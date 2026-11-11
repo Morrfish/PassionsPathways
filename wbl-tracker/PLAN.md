@@ -70,8 +70,16 @@ hmac }`
   detected.
 
 ### 3. Supervisor app (Windows)
-- **Electron desktop app** with a local **SQLite** database, installed with a
-  normal `.exe` installer.
+- **Built (phase 1):** one HTML file, `WBL Supervisor.html`, opened in Edge or
+  Chrome. There's nothing to install. Records save to a folder the supervisor
+  picks: `wbl-data.json`, an `images/` folder, an `Inbox/` folder, and daily
+  snapshots in `backups/`.
+  - The folder can be on the school server, which is how several supervisors
+    share records.
+  - If someone else saved changes while you had the records open, the app
+    reloads their version instead of overwriting it.
+- *Later, if needed:* wrap it as an installed Windows app (Electron), or add a
+  small server program for heavy simultaneous use.
 - **Import:** watches an "WBL Inbox" folder. In Outlook, the supervisor selects
   the emails and saves the attachments there (or drags them onto the app). A
   later phase could read the school mailbox directly over IMAP, still storing
@@ -127,7 +135,10 @@ The supervisor app can delete each email after importing it, to keep copies out 
   and the app should have a password.
 
 ## Build phases
-1. **Core loop:** the `.wbl` format, student capture with manual entry, email
+0. **Branding: done.** `brands/<school>/` is built into each school's apps,
+   and the `wbl-add-school` skill pulls a school's logo and colors from its
+   website. The first school is Greene County Career Center.
+1. **Core loop: done.** the `.wbl` format, student capture with manual entry, email
    sharing, supervisor import, student list and totals. *(Useful on its own.)*
 2. **Pay stub reading:** Tesseract.js reading, hour and date extraction, and the
    redaction step.

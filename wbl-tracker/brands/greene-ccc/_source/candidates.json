@@ -1,0 +1,71 @@
+{
+  "url": "https://www.greeneccc.com/",
+  "fetchedAt": "2026-11-11T16:44:15.899Z",
+  "title": "Greene County Career Center",
+  "siteName": "",
+  "headerText": "Greene County",
+  "description": "",
+  "themeColor": "",
+  "logos": [
+    {
+      "file": "logo-1.svg",
+      "bytes": 6181,
+      "type": "image/svg+xml",
+      "url": "https://www.greeneccc.com/sysimages/Greene%20CCC%20Logo.svg",
+      "why": "header image",
+      "score": 8,
+      "w": 420,
+      "h": 82,
+      "top": 283,
+      "alt": "logo"
+    },
+    {
+      "file": "logo-2.svg",
+      "bytes": 443,
+      "type": "image/svg+xml",
+      "url": "(inline svg)",
+      "why": "inline svg in header",
+      "score": 6,
+      "w": 17,
+      "h": 27,
+      "top": 293,
+      "alt": ""
+    },
+    {
+      "file": "logo-3.ico",
+      "bytes": 1150,
+      "type": "image/x-icon",
+      "url": "https://www.greeneccc.com/sysimages/esvlogo.ico",
+      "why": "favicon ",
+      "score": 1,
+      "w": null,
+      "h": null,
+      "top": null,
+      "alt": ""
+    }
+  ],
+  "colors": [
+    {
+      "hex": "#335ba5",
+      "weight": 2874,
+      "where": "other text ×16, link ×15, other background ×4, button text ×1",
+      "textOn": "#ffffff",
+      "contrastWithText": 6.6
+    },
+    {
+      "hex": "#40a2da",
+      "weight": 992,
+      "where": "button background ×3, other background ×3",
+      "textOn": "#1a1a1a",
+      "contrastWithText": 6.13
+    },
+    {
+      "hex": "#203968",
+      "weight": 310,
+      "where": "other background ×1",
+      "textOn": "#ffffff",
+      "contrastWithText": 11.37
+    }
+  ],
+  "cssVars": []
+}

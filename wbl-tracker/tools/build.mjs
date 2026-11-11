@@ -37,10 +37,14 @@ export function loadBrand(id) {
   if (!b.colors || !b.colors.primary || !b.colors.accent) throw new Error(id + ': brand.json needs colors.primary and colors.accent');
   b.logoPath = path.join(dir, b.logo || 'logo.svg');
   if (!fs.existsSync(b.logoPath)) throw new Error(id + ': logo file not found: ' + b.logoPath);
+  // Optional square mark for the phone home-screen icon (wide logos get tiny in a square).
+  b.iconPath = b.icon ? path.join(dir, b.icon) : b.logoPath;
+  if (!fs.existsSync(b.iconPath)) throw new Error(id + ': icon file not found: ' + b.iconPath);
   const c = b.colors;
   c.onPrimary = c.onPrimary || onColor(c.primary);
   c.onAccent = c.onAccent || onColor(c.accent);
   c.link = c.link || readableOnWhite(c.primary);
+  c.logoBg = c.logoBg || '#ffffff';  // tile behind the logo in the header; set dark for white logos
   b.appName = b.appName || 'WBL Hours';
   b.schoolShort = b.schoolShort || b.schoolName;
   b.defaultGoalHours = b.defaultGoalHours || 250;
@@ -56,6 +60,7 @@ function brandCss(b) {
   --brand-accent: ${c.accent};
   --brand-on-accent: ${c.onAccent};
   --brand-link: ${c.link};
+  --brand-logo-bg: ${c.logoBg};
 }
 `;
 }
@@ -88,14 +93,14 @@ async function renderIcons(b, outDir) {
     try { const { createRequire } = await import('node:module'); ({ chromium } = createRequire(import.meta.url)('playwright')); }
     catch (e2) { return false; }
   }
-  const logo = 'data:' + MIME[path.extname(b.logoPath).toLowerCase()] + ';base64,' + fs.readFileSync(b.logoPath).toString('base64');
+  const logo = 'data:' + MIME[path.extname(b.iconPath).toLowerCase()] + ';base64,' + fs.readFileSync(b.iconPath).toString('base64');
   const browser = await chromium.launch();
   try {
     for (const size of [192, 512]) {
       const page = await browser.newPage({ viewport: { width: size, height: size } });
       // Logo on a white rounded tile centered on the school color; keeps inside the maskable safe zone.
       await page.setContent(`<html><body style="margin:0;width:${size}px;height:${size}px;background:${b.colors.primary};display:flex;align-items:center;justify-content:center">
-        <div style="width:${size * 0.66}px;height:${size * 0.66}px;background:#fff;border-radius:${size * 0.12}px;display:flex;align-items:center;justify-content:center">
+        <div style="width:${size * 0.66}px;height:${size * 0.66}px;background:${b.colors.logoBg};border-radius:${size * 0.12}px;display:flex;align-items:center;justify-content:center">
         <img src="${logo}" style="max-width:82%;max-height:82%;object-fit:contain"></div></body></html>`);
       await page.waitForFunction(() => document.images[0].complete);
       await page.screenshot({ path: path.join(outDir, `icon-${size}.png`) });

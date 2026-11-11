@@ -39,7 +39,7 @@ p { margin: 0 0 .75em; }
   display: flex; align-items: center; gap: 12px; padding: 10px 16px;
   border-bottom: 4px solid var(--brand-accent);
 }
-.appbar .logo { height: 40px; width: auto; max-width: 140px; object-fit: contain; background: #fff; border-radius: 8px; padding: 3px; }
+.appbar .logo { height: 44px; width: auto; max-width: min(240px, 45vw); object-fit: contain; background: var(--brand-logo-bg, #fff); border-radius: 8px; padding: 3px; }
 .appbar .titles { display: flex; flex-direction: column; min-width: 0; }
 .appbar .school { font-size: .8rem; opacity: .9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .appbar .app { font-size: 1.1rem; font-weight: 700; }

@@ -1,0 +1,3643 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WBL Hours Supervisor – Greene CCC</title>
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2MzcuNzIgMTI0LjIzIj48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6IzQxYTJkYTt9LmNscy0ye2ZpbGw6IzM1NWJhNTt9PC9zdHlsZT48L2RlZnM+PHRpdGxlPkdyZWVuZSBDQ0MgTG9nbzwvdGl0bGU+PGcgaWQ9Ikdyb3VwXzUiIGRhdGEtbmFtZT0iR3JvdXAgNSI+PGcgaWQ9Ikdyb3VwXzEiIGRhdGEtbmFtZT0iR3JvdXAgMSI+PHBhdGggaWQ9IlBhdGhfMSIgZGF0YS1uYW1lPSJQYXRoIDEiIGNsYXNzPSJjbHMtMSIgZD0iTTkyLjgxLDYyLjExYTM1LDM1LDAsMCwwLC40Miw1LjQxSDBMMTAuODIsNTYuN0g5My4yM0EzNSwzNSwwLDAsMCw5Mi44MSw2Mi4xMVoiLz48cGF0aCBpZD0iUGF0aF8yIiBkYXRhLW5hbWU9IlBhdGggMiIgY2xhc3M9ImNscy0yIiBkPSJNMTY5LjEyLDgyLjY2Yy0uMTkuMzYtLjM3LjczLS41NiwxLjA4YTQ3LjE4LDQ3LjE4LDAsMCwxLTMuMzksNS40MSw0Niw0NiwwLDAsMS03NC4zNywwLDQxLDQxLDAsMCwxLTMuNDEtNS40MWgtNzVMMjMuMTgsNzIuOTJIOTQuNTFhMzUuMSwzNS4xLDAsMCwwLDU1Ljg4LDE2LjIzLDMzLjE4LDMzLjE4LDAsMCwwLDUuMjUtNS40MXEuNDQtLjUyLjg0LTEuMDhaIi8+PHBhdGggaWQ9IlBhdGhfMyIgZGF0YS1uYW1lPSJQYXRoIDMiIGNsYXNzPSJjbHMtMiIgZD0iTTE2Mi41OCwzMS44NWwtMy4yMSwzLjIyLTQuNDcsNC40NkEzNS4xOSwzNS4xOSwwLDAsMCw5NC41MSw1MS4yOUgyMC4wOUwzMC45MSw0MC40N0g4Ny4zOWE0MS41Nyw0MS41NywwLDAsMSwzLjQxLTUuNEE0Niw0NiwwLDAsMSwxNTUuMDYsMjVhNDYuNzMsNDYuNzMsMCwwLDEsNy41Miw2Ljg4WiIvPjxwYXRoIGlkPSJQYXRoXzQiIGRhdGEtbmFtZT0iUGF0aCA0IiBjbGFzcz0iY2xzLTEiIGQ9Ik0xODkuOTMsNjYuNDRjMCwuMzUtLjA1LjcyLS4wOSwxLjA4LS4xNiwxLjg0LS4zOSwzLjYzLS43MSw1LjQxLS4xNC44NS0uMzEsMS43LS41LDIuNTVsLS4yNywxLjc3aC0uMTdhNTYuNjYsNTYuNjYsMCwwLDEtMiw2LjQ5LDU1Ljg0LDU1Ljg0LDAsMCwxLTIuMjksNS40MUE2Mi4xMiw2Mi4xMiwwLDAsMSw3OC43MywxMDBIMjkuMzZMNDAuMTgsODkuMTVIODQuNDJBNTEuMjQsNTEuMjQsMCwwLDAsMTYyLjUsMTAwYTUwLjU1LDUwLjU1LDAsMCwwLDktMTAuODIsNDQuODQsNDQuODQsMCwwLDAsMi45My01LjQxQTQ3LjM0LDQ3LjM0LDAsMCwwLDE3Nyw3Ny4yNUgxMjcuNTNWNjYuNDRaIi8+PHBhdGggaWQ9IlBhdGhfNSIgZGF0YS1uYW1lPSJQYXRoIDUiIGNsYXNzPSJjbHMtMSIgZD0iTTE3NCwyMC40MmwtMy44MywzLjgzLTMuODUsMy44NmE1MS4yNiw1MS4yNiwwLDAsMC04MS45MSw3SDQ0LjgxTDU1LjYzLDI0LjI1SDc4Ljc1YTYyLjEsNjIuMSwwLDAsMSw4Ny4wOS0xMS4zN0E2MS40Myw2MS40MywwLDAsMSwxNzQsMjAuNDJaIi8+PC9nPjxnIGlkPSJHcm91cF80IiBkYXRhLW5hbWU9Ikdyb3VwIDQiPjxnIGlkPSJHcm91cF8yIiBkYXRhLW5hbWU9Ikdyb3VwIDIiPjxwYXRoIGlkPSJQYXRoXzYiIGRhdGEtbmFtZT0iUGF0aCA2IiBjbGFzcz0iY2xzLTIiIGQ9Ik0yMTkuNjMsMzIuNzljOC4yMiwwLDEzLjEsNC4xNCwxNS41NSw4LjdsLTksNC42MmE3LjMyLDcuMzIsMCwwLDAtNi41Mi0zLjg4Yy01LjE1LDAtOC42LDMuOTMtOC42LDguODZzMy40NSw4Ljg3LDguNiw4Ljg3YTEwLjEsMTAuMSwwLDAsMCw1Ljc4LTEuNTlWNTYuODNoLTYuODVWNDhoMTcuMjVWNjIuMjRhMjEsMjEsMCwwLDEtMTYuMTgsNy4xN2MtMTAuNzIsMC0xOS40OC03LTE5LjQ4LTE4LjMxUzIwOC45MSwzMi43OSwyMTkuNjMsMzIuNzlaIi8+PHBhdGggaWQ9IlBhdGhfNyIgZGF0YS1uYW1lPSJQYXRoIDciIGNsYXNzPSJjbHMtMiIgZD0iTTI1NS4xOCw1Ny40MWgtMy44N1Y2OC43N0gyNDAuNTlWMzMuMzdoMTguODljOC4yOCwwLDEyLjc0LDUuNTIsMTIuNzQsMTIuMTVhMTEuNDEsMTEuNDEsMCwwLDEtNi4zNywxMC43Mmw2LjQyLDEyLjUzSDI2MC4wNlptMi42NS0xNS4xMmgtNi41MlY0OC41aDYuNTJhMy4xMywzLjEzLDAsMSwwLC43NC02LjIxLDMuMDUsMy4wNSwwLDAsMC0uNzQsMFoiLz48cGF0aCBpZD0iUGF0aF84IiBkYXRhLW5hbWU9IlBhdGggOCIgY2xhc3M9ImNscy0yIiBkPSJNMjc2LjU2LDMzLjM3aDI2Ljg2djguOTJIMjg3LjI4djQuMTRIMzAzdjguOTFIMjg3LjI4djQuNTFoMTYuMTR2OC45MkgyNzYuNTZaIi8+PHBhdGggaWQ9IlBhdGhfOSIgZGF0YS1uYW1lPSJQYXRoIDkiIGNsYXNzPSJjbHMtMiIgZD0iTTMwOC4xOSwzMy4zN0gzMzV2OC45MkgzMTguOTF2NC4xNGgxNS43NnY4LjkxSDMxOC45MXY0LjUxSDMzNXY4LjkySDMwOC4xOVoiLz48cGF0aCBpZD0iUGF0aF8xMCIgZGF0YS1uYW1lPSJQYXRoIDEwIiBjbGFzcz0iY2xzLTIiIGQ9Ik0zNTAuNTQsNDkuNzd2MTlIMzM5LjgyVjMzLjM3aDExTDM2My4xNyw1MS4yVjMzLjM3aDEwLjcydjM1LjRIMzYzLjZaIi8+PHBhdGggaWQ9IlBhdGhfMTEiIGRhdGEtbmFtZT0iUGF0aCAxMSIgY2xhc3M9ImNscy0yIiBkPSJNMzc5LjYyLDMzLjM3aDI2Ljg1djguOTJIMzkwLjM0djQuMTRINDA2LjF2OC45MUgzOTAuMzR2NC41MWgxNi4xM3Y4LjkySDM3OS42MloiLz48cGF0aCBpZD0iUGF0aF8xMiIgZGF0YS1uYW1lPSJQYXRoIDEyIiBjbGFzcz0iY2xzLTIiIGQ9Ik00MjQuMzUsNTEuMWMwLTEwLjg4LDguMDctMTguMzEsMTguMTUtMTguMzFhMTYsMTYsMCwwLDEsMTQuMDYsNy40OGwtNC41MSwyLjM5YTExLjIzLDExLjIzLDAsMCwwLTkuNTUtNS4xNWMtNy4xNywwLTEyLjY4LDUuNjMtMTIuNjgsMTMuNTlzNS41MSwxMy41OCwxMi42OCwxMy41OGExMS4yLDExLjIsMCwwLDAsOS41NS01LjE1bDQuNTEsMi4zOWExNi4wOCwxNi4wOCwwLDAsMS0xNC4wNiw3LjQ5QzQzMi40Miw2OS40MSw0MjQuMzUsNjIsNDI0LjM1LDUxLjFaIi8+PHBhdGggaWQ9IlBhdGhfMTMiIGRhdGEtbmFtZT0iUGF0aCAxMyIgY2xhc3M9ImNscy0yIiBkPSJNNDc4LjIxLDMyLjc5YzEwLjU2LDAsMTcuODMsNy44LDE3LjgzLDE4LjMxcy03LjI3LDE4LjMxLTE3LjgzLDE4LjMxLTE3LjgzLTcuOC0xNy44My0xOC4zMVM0NjcuNjUsMzIuNzksNDc4LjIxLDMyLjc5Wm0wLDQuNzJjLTcuNTksMC0xMi4zNiw1Ljc5LTEyLjM2LDEzLjU5czQuNzcsMTMuNTgsMTIuMzYsMTMuNTgsMTIuMzctNS44NCwxMi4zNy0xMy41OC00Ljg5LTEzLjU5LTEyLjM3LTEzLjU5WiIvPjxwYXRoIGlkPSJQYXRoXzE0IiBkYXRhLW5hbWU9IlBhdGggMTQiIGNsYXNzPSJjbHMtMiIgZD0iTTUwMi40NiwzMy4zN2g1LjM2VjU0Ljc2YzAsNi4wNSwzLjM1LDkuOTIsOS41NSw5LjkyczkuNS0zLjg3LDkuNS05LjkyVjMzLjM3aDUuMzZ2MjEuNWMwLDguOC00LjkzLDE0LjU0LTE0Ljg2LDE0LjU0cy0xNC45MS01Ljc5LTE0LjkxLTE0LjQ5WiIvPjxwYXRoIGlkPSJQYXRoXzE1IiBkYXRhLW5hbWU9IlBhdGggMTUiIGNsYXNzPSJjbHMtMiIgZD0iTTU0NS40NSw0MS42VjY4Ljc3aC01LjMxVjMzLjM3aDUuNDZsMTkuMjcsMjYuNTRWMzMuMzdoNS4zMXYzNS40SDU2NVoiLz48cGF0aCBpZD0iUGF0aF8xNiIgZGF0YS1uYW1lPSJQYXRoIDE2IiBjbGFzcz0iY2xzLTIiIGQ9Ik01ODYuNjgsMzhoLTExVjMzLjM3aDI3LjIzVjM4SDU5MlY2OC43N2gtNS4zWiIvPjxwYXRoIGlkPSJQYXRoXzE3IiBkYXRhLW5hbWU9IlBhdGggMTciIGNsYXNzPSJjbHMtMiIgZD0iTTYxOC42Miw1NCw2MDQuNzcsMzMuMzdoNi4xbDEwLjQsMTUuODIsMTAuMy0xNS44Mmg2LjE1TDYyMy45Miw1NFY2OC43N2gtNS4zWiIvPjxwYXRoIGlkPSJQYXRoXzE4IiBkYXRhLW5hbWU9IlBhdGggMTgiIGNsYXNzPSJjbHMtMSIgZD0iTTI0MS4xMyw5Ny4yNWE4Ljg2LDguODYsMCwwLDEsOC41Ni05LjE1aC41MWE4LDgsMCwwLDEsNywzLjc0TDI1NSw5M2E1LjU5LDUuNTksMCwwLDAtNC43Ny0yLjU3Yy0zLjU4LDAtNi4zNCwyLjgxLTYuMzQsNi43OXMyLjc2LDYuNzksNi4zNCw2Ljc5YTUuNTksNS41OSwwLDAsMCw0Ljc3LTIuNTdsMi4yNiwxLjE5YTguMDUsOC4wNSwwLDAsMS03LDMuNzQsOC44Niw4Ljg2LDAsMCwxLTkuMDctOC42NEE0LjM0LDQuMzQsMCwwLDEsMjQxLjEzLDk3LjI1WiIvPjxwYXRoIGlkPSJQYXRoXzE5IiBkYXRhLW5hbWU9IlBhdGggMTkiIGNsYXNzPSJjbHMtMSIgZD0iTTI4My43MSwxMDIuNDJIMjc1bC0xLjQ0LDMuNjZoLTIuOTFsNy0xNy42OUgyODFsNywxNy42OWgtMi45MlptLTcuOS0yLjM2aDcuMTNsLTMuNTgtOS4zNloiLz48cGF0aCBpZD0iUGF0aF8yMCIgZGF0YS1uYW1lPSJQYXRoIDIwIiBjbGFzcz0iY2xzLTEiIGQ9Ik0zMDguODksOTkuMjZoLTMuMzJ2Ni44MmgtMi42NVY4OC4zOWg3LjQ2YzMuMzYsMCw1LjY3LDIuMTcsNS42Nyw1LjQzYTQuOTQsNC45NCwwLDAsMS00LjQsNS4xOGw0LjU0LDcuMDhoLTMuMDhaTTMxMCw5MC43MmgtNC40NnY2LjIxSDMxMGEzLjExLDMuMTEsMCwxLDAsLjM1LTYuMjEsMiwyLDAsMCwwLS4zNSwwWiIvPjxwYXRoIGlkPSJQYXRoXzIxIiBkYXRhLW5hbWU9IlBhdGggMjEiIGNsYXNzPSJjbHMtMSIgZD0iTTMzMi4wNSw4OC4zOWgxMS44OXYyLjMzaC05LjIzdjUuMTdoOXYyLjM0aC05djUuNTJoOS4yM3YyLjMzSDMzMi4wNVoiLz48cGF0aCBpZD0iUGF0aF8yMiIgZGF0YS1uYW1lPSJQYXRoIDIyIiBjbGFzcz0iY2xzLTEiIGQ9Ik0zNjAsODguMzloMTEuODl2Mi4zM2gtOS4yM3Y1LjE3aDl2Mi4zNGgtOXY1LjUyaDkuMjN2Mi4zM0gzNjBaIi8+PHBhdGggaWQ9IlBhdGhfMjMiIGRhdGEtbmFtZT0iUGF0aCAyMyIgY2xhc3M9ImNscy0xIiBkPSJNMzkzLjksOTkuMjZoLTMuMzF2Ni44MmgtMi42NlY4OC4zOWg3LjQ2YzMuMzYsMCw1LjY3LDIuMTcsNS42Nyw1LjQzYTQuOTMsNC45MywwLDAsMS00LjQsNS4xOGw0LjU0LDcuMDhoLTMuMDhaTTM5NSw5MC43MmgtNC40NXY2LjIxSDM5NWEzLjExLDMuMTEsMCwxLDAsLjM1LTYuMjFBMiwyLDAsMCwwLDM5NSw5MC43MloiLz48cGF0aCBpZD0iUGF0aF8yNCIgZGF0YS1uYW1lPSJQYXRoIDI0IiBjbGFzcz0iY2xzLTEiIGQ9Ik00MzUuOSw5Ny4yNWE4Ljg2LDguODYsMCwwLDEsOC41Ni05LjE1SDQ0NWE4LDgsMCwwLDEsNywzLjc0TDQ0OS43NSw5M0E1LjYxLDUuNjEsMCwwLDAsNDQ1LDkwLjQ2Yy0zLjU4LDAtNi4zNSwyLjgxLTYuMzUsNi43OVM0NDEuMzksMTA0LDQ0NSwxMDRhNS42MSw1LjYxLDAsMCwwLDQuNzctMi41N2wyLjI2LDEuMTlhOC4wNSw4LjA1LDAsMCwxLTcsMy43NCw4Ljg2LDguODYsMCwwLDEtOS4wOC04LjY0WiIvPjxwYXRoIGlkPSJQYXRoXzI1IiBkYXRhLW5hbWU9IlBhdGggMjUiIGNsYXNzPSJjbHMtMSIgZD0iTTQ2Ny40LDg4LjM5aDExLjg5djIuMzNoLTkuMjR2NS4xN2g5LjA1djIuMzRoLTkuMDV2NS41Mmg5LjI0djIuMzNINDY3LjRaIi8+PHBhdGggaWQ9IlBhdGhfMjYiIGRhdGEtbmFtZT0iUGF0aCAyNiIgY2xhc3M9ImNscy0xIiBkPSJNNDk4LDkyLjV2MTMuNThoLTIuNjVWODguMzloMi43M2w5LjYzLDEzLjI2Vjg4LjM5aDIuNjV2MTcuNjloLTIuNTdaIi8+PHBhdGggaWQ9IlBhdGhfMjciIGRhdGEtbmFtZT0iUGF0aCAyNyIgY2xhc3M9ImNscy0xIiBkPSJNNTMxLjM0LDkwLjcyaC01LjQ5Vjg4LjM5aDEzLjYxdjIuMzNINTM0djE1LjM2aC0yLjY1WiIvPjxwYXRoIGlkPSJQYXRoXzI4IiBkYXRhLW5hbWU9IlBhdGggMjgiIGNsYXNzPSJjbHMtMSIgZD0iTTU1NSw4OC4zOWgxMS44OHYyLjMzaC05LjIzdjUuMTdoOXYyLjM0aC05djUuNTJoOS4yM3YyLjMzSDU1NVoiLz48cGF0aCBpZD0iUGF0aF8yOSIgZGF0YS1uYW1lPSJQYXRoIDI5IiBjbGFzcz0iY2xzLTEiIGQ9Ik01ODguODYsOTkuMjZoLTMuMzF2Ni44Mkg1ODIuOVY4OC4zOWg3LjQ1YzMuMzcsMCw1LjY4LDIuMTcsNS42OCw1LjQzYTQuOTQsNC45NCwwLDAsMS00LjQsNS4xOGw0LjUzLDcuMDhoLTMuMDdaTTU5MCw5MC43MmgtNC40NXY2LjIxSDU5MGEzLjExLDMuMTEsMCwwLDAsLjM2LTYuMjFBMi4xNiwyLjE2LDAsMCwwLDU5MCw5MC43MloiLz48L2c+PGcgaWQ9Ikdyb3VwXzMiIGRhdGEtbmFtZT0iR3JvdXAgMyI+PHJlY3QgaWQ9IlJlY3RhbmdsZV8zIiBkYXRhLW5hbWU9IlJlY3RhbmdsZSAzIiBjbGFzcz0iY2xzLTEiIHg9IjIwNC43NiIgeT0iNzcuMzciIHdpZHRoPSI0MjguNjgiIGhlaWdodD0iMy40NyIvPjwvZz48L2c+PC9nPjwvc3ZnPg==">
+  <style>
+/* Shared look for both apps. School colors come from brand.css (generated by
+   tools/build.mjs from brands/<school>/brand.json). */
+:root {
+  --brand-primary: #1f4e79;
+  --brand-on-primary: #ffffff;
+  --brand-accent: #e8a317;
+  --brand-on-accent: #1a1a1a;
+  --brand-link: #1f4e79;
+
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --text: #1c1f23;
+  --muted: #5d6670;
+  --border: #d9dde2;
+  --ok: #1e7b3a;
+  --ok-bg: #e5f4ea;
+  --warn: #8a5a00;
+  --warn-bg: #fff3d6;
+  --bad: #b3261e;
+  --bad-bg: #fde8e7;
+  --radius: 12px;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.05);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.45; }
+a { color: var(--brand-link); }
+h1, h2, h3 { line-height: 1.2; margin: 0 0 .5em; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1.05rem; }
+p { margin: 0 0 .75em; }
+.muted { color: var(--muted); }
+.small { font-size: .875rem; }
+.hidden { display: none !important; }
+
+.appbar {
+  background: var(--brand-primary); color: var(--brand-on-primary);
+  display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+  border-bottom: 4px solid var(--brand-accent);
+}
+.appbar .logo { height: 44px; width: auto; max-width: min(240px, 45vw); object-fit: contain; background: var(--brand-logo-bg, #fff); border-radius: 8px; padding: 3px; }
+.appbar .titles { display: flex; flex-direction: column; min-width: 0; }
+.appbar .school { font-size: .8rem; opacity: .9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.appbar .app { font-size: 1.1rem; font-weight: 700; }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; margin-bottom: 16px; }
+
+button, .btn {
+  font: inherit; font-weight: 600; cursor: pointer; border-radius: 10px; border: 1px solid transparent;
+  padding: 10px 16px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  text-decoration: none;
+}
+.btn-primary { background: var(--brand-primary); color: var(--brand-on-primary); }
+.btn-accent { background: var(--brand-accent); color: var(--brand-on-accent); }
+.btn-secondary { background: var(--surface); color: var(--text); border-color: var(--border); }
+.btn-danger { background: var(--surface); color: var(--bad); border-color: var(--bad); }
+.btn-block { width: 100%; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, .btn:focus-visible {
+  outline: 3px solid var(--brand-accent); outline-offset: 2px;
+}
+
+label { display: block; font-weight: 600; margin: 12px 0 4px; }
+input, select, textarea {
+  font: inherit; width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: #fff; color: var(--text);
+  min-height: 44px;
+}
+textarea { min-height: 80px; resize: vertical; }
+.row { display: flex; gap: 12px; }
+.row > * { flex: 1; min-width: 0; }
+.hint { font-size: .85rem; color: var(--muted); margin-top: 4px; }
+
+.badge { display: inline-block; font-size: .78rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+.badge-ok { background: var(--ok-bg); color: var(--ok); }
+.badge-warn { background: var(--warn-bg); color: var(--warn); }
+.badge-bad { background: var(--bad-bg); color: var(--bad); }
+.badge-neutral { background: #eceff3; color: var(--muted); }
+
+.progress { height: 10px; background: #e6e9ee; border-radius: 999px; overflow: hidden; }
+.progress > span { display: block; height: 100%; background: var(--brand-primary); border-radius: 999px; }
+.progress.done > span { background: var(--ok); }
+
+.notice { padding: 12px 14px; border-radius: 10px; margin-bottom: 12px; }
+.notice-ok { background: var(--ok-bg); color: var(--ok); }
+.notice-warn { background: var(--warn-bg); color: var(--warn); }
+.notice-bad { background: var(--bad-bg); color: var(--bad); }
+
+.toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #222; color: #fff;
+  padding: 12px 18px; border-radius: 10px; z-index: 1000; max-width: calc(100% - 32px); box-shadow: var(--shadow);
+}
+
+</style>
+  <style>
+/* Generated from brands/greene-ccc/brand.json. Edit that file, not this one. */
+:root {
+  --brand-primary: #335ba5;
+  --brand-on-primary: #ffffff;
+  --brand-accent: #40a2da;
+  --brand-on-accent: #1a1a1a;
+  --brand-link: #335ba5;
+  --brand-logo-bg: #ffffff;
+}
+
+</style>
+  <style>
+body { min-width: 320px; }
+main { max-width: 1280px; margin: 0 auto; padding: 20px 16px 48px; }
+.appbar { flex-wrap: wrap; }
+.tabs { display: flex; gap: 4px; margin-left: 24px; flex-wrap: wrap; }
+.tabs button { background: transparent; color: var(--brand-on-primary); border-radius: 8px; padding: 8px 14px; min-height: 40px; opacity: .85; }
+.tabs button:hover { background: rgba(255,255,255,.12); opacity: 1; }
+.tabs button.active { background: var(--brand-on-primary); color: var(--brand-primary); opacity: 1; }
+.count { display: inline-block; min-width: 22px; padding: 0 6px; border-radius: 999px; background: var(--brand-accent); color: var(--brand-on-accent); font-size: .8rem; }
+.folder-status { margin-left: auto; font-size: .82rem; opacity: .9; text-align: right; }
+.spacer { flex: 1; }
+
+.setup { max-width: 640px; margin: 40px auto; }
+.setup-actions { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0 8px; }
+code { background: #eef0f3; padding: 1px 5px; border-radius: 4px; font-size: .9em; }
+
+.toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.toolbar input[type=search] { max-width: 280px; }
+.toolbar select { width: auto; }
+.file-btn { position: relative; overflow: hidden; }
+.file-btn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; box-shadow: var(--shadow); }
+.stat b { display: block; font-size: 1.6rem; line-height: 1.1; color: var(--brand-primary); }
+.stat span { color: var(--muted); font-size: .85rem; }
+
+.table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+table.grid { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.grid th, .grid td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.grid th { background: #f7f8fa; font-weight: 700; cursor: pointer; user-select: none; white-space: nowrap; position: sticky; top: 0; }
+.grid th.sorted::after { content: ' ▾'; }
+.grid th.sorted.asc::after { content: ' ▴'; }
+.grid tbody tr { cursor: pointer; }
+.grid tbody tr:hover { background: #f7f9fc; }
+.grid .num { text-align: right; white-space: nowrap; }
+.grid .name { font-weight: 600; }
+.grid .sub { color: var(--muted); font-size: .8rem; }
+.grid .progress { min-width: 120px; }
+.pct { font-size: .78rem; color: var(--muted); }
+
+.drop-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 28px; text-align: center; color: var(--muted); margin: 8px 0 16px; }
+.drop-zone.over { border-color: var(--brand-primary); background: #f0f5fb; color: var(--brand-primary); }
+.steps { padding-left: 20px; }
+.steps li { margin-bottom: 6px; }
+.result-list { list-style: none; padding: 0; margin: 12px 0 0; }
+.result-list li { padding: 6px 0; border-bottom: 1px solid var(--border); font-size: .92rem; }
+
+.review-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 16px; }
+.review-card .img-box { background: #111; border-radius: 10px; min-height: 120px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.review-card .img-box img { max-width: 100%; max-height: 360px; display: block; cursor: zoom-in; }
+.review-card .img-box .none { color: #aaa; padding: 20px; }
+.flags { margin: 8px 0; padding-left: 18px; color: var(--warn); }
+.review-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; align-items: end; }
+.review-actions .adj { display: flex; gap: 8px; align-items: end; }
+.review-actions .adj label { margin: 0; font-size: .8rem; }
+.review-actions .adj input { width: 90px; }
+dl.kv { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 0; }
+dl.kv dt { color: var(--muted); }
+dl.kv dd { margin: 0; font-weight: 600; }
+
+dialog { border: none; border-radius: 14px; padding: 0; width: min(1000px, calc(100vw - 32px)); max-height: calc(100vh - 32px); box-shadow: 0 10px 40px rgba(0,0,0,.25); }
+dialog::backdrop { background: rgba(10,20,30,.45); }
+dialog form { display: flex; flex-direction: column; max-height: calc(100vh - 32px); }
+.dlg-head, .dlg-foot { display: flex; align-items: center; gap: 8px; padding: 12px 18px; border-bottom: 1px solid var(--border); }
+.dlg-head h2 { margin: 0; flex: 1; }
+.dlg-foot { border-bottom: none; border-top: 1px solid var(--border); }
+.dlg-body { padding: 4px 18px 18px; overflow-y: auto; }
+.sd-cols { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 20px; }
+.enroll-box { background: var(--bg); border-radius: 12px; padding: 14px; margin-top: 12px; text-align: center; }
+.enroll-box .qr svg, .enroll-box .qr img { width: 200px; height: 200px; background: #fff; padding: 6px; border-radius: 8px; }
+.enroll-actions { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.enroll-actions button { min-height: 36px; padding: 6px 10px; font-size: .85rem; }
+#sd-history table { margin-top: 8px; }
+#sd-history .grid tbody tr { cursor: default; }
+.image-dialog { width: auto; max-width: calc(100vw - 32px); padding: 12px; text-align: center; }
+.image-dialog img { max-width: 100%; max-height: calc(100vh - 120px); display: block; margin: 0 auto 10px; }
+
+.print-area { display: none; }
+@media print {
+  body > *:not(.print-area) { display: none !important; }
+  .print-area { display: block; }
+  .print-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .print-card { border: 1px dashed #999; padding: 18px; text-align: center; break-inside: avoid; page-break-inside: avoid; height: 4.9in; }
+  .print-card img.logo { height: 44px; }
+  .print-card .qr svg { width: 2.3in; height: 2.3in; }
+  .print-card h3 { margin: 6px 0 2px; }
+  .print-card p { margin: 4px 0; font-size: 11pt; }
+}
+
+@media (max-width: 760px) {
+  .sd-cols, .review-card { grid-template-columns: 1fr; }
+  .tabs { margin-left: 0; width: 100%; }
+  .folder-status { display: none; }
+}
+
+</style>
+</head>
+<body>
+  <header class="appbar">
+    <img class="logo" src="data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2MzcuNzIgMTI0LjIzIj48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6IzQxYTJkYTt9LmNscy0ye2ZpbGw6IzM1NWJhNTt9PC9zdHlsZT48L2RlZnM+PHRpdGxlPkdyZWVuZSBDQ0MgTG9nbzwvdGl0bGU+PGcgaWQ9Ikdyb3VwXzUiIGRhdGEtbmFtZT0iR3JvdXAgNSI+PGcgaWQ9Ikdyb3VwXzEiIGRhdGEtbmFtZT0iR3JvdXAgMSI+PHBhdGggaWQ9IlBhdGhfMSIgZGF0YS1uYW1lPSJQYXRoIDEiIGNsYXNzPSJjbHMtMSIgZD0iTTkyLjgxLDYyLjExYTM1LDM1LDAsMCwwLC40Miw1LjQxSDBMMTAuODIsNTYuN0g5My4yM0EzNSwzNSwwLDAsMCw5Mi44MSw2Mi4xMVoiLz48cGF0aCBpZD0iUGF0aF8yIiBkYXRhLW5hbWU9IlBhdGggMiIgY2xhc3M9ImNscy0yIiBkPSJNMTY5LjEyLDgyLjY2Yy0uMTkuMzYtLjM3LjczLS41NiwxLjA4YTQ3LjE4LDQ3LjE4LDAsMCwxLTMuMzksNS40MSw0Niw0NiwwLDAsMS03NC4zNywwLDQxLDQxLDAsMCwxLTMuNDEtNS40MWgtNzVMMjMuMTgsNzIuOTJIOTQuNTFhMzUuMSwzNS4xLDAsMCwwLDU1Ljg4LDE2LjIzLDMzLjE4LDMzLjE4LDAsMCwwLDUuMjUtNS40MXEuNDQtLjUyLjg0LTEuMDhaIi8+PHBhdGggaWQ9IlBhdGhfMyIgZGF0YS1uYW1lPSJQYXRoIDMiIGNsYXNzPSJjbHMtMiIgZD0iTTE2Mi41OCwzMS44NWwtMy4yMSwzLjIyLTQuNDcsNC40NkEzNS4xOSwzNS4xOSwwLDAsMCw5NC41MSw1MS4yOUgyMC4wOUwzMC45MSw0MC40N0g4Ny4zOWE0MS41Nyw0MS41NywwLDAsMSwzLjQxLTUuNEE0Niw0NiwwLDAsMSwxNTUuMDYsMjVhNDYuNzMsNDYuNzMsMCwwLDEsNy41Miw2Ljg4WiIvPjxwYXRoIGlkPSJQYXRoXzQiIGRhdGEtbmFtZT0iUGF0aCA0IiBjbGFzcz0iY2xzLTEiIGQ9Ik0xODkuOTMsNjYuNDRjMCwuMzUtLjA1LjcyLS4wOSwxLjA4LS4xNiwxLjg0LS4zOSwzLjYzLS43MSw1LjQxLS4xNC44NS0uMzEsMS43LS41LDIuNTVsLS4yNywxLjc3aC0uMTdhNTYuNjYsNTYuNjYsMCwwLDEtMiw2LjQ5LDU1Ljg0LDU1Ljg0LDAsMCwxLTIuMjksNS40MUE2Mi4xMiw2Mi4xMiwwLDAsMSw3OC43MywxMDBIMjkuMzZMNDAuMTgsODkuMTVIODQuNDJBNTEuMjQsNTEuMjQsMCwwLDAsMTYyLjUsMTAwYTUwLjU1LDUwLjU1LDAsMCwwLDktMTAuODIsNDQuODQsNDQuODQsMCwwLDAsMi45My01LjQxQTQ3LjM0LDQ3LjM0LDAsMCwwLDE3Nyw3Ny4yNUgxMjcuNTNWNjYuNDRaIi8+PHBhdGggaWQ9IlBhdGhfNSIgZGF0YS1uYW1lPSJQYXRoIDUiIGNsYXNzPSJjbHMtMSIgZD0iTTE3NCwyMC40MmwtMy44MywzLjgzLTMuODUsMy44NmE1MS4yNiw1MS4yNiwwLDAsMC04MS45MSw3SDQ0LjgxTDU1LjYzLDI0LjI1SDc4Ljc1YTYyLjEsNjIuMSwwLDAsMSw4Ny4wOS0xMS4zN0E2MS40Myw2MS40MywwLDAsMSwxNzQsMjAuNDJaIi8+PC9nPjxnIGlkPSJHcm91cF80IiBkYXRhLW5hbWU9Ikdyb3VwIDQiPjxnIGlkPSJHcm91cF8yIiBkYXRhLW5hbWU9Ikdyb3VwIDIiPjxwYXRoIGlkPSJQYXRoXzYiIGRhdGEtbmFtZT0iUGF0aCA2IiBjbGFzcz0iY2xzLTIiIGQ9Ik0yMTkuNjMsMzIuNzljOC4yMiwwLDEzLjEsNC4xNCwxNS41NSw4LjdsLTksNC42MmE3LjMyLDcuMzIsMCwwLDAtNi41Mi0zLjg4Yy01LjE1LDAtOC42LDMuOTMtOC42LDguODZzMy40NSw4Ljg3LDguNiw4Ljg3YTEwLjEsMTAuMSwwLDAsMCw1Ljc4LTEuNTlWNTYuODNoLTYuODVWNDhoMTcuMjVWNjIuMjRhMjEsMjEsMCwwLDEtMTYuMTgsNy4xN2MtMTAuNzIsMC0xOS40OC03LTE5LjQ4LTE4LjMxUzIwOC45MSwzMi43OSwyMTkuNjMsMzIuNzlaIi8+PHBhdGggaWQ9IlBhdGhfNyIgZGF0YS1uYW1lPSJQYXRoIDciIGNsYXNzPSJjbHMtMiIgZD0iTTI1NS4xOCw1Ny40MWgtMy44N1Y2OC43N0gyNDAuNTlWMzMuMzdoMTguODljOC4yOCwwLDEyLjc0LDUuNTIsMTIuNzQsMTIuMTVhMTEuNDEsMTEuNDEsMCwwLDEtNi4zNywxMC43Mmw2LjQyLDEyLjUzSDI2MC4wNlptMi42NS0xNS4xMmgtNi41MlY0OC41aDYuNTJhMy4xMywzLjEzLDAsMSwwLC43NC02LjIxLDMuMDUsMy4wNSwwLDAsMC0uNzQsMFoiLz48cGF0aCBpZD0iUGF0aF84IiBkYXRhLW5hbWU9IlBhdGggOCIgY2xhc3M9ImNscy0yIiBkPSJNMjc2LjU2LDMzLjM3aDI2Ljg2djguOTJIMjg3LjI4djQuMTRIMzAzdjguOTFIMjg3LjI4djQuNTFoMTYuMTR2OC45MkgyNzYuNTZaIi8+PHBhdGggaWQ9IlBhdGhfOSIgZGF0YS1uYW1lPSJQYXRoIDkiIGNsYXNzPSJjbHMtMiIgZD0iTTMwOC4xOSwzMy4zN0gzMzV2OC45MkgzMTguOTF2NC4xNGgxNS43NnY4LjkxSDMxOC45MXY0LjUxSDMzNXY4LjkySDMwOC4xOVoiLz48cGF0aCBpZD0iUGF0aF8xMCIgZGF0YS1uYW1lPSJQYXRoIDEwIiBjbGFzcz0iY2xzLTIiIGQ9Ik0zNTAuNTQsNDkuNzd2MTlIMzM5LjgyVjMzLjM3aDExTDM2My4xNyw1MS4yVjMzLjM3aDEwLjcydjM1LjRIMzYzLjZaIi8+PHBhdGggaWQ9IlBhdGhfMTEiIGRhdGEtbmFtZT0iUGF0aCAxMSIgY2xhc3M9ImNscy0yIiBkPSJNMzc5LjYyLDMzLjM3aDI2Ljg1djguOTJIMzkwLjM0djQuMTRINDA2LjF2OC45MUgzOTAuMzR2NC41MWgxNi4xM3Y4LjkySDM3OS42MloiLz48cGF0aCBpZD0iUGF0aF8xMiIgZGF0YS1uYW1lPSJQYXRoIDEyIiBjbGFzcz0iY2xzLTIiIGQ9Ik00MjQuMzUsNTEuMWMwLTEwLjg4LDguMDctMTguMzEsMTguMTUtMTguMzFhMTYsMTYsMCwwLDEsMTQuMDYsNy40OGwtNC41MSwyLjM5YTExLjIzLDExLjIzLDAsMCwwLTkuNTUtNS4xNWMtNy4xNywwLTEyLjY4LDUuNjMtMTIuNjgsMTMuNTlzNS41MSwxMy41OCwxMi42OCwxMy41OGExMS4yLDExLjIsMCwwLDAsOS41NS01LjE1bDQuNTEsMi4zOWExNi4wOCwxNi4wOCwwLDAsMS0xNC4wNiw3LjQ5QzQzMi40Miw2OS40MSw0MjQuMzUsNjIsNDI0LjM1LDUxLjFaIi8+PHBhdGggaWQ9IlBhdGhfMTMiIGRhdGEtbmFtZT0iUGF0aCAxMyIgY2xhc3M9ImNscy0yIiBkPSJNNDc4LjIxLDMyLjc5YzEwLjU2LDAsMTcuODMsNy44LDE3LjgzLDE4LjMxcy03LjI3LDE4LjMxLTE3LjgzLDE4LjMxLTE3LjgzLTcuOC0xNy44My0xOC4zMVM0NjcuNjUsMzIuNzksNDc4LjIxLDMyLjc5Wm0wLDQuNzJjLTcuNTksMC0xMi4zNiw1Ljc5LTEyLjM2LDEzLjU5czQuNzcsMTMuNTgsMTIuMzYsMTMuNTgsMTIuMzctNS44NCwxMi4zNy0xMy41OC00Ljg5LTEzLjU5LTEyLjM3LTEzLjU5WiIvPjxwYXRoIGlkPSJQYXRoXzE0IiBkYXRhLW5hbWU9IlBhdGggMTQiIGNsYXNzPSJjbHMtMiIgZD0iTTUwMi40NiwzMy4zN2g1LjM2VjU0Ljc2YzAsNi4wNSwzLjM1LDkuOTIsOS41NSw5LjkyczkuNS0zLjg3LDkuNS05LjkyVjMzLjM3aDUuMzZ2MjEuNWMwLDguOC00LjkzLDE0LjU0LTE0Ljg2LDE0LjU0cy0xNC45MS01Ljc5LTE0LjkxLTE0LjQ5WiIvPjxwYXRoIGlkPSJQYXRoXzE1IiBkYXRhLW5hbWU9IlBhdGggMTUiIGNsYXNzPSJjbHMtMiIgZD0iTTU0NS40NSw0MS42VjY4Ljc3aC01LjMxVjMzLjM3aDUuNDZsMTkuMjcsMjYuNTRWMzMuMzdoNS4zMXYzNS40SDU2NVoiLz48cGF0aCBpZD0iUGF0aF8xNiIgZGF0YS1uYW1lPSJQYXRoIDE2IiBjbGFzcz0iY2xzLTIiIGQ9Ik01ODYuNjgsMzhoLTExVjMzLjM3aDI3LjIzVjM4SDU5MlY2OC43N2gtNS4zWiIvPjxwYXRoIGlkPSJQYXRoXzE3IiBkYXRhLW5hbWU9IlBhdGggMTciIGNsYXNzPSJjbHMtMiIgZD0iTTYxOC42Miw1NCw2MDQuNzcsMzMuMzdoNi4xbDEwLjQsMTUuODIsMTAuMy0xNS44Mmg2LjE1TDYyMy45Miw1NFY2OC43N2gtNS4zWiIvPjxwYXRoIGlkPSJQYXRoXzE4IiBkYXRhLW5hbWU9IlBhdGggMTgiIGNsYXNzPSJjbHMtMSIgZD0iTTI0MS4xMyw5Ny4yNWE4Ljg2LDguODYsMCwwLDEsOC41Ni05LjE1aC41MWE4LDgsMCwwLDEsNywzLjc0TDI1NSw5M2E1LjU5LDUuNTksMCwwLDAtNC43Ny0yLjU3Yy0zLjU4LDAtNi4zNCwyLjgxLTYuMzQsNi43OXMyLjc2LDYuNzksNi4zNCw2Ljc5YTUuNTksNS41OSwwLDAsMCw0Ljc3LTIuNTdsMi4yNiwxLjE5YTguMDUsOC4wNSwwLDAsMS03LDMuNzQsOC44Niw4Ljg2LDAsMCwxLTkuMDctOC42NEE0LjM0LDQuMzQsMCwwLDEsMjQxLjEzLDk3LjI1WiIvPjxwYXRoIGlkPSJQYXRoXzE5IiBkYXRhLW5hbWU9IlBhdGggMTkiIGNsYXNzPSJjbHMtMSIgZD0iTTI4My43MSwxMDIuNDJIMjc1bC0xLjQ0LDMuNjZoLTIuOTFsNy0xNy42OUgyODFsNywxNy42OWgtMi45MlptLTcuOS0yLjM2aDcuMTNsLTMuNTgtOS4zNloiLz48cGF0aCBpZD0iUGF0aF8yMCIgZGF0YS1uYW1lPSJQYXRoIDIwIiBjbGFzcz0iY2xzLTEiIGQ9Ik0zMDguODksOTkuMjZoLTMuMzJ2Ni44MmgtMi42NVY4OC4zOWg3LjQ2YzMuMzYsMCw1LjY3LDIuMTcsNS42Nyw1LjQzYTQuOTQsNC45NCwwLDAsMS00LjQsNS4xOGw0LjU0LDcuMDhoLTMuMDhaTTMxMCw5MC43MmgtNC40NnY2LjIxSDMxMGEzLjExLDMuMTEsMCwxLDAsLjM1LTYuMjEsMiwyLDAsMCwwLS4zNSwwWiIvPjxwYXRoIGlkPSJQYXRoXzIxIiBkYXRhLW5hbWU9IlBhdGggMjEiIGNsYXNzPSJjbHMtMSIgZD0iTTMzMi4wNSw4OC4zOWgxMS44OXYyLjMzaC05LjIzdjUuMTdoOXYyLjM0aC05djUuNTJoOS4yM3YyLjMzSDMzMi4wNVoiLz48cGF0aCBpZD0iUGF0aF8yMiIgZGF0YS1uYW1lPSJQYXRoIDIyIiBjbGFzcz0iY2xzLTEiIGQ9Ik0zNjAsODguMzloMTEuODl2Mi4zM2gtOS4yM3Y1LjE3aDl2Mi4zNGgtOXY1LjUyaDkuMjN2Mi4zM0gzNjBaIi8+PHBhdGggaWQ9IlBhdGhfMjMiIGRhdGEtbmFtZT0iUGF0aCAyMyIgY2xhc3M9ImNscy0xIiBkPSJNMzkzLjksOTkuMjZoLTMuMzF2Ni44MmgtMi42NlY4OC4zOWg3LjQ2YzMuMzYsMCw1LjY3LDIuMTcsNS42Nyw1LjQzYTQuOTMsNC45MywwLDAsMS00LjQsNS4xOGw0LjU0LDcuMDhoLTMuMDhaTTM5NSw5MC43MmgtNC40NXY2LjIxSDM5NWEzLjExLDMuMTEsMCwxLDAsLjM1LTYuMjFBMiwyLDAsMCwwLDM5NSw5MC43MloiLz48cGF0aCBpZD0iUGF0aF8yNCIgZGF0YS1uYW1lPSJQYXRoIDI0IiBjbGFzcz0iY2xzLTEiIGQ9Ik00MzUuOSw5Ny4yNWE4Ljg2LDguODYsMCwwLDEsOC41Ni05LjE1SDQ0NWE4LDgsMCwwLDEsNywzLjc0TDQ0OS43NSw5M0E1LjYxLDUuNjEsMCwwLDAsNDQ1LDkwLjQ2Yy0zLjU4LDAtNi4zNSwyLjgxLTYuMzUsNi43OVM0NDEuMzksMTA0LDQ0NSwxMDRhNS42MSw1LjYxLDAsMCwwLDQuNzctMi41N2wyLjI2LDEuMTlhOC4wNSw4LjA1LDAsMCwxLTcsMy43NCw4Ljg2LDguODYsMCwwLDEtOS4wOC04LjY0WiIvPjxwYXRoIGlkPSJQYXRoXzI1IiBkYXRhLW5hbWU9IlBhdGggMjUiIGNsYXNzPSJjbHMtMSIgZD0iTTQ2Ny40LDg4LjM5aDExLjg5djIuMzNoLTkuMjR2NS4xN2g5LjA1djIuMzRoLTkuMDV2NS41Mmg5LjI0djIuMzNINDY3LjRaIi8+PHBhdGggaWQ9IlBhdGhfMjYiIGRhdGEtbmFtZT0iUGF0aCAyNiIgY2xhc3M9ImNscy0xIiBkPSJNNDk4LDkyLjV2MTMuNThoLTIuNjVWODguMzloMi43M2w5LjYzLDEzLjI2Vjg4LjM5aDIuNjV2MTcuNjloLTIuNTdaIi8+PHBhdGggaWQ9IlBhdGhfMjciIGRhdGEtbmFtZT0iUGF0aCAyNyIgY2xhc3M9ImNscy0xIiBkPSJNNTMxLjM0LDkwLjcyaC01LjQ5Vjg4LjM5aDEzLjYxdjIuMzNINTM0djE1LjM2aC0yLjY1WiIvPjxwYXRoIGlkPSJQYXRoXzI4IiBkYXRhLW5hbWU9IlBhdGggMjgiIGNsYXNzPSJjbHMtMSIgZD0iTTU1NSw4OC4zOWgxMS44OHYyLjMzaC05LjIzdjUuMTdoOXYyLjM0aC05djUuNTJoOS4yM3YyLjMzSDU1NVoiLz48cGF0aCBpZD0iUGF0aF8yOSIgZGF0YS1uYW1lPSJQYXRoIDI5IiBjbGFzcz0iY2xzLTEiIGQ9Ik01ODguODYsOTkuMjZoLTMuMzF2Ni44Mkg1ODIuOVY4OC4zOWg3LjQ1YzMuMzcsMCw1LjY4LDIuMTcsNS42OCw1LjQzYTQuOTQsNC45NCwwLDAsMS00LjQsNS4xOGw0LjUzLDcuMDhoLTMuMDdaTTU5MCw5MC43MmgtNC40NXY2LjIxSDU5MGEzLjExLDMuMTEsMCwwLDAsLjM2LTYuMjFBMi4xNiwyLjE2LDAsMCwwLDU5MCw5MC43MloiLz48L2c+PGcgaWQ9Ikdyb3VwXzMiIGRhdGEtbmFtZT0iR3JvdXAgMyI+PHJlY3QgaWQ9IlJlY3RhbmdsZV8zIiBkYXRhLW5hbWU9IlJlY3RhbmdsZSAzIiBjbGFzcz0iY2xzLTEiIHg9IjIwNC43NiIgeT0iNzcuMzciIHdpZHRoPSI0MjguNjgiIGhlaWdodD0iMy40NyIvPjwvZz48L2c+PC9nPjwvc3ZnPg==" alt="Greene County Career Center logo">
+    <div class="titles">
+      <span class="school">Greene County Career Center</span>
+      <span class="app">WBL Hours · Supervisor</span>
+    </div>
+    <nav id="tabs" class="tabs hidden" aria-label="Sections">
+      <button data-tab="students" class="active">Students</button>
+      <button data-tab="import">Import</button>
+      <button data-tab="review">Review <span id="review-count" class="count hidden">0</span></button>
+      <button data-tab="settings">Settings</button>
+    </nav>
+    <div id="folder-status" class="folder-status hidden"></div>
+  </header>
+
+  <main id="main">
+    <!-- Setup -->
+    <section id="view-setup" class="view">
+      <div class="card setup">
+        <h2>Welcome</h2>
+        <p>This program keeps all work-based learning records in a <strong>folder you choose</strong>: on this computer or on your school's network drive. Nothing is sent to the internet.</p>
+        <div id="unsupported" class="notice notice-bad hidden">This browser can't save to folders. Open this file in <strong>Microsoft Edge</strong> or <strong>Google Chrome</strong>.</div>
+        <div id="reconnect-box" class="hidden">
+          <p>Last used folder: <strong id="reconnect-name"></strong></p>
+          <button class="btn-primary" id="reconnect-btn">Open my data folder</button>
+        </div>
+        <div class="setup-actions">
+          <button class="btn-primary" id="pick-folder">Choose data folder…</button>
+          <button class="btn-secondary" id="demo-btn">Try it with practice data</button>
+        </div>
+        <p class="hint">Tip: make a folder like <code>Documents\WBL Data</code> (or one on the school server), then pick it here. Every supervisor who shares the folder sees the same records.</p>
+      </div>
+    </section>
+
+    <!-- Students -->
+    <section id="view-students" class="view hidden">
+      <div id="backup-warning" class="notice notice-warn hidden"></div>
+      <div class="stats" id="stats"></div>
+      <div class="toolbar">
+        <input id="search" type="search" placeholder="Search name, ID, employer…" aria-label="Search students">
+        <select id="filter-program" aria-label="Program"><option value="">All programs</option></select>
+        <select id="filter-status" aria-label="Status">
+          <option value="">All statuses</option>
+          <option value="behind">Behind / no recent hours</option>
+          <option value="met">Goal met</option>
+          <option value="none">No submissions yet</option>
+        </select>
+        <span class="spacer"></span>
+        <button class="btn-secondary" id="print-qr-all">Print enrollment cards</button>
+        <button class="btn-secondary" id="export-students">Export to Excel</button>
+        <button class="btn-primary" id="add-student">+ Add student</button>
+      </div>
+      <div class="table-wrap">
+        <table class="grid" id="students-table">
+          <thead><tr>
+            <th data-sort="name">Student</th><th data-sort="program">Program</th><th data-sort="employer">Employer</th>
+            <th data-sort="approved" class="num">Hours</th><th data-sort="pct">Progress to goal</th><th data-sort="last">Last hours</th><th data-sort="status">Status</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p id="students-empty" class="muted hidden">No students yet. Add them one at a time, or import a class list on the Import tab.</p>
+    </section>
+
+    <!-- Import -->
+    <section id="view-import" class="view hidden">
+      <div class="card">
+        <h2>Import student submissions</h2>
+        <ol class="steps">
+          <li>In Outlook (or your email), select the students' emails and <strong>save the attachments</strong> into the <code>Inbox</code> folder inside your data folder.</li>
+          <li>Click <strong>Check Inbox folder</strong>. Imported files move to <code>Inbox\Imported</code>.</li>
+        </ol>
+        <div class="toolbar">
+          <button class="btn-primary" id="check-inbox">Check Inbox folder</button>
+          <label class="btn btn-secondary file-btn">Choose files…<input type="file" id="import-files" multiple accept=".txt,.wbl,.json,.eml"></label>
+        </div>
+        <div id="drop-zone" class="drop-zone">Or drag submission files here</div>
+        <details>
+          <summary>Student emailed it as text (no attachment)?</summary>
+          <p class="hint">Copy the whole email and paste it below.</p>
+          <textarea id="paste-box" rows="4" placeholder="Paste email text containing WBLDATA:…"></textarea>
+          <button class="btn-secondary" id="paste-import" style="margin-top:8px">Import pasted text</button>
+        </details>
+        <div id="import-results"></div>
+      </div>
+      <div class="card">
+        <h2>Import class list</h2>
+        <p>A CSV file (save from Excel as <em>CSV</em>) with columns:<br>
+          <code>StudentID, FirstName, LastName, Program, Employer, JobTitle, WorkSupervisor, WorkSupervisorContact, StartDate, GoalHours</code><br>
+          <span class="hint">Only StudentID, FirstName and LastName are required. Existing students are updated.</span></p>
+        <div class="toolbar">
+          <label class="btn btn-secondary file-btn">Choose CSV…<input type="file" id="roster-file" accept=".csv,text/csv"></label>
+          <button class="btn-secondary" id="roster-template">Download blank template</button>
+        </div>
+        <div id="roster-results"></div>
+      </div>
+    </section>
+
+    <!-- Review -->
+    <section id="view-review" class="view hidden">
+      <div class="toolbar">
+        <h2 style="margin:0">Needs review</h2>
+        <span class="spacer"></span>
+        <button class="btn-secondary" id="export-subs">Export all submissions</button>
+      </div>
+      <p class="muted">These submissions were flagged when imported. Check the photo against the numbers, then approve or reject.</p>
+      <div id="review-list"></div>
+    </section>
+
+    <!-- Settings -->
+    <section id="view-settings" class="view hidden">
+      <div class="card">
+        <h2>Program settings</h2>
+        <form id="settings-form">
+          <label for="s-school">School name</label>
+          <input id="s-school">
+          <label for="s-emails">Supervisor email address(es)</label>
+          <input id="s-emails" placeholder="you@school.org, coworker@school.org">
+          <p class="hint">Students can send to any of these. Separate several with commas.</p>
+          <label for="s-appurl">Student app web address</label>
+          <input id="s-appurl" placeholder="https://…/student/">
+          <p class="hint">Enrollment QR codes open this address on the student's phone.</p>
+          <div class="row">
+            <div><label for="s-goal">Default required hours</label><input id="s-goal" type="number" min="1"></div>
+            <div><label for="s-weekly">Flag weeks over (hours)</label><input id="s-weekly" type="number" min="1"></div>
+            <div><label for="s-stale">"No recent hours" after (days)</label><input id="s-stale" type="number" min="1"></div>
+          </div>
+          <div class="row">
+            <div><label for="s-term-start">School year / term start</label><input id="s-term-start" type="date"></div>
+            <div><label for="s-term-end">Term end</label><input id="s-term-end" type="date"></div>
+          </div>
+          <p class="hint">With term dates set, students are marked <em>Behind</em> when they're well under the pace needed to reach their goal by the end date.</p>
+          <button class="btn-primary" type="submit" style="margin-top:12px">Save settings</button>
+        </form>
+      </div>
+      <div class="card">
+        <h2>Backups</h2>
+        <p>Your data folder holds the only copy of these records. Back it up to a USB drive or district network drive at least weekly.</p>
+        <p id="last-backup" class="muted"></p>
+        <button class="btn-primary" id="backup-btn">Back up now…</button>
+        <p class="hint">The program also saves a daily snapshot inside your data folder (<code>backups</code>), but that won't help if this computer is lost.</p>
+      </div>
+      <div class="card">
+        <h2>Data folder</h2>
+        <p id="folder-info" class="muted"></p>
+        <button class="btn-secondary" id="switch-folder">Switch folder…</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Student editor / detail dialog -->
+  <dialog id="student-dialog">
+    <form id="student-form" method="dialog">
+      <div class="dlg-head"><h2 id="sd-title">Student</h2><button type="button" class="btn-secondary close-dlg" aria-label="Close">✕</button></div>
+      <div class="dlg-body">
+        <div class="sd-cols">
+          <div>
+            <div class="row">
+              <div><label for="sd-first">First name</label><input id="sd-first" required></div>
+              <div><label for="sd-last">Last name</label><input id="sd-last" required></div>
+            </div>
+            <div class="row">
+              <div><label for="sd-id">Student ID</label><input id="sd-id" required></div>
+              <div><label for="sd-program">Program</label><input id="sd-program" list="program-list"></div>
+            </div>
+            <datalist id="program-list"></datalist>
+            <div class="row">
+              <div><label for="sd-employer">Employer</label><input id="sd-employer"></div>
+              <div><label for="sd-job">Job title</label><input id="sd-job"></div>
+            </div>
+            <div class="row">
+              <div><label for="sd-ws">Workplace supervisor</label><input id="sd-ws"></div>
+              <div><label for="sd-wsc">Their phone / email</label><input id="sd-wsc"></div>
+            </div>
+            <div class="row">
+              <div><label for="sd-start">Start date</label><input id="sd-start" type="date"></div>
+              <div><label for="sd-goal">Required hours</label><input id="sd-goal" type="number" min="1"></div>
+            </div>
+            <label for="sd-notes">Notes</label>
+            <textarea id="sd-notes" rows="2"></textarea>
+          </div>
+          <div id="sd-enroll" class="enroll-box">
+            <h3>Phone setup</h3>
+            <div id="sd-qr" class="qr"></div>
+            <p class="hint">The student scans this with their phone camera to set up the app. Keep it private: it works like a password for their submissions.</p>
+            <div class="enroll-actions">
+              <button type="button" class="btn-secondary" id="sd-print">Print card</button>
+              <button type="button" class="btn-secondary" id="sd-copy">Copy code</button>
+              <button type="button" class="btn-danger" id="sd-rekey" title="Use if a phone is lost; the old phone can no longer send">New code</button>
+            </div>
+          </div>
+        </div>
+        <div id="sd-history"></div>
+      </div>
+      <div class="dlg-foot">
+        <button type="button" class="btn-danger" id="sd-delete">Delete student</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn-secondary close-dlg">Cancel</button>
+        <button type="submit" class="btn-primary" id="sd-save">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="image-dialog" class="image-dialog">
+    <img alt="Pay stub image"><button class="btn-secondary close-dlg">Close</button>
+  </dialog>
+
+  <div id="print-area" class="print-area"></div>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <script>window.WBL_BRAND = {"id":"greene-ccc","schoolName":"Greene County Career Center","schoolShort":"Greene CCC","appName":"WBL Hours","website":"https://www.greeneccc.com/","studentAppUrl":"","defaultGoalHours":250,"colors":{"primary":"#335ba5","accent":"#40a2da","onPrimary":"#ffffff","onAccent":"#1a1a1a","link":"#335ba5","logoBg":"#ffffff"}};</script>
+  <script>
+//---------------------------------------------------------------------
+//
+// QR Code Generator for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//  http://www.opensource.org/licenses/mit-license.php
+//
+// The word 'QR Code' is registered trademark of
+// DENSO WAVE INCORPORATED
+//  http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+
+var qrcode = function() {
+
+  //---------------------------------------------------------------------
+  // qrcode
+  //---------------------------------------------------------------------
+
+  /**
+   * qrcode
+   * @param typeNumber 1 to 40
+   * @param errorCorrectionLevel 'L','M','Q','H'
+   */
+  var qrcode = function(typeNumber, errorCorrectionLevel) {
+
+    var PAD0 = 0xEC;
+    var PAD1 = 0x11;
+
+    var _typeNumber = typeNumber;
+    var _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevel];
+    var _modules = null;
+    var _moduleCount = 0;
+    var _dataCache = null;
+    var _dataList = [];
+
+    var _this = {};
+
+    var makeImpl = function(test, maskPattern) {
+
+      _moduleCount = _typeNumber * 4 + 17;
+      _modules = function(moduleCount) {
+        var modules = new Array(moduleCount);
+        for (var row = 0; row < moduleCount; row += 1) {
+          modules[row] = new Array(moduleCount);
+          for (var col = 0; col < moduleCount; col += 1) {
+            modules[row][col] = null;
+          }
+        }
+        return modules;
+      }(_moduleCount);
+
+      setupPositionProbePattern(0, 0);
+      setupPositionProbePattern(_moduleCount - 7, 0);
+      setupPositionProbePattern(0, _moduleCount - 7);
+      setupPositionAdjustPattern();
+      setupTimingPattern();
+      setupTypeInfo(test, maskPattern);
+
+      if (_typeNumber >= 7) {
+        setupTypeNumber(test);
+      }
+
+      if (_dataCache == null) {
+        _dataCache = createData(_typeNumber, _errorCorrectionLevel, _dataList);
+      }
+
+      mapData(_dataCache, maskPattern);
+    };
+
+    var setupPositionProbePattern = function(row, col) {
+
+      for (var r = -1; r <= 7; r += 1) {
+
+        if (row + r <= -1 || _moduleCount <= row + r) continue;
+
+        for (var c = -1; c <= 7; c += 1) {
+
+          if (col + c <= -1 || _moduleCount <= col + c) continue;
+
+          if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
+              || (0 <= c && c <= 6 && (r == 0 || r == 6) )
+              || (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+            _modules[row + r][col + c] = true;
+          } else {
+            _modules[row + r][col + c] = false;
+          }
+        }
+      }
+    };
+
+    var getBestMaskPattern = function() {
+
+      var minLostPoint = 0;
+      var pattern = 0;
+
+      for (var i = 0; i < 8; i += 1) {
+
+        makeImpl(true, i);
+
+        var lostPoint = QRUtil.getLostPoint(_this);
+
+        if (i == 0 || minLostPoint > lostPoint) {
+          minLostPoint = lostPoint;
+          pattern = i;
+        }
+      }
+
+      return pattern;
+    };
+
+    var setupTimingPattern = function() {
+
+      for (var r = 8; r < _moduleCount - 8; r += 1) {
+        if (_modules[r][6] != null) {
+          continue;
+        }
+        _modules[r][6] = (r % 2 == 0);
+      }
+
+      for (var c = 8; c < _moduleCount - 8; c += 1) {
+        if (_modules[6][c] != null) {
+          continue;
+        }
+        _modules[6][c] = (c % 2 == 0);
+      }
+    };
+
+    var setupPositionAdjustPattern = function() {
+
+      var pos = QRUtil.getPatternPosition(_typeNumber);
+
+      for (var i = 0; i < pos.length; i += 1) {
+
+        for (var j = 0; j < pos.length; j += 1) {
+
+          var row = pos[i];
+          var col = pos[j];
+
+          if (_modules[row][col] != null) {
+            continue;
+          }
+
+          for (var r = -2; r <= 2; r += 1) {
+
+            for (var c = -2; c <= 2; c += 1) {
+
+              if (r == -2 || r == 2 || c == -2 || c == 2
+                  || (r == 0 && c == 0) ) {
+                _modules[row + r][col + c] = true;
+              } else {
+                _modules[row + r][col + c] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    var setupTypeNumber = function(test) {
+
+      var bits = QRUtil.getBCHTypeNumber(_typeNumber);
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
+      }
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+      }
+    };
+
+    var setupTypeInfo = function(test, maskPattern) {
+
+      var data = (_errorCorrectionLevel << 3) | maskPattern;
+      var bits = QRUtil.getBCHTypeInfo(data);
+
+      // vertical
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 6) {
+          _modules[i][8] = mod;
+        } else if (i < 8) {
+          _modules[i + 1][8] = mod;
+        } else {
+          _modules[_moduleCount - 15 + i][8] = mod;
+        }
+      }
+
+      // horizontal
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 8) {
+          _modules[8][_moduleCount - i - 1] = mod;
+        } else if (i < 9) {
+          _modules[8][15 - i - 1 + 1] = mod;
+        } else {
+          _modules[8][15 - i - 1] = mod;
+        }
+      }
+
+      // fixed module
+      _modules[_moduleCount - 8][8] = (!test);
+    };
+
+    var mapData = function(data, maskPattern) {
+
+      var inc = -1;
+      var row = _moduleCount - 1;
+      var bitIndex = 7;
+      var byteIndex = 0;
+      var maskFunc = QRUtil.getMaskFunction(maskPattern);
+
+      for (var col = _moduleCount - 1; col > 0; col -= 2) {
+
+        if (col == 6) col -= 1;
+
+        while (true) {
+
+          for (var c = 0; c < 2; c += 1) {
+
+            if (_modules[row][col - c] == null) {
+
+              var dark = false;
+
+              if (byteIndex < data.length) {
+                dark = ( ( (data[byteIndex] >>> bitIndex) & 1) == 1);
+              }
+
+              var mask = maskFunc(row, col - c);
+
+              if (mask) {
+                dark = !dark;
+              }
+
+              _modules[row][col - c] = dark;
+              bitIndex -= 1;
+
+              if (bitIndex == -1) {
+                byteIndex += 1;
+                bitIndex = 7;
+              }
+            }
+          }
+
+          row += inc;
+
+          if (row < 0 || _moduleCount <= row) {
+            row -= inc;
+            inc = -inc;
+            break;
+          }
+        }
+      }
+    };
+
+    var createBytes = function(buffer, rsBlocks) {
+
+      var offset = 0;
+
+      var maxDcCount = 0;
+      var maxEcCount = 0;
+
+      var dcdata = new Array(rsBlocks.length);
+      var ecdata = new Array(rsBlocks.length);
+
+      for (var r = 0; r < rsBlocks.length; r += 1) {
+
+        var dcCount = rsBlocks[r].dataCount;
+        var ecCount = rsBlocks[r].totalCount - dcCount;
+
+        maxDcCount = Math.max(maxDcCount, dcCount);
+        maxEcCount = Math.max(maxEcCount, ecCount);
+
+        dcdata[r] = new Array(dcCount);
+
+        for (var i = 0; i < dcdata[r].length; i += 1) {
+          dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
+        }
+        offset += dcCount;
+
+        var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+        var rawPoly = qrPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+        var modPoly = rawPoly.mod(rsPoly);
+        ecdata[r] = new Array(rsPoly.getLength() - 1);
+        for (var i = 0; i < ecdata[r].length; i += 1) {
+          var modIndex = i + modPoly.getLength() - ecdata[r].length;
+          ecdata[r][i] = (modIndex >= 0)? modPoly.getAt(modIndex) : 0;
+        }
+      }
+
+      var totalCodeCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalCodeCount += rsBlocks[i].totalCount;
+      }
+
+      var data = new Array(totalCodeCount);
+      var index = 0;
+
+      for (var i = 0; i < maxDcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < dcdata[r].length) {
+            data[index] = dcdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      for (var i = 0; i < maxEcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < ecdata[r].length) {
+            data[index] = ecdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      return data;
+    };
+
+    var createData = function(typeNumber, errorCorrectionLevel, dataList) {
+
+      var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
+
+      var buffer = qrBitBuffer();
+
+      for (var i = 0; i < dataList.length; i += 1) {
+        var data = dataList[i];
+        buffer.put(data.getMode(), 4);
+        buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+        data.write(buffer);
+      }
+
+      // calc num max data.
+      var totalDataCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalDataCount += rsBlocks[i].dataCount;
+      }
+
+      if (buffer.getLengthInBits() > totalDataCount * 8) {
+        throw 'code length overflow. ('
+          + buffer.getLengthInBits()
+          + '>'
+          + totalDataCount * 8
+          + ')';
+      }
+
+      // end code
+      if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+        buffer.put(0, 4);
+      }
+
+      // padding
+      while (buffer.getLengthInBits() % 8 != 0) {
+        buffer.putBit(false);
+      }
+
+      // padding
+      while (true) {
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD0, 8);
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD1, 8);
+      }
+
+      return createBytes(buffer, rsBlocks);
+    };
+
+    _this.addData = function(data, mode) {
+
+      mode = mode || 'Byte';
+
+      var newData = null;
+
+      switch(mode) {
+      case 'Numeric' :
+        newData = qrNumber(data);
+        break;
+      case 'Alphanumeric' :
+        newData = qrAlphaNum(data);
+        break;
+      case 'Byte' :
+        newData = qr8BitByte(data);
+        break;
+      case 'Kanji' :
+        newData = qrKanji(data);
+        break;
+      default :
+        throw 'mode:' + mode;
+      }
+
+      _dataList.push(newData);
+      _dataCache = null;
+    };
+
+    _this.isDark = function(row, col) {
+      if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) {
+        throw row + ',' + col;
+      }
+      return _modules[row][col];
+    };
+
+    _this.getModuleCount = function() {
+      return _moduleCount;
+    };
+
+    _this.make = function() {
+      if (_typeNumber < 1) {
+        var typeNumber = 1;
+
+        for (; typeNumber < 40; typeNumber++) {
+          var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, _errorCorrectionLevel);
+          var buffer = qrBitBuffer();
+
+          for (var i = 0; i < _dataList.length; i++) {
+            var data = _dataList[i];
+            buffer.put(data.getMode(), 4);
+            buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+            data.write(buffer);
+          }
+
+          var totalDataCount = 0;
+          for (var i = 0; i < rsBlocks.length; i++) {
+            totalDataCount += rsBlocks[i].dataCount;
+          }
+
+          if (buffer.getLengthInBits() <= totalDataCount * 8) {
+            break;
+          }
+        }
+
+        _typeNumber = typeNumber;
+      }
+
+      makeImpl(false, getBestMaskPattern() );
+    };
+
+    _this.createTableTag = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var qrHtml = '';
+
+      qrHtml += '<table style="';
+      qrHtml += ' border-width: 0px; border-style: none;';
+      qrHtml += ' border-collapse: collapse;';
+      qrHtml += ' padding: 0px; margin: ' + margin + 'px;';
+      qrHtml += '">';
+      qrHtml += '<tbody>';
+
+      for (var r = 0; r < _this.getModuleCount(); r += 1) {
+
+        qrHtml += '<tr>';
+
+        for (var c = 0; c < _this.getModuleCount(); c += 1) {
+          qrHtml += '<td style="';
+          qrHtml += ' border-width: 0px; border-style: none;';
+          qrHtml += ' border-collapse: collapse;';
+          qrHtml += ' padding: 0px; margin: 0px;';
+          qrHtml += ' width: ' + cellSize + 'px;';
+          qrHtml += ' height: ' + cellSize + 'px;';
+          qrHtml += ' background-color: ';
+          qrHtml += _this.isDark(r, c)? '#000000' : '#ffffff';
+          qrHtml += ';';
+          qrHtml += '"/>';
+        }
+
+        qrHtml += '</tr>';
+      }
+
+      qrHtml += '</tbody>';
+      qrHtml += '</table>';
+
+      return qrHtml;
+    };
+
+    _this.createSvgTag = function(cellSize, margin, alt, title) {
+
+      var opts = {};
+      if (typeof arguments[0] == 'object') {
+        // Called by options.
+        opts = arguments[0];
+        // overwrite cellSize and margin.
+        cellSize = opts.cellSize;
+        margin = opts.margin;
+        alt = opts.alt;
+        title = opts.title;
+      }
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      // Compose alt property surrogate
+      alt = (typeof alt === 'string') ? {text: alt} : alt || {};
+      alt.text = alt.text || null;
+      alt.id = (alt.text) ? alt.id || 'qrcode-description' : null;
+
+      // Compose title property surrogate
+      title = (typeof title === 'string') ? {text: title} : title || {};
+      title.text = title.text || null;
+      title.id = (title.text) ? title.id || 'qrcode-title' : null;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var c, mc, r, mr, qrSvg='', rect;
+
+      rect = 'l' + cellSize + ',0 0,' + cellSize +
+        ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
+
+      qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
+      qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
+      qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
+      qrSvg += ' preserveAspectRatio="xMinYMin meet"';
+      qrSvg += (title.text || alt.text) ? ' role="img" aria-labelledby="' +
+          escapeXml([title.id, alt.id].join(' ').trim() ) + '"' : '';
+      qrSvg += '>';
+      qrSvg += (title.text) ? '<title id="' + escapeXml(title.id) + '">' +
+          escapeXml(title.text) + '</title>' : '';
+      qrSvg += (alt.text) ? '<description id="' + escapeXml(alt.id) + '">' +
+          escapeXml(alt.text) + '</description>' : '';
+      qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
+      qrSvg += '<path d="';
+
+      for (r = 0; r < _this.getModuleCount(); r += 1) {
+        mr = r * cellSize + margin;
+        for (c = 0; c < _this.getModuleCount(); c += 1) {
+          if (_this.isDark(r, c) ) {
+            mc = c*cellSize+margin;
+            qrSvg += 'M' + mc + ',' + mr + rect;
+          }
+        }
+      }
+
+      qrSvg += '" stroke="transparent" fill="black"/>';
+      qrSvg += '</svg>';
+
+      return qrSvg;
+    };
+
+    _this.createDataURL = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      return createDataURL(size, size, function(x, y) {
+        if (min <= x && x < max && min <= y && y < max) {
+          var c = Math.floor( (x - min) / cellSize);
+          var r = Math.floor( (y - min) / cellSize);
+          return _this.isDark(r, c)? 0 : 1;
+        } else {
+          return 1;
+        }
+      } );
+    };
+
+    _this.createImgTag = function(cellSize, margin, alt) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+
+      var img = '';
+      img += '<img';
+      img += '\u0020src="';
+      img += _this.createDataURL(cellSize, margin);
+      img += '"';
+      img += '\u0020width="';
+      img += size;
+      img += '"';
+      img += '\u0020height="';
+      img += size;
+      img += '"';
+      if (alt) {
+        img += '\u0020alt="';
+        img += escapeXml(alt);
+        img += '"';
+      }
+      img += '/>';
+
+      return img;
+    };
+
+    var escapeXml = function(s) {
+      var escaped = '';
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charAt(i);
+        switch(c) {
+        case '<': escaped += '&lt;'; break;
+        case '>': escaped += '&gt;'; break;
+        case '&': escaped += '&amp;'; break;
+        case '"': escaped += '&quot;'; break;
+        default : escaped += c; break;
+        }
+      }
+      return escaped;
+    };
+
+    var _createHalfASCII = function(margin) {
+      var cellSize = 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r1, r2, p;
+
+      var blocks = {
+        '██': '█',
+        '█ ': '▀',
+        ' █': '▄',
+        '  ': ' '
+      };
+
+      var blocksLastLineNoMargin = {
+        '██': '▀',
+        '█ ': '▀',
+        ' █': ' ',
+        '  ': ' '
+      };
+
+      var ascii = '';
+      for (y = 0; y < size; y += 2) {
+        r1 = Math.floor((y - min) / cellSize);
+        r2 = Math.floor((y + 1 - min) / cellSize);
+        for (x = 0; x < size; x += 1) {
+          p = '█';
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r1, Math.floor((x - min) / cellSize))) {
+            p = ' ';
+          }
+
+          if (min <= x && x < max && min <= y+1 && y+1 < max && _this.isDark(r2, Math.floor((x - min) / cellSize))) {
+            p += ' ';
+          }
+          else {
+            p += '█';
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          ascii += (margin < 1 && y+1 >= max) ? blocksLastLineNoMargin[p] : blocks[p];
+        }
+
+        ascii += '\n';
+      }
+
+      if (size % 2 && margin > 0) {
+        return ascii.substring(0, ascii.length - size - 1) + Array(size+1).join('▀');
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.createASCII = function(cellSize, margin) {
+      cellSize = cellSize || 1;
+
+      if (cellSize < 2) {
+        return _createHalfASCII(margin);
+      }
+
+      cellSize -= 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r, p;
+
+      var white = Array(cellSize+1).join('██');
+      var black = Array(cellSize+1).join('  ');
+
+      var ascii = '';
+      var line = '';
+      for (y = 0; y < size; y += 1) {
+        r = Math.floor( (y - min) / cellSize);
+        line = '';
+        for (x = 0; x < size; x += 1) {
+          p = 1;
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r, Math.floor((x - min) / cellSize))) {
+            p = 0;
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          line += p ? white : black;
+        }
+
+        for (r = 0; r < cellSize; r += 1) {
+          ascii += line + '\n';
+        }
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.renderTo2dContext = function(context, cellSize) {
+      cellSize = cellSize || 2;
+      var length = _this.getModuleCount();
+      for (var row = 0; row < length; row++) {
+        for (var col = 0; col < length; col++) {
+          context.fillStyle = _this.isDark(row, col) ? 'black' : 'white';
+          context.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrcode.stringToBytes
+  //---------------------------------------------------------------------
+
+  qrcode.stringToBytesFuncs = {
+    'default' : function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        bytes.push(c & 0xff);
+      }
+      return bytes;
+    }
+  };
+
+  qrcode.stringToBytes = qrcode.stringToBytesFuncs['default'];
+
+  //---------------------------------------------------------------------
+  // qrcode.createStringToBytes
+  //---------------------------------------------------------------------
+
+  /**
+   * @param unicodeData base64 string of byte array.
+   * [16bit Unicode],[16bit Bytes], ...
+   * @param numChars
+   */
+  qrcode.createStringToBytes = function(unicodeData, numChars) {
+
+    // create conversion map.
+
+    var unicodeMap = function() {
+
+      var bin = base64DecodeInputStream(unicodeData);
+      var read = function() {
+        var b = bin.read();
+        if (b == -1) throw 'eof';
+        return b;
+      };
+
+      var count = 0;
+      var unicodeMap = {};
+      while (true) {
+        var b0 = bin.read();
+        if (b0 == -1) break;
+        var b1 = read();
+        var b2 = read();
+        var b3 = read();
+        var k = String.fromCharCode( (b0 << 8) | b1);
+        var v = (b2 << 8) | b3;
+        unicodeMap[k] = v;
+        count += 1;
+      }
+      if (count != numChars) {
+        throw count + ' != ' + numChars;
+      }
+
+      return unicodeMap;
+    }();
+
+    var unknownChar = '?'.charCodeAt(0);
+
+    return function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        if (c < 128) {
+          bytes.push(c);
+        } else {
+          var b = unicodeMap[s.charAt(i)];
+          if (typeof b == 'number') {
+            if ( (b & 0xff) == b) {
+              // 1byte
+              bytes.push(b);
+            } else {
+              // 2bytes
+              bytes.push(b >>> 8);
+              bytes.push(b & 0xff);
+            }
+          } else {
+            bytes.push(unknownChar);
+          }
+        }
+      }
+      return bytes;
+    };
+  };
+
+  //---------------------------------------------------------------------
+  // QRMode
+  //---------------------------------------------------------------------
+
+  var QRMode = {
+    MODE_NUMBER :    1 << 0,
+    MODE_ALPHA_NUM : 1 << 1,
+    MODE_8BIT_BYTE : 1 << 2,
+    MODE_KANJI :     1 << 3
+  };
+
+  //---------------------------------------------------------------------
+  // QRErrorCorrectionLevel
+  //---------------------------------------------------------------------
+
+  var QRErrorCorrectionLevel = {
+    L : 1,
+    M : 0,
+    Q : 3,
+    H : 2
+  };
+
+  //---------------------------------------------------------------------
+  // QRMaskPattern
+  //---------------------------------------------------------------------
+
+  var QRMaskPattern = {
+    PATTERN000 : 0,
+    PATTERN001 : 1,
+    PATTERN010 : 2,
+    PATTERN011 : 3,
+    PATTERN100 : 4,
+    PATTERN101 : 5,
+    PATTERN110 : 6,
+    PATTERN111 : 7
+  };
+
+  //---------------------------------------------------------------------
+  // QRUtil
+  //---------------------------------------------------------------------
+
+  var QRUtil = function() {
+
+    var PATTERN_POSITION_TABLE = [
+      [],
+      [6, 18],
+      [6, 22],
+      [6, 26],
+      [6, 30],
+      [6, 34],
+      [6, 22, 38],
+      [6, 24, 42],
+      [6, 26, 46],
+      [6, 28, 50],
+      [6, 30, 54],
+      [6, 32, 58],
+      [6, 34, 62],
+      [6, 26, 46, 66],
+      [6, 26, 48, 70],
+      [6, 26, 50, 74],
+      [6, 30, 54, 78],
+      [6, 30, 56, 82],
+      [6, 30, 58, 86],
+      [6, 34, 62, 90],
+      [6, 28, 50, 72, 94],
+      [6, 26, 50, 74, 98],
+      [6, 30, 54, 78, 102],
+      [6, 28, 54, 80, 106],
+      [6, 32, 58, 84, 110],
+      [6, 30, 58, 86, 114],
+      [6, 34, 62, 90, 118],
+      [6, 26, 50, 74, 98, 122],
+      [6, 30, 54, 78, 102, 126],
+      [6, 26, 52, 78, 104, 130],
+      [6, 30, 56, 82, 108, 134],
+      [6, 34, 60, 86, 112, 138],
+      [6, 30, 58, 86, 114, 142],
+      [6, 34, 62, 90, 118, 146],
+      [6, 30, 54, 78, 102, 126, 150],
+      [6, 24, 50, 76, 102, 128, 154],
+      [6, 28, 54, 80, 106, 132, 158],
+      [6, 32, 58, 84, 110, 136, 162],
+      [6, 26, 54, 82, 110, 138, 166],
+      [6, 30, 58, 86, 114, 142, 170]
+    ];
+    var G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
+    var G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+    var G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
+
+    var _this = {};
+
+    var getBCHDigit = function(data) {
+      var digit = 0;
+      while (data != 0) {
+        digit += 1;
+        data >>>= 1;
+      }
+      return digit;
+    };
+
+    _this.getBCHTypeInfo = function(data) {
+      var d = data << 10;
+      while (getBCHDigit(d) - getBCHDigit(G15) >= 0) {
+        d ^= (G15 << (getBCHDigit(d) - getBCHDigit(G15) ) );
+      }
+      return ( (data << 10) | d) ^ G15_MASK;
+    };
+
+    _this.getBCHTypeNumber = function(data) {
+      var d = data << 12;
+      while (getBCHDigit(d) - getBCHDigit(G18) >= 0) {
+        d ^= (G18 << (getBCHDigit(d) - getBCHDigit(G18) ) );
+      }
+      return (data << 12) | d;
+    };
+
+    _this.getPatternPosition = function(typeNumber) {
+      return PATTERN_POSITION_TABLE[typeNumber - 1];
+    };
+
+    _this.getMaskFunction = function(maskPattern) {
+
+      switch (maskPattern) {
+
+      case QRMaskPattern.PATTERN000 :
+        return function(i, j) { return (i + j) % 2 == 0; };
+      case QRMaskPattern.PATTERN001 :
+        return function(i, j) { return i % 2 == 0; };
+      case QRMaskPattern.PATTERN010 :
+        return function(i, j) { return j % 3 == 0; };
+      case QRMaskPattern.PATTERN011 :
+        return function(i, j) { return (i + j) % 3 == 0; };
+      case QRMaskPattern.PATTERN100 :
+        return function(i, j) { return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 == 0; };
+      case QRMaskPattern.PATTERN101 :
+        return function(i, j) { return (i * j) % 2 + (i * j) % 3 == 0; };
+      case QRMaskPattern.PATTERN110 :
+        return function(i, j) { return ( (i * j) % 2 + (i * j) % 3) % 2 == 0; };
+      case QRMaskPattern.PATTERN111 :
+        return function(i, j) { return ( (i * j) % 3 + (i + j) % 2) % 2 == 0; };
+
+      default :
+        throw 'bad maskPattern:' + maskPattern;
+      }
+    };
+
+    _this.getErrorCorrectPolynomial = function(errorCorrectLength) {
+      var a = qrPolynomial([1], 0);
+      for (var i = 0; i < errorCorrectLength; i += 1) {
+        a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0) );
+      }
+      return a;
+    };
+
+    _this.getLengthInBits = function(mode, type) {
+
+      if (1 <= type && type < 10) {
+
+        // 1 - 9
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 10;
+        case QRMode.MODE_ALPHA_NUM : return 9;
+        case QRMode.MODE_8BIT_BYTE : return 8;
+        case QRMode.MODE_KANJI     : return 8;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 27) {
+
+        // 10 - 26
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 12;
+        case QRMode.MODE_ALPHA_NUM : return 11;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 10;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 41) {
+
+        // 27 - 40
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 14;
+        case QRMode.MODE_ALPHA_NUM : return 13;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 12;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else {
+        throw 'type:' + type;
+      }
+    };
+
+    _this.getLostPoint = function(qrcode) {
+
+      var moduleCount = qrcode.getModuleCount();
+
+      var lostPoint = 0;
+
+      // LEVEL1
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount; col += 1) {
+
+          var sameCount = 0;
+          var dark = qrcode.isDark(row, col);
+
+          for (var r = -1; r <= 1; r += 1) {
+
+            if (row + r < 0 || moduleCount <= row + r) {
+              continue;
+            }
+
+            for (var c = -1; c <= 1; c += 1) {
+
+              if (col + c < 0 || moduleCount <= col + c) {
+                continue;
+              }
+
+              if (r == 0 && c == 0) {
+                continue;
+              }
+
+              if (dark == qrcode.isDark(row + r, col + c) ) {
+                sameCount += 1;
+              }
+            }
+          }
+
+          if (sameCount > 5) {
+            lostPoint += (3 + sameCount - 5);
+          }
+        }
+      };
+
+      // LEVEL2
+
+      for (var row = 0; row < moduleCount - 1; row += 1) {
+        for (var col = 0; col < moduleCount - 1; col += 1) {
+          var count = 0;
+          if (qrcode.isDark(row, col) ) count += 1;
+          if (qrcode.isDark(row + 1, col) ) count += 1;
+          if (qrcode.isDark(row, col + 1) ) count += 1;
+          if (qrcode.isDark(row + 1, col + 1) ) count += 1;
+          if (count == 0 || count == 4) {
+            lostPoint += 3;
+          }
+        }
+      }
+
+      // LEVEL3
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount - 6; col += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row, col + 1)
+              &&  qrcode.isDark(row, col + 2)
+              &&  qrcode.isDark(row, col + 3)
+              &&  qrcode.isDark(row, col + 4)
+              && !qrcode.isDark(row, col + 5)
+              &&  qrcode.isDark(row, col + 6) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount - 6; row += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row + 1, col)
+              &&  qrcode.isDark(row + 2, col)
+              &&  qrcode.isDark(row + 3, col)
+              &&  qrcode.isDark(row + 4, col)
+              && !qrcode.isDark(row + 5, col)
+              &&  qrcode.isDark(row + 6, col) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      // LEVEL4
+
+      var darkCount = 0;
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount; row += 1) {
+          if (qrcode.isDark(row, col) ) {
+            darkCount += 1;
+          }
+        }
+      }
+
+      var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+      lostPoint += ratio * 10;
+
+      return lostPoint;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // QRMath
+  //---------------------------------------------------------------------
+
+  var QRMath = function() {
+
+    var EXP_TABLE = new Array(256);
+    var LOG_TABLE = new Array(256);
+
+    // initialize tables
+    for (var i = 0; i < 8; i += 1) {
+      EXP_TABLE[i] = 1 << i;
+    }
+    for (var i = 8; i < 256; i += 1) {
+      EXP_TABLE[i] = EXP_TABLE[i - 4]
+        ^ EXP_TABLE[i - 5]
+        ^ EXP_TABLE[i - 6]
+        ^ EXP_TABLE[i - 8];
+    }
+    for (var i = 0; i < 255; i += 1) {
+      LOG_TABLE[EXP_TABLE[i] ] = i;
+    }
+
+    var _this = {};
+
+    _this.glog = function(n) {
+
+      if (n < 1) {
+        throw 'glog(' + n + ')';
+      }
+
+      return LOG_TABLE[n];
+    };
+
+    _this.gexp = function(n) {
+
+      while (n < 0) {
+        n += 255;
+      }
+
+      while (n >= 256) {
+        n -= 255;
+      }
+
+      return EXP_TABLE[n];
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrPolynomial
+  //---------------------------------------------------------------------
+
+  function qrPolynomial(num, shift) {
+
+    if (typeof num.length == 'undefined') {
+      throw num.length + '/' + shift;
+    }
+
+    var _num = function() {
+      var offset = 0;
+      while (offset < num.length && num[offset] == 0) {
+        offset += 1;
+      }
+      var _num = new Array(num.length - offset + shift);
+      for (var i = 0; i < num.length - offset; i += 1) {
+        _num[i] = num[i + offset];
+      }
+      return _num;
+    }();
+
+    var _this = {};
+
+    _this.getAt = function(index) {
+      return _num[index];
+    };
+
+    _this.getLength = function() {
+      return _num.length;
+    };
+
+    _this.multiply = function(e) {
+
+      var num = new Array(_this.getLength() + e.getLength() - 1);
+
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        for (var j = 0; j < e.getLength(); j += 1) {
+          num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i) ) + QRMath.glog(e.getAt(j) ) );
+        }
+      }
+
+      return qrPolynomial(num, 0);
+    };
+
+    _this.mod = function(e) {
+
+      if (_this.getLength() - e.getLength() < 0) {
+        return _this;
+      }
+
+      var ratio = QRMath.glog(_this.getAt(0) ) - QRMath.glog(e.getAt(0) );
+
+      var num = new Array(_this.getLength() );
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        num[i] = _this.getAt(i);
+      }
+
+      for (var i = 0; i < e.getLength(); i += 1) {
+        num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i) ) + ratio);
+      }
+
+      // recursive call
+      return qrPolynomial(num, 0).mod(e);
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // QRRSBlock
+  //---------------------------------------------------------------------
+
+  var QRRSBlock = function() {
+
+    var RS_BLOCK_TABLE = [
+
+      // L
+      // M
+      // Q
+      // H
+
+      // 1
+      [1, 26, 19],
+      [1, 26, 16],
+      [1, 26, 13],
+      [1, 26, 9],
+
+      // 2
+      [1, 44, 34],
+      [1, 44, 28],
+      [1, 44, 22],
+      [1, 44, 16],
+
+      // 3
+      [1, 70, 55],
+      [1, 70, 44],
+      [2, 35, 17],
+      [2, 35, 13],
+
+      // 4
+      [1, 100, 80],
+      [2, 50, 32],
+      [2, 50, 24],
+      [4, 25, 9],
+
+      // 5
+      [1, 134, 108],
+      [2, 67, 43],
+      [2, 33, 15, 2, 34, 16],
+      [2, 33, 11, 2, 34, 12],
+
+      // 6
+      [2, 86, 68],
+      [4, 43, 27],
+      [4, 43, 19],
+      [4, 43, 15],
+
+      // 7
+      [2, 98, 78],
+      [4, 49, 31],
+      [2, 32, 14, 4, 33, 15],
+      [4, 39, 13, 1, 40, 14],
+
+      // 8
+      [2, 121, 97],
+      [2, 60, 38, 2, 61, 39],
+      [4, 40, 18, 2, 41, 19],
+      [4, 40, 14, 2, 41, 15],
+
+      // 9
+      [2, 146, 116],
+      [3, 58, 36, 2, 59, 37],
+      [4, 36, 16, 4, 37, 17],
+      [4, 36, 12, 4, 37, 13],
+
+      // 10
+      [2, 86, 68, 2, 87, 69],
+      [4, 69, 43, 1, 70, 44],
+      [6, 43, 19, 2, 44, 20],
+      [6, 43, 15, 2, 44, 16],
+
+      // 11
+      [4, 101, 81],
+      [1, 80, 50, 4, 81, 51],
+      [4, 50, 22, 4, 51, 23],
+      [3, 36, 12, 8, 37, 13],
+
+      // 12
+      [2, 116, 92, 2, 117, 93],
+      [6, 58, 36, 2, 59, 37],
+      [4, 46, 20, 6, 47, 21],
+      [7, 42, 14, 4, 43, 15],
+
+      // 13
+      [4, 133, 107],
+      [8, 59, 37, 1, 60, 38],
+      [8, 44, 20, 4, 45, 21],
+      [12, 33, 11, 4, 34, 12],
+
+      // 14
+      [3, 145, 115, 1, 146, 116],
+      [4, 64, 40, 5, 65, 41],
+      [11, 36, 16, 5, 37, 17],
+      [11, 36, 12, 5, 37, 13],
+
+      // 15
+      [5, 109, 87, 1, 110, 88],
+      [5, 65, 41, 5, 66, 42],
+      [5, 54, 24, 7, 55, 25],
+      [11, 36, 12, 7, 37, 13],
+
+      // 16
+      [5, 122, 98, 1, 123, 99],
+      [7, 73, 45, 3, 74, 46],
+      [15, 43, 19, 2, 44, 20],
+      [3, 45, 15, 13, 46, 16],
+
+      // 17
+      [1, 135, 107, 5, 136, 108],
+      [10, 74, 46, 1, 75, 47],
+      [1, 50, 22, 15, 51, 23],
+      [2, 42, 14, 17, 43, 15],
+
+      // 18
+      [5, 150, 120, 1, 151, 121],
+      [9, 69, 43, 4, 70, 44],
+      [17, 50, 22, 1, 51, 23],
+      [2, 42, 14, 19, 43, 15],
+
+      // 19
+      [3, 141, 113, 4, 142, 114],
+      [3, 70, 44, 11, 71, 45],
+      [17, 47, 21, 4, 48, 22],
+      [9, 39, 13, 16, 40, 14],
+
+      // 20
+      [3, 135, 107, 5, 136, 108],
+      [3, 67, 41, 13, 68, 42],
+      [15, 54, 24, 5, 55, 25],
+      [15, 43, 15, 10, 44, 16],
+
+      // 21
+      [4, 144, 116, 4, 145, 117],
+      [17, 68, 42],
+      [17, 50, 22, 6, 51, 23],
+      [19, 46, 16, 6, 47, 17],
+
+      // 22
+      [2, 139, 111, 7, 140, 112],
+      [17, 74, 46],
+      [7, 54, 24, 16, 55, 25],
+      [34, 37, 13],
+
+      // 23
+      [4, 151, 121, 5, 152, 122],
+      [4, 75, 47, 14, 76, 48],
+      [11, 54, 24, 14, 55, 25],
+      [16, 45, 15, 14, 46, 16],
+
+      // 24
+      [6, 147, 117, 4, 148, 118],
+      [6, 73, 45, 14, 74, 46],
+      [11, 54, 24, 16, 55, 25],
+      [30, 46, 16, 2, 47, 17],
+
+      // 25
+      [8, 132, 106, 4, 133, 107],
+      [8, 75, 47, 13, 76, 48],
+      [7, 54, 24, 22, 55, 25],
+      [22, 45, 15, 13, 46, 16],
+
+      // 26
+      [10, 142, 114, 2, 143, 115],
+      [19, 74, 46, 4, 75, 47],
+      [28, 50, 22, 6, 51, 23],
+      [33, 46, 16, 4, 47, 17],
+
+      // 27
+      [8, 152, 122, 4, 153, 123],
+      [22, 73, 45, 3, 74, 46],
+      [8, 53, 23, 26, 54, 24],
+      [12, 45, 15, 28, 46, 16],
+
+      // 28
+      [3, 147, 117, 10, 148, 118],
+      [3, 73, 45, 23, 74, 46],
+      [4, 54, 24, 31, 55, 25],
+      [11, 45, 15, 31, 46, 16],
+
+      // 29
+      [7, 146, 116, 7, 147, 117],
+      [21, 73, 45, 7, 74, 46],
+      [1, 53, 23, 37, 54, 24],
+      [19, 45, 15, 26, 46, 16],
+
+      // 30
+      [5, 145, 115, 10, 146, 116],
+      [19, 75, 47, 10, 76, 48],
+      [15, 54, 24, 25, 55, 25],
+      [23, 45, 15, 25, 46, 16],
+
+      // 31
+      [13, 145, 115, 3, 146, 116],
+      [2, 74, 46, 29, 75, 47],
+      [42, 54, 24, 1, 55, 25],
+      [23, 45, 15, 28, 46, 16],
+
+      // 32
+      [17, 145, 115],
+      [10, 74, 46, 23, 75, 47],
+      [10, 54, 24, 35, 55, 25],
+      [19, 45, 15, 35, 46, 16],
+
+      // 33
+      [17, 145, 115, 1, 146, 116],
+      [14, 74, 46, 21, 75, 47],
+      [29, 54, 24, 19, 55, 25],
+      [11, 45, 15, 46, 46, 16],
+
+      // 34
+      [13, 145, 115, 6, 146, 116],
+      [14, 74, 46, 23, 75, 47],
+      [44, 54, 24, 7, 55, 25],
+      [59, 46, 16, 1, 47, 17],
+
+      // 35
+      [12, 151, 121, 7, 152, 122],
+      [12, 75, 47, 26, 76, 48],
+      [39, 54, 24, 14, 55, 25],
+      [22, 45, 15, 41, 46, 16],
+
+      // 36
+      [6, 151, 121, 14, 152, 122],
+      [6, 75, 47, 34, 76, 48],
+      [46, 54, 24, 10, 55, 25],
+      [2, 45, 15, 64, 46, 16],
+
+      // 37
+      [17, 152, 122, 4, 153, 123],
+      [29, 74, 46, 14, 75, 47],
+      [49, 54, 24, 10, 55, 25],
+      [24, 45, 15, 46, 46, 16],
+
+      // 38
+      [4, 152, 122, 18, 153, 123],
+      [13, 74, 46, 32, 75, 47],
+      [48, 54, 24, 14, 55, 25],
+      [42, 45, 15, 32, 46, 16],
+
+      // 39
+      [20, 147, 117, 4, 148, 118],
+      [40, 75, 47, 7, 76, 48],
+      [43, 54, 24, 22, 55, 25],
+      [10, 45, 15, 67, 46, 16],
+
+      // 40
+      [19, 148, 118, 6, 149, 119],
+      [18, 75, 47, 31, 76, 48],
+      [34, 54, 24, 34, 55, 25],
+      [20, 45, 15, 61, 46, 16]
+    ];
+
+    var qrRSBlock = function(totalCount, dataCount) {
+      var _this = {};
+      _this.totalCount = totalCount;
+      _this.dataCount = dataCount;
+      return _this;
+    };
+
+    var _this = {};
+
+    var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
+
+      switch(errorCorrectionLevel) {
+      case QRErrorCorrectionLevel.L :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+      case QRErrorCorrectionLevel.M :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+      case QRErrorCorrectionLevel.Q :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+      case QRErrorCorrectionLevel.H :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+      default :
+        return undefined;
+      }
+    };
+
+    _this.getRSBlocks = function(typeNumber, errorCorrectionLevel) {
+
+      var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
+
+      if (typeof rsBlock == 'undefined') {
+        throw 'bad rs block @ typeNumber:' + typeNumber +
+            '/errorCorrectionLevel:' + errorCorrectionLevel;
+      }
+
+      var length = rsBlock.length / 3;
+
+      var list = [];
+
+      for (var i = 0; i < length; i += 1) {
+
+        var count = rsBlock[i * 3 + 0];
+        var totalCount = rsBlock[i * 3 + 1];
+        var dataCount = rsBlock[i * 3 + 2];
+
+        for (var j = 0; j < count; j += 1) {
+          list.push(qrRSBlock(totalCount, dataCount) );
+        }
+      }
+
+      return list;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrBitBuffer
+  //---------------------------------------------------------------------
+
+  var qrBitBuffer = function() {
+
+    var _buffer = [];
+    var _length = 0;
+
+    var _this = {};
+
+    _this.getBuffer = function() {
+      return _buffer;
+    };
+
+    _this.getAt = function(index) {
+      var bufIndex = Math.floor(index / 8);
+      return ( (_buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+    };
+
+    _this.put = function(num, length) {
+      for (var i = 0; i < length; i += 1) {
+        _this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+      }
+    };
+
+    _this.getLengthInBits = function() {
+      return _length;
+    };
+
+    _this.putBit = function(bit) {
+
+      var bufIndex = Math.floor(_length / 8);
+      if (_buffer.length <= bufIndex) {
+        _buffer.push(0);
+      }
+
+      if (bit) {
+        _buffer[bufIndex] |= (0x80 >>> (_length % 8) );
+      }
+
+      _length += 1;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrNumber
+  //---------------------------------------------------------------------
+
+  var qrNumber = function(data) {
+
+    var _mode = QRMode.MODE_NUMBER;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _data;
+
+      var i = 0;
+
+      while (i + 2 < data.length) {
+        buffer.put(strToNum(data.substring(i, i + 3) ), 10);
+        i += 3;
+      }
+
+      if (i < data.length) {
+        if (data.length - i == 1) {
+          buffer.put(strToNum(data.substring(i, i + 1) ), 4);
+        } else if (data.length - i == 2) {
+          buffer.put(strToNum(data.substring(i, i + 2) ), 7);
+        }
+      }
+    };
+
+    var strToNum = function(s) {
+      var num = 0;
+      for (var i = 0; i < s.length; i += 1) {
+        num = num * 10 + chatToNum(s.charAt(i) );
+      }
+      return num;
+    };
+
+    var chatToNum = function(c) {
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      }
+      throw 'illegal char :' + c;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrAlphaNum
+  //---------------------------------------------------------------------
+
+  var qrAlphaNum = function(data) {
+
+    var _mode = QRMode.MODE_ALPHA_NUM;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var s = _data;
+
+      var i = 0;
+
+      while (i + 1 < s.length) {
+        buffer.put(
+          getCode(s.charAt(i) ) * 45 +
+          getCode(s.charAt(i + 1) ), 11);
+        i += 2;
+      }
+
+      if (i < s.length) {
+        buffer.put(getCode(s.charAt(i) ), 6);
+      }
+    };
+
+    var getCode = function(c) {
+
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      } else if ('A' <= c && c <= 'Z') {
+        return c.charCodeAt(0) - 'A'.charCodeAt(0) + 10;
+      } else {
+        switch (c) {
+        case ' ' : return 36;
+        case '$' : return 37;
+        case '%' : return 38;
+        case '*' : return 39;
+        case '+' : return 40;
+        case '-' : return 41;
+        case '.' : return 42;
+        case '/' : return 43;
+        case ':' : return 44;
+        default :
+          throw 'illegal char :' + c;
+        }
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qr8BitByte
+  //---------------------------------------------------------------------
+
+  var qr8BitByte = function(data) {
+
+    var _mode = QRMode.MODE_8BIT_BYTE;
+    var _data = data;
+    var _bytes = qrcode.stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _bytes.length;
+    };
+
+    _this.write = function(buffer) {
+      for (var i = 0; i < _bytes.length; i += 1) {
+        buffer.put(_bytes[i], 8);
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrKanji
+  //---------------------------------------------------------------------
+
+  var qrKanji = function(data) {
+
+    var _mode = QRMode.MODE_KANJI;
+    var _data = data;
+
+    var stringToBytes = qrcode.stringToBytesFuncs['SJIS'];
+    if (!stringToBytes) {
+      throw 'sjis not supported.';
+    }
+    !function(c, code) {
+      // self test for sjis support.
+      var test = stringToBytes(c);
+      if (test.length != 2 || ( (test[0] << 8) | test[1]) != code) {
+        throw 'sjis not supported.';
+      }
+    }('\u53cb', 0x9746);
+
+    var _bytes = stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return ~~(_bytes.length / 2);
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _bytes;
+
+      var i = 0;
+
+      while (i + 1 < data.length) {
+
+        var c = ( (0xff & data[i]) << 8) | (0xff & data[i + 1]);
+
+        if (0x8140 <= c && c <= 0x9FFC) {
+          c -= 0x8140;
+        } else if (0xE040 <= c && c <= 0xEBBF) {
+          c -= 0xC140;
+        } else {
+          throw 'illegal char at ' + (i + 1) + '/' + c;
+        }
+
+        c = ( (c >>> 8) & 0xff) * 0xC0 + (c & 0xff);
+
+        buffer.put(c, 13);
+
+        i += 2;
+      }
+
+      if (i < data.length) {
+        throw 'illegal char at ' + (i + 1);
+      }
+    };
+
+    return _this;
+  };
+
+  //=====================================================================
+  // GIF Support etc.
+  //
+
+  //---------------------------------------------------------------------
+  // byteArrayOutputStream
+  //---------------------------------------------------------------------
+
+  var byteArrayOutputStream = function() {
+
+    var _bytes = [];
+
+    var _this = {};
+
+    _this.writeByte = function(b) {
+      _bytes.push(b & 0xff);
+    };
+
+    _this.writeShort = function(i) {
+      _this.writeByte(i);
+      _this.writeByte(i >>> 8);
+    };
+
+    _this.writeBytes = function(b, off, len) {
+      off = off || 0;
+      len = len || b.length;
+      for (var i = 0; i < len; i += 1) {
+        _this.writeByte(b[i + off]);
+      }
+    };
+
+    _this.writeString = function(s) {
+      for (var i = 0; i < s.length; i += 1) {
+        _this.writeByte(s.charCodeAt(i) );
+      }
+    };
+
+    _this.toByteArray = function() {
+      return _bytes;
+    };
+
+    _this.toString = function() {
+      var s = '';
+      s += '[';
+      for (var i = 0; i < _bytes.length; i += 1) {
+        if (i > 0) {
+          s += ',';
+        }
+        s += _bytes[i];
+      }
+      s += ']';
+      return s;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64EncodeOutputStream
+  //---------------------------------------------------------------------
+
+  var base64EncodeOutputStream = function() {
+
+    var _buffer = 0;
+    var _buflen = 0;
+    var _length = 0;
+    var _base64 = '';
+
+    var _this = {};
+
+    var writeEncoded = function(b) {
+      _base64 += String.fromCharCode(encode(b & 0x3f) );
+    };
+
+    var encode = function(n) {
+      if (n < 0) {
+        // error.
+      } else if (n < 26) {
+        return 0x41 + n;
+      } else if (n < 52) {
+        return 0x61 + (n - 26);
+      } else if (n < 62) {
+        return 0x30 + (n - 52);
+      } else if (n == 62) {
+        return 0x2b;
+      } else if (n == 63) {
+        return 0x2f;
+      }
+      throw 'n:' + n;
+    };
+
+    _this.writeByte = function(n) {
+
+      _buffer = (_buffer << 8) | (n & 0xff);
+      _buflen += 8;
+      _length += 1;
+
+      while (_buflen >= 6) {
+        writeEncoded(_buffer >>> (_buflen - 6) );
+        _buflen -= 6;
+      }
+    };
+
+    _this.flush = function() {
+
+      if (_buflen > 0) {
+        writeEncoded(_buffer << (6 - _buflen) );
+        _buffer = 0;
+        _buflen = 0;
+      }
+
+      if (_length % 3 != 0) {
+        // padding
+        var padlen = 3 - _length % 3;
+        for (var i = 0; i < padlen; i += 1) {
+          _base64 += '=';
+        }
+      }
+    };
+
+    _this.toString = function() {
+      return _base64;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64DecodeInputStream
+  //---------------------------------------------------------------------
+
+  var base64DecodeInputStream = function(str) {
+
+    var _str = str;
+    var _pos = 0;
+    var _buffer = 0;
+    var _buflen = 0;
+
+    var _this = {};
+
+    _this.read = function() {
+
+      while (_buflen < 8) {
+
+        if (_pos >= _str.length) {
+          if (_buflen == 0) {
+            return -1;
+          }
+          throw 'unexpected end of file./' + _buflen;
+        }
+
+        var c = _str.charAt(_pos);
+        _pos += 1;
+
+        if (c == '=') {
+          _buflen = 0;
+          return -1;
+        } else if (c.match(/^\s$/) ) {
+          // ignore if whitespace.
+          continue;
+        }
+
+        _buffer = (_buffer << 6) | decode(c.charCodeAt(0) );
+        _buflen += 6;
+      }
+
+      var n = (_buffer >>> (_buflen - 8) ) & 0xff;
+      _buflen -= 8;
+      return n;
+    };
+
+    var decode = function(c) {
+      if (0x41 <= c && c <= 0x5a) {
+        return c - 0x41;
+      } else if (0x61 <= c && c <= 0x7a) {
+        return c - 0x61 + 26;
+      } else if (0x30 <= c && c <= 0x39) {
+        return c - 0x30 + 52;
+      } else if (c == 0x2b) {
+        return 62;
+      } else if (c == 0x2f) {
+        return 63;
+      } else {
+        throw 'c:' + c;
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // gifImage (B/W)
+  //---------------------------------------------------------------------
+
+  var gifImage = function(width, height) {
+
+    var _width = width;
+    var _height = height;
+    var _data = new Array(width * height);
+
+    var _this = {};
+
+    _this.setPixel = function(x, y, pixel) {
+      _data[y * _width + x] = pixel;
+    };
+
+    _this.write = function(out) {
+
+      //---------------------------------
+      // GIF Signature
+
+      out.writeString('GIF87a');
+
+      //---------------------------------
+      // Screen Descriptor
+
+      out.writeShort(_width);
+      out.writeShort(_height);
+
+      out.writeByte(0x80); // 2bit
+      out.writeByte(0);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Global Color Map
+
+      // black
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+
+      // white
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+
+      //---------------------------------
+      // Image Descriptor
+
+      out.writeString(',');
+      out.writeShort(0);
+      out.writeShort(0);
+      out.writeShort(_width);
+      out.writeShort(_height);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Local Color Map
+
+      //---------------------------------
+      // Raster Data
+
+      var lzwMinCodeSize = 2;
+      var raster = getLZWRaster(lzwMinCodeSize);
+
+      out.writeByte(lzwMinCodeSize);
+
+      var offset = 0;
+
+      while (raster.length - offset > 255) {
+        out.writeByte(255);
+        out.writeBytes(raster, offset, 255);
+        offset += 255;
+      }
+
+      out.writeByte(raster.length - offset);
+      out.writeBytes(raster, offset, raster.length - offset);
+      out.writeByte(0x00);
+
+      //---------------------------------
+      // GIF Terminator
+      out.writeString(';');
+    };
+
+    var bitOutputStream = function(out) {
+
+      var _out = out;
+      var _bitLength = 0;
+      var _bitBuffer = 0;
+
+      var _this = {};
+
+      _this.write = function(data, length) {
+
+        if ( (data >>> length) != 0) {
+          throw 'length over';
+        }
+
+        while (_bitLength + length >= 8) {
+          _out.writeByte(0xff & ( (data << _bitLength) | _bitBuffer) );
+          length -= (8 - _bitLength);
+          data >>>= (8 - _bitLength);
+          _bitBuffer = 0;
+          _bitLength = 0;
+        }
+
+        _bitBuffer = (data << _bitLength) | _bitBuffer;
+        _bitLength = _bitLength + length;
+      };
+
+      _this.flush = function() {
+        if (_bitLength > 0) {
+          _out.writeByte(_bitBuffer);
+        }
+      };
+
+      return _this;
+    };
+
+    var getLZWRaster = function(lzwMinCodeSize) {
+
+      var clearCode = 1 << lzwMinCodeSize;
+      var endCode = (1 << lzwMinCodeSize) + 1;
+      var bitLength = lzwMinCodeSize + 1;
+
+      // Setup LZWTable
+      var table = lzwTable();
+
+      for (var i = 0; i < clearCode; i += 1) {
+        table.add(String.fromCharCode(i) );
+      }
+      table.add(String.fromCharCode(clearCode) );
+      table.add(String.fromCharCode(endCode) );
+
+      var byteOut = byteArrayOutputStream();
+      var bitOut = bitOutputStream(byteOut);
+
+      // clear code
+      bitOut.write(clearCode, bitLength);
+
+      var dataIndex = 0;
+
+      var s = String.fromCharCode(_data[dataIndex]);
+      dataIndex += 1;
+
+      while (dataIndex < _data.length) {
+
+        var c = String.fromCharCode(_data[dataIndex]);
+        dataIndex += 1;
+
+        if (table.contains(s + c) ) {
+
+          s = s + c;
+
+        } else {
+
+          bitOut.write(table.indexOf(s), bitLength);
+
+          if (table.size() < 0xfff) {
+
+            if (table.size() == (1 << bitLength) ) {
+              bitLength += 1;
+            }
+
+            table.add(s + c);
+          }
+
+          s = c;
+        }
+      }
+
+      bitOut.write(table.indexOf(s), bitLength);
+
+      // end code
+      bitOut.write(endCode, bitLength);
+
+      bitOut.flush();
+
+      return byteOut.toByteArray();
+    };
+
+    var lzwTable = function() {
+
+      var _map = {};
+      var _size = 0;
+
+      var _this = {};
+
+      _this.add = function(key) {
+        if (_this.contains(key) ) {
+          throw 'dup key:' + key;
+        }
+        _map[key] = _size;
+        _size += 1;
+      };
+
+      _this.size = function() {
+        return _size;
+      };
+
+      _this.indexOf = function(key) {
+        return _map[key];
+      };
+
+      _this.contains = function(key) {
+        return typeof _map[key] != 'undefined';
+      };
+
+      return _this;
+    };
+
+    return _this;
+  };
+
+  var createDataURL = function(width, height, getPixel) {
+    var gif = gifImage(width, height);
+    for (var y = 0; y < height; y += 1) {
+      for (var x = 0; x < width; x += 1) {
+        gif.setPixel(x, y, getPixel(x, y) );
+      }
+    }
+
+    var b = byteArrayOutputStream();
+    gif.write(b);
+
+    var base64 = base64EncodeOutputStream();
+    var bytes = b.toByteArray();
+    for (var i = 0; i < bytes.length; i += 1) {
+      base64.writeByte(bytes[i]);
+    }
+    base64.flush();
+
+    return 'data:image/gif;base64,' + base64;
+  };
+
+  //---------------------------------------------------------------------
+  // returns qrcode function.
+
+  return qrcode;
+}();
+
+// multibyte support
+!function() {
+
+  qrcode.stringToBytesFuncs['UTF-8'] = function(s) {
+    // http://stackoverflow.com/questions/18729405/how-to-convert-utf8-string-to-byte-array
+    function toUTF8Array(str) {
+      var utf8 = [];
+      for (var i=0; i < str.length; i++) {
+        var charcode = str.charCodeAt(i);
+        if (charcode < 0x80) utf8.push(charcode);
+        else if (charcode < 0x800) {
+          utf8.push(0xc0 | (charcode >> 6),
+              0x80 | (charcode & 0x3f));
+        }
+        else if (charcode < 0xd800 || charcode >= 0xe000) {
+          utf8.push(0xe0 | (charcode >> 12),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+        // surrogate pair
+        else {
+          i++;
+          // UTF-16 encodes 0x10000-0x10FFFF by
+          // subtracting 0x10000 and splitting the
+          // 20 bits of 0x0-0xFFFFF into two halves
+          charcode = 0x10000 + (((charcode & 0x3ff)<<10)
+            | (str.charCodeAt(i) & 0x3ff));
+          utf8.push(0xf0 | (charcode >>18),
+              0x80 | ((charcode>>12) & 0x3f),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+      }
+      return utf8;
+    }
+    return toUTF8Array(s);
+  };
+
+}();
+
+(function (factory) {
+  if (typeof define === 'function' && define.amd) {
+      define([], factory);
+  } else if (typeof exports === 'object') {
+      module.exports = factory();
+  }
+}(function () {
+    return qrcode;
+}));
+
+</script>
+  <script>
+/*
+ * WBL submission format: shared by the student app and the supervisor app.
+ *
+ * A submission is a small JSON document. The student's phone signs it with an
+ * HMAC-SHA256 key that came from the enrollment QR code. Only the student's
+ * phone and the supervisor's records know that key, so the supervisor app can
+ * tell whether a file was made by that student's app and not changed afterward.
+ *
+ * Works in browsers (window.WBL) and in Node 20+ (module.exports) for tests.
+ */
+(function (root) {
+  'use strict';
+
+  const FORMAT = 'wbl-submission';
+  const VERSION = 1;
+  const ENROLL_VERSION = 1;
+
+  const subtle = () => {
+    const c = (typeof globalThis !== 'undefined' && globalThis.crypto) || null;
+    if (!c || !c.subtle) throw new Error('This browser cannot sign submissions (Web Crypto is unavailable).');
+    return c.subtle;
+  };
+
+  // ---------- base64url helpers ----------
+  function bytesToB64url(bytes) {
+    let bin = '';
+    const arr = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+    for (let i = 0; i < arr.length; i++) bin += String.fromCharCode(arr[i]);
+    return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function b64urlToBytes(s) {
+    s = String(s).replace(/-/g, '+').replace(/_/g, '/');
+    while (s.length % 4) s += '=';
+    const bin = atob(s);
+    const out = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+  function utf8(s) { return new TextEncoder().encode(s); }
+  function encodeJson(obj) { return bytesToB64url(utf8(JSON.stringify(obj))); }
+  function decodeJson(s) { return JSON.parse(new TextDecoder().decode(b64urlToBytes(s))); }
+
+  // ---------- canonical JSON (sorted keys) so signatures are stable ----------
+  function canonical(value) {
+    if (value === null || typeof value !== 'object') return JSON.stringify(value);
+    if (Array.isArray(value)) return '[' + value.map(canonical).join(',') + ']';
+    const keys = Object.keys(value).filter(k => value[k] !== undefined).sort();
+    return '{' + keys.map(k => JSON.stringify(k) + ':' + canonical(value[k])).join(',') + '}';
+  }
+
+  function randomBytes(n) {
+    const b = new Uint8Array(n);
+    globalThis.crypto.getRandomValues(b);
+    return b;
+  }
+  function newKey() { return bytesToB64url(randomBytes(32)); }
+  function newId(prefix) {
+    const t = Date.now().toString(36);
+    return (prefix || '') + t + '-' + bytesToB64url(randomBytes(6));
+  }
+
+  async function hmac(keyB64, text) {
+    const key = await subtle().importKey('raw', b64urlToBytes(keyB64), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+    const sig = await subtle().sign('HMAC', key, utf8(text));
+    return bytesToB64url(new Uint8Array(sig));
+  }
+
+  function round2(n) { return Math.round(Number(n) * 100) / 100; }
+
+  // ---------- submissions ----------
+  /**
+   * Build and sign a submission.
+   * fields: { studentId, type: 'paystub'|'manual', employer, periodStart, periodEnd,
+   *           regularHours, overtimeHours, notes, image (data URL or null),
+   *           entryMethod: 'typed'|'ocr', ocrConfidence }
+   */
+  async function createSubmission(fields, keyB64) {
+    const doc = {
+      format: FORMAT,
+      version: VERSION,
+      submissionId: fields.submissionId || newId('s-'),
+      studentId: String(fields.studentId),
+      studentName: fields.studentName || '',
+      type: fields.type === 'manual' ? 'manual' : 'paystub',
+      employer: (fields.employer || '').trim(),
+      periodStart: fields.periodStart,
+      periodEnd: fields.periodEnd,
+      regularHours: round2(fields.regularHours || 0),
+      overtimeHours: round2(fields.overtimeHours || 0),
+      notes: (fields.notes || '').trim(),
+      entryMethod: fields.entryMethod || 'typed',
+      ocrConfidence: fields.ocrConfidence == null ? null : Number(fields.ocrConfidence),
+      image: fields.image || null,
+      createdAt: fields.createdAt || new Date().toISOString(),
+      app: fields.app || 'wbl-student'
+    };
+    doc.hmac = await hmac(keyB64, canonical(doc));
+    return doc;
+  }
+
+  /** Parse file text into a submission object (no signature check). Throws on bad input. */
+  function parseSubmission(text) {
+    let doc;
+    try { doc = JSON.parse(String(text).trim()); }
+    catch (e) { throw new Error('Not a WBL submission file (could not read it).'); }
+    if (!doc || doc.format !== FORMAT) throw new Error('Not a WBL submission file.');
+    if (doc.version > VERSION) throw new Error('This file was made by a newer version of the student app. Please update the supervisor app.');
+    for (const f of ['submissionId', 'studentId', 'periodStart', 'periodEnd', 'hmac']) {
+      if (!doc[f]) throw new Error('Submission is missing "' + f + '".');
+    }
+    return doc;
+  }
+
+  async function verifySubmission(doc, keyB64) {
+    if (!keyB64) return false;
+    const copy = Object.assign({}, doc);
+    const given = copy.hmac;
+    delete copy.hmac;
+    const expected = await hmac(keyB64, canonical(copy));
+    return expected === given;
+  }
+
+  function totalHours(doc) { return round2((doc.regularHours || 0) + (doc.overtimeHours || 0)); }
+
+  /** File name for a submission, e.g. WBL_12345_2026-11-01_to_2026-11-07.txt
+   *  (.txt so phones' share sheets and mail apps accept it as an attachment). */
+  function fileName(doc) {
+    const safe = s => String(s || '').replace(/[^A-Za-z0-9_-]+/g, '');
+    return 'WBL_' + safe(doc.studentId) + '_' + safe(doc.periodStart) + '_to_' + safe(doc.periodEnd) + '_' + safe(doc.submissionId).slice(-6) + '.txt';
+  }
+
+  // ---------- enrollment ----------
+  /** enrollment: { studentId, name, school, emails: [], key, employer, appUrl } -> URL with #enroll=... */
+  function enrollmentCode(e) {
+    return encodeJson({ v: ENROLL_VERSION, i: e.studentId, n: e.name, s: e.school, e: e.emails || [], k: e.key, w: e.employer || '' });
+  }
+  function enrollmentUrl(appUrl, e) {
+    const base = String(appUrl || '').split('#')[0];
+    return base + '#enroll=' + enrollmentCode(e);
+  }
+  function parseEnrollment(codeOrUrl) {
+    let code = String(codeOrUrl || '').trim();
+    const m = code.match(/#enroll=([A-Za-z0-9_-]+)/);
+    if (m) code = m[1];
+    let o;
+    try { o = decodeJson(code); } catch (e) { throw new Error('That enrollment code is not valid. Ask your supervisor for a new one.'); }
+    if (!o || !o.i || !o.k) throw new Error('That enrollment code is incomplete. Ask your supervisor for a new one.');
+    return { studentId: String(o.i), name: o.n || '', school: o.s || '', emails: Array.isArray(o.e) ? o.e : [], key: o.k, employer: o.w || '' };
+  }
+
+  // ---------- dates ----------
+  function parseDate(s) { const [y, m, d] = String(s).split('-').map(Number); return new Date(Date.UTC(y, m - 1, d)); }
+  function daysBetween(a, b) { return Math.round((parseDate(b) - parseDate(a)) / 86400000); }
+
+  const api = {
+    FORMAT, VERSION, canonical, newKey, newId, hmac, createSubmission, parseSubmission, verifySubmission,
+    totalHours, fileName, enrollmentCode, enrollmentUrl, parseEnrollment, parseDate, daysBetween, round2,
+    bytesToB64url, b64urlToBytes
+  };
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.WBL = api;
+})(typeof self !== 'undefined' ? self : this);
+
+</script>
+  <script>
+/* Supervisor app: all records live in a folder the supervisor chooses (this PC or
+ * a school network drive). Uses the browser's File System Access API (Edge/Chrome).
+ *
+ * Folder layout:
+ *   wbl-data.json         all students, submissions, settings
+ *   images/<id>.jpg       redacted pay stub images
+ *   Inbox/                save emailed attachments here
+ *   Inbox/Imported/       files move here after import
+ *   backups/              automatic daily snapshots of wbl-data.json
+ */
+(function () {
+  'use strict';
+  const BRAND = window.WBL_BRAND || {};
+  const $ = id => document.getElementById(id);
+  const DATA_FILE = 'wbl-data.json';
+
+  // ---------------- state ----------------
+  let root = null;          // FileSystemDirectoryHandle
+  let isDemo = false;
+  let data = null;
+  let loadedStamp = 0;      // lastModified of wbl-data.json when we loaded it
+  let sort = { key: 'name', asc: true };
+  let editing = null;       // student being edited (copy) or null for new
+  const imageCache = new Map();
+
+  function emptyData() {
+    return {
+      format: 'wbl-supervisor-data', version: 1,
+      settings: {
+        schoolName: BRAND.schoolName || '', emails: [], appUrl: BRAND.studentAppUrl || '',
+        defaultGoal: BRAND.defaultGoalHours || 250, weeklyMax: 60, staleDays: 21,
+        termStart: '', termEnd: '', lastBackup: ''
+      },
+      students: [], submissions: [], log: []
+    };
+  }
+
+  // ---------------- helpers ----------------
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+  let toastTimer;
+  function toast(msg, ms) {
+    const t = $('toast'); t.textContent = msg; t.classList.remove('hidden');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.add('hidden'), ms || 3500);
+  }
+  function today() { const d = new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); }
+  function fmtDate(iso) { return iso ? WBL.parseDate(iso.slice(0, 10)).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : ''; }
+  function fmtH(n) { return (Math.round((n || 0) * 10) / 10).toLocaleString(); }
+  function fullName(s) { return (s.firstName + ' ' + s.lastName).trim(); }
+  function goalOf(s) { return Number(s.goalHours) || Number(data.settings.defaultGoal) || 250; }
+  function studentById(id) { return data.students.find(s => s.studentId === String(id)); }
+  function log(msg) { data.log.push({ at: new Date().toISOString(), msg }); if (data.log.length > 2000) data.log.splice(0, data.log.length - 2000); }
+
+  // ---------------- IndexedDB (remember the folder handle) ----------------
+  function idb() {
+    return new Promise((res, rej) => {
+      const r = indexedDB.open('wbl-supervisor', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('kv');
+      r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+    });
+  }
+  async function idbGet(k) { const d = await idb(); return new Promise(res => { const q = d.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => res(null); }); }
+  async function idbSet(k, v) { const d = await idb(); return new Promise(res => { const t = d.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = res; t.onerror = res; }); }
+
+  // ---------------- file helpers ----------------
+  async function getDir(parent, name, create) { return parent.getDirectoryHandle(name, { create: !!create }); }
+  async function readText(dir, name) {
+    try { const f = await (await dir.getFileHandle(name)).getFile(); return { text: await f.text(), stamp: f.lastModified }; }
+    catch (e) { if (e.name === 'NotFoundError') return null; throw e; }
+  }
+  async function writeFile(dir, name, content) {
+    const fh = await dir.getFileHandle(name, { create: true });
+    const w = await fh.createWritable();
+    await w.write(content); await w.close();
+    return fh;
+  }
+  function dataUrlToBlob(u) {
+    const [head, b64] = u.split(',');
+    const mime = (head.match(/data:([^;]+)/) || [])[1] || 'image/jpeg';
+    const bin = atob(b64); const a = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i);
+    return new Blob([a], { type: mime });
+  }
+
+  // ---------------- open / save ----------------
+  async function openFolder(handle, demo) {
+    root = handle; isDemo = !!demo;
+    await getDir(root, 'Inbox', true); await getDir(root, 'images', true); await getDir(root, 'backups', true);
+    const r = await readText(root, DATA_FILE);
+    if (r) {
+      data = JSON.parse(r.text);
+      if (data.format !== 'wbl-supervisor-data') throw new Error('That folder has a ' + DATA_FILE + ' that is not WBL data.');
+      data.settings = Object.assign(emptyData().settings, data.settings);
+      loadedStamp = r.stamp;
+    } else {
+      data = emptyData();
+      if (isDemo) seedDemo();
+      await save('Created data folder');
+    }
+    if (!isDemo) await idbSet('folder', root);
+    $('view-setup').classList.add('hidden');
+    $('tabs').classList.remove('hidden');
+    $('folder-status').classList.remove('hidden');
+    $('folder-status').innerHTML = (isDemo ? '<b>Practice data</b> (stored in this browser only)' : 'Data folder: <b>' + esc(root.name) + '</b>');
+    renderAll();
+    showTab('students');
+  }
+
+  let saving = Promise.resolve();
+  function save(why) {
+    saving = saving.then(() => doSave(why)).catch(e => { console.error(e); toast('Could not save: ' + e.message, 8000); });
+    return saving;
+  }
+  async function doSave(why) {
+    // If another supervisor changed the file since we loaded it, stop and reload rather than overwrite their work.
+    const cur = await readText(root, DATA_FILE);
+    if (cur && loadedStamp && cur.stamp > loadedStamp + 1) {
+      const theirs = JSON.parse(cur.text);
+      if (JSON.stringify(theirs) !== JSON.stringify(data)) {
+        alert('Someone else changed the WBL records while you had them open. The latest records will be reloaded. Please redo your last change.');
+        data = theirs; loadedStamp = cur.stamp; renderAll(); return;
+      }
+    }
+    if (why) log(why);
+    data.savedAt = new Date().toISOString();
+    const text = JSON.stringify(data, null, 1);
+    await writeFile(root, DATA_FILE, text);
+    const after = await readText(root, DATA_FILE); loadedStamp = after ? after.stamp : Date.now();
+    // Daily snapshot, keep the newest 30.
+    const bdir = await getDir(root, 'backups', true);
+    const snap = 'wbl-data-' + today() + '.json';
+    await writeFile(bdir, snap, text);
+    const names = []; for await (const [n] of bdir.entries()) if (/^wbl-data-\d{4}-\d{2}-\d{2}\.json$/.test(n)) names.push(n);
+    names.sort().slice(0, Math.max(0, names.length - 30)).forEach(n => bdir.removeEntry(n).catch(() => {}));
+  }
+
+  // ---------------- setup screen ----------------
+  async function initSetup() {
+    if (!window.showDirectoryPicker) {
+      $('unsupported').classList.remove('hidden');
+      $('pick-folder').disabled = true;
+    }
+    const saved = await idbGet('folder').catch(() => null);
+    if (saved && saved.kind === 'directory') {
+      $('reconnect-box').classList.remove('hidden');
+      $('reconnect-name').textContent = saved.name;
+      $('reconnect-btn').onclick = async () => {
+        try {
+          const p = await saved.requestPermission({ mode: 'readwrite' });
+          if (p !== 'granted') return toast('Permission is needed to open the folder.');
+          await openFolder(saved);
+        } catch (e) { toast('Could not open that folder: ' + e.message, 6000); }
+      };
+    }
+  }
+  async function pickFolder() {
+    try {
+      const h = await window.showDirectoryPicker({ id: 'wbl-data', mode: 'readwrite' });
+      await openFolder(h);
+    } catch (e) { if (e.name !== 'AbortError') toast('Could not open that folder: ' + e.message, 6000); }
+  }
+  $('pick-folder').addEventListener('click', pickFolder);
+  $('switch-folder').addEventListener('click', pickFolder);
+  $('demo-btn').addEventListener('click', async () => {
+    if (!navigator.storage || !navigator.storage.getDirectory) return toast('Practice mode needs Edge or Chrome.');
+    const opfs = await navigator.storage.getDirectory();
+    await openFolder(await opfs.getDirectoryHandle('wbl-practice', { create: true }), true);
+  });
+
+  // ---------------- tabs ----------------
+  function showTab(name) {
+    document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+    $('view-' + name).classList.remove('hidden');
+    if (name === 'review') renderReview();
+    if (name === 'settings') renderSettings();
+    if (name === 'students') renderStudents();
+  }
+  $('tabs').addEventListener('click', e => { const b = e.target.closest('button[data-tab]'); if (b) showTab(b.dataset.tab); });
+
+  // ---------------- calculations ----------------
+  function summarize(s) {
+    const subs = data.submissions.filter(x => x.studentId === s.studentId);
+    const approved = subs.filter(x => x.status === 'approved');
+    const pending = subs.filter(x => x.status === 'review');
+    const hours = approved.reduce((t, x) => t + x.hours, 0);
+    const pendingHours = pending.reduce((t, x) => t + x.hours, 0);
+    const last = subs.filter(x => x.status !== 'rejected').map(x => x.periodEnd).sort().pop() || '';
+    const goal = goalOf(s);
+    const pct = Math.min(100, hours / goal * 100);
+    let status = 'ok', label = 'On track';
+    const st = data.settings;
+    if (hours >= goal) { status = 'met'; label = 'Goal met'; }
+    else if (!subs.length) { status = 'none'; label = 'No submissions'; }
+    else {
+      if (st.termStart && st.termEnd && st.termEnd > st.termStart) {
+        const span = WBL.daysBetween(st.termStart, st.termEnd);
+        const startFrom = s.startDate && s.startDate > st.termStart ? s.startDate : st.termStart;
+        const elapsed = Math.max(0, Math.min(span, WBL.daysBetween(startFrom, today())));
+        const totalSpan = Math.max(1, WBL.daysBetween(startFrom, st.termEnd));
+        const expected = goal * Math.min(1, elapsed / totalSpan);
+        if (hours + pendingHours < expected * 0.85) { status = 'behind'; label = 'Behind (' + fmtH(expected) + ' expected)'; }
+      }
+      if (last && WBL.daysBetween(last, today()) > (Number(st.staleDays) || 21)) {
+        status = 'behind'; label = status === 'behind' && label.startsWith('Behind') ? label + ', no recent hours' : 'No recent hours';
+      }
+    }
+    return { subs, hours, pendingHours, last, goal, pct, status, label };
+  }
+
+  // ---------------- students view ----------------
+  function renderAll() { renderStudents(); renderReviewCount(); renderBackupWarning(); }
+
+  function renderBackupWarning() {
+    const lb = data.settings.lastBackup;
+    const w = $('backup-warning');
+    const due = !isDemo && data.students.length && (!lb || WBL.daysBetween(lb.slice(0, 10), today()) > 7);
+    w.classList.toggle('hidden', !due);
+    if (due) w.innerHTML = (lb ? 'Last backup was ' + esc(fmtDate(lb)) + '.' : 'These records have never been backed up.') + ' <a href="#" id="backup-link">Back up now</a>';
+    const l = $('backup-link'); if (l) l.onclick = e => { e.preventDefault(); doBackup(); };
+  }
+
+  function renderStudents() {
+    if (!data) return;
+    const q = $('search').value.trim().toLowerCase();
+    const prog = $('filter-program').value;
+    const fst = $('filter-status').value;
+    const programs = [...new Set(data.students.map(s => s.program).filter(Boolean))].sort();
+    const sel = $('filter-program');
+    sel.innerHTML = '<option value="">All programs</option>' + programs.map(p => '<option' + (p === prog ? ' selected' : '') + '>' + esc(p) + '</option>').join('');
+    $('program-list').innerHTML = programs.map(p => '<option value="' + esc(p) + '">').join('');
+
+    const rows = data.students.filter(s => s.active !== false).map(s => ({ s, m: summarize(s) }));
+    // stats
+    const total = rows.reduce((t, r) => t + r.m.hours, 0);
+    const met = rows.filter(r => r.m.status === 'met').length;
+    const behind = rows.filter(r => r.m.status === 'behind').length;
+    const review = data.submissions.filter(x => x.status === 'review').length;
+    $('stats').innerHTML =
+      '<div class="stat"><b>' + rows.length + '</b><span>students</span></div>' +
+      '<div class="stat"><b>' + fmtH(total) + '</b><span>approved hours (all students)</span></div>' +
+      '<div class="stat"><b>' + met + '</b><span>met their goal</span></div>' +
+      '<div class="stat"><b>' + behind + '</b><span>behind / no recent hours</span></div>' +
+      '<div class="stat"><b>' + review + '</b><span>waiting for review</span></div>';
+
+    let list = rows.filter(({ s, m }) => {
+      if (prog && s.program !== prog) return false;
+      if (fst && m.status !== fst) return false;
+      if (q && ![fullName(s), s.studentId, s.employer, s.program].join(' ').toLowerCase().includes(q)) return false;
+      return true;
+    });
+    const key = sort.key, dir = sort.asc ? 1 : -1;
+    const val = ({ s, m }) => ({ name: (s.lastName + ' ' + s.firstName).toLowerCase(), program: s.program || '', employer: s.employer || '', approved: m.hours, pct: m.pct, last: m.last, status: m.status }[key]);
+    list.sort((a, b) => { const x = val(a), y = val(b); return (x < y ? -1 : x > y ? 1 : 0) * dir; });
+    document.querySelectorAll('#students-table th').forEach(th => { th.classList.toggle('sorted', th.dataset.sort === key); th.classList.toggle('asc', th.dataset.sort === key && sort.asc); });
+
+    const badge = { ok: 'badge-ok', met: 'badge-ok', none: 'badge-neutral', behind: 'badge-warn' };
+    $('students-table').querySelector('tbody').innerHTML = list.map(({ s, m }) =>
+      '<tr data-id="' + esc(s.studentId) + '">' +
+      '<td><div class="name">' + esc(s.lastName + ', ' + s.firstName) + '</div><div class="sub">ID ' + esc(s.studentId) + '</div></td>' +
+      '<td>' + esc(s.program) + '</td>' +
+      '<td>' + esc(s.employer) + '</td>' +
+      '<td class="num"><b>' + fmtH(m.hours) + '</b> / ' + fmtH(m.goal) + (m.pendingHours ? '<div class="sub">+' + fmtH(m.pendingHours) + ' in review</div>' : '') + '</td>' +
+      '<td><div class="progress' + (m.status === 'met' ? ' done' : '') + '"><span style="width:' + m.pct.toFixed(1) + '%"></span></div><span class="pct">' + Math.floor(m.pct) + '%</span></td>' +
+      '<td>' + esc(fmtDate(m.last)) + '</td>' +
+      '<td><span class="badge ' + badge[m.status] + '">' + esc(m.label) + '</span></td></tr>').join('');
+    $('students-empty').classList.toggle('hidden', data.students.length > 0);
+  }
+  $('search').addEventListener('input', renderStudents);
+  $('filter-program').addEventListener('change', renderStudents);
+  $('filter-status').addEventListener('change', renderStudents);
+  document.querySelectorAll('#students-table th[data-sort]').forEach(th => th.addEventListener('click', () => {
+    sort = { key: th.dataset.sort, asc: sort.key === th.dataset.sort ? !sort.asc : true }; renderStudents();
+  }));
+  $('students-table').querySelector('tbody').addEventListener('click', e => {
+    const tr = e.target.closest('tr[data-id]'); if (tr) openStudent(studentById(tr.dataset.id));
+  });
+  $('add-student').addEventListener('click', () => openStudent(null));
+
+  // ---------------- student dialog ----------------
+  const F = { first: 'firstName', last: 'lastName', id: 'studentId', program: 'program', employer: 'employer', job: 'jobTitle', ws: 'workSupervisor', wsc: 'workSupervisorContact', start: 'startDate', goal: 'goalHours', notes: 'notes' };
+  function openStudent(s) {
+    editing = s ? s : null;
+    const v = s || { goalHours: '' };
+    Object.entries(F).forEach(([k, f]) => { $('sd-' + k).value = v[f] == null ? '' : v[f]; });
+    $('sd-goal').placeholder = data.settings.defaultGoal;
+    $('sd-id').readOnly = !!s;
+    $('sd-title').textContent = s ? fullName(s) : 'Add student';
+    $('sd-delete').classList.toggle('hidden', !s);
+    $('sd-enroll').classList.toggle('hidden', !s);
+    if (s) renderEnrollQr(s);
+    renderStudentHistory(s);
+    $('student-dialog').showModal();
+  }
+  document.querySelectorAll('.close-dlg').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
+
+  $('student-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const v = {};
+    Object.entries(F).forEach(([k, f]) => { v[f] = $('sd-' + k).value.trim(); });
+    v.goalHours = v.goalHours ? Number(v.goalHours) : '';
+    if (!v.firstName || !v.lastName || !v.studentId) return toast('First name, last name and student ID are required.');
+    if (editing) {
+      Object.assign(editing, v);
+      await save('Edited student ' + v.studentId);
+    } else {
+      if (studentById(v.studentId)) return toast('A student with ID ' + v.studentId + ' already exists.');
+      const s = Object.assign({ key: WBL.newKey(), active: true, createdAt: new Date().toISOString() }, v);
+      data.students.push(s);
+      await save('Added student ' + v.studentId);
+      editing = s;
+      $('sd-id').readOnly = true; $('sd-delete').classList.remove('hidden'); $('sd-enroll').classList.remove('hidden');
+      $('sd-title').textContent = fullName(s);
+      renderEnrollQr(s);
+      toast('Student added. Print or show the QR code so they can set up their phone.');
+      renderAll();
+      return; // keep dialog open to show the QR
+    }
+    $('student-dialog').close();
+    renderAll();
+  });
+
+  $('sd-delete').addEventListener('click', async () => {
+    if (!editing) return;
+    const n = data.submissions.filter(x => x.studentId === editing.studentId).length;
+    if (!confirm('Delete ' + fullName(editing) + (n ? ' and their ' + n + ' submission(s)' : '') + '? This cannot be undone.')) return;
+    data.students = data.students.filter(s => s !== editing);
+    data.submissions = data.submissions.filter(x => x.studentId !== editing.studentId);
+    await save('Deleted student ' + editing.studentId);
+    $('student-dialog').close(); renderAll();
+  });
+
+  function enrollFor(s) {
+    return { studentId: s.studentId, name: fullName(s), school: data.settings.schoolName, emails: data.settings.emails, key: s.key, employer: s.employer };
+  }
+  function qrSvg(text, cell) {
+    const q = qrcode(0, 'M'); q.addData(text); q.make();
+    return q.createSvgTag({ cellSize: cell || 4, margin: 2, scalable: true });
+  }
+  function renderEnrollQr(s) {
+    const box = $('sd-qr');
+    if (!data.settings.appUrl) { box.innerHTML = '<p class="notice notice-warn small">Set the <b>Student app web address</b> in Settings to make QR codes.</p>'; return; }
+    if (!data.settings.emails.length) { box.innerHTML = '<p class="notice notice-warn small">Add your <b>supervisor email</b> in Settings first, so students know where to send.</p>'; return; }
+    box.innerHTML = qrSvg(WBL.enrollmentUrl(data.settings.appUrl, enrollFor(s)));
+  }
+  $('sd-copy').addEventListener('click', async () => {
+    if (!editing) return;
+    try { await navigator.clipboard.writeText(WBL.enrollmentCode(enrollFor(editing))); toast('Enrollment code copied. Only share it with this student.'); }
+    catch (e) { prompt('Enrollment code:', WBL.enrollmentCode(enrollFor(editing))); }
+  });
+  $('sd-rekey').addEventListener('click', async () => {
+    if (!editing) return;
+    if (!confirm('Make a new setup code for ' + fullName(editing) + '? Their current phone will no longer be able to send hours until they scan the new code.')) return;
+    editing.key = WBL.newKey();
+    await save('New enrollment key for ' + editing.studentId);
+    renderEnrollQr(editing); toast('New code created. Have the student scan it.');
+  });
+  $('sd-print').addEventListener('click', () => { if (editing) printCards([editing]); });
+  $('print-qr-all').addEventListener('click', () => {
+    const prog = $('filter-program').value;
+    const list = data.students.filter(s => s.active !== false && (!prog || s.program === prog)).sort((a, b) => (a.lastName + a.firstName).localeCompare(b.lastName + b.firstName));
+    if (!list.length) return toast('No students to print.');
+    printCards(list);
+  });
+
+  function printCards(list) {
+    if (!data.settings.appUrl || !data.settings.emails.length) { showTab('settings'); return toast('Fill in the student app address and your email in Settings first.', 5000); }
+    const logo = document.querySelector('.appbar .logo').src;
+    $('print-area').innerHTML = '<div class="print-cards">' + list.map(s =>
+      '<div class="print-card"><img class="logo" src="' + esc(logo) + '" alt=""><h3>' + esc(fullName(s)) + '</h3>' +
+      '<p>WBL Hours app: phone setup</p><div class="qr">' + qrSvg(WBL.enrollmentUrl(data.settings.appUrl, enrollFor(s)), 3) + '</div>' +
+      '<p><b>1.</b> Open your phone camera and point it at this code.<br><b>2.</b> Tap the link, then choose <i>Add to Home Screen</i>.</p>' +
+      '<p style="font-size:9pt">Keep this card private. Student ID ' + esc(s.studentId) + '</p></div>').join('') + '</div>';
+    setTimeout(() => window.print(), 50);
+  }
+
+  function renderStudentHistory(s) {
+    const h = $('sd-history');
+    if (!s) { h.innerHTML = ''; return; }
+    const m = summarize(s);
+    const subs = m.subs.slice().sort((a, b) => b.periodEnd.localeCompare(a.periodEnd));
+    h.innerHTML = '<h3 style="margin-top:18px">Hours: ' + fmtH(m.hours) + ' of ' + fmtH(m.goal) + ' approved' + (m.pendingHours ? ' · ' + fmtH(m.pendingHours) + ' in review' : '') + '</h3>' +
+      (subs.length ? '<div class="table-wrap"><table class="grid"><thead><tr><th>Dates</th><th>Type</th><th>Employer</th><th class="num">Hours</th><th>Status</th><th>Photo</th></tr></thead><tbody>' +
+        subs.map(x => '<tr><td>' + esc(fmtDate(x.periodStart)) + ' – ' + esc(fmtDate(x.periodEnd)) + '</td><td>' + (x.type === 'manual' ? 'Unpaid' : 'Pay stub') + '</td><td>' + esc(x.employer) + '</td>' +
+          '<td class="num">' + fmtH(x.hours) + '</td><td>' + statusBadge(x) + '</td><td>' + (x.hasImage ? '<button type="button" class="btn-secondary" data-img="' + esc(x.submissionId) + '">View</button>' : '') + '</td></tr>').join('') +
+        '</tbody></table></div>' : '<p class="muted">No submissions yet.</p>');
+  }
+  function statusBadge(x) {
+    return { approved: '<span class="badge badge-ok">Approved</span>', review: '<span class="badge badge-warn">In review</span>', rejected: '<span class="badge badge-bad">Rejected</span>' }[x.status] || '';
+  }
+  $('sd-history').addEventListener('click', e => { const b = e.target.closest('[data-img]'); if (b) viewImage(b.dataset.img); });
+
+  async function imageUrl(id) {
+    if (imageCache.has(id)) return imageCache.get(id);
+    try {
+      const f = await (await (await getDir(root, 'images')).getFileHandle(id + '.jpg')).getFile();
+      const u = URL.createObjectURL(f); imageCache.set(id, u); return u;
+    } catch (e) { return null; }
+  }
+  async function viewImage(id) {
+    const u = await imageUrl(id);
+    if (!u) return toast('Image file not found.');
+    const d = $('image-dialog'); d.querySelector('img').src = u; d.showModal();
+  }
+
+  // ---------------- importing submissions ----------------
+  /** Pull every submission out of a piece of text (a .txt attachment, pasted email, or .eml file). */
+  function extractDocs(text) {
+    const docs = [], errors = [];
+    const t = String(text).trim();
+    const tryParse = s => { try { docs.push(WBL.parseSubmission(s)); return true; } catch (e) { errors.push(e.message); return false; } };
+    if (t.startsWith('{')) { tryParse(t); return { docs, errors }; }
+    // Text-only emails: WBLDATA:<base64url json>:END (email clients may wrap lines)
+    const re = /WBLDATA:([A-Za-z0-9_\-\s=]+?):END/g; let m;
+    while ((m = re.exec(t))) {
+      try { tryParse(new TextDecoder().decode(WBL.b64urlToBytes(m[1].replace(/[\s=]/g, '')))); }
+      catch (e) { errors.push('Pasted code is incomplete. Ask the student to resend.'); }
+    }
+    // Saved .eml files: look inside base64 MIME parts for an attached submission.
+    if (/Content-Transfer-Encoding:\s*base64/i.test(t)) {
+      const parts = t.split(/\r?\n--[^\r\n]+/);
+      parts.forEach(p => {
+        if (!/Content-Transfer-Encoding:\s*base64/i.test(p)) return;
+        const body = p.split(/\r?\n\r?\n/).slice(1).join('').replace(/\s+/g, '');
+        try {
+          const dec = new TextDecoder().decode(Uint8Array.from(atob(body), c => c.charCodeAt(0))).trim();
+          if (dec.startsWith('{') && dec.includes('wbl-submission')) tryParse(dec);
+          else if (dec.includes('WBLDATA:')) { const r = extractDocs(dec); docs.push(...r.docs); }
+        } catch (e) { /* not ours */ }
+      });
+    }
+    if (!docs.length && !errors.length) errors.push('No WBL submission found in this file.');
+    return { docs, errors };
+  }
+
+  async function checkDoc(doc) {
+    const flags = [];
+    const s = studentById(doc.studentId);
+    const hours = WBL.totalHours(doc);
+    if (!s) flags.push('Unknown student ID "' + doc.studentId + '" (add the student, then re-import).');
+    else if (!(await WBL.verifySubmission(doc, s.key))) flags.push('Security check failed: the file may have been edited, or it came from an old phone setup.');
+    if (doc.periodEnd > today()) flags.push('Pay period ends in the future.');
+    if (doc.periodEnd < doc.periodStart) flags.push('End date is before start date.');
+    const days = WBL.daysBetween(doc.periodStart, doc.periodEnd) + 1;
+    const perWeek = days >= 7 ? hours / (days / 7) : hours;
+    if (perWeek > (Number(data.settings.weeklyMax) || 60)) flags.push(fmtH(perWeek) + ' hours per week is above your ' + data.settings.weeklyMax + '-hour limit.');
+    if (hours <= 0) flags.push('No hours entered.');
+    if (doc.type === 'paystub' && !doc.image) flags.push('No pay stub photo was included.');
+    if (doc.type === 'manual') flags.push('Unpaid hours: confirm with the workplace supervisor.');
+    if (doc.entryMethod === 'ocr' && doc.ocrConfidence != null && doc.ocrConfidence < 0.75) flags.push('The app had trouble reading this stub.');
+    if (s) {
+      const overlap = data.submissions.find(x => x.studentId === s.studentId && x.status !== 'rejected' && x.type === doc.type &&
+        x.periodStart <= doc.periodEnd && doc.periodStart <= x.periodEnd);
+      if (overlap) flags.push('Overlaps another submission (' + fmtDate(overlap.periodStart) + ' – ' + fmtDate(overlap.periodEnd) + ', ' + fmtH(overlap.hours) + ' h).');
+    }
+    return flags;
+  }
+
+  async function importDocs(docs, source) {
+    const out = [];
+    for (const doc of docs) {
+      if (data.submissions.some(x => x.submissionId === doc.submissionId)) { out.push({ doc, result: 'duplicate' }); continue; }
+      const flags = await checkDoc(doc);
+      let hasImage = false;
+      if (doc.image && /^data:image\//.test(doc.image)) {
+        try { await writeFile(await getDir(root, 'images', true), doc.submissionId + '.jpg', dataUrlToBlob(doc.image)); hasImage = true; }
+        catch (e) { flags.push('Could not save the photo: ' + e.message); }
+      }
+      const rec = {
+        submissionId: doc.submissionId, studentId: String(doc.studentId), studentName: doc.studentName || '', type: doc.type,
+        employer: doc.employer, periodStart: doc.periodStart, periodEnd: doc.periodEnd,
+        regularHours: doc.regularHours, overtimeHours: doc.overtimeHours, hours: WBL.totalHours(doc),
+        notes: doc.notes, entryMethod: doc.entryMethod, ocrConfidence: doc.ocrConfidence, createdAt: doc.createdAt,
+        hasImage, flags, status: flags.length ? 'review' : 'approved', importedAt: new Date().toISOString(), source: source || ''
+      };
+      data.submissions.push(rec);
+      out.push({ doc, rec, result: rec.status });
+    }
+    return out;
+  }
+
+  async function importTexts(items) {
+    // items: [{ name, text }]
+    const report = [];
+    const okNames = [];
+    for (const it of items) {
+      const { docs, errors } = extractDocs(it.text);
+      const res = await importDocs(docs, it.name);
+      res.forEach(r => report.push({ name: it.name, r }));
+      errors.forEach(err => report.push({ name: it.name, error: err }));
+      if (docs.length && !errors.length) okNames.push(it.name);
+    }
+    const added = report.filter(x => x.r && x.r.result !== 'duplicate').length;
+    if (added) await save('Imported ' + added + ' submission(s)');
+    showImportReport(report);
+    renderAll();
+    return okNames;
+  }
+
+  function showImportReport(report) {
+    const el = $('import-results');
+    if (!report.length) { el.innerHTML = '<p class="notice notice-ok">Nothing new to import.</p>'; return; }
+    const c = { approved: 0, review: 0, duplicate: 0, error: 0 };
+    report.forEach(x => { if (x.error) c.error++; else c[x.r.result]++; });
+    el.innerHTML = '<div class="notice ' + (c.error || c.review ? 'notice-warn' : 'notice-ok') + '" style="margin-top:12px">' +
+      '<b>' + c.approved + '</b> approved automatically · <b>' + c.review + '</b> need review · <b>' + c.duplicate + '</b> already imported' + (c.error ? ' · <b>' + c.error + '</b> could not be read' : '') + '</div>' +
+      '<ul class="result-list">' + report.map(x => {
+        if (x.error) return '<li><span class="badge badge-bad">Error</span> ' + esc(x.name) + ': ' + esc(x.error) + '</li>';
+        const d = x.r.doc, s = studentById(d.studentId);
+        const who = s ? fullName(s) : (d.studentName || 'ID ' + d.studentId);
+        const b = { approved: '<span class="badge badge-ok">Approved</span>', review: '<span class="badge badge-warn">Review</span>', duplicate: '<span class="badge badge-neutral">Duplicate</span>' }[x.r.result];
+        return '<li>' + b + ' ' + esc(who) + ': ' + esc(d.periodStart) + ' to ' + esc(d.periodEnd) + ', ' + fmtH(WBL.totalHours(d)) + ' h' +
+          (x.r.rec && x.r.rec.flags.length ? '<div class="small muted">' + x.r.rec.flags.map(esc).join(' ') + '</div>' : '') + '</li>';
+      }).join('') + '</ul>';
+  }
+
+  $('check-inbox').addEventListener('click', async () => {
+    const inbox = await getDir(root, 'Inbox', true);
+    const files = [];
+    for await (const [name, h] of inbox.entries()) {
+      if (h.kind === 'file' && /\.(txt|wbl|json|eml)$/i.test(name)) files.push({ name, h });
+    }
+    if (!files.length) { $('import-results').innerHTML = '<p class="notice notice-warn" style="margin-top:12px">The Inbox folder is empty. Save the students\' email attachments into <code>' + esc(root.name) + '\\Inbox</code> first.</p>'; return; }
+    const items = [];
+    for (const f of files) items.push({ name: f.name, text: await (await f.h.getFile()).text() });
+    const ok = await importTexts(items);
+    // Move fully imported files to Inbox/Imported
+    const done = await getDir(inbox, 'Imported', true);
+    for (const f of files) {
+      if (!ok.includes(f.name)) continue;
+      try {
+        const blob = await f.h.getFile();
+        let target = f.name;
+        try { await done.getFileHandle(target); target = target.replace(/(\.[^.]+)$/, '_' + Date.now() + '$1'); } catch (e) { /* not there yet */ }
+        await writeFile(done, target, blob);
+        await inbox.removeEntry(f.name);
+      } catch (e) { console.warn('Could not move', f.name, e); }
+    }
+  });
+
+  async function importFileList(fileList) {
+    const items = [];
+    for (const f of fileList) items.push({ name: f.name, text: await f.text() });
+    await importTexts(items);
+  }
+  $('import-files').addEventListener('change', async e => { await importFileList(e.target.files); e.target.value = ''; });
+  const dz = $('drop-zone');
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+  dz.addEventListener('drop', async e => { e.preventDefault(); dz.classList.remove('over'); await importFileList(e.dataTransfer.files); });
+  $('paste-import').addEventListener('click', async () => {
+    const t = $('paste-box').value; if (!t.trim()) return;
+    await importTexts([{ name: 'Pasted text', text: t }]); $('paste-box').value = '';
+  });
+
+  // ---------------- roster CSV ----------------
+  function parseCsv(text) {
+    const rows = []; let row = [], cell = '', q = false;
+    text = text.replace(/^\uFEFF/, '');
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (q) { if (ch === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += ch; }
+      else if (ch === '"') q = true;
+      else if (ch === ',') { row.push(cell); cell = ''; }
+      else if (ch === '\n' || ch === '\r') { if (ch === '\r' && text[i + 1] === '\n') i++; row.push(cell); rows.push(row); row = []; cell = ''; }
+      else cell += ch;
+    }
+    if (cell || row.length) { row.push(cell); rows.push(row); }
+    return rows.filter(r => r.some(c => c.trim()));
+  }
+  const ROSTER_COLS = { studentid: 'studentId', id: 'studentId', firstname: 'firstName', first: 'firstName', lastname: 'lastName', last: 'lastName', program: 'program', employer: 'employer', jobtitle: 'jobTitle', worksupervisor: 'workSupervisor', worksupervisorcontact: 'workSupervisorContact', startdate: 'startDate', goalhours: 'goalHours', goal: 'goalHours' };
+  function normDate(v) {
+    v = (v || '').trim(); if (!v) return '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+    const m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+    if (m) { const y = m[3].length === 2 ? '20' + m[3] : m[3]; return y + '-' + m[1].padStart(2, '0') + '-' + m[2].padStart(2, '0'); }
+    return '';
+  }
+  $('roster-file').addEventListener('change', async e => {
+    const f = e.target.files[0]; e.target.value = '';
+    if (!f) return;
+    const rows = parseCsv(await f.text());
+    if (rows.length < 2) return ($('roster-results').innerHTML = '<p class="notice notice-bad">That file has no student rows.</p>');
+    const head = rows[0].map(h => ROSTER_COLS[h.toLowerCase().replace(/[^a-z]/g, '')] || null);
+    if (!head.includes('studentId') || !head.includes('firstName') || !head.includes('lastName')) {
+      return ($('roster-results').innerHTML = '<p class="notice notice-bad">The first row must have column names, including StudentID, FirstName and LastName.</p>');
+    }
+    let added = 0, updated = 0; const problems = [];
+    rows.slice(1).forEach((r, i) => {
+      const v = {}; head.forEach((k, j) => { if (k) v[k] = (r[j] || '').trim(); });
+      if (!v.studentId || !v.firstName || !v.lastName) { problems.push('Row ' + (i + 2) + ': missing ID or name'); return; }
+      if (v.startDate !== undefined) v.startDate = normDate(v.startDate);
+      if (v.goalHours !== undefined) v.goalHours = v.goalHours ? Number(v.goalHours) || '' : '';
+      Object.keys(v).forEach(k => { if (v[k] === '' && k !== 'goalHours') delete v[k]; });
+      const ex = studentById(v.studentId);
+      if (ex) { Object.assign(ex, v); updated++; }
+      else { data.students.push(Object.assign({ key: WBL.newKey(), active: true, createdAt: new Date().toISOString(), program: '', employer: '', goalHours: '' }, v)); added++; }
+    });
+    await save('Roster import: ' + added + ' added, ' + updated + ' updated');
+    $('roster-results').innerHTML = '<p class="notice notice-ok">' + added + ' students added, ' + updated + ' updated.</p>' +
+      (problems.length ? '<p class="notice notice-warn">' + problems.map(esc).join('<br>') + '</p>' : '');
+    renderAll();
+  });
+  $('roster-template').addEventListener('click', () => downloadCsv('WBL class list template.csv', [['StudentID', 'FirstName', 'LastName', 'Program', 'Employer', 'JobTitle', 'WorkSupervisor', 'WorkSupervisorContact', 'StartDate', 'GoalHours']]));
+
+  // ---------------- review ----------------
+  function renderReviewCount() {
+    const n = data.submissions.filter(x => x.status === 'review').length;
+    $('review-count').textContent = n; $('review-count').classList.toggle('hidden', !n);
+  }
+  async function renderReview() {
+    const list = data.submissions.filter(x => x.status === 'review').sort((a, b) => a.importedAt.localeCompare(b.importedAt));
+    const el = $('review-list');
+    if (!list.length) { el.innerHTML = '<div class="card"><p class="muted" style="margin:0">Nothing to review. 🎉</p></div>'; return; }
+    el.innerHTML = list.map(x => {
+      const s = studentById(x.studentId);
+      return '<div class="card review-card" data-id="' + esc(x.submissionId) + '">' +
+        '<div class="img-box">' + (x.hasImage ? '<img data-img="' + esc(x.submissionId) + '" alt="Redacted pay stub">' : '<span class="none">No photo</span>') + '</div>' +
+        '<div><h3>' + esc(s ? fullName(s) : (x.studentName || 'Unknown student')) + ' <span class="muted small">ID ' + esc(x.studentId) + '</span></h3>' +
+        '<dl class="kv"><dt>Type</dt><dd>' + (x.type === 'manual' ? 'Unpaid hours' : 'Pay stub') + '</dd>' +
+        '<dt>Employer</dt><dd>' + esc(x.employer) + '</dd>' +
+        '<dt>Dates</dt><dd>' + esc(fmtDate(x.periodStart)) + ' – ' + esc(fmtDate(x.periodEnd)) + '</dd>' +
+        '<dt>Hours</dt><dd>' + fmtH(x.regularHours) + (x.overtimeHours ? ' + ' + fmtH(x.overtimeHours) + ' OT' : '') + ' = ' + fmtH(x.hours) + '</dd>' +
+        (x.notes ? '<dt>Notes</dt><dd>' + esc(x.notes) + '</dd>' : '') + '</dl>' +
+        '<ul class="flags">' + x.flags.map(f => '<li>' + esc(f) + '</li>').join('') + '</ul>' +
+        '<div class="review-actions">' +
+        (s ? '<button class="btn-primary" data-act="approve">Approve</button>' : '') +
+        '<button class="btn-danger" data-act="reject">Reject</button>' +
+        (s ? '<span class="adj"><div><label>Regular</label><input type="number" step="0.01" min="0" class="adj-reg" value="' + x.regularHours + '"></div>' +
+          '<div><label>OT</label><input type="number" step="0.01" min="0" class="adj-ot" value="' + x.overtimeHours + '"></div>' +
+          '<button class="btn-secondary" data-act="adjust">Approve with these hours</button></span>' : '') +
+        '</div></div></div>';
+    }).join('');
+    el.querySelectorAll('img[data-img]').forEach(async img => { const u = await imageUrl(img.dataset.img); if (u) img.src = u; });
+  }
+  $('review-list').addEventListener('click', async e => {
+    const img = e.target.closest('img[data-img]'); if (img) return viewImage(img.dataset.img);
+    const b = e.target.closest('button[data-act]'); if (!b) return;
+    const card = b.closest('[data-id]'); const x = data.submissions.find(s => s.submissionId === card.dataset.id);
+    if (!x) return;
+    const act = b.dataset.act;
+    if (act === 'approve') { x.status = 'approved'; }
+    else if (act === 'reject') {
+      const why = prompt('Reason for rejecting (optional):'); if (why === null) return;
+      x.status = 'rejected'; x.rejectReason = why;
+    } else if (act === 'adjust') {
+      const reg = parseFloat(card.querySelector('.adj-reg').value) || 0, ot = parseFloat(card.querySelector('.adj-ot').value) || 0;
+      x.original = x.original || { regularHours: x.regularHours, overtimeHours: x.overtimeHours };
+      x.regularHours = reg; x.overtimeHours = ot; x.hours = WBL.round2(reg + ot); x.status = 'approved'; x.adjusted = true;
+    }
+    x.reviewedAt = new Date().toISOString();
+    await save((act === 'reject' ? 'Rejected ' : 'Approved ') + x.submissionId);
+    renderReview(); renderAll();
+  });
+
+  // ---------------- settings ----------------
+  function renderSettings() {
+    const s = data.settings;
+    $('s-school').value = s.schoolName; $('s-emails').value = s.emails.join(', '); $('s-appurl').value = s.appUrl;
+    $('s-goal').value = s.defaultGoal; $('s-weekly').value = s.weeklyMax; $('s-stale').value = s.staleDays;
+    $('s-term-start').value = s.termStart; $('s-term-end').value = s.termEnd;
+    $('last-backup').textContent = s.lastBackup ? 'Last backup: ' + new Date(s.lastBackup).toLocaleString() : 'Not backed up yet.';
+    $('folder-info').textContent = isDemo ? 'Practice data stored inside this browser. Choose a real folder before entering real students.' : 'Records are saved in the folder "' + root.name + '".';
+  }
+  $('settings-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const s = data.settings;
+    s.schoolName = $('s-school').value.trim();
+    s.emails = $('s-emails').value.split(/[,;\s]+/).map(x => x.trim()).filter(x => /.+@.+\..+/.test(x));
+    s.appUrl = $('s-appurl').value.trim();
+    s.defaultGoal = Number($('s-goal').value) || 250; s.weeklyMax = Number($('s-weekly').value) || 60; s.staleDays = Number($('s-stale').value) || 21;
+    s.termStart = $('s-term-start').value; s.termEnd = $('s-term-end').value;
+    await save('Settings changed'); renderSettings(); renderAll(); toast('Settings saved.');
+  });
+
+  // ---------------- backup ----------------
+  async function doBackup() {
+    let dest;
+    try { dest = await window.showDirectoryPicker({ id: 'wbl-backup', mode: 'readwrite' }); }
+    catch (e) { if (e.name !== 'AbortError') toast('Backup failed: ' + e.message); return; }
+    try {
+      const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
+      const bdir = await dest.getDirectoryHandle('WBL backup ' + stamp, { create: true });
+      data.settings.lastBackup = new Date().toISOString();
+      await save('Backup made');
+      await writeFile(bdir, DATA_FILE, JSON.stringify(data, null, 1));
+      const imgs = await getDir(root, 'images'); const out = await bdir.getDirectoryHandle('images', { create: true });
+      let n = 0;
+      for await (const [name, h] of imgs.entries()) { if (h.kind === 'file') { await writeFile(out, name, await h.getFile()); n++; } }
+      toast('Backup saved (' + data.students.length + ' students, ' + n + ' images).', 5000);
+      renderSettings(); renderBackupWarning();
+    } catch (e) { toast('Backup failed: ' + e.message, 8000); }
+  }
+  $('backup-btn').addEventListener('click', doBackup);
+
+  // ---------------- export ----------------
+  function csvCell(v) { v = v == null ? '' : String(v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+  function downloadCsv(name, rows) {
+    const blob = new Blob(['\uFEFF' + rows.map(r => r.map(csvCell).join(',')).join('\r\n')], { type: 'text/csv' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+  }
+  $('export-students').addEventListener('click', () => {
+    const rows = [['Student ID', 'Last Name', 'First Name', 'Program', 'Employer', 'Job Title', 'Workplace Supervisor', 'Supervisor Contact', 'Start Date', 'Goal Hours', 'Approved Hours', 'Hours In Review', 'Percent of Goal', 'Last Hours Date', 'Status']];
+    data.students.slice().sort((a, b) => (a.lastName + a.firstName).localeCompare(b.lastName + b.firstName)).forEach(s => {
+      const m = summarize(s);
+      rows.push([s.studentId, s.lastName, s.firstName, s.program, s.employer, s.jobTitle, s.workSupervisor, s.workSupervisorContact, s.startDate, m.goal, WBL.round2(m.hours), WBL.round2(m.pendingHours), Math.floor(m.pct), m.last, m.label]);
+    });
+    downloadCsv('WBL students ' + today() + '.csv', rows);
+  });
+  $('export-subs').addEventListener('click', () => {
+    const rows = [['Student ID', 'Student Name', 'Type', 'Employer', 'Period Start', 'Period End', 'Regular Hours', 'Overtime Hours', 'Total Hours', 'Status', 'Adjusted', 'Flags', 'Notes', 'Imported']];
+    data.submissions.slice().sort((a, b) => a.studentId.localeCompare(b.studentId) || a.periodStart.localeCompare(b.periodStart)).forEach(x => {
+      const s = studentById(x.studentId);
+      rows.push([x.studentId, s ? fullName(s) : x.studentName, x.type === 'manual' ? 'Unpaid' : 'Pay stub', x.employer, x.periodStart, x.periodEnd, x.regularHours, x.overtimeHours, x.hours, x.status, x.adjusted ? 'yes' : '', x.flags.join(' | '), x.notes, x.importedAt.slice(0, 10)]);
+    });
+    downloadCsv('WBL submissions ' + today() + '.csv', rows);
+  });
+
+  // ---------------- practice data ----------------
+  function seedDemo() {
+    const st = data.settings;
+    st.schoolName = st.schoolName || 'Practice School';
+    st.emails = ['wbl.supervisor@example.org'];
+    st.appUrl = st.appUrl || 'https://example.org/wbl/student/';
+    const y = new Date().getFullYear(), mo = new Date().getMonth();
+    st.termStart = (mo >= 7 ? y : y - 1) + '-08-15'; st.termEnd = (mo >= 7 ? y + 1 : y) + '-05-20';
+    const names = [['Ava', 'Martinez', 'Auto Technology', 'Quick Lube Plus'], ['Jordan', 'Lee', 'Culinary Arts', 'Main St Diner'], ['Mia', 'Johnson', 'Health Careers', 'Sunrise Care Center'],
+      ['Noah', 'Brown', 'Welding', 'Midwest Fabrication'], ['Liam', 'Davis', 'Construction', 'Buckeye Builders'], ['Emma', 'Wilson', 'Cosmetology', 'Shear Style Salon']];
+    names.forEach(([f, l, p, e], i) => {
+      const s = { studentId: String(10001 + i), firstName: f, lastName: l, program: p, employer: e, jobTitle: 'Student worker', workSupervisor: '', workSupervisorContact: '', startDate: st.termStart, goalHours: '', notes: '', key: WBL.newKey(), active: true, createdAt: new Date().toISOString() };
+      data.students.push(s);
+      const weeks = [10, 7, 12, 2, 0, 9][i];
+      for (let w = 0; w < weeks; w++) {
+        const end = new Date(Date.now() - (w * 14 + (i === 3 ? 30 : 3)) * 86400000).toISOString().slice(0, 10);
+        const start = new Date(WBL.parseDate(end) - 13 * 86400000).toISOString().slice(0, 10);
+        const hrs = [24, 30, 18, 20, 0, 22][i] + (w % 3);
+        data.submissions.push({ submissionId: WBL.newId('demo-'), studentId: s.studentId, studentName: f + ' ' + l, type: 'paystub', employer: e, periodStart: start, periodEnd: end, regularHours: hrs, overtimeHours: 0, hours: hrs, notes: '', entryMethod: 'typed', hasImage: false, flags: [], status: w === 0 && i === 1 ? 'review' : 'approved', importedAt: new Date().toISOString(), source: 'practice' });
+        if (w === 0 && i === 1) data.submissions[data.submissions.length - 1].flags = ['No pay stub photo was included.'];
+      }
+    });
+  }
+
+  // ---------------- test hook ----------------
+  // Lets automated tests open a folder without the picker dialog.
+  window.__wblOpenFolder = (h, demo) => openFolder(h, demo);
+  window.__wblData = () => data;
+
+  initSetup();
+})();
+
+</script>
+</body>
+</html>

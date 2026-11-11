@@ -1,7 +1,6 @@
 {
   "name": "wbl-tracker",
   "private": true,
-  "type": "module",
   "description": "Work-based learning hours tracker: student phone app + supervisor desktop app, no cloud storage.",
   "scripts": {
     "build": "node tools/build.mjs --all",
