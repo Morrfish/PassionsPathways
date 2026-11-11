@@ -1,0 +1,17 @@
+{
+  "id": "greene-ccc",
+  "schoolName": "Greene County Career Center",
+  "schoolShort": "Greene CCC",
+  "appName": "ClockedIn",
+  "website": "https://www.greeneccc.com/",
+  "state": "OH",
+  "logo": "logo.svg",
+  "icon": "icon-mark.svg",
+  "colors": {
+    "primary": "#335ba5",
+    "accent": "#40a2da"
+  },
+  "studentAppUrl": "https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/greene-ccc/student/",
+  "defaultGoalHours": 250,
+  "notes": "From greeneccc.com on 2026-11-11. Primary = navigation bar and link blue; accent = button light blue. Logo = site header SVG; icon = the G mark cropped from the same SVG."
+}

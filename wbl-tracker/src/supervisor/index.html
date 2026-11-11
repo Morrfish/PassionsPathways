@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{APP_NAME}} Supervisor – {{SCHOOL_SHORT}}</title>
+  <link rel="icon" href="{{LOGO_FILE}}">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="brand.css">
+  <link rel="stylesheet" href="supervisor.css">
+</head>
+<body>
+  <header class="appbar">
+    <img class="logo" src="{{LOGO_FILE}}" alt="{{SCHOOL_NAME}} logo">
+    <div class="titles">
+      <span class="school">{{SCHOOL_NAME}}</span>
+      <span class="app">{{APP_NAME}} · Supervisor</span>
+    </div>
+    <nav id="tabs" class="tabs hidden" aria-label="Sections">
+      <button data-tab="students" class="active">Students</button>
+      <button data-tab="import">Import</button>
+      <button data-tab="review">Review <span id="review-count" class="count hidden">0</span></button>
+      <button data-tab="settings">Settings</button>
+    </nav>
+    <div id="folder-status" class="folder-status hidden"></div>
+  </header>
+
+  <main id="main">
+    <!-- Setup -->
+    <section id="view-setup" class="view">
+      <div class="card setup">
+        <img class="ci-hero" src="{{CLOCKEDIN_LOGO}}" alt="ClockedIn">
+        <h2>Welcome</h2>
+        <p>This program keeps all work-based learning records in a <strong>folder you choose</strong>: on this computer or on your school's network drive. Nothing is sent to the internet.</p>
+        <div id="unsupported" class="notice notice-bad hidden">This browser can't save to folders. Open this file in <strong>Microsoft Edge</strong> or <strong>Google Chrome</strong>.</div>
+        <div id="reconnect-box" class="hidden">
+          <p>Last used folder: <strong id="reconnect-name"></strong></p>
+          <button class="btn-primary" id="reconnect-btn">Open my data folder</button>
+        </div>
+        <div class="setup-actions">
+          <button class="btn-primary" id="pick-folder">Choose data folder…</button>
+          <button class="btn-secondary" id="demo-btn">Try it with practice data</button>
+        </div>
+        <p class="hint">Tip: make a folder like <code>Documents\WBL Data</code> (or one on the school server), then pick it here. Every supervisor who shares the folder sees the same records.</p>
+      </div>
+    </section>
+
+    <!-- Students -->
+    <section id="view-students" class="view hidden">
+      <div id="backup-warning" class="notice notice-warn hidden"></div>
+      <div class="stats" id="stats"></div>
+      <div class="toolbar">
+        <input id="search" type="search" placeholder="Search name, ID, employer…" aria-label="Search students">
+        <select id="filter-program" aria-label="Program"><option value="">All programs</option></select>
+        <select id="filter-status" aria-label="Status">
+          <option value="">All statuses</option>
+          <option value="behind">Behind / no recent hours</option>
+          <option value="met">Goal met</option>
+          <option value="none">No submissions yet</option>
+        </select>
+        <span class="spacer"></span>
+        <button class="btn-secondary" id="print-qr-all">Print enrollment cards</button>
+        <button class="btn-secondary" id="export-students">Export to Excel</button>
+        <button class="btn-primary" id="add-student">+ Add student</button>
+      </div>
+      <div class="table-wrap">
+        <table class="grid" id="students-table">
+          <thead><tr>
+            <th data-sort="name">Student</th><th data-sort="program">Program</th><th data-sort="employer">Employer</th>
+            <th data-sort="approved" class="num">Hours</th><th data-sort="pct">Progress to goal</th><th data-sort="last">Last hours</th><th data-sort="status">Status</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p id="students-empty" class="muted hidden">No students yet. Add them one at a time, or import a class list on the Import tab.</p>
+    </section>
+
+    <!-- Import -->
+    <section id="view-import" class="view hidden">
+      <div class="card">
+        <h2>Import student submissions</h2>
+        <ol class="steps">
+          <li>In Outlook (or your email), select the students' emails and <strong>save the attachments</strong> into the <code>Inbox</code> folder inside your data folder.</li>
+          <li>Click <strong>Check Inbox folder</strong>. Imported files move to <code>Inbox\Imported</code>.</li>
+        </ol>
+        <div class="toolbar">
+          <button class="btn-primary" id="check-inbox">Check Inbox folder</button>
+          <label class="btn btn-secondary file-btn">Choose files…<input type="file" id="import-files" multiple accept=".txt,.wbl,.json,.eml"></label>
+        </div>
+        <div id="drop-zone" class="drop-zone">Or drag submission files here</div>
+        <details>
+          <summary>Student emailed it as text (no attachment)?</summary>
+          <p class="hint">Copy the whole email and paste it below.</p>
+          <textarea id="paste-box" rows="4" placeholder="Paste email text containing WBLDATA:…"></textarea>
+          <button class="btn-secondary" id="paste-import" style="margin-top:8px">Import pasted text</button>
+        </details>
+        <div id="import-results"></div>
+      </div>
+      <div class="card">
+        <h2>Import class list</h2>
+        <p>A CSV file (save from Excel as <em>CSV</em>) with columns:<br>
+          <code>StudentID, FirstName, LastName, Program, Employer, JobTitle, WorkSupervisor, WorkSupervisorContact, StartDate, GoalHours</code><br>
+          <span class="hint">Only StudentID, FirstName and LastName are required. Existing students are updated.</span></p>
+        <div class="toolbar">
+          <label class="btn btn-secondary file-btn">Choose CSV…<input type="file" id="roster-file" accept=".csv,text/csv"></label>
+          <button class="btn-secondary" id="roster-template">Download blank template</button>
+        </div>
+        <div id="roster-results"></div>
+      </div>
+    </section>
+
+    <!-- Review -->
+    <section id="view-review" class="view hidden">
+      <div class="toolbar">
+        <h2 style="margin:0">Needs review</h2>
+        <span class="spacer"></span>
+        <button class="btn-secondary" id="export-subs">Export all submissions</button>
+      </div>
+      <p class="muted">These submissions were flagged when imported. Check the photo against the numbers, then approve or reject.</p>
+      <div id="review-list"></div>
+    </section>
+
+    <!-- Settings -->
+    <section id="view-settings" class="view hidden">
+      <div class="card">
+        <h2>Program settings</h2>
+        <form id="settings-form">
+          <label for="s-school">School name</label>
+          <input id="s-school">
+          <label for="s-emails">Supervisor email address(es)</label>
+          <input id="s-emails" placeholder="you@school.org, coworker@school.org">
+          <p class="hint">Students can send to any of these. Separate several with commas.</p>
+          <label for="s-appurl">Student app web address</label>
+          <input id="s-appurl" placeholder="https://…/student/">
+          <p class="hint">Enrollment QR codes open this address on the student's phone.</p>
+          <div class="row">
+            <div><label for="s-goal">Default required hours</label><input id="s-goal" type="number" min="1"></div>
+            <div><label for="s-weekly">Flag weeks over (hours)</label><input id="s-weekly" type="number" min="1"></div>
+            <div><label for="s-stale">"No recent hours" after (days)</label><input id="s-stale" type="number" min="1"></div>
+          </div>
+          <div class="row">
+            <div><label for="s-term-start">School year / term start</label><input id="s-term-start" type="date"></div>
+            <div><label for="s-term-end">Term end</label><input id="s-term-end" type="date"></div>
+          </div>
+          <p class="hint">With term dates set, students are marked <em>Behind</em> when they're well under the pace needed to reach their goal by the end date.</p>
+          <button class="btn-primary" type="submit" style="margin-top:12px">Save settings</button>
+        </form>
+      </div>
+      <div class="card">
+        <h2>Backups</h2>
+        <p>Your data folder holds the only copy of these records. Back it up to a USB drive or district network drive at least weekly.</p>
+        <p id="last-backup" class="muted"></p>
+        <button class="btn-primary" id="backup-btn">Back up now…</button>
+        <p class="hint">The program also saves a daily snapshot inside your data folder (<code>backups</code>), but that won't help if this computer is lost.</p>
+      </div>
+      <div class="card">
+        <h2>Data folder</h2>
+        <p id="folder-info" class="muted"></p>
+        <button class="btn-secondary" id="switch-folder">Switch folder…</button>
+      </div>
+    </section>
+  </main>
+  <footer class="powered{{POWERED_CLASS}}"><span>Powered by</span><img src="{{CLOCKEDIN_LOGO}}" alt="ClockedIn"></footer>
+
+  <!-- Student editor / detail dialog -->
+  <dialog id="student-dialog">
+    <form id="student-form" method="dialog">
+      <div class="dlg-head"><h2 id="sd-title">Student</h2><button type="button" class="btn-secondary close-dlg" aria-label="Close">✕</button></div>
+      <div class="dlg-body">
+        <div class="sd-cols">
+          <div>
+            <div class="row">
+              <div><label for="sd-first">First name</label><input id="sd-first" required></div>
+              <div><label for="sd-last">Last name</label><input id="sd-last" required></div>
+            </div>
+            <div class="row">
+              <div><label for="sd-id">Student ID</label><input id="sd-id" required></div>
+              <div><label for="sd-program">Program</label><input id="sd-program" list="program-list"></div>
+            </div>
+            <datalist id="program-list"></datalist>
+            <div class="row">
+              <div><label for="sd-employer">Employer</label><input id="sd-employer"></div>
+              <div><label for="sd-job">Job title</label><input id="sd-job"></div>
+            </div>
+            <div class="row">
+              <div><label for="sd-ws">Workplace supervisor</label><input id="sd-ws"></div>
+              <div><label for="sd-wsc">Their phone / email</label><input id="sd-wsc"></div>
+            </div>
+            <div class="row">
+              <div><label for="sd-start">Start date</label><input id="sd-start" type="date"></div>
+              <div><label for="sd-goal">Required hours</label><input id="sd-goal" type="number" min="1"></div>
+            </div>
+            <label for="sd-notes">Notes</label>
+            <textarea id="sd-notes" rows="2"></textarea>
+          </div>
+          <div id="sd-enroll" class="enroll-box">
+            <h3>Phone setup</h3>
+            <div id="sd-qr" class="qr"></div>
+            <p class="hint">The student scans this with their phone camera to set up the app. Keep it private: it works like a password for their submissions.</p>
+            <div class="enroll-actions">
+              <button type="button" class="btn-secondary" id="sd-print">Print card</button>
+              <button type="button" class="btn-secondary" id="sd-copy">Copy code</button>
+              <button type="button" class="btn-danger" id="sd-rekey" title="Use if a phone is lost; the old phone can no longer send">New code</button>
+            </div>
+          </div>
+        </div>
+        <div id="sd-history"></div>
+      </div>
+      <div class="dlg-foot">
+        <button type="button" class="btn-danger" id="sd-delete">Delete student</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn-secondary close-dlg">Cancel</button>
+        <button type="submit" class="btn-primary" id="sd-save">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="image-dialog" class="image-dialog">
+    <img alt="Pay stub image"><button class="btn-secondary close-dlg">Close</button>
+  </dialog>
+
+  <div id="print-area" class="print-area"></div>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <script>window.WBL_BRAND = {{BRAND_JSON}};</script>
+  <script src="qrcode.js"></script>
+  <script src="wbl-format.js"></script>
+  <script src="supervisor.js"></script>
+</body>
+</html>
