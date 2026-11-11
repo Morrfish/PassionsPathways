@@ -133,7 +133,8 @@ export async function build(id) {
 
   // ---- student (static files for a web host) ----
   const sdir = path.join(out, 'student');
-  const extra = { LOGO_FILE: logoName };
+  const powered = b.showPoweredBy === false ? ' hidden' : '';
+  const extra = { LOGO_FILE: logoName, CLOCKEDIN_LOGO: 'clockedin-logo.png', POWERED_CLASS: powered };
   write(path.join(sdir, 'index.html'), fill(read('student/index.html'), b, extra));
   write(path.join(sdir, 'sw.js'), fill(read('student/sw.js'), b, extra));
   write(path.join(sdir, 'manifest.webmanifest'), fill(read('student/manifest.webmanifest'), b, extra));
@@ -141,6 +142,7 @@ export async function build(id) {
   write(path.join(sdir, 'student.js'), read('student/student.js'));
   for (const [n, t] of Object.entries(shared)) write(path.join(sdir, n), t);
   fs.copyFileSync(b.logoPath, path.join(sdir, logoName));
+  fs.copyFileSync(path.join(SRC, 'shared', 'clockedin-logo.png'), path.join(sdir, 'clockedin-logo.png'));
   let icons = false;
   if (!noIcons) icons = await renderIcons(b, sdir);
   if (!icons) {
@@ -150,7 +152,8 @@ export async function build(id) {
 
   // ---- supervisor (one self-contained HTML file) ----
   const logoData = 'data:' + MIME[logoExt] + ';base64,' + fs.readFileSync(b.logoPath).toString('base64');
-  let shtml = fill(read('supervisor/index.html'), b, { LOGO_FILE: logoData });
+  const ciData = 'data:image/png;base64,' + fs.readFileSync(path.join(SRC, 'shared', 'clockedin-logo.png')).toString('base64');
+  let shtml = fill(read('supervisor/index.html'), b, { LOGO_FILE: logoData, CLOCKEDIN_LOGO: ciData, POWERED_CLASS: powered });
   shtml = inlineSingleFile(shtml, Object.assign({}, shared, {
     'supervisor.css': read('supervisor/supervisor.css'), 'supervisor.js': read('supervisor/supervisor.js'), 'qrcode.js': read('vendor/qrcode.js')
   }));

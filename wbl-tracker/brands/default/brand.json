@@ -5,12 +5,14 @@
   "appName": "ClockedIn",
   "website": "",
   "state": "OH",
-  "logo": "logo.svg",
+  "logo": "logo.png",
   "colors": {
-    "primary": "#1f4e79",
-    "accent": "#e8a317"
+    "primary": "#0b1f3f",
+    "accent": "#00a89b"
   },
   "studentAppUrl": "https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/default/student/",
   "defaultGoalHours": 250,
-  "notes": "Unbranded version. Copy this folder to make a new school brand, or use the add-school skill."
+  "notes": "Unbranded ClockedIn version. Logo, colors (navy #011736-ish primary, teal #00a89b accent) and clipboard icon come from the ClockedIn logo. Copy this folder to make a new school brand, or use the wbl-add-school skill.",
+  "icon": "icon-mark.png",
+  "showPoweredBy": false
 }

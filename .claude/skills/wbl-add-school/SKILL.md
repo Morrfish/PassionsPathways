@@ -14,6 +14,12 @@ repository. Every school is a folder in `wbl-tracker/brands/<school-id>/` holdin
 
 `brands/default/` is the unbranded version. Never edit it for a specific school.
 
+Every school's version also shows the **ClockedIn product logo**
+(`wbl-tracker/src/shared/clockedin-logo.png`): it sits at the top of the phone's welcome screen,
+on the supervisor's setup screen, and in a small "Powered by ClockedIn" footer. The build adds it
+automatically. Don't remove it, and don't use it as a school's logo. (`"showPoweredBy": false` is only
+for the unbranded version, which already uses the ClockedIn logo in its header.)
+
 The user is a teacher, not a developer. Talk in plain language, show them pictures of the
 result, and keep technical detail out of the final message unless they ask.
 

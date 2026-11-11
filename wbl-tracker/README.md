@@ -8,6 +8,10 @@ keeps the records on a school computer or the school server. **No cloud storage.
 | Student app | Phone web app, installed with "Add to Home Screen" | Hosted as plain files on any HTTPS site. It holds no student data |
 | Supervisor app | One file, `ClockedIn Supervisor.html` | Opened in Edge/Chrome on the supervisor's PC. Records go in a folder they choose (PC or network drive) |
 
+Every school's version shows the ClockedIn logo (`src/shared/clockedin-logo.png`) on the
+welcome and setup screens, with "Powered by ClockedIn" at the bottom. The unbranded `default`
+version uses it as its main logo, with the navy/teal colors and the clipboard as its phone icon.
+
 ## How a submission travels
 1. The supervisor adds a student. The app makes a **QR code** that holds that student's
    private signing key.

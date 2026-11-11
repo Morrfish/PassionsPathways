@@ -90,3 +90,9 @@ textarea { min-height: 80px; resize: vertical; }
   position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #222; color: #fff;
   padding: 12px 18px; border-radius: 10px; z-index: 1000; max-width: calc(100% - 32px); box-shadow: var(--shadow);
 }
+
+/* ClockedIn product mark (shown in every school's version) */
+.ci-hero { display: block; width: 220px; max-width: 70%; height: auto; margin: 4px auto 16px; }
+.powered { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--muted); font-size: .8rem; padding: 8px 16px 24px; }
+.powered img { height: 22px; width: auto; }
+@media print { .powered { display: none; } }
