@@ -14,6 +14,11 @@ supervisor's computer.
 | Pay stub photo | Send a **redacted** photo (only dates and hours visible) plus the numbers |
 | Devices | Supervisor: Windows PC. Students: their own iPhone or Android phones |
 | What's tracked | Paid hours from stubs, required-hours goals, employer and job info, employer evaluations, unpaid/hand-logged hours |
+| Required hours | At least **250** (configurable per program) |
+| Supervisors | Possibly **several**; a student can be set up to send to more than one email |
+| Where data lives | Supervisor PC to start, then the **school's own server** (the design supports both) |
+| Evaluation form | School will provide; build the form to match it |
+| State | **Ohio**; export format to be confirmed (likely EMIS reporting through Ohio DEW) |
 
 ## How it works
 
@@ -92,6 +97,26 @@ hmac }`
 SQLite. Redacted images are about 150 KB each, roughly 2 GB a year, and they can
 be archived by school year.
 
+## Where student data lives (and who can reach it)
+| Place | What's there | Who controls it |
+|---|---|---|
+| Student's phone | Their own submissions until sent; original photos are deleted right after redaction | The student |
+| Email in transit and in mailboxes | The `.wbl` files (hours, dates, employer, redacted image) | The district's email system. If it's Google Workspace or Microsoft 365, the files sit on their servers under the district's existing agreement, the same as any other school email |
+| Supervisor PC or **school server** | The database and all records | The school/district only |
+| App hosting (e.g., GitHub Pages or the school's web server) | App code only, **no student data** | Whoever hosts it; the school server works too |
+
+The supervisor app can delete each email after importing it, to keep copies out of mailboxes.
+
+### Several supervisors on a school server
+- **Phase 1:** a single supervisor PC with a local database.
+- **Later:** a small "WBL Server" program runs on the school's server and holds
+  the one shared database. Each supervisor's PC runs the desktop app, which
+  connects to it over the school network. Everyone sees the same totals, and
+  each supervisor can filter to their own students.
+- **Students and multiple emails:** the enrollment QR code can list several
+  supervisor addresses. The student picks one or more when sending, and the
+  `submissionId` keeps duplicates from being counted twice.
+
 ## Privacy notes
 - Records are FERPA-protected student records kept on district hardware. Check
   the district's data policy and whether the student email accounts are
@@ -113,10 +138,8 @@ be archived by school year.
 5. **Polish:** Windows installer, optional IMAP auto-import, pilot with one class.
 
 ## Open questions
-- Required hours for each program (one number, or different for each program or
-  grade?)
-- Is there an existing evaluation form or rubric to copy?
-- Do students have district email on their phones, or personal email?
-- Will one supervisor or several share the data? (Several would need a shared
-  network-drive database or a merge feature.)
-- Are there any state reporting formats the export must match?
+- Evaluation form (school is getting a copy)
+- Ohio reporting format (EMIS or other; school is checking)
+- Does the district use Google Workspace or Microsoft 365 for email? Who manages
+  the school server (district IT)?
+- Do students send from district email or personal email?
