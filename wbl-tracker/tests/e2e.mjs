@@ -13,6 +13,7 @@ const { chromium, devices } = createRequire(import.meta.url)('playwright');
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const brand = process.argv[2] || 'default';
 const DIST = path.join(ROOT, 'dist', brand);
+const SUP = fs.readdirSync(path.join(DIST, 'supervisor')).find(f => f.endsWith(' Supervisor.html'));
 const SHOTS = process.env.SHOTS || '';
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.webmanifest': 'application/manifest+json', '.jpg': 'image/jpeg' };
 
@@ -41,7 +42,7 @@ try {
   console.log('Supervisor app');
   const sup = await (await browser.newContext({ viewport: { width: 1280, height: 860 }, acceptDownloads: true })).newPage();
   const errs = []; sup.on('pageerror', e => errs.push(e.message));
-  await sup.goto(base + '/supervisor/' + encodeURIComponent('WBL Supervisor.html'));
+  await sup.goto(base + '/supervisor/' + encodeURIComponent(SUP));
   check(await sup.evaluate(() => typeof window.showDirectoryPicker === 'function'), 'folder picker available in Chromium');
   await shot(sup, '01-supervisor-setup');
   // Open a private browser folder (stands in for a real folder picked in the dialog).
@@ -172,7 +173,7 @@ try {
 
   // Practice data mode renders
   const demo = await (await browser.newContext({ viewport: { width: 1280, height: 860 } })).newPage();
-  await demo.goto(base + '/supervisor/' + encodeURIComponent('WBL Supervisor.html'));
+  await demo.goto(base + '/supervisor/' + encodeURIComponent(SUP));
   await demo.click('#demo-btn');
   await demo.waitForSelector('#students-table tbody tr');
   check((await demo.locator('#students-table tbody tr').count()) >= 6, 'practice data loads');

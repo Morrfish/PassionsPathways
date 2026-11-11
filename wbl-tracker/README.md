@@ -1,4 +1,4 @@
-# WBL Hours: work-based learning tracker
+# ClockedIn: work-based learning hours tracker
 
 Students on job sites send their hours from their phones. The school's WBL supervisor
 keeps the records on a school computer or the school server. **No cloud storage.**
@@ -6,7 +6,7 @@ keeps the records on a school computer or the school server. **No cloud storage.
 | Part | What it is | Where it runs |
 |---|---|---|
 | Student app | Phone web app, installed with "Add to Home Screen" | Hosted as plain files on any HTTPS site. It holds no student data |
-| Supervisor app | One file, `WBL Supervisor.html` | Opened in Edge/Chrome on the supervisor's PC. Records go in a folder they choose (PC or network drive) |
+| Supervisor app | One file, `ClockedIn Supervisor.html` | Opened in Edge/Chrome on the supervisor's PC. Records go in a folder they choose (PC or network drive) |
 
 ## How a submission travels
 1. The supervisor adds a student. The app makes a **QR code** that holds that student's
@@ -50,6 +50,12 @@ node tests/e2e.mjs <id>                 # full loop in Chromium (SHOTS=dir saves
 ```
 Adding a school: use the **wbl-add-school** skill (`.claude/skills/wbl-add-school/`) and give it
 the school's website.
+
+## Live student app (GitHub Pages, from the `main` branch)
+- Unbranded: https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/default/student/
+- Greene CCC: https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/greene-ccc/student/
+
+Students don't type these addresses: the enrollment QR code opens them.
 
 ## Schools
 | id | School | Source |

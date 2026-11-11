@@ -1,16 +1,16 @@
 ---
 name: wbl-add-school
-description: Add a new school to the WBL Hours tracker (work-based learning hours app for vocational / career-tech schools) with that school's colors and logo pulled from its website, then build its branded student phone app and supervisor app. Use whenever the user wants to add, brand, set up, re-skin, or update a school, district, career center, or JVSD for the WBL tracker or "WBL Hours" app, gives a school website and asks for a version for them, or wants to change a school's logo/colors/name in the tracker, even if they don't say "skill" or "brand".
+description: Add a new school to ClockedIn, the WBL (work-based learning) hours tracker app for vocational / career-tech schools, with that school's colors and logo pulled from its website, then build its branded student phone app and supervisor app. Use whenever the user wants to add, brand, set up, re-skin, or update a school, district, career center, or JVSD for the WBL tracker or "WBL Hours" app, gives a school website and asks for a version for them, or wants to change a school's logo/colors/name in the tracker, even if they don't say "skill" or "brand".
 ---
 
-# Add a school to the WBL Hours tracker
+# Add a school to ClockedIn (the WBL hours tracker)
 
 The WBL tracker lives in the `wbl-tracker/` folder of the `morrfish/passionspathways`
 repository. Every school is a folder in `wbl-tracker/brands/<school-id>/` holding a
 `brand.json`, a logo, and an optional square icon. A build script turns a brand folder into:
 
 - `dist/<school-id>/student/`: the phone app (static files to host on any HTTPS site)
-- `dist/<school-id>/supervisor/WBL Supervisor.html`: one file the supervisor opens in Edge/Chrome
+- `dist/<school-id>/supervisor/ClockedIn Supervisor.html`: one file the supervisor opens in Edge/Chrome
 
 `brands/default/` is the unbranded version. Never edit it for a specific school.
 
@@ -94,22 +94,24 @@ separate symbol (a letter mark, mascot, or emblem), make a square icon of just t
   "id": "<id>",
   "schoolName": "Full School Name",
   "schoolShort": "Short Name",
-  "appName": "WBL Hours",
+  "appName": "ClockedIn",
   "website": "<url>",
   "state": "OH",
   "logo": "logo.svg",
   "icon": "icon-mark.svg",
   "colors": { "primary": "#335ba5", "accent": "#40a2da" },
-  "studentAppUrl": "",
+  "studentAppUrl": "https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/<id>/student/",
   "defaultGoalHours": 250,
   "notes": "Where each choice came from, e.g. primary = nav bar blue on <url> (date)."
 }
 ```
 - Optional: `colors.logoBg`, `colors.onPrimary`, `colors.onAccent`, `colors.link`. Only add these
   to override the automatic choices.
-- Keep `appName` as "WBL Hours" unless the user names the app something else.
-- `studentAppUrl` is the address where `dist/<id>/student/` will be hosted, if the user knows
-  it. The supervisor can also type it under Settings later.
+- Keep `appName` as "ClockedIn" unless the user names the app something else.
+- `studentAppUrl`: the student app is hosted free on GitHub Pages from the repo's `main`
+  branch, so use `https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/<id>/student/`
+  unless the user says it's hosted somewhere else. It only goes live after the branch is merged
+  into `main`. Offer to open a pull request.
 - `state`: the school's state abbreviation.
 
 ### 6. Build and test
@@ -138,7 +140,7 @@ In plain language:
 - which logo and colors you used, and where on their site they came from
 - a phone screenshot and a supervisor screenshot (send the files)
 - the files to hand over:
-  - `wbl-tracker/dist/<id>/supervisor/WBL Supervisor.html` goes to the supervisor's computer
+  - `wbl-tracker/dist/<id>/supervisor/ClockedIn Supervisor.html` goes to the supervisor's computer
   - `wbl-tracker/dist/<id>/student/` goes on a web host
 - anything you guessed that they should confirm, for example "the site uses two blues, so I
   used the darker one for headers"
@@ -146,4 +148,4 @@ In plain language:
 ## Changing an existing school
 Edit `brands/<id>/brand.json` or the logo files, then repeat steps 6–8. A school's supervisor
 data is never in the repo. It lives in their own data folder, so rebuilding doesn't touch
-anyone's records. A supervisor only has to replace their `WBL Supervisor.html` file.
+anyone's records. A supervisor only has to replace their `ClockedIn Supervisor.html` file.

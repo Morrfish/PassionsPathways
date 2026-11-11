@@ -367,7 +367,7 @@
     const logo = document.querySelector('.appbar .logo').src;
     $('print-area').innerHTML = '<div class="print-cards">' + list.map(s =>
       '<div class="print-card"><img class="logo" src="' + esc(logo) + '" alt=""><h3>' + esc(fullName(s)) + '</h3>' +
-      '<p>WBL Hours app: phone setup</p><div class="qr">' + qrSvg(WBL.enrollmentUrl(data.settings.appUrl, enrollFor(s)), 3) + '</div>' +
+      '<p>' + esc(BRAND.appName || 'ClockedIn') + ' app: phone setup</p><div class="qr">' + qrSvg(WBL.enrollmentUrl(data.settings.appUrl, enrollFor(s)), 3) + '</div>' +
       '<p><b>1.</b> Open your phone camera and point it at this code.<br><b>2.</b> Tap the link, then choose <i>Add to Home Screen</i>.</p>' +
       '<p style="font-size:9pt">Keep this card private. Student ID ' + esc(s.studentId) + '</p></div>').join('') + '</div>';
     setTimeout(() => window.print(), 50);

@@ -1,6 +1,6 @@
 {
-  "name": "WBL Hours – Greene CCC",
-  "short_name": "WBL Hours",
+  "name": "ClockedIn – Greene CCC",
+  "short_name": "ClockedIn",
   "description": "Send your work-based learning hours to your supervisor.",
   "start_url": "./",
   "scope": "./",

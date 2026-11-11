@@ -9,7 +9,7 @@
  *
  * Output (dist/<brand>/):
  *   student/                      the phone app; host these files on any HTTPS web server
- *   supervisor/WBL Supervisor.html  one self-contained file; copy it to the supervisor's PC
+ *   supervisor/<AppName> Supervisor.html  one self-contained file; copy it to the supervisor's PC
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -45,7 +45,7 @@ export function loadBrand(id) {
   c.onAccent = c.onAccent || onColor(c.accent);
   c.link = c.link || readableOnWhite(c.primary);
   c.logoBg = c.logoBg || '#ffffff';  // tile behind the logo in the header; set dark for white logos
-  b.appName = b.appName || 'WBL Hours';
+  b.appName = b.appName || 'ClockedIn';
   b.schoolShort = b.schoolShort || b.schoolName;
   b.defaultGoalHours = b.defaultGoalHours || 250;
   return b;
@@ -154,13 +154,14 @@ export async function build(id) {
   shtml = inlineSingleFile(shtml, Object.assign({}, shared, {
     'supervisor.css': read('supervisor/supervisor.css'), 'supervisor.js': read('supervisor/supervisor.js'), 'qrcode.js': read('vendor/qrcode.js')
   }));
-  write(path.join(out, 'supervisor', 'WBL Supervisor.html'), shtml);
+  const supName = b.appName + ' Supervisor.html';
+  write(path.join(out, 'supervisor', supName), shtml);
   write(path.join(out, 'supervisor', 'README.txt'),
-`WBL Supervisor: ${b.schoolName}
+`${b.appName} Supervisor: ${b.schoolName}
 
-1. Copy "WBL Supervisor.html" to the supervisor's computer (for example, the Desktop).
+1. Copy "${supName}" to the supervisor's computer (for example, the Desktop).
 2. Make a folder for the records, for example Documents\\WBL Data, or a folder on the school network drive.
-3. Double-click "WBL Supervisor.html". It opens in Microsoft Edge or Google Chrome.
+3. Double-click "${supName}". It opens in Microsoft Edge or Google Chrome.
 4. Click "Choose data folder..." and pick the folder from step 2.
 5. Under Settings, enter your email address(es) and the student app web address.
 

@@ -1,4 +1,4 @@
-# WBL Tracker: Plan
+# ClockedIn (WBL Tracker): Plan
 
 A work-based learning (WBL) hours tracker for vocational schools. Students on job
 sites submit hours from their phones, and the school WBL supervisor tracks
@@ -70,7 +70,7 @@ hmac }`
   detected.
 
 ### 3. Supervisor app (Windows)
-- **Built (phase 1):** one HTML file, `WBL Supervisor.html`, opened in Edge or
+- **Built (phase 1):** one HTML file, `ClockedIn Supervisor.html`, opened in Edge or
   Chrome. There's nothing to install. Records save to a folder the supervisor
   picks: `wbl-data.json`, an `images/` folder, an `Inbox/` folder, and daily
   snapshots in `backups/`.

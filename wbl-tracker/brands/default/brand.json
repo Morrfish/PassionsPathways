@@ -2,7 +2,7 @@
   "id": "default",
   "schoolName": "Your School Name",
   "schoolShort": "Your School",
-  "appName": "WBL Hours",
+  "appName": "ClockedIn",
   "website": "",
   "state": "OH",
   "logo": "logo.svg",
@@ -10,7 +10,7 @@
     "primary": "#1f4e79",
     "accent": "#e8a317"
   },
-  "studentAppUrl": "",
+  "studentAppUrl": "https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/default/student/",
   "defaultGoalHours": 250,
   "notes": "Unbranded version. Copy this folder to make a new school brand, or use the add-school skill."
 }

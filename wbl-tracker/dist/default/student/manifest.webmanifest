@@ -1,6 +1,6 @@
 {
-  "name": "WBL Hours – Your School",
-  "short_name": "WBL Hours",
+  "name": "ClockedIn – Your School",
+  "short_name": "ClockedIn",
   "description": "Send your work-based learning hours to your supervisor.",
   "start_url": "./",
   "scope": "./",
