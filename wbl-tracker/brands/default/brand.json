@@ -1,0 +1,16 @@
+{
+  "id": "default",
+  "schoolName": "Your School Name",
+  "schoolShort": "WBL",
+  "appName": "WBL Hours",
+  "website": "",
+  "state": "OH",
+  "logo": "logo.svg",
+  "colors": {
+    "primary": "#1f4e79",
+    "accent": "#e8a317"
+  },
+  "studentAppUrl": "",
+  "defaultGoalHours": 250,
+  "notes": "Unbranded version. Copy this folder to make a new school brand, or use the add-school skill."
+}
