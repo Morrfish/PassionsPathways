@@ -29,7 +29,10 @@
       settings: {
         schoolName: BRAND.schoolName || '', emails: [], appUrl: BRAND.studentAppUrl || '',
         defaultGoal: BRAND.defaultGoalHours || 250, weeklyMax: 60, staleDays: 21,
-        termStart: '', termEnd: '', lastBackup: ''
+        termStart: '', termEnd: '', lastBackup: '',
+        emailProvider: (BRAND.email && BRAND.email.provider) || '', googleClientId: (BRAND.email && BRAND.email.googleClientId) || '',
+        msClientId: (BRAND.email && BRAND.email.microsoftClientId) || '', msTenant: (BRAND.email && BRAND.email.microsoftTenant) || '',
+        emailLastCheck: '', emailAccount: ''
       },
       students: [], submissions: [], log: []
     };
@@ -172,7 +175,7 @@
     document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
     $('view-' + name).classList.remove('hidden');
     if (name === 'review') renderReview();
-    if (name === 'settings') renderSettings();
+    if (name === 'settings') { renderSettings(); renderEmailSettings(); }
     if (name === 'students') renderStudents();
   }
   $('tabs').addEventListener('click', e => { const b = e.target.closest('button[data-tab]'); if (b) showTab(b.dataset.tab); });
@@ -208,7 +211,7 @@
   }
 
   // ---------------- students view ----------------
-  function renderAll() { renderStudents(); renderReviewCount(); renderBackupWarning(); }
+  function renderAll() { renderStudents(); renderReviewCount(); renderBackupWarning(); renderEmailStatus(); }
 
   function renderBackupWarning() {
     const lb = data.settings.lastBackup;
@@ -478,7 +481,7 @@
     return out;
   }
 
-  async function importTexts(items) {
+  async function importTexts(items, target) {
     // items: [{ name, text }]
     const report = [];
     const okNames = [];
@@ -491,13 +494,13 @@
     }
     const added = report.filter(x => x.r && x.r.result !== 'duplicate').length;
     if (added) await save('Imported ' + added + ' submission(s)');
-    showImportReport(report);
+    showImportReport(report, target);
     renderAll();
     return okNames;
   }
 
-  function showImportReport(report) {
-    const el = $('import-results');
+  function showImportReport(report, target) {
+    const el = target || $('import-results');
     if (!report.length) { el.innerHTML = '<p class="notice notice-ok">Nothing new to import.</p>'; return; }
     const c = { approved: 0, review: 0, duplicate: 0, error: 0 };
     report.forEach(x => { if (x.error) c.error++; else c[x.r.result]++; });
@@ -714,6 +717,73 @@
       rows.push([x.studentId, s ? fullName(s) : x.studentName, x.type === 'manual' ? 'Unpaid' : 'Pay stub', x.employer, x.periodStart, x.periodEnd, x.regularHours, x.overtimeHours, x.hours, x.status, x.adjusted ? 'yes' : '', x.flags.join(' | '), x.notes, x.importedAt.slice(0, 10)]);
     });
     downloadCsv('WBL submissions ' + today() + '.csv', rows);
+  });
+
+  // ---------------- email ----------------
+  function emailCfg() {
+    const s = data.settings;
+    return { provider: s.emailProvider, clientId: s.emailProvider === 'google' ? s.googleClientId : s.emailProvider === 'microsoft' ? s.msClientId : '', tenant: s.msTenant };
+  }
+  function renderEmailStatus() {
+    if (!data) return;
+    const s = data.settings, c = emailCfg();
+    const name = { google: 'Google', microsoft: 'Microsoft 365' }[c.provider];
+    let msg;
+    if (!c.provider || !c.clientId) msg = 'Email isn\'t set up yet. Your district IT does a one-time setup; then enter it under Settings.';
+    else msg = 'Connected to ' + name + (s.emailAccount ? ' (' + s.emailAccount + ')' : '') + '. ' +
+      (s.emailLastCheck ? 'Last checked ' + new Date(s.emailLastCheck).toLocaleString() + '.' : 'Not checked yet.');
+    if (!WBLMail.canUse()) msg = 'To use email, open the supervisor app from its web address' + (BRAND.supervisorAppUrl ? ': ' + BRAND.supervisorAppUrl : '') + ' (not a saved copy of the file).';
+    $('email-status').textContent = msg;
+    $('email-setup-link').classList.toggle('hidden', !!(c.provider && c.clientId));
+  }
+  $('email-setup-link').addEventListener('click', () => { showTab('settings'); $('email-settings').scrollIntoView(); });
+
+  $('check-email').addEventListener('click', async () => {
+    const c = emailCfg();
+    if (!c.provider || !c.clientId) { showTab('settings'); $('email-settings').scrollIntoView(); return toast('Set up the email connection first.'); }
+    // Open the sign-in window right away (inside the click) so pop-up blockers allow it.
+    const popup = WBLMail.canUse() && WBLMail.needsPopup(c.provider) ? window.open('', 'clockedin-signin', 'width=520,height=680') : null;
+    const btn = $('check-email'); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Checking email…';
+    const started = new Date().toISOString();
+    const s = data.settings;
+    let since;
+    if (s.emailLastCheck) since = Date.parse(s.emailLastCheck) - 2 * 86400000; // overlap; duplicates are skipped
+    else { since = Date.now() - 90 * 86400000; if (s.termStart) since = Math.max(since, WBL.parseDate(s.termStart).getTime()); }
+    try {
+      const res = await WBLMail.fetchSubmissions(Object.assign({ since, popup }, c));
+      s.emailAccount = res.account || s.emailAccount;
+      if (!res.more) s.emailLastCheck = started;
+      const el = $('email-results');
+      if (res.items.length) await importTexts(res.items, el);
+      else el.innerHTML = '<p class="notice notice-ok">No new ClockedIn emails.</p>';
+      await save('Checked email: ' + res.items.length + ' item(s)');
+      if (res.more) el.insertAdjacentHTML('beforeend', '<p class="notice notice-warn">There are more emails to check. Click the button again.</p>');
+      renderEmailStatus();
+    } catch (e) {
+      if (popup && !popup.closed) popup.close();
+      $('email-results').innerHTML = '<p class="notice notice-bad">' + esc(e.message) + '</p>';
+    } finally { btn.disabled = false; btn.textContent = label; }
+  });
+
+  function renderEmailSettings() {
+    const s = data.settings;
+    $('s-email-provider').value = s.emailProvider; $('s-google-id').value = s.googleClientId; $('s-ms-id').value = s.msClientId; $('s-ms-tenant').value = s.msTenant;
+    $('redirect-uri').textContent = WBLMail.redirectUri();
+    toggleEmailFields();
+  }
+  function toggleEmailFields() {
+    const p = $('s-email-provider').value;
+    $('email-google').classList.toggle('hidden', p !== 'google'); $('email-ms').classList.toggle('hidden', p !== 'microsoft');
+  }
+  $('s-email-provider').addEventListener('change', toggleEmailFields);
+  $('email-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const s = data.settings;
+    const prev = s.emailProvider + s.googleClientId + s.msClientId + s.msTenant;
+    s.emailProvider = $('s-email-provider').value; s.googleClientId = $('s-google-id').value.trim();
+    s.msClientId = $('s-ms-id').value.trim(); s.msTenant = $('s-ms-tenant').value.trim();
+    if (prev !== s.emailProvider + s.googleClientId + s.msClientId + s.msTenant) { WBLMail.signOut(); s.emailAccount = ''; }
+    await save('Email settings changed'); renderEmailStatus(); toast('Email settings saved.');
   });
 
   // ---------------- practice data ----------------

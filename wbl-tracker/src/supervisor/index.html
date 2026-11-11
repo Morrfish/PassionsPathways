@@ -77,8 +77,18 @@
 
     <!-- Import -->
     <section id="view-import" class="view hidden">
+      <div class="card email-card">
+        <h2>Pull hours from email</h2>
+        <p id="email-status" class="muted">Email isn't connected yet.</p>
+        <div class="toolbar">
+          <button class="btn-primary big-btn" id="check-email">📥 Check email for new hours</button>
+          <button class="btn-secondary hidden" id="email-setup-link">Set up email…</button>
+        </div>
+        <p class="hint">Reads only ClockedIn emails from your school inbox. You'll sign in with Google or Microsoft in a small window. The sign-in is forgotten when you close this page.</p>
+        <div id="email-results"></div>
+      </div>
       <div class="card">
-        <h2>Import student submissions</h2>
+        <h2>Import student submissions by hand</h2>
         <ol class="steps">
           <li>In Outlook (or your email), select the students' emails and <strong>save the attachments</strong> into the <code>Inbox</code> folder inside your data folder.</li>
           <li>Click <strong>Check Inbox folder</strong>. Imported files move to <code>Inbox\Imported</code>.</li>
@@ -144,6 +154,30 @@
           </div>
           <p class="hint">With term dates set, students are marked <em>Behind</em> when they're well under the pace needed to reach their goal by the end date.</p>
           <button class="btn-primary" type="submit" style="margin-top:12px">Save settings</button>
+        </form>
+      </div>
+      <div class="card" id="email-settings">
+        <h2>Email connection</h2>
+        <p>Lets the <b>Check email</b> button pull student submissions straight from your school inbox (read-only). Your district IT does a one-time setup and gives you a <b>client ID</b>: send them the <a href="https://github.com/Morrfish/PassionsPathways/blob/main/wbl-tracker/docs/email-setup.md" target="_blank" rel="noopener">email setup guide</a>.</p>
+        <form id="email-form">
+          <label for="s-email-provider">School email system</label>
+          <select id="s-email-provider">
+            <option value="">Not connected</option>
+            <option value="google">Google (Gmail / Google Workspace)</option>
+            <option value="microsoft">Microsoft 365 (Outlook)</option>
+          </select>
+          <div id="email-google" class="hidden">
+            <label for="s-google-id">Google client ID</label>
+            <input id="s-google-id" placeholder="1234567890-abc….apps.googleusercontent.com" autocomplete="off" spellcheck="false">
+          </div>
+          <div id="email-ms" class="hidden">
+            <label for="s-ms-id">Microsoft application (client) ID</label>
+            <input id="s-ms-id" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off" spellcheck="false">
+            <label for="s-ms-tenant">Directory (tenant) ID <span class="muted small">(optional)</span></label>
+            <input id="s-ms-tenant" placeholder="organizations" autocomplete="off" spellcheck="false">
+          </div>
+          <p class="hint">IT will ask for this sign-in return address: <code id="redirect-uri"></code></p>
+          <button class="btn-primary" type="submit" style="margin-top:8px">Save email settings</button>
         </form>
       </div>
       <div class="card">
@@ -225,6 +259,7 @@
   <script>window.WBL_BRAND = {{BRAND_JSON}};</script>
   <script src="qrcode.js"></script>
   <script src="wbl-format.js"></script>
+  <script src="email.js"></script>
   <script src="supervisor.js"></script>
 </body>
 </html>

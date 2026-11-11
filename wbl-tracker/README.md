@@ -21,8 +21,11 @@ version uses it as its main logo, with the navy/teal colors and the clipboard as
 4. The phone makes a small signed `.txt` file, and the student shares it to their email app
    addressed to the supervisor. There are two fallbacks: download the file, or send the
    numbers as email text.
-5. The supervisor saves attachments into the data folder's `Inbox` and clicks
-   **Check Inbox folder**. Each file is checked for:
+5. The supervisor clicks **Check email for new hours**. The app signs in to their school
+   mailbox (Google or Microsoft, read-only) and pulls every new ClockedIn email in.
+   District IT sets this up once: see [docs/email-setup.md](docs/email-setup.md).
+   Without that setup, the supervisor can save attachments into the data folder's `Inbox`
+   and click **Check Inbox folder**. Each submission is checked for:
    - a valid signature (edited files are caught)
    - duplicates and overlapping pay periods
    - weekly hours over the limit
@@ -51,6 +54,7 @@ node tools/build.mjs --all
 node tools/extract-brand.mjs <url> <id> # pull logo/colors candidates from a school website
 node --test tests/format.test.mjs       # unit tests
 node tests/e2e.mjs <id>                 # full loop in Chromium (SHOTS=dir saves screenshots)
+node tests/e2e-email.mjs <id>           # "Check email" against fake Google and Microsoft servers
 ```
 Adding a school: use the **wbl-add-school** skill (`.claude/skills/wbl-add-school/`) and give it
 the school's website.
@@ -60,6 +64,9 @@ the school's website.
 - Greene CCC: https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/greene-ccc/student/
 
 Students don't type these addresses: the enrollment QR code opens them.
+
+Supervisor app (open in Edge/Chrome and bookmark; needed for the email button):
+- Greene CCC: https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/greene-ccc/supervisor/ClockedIn%20Supervisor.html
 
 ## Schools
 | id | School | Source |

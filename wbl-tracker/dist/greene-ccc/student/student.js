@@ -344,10 +344,10 @@
     if (!em.length) return toast('Pick at least one email above.');
     const file = submissionFile();
     const d = current.doc;
-    const text = 'WBL hours for ' + (profile.name || profile.studentId) + ' (' + d.periodStart + ' to ' + d.periodEnd + ', ' + fmtHours(WBL.totalHours(d)) + ' h).\nSend to: ' + em.join(', ');
+    const text = 'ClockedIn hours for ' + (profile.name || profile.studentId) + ' (' + d.periodStart + ' to ' + d.periodEnd + ', ' + fmtHours(WBL.totalHours(d)) + ' h).\nSend to: ' + em.join(', ');
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
-        await navigator.share({ files: [file], title: 'WBL hours', text });
+        await navigator.share({ files: [file], title: 'ClockedIn hours', text });
         await markSent();
       } catch (e) {
         if (e.name !== 'AbortError') toast('Could not open sharing. Try "Download file" below.');
@@ -375,10 +375,10 @@
     const textDoc = await WBL.createSubmission(Object.assign(base, { image: null, notes: (base.notes ? base.notes + ' ' : '') + '[sent as text, no photo]' }), profile.key);
     const code = WBL.bytesToB64url(new TextEncoder().encode(JSON.stringify(textDoc)));
     const d = current.doc;
-    const body = 'WBL hours for ' + (profile.name || profile.studentId) + '\n' +
+    const body = 'ClockedIn hours for ' + (profile.name || profile.studentId) + '\n' +
       d.periodStart + ' to ' + d.periodEnd + ': ' + fmtHours(WBL.totalHours(d)) + ' hours at ' + d.employer + '\n\n' +
       'Do not edit below this line.\nWBLDATA:' + code + ':END';
-    (window.__wblOpenUrl || (u => { location.href = u; }))('mailto:' + em.map(encodeURIComponent).join(',') + '?subject=' + encodeURIComponent('WBL hours ' + d.periodStart + ' to ' + d.periodEnd) + '&body=' + encodeURIComponent(body));
+    (window.__wblOpenUrl || (u => { location.href = u; }))('mailto:' + em.map(encodeURIComponent).join(',') + '?subject=' + encodeURIComponent('ClockedIn hours ' + d.periodStart + ' to ' + d.periodEnd) + '&body=' + encodeURIComponent(body));
   });
 
   async function markSent() {

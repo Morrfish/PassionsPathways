@@ -67,7 +67,8 @@ function brandCss(b) {
 
 function publicBrand(b) {
   return { id: b.id, schoolName: b.schoolName, schoolShort: b.schoolShort, appName: b.appName, website: b.website || '',
-    studentAppUrl: b.studentAppUrl || '', defaultGoalHours: b.defaultGoalHours, colors: b.colors };
+    studentAppUrl: b.studentAppUrl || '', supervisorAppUrl: b.studentAppUrl ? b.studentAppUrl.replace(/student\/?$/, 'supervisor/') + encodeURIComponent(b.appName + ' Supervisor.html') : '',
+    defaultGoalHours: b.defaultGoalHours, colors: b.colors, email: b.email || {} };
 }
 
 function fill(text, b, extra = {}) {
@@ -155,18 +156,26 @@ export async function build(id) {
   const ciData = 'data:image/png;base64,' + fs.readFileSync(path.join(SRC, 'shared', 'clockedin-logo.png')).toString('base64');
   let shtml = fill(read('supervisor/index.html'), b, { LOGO_FILE: logoData, CLOCKEDIN_LOGO: ciData, POWERED_CLASS: powered });
   shtml = inlineSingleFile(shtml, Object.assign({}, shared, {
-    'supervisor.css': read('supervisor/supervisor.css'), 'supervisor.js': read('supervisor/supervisor.js'), 'qrcode.js': read('vendor/qrcode.js')
+    'supervisor.css': read('supervisor/supervisor.css'), 'supervisor.js': read('supervisor/supervisor.js'), 'email.js': read('supervisor/email.js'), 'qrcode.js': read('vendor/qrcode.js')
   }));
   const supName = b.appName + ' Supervisor.html';
   write(path.join(out, 'supervisor', supName), shtml);
+  // Sign-in return page for the email connection (Google/Microsoft send the browser back here).
+  write(path.join(out, 'supervisor', 'oauth-callback.html'), '<!doctype html><meta charset="utf-8"><meta name="referrer" content="no-referrer"><title>Signing in…</title>' +
+    '<body style="font-family:system-ui,sans-serif;padding:24px">Signing in… This window will close by itself.</body>');
   write(path.join(out, 'supervisor', 'README.txt'),
 `${b.appName} Supervisor: ${b.schoolName}
 
-1. Copy "${supName}" to the supervisor's computer (for example, the Desktop).
-2. Make a folder for the records, for example Documents\\WBL Data, or a folder on the school network drive.
-3. Double-click "${supName}". It opens in Microsoft Edge or Google Chrome.
-4. Click "Choose data folder..." and pick the folder from step 2.
-5. Under Settings, enter your email address(es) and the student app web address.
+EASIEST: open the web address in Microsoft Edge or Google Chrome and bookmark it:
+   ${publicBrand(b).supervisorAppUrl || '(set studentAppUrl in brand.json)'}
+   (Needed for the "Check email" button. Your records still stay in your own folder.)
+OR: copy "${supName}" to the computer and double-click it (works offline, no email button).
+
+Then:
+1. Make a folder for the records, for example Documents\\WBL Data, or a folder on the school network drive.
+2. Click "Choose data folder..." and pick the folder from step 1.
+3. Under Settings, enter your email address(es). For the email button, enter the client ID
+   from district IT (see docs/email-setup.md).
 
 All records stay in that folder. Back it up weekly (Settings > Back up now).
 `);

@@ -117,7 +117,7 @@ try {
   const [dl] = await Promise.all([ph.waitForEvent('download'), ph.click('#share-btn')]);
   const fileName = dl.suggestedFilename();
   const filePath = await dl.path();
-  check(/^WBL_20001_2026-10-19_to_2026-11-01_.*\.txt$/.test(fileName), 'submission file created: ' + fileName);
+  check(/^ClockedIn_20001_2026-10-19_to_2026-11-01_.*\.txt$/.test(fileName), 'submission file created: ' + fileName);
   const fileText = fs.readFileSync(filePath, 'utf8');
   check(!/1234|412/.test(fileText.replace(/"image":"[^"]*"/, '')), 'file has no SSN or pay amount text');
   await ph.click('#send-done');

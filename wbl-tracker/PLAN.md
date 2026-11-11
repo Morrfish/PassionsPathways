@@ -146,7 +146,10 @@ The supervisor app can delete each email after importing it, to keep copies out 
    bulk QR enrollment.
 4. **Unpaid hours and evaluations:** employer signature capture and
    configurable evaluation forms.
-5. **Polish:** Windows installer, optional IMAP auto-import, pilot with one class.
+5. **Email pull: done.** The **Check email** button reads ClockedIn emails straight from
+   the supervisor's Google or Microsoft 365 mailbox, read-only, with sign-in in the browser
+   and no server. District IT registers it once (`docs/email-setup.md`).
+6. **Polish:** Windows installer, pilot with one class.
 
 ## Open questions
 - Evaluation form (school is getting a copy)
