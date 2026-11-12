@@ -1,0 +1,17 @@
+{
+  "id": "apollo-cc",
+  "schoolName": "Apollo Career Center",
+  "schoolShort": "Apollo CC",
+  "appName": "ClockedIn",
+  "website": "https://www.apollocareercenter.com/",
+  "state": "OH",
+  "logo": "logo.svg",
+  "icon": "icon-mark.png",
+  "colors": {
+    "primary": "#d71920",
+    "accent": "#231f20"
+  },
+  "studentAppUrl": "https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/apollo-cc/student/",
+  "defaultGoalHours": 250,
+  "notes": "From apollocareercenter.com on 2026-11-12. Primary = Apollo red (header background / logo #d71920); accent = logo black #231f20. Logo = header SVG (Apollo-logo-01.svg), not the 50th-anniversary badge. Icon = the site's red/black A favicon (192px)."
+}

@@ -1,0 +1,168 @@
+{
+  "url": "https://www.apollocareercenter.com/",
+  "fetchedAt": "2026-11-12T04:15:41.762Z",
+  "title": "Home • Apollo Career Center",
+  "siteName": "Apollo Career Center",
+  "headerText": "",
+  "description": "Building careers for 50 years. Facebook Instagram Youtube Adult Education Adult Education Office Hours: Monday – Thursday 8 a.m. – 6 p.m.Friday 8 a.m. – 3 p.m. Call: 419-998-3000 Visit Website High School High School Office Hours:  Monday – Friday 8 a.m. – 3 p.m. Call: 419-998-2908 Attendance: 419-998-2900 Visit Website District District Office Hours […]",
+  "themeColor": "",
+  "logos": [
+    {
+      "file": "logo-1.svg",
+      "bytes": 6364,
+      "type": "image/svg+xml",
+      "url": "https://www.apollocareercenter.com/wp-content/uploads/2018/04/Apollo-logo-01.svg",
+      "why": "image",
+      "score": 7,
+      "w": 225,
+      "h": 83,
+      "top": 60,
+      "alt": "Apollo Logo"
+    },
+    {
+      "file": "logo-2.png",
+      "bytes": 329827,
+      "type": "image/png",
+      "url": "https://www.apollocareercenter.com/wp-content/uploads/2025/02/50th-logo-1024x989.png",
+      "why": "image",
+      "score": 7,
+      "w": 137,
+      "h": 132,
+      "top": 30,
+      "alt": "Building careers for 50 years."
+    },
+    {
+      "file": "logo-3.png",
+      "bytes": 19142,
+      "type": "image/png",
+      "url": "https://www.apollocareercenter.com/wp-content/uploads/elementor/thumbs/apollo-logo-p81ds8sl40o4hay8akxgrgfgfk9i1jnzzz5ubxpt4m.png",
+      "why": "image",
+      "score": 5,
+      "w": 260,
+      "h": 95,
+      "top": 1498,
+      "alt": "Apollo Logo footer"
+    },
+    {
+      "file": "logo-4.png",
+      "bytes": 9384,
+      "type": "image/png",
+      "url": "https://www.apollocareercenter.com/wp-content/uploads/cropped-ApolloFavicon-4-180x180.png",
+      "why": "apple-touch-icon",
+      "score": 3,
+      "w": null,
+      "h": null,
+      "top": null,
+      "alt": ""
+    },
+    {
+      "file": "logo-5.png",
+      "bytes": 1577936,
+      "type": "image/png",
+      "url": "https://www.apollocareercenter.com/wp-content/uploads/2021/06/Apollo-school.png",
+      "why": "og:image",
+      "score": 2,
+      "w": null,
+      "h": null,
+      "top": null,
+      "alt": ""
+    },
+    {
+      "file": "logo-6.png",
+      "bytes": 783,
+      "type": "image/png",
+      "url": "https://www.apollocareercenter.com/wp-content/uploads/cropped-ApolloFavicon-4-32x32.png",
+      "why": "favicon 32x32",
+      "score": 1,
+      "w": null,
+      "h": null,
+      "top": null,
+      "alt": ""
+    },
+    {
+      "file": "logo-7.png",
+      "bytes": 10287,
+      "type": "image/png",
+      "url": "https://www.apollocareercenter.com/wp-content/uploads/cropped-ApolloFavicon-4-192x192.png",
+      "why": "favicon 192x192",
+      "score": 1,
+      "w": null,
+      "h": null,
+      "top": null,
+      "alt": ""
+    }
+  ],
+  "colors": [
+    {
+      "hex": "#d61920",
+      "weight": 2162,
+      "where": "button background ×3, other background ×2, heading text ×1",
+      "textOn": "#ffffff",
+      "contrastWithText": 5.23
+    },
+    {
+      "hex": "#e9231b",
+      "weight": 199,
+      "where": "other text ×3, link ×1, button background ×1",
+      "textOn": "#ffffff",
+      "contrastWithText": 4.45
+    },
+    {
+      "hex": "#e9231c",
+      "weight": 62,
+      "where": "other text ×5, link ×5, heading text ×1",
+      "textOn": "#ffffff",
+      "contrastWithText": 4.45
+    }
+  ],
+  "cssVars": [
+    [
+      "--wp--preset--color--black",
+      "#000000"
+    ],
+    [
+      "--wp--preset--color--cyan-bluish-gray",
+      "#abb8c3"
+    ],
+    [
+      "--wp--preset--color--white",
+      "#ffffff"
+    ],
+    [
+      "--wp--preset--color--pale-pink",
+      "#f78da7"
+    ],
+    [
+      "--wp--preset--color--vivid-red",
+      "#cf2e2e"
+    ],
+    [
+      "--wp--preset--color--luminous-vivid-orange",
+      "#ff6900"
+    ],
+    [
+      "--wp--preset--color--luminous-vivid-amber",
+      "#fcb900"
+    ],
+    [
+      "--wp--preset--color--light-green-cyan",
+      "#7bdcb5"
+    ],
+    [
+      "--wp--preset--color--vivid-green-cyan",
+      "#00d084"
+    ],
+    [
+      "--wp--preset--color--pale-cyan-blue",
+      "#8ed1fc"
+    ],
+    [
+      "--wp--preset--color--vivid-cyan-blue",
+      "#0693e3"
+    ],
+    [
+      "--wp--preset--color--vivid-purple",
+      "#9b51e0"
+    ]
+  ]
+}
