@@ -113,6 +113,9 @@ separate symbol (a letter mark, mascot, or emblem), make a square icon of just t
 ```
 - Optional: `colors.logoBg`, `colors.onPrimary`, `colors.onAccent`, `colors.link`. Only add these
   to override the automatic choices.
+- Optional `colors.stripe`: a list of hex colors, e.g. `["#fab92b", "#ee232e", "#8535ac"]`. The
+  line under the header shows them as equal bands instead of the plain accent color. Use it when a
+  logo has several colors (see `brands/tri-star/`).
 - Keep `appName` as "ClockedIn" unless the user names the app something else.
 - `studentAppUrl`: the student app is hosted free on GitHub Pages from the repo's `main`
   branch, so use `https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/<id>/student/`

@@ -2,8 +2,9 @@
 :root {
   --brand-primary: #383838;
   --brand-on-primary: #ffffff;
-  --brand-accent: #f8b828;
+  --brand-accent: #fab92b;
   --brand-on-accent: #1a1a1a;
   --brand-link: #383838;
   --brand-logo-bg: #ffffff;
 }
+.appbar { border-image: linear-gradient(90deg, #fab92b 0.00% 20.00%, #ee232e 20.00% 40.00%, #8535ac 40.00% 60.00%, #f2691c 60.00% 80.00%, #00c543 80.00% 100.00%) 1; }
