@@ -1,0 +1,146 @@
+{
+  "url": "https://www.mvctc.com/",
+  "fetchedAt": "2026-11-12T04:14:32.692Z",
+  "title": "Miami Valley Career Technology Center",
+  "siteName": "",
+  "headerText": "",
+  "description": "Home - Miami Valley Career Technology Center",
+  "themeColor": "",
+  "logos": [
+    {
+      "file": "logo-1.webp",
+      "bytes": 9632,
+      "type": "image/webp",
+      "url": "https://resources.finalsite.net/images/f_auto,q_auto,t_image_size_3/v1713529660/mvctccom/ngshlzrhup85gespbyce/MVCTCLogo_AllWhite.png",
+      "why": "header image",
+      "score": 13,
+      "w": 381,
+      "h": 100,
+      "top": 70,
+      "alt": "Miami Valley Career Technology Center District"
+    },
+    {
+      "file": "logo-2.webp",
+      "bytes": 5462,
+      "type": "image/webp",
+      "url": "https://resources.finalsite.net/images/f_auto,q_auto,t_image_size_2/v1713529660/mvctccom/ngshlzrhup85gespbyce/MVCTCLogo_AllWhite.png",
+      "why": "image",
+      "score": 8,
+      "w": 280,
+      "h": 74,
+      "top": 2161,
+      "alt": "Miami Valley Career Technology Center District"
+    },
+    {
+      "file": "logo-3.webp",
+      "bytes": 15930,
+      "type": "image/webp",
+      "url": "https://resources.finalsite.net/images/f_auto,q_auto/v1726594821/mvctccom/ypxfaqzugaxtjb6jmh0r/cognia-logo.png",
+      "why": "image",
+      "score": 5,
+      "w": 60,
+      "h": 60,
+      "top": 2695,
+      "alt": "East Asia Regional Council of Schools"
+    },
+    {
+      "file": "logo-4.webp",
+      "bytes": 15222,
+      "type": "image/webp",
+      "url": "https://resources.finalsite.net/images/f_auto,q_auto/v1727181015/mvctccom/cmox7e6b83uuyltexnaa/edu-workforce.png",
+      "why": "image",
+      "score": 5,
+      "w": 219,
+      "h": 60,
+      "top": 2695,
+      "alt": "East Asia Regional Council of Schools"
+    },
+    {
+      "file": "logo-5.webp",
+      "bytes": 5376,
+      "type": "image/webp",
+      "url": "https://resources.finalsite.net/images/f_auto,q_auto/v1726069152/mvctccom/e5rxdfngjsltglk8okzc/ab-seal-horizontal.png",
+      "why": "image",
+      "score": 5,
+      "w": 148,
+      "h": 60,
+      "top": 2695,
+      "alt": "East Asia Regional Council of Schools"
+    },
+    {
+      "file": "logo-6.png",
+      "bytes": 117699,
+      "type": "image/png",
+      "url": "https://resources.finalsite.net/images/v1712700990/mvctccom/lzhoczvhfme0ia9jnis8/favicon31.png",
+      "why": "favicon ",
+      "score": 1,
+      "w": null,
+      "h": null,
+      "top": null,
+      "alt": ""
+    }
+  ],
+  "colors": [
+    {
+      "hex": "#005eb8",
+      "weight": 7114,
+      "where": "link ×40, other text ×18, other background ×4, header background ×2",
+      "textOn": "#ffffff",
+      "contrastWithText": 6.38
+    }
+  ],
+  "cssVars": [
+    [
+      "--primary-color-h",
+      "209.35"
+    ],
+    [
+      "--primary-color-s",
+      "100.00%"
+    ],
+    [
+      "--primary-color-l",
+      "36.08%"
+    ],
+    [
+      "--primary-color-hsl",
+      "var(--primary-color-h), var(--primary-color-s), var(--primary-color-l)"
+    ],
+    [
+      "--primary-color",
+      "#005eb8"
+    ],
+    [
+      "--secondary-color-h",
+      "180.0"
+    ],
+    [
+      "--secondary-color-s",
+      "1.72%"
+    ],
+    [
+      "--secondary-color-l",
+      "54.51%"
+    ],
+    [
+      "--secondary-color-hsl",
+      "var(--secondary-color-h), var(--secondary-color-s), var(--secondary-color-l)"
+    ],
+    [
+      "--secondary-color",
+      "#898d8d"
+    ],
+    [
+      "--accent-font",
+      "'Ubuntu'"
+    ],
+    [
+      "--font-primary",
+      "'Poppins'"
+    ],
+    [
+      "--font-secondary",
+      "'Ubuntu'"
+    ]
+  ]
+}

@@ -1,5 +1,5 @@
 /* Offline support: caches the app files only. No student data passes through here. */
-const CACHE = 'wbl-student-mwd1lvpk';
+const CACHE = 'wbl-student-mwd1sxei';
 const FILES = ['./', 'index.html', 'base.css', 'brand.css', 'student.css', 'wbl-format.js', 'student.js',
   'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'clockedin-logo.png', 'logo.png'];
 self.addEventListener('install', e => {

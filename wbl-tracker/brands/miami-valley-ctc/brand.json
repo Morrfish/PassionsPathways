@@ -1,0 +1,18 @@
+{
+  "id": "miami-valley-ctc",
+  "schoolName": "Miami Valley Career Technology Center",
+  "schoolShort": "Miami Valley CTC",
+  "appName": "ClockedIn",
+  "website": "https://www.mvctc.com/",
+  "state": "OH",
+  "logo": "logo.png",
+  "icon": "icon-mark.png",
+  "colors": {
+    "primary": "#005eb8",
+    "accent": "#898d8d",
+    "logoBg": "#005eb8"
+  },
+  "studentAppUrl": "https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/miami-valley-ctc/student/",
+  "defaultGoalHours": 250,
+  "notes": "From mvctc.com (district.mvctc.com) on 2026-11-12. Primary = site's --primary-color / header blue #005eb8; accent = site's --secondary-color gray #898d8d. Logo = all-white header wordmark (MVCTCLogo_AllWhite), so it sits on a blue tile (logoBg). Icon = the site's square blue M favicon."
+}
