@@ -62,7 +62,17 @@ function brandCss(b) {
   --brand-link: ${c.link};
   --brand-logo-bg: ${c.logoBg};
 }
-`;
+${stripeCss(c.stripe)}`;
+}
+
+// Optional colors.stripe: a list of colors shown as equal bands in the line under the header
+// (e.g. a multicolor logo). Without it the line is the accent color.
+function stripeCss(stripe) {
+  if (!Array.isArray(stripe) || !stripe.length) return '';
+  if (!stripe.every(s => /^#[0-9a-f]{3,8}$/i.test(s))) throw new Error('colors.stripe must be a list of hex colors');
+  const n = stripe.length;
+  const stops = stripe.map((s, i) => `${s} ${(i * 100 / n).toFixed(2)}% ${((i + 1) * 100 / n).toFixed(2)}%`).join(', ');
+  return `.appbar { border-image: linear-gradient(90deg, ${stops}) 1; }\n`;
 }
 
 function publicBrand(b) {
