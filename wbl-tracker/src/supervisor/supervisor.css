@@ -92,3 +92,6 @@ dialog form { display: flex; flex-direction: column; max-height: calc(100vh - 32
   .tabs { margin-left: 0; width: 100%; }
   .folder-status { display: none; }
 }
+
+.email-card { border-left: 5px solid var(--brand-primary); }
+.big-btn { min-height: 52px; font-size: 1.05rem; padding: 10px 22px; }

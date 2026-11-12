@@ -122,11 +122,11 @@
 
   function totalHours(doc) { return round2((doc.regularHours || 0) + (doc.overtimeHours || 0)); }
 
-  /** File name for a submission, e.g. WBL_12345_2026-11-01_to_2026-11-07.txt
+  /** File name for a submission, e.g. ClockedIn_12345_2026-11-01_to_2026-11-07_abc123.txt
    *  (.txt so phones' share sheets and mail apps accept it as an attachment). */
   function fileName(doc) {
     const safe = s => String(s || '').replace(/[^A-Za-z0-9_-]+/g, '');
-    return 'WBL_' + safe(doc.studentId) + '_' + safe(doc.periodStart) + '_to_' + safe(doc.periodEnd) + '_' + safe(doc.submissionId).slice(-6) + '.txt';
+    return 'ClockedIn_' + safe(doc.studentId) + '_' + safe(doc.periodStart) + '_to_' + safe(doc.periodEnd) + '_' + safe(doc.submissionId).slice(-6) + '.txt';
   }
 
   // ---------- enrollment ----------

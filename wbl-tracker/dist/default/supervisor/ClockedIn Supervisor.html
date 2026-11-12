@@ -214,6 +214,9 @@ dialog form { display: flex; flex-direction: column; max-height: calc(100vh - 32
   .folder-status { display: none; }
 }
 
+.email-card { border-left: 5px solid var(--brand-primary); }
+.big-btn { min-height: 52px; font-size: 1.05rem; padding: 10px 22px; }
+
 </style>
 </head>
 <body>
@@ -284,8 +287,18 @@ dialog form { display: flex; flex-direction: column; max-height: calc(100vh - 32
 
     <!-- Import -->
     <section id="view-import" class="view hidden">
+      <div class="card email-card">
+        <h2>Pull hours from email</h2>
+        <p id="email-status" class="muted">Email isn't connected yet.</p>
+        <div class="toolbar">
+          <button class="btn-primary big-btn" id="check-email">📥 Check email for new hours</button>
+          <button class="btn-secondary hidden" id="email-setup-link">Set up email…</button>
+        </div>
+        <p class="hint">Reads only ClockedIn emails from your school inbox. You'll sign in with Google or Microsoft in a small window. The sign-in is forgotten when you close this page.</p>
+        <div id="email-results"></div>
+      </div>
       <div class="card">
-        <h2>Import student submissions</h2>
+        <h2>Import student submissions by hand</h2>
         <ol class="steps">
           <li>In Outlook (or your email), select the students' emails and <strong>save the attachments</strong> into the <code>Inbox</code> folder inside your data folder.</li>
           <li>Click <strong>Check Inbox folder</strong>. Imported files move to <code>Inbox\Imported</code>.</li>
@@ -351,6 +364,30 @@ dialog form { display: flex; flex-direction: column; max-height: calc(100vh - 32
           </div>
           <p class="hint">With term dates set, students are marked <em>Behind</em> when they're well under the pace needed to reach their goal by the end date.</p>
           <button class="btn-primary" type="submit" style="margin-top:12px">Save settings</button>
+        </form>
+      </div>
+      <div class="card" id="email-settings">
+        <h2>Email connection</h2>
+        <p>Lets the <b>Check email</b> button pull student submissions straight from your school inbox (read-only). Your district IT does a one-time setup and gives you a <b>client ID</b>: send them the <a href="https://github.com/Morrfish/PassionsPathways/blob/main/wbl-tracker/docs/email-setup.md" target="_blank" rel="noopener">email setup guide</a>.</p>
+        <form id="email-form">
+          <label for="s-email-provider">School email system</label>
+          <select id="s-email-provider">
+            <option value="">Not connected</option>
+            <option value="google">Google (Gmail / Google Workspace)</option>
+            <option value="microsoft">Microsoft 365 (Outlook)</option>
+          </select>
+          <div id="email-google" class="hidden">
+            <label for="s-google-id">Google client ID</label>
+            <input id="s-google-id" placeholder="1234567890-abc….apps.googleusercontent.com" autocomplete="off" spellcheck="false">
+          </div>
+          <div id="email-ms" class="hidden">
+            <label for="s-ms-id">Microsoft application (client) ID</label>
+            <input id="s-ms-id" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off" spellcheck="false">
+            <label for="s-ms-tenant">Directory (tenant) ID <span class="muted small">(optional)</span></label>
+            <input id="s-ms-tenant" placeholder="organizations" autocomplete="off" spellcheck="false">
+          </div>
+          <p class="hint">IT will ask for this sign-in return address: <code id="redirect-uri"></code></p>
+          <button class="btn-primary" type="submit" style="margin-top:8px">Save email settings</button>
         </form>
       </div>
       <div class="card">
@@ -429,7 +466,7 @@ dialog form { display: flex; flex-direction: column; max-height: calc(100vh - 32
   <div id="print-area" class="print-area"></div>
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
-  <script>window.WBL_BRAND = {"id":"default","schoolName":"Your School Name","schoolShort":"Your School","appName":"ClockedIn","website":"","studentAppUrl":"https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/default/student/","defaultGoalHours":250,"colors":{"primary":"#0b1f3f","accent":"#00a89b","onPrimary":"#ffffff","onAccent":"#1a1a1a","link":"#0b1f3f","logoBg":"#ffffff"}};</script>
+  <script>window.WBL_BRAND = {"id":"default","schoolName":"Your School Name","schoolShort":"Your School","appName":"ClockedIn","website":"","studentAppUrl":"https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/default/student/","supervisorAppUrl":"https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/default/supervisor/ClockedIn%20Supervisor.html","defaultGoalHours":250,"colors":{"primary":"#0b1f3f","accent":"#00a89b","onPrimary":"#ffffff","onAccent":"#1a1a1a","link":"#0b1f3f","logoBg":"#ffffff"},"email":{}};</script>
   <script>
 //---------------------------------------------------------------------
 //
@@ -2855,11 +2892,11 @@ var qrcode = function() {
 
   function totalHours(doc) { return round2((doc.regularHours || 0) + (doc.overtimeHours || 0)); }
 
-  /** File name for a submission, e.g. WBL_12345_2026-11-01_to_2026-11-07.txt
+  /** File name for a submission, e.g. ClockedIn_12345_2026-11-01_to_2026-11-07_abc123.txt
    *  (.txt so phones' share sheets and mail apps accept it as an attachment). */
   function fileName(doc) {
     const safe = s => String(s || '').replace(/[^A-Za-z0-9_-]+/g, '');
-    return 'WBL_' + safe(doc.studentId) + '_' + safe(doc.periodStart) + '_to_' + safe(doc.periodEnd) + '_' + safe(doc.submissionId).slice(-6) + '.txt';
+    return 'ClockedIn_' + safe(doc.studentId) + '_' + safe(doc.periodStart) + '_to_' + safe(doc.periodEnd) + '_' + safe(doc.submissionId).slice(-6) + '.txt';
   }
 
   // ---------- enrollment ----------
@@ -2896,6 +2933,193 @@ var qrcode = function() {
 
 </script>
   <script>
+/*
+ * Email connector for the supervisor app: reads ClockedIn submissions straight
+ * from the supervisor's school mailbox (Google Gmail or Microsoft 365).
+ *
+ * - Read-only access (Gmail: gmail.readonly; Microsoft: Mail.Read).
+ * - Sign-in happens in a popup run by Google/Microsoft. The access token lives
+ *   only in this page's memory and is gone when the page closes. Nothing is
+ *   stored or sent anywhere else.
+ * - The district registers the app once (free) and gets a "client ID". See
+ *   docs/email-setup.md. The client ID is not a secret.
+ *
+ * window.WBLMail.fetchSubmissions({ provider, clientId, tenant, since, max })
+ *   -> { account, items: [{ name, text, messageId }], scanned, more }
+ */
+(function () {
+  'use strict';
+
+  const GOOGLE_SCOPE = 'https://www.googleapis.com/auth/gmail.readonly';
+  const MS_SCOPE = 'https://graph.microsoft.com/Mail.Read https://graph.microsoft.com/User.Read';
+  const FILE_RE = /^(ClockedIn|WBL)_.*\.(txt|wbl|json)$/i;
+  const tokens = {}; // provider -> { token, exp, account }
+
+  function redirectUri() { return new URL('oauth-callback.html', location.href).href.split('#')[0].split('?')[0]; }
+  function canUse() { return location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1'; }
+
+  function b64url(bytes) { return btoa(String.fromCharCode.apply(null, Array.from(bytes))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+  function randomString(n) { const a = new Uint8Array(n); crypto.getRandomValues(a); return b64url(a); }
+  function decodeB64(s) {
+    s = String(s).replace(/-/g, '+').replace(/_/g, '/').replace(/\s+/g, '');
+    while (s.length % 4) s += '=';
+    const bin = atob(s); const out = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(out);
+  }
+
+  /** Open a sign-in popup and wait until it comes back to our callback page. */
+  function popupAuth(url, popup) {
+    return new Promise((resolve, reject) => {
+      const w = popup || window.open('', 'clockedin-signin', 'width=520,height=680');
+      if (!w) return reject(new Error('The sign-in window was blocked. Allow pop-ups for this page and try again.'));
+      w.location.href = url;
+      const started = Date.now();
+      const timer = setInterval(() => {
+        if (w.closed) { clearInterval(timer); return reject(new Error('Sign-in window was closed.')); }
+        let href = '';
+        try { href = w.location.href; } catch (e) { return; } // still on Google/Microsoft
+        if (href && href.startsWith(redirectUri())) {
+          clearInterval(timer); w.close(); resolve(new URL(href));
+        }
+        if (Date.now() - started > 5 * 60 * 1000) { clearInterval(timer); w.close(); reject(new Error('Sign-in timed out.')); }
+      }, 300);
+    });
+  }
+
+  // ---------------- Google ----------------
+  async function googleToken(cfg, popup) {
+    const t = tokens.google;
+    if (t && t.exp > Date.now() + 60000) return t;
+    const state = randomString(12);
+    const u = new URL('https://accounts.google.com/o/oauth2/v2/auth');
+    u.search = new URLSearchParams({ client_id: cfg.clientId, redirect_uri: redirectUri(), response_type: 'token', scope: GOOGLE_SCOPE,
+      state, include_granted_scopes: 'true', prompt: 'select_account' }).toString();
+    const back = await popupAuth(u.href, popup);
+    const p = new URLSearchParams(back.hash.slice(1) || back.search.slice(1));
+    if (p.get('error')) throw new Error('Google sign-in failed: ' + p.get('error'));
+    if (p.get('state') !== state) throw new Error('Sign-in response did not match. Try again.');
+    tokens.google = { token: p.get('access_token'), exp: Date.now() + (Number(p.get('expires_in')) || 3600) * 1000 };
+    const prof = await gget('https://gmail.googleapis.com/gmail/v1/users/me/profile');
+    tokens.google.account = prof.emailAddress;
+    return tokens.google;
+  }
+  async function gget(url) {
+    const r = await fetch(url, { headers: { Authorization: 'Bearer ' + tokens.google.token } });
+    if (r.status === 401) { delete tokens.google; throw new Error('Your Google sign-in expired. Click again to sign in.'); }
+    if (!r.ok) throw new Error('Gmail error ' + r.status + ': ' + (await r.text()).slice(0, 200));
+    return r.json();
+  }
+  async function googleFetch(cfg, since, max, popup) {
+    const t = await googleToken(cfg, popup);
+    const d = new Date(since);
+    const after = d.getUTCFullYear() + '/' + (d.getUTCMonth() + 1) + '/' + d.getUTCDate();
+    const q = '(filename:ClockedIn OR filename:WBL OR ClockedIn OR WBLDATA) after:' + after;
+    const ids = []; let pageToken = '';
+    do {
+      const r = await gget('https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=100&q=' + encodeURIComponent(q) + (pageToken ? '&pageToken=' + pageToken : ''));
+      (r.messages || []).forEach(m => ids.push(m.id));
+      pageToken = r.nextPageToken || '';
+    } while (pageToken && ids.length < max);
+    const items = [];
+    for (const id of ids.slice(0, max)) {
+      const m = await gget('https://gmail.googleapis.com/gmail/v1/users/me/messages/' + id + '?format=full');
+      const parts = []; (function walk(p) { if (!p) return; parts.push(p); (p.parts || []).forEach(walk); })(m.payload);
+      for (const p of parts) {
+        if (p.filename && FILE_RE.test(p.filename)) {
+          const data = p.body && p.body.data ? p.body.data : (await gget('https://gmail.googleapis.com/gmail/v1/users/me/messages/' + id + '/attachments/' + p.body.attachmentId)).data;
+          items.push({ name: p.filename, text: decodeB64(data), messageId: id });
+        } else if (!p.filename && p.mimeType === 'text/plain' && p.body && p.body.data) {
+          const text = decodeB64(p.body.data);
+          if (text.includes('WBLDATA:')) items.push({ name: 'Email text', text, messageId: id });
+        }
+      }
+    }
+    return { account: t.account, items, scanned: Math.min(ids.length, max), more: ids.length > max };
+  }
+
+  // ---------------- Microsoft 365 ----------------
+  async function msToken(cfg, popup) {
+    const t = tokens.microsoft;
+    if (t && t.exp > Date.now() + 60000) return t;
+    const tenant = encodeURIComponent(cfg.tenant || 'organizations');
+    const verifier = randomString(48);
+    const challenge = b64url(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier))));
+    const state = randomString(12);
+    const u = new URL('https://login.microsoftonline.com/' + tenant + '/oauth2/v2.0/authorize');
+    u.search = new URLSearchParams({ client_id: cfg.clientId, response_type: 'code', redirect_uri: redirectUri(), response_mode: 'fragment',
+      scope: MS_SCOPE, state, code_challenge: challenge, code_challenge_method: 'S256', prompt: 'select_account' }).toString();
+    const back = await popupAuth(u.href, popup);
+    const p = new URLSearchParams(back.hash.slice(1) || back.search.slice(1));
+    if (p.get('error')) throw new Error('Microsoft sign-in failed: ' + (p.get('error_description') || p.get('error')));
+    if (p.get('state') !== state) throw new Error('Sign-in response did not match. Try again.');
+    const r = await fetch('https://login.microsoftonline.com/' + tenant + '/oauth2/v2.0/token', {
+      method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ client_id: cfg.clientId, grant_type: 'authorization_code', code: p.get('code'), redirect_uri: redirectUri(), code_verifier: verifier, scope: MS_SCOPE })
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error('Microsoft sign-in failed: ' + (j.error_description || j.error || r.status));
+    tokens.microsoft = { token: j.access_token, exp: Date.now() + (Number(j.expires_in) || 3600) * 1000 };
+    const me = await mget('https://graph.microsoft.com/v1.0/me?$select=mail,userPrincipalName');
+    tokens.microsoft.account = me.mail || me.userPrincipalName;
+    return tokens.microsoft;
+  }
+  async function mget(url, headers) {
+    const r = await fetch(url, { headers: Object.assign({ Authorization: 'Bearer ' + tokens.microsoft.token }, headers || {}) });
+    if (r.status === 401) { delete tokens.microsoft; throw new Error('Your Microsoft sign-in expired. Click again to sign in.'); }
+    if (!r.ok) throw new Error('Outlook error ' + r.status + ': ' + (await r.text()).slice(0, 200));
+    return r.json();
+  }
+  async function msFetch(cfg, since, max, popup) {
+    const t = await msToken(cfg, popup);
+    const G = 'https://graph.microsoft.com/v1.0/me/messages';
+    let url = G + '?$filter=' + encodeURIComponent('receivedDateTime ge ' + new Date(since).toISOString()) +
+      '&$orderby=receivedDateTime desc&$select=id,hasAttachments,bodyPreview,subject&$top=50';
+    const msgs = [];
+    while (url && msgs.length < max * 4) {
+      const r = await mget(url);
+      msgs.push(...(r.value || []));
+      url = r['@odata.nextLink'] || '';
+    }
+    const items = []; let scanned = 0;
+    const likely = msgs.filter(m => m.hasAttachments || /ClockedIn|WBLDATA/.test((m.subject || '') + ' ' + (m.bodyPreview || '')));
+    for (const m of likely.slice(0, max)) {
+      scanned++;
+      let found = false;
+      if (m.hasAttachments) {
+        const a = await mget(G + '/' + m.id + '/attachments');
+        for (const at of a.value || []) {
+          if (at.contentBytes && FILE_RE.test(at.name || '')) { items.push({ name: at.name, text: decodeB64(at.contentBytes), messageId: m.id }); found = true; }
+        }
+      }
+      if (!found && /ClockedIn|WBLDATA/.test((m.subject || '') + ' ' + (m.bodyPreview || ''))) {
+        const full = await mget(G + '/' + m.id + '?$select=body', { Prefer: 'outlook.body-content-type="text"' });
+        const text = full.body && full.body.content || '';
+        if (text.includes('WBLDATA:')) items.push({ name: 'Email text', text, messageId: m.id });
+      }
+    }
+    return { account: t.account, items, scanned, more: likely.length > max || !!url };
+  }
+
+  /** Must be called from a click so the sign-in popup isn't blocked. */
+  function needsPopup(provider) { const t = tokens[provider]; return !(t && t.exp > Date.now() + 60000); }
+
+  async function fetchSubmissions(opts) {
+    if (!canUse()) throw new Error('Email can only be connected when the supervisor app is opened from its web address (https://…), not from a saved file.');
+    if (!opts.clientId) throw new Error('Email isn\'t set up yet. Enter the client ID from your district IT under Settings → Email connection.');
+    const max = opts.max || 300;
+    if (opts.provider === 'google') return googleFetch(opts, opts.since, max, opts.popup);
+    if (opts.provider === 'microsoft') return msFetch(opts, opts.since, max, opts.popup);
+    throw new Error('Choose Google or Microsoft under Settings → Email connection.');
+  }
+  function account(provider) { return tokens[provider] && tokens[provider].account || ''; }
+  function signOut() { Object.keys(tokens).forEach(k => delete tokens[k]); }
+
+  window.WBLMail = { fetchSubmissions, needsPopup, account, signOut, redirectUri, canUse };
+})();
+
+</script>
+  <script>
 /* Supervisor app: all records live in a folder the supervisor chooses (this PC or
  * a school network drive). Uses the browser's File System Access API (Edge/Chrome).
  *
@@ -2927,7 +3151,10 @@ var qrcode = function() {
       settings: {
         schoolName: BRAND.schoolName || '', emails: [], appUrl: BRAND.studentAppUrl || '',
         defaultGoal: BRAND.defaultGoalHours || 250, weeklyMax: 60, staleDays: 21,
-        termStart: '', termEnd: '', lastBackup: ''
+        termStart: '', termEnd: '', lastBackup: '',
+        emailProvider: (BRAND.email && BRAND.email.provider) || '', googleClientId: (BRAND.email && BRAND.email.googleClientId) || '',
+        msClientId: (BRAND.email && BRAND.email.microsoftClientId) || '', msTenant: (BRAND.email && BRAND.email.microsoftTenant) || '',
+        emailLastCheck: '', emailAccount: ''
       },
       students: [], submissions: [], log: []
     };
@@ -3070,7 +3297,7 @@ var qrcode = function() {
     document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
     $('view-' + name).classList.remove('hidden');
     if (name === 'review') renderReview();
-    if (name === 'settings') renderSettings();
+    if (name === 'settings') { renderSettings(); renderEmailSettings(); }
     if (name === 'students') renderStudents();
   }
   $('tabs').addEventListener('click', e => { const b = e.target.closest('button[data-tab]'); if (b) showTab(b.dataset.tab); });
@@ -3106,7 +3333,7 @@ var qrcode = function() {
   }
 
   // ---------------- students view ----------------
-  function renderAll() { renderStudents(); renderReviewCount(); renderBackupWarning(); }
+  function renderAll() { renderStudents(); renderReviewCount(); renderBackupWarning(); renderEmailStatus(); }
 
   function renderBackupWarning() {
     const lb = data.settings.lastBackup;
@@ -3376,7 +3603,7 @@ var qrcode = function() {
     return out;
   }
 
-  async function importTexts(items) {
+  async function importTexts(items, target) {
     // items: [{ name, text }]
     const report = [];
     const okNames = [];
@@ -3389,13 +3616,13 @@ var qrcode = function() {
     }
     const added = report.filter(x => x.r && x.r.result !== 'duplicate').length;
     if (added) await save('Imported ' + added + ' submission(s)');
-    showImportReport(report);
+    showImportReport(report, target);
     renderAll();
     return okNames;
   }
 
-  function showImportReport(report) {
-    const el = $('import-results');
+  function showImportReport(report, target) {
+    const el = target || $('import-results');
     if (!report.length) { el.innerHTML = '<p class="notice notice-ok">Nothing new to import.</p>'; return; }
     const c = { approved: 0, review: 0, duplicate: 0, error: 0 };
     report.forEach(x => { if (x.error) c.error++; else c[x.r.result]++; });
@@ -3612,6 +3839,73 @@ var qrcode = function() {
       rows.push([x.studentId, s ? fullName(s) : x.studentName, x.type === 'manual' ? 'Unpaid' : 'Pay stub', x.employer, x.periodStart, x.periodEnd, x.regularHours, x.overtimeHours, x.hours, x.status, x.adjusted ? 'yes' : '', x.flags.join(' | '), x.notes, x.importedAt.slice(0, 10)]);
     });
     downloadCsv('WBL submissions ' + today() + '.csv', rows);
+  });
+
+  // ---------------- email ----------------
+  function emailCfg() {
+    const s = data.settings;
+    return { provider: s.emailProvider, clientId: s.emailProvider === 'google' ? s.googleClientId : s.emailProvider === 'microsoft' ? s.msClientId : '', tenant: s.msTenant };
+  }
+  function renderEmailStatus() {
+    if (!data) return;
+    const s = data.settings, c = emailCfg();
+    const name = { google: 'Google', microsoft: 'Microsoft 365' }[c.provider];
+    let msg;
+    if (!c.provider || !c.clientId) msg = 'Email isn\'t set up yet. Your district IT does a one-time setup; then enter it under Settings.';
+    else msg = 'Connected to ' + name + (s.emailAccount ? ' (' + s.emailAccount + ')' : '') + '. ' +
+      (s.emailLastCheck ? 'Last checked ' + new Date(s.emailLastCheck).toLocaleString() + '.' : 'Not checked yet.');
+    if (!WBLMail.canUse()) msg = 'To use email, open the supervisor app from its web address' + (BRAND.supervisorAppUrl ? ': ' + BRAND.supervisorAppUrl : '') + ' (not a saved copy of the file).';
+    $('email-status').textContent = msg;
+    $('email-setup-link').classList.toggle('hidden', !!(c.provider && c.clientId));
+  }
+  $('email-setup-link').addEventListener('click', () => { showTab('settings'); $('email-settings').scrollIntoView(); });
+
+  $('check-email').addEventListener('click', async () => {
+    const c = emailCfg();
+    if (!c.provider || !c.clientId) { showTab('settings'); $('email-settings').scrollIntoView(); return toast('Set up the email connection first.'); }
+    // Open the sign-in window right away (inside the click) so pop-up blockers allow it.
+    const popup = WBLMail.canUse() && WBLMail.needsPopup(c.provider) ? window.open('', 'clockedin-signin', 'width=520,height=680') : null;
+    const btn = $('check-email'); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Checking email…';
+    const started = new Date().toISOString();
+    const s = data.settings;
+    let since;
+    if (s.emailLastCheck) since = Date.parse(s.emailLastCheck) - 2 * 86400000; // overlap; duplicates are skipped
+    else { since = Date.now() - 90 * 86400000; if (s.termStart) since = Math.max(since, WBL.parseDate(s.termStart).getTime()); }
+    try {
+      const res = await WBLMail.fetchSubmissions(Object.assign({ since, popup }, c));
+      s.emailAccount = res.account || s.emailAccount;
+      if (!res.more) s.emailLastCheck = started;
+      const el = $('email-results');
+      if (res.items.length) await importTexts(res.items, el);
+      else el.innerHTML = '<p class="notice notice-ok">No new ClockedIn emails.</p>';
+      await save('Checked email: ' + res.items.length + ' item(s)');
+      if (res.more) el.insertAdjacentHTML('beforeend', '<p class="notice notice-warn">There are more emails to check. Click the button again.</p>');
+      renderEmailStatus();
+    } catch (e) {
+      if (popup && !popup.closed) popup.close();
+      $('email-results').innerHTML = '<p class="notice notice-bad">' + esc(e.message) + '</p>';
+    } finally { btn.disabled = false; btn.textContent = label; }
+  });
+
+  function renderEmailSettings() {
+    const s = data.settings;
+    $('s-email-provider').value = s.emailProvider; $('s-google-id').value = s.googleClientId; $('s-ms-id').value = s.msClientId; $('s-ms-tenant').value = s.msTenant;
+    $('redirect-uri').textContent = WBLMail.redirectUri();
+    toggleEmailFields();
+  }
+  function toggleEmailFields() {
+    const p = $('s-email-provider').value;
+    $('email-google').classList.toggle('hidden', p !== 'google'); $('email-ms').classList.toggle('hidden', p !== 'microsoft');
+  }
+  $('s-email-provider').addEventListener('change', toggleEmailFields);
+  $('email-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const s = data.settings;
+    const prev = s.emailProvider + s.googleClientId + s.msClientId + s.msTenant;
+    s.emailProvider = $('s-email-provider').value; s.googleClientId = $('s-google-id').value.trim();
+    s.msClientId = $('s-ms-id').value.trim(); s.msTenant = $('s-ms-tenant').value.trim();
+    if (prev !== s.emailProvider + s.googleClientId + s.msClientId + s.msTenant) { WBLMail.signOut(); s.emailAccount = ''; }
+    await save('Email settings changed'); renderEmailStatus(); toast('Email settings saved.');
   });
 
   // ---------------- practice data ----------------

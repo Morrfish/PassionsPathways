@@ -36,5 +36,5 @@ test('rejects non-WBL files', () => {
 
 test('file names are safe', async () => {
   const d = await WBL.createSubmission(Object.assign({}, base, { studentId: '1/2\\3' }), WBL.newKey());
-  assert.match(WBL.fileName(d), /^WBL_123_2026-10-01_to_2026-10-14_[A-Za-z0-9_-]{6}\.txt$/);
+  assert.match(WBL.fileName(d), /^ClockedIn_123_2026-10-01_to_2026-10-14_[A-Za-z0-9_-]{6}\.txt$/);
 });

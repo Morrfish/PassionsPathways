@@ -119,6 +119,10 @@ separate symbol (a letter mark, mascot, or emblem), make a square icon of just t
   unless the user says it's hosted somewhere else. It only goes live after the branch is merged
   into `main`. Offer to open a pull request.
 - `state`: the school's state abbreviation.
+- `email` (optional, add only when the user gives you IDs from district IT): presets the
+  supervisor's **Check email** connection for everyone at that school. Use
+  `{ "provider": "google", "googleClientId": "…" }` or
+  `{ "provider": "microsoft", "microsoftClientId": "…", "microsoftTenant": "…" }`.
 
 ### 6. Build and test
 ```bash
@@ -136,6 +140,9 @@ SHOTS=<scratchpad>/shots-<id> node tests/e2e.mjs <id>
   - `dist/<id>/student/icon-192.png` (home-screen icon)
 - Fix anything off and rebuild.
 
+Also add the new school's row to the table in `wbl-tracker/docs/email-setup.md`. Its return
+address is `https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/<id>/supervisor/oauth-callback.html`.
+
 ### 7. Save
 Leave `brands/<id>/_source/` in place: it's a record of where the branding came from. Then
 commit `brands/<id>/` and `dist/<id>/` with a message like `Add <School Name> brand` and push to
@@ -148,6 +155,9 @@ In plain language:
 - the files to hand over:
   - `wbl-tracker/dist/<id>/supervisor/ClockedIn Supervisor.html` goes to the supervisor's computer
   - `wbl-tracker/dist/<id>/student/` goes on a web host
+- the supervisor web address to bookmark:
+  `https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/<id>/supervisor/ClockedIn%20Supervisor.html`
+- for the **Check email** button, the school's IT follows `wbl-tracker/docs/email-setup.md`
 - anything you guessed that they should confirm, for example "the site uses two blues, so I
   used the darker one for headers"
 
