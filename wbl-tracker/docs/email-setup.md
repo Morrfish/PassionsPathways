@@ -32,6 +32,7 @@ not a secret. The supervisor enters it under **Settings → Email connection**.
 | Greene County Career Center | `https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/greene-ccc/supervisor/oauth-callback.html` |
 | Millstream Career Center | `https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/millstream-cc/supervisor/oauth-callback.html` |
 | Tri-County Career Center | `https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/tri-county/supervisor/oauth-callback.html` |
+| Tri Star Career Compact | `https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/tri-star/supervisor/oauth-callback.html` |
 | Unbranded / testing | `https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/default/supervisor/oauth-callback.html` |
 
 - **JavaScript origin (Google only):** `https://morrfish.github.io`

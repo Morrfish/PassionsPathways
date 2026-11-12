@@ -1,0 +1,14 @@
+{
+  "id": "tri-star",
+  "schoolName": "Tri Star Career Compact",
+  "schoolShort": "Tri Star",
+  "appName": "ClockedIn",
+  "website": "https://www.tristarcareercompact.com/",
+  "state": "OH",
+  "logo": "logo.png",
+  "icon": "icon-mark.png",
+  "colors": { "primary": "#383838", "accent": "#f8b828" },
+  "studentAppUrl": "https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/tri-star/student/",
+  "defaultGoalHours": 250,
+  "notes": "Website blocks automated visitors, so the logo was supplied by the user on 2026-11-12. Primary = charcoal lettering of the logo; accent = yellow top point of the star (the star has five colors). Icon = the star cropped from the logo. Confirm colors with the school."
+}
