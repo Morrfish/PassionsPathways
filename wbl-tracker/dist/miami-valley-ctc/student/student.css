@@ -1,0 +1,37 @@
+main { max-width: 560px; margin: 0 auto; padding: 16px 16px calc(32px + env(safe-area-inset-bottom)); }
+.center { text-align: center; }
+.big { min-height: 56px; font-size: 1.05rem; margin-top: 12px; }
+.hello { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.hello h2 { margin: 0; }
+.hello p { margin: 2px 0 0; }
+.total { display: flex; flex-direction: column; align-items: center; background: var(--brand-primary); color: var(--brand-on-primary); border-radius: 12px; padding: 8px 14px; min-width: 96px; }
+.total .muted { color: inherit; opacity: .85; }
+.total-num { font-size: 1.8rem; font-weight: 800; line-height: 1.1; }
+
+.link-back { background: none; border: none; color: var(--brand-link); padding: 6px 0; min-height: 36px; font-weight: 600; }
+
+.hist-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+.hist-item .when { font-weight: 600; }
+.hist-item .hrs { font-weight: 800; font-size: 1.1rem; white-space: nowrap; }
+.hist-item button { min-height: 36px; padding: 6px 10px; font-size: .85rem; }
+.hist-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+
+.photo-preview { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: #111; margin-bottom: 8px; }
+.photo-preview img { display: block; width: 100%; height: auto; }
+
+.redact-wrap { background: #111; border-radius: 10px; overflow: hidden; touch-action: none; }
+#redact-canvas { display: block; width: 100%; height: auto; touch-action: none; cursor: crosshair; }
+
+.summary { background: var(--bg); border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+.summary dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 0; }
+.summary dt { color: var(--muted); }
+.summary dd { margin: 0; font-weight: 600; }
+.summary img { width: 100%; border-radius: 8px; margin-top: 10px; }
+.send-to { border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px 12px; margin: 0 0 12px; }
+.send-to legend { font-weight: 600; padding: 0 4px; }
+.send-to label { display: flex; align-items: center; gap: 10px; font-weight: 500; margin: 8px 0 0; word-break: break-all; }
+.send-to input { width: 22px; height: 22px; min-height: 0; flex: none; }
+.steps p { margin: 0 0 8px; }
+.settings { margin-top: 24px; }
+.settings summary { cursor: pointer; }
+details summary { cursor: pointer; font-weight: 600; }

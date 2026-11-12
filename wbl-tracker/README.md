@@ -73,3 +73,5 @@ Supervisor app (open in Edge/Chrome and bookmark; needed for the email button):
 |---|---|---|
 | `default` | Unbranded | n/a |
 | `greene-ccc` | Greene County Career Center (Xenia, OH) | greeneccc.com |
+| `miami-valley-ctc` | Miami Valley Career Technology Center (Clayton, OH) | mvctc.com |
+| `apollo-cc` | Apollo Career Center (Lima, OH) | apollocareercenter.com |
