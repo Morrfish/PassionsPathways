@@ -1,0 +1,76 @@
+{
+  "url": "https://millstream-career-center.fcs.org/",
+  "fetchedAt": "2026-11-12T04:22:05.626Z",
+  "title": "Home - Millstream Career Center",
+  "siteName": "",
+  "headerText": "",
+  "description": "Home - Millstream Career Center",
+  "themeColor": "",
+  "logos": [
+    {
+      "file": "logo-1.webp",
+      "bytes": 5082,
+      "type": "image/webp",
+      "url": "https://resources.finalsite.net/images/f_auto,q_auto,t_image_size_2/v1671793203/fcsorg/zvuf1ysge0u0xcsv3xqh/MillstreamCareerCenterWhite.png",
+      "why": "header image",
+      "score": 13,
+      "w": 128,
+      "h": 44,
+      "top": 84,
+      "alt": "Millstream Career Center"
+    },
+    {
+      "file": "logo-2.jpg",
+      "bytes": 189260,
+      "type": "image/jpeg",
+      "url": "https://resources.finalsite.net/images/f_auto,q_auto,t_image_size_5/v1679672883/fcsorg/appcxf3dzyfxgpgyevz5/Millstream-2-HiRes.jpg",
+      "why": "header image",
+      "score": 8,
+      "w": 1,
+      "h": 1,
+      "top": 223,
+      "alt": "Millstream Building"
+    },
+    {
+      "file": "logo-3.webp",
+      "bytes": 12412,
+      "type": "image/webp",
+      "url": "https://resources.finalsite.net/images/f_auto,q_auto,t_image_size_4/v1671793203/fcsorg/zvuf1ysge0u0xcsv3xqh/MillstreamCareerCenterWhite.png",
+      "why": "image",
+      "score": 8,
+      "w": 128,
+      "h": 44,
+      "top": 1680,
+      "alt": "Millstream Career Center"
+    },
+    {
+      "file": "logo-4.ico",
+      "bytes": 15406,
+      "type": "image/x-icon",
+      "url": "https://resources.finalsite.net/images/v1672878717/fcsorg/igfc9avur0x1pc9zlnqa/findlay_favicon.ico",
+      "why": "favicon ",
+      "score": 1,
+      "w": null,
+      "h": null,
+      "top": null,
+      "alt": ""
+    }
+  ],
+  "colors": [
+    {
+      "hex": "#17489d",
+      "weight": 7030,
+      "where": "other background ×41, other text ×2, link ×2, heading text ×2",
+      "textOn": "#ffffff",
+      "contrastWithText": 8.57
+    },
+    {
+      "hex": "#2c3b98",
+      "weight": 214,
+      "where": "link ×22, other text ×21",
+      "textOn": "#ffffff",
+      "contrastWithText": 9.61
+    }
+  ],
+  "cssVars": []
+}

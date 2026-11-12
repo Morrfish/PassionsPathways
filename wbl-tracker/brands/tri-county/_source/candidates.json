@@ -1,0 +1,165 @@
+{
+  "url": "https://www.tricounty.cc/",
+  "fetchedAt": "2026-11-12T04:22:17.858Z",
+  "title": "Tri-County Career Center",
+  "siteName": "",
+  "headerText": "",
+  "description": "The mission of the Tri-County Career Center is to &quot;inspire, challenge and prepare students to reach their career potential.&quot;",
+  "themeColor": "",
+  "logos": [
+    {
+      "file": "logo-1.webp",
+      "bytes": 17598,
+      "type": "image/webp",
+      "url": "https://resources.finalsite.net/images/f_auto,q_auto,t_image_size_2/v1788542858/tricountyhightechcom/kqf164zysh8gdxwrdgl5/logo_2026_white_midsize.png",
+      "why": "header image",
+      "score": 13,
+      "w": 227,
+      "h": 100,
+      "top": 45,
+      "alt": "Tri-County Career Center"
+    },
+    {
+      "file": "logo-2.webp",
+      "bytes": 20754,
+      "type": "image/webp",
+      "url": "https://resources.finalsite.net/images/f_auto,q_auto,t_image_size_1/v1785178121/tricountyhightechcom/h1cssblroirg3uqs4feo/alexander_logo.png",
+      "why": "header image",
+      "score": 8,
+      "w": 80,
+      "h": 80,
+      "top": 3121,
+      "alt": "The Ohio State University"
+    },
+    {
+      "file": "logo-3.webp",
+      "bytes": 17662,
+      "type": "image/webp",
+      "url": "https://resources.finalsite.net/images/f_auto,q_auto,t_image_size_1/v1785178156/tricountyhightechcom/d6lygfscmrgi4edbt3c5/athens_logo.png",
+      "why": "header image",
+      "score": 8,
+      "w": 80,
+      "h": 80,
+      "top": 3121,
+      "alt": "The Ohio State University"
+    },
+    {
+      "file": "logo-4.webp",
+      "bytes": 20294,
+      "type": "image/webp",
+      "url": "https://resources.finalsite.net/images/f_auto,q_auto,t_image_size_1/v1785178156/tricountyhightechcom/bsjjmyt2ybjyydz6rujs/Federal_Hocking_Local_Schools_web_logo_template_300.png",
+      "why": "header image",
+      "score": 8,
+      "w": 119,
+      "h": 80,
+      "top": 3121,
+      "alt": "The Ohio State University"
+    },
+    {
+      "file": "logo-5.webp",
+      "bytes": 28412,
+      "type": "image/webp",
+      "url": "https://resources.finalsite.net/images/f_auto,q_auto,t_image_size_1/v1785178156/tricountyhightechcom/b8zvuxhpe89dqabmsrch/newlex_logo.png",
+      "why": "header image",
+      "score": 8,
+      "w": 80,
+      "h": 80,
+      "top": 3337,
+      "alt": "A knight on a horse with a lance charges forward in the foreground, set against a circular emblem with the word \"Lancers\" in the background."
+    },
+    {
+      "file": "logo-6.webp",
+      "bytes": 15764,
+      "type": "image/webp",
+      "url": "https://resources.finalsite.net/images/f_auto,q_auto,t_image_size_1/v1785178156/tricountyhightechcom/t9ebcxgy2sqqau54vkiw/miller_logo.png",
+      "why": "header image",
+      "score": 8,
+      "w": 80,
+      "h": 80,
+      "top": 3337,
+      "alt": "A knight on a horse with a lance charges forward in the foreground, set against a circular emblem with the word \"Lancers\" in the background."
+    },
+    {
+      "file": "logo-7.webp",
+      "bytes": 22184,
+      "type": "image/webp",
+      "url": "https://resources.finalsite.net/images/f_auto,q_auto,t_image_size_1/v1785178156/tricountyhightechcom/ttlpfocuwpcozylxpmru/logan-hocking_logo.png",
+      "why": "header image",
+      "score": 4,
+      "w": 79,
+      "h": 80,
+      "top": 3121,
+      "alt": "A maroon and gray crest with four quadrants depicting a torch, an atom, winged sandals, and gardening tools, is centered on a white background, with a banner reading \"TRIMBLE LOCAL\" across the bottom."
+    },
+    {
+      "file": "logo-8.webp",
+      "bytes": 16866,
+      "type": "image/webp",
+      "url": "https://resources.finalsite.net/images/f_auto,q_auto,t_image_size_1/v1785178156/tricountyhightechcom/qwqzjulmavd96vulghvo/nelsonville_logo.png",
+      "why": "header image",
+      "score": 4,
+      "w": 80,
+      "h": 80,
+      "top": 3337,
+      "alt": "A crest with the word \"Buckeyes\" and a chestnut leaf is displayed in the foreground, with \"Nelsonville-York\" written on a banner below it, all against a white background."
+    }
+  ],
+  "colors": [
+    {
+      "hex": "#0e76bc",
+      "weight": 2129,
+      "where": "other text ×76, link ×12, heading text ×6, other background ×2",
+      "textOn": "#ffffff",
+      "contrastWithText": 4.84
+    },
+    {
+      "hex": "#25aae1",
+      "weight": 80,
+      "where": "header border ×1",
+      "textOn": "#1a1a1a",
+      "contrastWithText": 6.56
+    }
+  ],
+  "cssVars": [
+    [
+      "--primary-color-h",
+      "204.14"
+    ],
+    [
+      "--primary-color-s",
+      "86.14%"
+    ],
+    [
+      "--primary-color-l",
+      "39.61%"
+    ],
+    [
+      "--primary-color-hsl",
+      "var(--primary-color-h), var(--primary-color-s), var(--primary-color-l)"
+    ],
+    [
+      "--primary-color",
+      "#0e76bc"
+    ],
+    [
+      "--secondary-color-h",
+      "197.55"
+    ],
+    [
+      "--secondary-color-s",
+      "75.81%"
+    ],
+    [
+      "--secondary-color-l",
+      "51.37%"
+    ],
+    [
+      "--secondary-color-hsl",
+      "var(--secondary-color-h), var(--secondary-color-s), var(--secondary-color-l)"
+    ],
+    [
+      "--secondary-color",
+      "#25aae1"
+    ]
+  ]
+}

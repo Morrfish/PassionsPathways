@@ -1,0 +1,13 @@
+{
+  "id": "tri-county",
+  "schoolName": "Tri-County Career Center",
+  "schoolShort": "Tri-County CC",
+  "appName": "ClockedIn",
+  "website": "https://www.tricounty.cc/",
+  "state": "OH",
+  "logo": "logo.png",
+  "colors": { "primary": "#0e76bc", "accent": "#25aae1", "logoBg": "#0e76bc" },
+  "studentAppUrl": "https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/tri-county/student/",
+  "defaultGoalHours": 250,
+  "notes": "From tricounty.cc on 2026-11-12. Primary = heading and link blue; accent = light blue stripe across the top of the site. Logo = white Tri-County Career Center header logo (shown on the blue tile). No separate symbol, so the phone icon uses the full logo."
+}

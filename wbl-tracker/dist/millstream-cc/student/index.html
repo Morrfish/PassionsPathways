@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ClockedIn – Millstream CC</title>
+  <meta name="theme-color" content="#17489d">
+  <meta name="referrer" content="no-referrer">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ClockedIn">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="brand.css">
+  <link rel="stylesheet" href="student.css">
+</head>
+<body>
+  <header class="appbar">
+    <img class="logo" src="logo.png" alt="Millstream Career Center logo">
+    <div class="titles">
+      <span class="school">Millstream CC</span>
+      <span class="app">ClockedIn</span>
+    </div>
+  </header>
+
+  <main id="app">
+    <!-- Enrollment -->
+    <section id="screen-enroll" class="screen hidden">
+      <div class="card">
+        <img class="ci-hero" src="clockedin-logo.png" alt="ClockedIn">
+        <h2>Welcome!</h2>
+        <p>This app sends your work-based learning hours to your WBL supervisor at school.</p>
+        <p><strong>To get started, scan the QR code your supervisor gave you</strong> with your phone's camera. It will open this app and set it up for you.</p>
+        <details>
+          <summary>Have an enrollment code instead?</summary>
+          <label for="enroll-code">Paste your enrollment code</label>
+          <textarea id="enroll-code" rows="3" autocomplete="off" spellcheck="false"></textarea>
+          <button class="btn-primary btn-block" id="enroll-btn" style="margin-top:12px">Set up my app</button>
+        </details>
+        <div id="enroll-error" class="notice notice-bad hidden" role="alert"></div>
+      </div>
+      <p class="small muted center">Your information stays on this phone until you choose to send it.</p>
+    </section>
+
+    <!-- Home -->
+    <section id="screen-home" class="screen hidden">
+      <div class="card hello">
+        <div>
+          <h2 id="hello-name">Hi!</h2>
+          <p class="muted small" id="hello-employer"></p>
+        </div>
+        <div class="total">
+          <span class="total-num" id="total-sent">0</span>
+          <span class="small muted">hours sent</span>
+        </div>
+      </div>
+
+      <button class="btn-primary btn-block big" id="new-paystub">📷 Add a pay stub</button>
+      <button class="btn-secondary btn-block big" id="new-manual">✍️ Log unpaid hours</button>
+
+      <div id="unsent-notice" class="notice notice-warn hidden" style="margin-top:16px"></div>
+
+      <h3 style="margin-top:24px">My submissions</h3>
+      <div id="history"></div>
+      <p class="small muted">Your supervisor reviews each submission. Your official total is the one your supervisor keeps.</p>
+
+      <details class="small muted settings">
+        <summary>Settings</summary>
+        <p>Student ID: <span id="set-id"></span><br>Supervisor email(s): <span id="set-emails"></span></p>
+        <button class="btn-danger" id="reset-btn">Remove my info from this phone</button>
+      </details>
+    </section>
+
+    <!-- Entry form -->
+    <section id="screen-entry" class="screen hidden">
+      <button class="link-back" data-go="home">‹ Back</button>
+      <div class="card">
+        <h2 id="entry-title">Pay stub</h2>
+        <form id="entry-form" novalidate>
+          <div id="photo-block">
+            <label>Photo of your pay stub</label>
+            <div id="photo-preview" class="photo-preview hidden"><img alt="Your pay stub with private details blacked out"></div>
+            <input type="file" id="photo-input" accept="image/*" capture="environment" class="hidden">
+            <button type="button" class="btn-secondary btn-block" id="photo-btn">📷 Take or choose photo</button>
+            <p class="hint">Next you'll draw a box around the <strong>pay dates and hours</strong>. Everything else (pay, SSN, address) is blacked out before anything is saved.</p>
+          </div>
+
+          <label for="f-employer">Employer</label>
+          <input id="f-employer" required autocomplete="organization">
+
+          <div class="row">
+            <div>
+              <label for="f-start" id="l-start">Pay period start</label>
+              <input id="f-start" type="date" required>
+            </div>
+            <div>
+              <label for="f-end" id="l-end">Pay period end</label>
+              <input id="f-end" type="date" required>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="f-reg" id="l-reg">Regular hours</label>
+              <input id="f-reg" type="number" inputmode="decimal" min="0" step="0.01" required>
+            </div>
+            <div id="ot-wrap">
+              <label for="f-ot">Overtime hours</label>
+              <input id="f-ot" type="number" inputmode="decimal" min="0" step="0.01" value="0">
+            </div>
+          </div>
+
+          <label for="f-notes" id="l-notes">Notes <span class="muted small">(optional)</span></label>
+          <textarea id="f-notes" maxlength="500"></textarea>
+
+          <div id="entry-error" class="notice notice-bad hidden" role="alert" style="margin-top:12px"></div>
+          <button type="submit" class="btn-primary btn-block big" style="margin-top:16px">Review &amp; send</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Redaction -->
+    <section id="screen-redact" class="screen hidden">
+      <div class="card">
+        <h2>Black out private info</h2>
+        <p>Drag your finger to draw a box around the <strong>pay period dates</strong> and another around the <strong>hours</strong>. Everything outside your boxes is blacked out.</p>
+        <div class="redact-wrap"><canvas id="redact-canvas"></canvas></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn-secondary" id="redact-undo">Undo box</button>
+          <button class="btn-secondary" id="redact-preview">Preview</button>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn-secondary" id="redact-cancel">Cancel</button>
+          <button class="btn-primary" id="redact-done">Use this</button>
+        </div>
+        <div id="redact-error" class="notice notice-bad hidden" role="alert" style="margin-top:12px"></div>
+      </div>
+    </section>
+
+    <!-- Send -->
+    <section id="screen-send" class="screen hidden">
+      <div class="card">
+        <h2>Send to your supervisor</h2>
+        <div id="send-summary" class="summary"></div>
+        <fieldset id="send-to" class="send-to">
+          <legend>Send to</legend>
+        </fieldset>
+
+        <div class="steps">
+          <p><strong>1.</strong> Copy your supervisor's email address.</p>
+          <button class="btn-secondary btn-block" id="copy-email">📋 Copy email address</button>
+          <p style="margin-top:14px"><strong>2.</strong> Tap Send and pick your email app. Paste the address in <em>To</em> and send.</p>
+          <button class="btn-primary btn-block big" id="share-btn">📤 Send with photo</button>
+        </div>
+        <details class="small" style="margin-top:16px">
+          <summary>Sending isn't working?</summary>
+          <p style="margin-top:8px">Option A: download the file and attach it to an email yourself.</p>
+          <button class="btn-secondary btn-block" id="download-btn">⬇️ Download file</button>
+          <p style="margin-top:12px">Option B: send it as plain email text. This sends your numbers but <strong>not</strong> the photo.</p>
+          <button class="btn-secondary btn-block" id="mailto-btn">✉️ Email as text (no photo)</button>
+        </details>
+        <button class="btn-secondary btn-block" id="send-done" style="margin-top:16px">I sent it ✔</button>
+        <button class="link-back" data-go="home" style="margin-top:8px">Not now: save it for later</button>
+      </div>
+    </section>
+  </main>
+  <footer class="powered"><span>Powered by</span><img src="clockedin-logo.png" alt="ClockedIn"></footer>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <script>window.WBL_BRAND = {"id":"millstream-cc","schoolName":"Millstream Career Center","schoolShort":"Millstream CC","appName":"ClockedIn","website":"https://millstream-career-center.fcs.org/","studentAppUrl":"https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/millstream-cc/student/","supervisorAppUrl":"https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/millstream-cc/supervisor/ClockedIn%20Supervisor.html","defaultGoalHours":250,"colors":{"primary":"#17489d","accent":"#88bae5","logoBg":"#17489d","onPrimary":"#ffffff","onAccent":"#1a1a1a","link":"#17489d"},"email":{}};</script>
+  <script src="wbl-format.js"></script>
+  <script src="student.js"></script>
+</body>
+</html>

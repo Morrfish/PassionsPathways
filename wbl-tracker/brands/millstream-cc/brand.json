@@ -1,0 +1,14 @@
+{
+  "id": "millstream-cc",
+  "schoolName": "Millstream Career Center",
+  "schoolShort": "Millstream CC",
+  "appName": "ClockedIn",
+  "website": "https://millstream-career-center.fcs.org/",
+  "state": "OH",
+  "logo": "logo.png",
+  "icon": "icon-mark.png",
+  "colors": { "primary": "#17489d", "accent": "#88bae5", "logoBg": "#17489d" },
+  "studentAppUrl": "https://morrfish.github.io/PassionsPathways/wbl-tracker/dist/millstream-cc/student/",
+  "defaultGoalHours": 250,
+  "notes": "From millstream-career-center.fcs.org on 2026-11-12. Primary = blue navigation bar (also the dark square in the logo); accent = light blue square in the logo. Logo = site's 'Millstream Career Center' wordmark with squares (white lettering, so shown on the blue tile). Icon = the four squares cropped from that logo."
+}
