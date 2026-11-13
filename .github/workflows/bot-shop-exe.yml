@@ -6,7 +6,7 @@ name: Bot Assembly Shop exe
 on:
   workflow_dispatch:
   push:
-    branches: [main, ccr-e56bdd5b-514s4o]
+    branches: [main]
     paths:
       - 'bot-shop/**'
       - '.github/workflows/bot-shop-exe.yml'
