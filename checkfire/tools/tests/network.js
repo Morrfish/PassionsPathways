@@ -53,6 +53,7 @@ const {chromium}=require('playwright'),{spawn}=require('child_process');
     const pos=p=>p.evaluate(()=>({me:D.player.pos.toArray().map(v=>+v.toFixed(1)),them:D.bot.pos.toArray().map(v=>+v.toFixed(1))}));
     await A.evaluate(()=>{D.player.pos.set(6,0,14);});await A.waitForTimeout(1200);
     const pa=await pos(A),pb=await pos(B);out.positions={hostSeesSelf:pa.me,guestSeesHost:pb.them,guestSeesSelf:pb.me,hostSeesGuest:pa.them};
+    await A.waitForFunction(()=>!(D.safe>0),null,{timeout:240000});await B.waitForFunction(()=>!(D.safe>0),null,{timeout:240000});   // the 3-second start shield has to run out first
     // host shoots the guest: the guest's health drops on both machines
     await B.evaluate(()=>{D.player.pos.set(6,0,4);D.player.max=D.player.hp=100;});await A.waitForTimeout(900);
     const aimFire=p=>p.evaluate(()=>{const P=D.player,B=D.bot,dx=B.pos.x-P.pos.x,dz=B.pos.z-P.pos.z,dy=(B.pos.y+1)-(P.pos.y+P.eye);P.yaw=Math.atan2(-dx,-dz);P.pitch=Math.atan2(dy,Math.hypot(dx,dz));P.fireCd=0;P.ammo=P.w.mag;return playerFire();});
