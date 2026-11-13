@@ -49,6 +49,11 @@ const SEG = {
   tnt: (b) => b.need('cannon').flat(12).o('tnt', 0).o('stone', 2).o('stone', 4.4).flat(12),
   glass: (b, p = 2) => { b.need('fast').flat(14); for (let i = 0; i < p; i++) b.o('glass', i * 5); b.flat(p * 5 + 8); },
   ballpit: (b) => b.flat(3).gdown(1).flat(1).o('ballpit', 3).flat(7).gup(1).flat(3),
+  // --- puzzle sections
+  bridgegap: (b) => b.need('bridge').flat(9).z(-2.0, -1.2, { bridge: 1 }).gap(3, LAVA, 5, 2).flat(8),
+  droneswitch: (b) => b.need('drone').flat(8).z(-2, 3, { drone: 1 }).o('switch', 6, 9).o('gate', 6).flat(14),
+  hoverlava: (b) => b.need('hover').flat(8).z(-1.5, 10.5, { hover: 1 }).gap(9, LAVA, 2).flat(8),
+  mlasers: (b, p = 4) => { b.need('mirror').flat(6); for (let i = 0; i < p; i++) b.o('laser', 3 + i * 3); b.flat(p * 3 + 6); },
   charge: (b) => b.flat(2).o('charger', 1).flat(4),
   fix: (b) => b.flat(2).o('repair', 1).flat(4),
 };
@@ -93,6 +98,15 @@ const LEVELS = [
   ['l33', 'Free Fall', 'crazy', 4, 'space', 30, 1, 'fall:8 fall:10 fall:6'],
   ['l34', 'Gate Crashers', 'crazy', 4, '', 10, 1, 'gateeasy gatehigh plate'],
   ['l35', 'Mixed Nuts', 'crazy', 4, 'candy', 14, 1, 'tele board:7 pool:8 zip:12'],
+  // ---- puzzle: a rule limits how many gadgets fit, and pit stops let you swap them
+  ['l41', 'Pit Stop 101', 'puzzle', 2, 'speed', 10, 1, 'wood:1 pit icew:1 pit rock:1'],
+  ['l42', 'Two Hands', 'puzzle', 3, 'desert', 10, 1, 'wood:2 rock:1 pit pool:10 icew:1'],
+  ['l43', 'Mind the Gap', 'puzzle', 3, 'night', 10, 1, 'bridgegap pit droneswitch'],
+  ['l44', 'Hot Foot', 'puzzle', 3, 'strength', 10, 1, 'hoverlava pit wood:2 pit hoverlava'],
+  ['l45', 'Mirror Mirror', 'puzzle', 4, 'space', 10, 1, 'mlasers:4 pit gatehigh pit zip:14'],
+  ['l46', 'Swap Meet', 'puzzle', 4, 'snow', 8, 1, 'zip:14 pit climb:5 pit propgap:10 pit rock:2'],
+  ['l47', 'Toolbelt', 'puzzle', 4, 'candy', 10, 1, 'wood:1 icew:1 pit rock:1 tnt pit pool:10 droneswitch'],
+  ['l48', 'The Long Con', 'puzzle', 5, 'crazy', 8, 2, 'bridgegap wood:2 pit hoverlava mlasers:3 pit climb:6 zip:16 pit rock:2 gatehigh'],
   // ---- legendary: long, few checkpoints, tight budgets
   ['l36', 'The Long Haul', 'boss', 5, 'desert', 5, 3, 'mud:16 steep:5 sand:14 conveyor:3 blower steep:6 charge rock:2 wood:2 crates:3 steep:4 blower rock:1'],
   ['l37', 'Leap of Faith', 'boss', 5, 'space', 30, 3, 'fall:12 board:9 launch:20 fix fall:13 moon:12 launchwall:7 gaplava:3 propgap:14 propwall:6 fall:12 launch:22'],
@@ -103,31 +117,112 @@ const LEVELS = [
 const LEVEL_BLURB = { 1: 'A gentle warm-up.', 2: 'Getting trickier.', 3: 'Plan before you build.', 4: 'For experienced engineers.', 5: 'Legendary. Few checkpoints. Good luck.' };
 
 /* The bot the course checker drives. Budgets are set from what it costs. */
-function refBuild(needs) {
-  const gad = ['hook', 'saw', 'drill', 'torch', 'cannon', 'suction', 'prop', 'floats', 'shocks', 'gyro', 'blade'].filter(g => needs[g]);
-  if (gad.length !== 3 && gad.length < 5) gad.push('righter');   // a spare slot gets a roll cage
-  const chassis = gad.length > 5 ? 'tank' : gad.length > 3 ? 'hauler' : 'rover';
+const REF_GADGETS = ['hook', 'saw', 'drill', 'torch', 'cannon', 'suction', 'prop', 'floats', 'blade', 'bridge', 'drone', 'hover', 'mirror'];
+const gadgetsFor = needs => REF_GADGETS.filter(g => needs[g]);
+function refBuild(needs, gad, slots) {
+  gad = gad.slice(); const n = slots || gad.length;
+  if (!slots && gad.length !== 3 && gad.length < 5) gad.push('righter');   // a spare slot gets a roll cage
+  const chassis = n > 5 ? 'tank' : n > 3 ? 'hauler' : 'rover';
   const gear = needs.suction ? (chassis === 'rover' ? 4 : 5) : needs.fast && !needs.big ? 2 : needs.big ? 4 : 3;
-  return { name: 'Checker', color: '#ffc21a', chassis, wheels: needs.big ? 'big' : 'std', tires: 'spiked', motor: 'beast', gear, battery: 'large', drive: 'awd', gadgets: gad };
+  return { name: 'Checker', color: '#ffc21a', chassis, wheels: needs.big ? 'big' : 'std', tires: 'spiked', motor: 'beast', gear, battery: 'large', drive: 'awd', gadgets: gad, upgrades: ['shocks', 'gyro'].filter(u => needs[u]) };
 }
 
 function moreLevels() {
-  return LEVELS.map(([id, name, kind, stars, sky, h0, cpEvery, segs], idx) => {
-    const boss = kind === 'boss', b = CB(id, name, boss ? 'crazy' : kind, 1000, LEVEL_BLURB[stars], null);
+  const made = LEVELS.map(([id, name, kind, stars, sky, h0, cpEvery, segs], idx) => {
+    const boss = kind === 'boss', puzzle = kind === 'puzzle', b = CB(id, name, boss || puzzle ? 'crazy' : kind, 1000, puzzle ? 'A puzzle course. Read the rule, then plan your pit stops.' : LEVEL_BLURB[stars], null);
+    const groups = [{}], pits = [], c0 = b.c; c0.needs = groups[0];
     b.setH(h0).flat(4).o('start').flat(8);
     segs.split(' ').forEach((sg, i) => {
       const [nm, par] = sg.split(':');
+      if (nm === 'pit') { b.flat(4).o('pit', 0).flat(5); pits.push(b.x - 5); groups.push({}); c0.needs = groups[groups.length - 1]; return; }
       if (i % cpEvery === 0 && i) b.flat(3).o('checkpoint', -1.5).flat(2);
       SEG[nm](b, par ? +par : undefined);
       if (b.h < 3 || b.h > 31) throw new Error(`${id} ${nm}: height ${b.h} out of range`);
     });
     b.flat(6).o('finish', -2).flat(6);
-    const c = b.done();
-    Object.assign(c, { stars, boss, sky: sky || '', num: idx + 1, ref: refBuild(c.needs) });
-    c.budget = Math.ceil(botSpec(c.ref).cost * (boss ? 1.03 : 1.12) / 50) * 50;
+    const c = b.done(), all = Object.assign({}, ...groups), lists = groups.map(gadgetsFor);
+    c.needs = all;
+    if (puzzle) { c.rules = { slots: Math.max(1, ...lists.map(l => l.length)) }; c.plan = pits.map((x, i) => ({ x, gadgets: lists[i + 1] })); }
+    const ref = refBuild(all, puzzle ? lists[0] : gadgetsFor(all), puzzle ? c.rules.slots : 0);
+    const cost = Math.max(...lists.map(l => botSpec(Object.assign({}, ref, { gadgets: puzzle ? l : ref.gadgets })).cost));
+    Object.assign(c, { stars, boss, group: boss ? 'boss' : puzzle ? 'puzzle' : '', sky: sky || '', num: idx + 1, ref });
+    c.budget = Math.ceil(cost * (boss ? 1.03 : 1.12) / 50) * 50;
     if (REF_TIMES[id]) c.medals = [Math.ceil(REF_TIMES[id] * 1.05), Math.ceil(REF_TIMES[id] * 1.7)];
     return c;
   });
+  return made.concat(mazes());
 }
+
+/* ---------------- Mazes ----------------
+   Underground, dark, several floors. A rule allows one gadget at a time and a small battery that
+   drains the whole time, so the route has to pass chargers and pit stops in the right order.
+   Floors are 5 apart: a hall at height y is clear from y to y+3. `solve` is the checker's route. */
+function MZ(id, name, w, stars, desc) {
+  const c = newCourse(w);
+  Object.assign(c, { id, name, kind: 'crazy', group: 'maze', stars, builtin: true, desc, sky: 'cave', needs: {}, test: [], rules: { slots: 1, energy: 50, drain: 0.3, dark: true } });
+  for (let x = 0; x < w; x++) for (let y = 0; y < 36; y++) tset(c, x, y, tcode(1, 0));
+  const clear = (x0, x1, y0, y1, v = 0) => { for (let x = x0; x < x1; x++) for (let y = y0; y < y1; y++) tset(c, x, y, v); };
+  const m = {
+    c, clear,
+    hall(x0, x1, y) { clear(x0, x1, y, y + 4); return m; },
+    lift(x, y) { clear(x, x + 4, y, y + 9); c.objs.push({ t: 'lift', x: x + 2, y }); return m; },   // carries from floor y to floor y+5
+    hole(x, y) { clear(x, x + 3, y - 1, y); return m; },                                           // a hole in the floor of hall y
+    o(t, x, y, ex) { c.objs.push(Object.assign({ t, x, y }, ex)); return m; },
+    done(first, solve) {
+      c.ref = { name: 'Checker', color: '#ffc21a', chassis: 'rover', wheels: 'std', tires: 'spiked', motor: 'titan', gear: 2, battery: 'small', drive: 'awd', gadgets: [first], upgrades: ['ballast'] };
+      c.solve = solve;
+      const cost = Math.max(...[first].concat(solve.filter(s => s[0] === 'swap').map(s => s[1][0])).map(g => botSpec(Object.assign({}, c.ref, { gadgets: [g] })).cost));
+      c.budget = Math.ceil(cost * 1.15 / 50) * 50;
+      if (REF_TIMES[id]) c.medals = [Math.ceil(REF_TIMES[id] * 1.05), Math.ceil(REF_TIMES[id] * 1.7)];
+      return c;
+    },
+  };
+  return m;
+}
+function mazes() {
+  const A = 5, B = 10, C = 15, D = 20, E = 25, L = [];
+  L.push(MZ('m1', 'Mouse House', 70, 3, 'Three floors, two lifts and a couple of dead ends.')
+    .hall(2, 66, A).hall(2, 66, B).hall(2, 66, C)
+    .o('start', 5, A).o('woodwall', 20, A).lift(40, A).o('sign', 52, A, { txt: 'Dead end!' }).o('charger', 58, A)
+    .o('checkpoint', 36, B).o('pit', 32, B).o('charger', 27, B).o('iceblock', 18, B).lift(6, B).o('repair', 56, B).o('checkpoint', 13, C)
+    .o('laser', 26, C).o('charger', 36, C).o('laser', 46, C).o('finish', 60, C)
+    .done('saw', [['go', 36], ['lift', 42], ['go', 32], ['swap', ['torch']], ['go', 27], ['charge'], ['go', 12], ['lift', 8], ['go', 36], ['charge'], ['go', 60]]));
+
+  L.push(MZ('m2', 'Portal Puzzle', 80, 3, 'Three portals. Only one of them helps.')
+    .hall(2, 76, A).hall(2, 46, B).hall(50, 76, B).hall(2, 76, C)
+    .o('start', 5, A).o('woodwall', 14, A).lift(20, A).o('sign', 34, A, { txt: 'Shortcut? ->' }).o('tele', 56, A + 1, { x2: 60, y2: B + 1 })
+    .o('checkpoint', 17, B).o('pit', 14, B).o('charger', 10, B).o('tele', 4, B + 1, { x2: 8, y2: C + 1 }).o('checkpoint', 12, C).o('repair', 36, B)
+    .o('charger', 66, B).o('tele', 72, B + 1, { x2: 8, y2: A + 1 })
+    .o('switch', 20, C + 1.2).o('gate', 28, C).o('charger', 38, C).o('stone', 48, C).o('finish', 70, C)
+    .done('saw', [['go', 17.5], ['lift', 22], ['go', 14], ['swap', ['drill']], ['go', 10], ['charge'], ['tele', 4], ['go', 38], ['charge'], ['go', 70]]));
+
+  L.push(MZ('m3', 'Flooded Basement', 80, 4, 'Start at the top and work down. The middle floor is under water.')
+    .hall(2, 76, C).hall(2, 76, B).hall(2, 76, A)
+    .o('start', 5, C).o('iceblock', 16, C).hole(30, C).o('sign', 40, C, { txt: 'Mind the hole' }).o('charger', 52, C)
+    .o('checkpoint', 28, B).o('pit', 24, B).o('charger', 19, B).o('sign', 8, B, { txt: 'Nothing here' }).hole(66, B).o('checkpoint', 62, A)
+    .o('convR', 50, A).o('laser', 36, A).o('charger', 28, A).o('laser', 20, A).o('finish', 8, A));
+  L[2].clear(40, 60, B, B + 2, WATER);
+  L[2] = L[2].done('torch', [['go', 27.5], ['go', 31.5], ['go', 24], ['swap', ['snorkel']], ['go', 19], ['charge'], ['go', 67.5], ['go', 28], ['charge'], ['go', 8]]);
+
+  L.push(MZ('m4', 'Switchback Tower', 70, 4, 'Five floors, four lifts, and a different tool on every other floor.')
+    .hall(2, 66, A).hall(2, 66, B).hall(2, 66, C).hall(2, 66, D).hall(2, 66, E)
+    .o('start', 5, A).o('plate', 20, A).o('gate', 30, A).lift(56, A)
+    .o('stone', 44, B).o('checkpoint', 39, B).o('pit', 36, B).o('charger', 32, B).o('woodwall', 22, B).lift(6, B)
+    .o('checkpoint', 13, C).o('laser', 22, C).o('charger', 32, C).o('laser', 42, C).lift(56, C).o('checkpoint', 52, D).o('checkpoint', 13, E)
+    .o('switch', 46, D + 1.2).o('gate', 38, D).o('pit', 30, D).o('charger', 26, D).o('iceblock', 18, D).lift(6, D)
+    .o('charger', 30, E).o('finish', 58, E)
+    .done('drill', [['go', 52], ['lift', 58], ['go', 36], ['swap', ['saw']], ['go', 32], ['charge'], ['go', 12], ['lift', 8], ['go', 32], ['charge'], ['go', 52], ['lift', 58], ['go', 30], ['swap', ['torch']], ['go', 26], ['charge'], ['go', 12], ['lift', 8], ['go', 30], ['charge'], ['go', 58]]));
+
+  L.push(MZ('m5', 'The Labyrinth', 100, 5, 'A hole, a lake of lava and a switch nobody can reach. Four gadgets, one slot.')
+    .hall(2, 66, A).hall(2, 96, B).hall(2, 96, C)
+    .o('start', 5, A).o('woodwall', 14, A).lift(26, A).o('sign', 44, A, { txt: 'Wrong way' }).o('charger', 52, A).o('tele', 62, A + 1, { x2: 8, y2: A + 1 })
+    .o('checkpoint', 31, B).o('pit', 33, B).o('charger', 36, B).hole(44, B).o('checkpoint', 55, B).o('checkpoint', 87, C).o('laser', 51, B).o('pit', 58, B).o('charger', 62, B).lift(90, B)
+    .o('pit', 84, C).o('switch', 76, C + 3.4).o('gate', 72, C).o('charger', 60, C).o('laser', 50, C).o('charger', 30, C).o('finish', 8, C));
+  L[4].clear(70, 80, B - 1, B, LAVA);
+  L[4] = L[4].done('saw', [['go', 22.5], ['lift', 28], ['go', 33], ['swap', ['bridge']], ['go', 36], ['charge'], ['go', 41.2], ['press', 'bridge'], ['go', 58], ['swap', ['hover']], ['go', 62], ['charge'], ['go', 67.5], ['goK', 83, { hover: 1 }], ['go', 86], ['lift', 92], ['go', 84], ['swap', ['drone']], ['press', 'drone'], ['wait', 2.5], ['go', 60], ['charge'], ['go', 30], ['charge'], ['go', 8]]);
+  L.forEach((c, i) => { c.num = LEVELS.length + i + 1; });
+  return L;
+}
+
 /* Finish times of the course checker's test bot, used to set medal times */
-const REF_TIMES = {l01: 12,  l02: 12.2,  l03: 14.1,  l04: 10.2,  l05: 17,  l06: 13.8,  l07: 14.2,  l08: 14.9,  l09: 19,  l10: 19.5,  l11: 14.3,  l12: 14.6,  l13: 8.2,  l14: 26.1,  l15: 8.6,  l16: 71.1,  l17: 14.9,  l18: 17.1,  l19: 13,  l20: 15.1,  l21: 10.1,  l22: 18.8,  l23: 21.7,  l24: 20.9,  l25: 25,  l26: 8.3,  l27: 10.9,  l28: 13.1,  l29: 13.2,  l30: 11,  l31: 12.5,  l32: 18,  l33: 14.4,  l34: 10.7,  l35: 14.6,  l36: 49.2,  l37: 46.1,  l38: 50.8,  l39: 51.9,  l40: 90};
+const REF_TIMES = {l01: 12.1,  l02: 12.4,  l03: 14.3,  l04: 10.1,  l05: 13.8,  l06: 13.8,  l07: 14.5,  l08: 15.1,  l09: 19.2,  l10: 19.8,  l11: 14.4,  l12: 14.6,  l13: 8.2,  l14: 26.1,  l15: 8.6,  l16: 51.6,  l17: 15,  l18: 17.6,  l19: 13,  l20: 15.1,  l21: 10.2,  l22: 15.3,  l23: 23,  l24: 21.1,  l25: 22,  l26: 8.1,  l27: 10.9,  l28: 13.3,  l29: 13.3,  l30: 10.6,  l31: 12.6,  l32: 14.2,  l33: 9.3,  l34: 11.3,  l35: 14.7,  l41: 27,  l42: 22.7,  l43: 12.9,  l44: 26.3,  l45: 20.2,  l46: 34.4,  l47: 38.1,  l48: 64.2,  l36: 47.5,  l37: 46.5,  l38: 49.2,  l39: 48.4,  l40: 84.2,  m1: 75.9,  m2: 30.2,  m3: 41,  m4: 151.9,  m5: 106.9};

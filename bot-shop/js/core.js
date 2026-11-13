@@ -1,6 +1,6 @@
 /* Bot Assembly Shop — core data: parts, bot math, tiles, courses, storage */
 'use strict';
-const VERSION = '1.1';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
+const VERSION = '1.2';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
 const pl = planck, V = pl.Vec2;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -12,84 +12,123 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;'
 /* ---------------- Parts catalog ---------------- */
 const PARTS = {
   chassis: [
-    { id: 'skeleton', name: 'Skeleton', icon: '🦴', desc: 'Bare frame. Feather light, but breaks easily. 2 gadget slots.', len: 1.6, ht: 0.4, mass: 16, slots: 2, hp: 60, cost: 70 },
-    { id: 'scout', name: 'Scout', icon: '🛹', desc: 'Light and quick. 2 gadget slots.', len: 1.8, ht: 0.45, mass: 28, slots: 2, hp: 80, cost: 100 },
-    { id: 'rover', name: 'Rover', icon: '🚙', desc: 'Good at everything. 3 gadget slots.', len: 2.2, ht: 0.55, mass: 50, slots: 3, hp: 100, cost: 180 },
-    { id: 'hauler', name: 'Hauler', icon: '🚛', desc: 'Big and heavy. 5 gadget slots.', len: 2.8, ht: 0.7, mass: 95, slots: 5, hp: 140, cost: 300 },
-    { id: 'tank', name: 'Tank', icon: '🛡️', desc: 'Enormous and nearly unbreakable. 7 gadget slots.', len: 3.2, ht: 0.8, mass: 150, slots: 7, hp: 220, cost: 420 },
+    { id: 'skeleton', name: 'Skeleton', icon: '🦴', desc: 'Bare frame. Feather light, but breaks easily.', len: 1.6, ht: 0.4, mass: 16, slots: 2, up: 2, hp: 60, cost: 70 },
+    { id: 'scout', name: 'Scout', icon: '🛹', desc: 'Light and quick.', len: 1.8, ht: 0.45, mass: 28, slots: 2, up: 2, hp: 80, cost: 100 },
+    { id: 'dragster', name: 'Dragster', icon: '🏁', desc: 'Long and low. Very hard to flip, but fragile.', len: 3.0, ht: 0.4, mass: 38, slots: 2, up: 3, hp: 70, cost: 150 },
+    { id: 'rover', name: 'Rover', icon: '🚙', desc: 'Good at everything.', len: 2.2, ht: 0.55, mass: 50, slots: 3, up: 3, hp: 100, cost: 180 },
+    { id: 'cube', name: 'Box Bot', icon: '📦', desc: 'Short and tall. Lots of room for gadgets, but tippy.', len: 1.5, ht: 0.9, mass: 46, slots: 4, up: 2, hp: 110, cost: 200 },
+    { id: 'crawler', name: 'Crawler', icon: '🦀', desc: 'Low, dense and tough. Built to push.', len: 2.4, ht: 0.5, mass: 115, slots: 3, up: 4, hp: 180, cost: 260 },
+    { id: 'hauler', name: 'Hauler', icon: '🚛', desc: 'Big and heavy. Carries a lot.', len: 2.8, ht: 0.7, mass: 95, slots: 5, up: 4, hp: 140, cost: 300 },
+    { id: 'tank', name: 'Tank', icon: '🛡️', desc: 'Enormous and nearly unbreakable.', len: 3.2, ht: 0.8, mass: 150, slots: 7, up: 5, hp: 220, cost: 420 },
   ],
   wheels: [
+    { id: 'micro', name: 'Micro', desc: 'Skateboard wheels. Maximum push, hopeless on bumps.', r: 0.22, mass: 2, cost: 30 },
     { id: 'mini', name: 'Mini', desc: 'Tiny. Lots of push, low top speed. Gets stuck on bumps.', r: 0.3, mass: 3, cost: 40 },
     { id: 'std', name: 'Standard', desc: 'A solid all-around wheel.', r: 0.45, mass: 6, cost: 80 },
+    { id: 'racing', name: 'Racing', desc: 'Hollow and very light. Quick to spin up.', r: 0.5, mass: 3, cost: 120 },
+    { id: 'fat', name: 'Fat', desc: 'Extra wide for 20% more grip. Heavy.', r: 0.55, mass: 10, grip: 1.2, cost: 150 },
     { id: 'big', name: 'Big', desc: 'Rolls over steps and mud. Faster, but less push.', r: 0.65, mass: 11, cost: 140 },
     { id: 'monster', name: 'Monster', desc: 'Crushes obstacles. Needs a strong motor to turn.', r: 0.9, mass: 20, cost: 220 },
+    { id: 'colossus', name: 'Colossus', desc: 'Taller than the bot. Rolls over almost anything.', r: 1.15, mass: 32, cost: 320 },
   ],
   tires: [
     { id: 'slick', name: 'Slick', desc: 'Smooth and cheap. Slips on hills and ice.', mu: 0.55, ice: 0.06, mass: 0, cost: 0 },
     { id: 'allterrain', name: 'All-Terrain', desc: 'Knobby tread for good grip.', mu: 0.95, ice: 0.14, mass: 1, cost: 60 },
+    { id: 'balloon', name: 'Balloon', desc: 'Soft and puffy. Rolls over sand and mud like they are not there.', mu: 0.8, ice: 0.1, soft: 0.15, mass: 1, cost: 80 },
     { id: 'paddle', name: 'Paddle', desc: 'Big scoops that float over mud and sand.', mu: 0.85, ice: 0.1, soft: 0.3, mass: 2, cost: 90 },
+    { id: 'soft', name: 'Racing Soft', desc: 'Sticky rubber. Superb on dry ground, terrible in mud and on ice.', mu: 1.25, ice: 0.04, soft: 1.5, mass: 1, cost: 100 },
+    { id: 'chains', name: 'Snow Chains', desc: 'Steel chains. The best there is on ice. Heavy.', mu: 1.0, ice: 0.95, mass: 4, cost: 110 },
     { id: 'spiked', name: 'Spiked', desc: 'Maximum grip. Bites into ice.', mu: 1.5, ice: 0.75, mass: 2, cost: 130 },
   ],
   motor: [
+    { id: 'micro', name: 'Micro Motor', desc: 'Tiny and cheap. Sips battery.', speed: 22, torque: 30, mass: 3, eff: 0.8, cost: 40 },
     { id: 'zip', name: 'Zip Motor', desc: 'Spins very fast, but weak.', speed: 30, torque: 60, mass: 6, eff: 1, cost: 80 },
     { id: 'std', name: 'Workhorse', desc: 'Balanced speed and torque.', speed: 20, torque: 140, mass: 10, eff: 1, cost: 120 },
+    { id: 'sprinter', name: 'Sprinter', desc: 'Screaming fast. Thirsty.', speed: 40, torque: 90, mass: 12, eff: 1.2, cost: 180 },
     { id: 'titan', name: 'Torque Titan', desc: 'Slow but very strong.', speed: 11, torque: 420, mass: 18, eff: 1, cost: 200 },
+    { id: 'mammoth', name: 'Mammoth', desc: 'Barely moves. Could tow a house.', speed: 7, torque: 900, mass: 40, eff: 1.1, cost: 320 },
     { id: 'beast', name: 'The Beast', desc: 'Fast AND strong. Heavy, pricey, drains batteries.', speed: 26, torque: 500, mass: 30, eff: 1.4, cost: 380 },
   ],
   gear: [
     { ratio: 0.5, name: 'Overdrive' }, { ratio: 0.75, name: 'Fast' }, { ratio: 1, name: 'Even' },
-    { ratio: 1.5, name: 'Strong' }, { ratio: 2, name: 'Crawler' }, { ratio: 3, name: 'Tractor' },
+    { ratio: 1.5, name: 'Strong' }, { ratio: 2, name: 'Crawler' }, { ratio: 3, name: 'Tractor' }, { ratio: 4.5, name: 'Bulldozer' },
   ],
   battery: [
+    { id: 'coin', name: 'Coin Cell', desc: 'Weighs almost nothing. Holds almost nothing.', mass: 2, energy: 40, cost: 20 },
     { id: 'small', name: 'Small Cell', desc: 'Light, but runs out fast.', mass: 5, energy: 80, cost: 40 },
+    { id: 'supercap', name: 'Supercapacitor', desc: 'Small tank that slowly refills itself as you go.', mass: 6, energy: 100, regen: 2, cost: 130 },
     { id: 'medium', name: 'Power Pack', desc: 'Enough for most courses.', mass: 11, energy: 200, cost: 90 },
     { id: 'large', name: 'Mega Cell', desc: 'Lasts a long time. Heavy.', mass: 22, energy: 500, cost: 160 },
+    { id: 'giga', name: 'Giga Brick', desc: 'Power for days. Weighs as much as a small bot.', mass: 40, energy: 900, cost: 260 },
   ],
   drive: [
     { id: 'rwd', name: 'Rear-Wheel Drive', desc: 'Only the back wheel pushes.', mass: 0, cost: 0 },
+    { id: 'fwd', name: 'Front-Wheel Drive', desc: 'Only the front wheel pulls. Good at dragging itself up ledges.', mass: 0, cost: 0 },
     { id: 'awd', name: 'All-Wheel Drive', desc: 'Both wheels push. Much better traction.', mass: 5, cost: 80 },
+    { id: 'smart', name: 'Smart All-Wheel Drive', desc: 'Both wheels push, and a computer stops them spinning uselessly.', mass: 7, cost: 170 },
   ],
   // key = label shown, code = keyboard code, hold = works while held, act = what the key does
   gadgets: [
     { id: 'saw', cat: 'Tools', name: 'Buzz Saw', icon: '🪚', desc: 'Cuts through wood walls and crates on contact.', mass: 6, cost: 110 },
     { id: 'drill', cat: 'Tools', name: 'Rock Drill', icon: '🔩', desc: 'Bores through rock, boulders and ice walls.', mass: 9, cost: 140 },
     { id: 'torch', cat: 'Tools', name: 'Heat Torch', icon: '🔥', desc: 'Melts ice walls fast. Burns wood slowly.', mass: 4, cost: 90 },
+    { id: 'sledge', cat: 'Tools', name: 'Sledgehammer', icon: '🔨', key: 'B', code: 'KeyB', act: 'Swing hammer', desc: 'Smashes crates and glass in one hit. Cracks walls and rock.', mass: 9, cost: 120 },
+    { id: 'bomb', cat: 'Tools', name: 'Mini Bombs', icon: '💣', key: 'K', code: 'KeyK', act: 'Toss a bomb', desc: '3 bombs. Tossed ahead, they blow up walls and rock. Stand back!', mass: 5, cost: 130 },
     { id: 'blade', cat: 'Tools', name: 'Dozer Blade', icon: '🚜', desc: 'Pushes crates without climbing on top of them.', mass: 8, cost: 70 },
     { id: 'lance', cat: 'Tools', name: 'Long Pole', icon: '🎣', desc: 'A 2 m pole out front. Pokes switches and topples stacks from a distance.', mass: 4, cost: 50 },
     { id: 'cannon', cat: 'Tools', name: 'Ball Cannon', icon: '💥', key: 'C', code: 'KeyC', act: 'Fire cannon', desc: '6 shots. Hits far-off switches, knocks things over, cracks wood walls.', mass: 8, cost: 150 },
     { id: 'claw', cat: 'Tools', name: 'Grabber Claw', icon: '🦞', key: 'G', code: 'KeyG', act: 'Grab / drop', desc: 'Pick up a crate or boulder and carry it. Stack crates to make a step.', mass: 7, cost: 130 },
-    { id: 'sledge', cat: 'Tools', name: 'Sledgehammer', icon: '🔨', key: 'B', code: 'KeyB', act: 'Swing hammer', desc: 'Smashes crates and glass in one hit. Cracks walls and rock.', mass: 9, cost: 120 },
     { id: 'magnet', cat: 'Tools', name: 'Magnet', icon: '🧲', key: 'M', code: 'KeyM', hold: true, act: 'Magnet (hold)', desc: 'Pulls steel crates toward you so you can drag them out of the way.', mass: 6, cost: 100 },
+    { id: 'bridge', cat: 'Tools', name: 'Bridge Layer', icon: '🌉', key: 'L', code: 'KeyL', act: 'Lay a bridge', desc: '2 planks. Each lays a 5 m bridge in front of the bot.', mass: 10, cost: 120 },
     { id: 'hook', cat: 'Movement', name: 'Grapple Hook', icon: '🪝', key: 'E', code: 'KeyE', act: 'Hook on / let go', desc: 'Grab zip lines and grapple points. Hold ↑ to reel in.', mass: 4, cost: 120 },
     { id: 'jump', cat: 'Movement', name: 'Jump Jack', icon: '🦘', key: 'Space', code: 'Space', act: 'Jump', desc: 'Spring straight up. Light bots jump higher.', mass: 5, cost: 100 },
-    { id: 'vault', cat: 'Movement', name: 'Vault Pole', icon: '🏑', key: 'V', code: 'KeyV', act: 'Pole vault', desc: 'Plant the pole and leap forward. Great for gaps.', mass: 5, cost: 90 },
+    { id: 'airjump', cat: 'Movement', name: 'Air Jets', icon: '💨', key: 'Space', code: 'Space', act: 'Mid-air hop', desc: 'One extra hop while already in the air. Refills when you land.', mass: 4, cost: 110 },
+    { id: 'vault', cat: 'Movement', name: 'Vault Pole', icon: '🏑', key: 'V', code: 'KeyV', act: 'Pole vault', desc: 'Plant the pole and leap forward. 3 vaults, refilled at checkpoints.', mass: 5, cost: 90 },
     { id: 'rocket', cat: 'Movement', name: 'Rocket Booster', icon: '🚀', key: 'Shift', code: 'ShiftLeft', hold: true, act: 'Rocket (hold)', desc: '3 seconds of serious thrust.', mass: 7, cost: 160 },
-    { id: 'prop', cat: 'Movement', name: 'Propeller', icon: '🚁', key: 'X', code: 'KeyX', hold: true, act: 'Propeller (hold)', desc: 'Fly! Heavier bots drain the battery much faster.', mass: 8, cost: 170 },
-    { id: 'balloon', cat: 'Movement', name: 'Balloon Pack', icon: '🎈', key: 'N', code: 'KeyN', hold: true, act: 'Balloons (hold)', desc: '6 seconds of helium. Floats light bots up and over. No battery needed.', mass: 2, cost: 80 },
+    { id: 'prop', cat: 'Movement', name: 'Propeller', icon: '🚁', key: 'X', code: 'KeyX', hold: true, act: 'Propeller (hold)', desc: '4 seconds of flight, up to 8 m high. Refills at checkpoints. Heavy bots drain the battery faster.', mass: 8, cost: 170 },
+    { id: 'hover', cat: 'Movement', name: 'Hover Skirt', icon: '🛸', key: 'U', code: 'KeyU', hold: true, act: 'Hover (hold)', desc: '3 seconds of floating just above the ground, water or lava. Refills at checkpoints.', mass: 6, cost: 150 },
+    { id: 'balloon', cat: 'Movement', name: 'Balloon Pack', icon: '🎈', key: 'N', code: 'KeyN', hold: true, act: 'Balloons (hold)', desc: '6 seconds of helium. Floats light bots up and over. Refills at checkpoints.', mass: 2, cost: 80 },
     { id: 'chute', cat: 'Movement', name: 'Parachute', icon: '🪂', desc: 'Pops open on long falls so you land softly.', mass: 3, cost: 70 },
-    { id: 'gyro', cat: 'Movement', name: 'Gyro Stabilizer', icon: '🌀', desc: 'Keeps the bot level in the air so it lands on its wheels.', mass: 4, cost: 80 },
     { id: 'wing', cat: 'Movement', name: 'Glider Wing', icon: '🪽', desc: 'Glide over long gaps. Only lifts light, fast bots.', mass: 3, cost: 110 },
-    { id: 'suction', cat: 'Movement', name: 'Wall Climber', icon: '🧗', key: 'Z', code: 'KeyZ', hold: true, act: 'Stick to walls (hold)', desc: 'Suction wheels drive straight up walls. Needs All-Wheel Drive.', mass: 5, cost: 140 },
+    { id: 'suction', cat: 'Movement', name: 'Wall Climber', icon: '🧗', key: 'Z', code: 'KeyZ', hold: true, act: 'Stick to walls (hold)', desc: 'Suction wheels drive straight up walls. Needs both wheels driven.', mass: 5, cost: 140 },
     { id: 'floats', cat: 'Movement', name: 'Pontoon Floats', icon: '🛟', desc: 'Float and paddle across water.', mass: 6, cost: 90 },
     { id: 'snorkel', cat: 'Movement', name: 'Snorkel', icon: '🤿', desc: 'Drive along the bottom of pools without shorting out.', mass: 2, cost: 50 },
-    { id: 'shocks', cat: 'Upgrades', name: 'Shock Absorbers', icon: '🛞', desc: 'Soak up hard landings. Much less fall damage.', mass: 5, cost: 80 },
-    { id: 'armor', cat: 'Upgrades', name: 'Armor Plating', icon: '🛡️', desc: 'Halves all damage. Heavy.', mass: 16, cost: 110 },
-    { id: 'shield', cat: 'Upgrades', name: 'Bubble Shield', icon: '🫧', key: 'J', code: 'KeyJ', act: 'Shield', desc: '3 uses. Nothing can hurt you for 2.5 seconds.', mass: 4, cost: 130 },
-    { id: 'spoiler', cat: 'Upgrades', name: 'Spoiler', icon: '🏎️', desc: 'Air pushes the bot down at speed: more grip the faster you go.', mass: 3, cost: 60 },
-    { id: 'xbatt', cat: 'Upgrades', name: 'Spare Battery', icon: '🔋', desc: 'An extra 150 kJ strapped on.', mass: 8, cost: 70 },
-    { id: 'scout', cat: 'Upgrades', name: 'Scout Camera', icon: '🔭', key: 'T', code: 'KeyT', hold: true, act: 'Look ahead (hold)', desc: 'See what is coming before you drive into it.', mass: 1, cost: 40 },
-    { id: 'ballast', cat: 'Upgrades', name: 'Ballast Weights', icon: '🧱', desc: 'Extra weight down low: more traction, harder to flip.', mass: 30, cost: 30 },
-    { id: 'righter', cat: 'Upgrades', name: 'Roll Cage', icon: '🔄', key: 'F', code: 'KeyF', act: 'Flip upright', desc: 'Flip yourself back over when you crash.', mass: 5, cost: 60 },
-    { id: 'wbar', cat: 'Upgrades', name: 'Wheelie Bar', icon: '🦯', desc: 'A rear arm that stops you flipping over backward on steep climbs.', mass: 4, cost: 40 },
-    { id: 'turbo', cat: 'Upgrades', name: 'Turbocharger', icon: '🌪️', desc: 'Motor spins 30% faster, but uses 50% more battery.', mass: 4, cost: 120 },
-    { id: 'solar', cat: 'Upgrades', name: 'Solar Panel', icon: '☀️', desc: 'Slowly recharges the battery as you drive.', mass: 3, cost: 70 },
-    { id: 'horn', cat: 'Upgrades', name: 'Horn', icon: '📯', key: 'H', code: 'KeyH', act: 'Honk', desc: 'Beep beep! Does nothing useful. Totally worth it.', mass: 0, cost: 5 },
+    { id: 'anchor', cat: 'Movement', name: 'Ground Anchor', icon: '⚓', key: 'Y', code: 'KeyY', hold: true, act: 'Anchor (hold)', desc: 'Clamps the bot to the ground. Wind, belts and hammers cannot move it.', mass: 6, cost: 70 },
+    { id: 'drone', cat: 'Helpers', name: 'Switch Drone', icon: '🛰️', key: 'Q', code: 'KeyQ', act: 'Send drone', desc: 'A little drone that flies to the nearest switch within 14 m and presses it.', mass: 3, cost: 140 },
+    { id: 'beacon', cat: 'Helpers', name: 'Warp Beacon', icon: '📡', key: 'I', code: 'KeyI', act: 'Drop beacon / warp back', desc: 'Drop a beacon, explore, then warp back to it. One warp per checkpoint.', mass: 4, cost: 120 },
+    { id: 'slowmo', cat: 'Helpers', name: 'Slow-Mo Chip', icon: '⏳', key: 'O', code: 'KeyO', act: 'Slow motion', desc: '2 uses. Everything runs at half speed for 4 seconds. The clock still counts.', mass: 1, cost: 90 },
+    { id: 'map', cat: 'Helpers', name: 'Map Screen', icon: '🗺️', desc: 'Shows a map of the whole course with a dot for you.', mass: 1, cost: 60 },
+    { id: 'scout', cat: 'Helpers', name: 'Scout Camera', icon: '🔭', key: 'T', code: 'KeyT', hold: true, act: 'Look ahead (hold)', desc: 'See what is coming before you drive into it.', mass: 1, cost: 40 },
+    { id: 'mirror', cat: 'Helpers', name: 'Mirror Plating', icon: '🪞', desc: 'Lasers bounce off. They cannot hurt you.', mass: 4, cost: 100 },
+    { id: 'shield', cat: 'Helpers', name: 'Bubble Shield', icon: '🫧', key: 'J', code: 'KeyJ', act: 'Shield', desc: '3 uses. Nothing can hurt you for 2.5 seconds.', mass: 4, cost: 130 },
+    { id: 'righter', cat: 'Helpers', name: 'Roll Cage', icon: '🔄', key: 'F', code: 'KeyF', act: 'Flip upright', desc: 'Flip yourself back over when you crash.', mass: 5, cost: 60 },
+    { id: 'horn', cat: 'Helpers', name: 'Horn', icon: '📯', key: 'H', code: 'KeyH', act: 'Honk', desc: 'Beep beep! Does nothing useful. Totally worth it.', mass: 0, cost: 5 },
+  ],
+  // Upgrades make the bot itself better. They have their own slots and never need a key.
+  upgrades: [
+    { id: 'shocks', name: 'Shock Absorbers', icon: '🛞', desc: 'Soak up hard landings. Much less fall damage.', mass: 5, cost: 80 },
+    { id: 'armor', name: 'Armor Plating', icon: '🛡️', desc: 'Halves all damage. Heavy.', mass: 16, cost: 110 },
+    { id: 'frame', name: 'Reinforced Frame', icon: '🦾', desc: '40 more health for very little weight.', mass: 4, cost: 90 },
+    { id: 'bumper', name: 'Crash Bumper', icon: '🧽', desc: 'Crashing into things hurts 70% less.', mass: 5, cost: 60 },
+    { id: 'heatshield', name: 'Heat Shield', icon: '🧯', desc: 'Survive 1.5 seconds in lava instead of melting at once.', mass: 6, cost: 100 },
+    { id: 'alloy', name: 'Light Alloy', icon: '🪶', desc: 'Rebuilds the chassis in alloy: 25% lighter.', mass: 0, cost: 150 },
+    { id: 'ballast', name: 'Ballast Weights', icon: '🧱', desc: 'Extra weight down low: more traction, harder to flip.', mass: 30, cost: 30 },
+    { id: 'wbar', name: 'Wheelie Bar', icon: '🦯', desc: 'A rear arm that stops you flipping over backward on steep climbs.', mass: 4, cost: 40 },
+    { id: 'gyro', name: 'Gyro Stabilizer', icon: '🌀', desc: 'Keeps the bot level in the air so it lands on its wheels.', mass: 4, cost: 80 },
+    { id: 'spoiler', name: 'Spoiler', icon: '🏎️', desc: 'Air pushes the bot down at speed: more grip the faster you go.', mass: 3, cost: 60 },
+    { id: 'gripx', name: 'Grip Coating', icon: '🧴', desc: '15% more grip from any tire.', mass: 0, cost: 70 },
+    { id: 'turbo', name: 'Turbocharger', icon: '🌪️', desc: 'Motor spins 30% faster, but uses 50% more battery.', mass: 4, cost: 120 },
+    { id: 'supercharger', name: 'Supercharger', icon: '💪', desc: 'Motor twists 25% harder, but uses 30% more battery.', mass: 6, cost: 130 },
+    { id: 'heatsink', name: 'Cooling Fins', icon: '❄️', desc: 'A cooler motor wastes less: 25% less battery used.', mass: 3, cost: 80 },
+    { id: 'regen', name: 'Regen Brakes', icon: '♻️', desc: 'Coasting and braking put energy back in the battery.', mass: 4, cost: 100 },
+    { id: 'solar', name: 'Solar Panel', icon: '☀️', desc: 'Slowly recharges the battery as you drive. Not in the dark.', mass: 3, cost: 70 },
+    { id: 'xbatt', name: 'Spare Battery', icon: '🔋', desc: 'An extra 150 kJ strapped on.', mass: 8, cost: 70 },
   ],
 };
 const byId = (list, id) => list.find(p => p.id === id) || list[0];
 const BOT_COLORS = ['#ffc21a', '#ff5a36', '#2ad4c0', '#4d8dff', '#b46bff', '#7bd13b', '#ff6fb5', '#e8edf2', '#20242b', '#c0392b', '#1f4fa8', '#8a5a2b'];
 // A new builder starts with an empty build bay: every part is the student's choice
-const DEFAULT_BOT = { name: '', color: '#ffc21a', color2: '#20242b', hub: '#aab3bf', pattern: 'none', eyes: 'normal', topper: 'antenna', words: '', pic: '', chassis: null, wheels: null, tires: null, motor: null, gear: 2, battery: null, drive: null, gadgets: [] };
+const DEFAULT_BOT = { name: '', color: '#ffc21a', color2: '#20242b', hub: '#aab3bf', pattern: 'none', eyes: 'normal', topper: 'antenna', words: '', pic: '', chassis: null, wheels: null, tires: null, motor: null, gear: 2, battery: null, drive: null, gadgets: [], upgrades: [] };
 const REQUIRED = [['chassis', 'a chassis'], ['wheels', 'wheels'], ['tires', 'tires'], ['motor', 'a motor'], ['battery', 'a battery'], ['drive', 'a drive type']];
 const LOOKS = {
   pattern: [['none', 'Plain'], ['stripes', 'Stripes'], ['racing', 'Racing'], ['flames', 'Flames'], ['dots', 'Dots'], ['camo', 'Camo'], ['checker', 'Checkers'], ['zigzag', 'Zigzag']],
@@ -99,32 +138,46 @@ const LOOKS = {
 };
 
 /* Everything the physics and the stat panel need to know about a build */
-function botSpec(cfg) {
+/* rules = a course's special rules (mazes and puzzle courses limit gadgets and battery) */
+function botSpec(cfg, rules) {
+  rules = rules || {};
   const pick = k => PARTS[k].find(p => p.id === cfg[k]), fb = (k, id) => pick(k) || PARTS[k].find(p => p.id === id);
   const real = {}; REQUIRED.forEach(r => real[r[0]] = pick(r[0]));
   const missing = REQUIRED.filter(r => !real[r[0]]).map(r => r[1]);
   const ch = fb('chassis', 'rover'), wh = fb('wheels', 'std'), ti = fb('tires', 'slick'), mo = fb('motor', 'std'), ba = fb('battery', 'small'), dr = fb('drive', 'rwd');
   const ge = PARTS.gear[clamp(cfg.gear | 0, 0, PARTS.gear.length - 1)];
-  const gadgets = (cfg.gadgets || []).map(id => PARTS.gadgets.find(g => g.id === id)).filter(Boolean).slice(0, real.chassis ? ch.slots : 0);
-  const has = {}; gadgets.forEach(g => has[g.id] = true);
-  const gMass = gadgets.reduce((s, g) => s + g.mass, 0), gCost = gadgets.reduce((s, g) => s + g.cost, 0);
+  const slots = real.chassis ? Math.min(ch.slots, rules.slots || 99) : 0, upSlots = real.chassis ? ch.up : 0;
+  const gadgets = (cfg.gadgets || []).map(id => PARTS.gadgets.find(g => g.id === id)).filter(Boolean).slice(0, slots);
+  const upgrades = (cfg.upgrades || []).map(id => PARTS.upgrades.find(g => g.id === id)).filter(Boolean).slice(0, upSlots);
+  const has = {}; gadgets.concat(upgrades).forEach(g => has[g.id] = true);
+  const extra = gadgets.concat(upgrades), gMass = extra.reduce((s, g) => s + g.mass, 0), gCost = extra.reduce((s, g) => s + g.cost, 0);
   const wheelMass = wh.mass + ti.mass;
-  const bodyMass = ch.mass + mo.mass + ba.mass + dr.mass + gMass;
+  const bodyMass = ch.mass * (has.alloy ? 0.75 : 1) + mo.mass + ba.mass + dr.mass + gMass;
   const mass = bodyMass + wheelMass * 2;
-  const T = mo.torque * ge.ratio, w = mo.speed / ge.ratio * (has.turbo ? 1.3 : 1);
-  const awd = dr.id === 'awd', frac = awd ? 1 : 0.55;
+  const T = mo.torque * ge.ratio * (has.supercharger ? 1.25 : 1), w = mo.speed / ge.ratio * (has.turbo ? 1.3 : 1);
+  const driven = [dr.id !== 'fwd', dr.id !== 'rwd'], awd = driven[0] && driven[1], frac = awd ? 1 : dr.id === 'fwd' ? 0.45 : 0.55;
+  const mu = ti.mu * (wh.grip || 1) * (has.gripx ? 1.15 : 1), ice = ti.ice * (wh.grip || 1) * (has.gripx ? 1.15 : 1);
   const weight = mass * 10;
-  const push = Math.min(T / wh.r, ti.mu * weight * frac);
+  const push = Math.min(T / wh.r, mu * weight * frac);
   const climbTorque = Math.asin(Math.min(1, (T / wh.r) / weight));
-  const climbGrip = Math.atan(ti.mu * frac);
+  const climbGrip = Math.atan(mu * frac);
   const cost = REQUIRED.reduce((c, r) => c + (real[r[0]] ? real[r[0]].cost : 0), 0) + gCost;
   const wheelDX = Math.max(ch.len * 0.36, wh.r + 0.04);
+  const energy = Math.min(ba.energy + (has.xbatt ? 150 : 0), rules.energy || 1e9);
   return {
-    ch, wh, ti, mo, ge, ba, dr, gadgets, has, awd, r: wh.r, mu: ti.mu, wheelMass, bodyMass, mass, T, w, real, missing, ready: !missing.length,
+    ch, wh, ti, mo, ge, ba, dr, gadgets, upgrades, has, awd, driven, di: driven[0] ? 0 : 1, smart: dr.id === 'smart', slots, upSlots, r: wh.r, mu, ice, wheelMass, bodyMass, mass, T, w, real, missing, ready: !missing.length,
     topSpeed: w * wh.r, push, climbDeg: Math.min(climbTorque, climbGrip) * 180 / Math.PI,
-    limitedBy: climbTorque < climbGrip ? 'torque' : 'grip', energy: ba.energy + (has.xbatt ? 150 : 0), cost, eff: mo.eff * (has.turbo ? 1.5 : 1),
-    hp: ch.hp, soft: ti.soft || 1, wheelDX, front: Math.max(ch.len / 2, wheelDX + wh.r) + 0.1, comY: -0.08 - (has.ballast ? 0.2 : 0),
+    limitedBy: climbTorque < climbGrip ? 'torque' : 'grip', energy, regen: ba.regen || 0, cost,
+    eff: mo.eff * (has.turbo ? 1.5 : 1) * (has.supercharger ? 1.3 : 1) * (has.heatsink ? 0.75 : 1),
+    hp: ch.hp + (has.frame ? 40 : 0), soft: ti.soft || 1, wheelDX, front: Math.max(ch.len / 2, wheelDX + wh.r) + 0.1, comY: -0.08 - (has.ballast ? 0.2 : 0),
   };
+}
+/* Older saves kept upgrades in the gadget list: move them across */
+function tidyBot(cfg) {
+  const isUp = id => PARTS.upgrades.some(u => u.id === id);
+  cfg.upgrades = (cfg.upgrades || []).concat((cfg.gadgets || []).filter(isUp)).filter((v, i, a) => a.indexOf(v) === i && isUp(v));
+  cfg.gadgets = (cfg.gadgets || []).filter(id => PARTS.gadgets.some(g => g.id === id));
+  return cfg;
 }
 
 /* ---------------- Tiles ---------------- */
@@ -203,12 +256,13 @@ function buildOutline(c) {
 function packCourse(c) {
   const t = c.tiles, out = [];
   for (let i = 0; i < t.length;) { let j = i; while (j < t.length && t[j] === t[i]) j++; out.push(t[i].toString(36) + (j - i > 1 ? '*' + (j - i).toString(36) : '')); i = j; }
-  return { v: 1, id: c.id, name: c.name, kind: c.kind, budget: c.budget, w: c.w, h: c.h, par: c.par, desc: c.desc || '', author: c.author || '', sky: c.sky || '', objs: c.objs, t: out.join(',') };
+  return { v: 1, id: c.id, name: c.name, kind: c.kind, budget: c.budget, w: c.w, h: c.h, par: c.par, desc: c.desc || '', author: c.author || '', sky: c.sky || '', rules: c.rules || null, objs: c.objs, t: out.join(',') };
 }
 function unpackCourse(o) {
   if (!o || !o.w || !o.h || o.w > 600 || o.h !== COURSE_H) throw new Error('bad course');
   const c = newCourse(o.w);
   Object.assign(c, { id: o.id || c.id, name: String(o.name || 'Course').slice(0, 40), kind: ['speed', 'strength', 'crazy'].includes(o.kind) ? o.kind : 'crazy', budget: clamp(+o.budget || 1000, 200, 9999), par: o.par || null, desc: String(o.desc || '').slice(0, 200), author: String(o.author || '').slice(0, 30), sky: SKIES.includes(o.sky) ? o.sky : '' });
+  if (o.rules && typeof o.rules === 'object') { const r = {}; if (+o.rules.slots > 0) r.slots = clamp(+o.rules.slots | 0, 1, 7); if (+o.rules.energy > 0) r.energy = clamp(+o.rules.energy, 10, 900); if (+o.rules.drain > 0) r.drain = clamp(+o.rules.drain, 0.1, 5); if (o.rules.dark) r.dark = true; if (Object.keys(r).length) c.rules = r; }
   let i = 0;
   for (const run of String(o.t || '').split(',')) { if (!run) continue; const [v, n] = run.split('*'); const val = parseInt(v, 36), cnt = n ? parseInt(n, 36) : 1; for (let k = 0; k < cnt && i < c.tiles.length; k++) c.tiles[i++] = val; }
   c.objs = (o.objs || []).filter(b => b && OBJ[b.t]).slice(0, 400).map(b => { const r = { t: b.t, x: +b.x || 0, y: +b.y || 0 }; if (OBJ[b.t].two) { r.x2 = +b.x2 || 0; r.y2 = +b.y2 || 0; } if (b.txt) r.txt = String(b.txt).slice(0, 30); return r; });
@@ -220,8 +274,8 @@ function codeToCourse(code) {
   return unpackCourse(JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g, '+').replace(/_/g, '/'))))));
 }
 
-const SKIES = ['speed', 'strength', 'crazy', 'night', 'space', 'snow', 'candy', 'desert'];
-const SKY_NAMES = { speed: 'Blue sky', strength: 'Sunset', crazy: 'Purple dusk', night: 'Night', space: 'Outer space', snow: 'Snowy', candy: 'Candy land', desert: 'Desert' };
+const SKIES = ['speed', 'strength', 'crazy', 'night', 'space', 'snow', 'candy', 'desert', 'cave'];
+const SKY_NAMES = { speed: 'Blue sky', strength: 'Sunset', crazy: 'Purple dusk', night: 'Night', space: 'Outer space', snow: 'Snowy', candy: 'Candy land', desert: 'Desert', cave: 'Underground' };
 /* ---------------- Course objects ---------------- */
 const OBJ = {
   start: { name: 'Start', icon: '🟢', one: true, tip: 'Where the bot begins.' },
@@ -261,6 +315,7 @@ const OBJ = {
   ballpit: { name: 'Ball Pit', icon: '🎱', tip: 'A pile of bouncy balls.' },
   repair: { name: 'Repair Station', icon: '🔧', tip: 'Fixes damage while the bot is parked on it.' },
   charger: { name: 'Charger', icon: '🔌', tip: 'Recharges the battery while the bot is parked on it.' },
+  pit: { name: 'Pit Stop', icon: '🛠️', tip: 'Park here and press Enter to swap gadgets in the middle of a course.' },
   sign: { name: 'Sign', icon: '🪧', text: true, tip: 'A sign with your own words on it.' },
 };
 
@@ -368,7 +423,7 @@ function analyzeCourse(c) {
   const out = [], add = (ok, icon, label) => { if (ok) out.push([icon, label]); };
   add(f.steep, '⛰️', 'Steep 45° climbs'); add(wall, '🧗', `Walls up to ${wall} m`); add(drop, '🪂', `Drops up to ${drop} m`); add(f.slab, '🪜', 'Half-meter ledges'); add(gap, '🕳️', `Gaps up to ${gap} m`);
   add(f.ice, '🧊', 'Ice'); add(f.mud, '🟤', 'Mud'); add(f.sand, '🏖️', 'Soft sand'); add(f.rubber, '🩷', 'Bouncy rubber'); add(f.water, '🌊', 'Water'); add(f.lava, '🌋', 'Lava');
-  const names = { zip: 'Zip lines', anchor: 'Grapple points', steel: 'Steel crates', boulder: 'Boulders', crate: 'Wood crates', woodwall: 'Wood walls', iceblock: 'Ice walls', stone: 'Rocks', gate: 'Gates and switches', hammer: 'Swinging hammers', spinner: 'Spinners', bridge: 'Rope bridges', seesaw: 'Seesaws', lift: 'Elevators', ferry: 'Moving platforms', spring: 'Spring pads', fan: 'Fans', boost: 'Boost pads', springboard: 'Springboards', launcher: 'Bot cannons', tele: 'Teleporters', convL: 'Conveyor belts', convR: 'Conveyor belts', blower: 'Giant propellers', moon: 'Low gravity', laser: 'Lasers', dropper: 'Falling boulders', tnt: 'TNT', glass: 'Glass walls', plate: 'Weight plates', ballpit: 'Ball pits', repair: 'Repair stations', charger: 'Chargers' };
+  const names = { zip: 'Zip lines', anchor: 'Grapple points', steel: 'Steel crates', boulder: 'Boulders', crate: 'Wood crates', woodwall: 'Wood walls', iceblock: 'Ice walls', stone: 'Rocks', gate: 'Gates and switches', hammer: 'Swinging hammers', spinner: 'Spinners', bridge: 'Rope bridges', seesaw: 'Seesaws', lift: 'Elevators', ferry: 'Moving platforms', spring: 'Spring pads', fan: 'Fans', boost: 'Boost pads', springboard: 'Springboards', launcher: 'Bot cannons', tele: 'Teleporters', convL: 'Conveyor belts', convR: 'Conveyor belts', blower: 'Giant propellers', moon: 'Low gravity', laser: 'Lasers', dropper: 'Falling boulders', tnt: 'TNT', glass: 'Glass walls', plate: 'Weight plates', ballpit: 'Ball pits', repair: 'Repair stations', charger: 'Chargers', pit: 'Pit stops' };
   const seen = {};
   for (const k in names) if (n[k] && !seen[names[k]]) { seen[names[k]] = 1; out.push([OBJ[k].icon, names[k]]); }
   if (!out.length) out.push(['🛣️', 'Open road']);
