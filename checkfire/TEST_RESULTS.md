@@ -1,11 +1,35 @@
-# Checkfire — test results (build of 13 Nov 2026, branch `claude/vigilant-fermi-qapd7m`)
+# Checkfire — test results (13 Nov 2026, branch `claude/vigilant-fermi-qapd7m`)
 
 **What these are:** automated checks run in a headless test browser with software graphics (about 9 frames a second).
 They prove the game loads, plays through and draws the right things without errors.
 **What these are not:** a play-test. Nothing here says how smooth the game is on a real PC, how the hands look in motion at
 full speed, or how difficulty and gadgets feel. Those are in `PLAYTEST_NOTES.md` and are all still open.
 
-## Automated coverage
+## Latest build: draw rules, steady floors, teacher code, story mode
+
+| Check | Script | Result |
+|---|---|---|
+| Full computer-vs-computer games (10-minute limit each) | `tools/tests/full_games.js` | **4 of 4 finished**, no errors: one **draw by repetition** (169 s, 11 duels) and three checkmates (195 s / 13 duels, 34 s / 1 duel, 247 s / 20 duels) |
+| Draw by repetition: knights out and back until the start position comes up a third time | `tools/tests/story_draw.js` | Pass: game ends as a draw on the 8th move with the right message |
+| Fifty-move rule: ends at 100 quiet half-moves; a pawn move resets the count | `tools/tests/story_draw.js` | Pass (the count was set to 99 by the test rather than played out) |
+| Floors: scan of all 14 rooms for two level surfaces at the same height | `tools/tests/floors.js` | Pass: the whole-floor overlap is gone from the Library Table, Diner Counter and all four neon arenas. Two overlaps remain that cannot be seen (the underside of the bedroom boxing ring on the floor; a hidden layer under the Chess Park table top) |
+| Settings: tools hidden at first, wrong code keeps them hidden, right code (any letter case) shows them, practice unlock works, no unlock button left in the Armory, code text not readable in the page | `tools/tests/story_draw.js` | Pass on all six |
+| Story mode: 8 champions listed, only the first open; opponent's pieces take the champion's colours; a win unlocks the colours and the next champion; the unlocked colours can be worn; the duel happens in the champion's home room | `tools/tests/story_draw.js` | Pass. Sheet: `tools/tests/shots/story_mode.jpg` |
+| Both board styles through a move and a capture; loadout with each gadget | `tools/tests/board_gadgets.js` | Pass, no errors |
+| All 14 rooms load | `tools/tests/room_views.js` | Pass, no errors |
+| Menu, loadout, live duel, armory, abilities | `ui_screens.js`, `equipment_rooms.js` | Pass, no errors |
+
+Notes on this build:
+- **The earlier unfinished game is now explained with reasonable confidence:** with draw rules in place, one of the four
+  games ended as a draw by repetition, which is the endless shuffling the previous build could not end.
+- **Floors:** the scan proves the overlapping surfaces are gone; it cannot prove that nothing flickers on a real graphics
+  card. That is a play-test item.
+- **Story colours on the board:** the board's bright lighting washes colours out (maroon reads as pink). The colours are
+  true in duels. Whether every pair of colour sets is easy to tell apart is a play-test item.
+- **Story wins in the test were triggered directly** (the test declares checkmate) rather than by playing a whole story game.
+- Not re-shot for this build: the per-blaster hold sheets and gear sheets below (that code did not change).
+
+## Earlier build: two-handed holds, enemy gear, Repair Core
 
 | Check | Script | Result |
 |---|---|---|
