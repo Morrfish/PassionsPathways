@@ -40,6 +40,7 @@ h1,h2,h3{margin:0;font-weight:800;letter-spacing:.2px}
 .lgbox label{display:block;font-size:13.5px;color:var(--dim);margin-top:10px}.lgbox input{display:block;width:100%;margin-top:4px;font-size:17px;padding:10px 12px}
 .lgbox .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;align-items:center}.lgmsg{color:#ffb3a8;font-weight:700;min-height:22px;margin-top:10px}.lgnote{color:var(--dim);font-size:13px;margin:14px 0 0}
 .who{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}.who button{display:flex;flex-direction:column;gap:3px;text-align:left;padding:14px;border:2px solid var(--line);background:var(--panel2)}.who button:hover{border-color:var(--y)}.who b{font-size:17px}.who small{color:var(--dim);font-weight:500}.who .add{border-style:dashed}
+.ver{text-align:center;color:#5b6470;font-size:12px;margin-top:26px}
 .me{align-self:center;color:var(--dim);font-size:14px}.me b{color:var(--ink)}.th{margin:16px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--y)}
 .tag.boss{background:#5a1a1a;color:#ffb3a8}.card.boss{border-color:#7a2a22}
 .stars{color:var(--y);font-size:13px;margin-left:8px;letter-spacing:1px;white-space:nowrap}.stars i{font-style:normal;color:#3a4654}
@@ -165,10 +166,11 @@ label.chk{display:flex;gap:8px;align-items:center;font-size:13.5px;margin-top:12
 </div>
 <div id="modal"><div class="mbox"></div></div>
 <div id="toast"></div>
-<script src="js/planck.min.js"></script>
-<script src="js/core.js"></script>
-<script src="js/levels.js"></script>
-<script src="js/sim.js"></script>
-<script src="js/ui.js"></script>
+<!-- Bump every ?v= below (and VERSION in js/core.js) with each change, so browsers never run a stale copy -->
+<script src="js/planck.min.js?v=1.1"></script>
+<script src="js/core.js?v=1.1"></script>
+<script src="js/levels.js?v=1.1"></script>
+<script src="js/sim.js?v=1.1"></script>
+<script src="js/ui.js?v=1.1"></script>
 </body>
 </html>

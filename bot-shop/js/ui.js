@@ -57,7 +57,7 @@ function showLogin(pick) {
       ? `<h2>${list.length ? 'New player' : 'Welcome! Make your player'}</h2><form id="lgF"><label>Pick a name<input type="text" id="lgName" maxlength="16" autocomplete="off" placeholder="Like RoboRosa7"></label><label>Make a password<input type="password" id="lgPw" maxlength="30" autocomplete="off"></label><label>Type it again<input type="password" id="lgPw2" maxlength="30" autocomplete="off"></label><div class="lgmsg" id="lgMsg" role="alert"></div>
         <div class="acts"><button class="go" type="submit">Create player ▶</button>${list.length ? '<button type="button" data-l="back">← Back</button>' : ''}</div></form><p class="lgnote">Use a password just for this game, not one you use anywhere else.</p>`
       : `<h2>Who is playing?</h2><div class="who">${list.map(p => `<button data-who="${p.id}"><b>${esc(p.name)}</b><small>${Players.beaten(p.id)} of ${BUILTIN.length} levels beaten</small></button>`).join('')}<button data-who="+" class="add"><b>＋ New player</b><small>Start a fresh save</small></button></div>`;
-  $('#login').innerHTML = `<div class="stripe"></div><div class="lgwrap"><h1>Bot <span>Assembly</span> Shop</h1><div class="lgbox">${body}</div></div>`;
+  $('#login').innerHTML = `<div class="stripe"></div><div class="lgwrap"><h1>Bot <span>Assembly</span> Shop</h1><div class="lgbox">${body}</div><div class="ver">Version ${VERSION}</div></div>`;
   const f = $('#lgF'), first = $('#lgName') || $('#lgPw'); if (first) first.focus();
   if (f) f.onsubmit = e => {
     e.preventDefault(); const pw = $('#lgPw').value, msg = t => { $('#lgMsg').textContent = t; };
@@ -93,7 +93,7 @@ function showHome() {
     <div class="sect"><h2>🛠️ My courses<small>Build your own and dare a friend to beat it.</small></h2><div class="cards">
       <div class="card new" data-h="new" tabindex="0" role="button"><div style="font-size:34px">＋</div>Build a course</div>
       <div class="card new" data-h="import" tabindex="0" role="button"><div style="font-size:34px">📥</div>Load a course code</div>
-      ${mine.map(c => card(c, true)).join('')}</div></div></div>`;
+      ${mine.map(c => card(c, true)).join('')}</div></div><div class="ver">Bot Assembly Shop · version ${VERSION}</div></div>`;
   const all = BUILTIN.concat(mine);
   $$('#home .card[data-id]').forEach(el => drawMini($('canvas', el), all.find(c => c.id === el.dataset.id)));
 }
