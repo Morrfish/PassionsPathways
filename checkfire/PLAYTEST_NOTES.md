@@ -43,4 +43,13 @@ For each one, the exact blaster and what was happening.
 - Enemies now wear a Propeller Hat or Jetpack for looks only (they do not fly). Is that confusing?
 - Repair Core: can you spot it and tell what it is from across the room? In which rooms is it hard to see?
 
-## 5. Anything else
+## 5. Floors
+The flickering floors (diner, library and the four neon arenas) should be gone. Any room where a floor, rug or puddle
+still flickers or flashes? Which room, and where were you standing? ____________________
+
+## 6. Story mode
+- Are the champions' names and jokes right for your students? Any to change? ____________________
+- Can you tell your pieces from the champion's at a glance, for every colour set? Which pairs are too close? ____________________
+- Is the order of difficulty right (2 Recruit, 3 Veteran, 3 Warlord)? ____________________
+
+## 7. Anything else

@@ -101,6 +101,13 @@ kbd{border:2px solid var(--line);border-bottom-width:3px;border-radius:6px;paddi
 .tile .ico{font-size:22px;line-height:52px;height:52px;color:var(--navy)}
 .tile .ico svg{width:30px;height:30px;vertical-align:middle}
 .swatches{display:flex;gap:8px;flex-wrap:wrap}
+.skinchip{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 6px;border-radius:999px;border:3px solid var(--line);background:#fff8ea;font-weight:800;font-size:13px;cursor:pointer;color:var(--navy)}
+.skinchip.on{border-color:var(--teal,#1f8a86);box-shadow:0 0 0 3px rgba(31,138,134,.25)}
+.skindot{width:26px;height:26px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px rgba(29,42,68,.25)}
+.storycard{display:flex;align-items:center;gap:14px;padding:10px 12px;border:3px solid var(--line);border-radius:16px;background:#fff8ea;margin-bottom:8px}
+.storycard.locked{opacity:.55}
+.storycard .skindot{width:46px;height:46px;flex:none;display:flex;align-items:center;justify-content:center;font-size:24px}
+.storycard .who{flex:1;min-width:0}.storycard .who b{font-size:17px}.storycard .who small{display:block;color:var(--dim);font-weight:700}
 .swatch{width:54px;height:54px;border-radius:12px;border:3px solid var(--line);position:relative;padding:0;box-shadow:0 3px 0 rgba(29,42,68,.08)}
 .swatch.on{border-color:var(--w);box-shadow:0 0 0 3px rgba(31,138,134,.25)}
 .swatch.on:after{content:"✓";position:absolute;right:-6px;top:-8px;background:var(--w);color:#fff;border-radius:7px;width:20px;height:20px;display:grid;place-items:center;font-size:12px}
@@ -256,8 +263,10 @@ kbd{border:2px solid var(--line);border-bottom-width:3px;border-radius:6px;paddi
     <div class="row" style="margin-top:24px">
       <button class="btn big" id="bStart">Start battle</button>
       <button class="btn big pink hidden" id="bCont">Continue</button>
+      <button class="btn big" id="bStory" style="background:var(--navy)">Story mode</button>
       <button class="btn ghost" id="bRules1">How to play</button>
       <button class="btn ghost" id="bArmory1">Armory · <span class="credval"></span> ◈</button>
+      <button class="btn ghost" id="bSettings">Settings</button>
     </div>
   </div>
 </div>
@@ -419,10 +428,37 @@ kbd{border:2px solid var(--line);border-bottom-width:3px;border-radius:6px;paddi
     <div style="color:var(--dim);font-size:13px;margin-top:8px;font-weight:700">Earn credits by winning duels and games. Buy blasters for each piece type, then fit scopes, stocks and big clips, power them up, and pick a finish — every finish tier adds firepower.</div>
     <div class="chips" id="armTabs" style="margin-top:12px"></div>
     <div class="armgrid"><div><canvas id="armPrev" width="340" height="190"></canvas><div id="armMsg"></div></div><div id="armBody"></div></div>
-    <div class="row" style="justify-content:space-between;margin-top:12px"><button class="btn" id="bArmClose">Done</button><button class="btn small pink" id="bArmUnlock">Practice: unlock everything</button></div>
+    <div class="row" style="justify-content:space-between;margin-top:12px"><button class="btn" id="bArmClose">Done</button></div>
   </div>
 </div>
 
+<!-- STORY MODE -->
+<div id="story" class="overlay hidden">
+  <div class="card" style="max-width:980px">
+    <div class="row" style="justify-content:space-between;align-items:center"><h2 class="title" style="margin:0;font-size:34px">Story mode</h2><button class="btn ghost" id="bStoryClose">Back</button></div>
+    <p style="color:var(--dim);font-weight:700;margin:6px 0 12px">Beat eight chess champions (well, toy versions of them) one after another. You play White. Every champion you beat unlocks their colours for your own pieces.</p>
+    <h4 style="margin:0 0 6px">Your colours</h4><div class="swatches" id="skinPick" style="margin-bottom:14px"></div>
+    <div id="storyList"></div>
+  </div>
+</div>
+<!-- SETTINGS -->
+<div id="settings" class="overlay hidden">
+  <div class="card" style="max-width:520px">
+    <div class="row" style="justify-content:space-between;align-items:center"><h2 class="title" style="margin:0;font-size:34px">Settings</h2><button class="btn ghost" id="bSettingsClose">Back</button></div>
+    <label class="opt" style="margin-top:12px">Mouse sensitivity</label><input type="range" id="sens3" min="0.4" max="3" step="0.1" value="1" style="width:100%">
+    <label class="opt" style="margin-top:14px">Teacher code</label>
+    <div class="row" style="gap:8px"><input id="codeIn" type="text" autocomplete="off" spellcheck="false" placeholder="Enter code" style="flex:1;padding:10px 12px;border-radius:12px;border:3px solid var(--line);font:inherit;font-weight:800;text-transform:uppercase"><button class="btn" id="bCode">Unlock</button></div>
+    <div id="codeMsg" style="min-height:20px;font-weight:800;color:var(--dim);margin-top:6px"></div>
+    <div id="teacher" class="hidden" style="margin-top:8px">
+      <h4 style="margin:0 0 8px">Teacher tools</h4>
+      <div class="row" style="flex-wrap:wrap;gap:8px">
+        <button class="btn small pink" id="bPractice">Practice: unlock every blaster, attachment, finish and gadget</button>
+        <button class="btn small" id="bAllSkins">Unlock all story colours and opponents</button>
+        <button class="btn small" id="bCredits">Add 1000 credits</button>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- END -->
 <div id="end" class="overlay hidden">
   <div class="card" style="max-width:520px;text-align:center">
@@ -703,7 +739,9 @@ function renderScene(scene,cam){
 
 // ---------------------------------------------------------------- piece models (procedural, shared by board + arena)
 const TEAM={w:{body:0xefe4cc,emis:0x2ec4b6,glow:0x2ec4b6},b:{body:0x2c2c31,emis:0xff8c32,glow:0xff8c32}};
+const FIG_COL={w:{TeamMain:0xefe2c6,TeamAccent:0x1f8a86,TeamEmblem:0x26324f},b:{TeamMain:0x3b3b42,TeamAccent:0xf07a22,TeamEmblem:0xf6e7c8}},FIGMAT={};
 const matCache={};
+let GEARCOL={w:{AccOrange:0xefe2c6,AccOrangeDark:0xd8c9a8},b:{AccTeal:0xf07a22,AccTealDark:0xd0631a,AccOrange:0x3b3b42,AccOrangeDark:0x2c2c31}};const GEARMAT={};
 function pieceMats(c){
   if(matCache[c])return matCache[c];
   const T=TEAM[c];
@@ -741,6 +779,51 @@ function buildPiece(t,c){
     const eye=new THREE.Mesh(new THREE.BoxGeometry(.24,.035,.05),M.glow);eye.position.set(0,.74,-.2);g.add(eye);
     if(c==='b')g.rotation.y=Math.PI;}
   return g;
+}
+
+// ---------------------------------------------------------------- team colours + story mode
+// A colour set = armour colour, accent colour (tabard, plume, glow) and emblem colour.
+const SKINS={
+  ivory:{name:'Ivory & Teal',main:0xefe2c6,acc:0x1f8a86,emb:0x26324f,body:0xefe4cc,glow:0x2ec4b6},
+  charcoal:{name:'Charcoal & Orange',main:0x3b3b42,acc:0xf07a22,emb:0xf6e7c8,body:0x2c2c31,glow:0xff8c32},
+};
+// Story opponents: playful parodies of famous chess champions. Beat one to unlock their colours.
+const STORY=[
+  {id:'morefun',name:'Paul Morefun',title:'the Riverboat Rocket',diff:0,room:'attic',skin:{name:'Riverboat Maroon & Gold',main:0x7a2e3a,acc:0xf2c14e,emb:0xf6ead6},
+    blurb:'Plays faster than you can blink and would rather be at the opera. Sends every piece out to play at once.',hello:'Shall we be quick? I have a show to catch.',win:'Bravo! That was more fun than the opera.',lose:'Encore? I do love a short game.'},
+  {id:'capablanket',name:'José Capablanket',title:'the Cozy Machine',diff:0,room:'beach',skin:{name:'Seaside Blue & White',main:0x6fb1e3,acc:0xffffff,emb:0x1d2a44},
+    blurb:'Never seems to try, never seems to lose, and is always wrapped up warm. Loves a calm, tidy board.',hello:'Simple moves, warm blanket. Let us begin.',win:'You untucked my whole position! Well played.',lose:'Smooth as a fresh-made bed.'},
+  {id:'tall',name:'Mikhail Tall',title:'the Wizard of Risky Moves',diff:1,room:'arcade',skin:{name:'Wizard Purple & Gold',main:0x5b3a8c,acc:0xffd23f,emb:0xf6ead6},
+    blurb:'Gives away pieces just to see what happens. Stares so hard that blasters get nervous.',hello:'I will give you a rook. Then things get interesting.',win:'You walked out of the forest! Magnificent.',lose:'Two plus two was five today.'},
+  {id:'fidget',name:'Bobby Fidget',title:'the Kid Who Cannot Sit Still',diff:1,room:'library',skin:{name:'Brooklyn Green & Cream',main:0x2f6b3a,acc:0xf6ead6,emb:0xf2c14e},
+    blurb:'Practised alone for years, taps the table, moves the lamp, then plays the perfect move.',hello:'Is that light too bright? Never mind. Your move.',win:'Okay. Okay! That was a real game.',lose:'I knew that move when I was eleven.'},
+  {id:'carpool',name:'Anatoly Carpool',title:'the Slow Squeeze',diff:1,room:'diner',skin:{name:'Champion Red & Silver',main:0xb3312b,acc:0xe8ecef,emb:0x1d2a44},
+    blurb:'Takes one small square at a time, picks up everybody on the way, and is never, ever late.',hello:'No hurry. We will get there together.',win:'You found the fast lane. Congratulations.',lose:'Little by little. That is the whole trick.'},
+  {id:'polkadot',name:'Judit Polka-Dot',title:'the Fearless Attacker',diff:2,room:'toystore',skin:{name:'Polka Pink & Midnight',main:0xe0558f,acc:0x2b2b3a,emb:0xffffff},
+    blurb:'Has beaten champion after champion since she was a kid. Attacks first and asks questions later.',hello:'I hope you like fireworks.',win:'Finally, somebody who attacks back!',lose:'Always go for the king.'},
+  {id:'casserole',name:'Garry Casserole',title:'the Boiling Pot',diff:2,room:'gym',skin:{name:'Midnight Navy & Crimson',main:0x1d2a44,acc:0xe63946,emb:0xf6ead6},
+    blurb:'Cooks up twenty moves of preparation, paces behind his chair, and brings everything to the boil at once.',hello:'I prepared this at breakfast. All of it.',win:'Impossible! ...Fine. It was delicious.',lose:'Served hot.'},
+  {id:'carlsbad',name:'Magnet Carlsbad',title:'the Endgame Magnet',diff:2,room:'park',skin:{name:'Fjord Ice & Deep Sea',main:0xbfe9f5,acc:0x136f8a,emb:0x1d2a44},
+    blurb:'Every piece ends up exactly where he wants it, as if pulled there. Wins the games everybody else calls a draw.',hello:'It looks equal. It is not equal.',win:'Huh. I did not see that coming. Good game.',lose:'I just kept making okay moves.'},
+];
+for(const c of STORY)SKINS[c.id]=c.skin;
+const storyChar=()=>G.story?STORY.find(c=>c.id===G.story)||null:null;
+const shadeHex=(h,k)=>((h>>16&255)*k|0)<<16|((h>>8&255)*k|0)<<8|((h&255)*k|0);
+/** Give each side its colours: the player's chosen set, and the story opponent's own set (or the classic ones). */
+function applySkins(){
+  const base={w:'ivory',b:'charcoal'},me=G.human||'w',them=other(me),ch=storyChar();
+  const use={[me]:base[me],[them]:ch?ch.id:base[them]};
+  if(PROF.skin&&PROF.skin!=='default'&&SKINS[PROF.skin]&&(PROF.skins[PROF.skin]||PROF.skin==='ivory'||PROF.skin==='charcoal')&&PROF.skin!==use[them])use[me]=PROF.skin;
+  if(use[me]===use[them])use[me]=base[me]===use[them]?base[them]:base[me];
+  for(const c of ['w','b']){const k=SKINS[use[c]];
+    Object.assign(FIG_COL[c],{TeamMain:k.main,TeamAccent:k.acc,TeamEmblem:k.emb});
+    Object.assign(TEAM[c],{body:k.body||k.main,emis:k.glow||k.acc,glow:k.glow||k.acc});
+    GEARCOL[c]={AccTeal:k.acc,AccTealDark:shadeHex(k.acc,.8),AccOrange:k.main,AccOrangeDark:shadeHex(k.main,.85)};}
+  for(const cache of [FIGMAT,matCache,GEARMAT])for(const k in cache)delete cache[k];
+  LV.key='';
+  try{const T=thumbRenderer();for(const k in T.cache)if(k.indexOf('port')===0)delete T.cache[k];}catch(e){}
+  document.documentElement.style.setProperty('--skin-me','#'+SKINS[use[me]].acc.toString(16).padStart(6,'0'));
+  G.skinUse=use;
 }
 
 /** Board piece: the toy fighter on a team-coloured base (classic chess shape if the models aren't loaded or 'Classic' is chosen). */
@@ -870,7 +953,8 @@ const SAVE_KEY='checkfire-save-v1';
 function save(){
   if(G.over){try{localStorage.removeItem(SAVE_KEY);}catch(e){}return;}
   try{localStorage.setItem(SAVE_KEY,JSON.stringify({st:{b:G.st.b.map(p=>p&&[p.t,p.c,p.hp,p.w||null]),turn:G.st.turn,castle:G.st.castle,ep:G.st.ep},
-    human:G.human,diff:G.diff,duelMode:G.duelMode,log:G.log.slice(-80),fallen:G.fallen,last:G.last}));}catch(e){}
+    human:G.human,diff:G.diff,duelMode:G.duelMode,log:G.log.slice(-80),fallen:G.fallen,last:G.last,
+    hist:G.hist,half:G.half,sig:G.sig,story:G.story}));}catch(e){}
 }
 function loadSave(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(!s||!s.st)return null;return s;}catch(e){return null;}}
 
@@ -934,7 +1018,7 @@ const PROF_KEY='checkfire-profile-v1';
 let PROF=loadProfile();
 function loadProfile(){
   let p=null;try{p=JSON.parse(localStorage.getItem(PROF_KEY));}catch(e){}
-  p=Object.assign({credits:500,weapons:{},mods:{},gadgets:{},gadget:'none',loadout:{},room:'auto'},p||{});
+  p=Object.assign({credits:500,weapons:{},mods:{},gadgets:{},gadget:'none',loadout:{},room:'auto',skins:{},skin:'default',story:0},p||{});
   p.loadout=Object.assign({},DEFAULT_W,p.loadout);
   for(const t in DEFAULT_W)p.weapons[DEFAULT_W[t]]=true;
   return p;
@@ -1121,8 +1205,8 @@ function buildArena(room,seed,pieceTypes){
     for(let i=-HALF;i<=HALF;i+=6){const r=K.box(i,wallH+6,0,.25,.25,HALF*2,fm,false);}
     for(const s of [-1,1]){const r=K.box(s*HALF/2,wallH+3,0,HALF*1.15,.25,HALF*2,fm,false);r.rotation.z=s*.48;}
   }
-  if(cfg.edge!=null){   // tabletop rooms: the arena is the top of a big table
-    const K=kit(A);K.box(0,-1.3,0,HALF*2+2,2.6,HALF*2+2,stdMat(cfg.edge,{roughness:.6,metalness:room==='diner'?.6:.05}),false);
+  if(cfg.edge!=null&&!cfg.neon){   // tabletop rooms: the arena is the top of a big table (its top sits just under the floor so the two never flicker)
+    const K=kit(A);K.box(0,-1.34,0,HALF*2+2,2.6,HALF*2+2,stdMat(cfg.edge,{roughness:.6,metalness:room==='diner'?.6:.05}),false);
   }
   ROOM_BUILD[room](A,R,addBox,cfg,pieceTypes);
   if(cfg.neon){
@@ -1900,8 +1984,7 @@ function dmgNumber(pos,amt,head){
 function clearFX(){clearToyFX();FX.parts.forEach(p=>duelScene.remove(p.m));FX.tracers.forEach(t=>duelScene.remove(t.l));FX.nums.forEach(n=>n.el.remove());FX.parts=[];FX.tracers=[];FX.nums=[];
   (D.projs||[]).forEach(r=>duelScene.remove(r.m));D.projs=[];if(D.rope){duelScene.remove(D.rope);D.rope=null;}}
 // ---- toy fighters (Blender figures, recoloured per team)
-const FIG_COL={w:{TeamMain:0xefe2c6,TeamAccent:0x1f8a86,TeamEmblem:0x26324f},b:{TeamMain:0x3b3b42,TeamAccent:0xf07a22,TeamEmblem:0xf6e7c8}};
-const FIGMAT={};
+
 function figMat(m,c){const col=FIG_COL[c][m.name];if(col==null)return m;const k=c+m.name;
   if(!FIGMAT[k]){const n=m.clone();n.color.setHex(col);n._shared=true;FIGMAT[k]=n;}return FIGMAT[k];}
 /** A posable toy fighter for piece type t and team c (null if the models aren't loaded). Faces -Z. */
@@ -1948,7 +2031,7 @@ function figExtent(t){
     top=Math.max(top,v.y);if(Math.hypot(v.x,v.z)>.24)helm=Math.max(helm,v.y);if(v.y>.9&&v.y<1.45&&Math.abs(v.x)<.3)back=Math.max(back,v.z);}});
   return FIGX[t]={top,helm,back};
 }
-const GEARCOL={w:{AccOrange:0xefe2c6,AccOrangeDark:0xd8c9a8},b:{AccTeal:0xf07a22,AccTealDark:0xd0631a,AccOrange:0x3b3b42,AccOrangeDark:0x2c2c31}},GEARMAT={};
+
 const gearMat=(m,c)=>{const col=GEARCOL[c][m.name];if(col==null)return m;const k=c+m.name;if(!GEARMAT[k]){GEARMAT[k]=m.clone();GEARMAT[k].color.setHex(col);GEARMAT[k]._shared=true;}return GEARMAT[k];};
 /** Put a Propeller Hat or Jetpack on a fighter, clear of crowns, plumes and capes. team=true recolours it for the fighter's team. */
 function wearGear(fig,t,c,type,team){
@@ -2398,7 +2481,7 @@ function startDuel(atk,def,m){
 }
 /** (Re)builds the room and puts both fighters at their spawns. Used on start and when the player picks a room. */
 function setupWorld(){
-  const room=resolveRoom(PROF.room,D.cfg.m.to);
+  const room=PROF.room==='auto'&&storyChar()?storyChar().room:resolveRoom(PROF.room,D.cfg.m.to);   // story opponents fight on home turf unless you pick a room
   buildArena(room,D.cfg.seed,[D.cfg.atk.t,D.cfg.def.t]);
   clearFX();
   const P=D.player,B=D.bot;
@@ -2852,17 +2935,22 @@ function updateTurnLabel(){
 }
 function newGame(opts){
   PID=0;G.st=initialState();G.sel=-1;G.selMoves=[];G.last=null;G.busy=false;G.over=false;G.log=[];G.fallen={w:[],b:[]};
-  Object.assign(G,opts);
+  G.hist=[];G.half=0;G.sig='';G.skipHist=false;G.story=null;
+  Object.assign(G,opts);applySkins();
   for(const m of BOARD.meshes.values())BOARD.group.remove(m);BOARD.meshes.clear();BOARD.hpSprites.clear();
   syncBoard();renderLog();renderFallen();resetView();updateTurnLabel();
-  logLine(`New battle · You command <b class="${G.human==='w'?'glow-w':'glow-b'}">${G.human==='w'?'White':'Black'}</b> · ${DIFF[G.diff].name}`);
+  const ch=storyChar();
+  if(ch)logLine(`Story battle ${STORY.indexOf(ch)+1} of ${STORY.length} · You face <b>${ch.name}</b>, ${ch.title} · ${DIFF[G.diff].name}`);
+  else logLine(`New battle · You command <b class="${G.human==='w'?'glow-w':'glow-b'}">${G.human==='w'?'White':'Black'}</b> · ${DIFF[G.diff].name}`);
+  if(ch)logLine(`${ch.name}: “${ch.hello}”`);
   enterBoard();
   save();
   nextTurn();
 }
 function resumeGame(s){
   PID=0;G.st={b:s.st.b.map(a=>a?newPiece(a[0],a[1],a[2],a[3]):null),turn:s.st.turn,castle:s.st.castle,ep:s.st.ep};
-  Object.assign(G,{human:s.human,diff:s.diff,duelMode:s.duelMode,log:s.log||[],fallen:s.fallen||{w:[],b:[]},last:s.last||null,sel:-1,selMoves:[],busy:false,over:false});
+  Object.assign(G,{human:s.human,diff:s.diff,duelMode:s.duelMode,log:s.log||[],fallen:s.fallen||{w:[],b:[]},last:s.last||null,sel:-1,selMoves:[],busy:false,over:false,
+    hist:s.hist||[],half:s.half||0,sig:s.sig||'',skipHist:!!(s.hist&&s.hist.length),story:s.story||null});applySkins();
   for(const m of BOARD.meshes.values())BOARD.group.remove(m);BOARD.meshes.clear();BOARD.hpSprites.clear();
   syncBoard();renderLog();renderFallen();resetView();updateTurnLabel();enterBoard();nextTurn();
 }
@@ -2874,7 +2962,7 @@ function nextTurn(){
     const chk=inCheck(G.st,G.human);
     caption(chk?'<span style="color:#ff5a5a">Your king is in check!</span> Defend it.':'Your move — click a piece.');
   }else{
-    caption(`<span class="${G.st.turn==='w'?'glow-w':'glow-b'}">Enemy commander</span> is thinking…`);
+    caption(`<span class="${G.st.turn==='w'?'glow-w':'glow-b'}">${storyChar()?storyChar().name:'Enemy commander'}</span> is thinking…`);
     G.busy=true;
     setTimeout(()=>{const m=chooseMove(G.st,G.diff);if(m)performMove(m);},350+DIFF[G.diff].think*500);
   }
@@ -2888,8 +2976,24 @@ function checkEnd(){
   }
   const left=G.st.b.filter(Boolean);
   if(left.length===2){endGame(null,'Only the kings remain.');return true;}
+  // draw rules: the same position three times, or fifty moves each with no capture and no pawn move
+  if(G.skipHist)G.skipHist=false;
+  else{
+    const sig=drawSig(G.st);
+    if(sig!==G.sig){G.sig=sig;G.half=0;G.hist=[];}else G.half++;   // a capture, lost attack or pawn move: earlier positions can never come back
+    G.hist.push(posKey(G.st));
+  }
+  const key=G.hist[G.hist.length-1],seen=G.hist.filter(k=>k===key).length;
+  if(seen>=3){endGame(null,'Draw by repetition — the same position came up three times.');return true;}
+  if(G.half>=100){endGame(null,'Draw — fifty moves each without a capture or a pawn move.');return true;}
+  if(seen===2&&G.st.turn===G.human)logLine('This position has come up twice. A third time is a draw.');
   return false;
 }
+/** Position as text (pieces, side to move, castling rights, en passant square): two equal keys are the same chess position. */
+function posKey(st){let k=st.turn+(st.castle.wK?1:0)+(st.castle.wQ?1:0)+(st.castle.bK?1:0)+(st.castle.bQ?1:0)+'/'+st.ep+'/';
+  for(let i=0;i<64;i++){const p=st.b[i];k+=p?(p.c==='w'?p.t.toUpperCase():p.t):'.';}return k;}
+/** Changes whenever a piece leaves the board or a pawn moves (what resets the fifty-move count). */
+function drawSig(st){let n=0,s='';for(let i=0;i<64;i++){const p=st.b[i];if(!p)continue;n++;if(p.t==='p')s+=i+p.c;}return n+s;}
 function endGame(winner,why){
   G.over=true;G.busy=true;save();updateTurnLabel();
   const won=winner===G.human;
@@ -2900,6 +3004,12 @@ function endGame(winner,why){
   won?Sound.win():Sound.lose();
   const cr=winner?(won?[300,500,800][G.diff]:60):150;addCredits(cr);
   document.getElementById('endText').textContent+=` You earned ${cr} credits for the Armory.`;
+  const ch=storyChar();
+  if(ch){const i=STORY.indexOf(ch);let msg=` ${ch.name}: “${winner?(won?ch.win:ch.lose):'A draw. Again?'}”`;
+    if(won){const first=!PROF.skins[ch.id];PROF.skins[ch.id]=true;PROF.story=Math.max(PROF.story||0,i+1);saveProfile();
+      msg+=first?` You unlocked the ${ch.skin.name} colours — pick them under “Your colours” in Story Mode.`:'';
+      msg+=i+1<STORY.length?` Next up: ${STORY[i+1].name}.`:' You have beaten every champion!';}
+    document.getElementById('endText').textContent+=msg;}
   setTimeout(()=>show('end',true),900);
 }
 async function performMove(m){
@@ -3070,7 +3180,7 @@ document.getElementById('classRows').innerHTML=Object.keys(CL).map(t=>{const c=C
 function applyGfx(){useBloom=opts.gfx==='hi';renderer.setPixelRatio(useBloom?Math.min(devicePixelRatio||1,2):1);renderer.shadowMap.enabled=useBloom;resize();}
 document.getElementById('bStart').onclick=()=>{Sound.init();applyGfx();
   const side=opts.side==='r'?(Math.random()<.5?'w':'b'):opts.side;
-  newGame({human:side,diff:+opts.diff,duelMode:opts.duel});};
+  newGame({human:side,diff:+opts.diff,duelMode:opts.duel,story:null});};
 document.getElementById('bCont').onclick=()=>{Sound.init();applyGfx();const s=loadSave();if(s)resumeGame(s);};
 document.getElementById('bRules1').onclick=()=>show('rules',true);
 document.getElementById('bRules2').onclick=()=>show('rules',true);
@@ -3087,12 +3197,48 @@ document.getElementById('bAutoOnce').onclick=async()=>{
 document.getElementById('bResume').onclick=resumeDuel;
 ['bArmory1','bArmory2','bArmory3'].forEach(id=>document.getElementById(id).onclick=()=>{Sound.init();if(id==='bArmory2'&&G.busy&&!G.over)return;openArmory(id==='bArmory3');});
 document.getElementById('bArmClose').onclick=closeArmory;
-document.getElementById('bArmUnlock').onclick=()=>{if(!confirm('Practice mode: unlock every weapon, mod, bling and gadget for free?'))return;
-  for(const id in WEAPONS){PROF.weapons[id]=true;Object.assign(modsOf(id),{stock:true,scope:!WEAPONS[id].scope,mag:true,lvl:3,bling:3});}for(const g in GADGETS)PROF.gadgets[g]=true;PROF.gadget='hat';saveProfile();renderArmory();armMsg('Everything unlocked.');};
+// ---- settings: the practice unlock and other teacher tools sit behind a code
+const CODE_HASH=3131396511;   // hash of the teacher code, so the code itself is not sitting in the page
+const codeHash=t=>{let h=5381;for(const ch of t.trim().toUpperCase())h=(h*33^ch.charCodeAt(0))>>>0;return h;};
+const setMsg=t=>{document.getElementById('codeMsg').textContent=t;};
+document.getElementById('bSettings').onclick=()=>{Sound.init();setMsg('');document.getElementById('sens3').value=sens;show('settings',true);};
+document.getElementById('bSettingsClose').onclick=()=>{show('settings',false);refreshMenu();};
+const tryCode=()=>{const el=document.getElementById('codeIn');
+  if(codeHash(el.value)===CODE_HASH){show('teacher',true);setMsg('Teacher tools unlocked until this page is closed.');el.value='';Sound.win();}
+  else{setMsg('That code is not right.');Sound.dry();}};
+document.getElementById('bCode').onclick=tryCode;
+document.getElementById('codeIn').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')tryCode();});
+document.getElementById('bPractice').onclick=()=>{if(!confirm('Practice mode: unlock every blaster, attachment, finish and gadget for free?'))return;
+  for(const id in WEAPONS){PROF.weapons[id]=true;Object.assign(modsOf(id),{stock:true,scope:!WEAPONS[id].scope,mag:true,lvl:3,bling:3});}for(const g in GADGETS)PROF.gadgets[g]=true;PROF.gadget='hat';saveProfile();setMsg('Everything in the Armory is unlocked.');};
+document.getElementById('bAllSkins').onclick=()=>{for(const c of STORY)PROF.skins[c.id]=true;PROF.story=STORY.length;saveProfile();setMsg('All story colours and opponents are unlocked.');};
+document.getElementById('bCredits').onclick=()=>{addCredits(1000);setMsg('Added 1000 credits.');};
+// ---- story mode
+const hex6s=h=>'#'+h.toString(16).padStart(6,'0');
+const skinDot=(k,extra)=>`<span class="skindot" style="background:linear-gradient(135deg,${hex6s(k.main)} 0 52%,${hex6s(k.acc)} 52% 100%)">${extra||''}</span>`;
+function renderStory(){
+  const owned=['default'].concat(STORY.filter(c=>PROF.skins[c.id]).map(c=>c.id));
+  document.getElementById('skinPick').innerHTML=owned.map(id=>{const k=id==='default'?SKINS.ivory:SKINS[id];
+    return `<button class="skinchip${(PROF.skin||'default')===id?' on':''}" data-skin="${id}">${skinDot(k)}${id==='default'?'Classic (Ivory & Teal)':k.name}</button>`;}).join('')
+    +(owned.length===1?'<span style="align-self:center;color:var(--dim);font-weight:700">Beat a champion to unlock more.</span>':'');
+  document.getElementById('storyList').innerHTML=STORY.map((c,i)=>{const beaten=!!PROF.skins[c.id],open=i<=(PROF.story||0);
+    return `<div class="storycard${open?'':' locked'}">${skinDot(c.skin,'<span style="color:'+hex6s(c.skin.emb)+'">♚</span>')}
+      <div class="who"><b>${i+1}. ${c.name}</b> <span style="color:var(--dim);font-weight:800">${c.title} · ${DIFF[c.diff].name}</span>
+      <small>${open?c.blurb:'Beat '+STORY[i-1].name+' to meet this champion.'}</small>
+      <small style="color:var(--navy)">${beaten?'Beaten ✓ — '+c.skin.name+' unlocked':'Prize: '+c.skin.name+' colours'}</small></div>
+      ${open?`<button class="btn${beaten?' ghost':''}" data-story="${c.id}">${beaten?'Rematch':'Challenge'}</button>`:'<span style="font-weight:900;color:var(--dim)">Locked</span>'}</div>`;}).join('');
+}
+document.getElementById('bStory').onclick=()=>{Sound.init();renderStory();show('story',true);};
+document.getElementById('bStoryClose').onclick=()=>show('story',false);
+document.getElementById('story').addEventListener('click',e=>{const b=e.target.closest('[data-skin],[data-story]');if(!b)return;Sound.click();
+  if(b.dataset.skin){PROF.skin=b.dataset.skin;saveProfile();renderStory();return;}
+  const ch=STORY.find(c=>c.id===b.dataset.story);if(!ch)return;
+  if(loadSave()&&!confirm('Start this story battle? Your saved battle will be replaced.'))return;
+  applyGfx();show('story',false);newGame({human:'w',diff:ch.diff,duelMode:opts.duel,story:ch.id});});
 document.getElementById('intro').addEventListener('click',introClick);
 document.getElementById('bForfeit').onclick=()=>{show('pause',false);D.paused=false;D.player.hp=0;D.over=false;D.fighting=true;finishDuel();};
 document.getElementById('sens').oninput=e=>{sens=+e.target.value;document.getElementById('sens2').value=sens;};
 document.getElementById('sens2').oninput=e=>{sens=+e.target.value;document.getElementById('sens').value=sens;};
+document.getElementById('sens3').oninput=e=>{sens=+e.target.value;document.getElementById('sens').value=sens;document.getElementById('sens2').value=sens;};
 document.getElementById('bAgain').onclick=()=>{show('end',false);refreshMenu();G.mode='menu';show('bhud',false);show('menu',true);};
 document.getElementById('bLook').onclick=()=>show('end',false);
 function refreshMenu(){show('bCont',!!loadSave());updateCreditsUI();}

@@ -6,7 +6,7 @@ const {chromium}=require('playwright');
   p.on('dialog',d=>d.accept());
   await p.goto('file://'+require('path').resolve(__dirname,'../../index.html')+'');
   await p.waitForFunction(()=>ASSET.ready,null,{timeout:90000});
-  await p.click('#bArmory1');await p.click('#bArmUnlock');await p.click('[data-tab=k]');await p.click('[data-sel=handcannon]');await p.waitForTimeout(800);
+  await p.click('#bSettings');await p.fill('#codeIn','MORRISFIGHT6');await p.click('#bCode');await p.click('#bPractice');await p.click('#bSettingsClose');await p.click('#bArmory1');await p.click('[data-tab=k]');await p.click('[data-sel=handcannon]');await p.waitForTimeout(800);
   await p.screenshot({path:'e1-armory.png'});
   await p.click('[data-tab=gadgets]');await p.click('[data-sel=jetpack]');await p.waitForTimeout(700);await p.screenshot({path:'e2-armory-jet.png',clip:{x:150,y:150,width:420,height:300}});
   await p.click('#bArmClose');await p.click('#bStart');await p.waitForTimeout(800);

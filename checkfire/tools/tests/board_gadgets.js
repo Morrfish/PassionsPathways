@@ -27,7 +27,7 @@ const {chromium}=require('playwright'),path=require('path');
   p.on('pageerror',e=>errs.push('loadout PAGEERR '+e.message));p.on('dialog',d=>d.accept());
   await p.goto('file://'+path.resolve(__dirname,'../../index.html'));
   await p.waitForFunction(()=>ASSET.ready,null,{timeout:90000});
-  await p.click('#bArmory1');await p.click('#bArmUnlock');await p.click('#bArmClose');await p.click('#bStart');await p.waitForTimeout(600);
+  await p.click('#bSettings');await p.fill('#codeIn','MORRISFIGHT6');await p.click('#bCode');await p.click('#bPractice');await p.click('#bSettingsClose');await p.click('#bArmory1');await p.click('#bArmClose');await p.click('#bStart');await p.waitForTimeout(600);
   await p.evaluate(()=>{const C=window.__checkfire,G=C.G;const mv=(f,t)=>C.legalMoves(G.st).find(m=>m.from===f&&m.to===t);
     G.st=C.applyMove(G.st,mv(6,21));G.st=C.applyMove(G.st,mv(52,36));setTimeout(()=>C.performMove(C.legalMoves(G.st).find(m=>m.from===21&&m.to===36)),0);});
   await p.waitForTimeout(2200);

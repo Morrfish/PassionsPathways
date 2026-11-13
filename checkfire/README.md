@@ -2,7 +2,9 @@
 
 Chess where every capture is a firefight. Open `index.html` in a browser — it's one self-contained file (Three.js is inlined), so it also runs offline or from a USB drive.
 
-- **Real chess:** castling, en passant, promotion, check, checkmate, stalemate.
+- **Real chess:** castling, en passant, promotion, check, checkmate, stalemate, draw by threefold repetition and the fifty-move rule.
+- **Story mode:** beat eight toy parodies of famous chess champions, one after another; each one you beat unlocks their colours for your own pieces.
+- **Settings:** teacher tools (practice unlock and more) open with a code.
 - **Captures become FPS duels.** Win and you take the square; lose and your attacker is destroyed.
 - **Six classes:** each piece has its own HP, weapon and ability (Vanguard, Lancer, Oracle, Bastion, Sovereign, Monarch).
 - **Wounds carry over** between battles, with 8 HP of repairs per turn.

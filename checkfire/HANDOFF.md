@@ -25,6 +25,8 @@ python3 build.py package                                   # game.src.html + ass
 - `node tools/tests/gear.js` — Propeller Hat / Jetpack on all six fighter types in both teams; Repair Core in five rooms.
 - `node tools/tests/board_gadgets.js` — both board styles through a move and a capture; loadout preview with each gadget.
 - `GAME_MS=600000 node tools/tests/full_games.js` — the per-game time limit is adjustable; unfinished games are reported.
+- `node tools/tests/story_draw.js` — the code-locked teacher settings, both draw rules, story mode colours and unlocks.
+- `node tools/tests/floors.js` — scans every room for two level surfaces at the same height (what makes floors flicker).
 - Latest results: `TEST_RESULTS.md`; comparison sheets: `tools/tests/shots/`. Things only a real PC can answer: `PLAYTEST_NOTES.md`.
 - `node tools/tests/room_views.js [room ...]` — two screenshots of each room (player start + raised corner) to check props.
 
@@ -45,6 +47,17 @@ python3 build.py package                                   # game.src.html + ass
   each fighter's head gear and back so hats clear crowns/plumes and jetpacks sit outside capes). The loadout preview uses
   the same placement.
 - Repair Core has a large glowing white cross on all eight faces (the old ones were buried under the surface).
+- **Draw rules:** threefold repetition and the fifty-move rule (`checkEnd()`, `posKey()`, `drawSig()`; history is saved with the game).
+- **Flickering floors fixed:** the library/diner tabletop slab sat at exactly floor height, and the same slab was being
+  built by mistake under all four neon arenas (their `edge` colour was read as "this is a tabletop room").
+- **Settings + teacher code:** main menu → Settings. The old Armory "Practice: unlock everything" button is gone; it now
+  lives under Teacher tools, shown after entering the code **MORRISFIGHT6** (only a hash of it is in the page; tools stay
+  open until the page is closed). Tools: practice unlock, unlock all story colours/opponents, +1000 credits.
+- **Story mode:** main menu → Story mode. Eight parody champions in `STORY` (Paul Morefun, José Capablanket, Mikhail Tall,
+  Bobby Fidget, Anatoly Carpool, Judit Polka-Dot, Garry Casserole, Magnet Carlsbad), each with a difficulty, a home room
+  (used when the room is "Battlefield pick"), lines of dialogue and a colour set. You play White; beating one unlocks the
+  next and their colours (`PROF.skins`, `PROF.story`), chosen under "Your colours" (`PROF.skin`). `applySkins()` recolours
+  both sides (toy fighters, classic pieces, hands, gear, glows).
 - Cream/navy/teal/orange UI: menu, board HUD, loadout screen (turntable), room picker, in-match HUD, armory.
 - 14 rooms. Blender-modelled from reference sheets: **Kid's Bedroom** (`bedroom.glb`), **Chess Park** (`park.glb`).
   Blender-modelled from the written descriptions (no sheets yet): **Library Table, Diner Counter, School Gym, Toy Store,
