@@ -22,6 +22,24 @@ unlocks persist. A copy is committed as `checkfire/Checkfire.exe` so there is a 
 (`launcher/build_exe.sh`, then copy `dist/Checkfire.exe` over it). Not code-signed, and never run on real
 Windows from this environment (only the same code as a Linux build was tested).
 
+## Balance and rules (Nov 2026 pass)
+- **Game rules** (menu → Game rules; stored on the game as `G.rules`, saved, and in a network game sent by the player who
+  made the game): *No flying* (Jetpack and Propeller Hat give nothing; enemies wear no gear) and *Starter blasters only*
+  (every piece uses its starter, plain, for both sides). Helpers: `RULES()`, `gadgetAllowed()`, `activeGadget()`.
+- **Start shield:** nobody can be hurt for the first 3 seconds of a duel (`D.safe`, checked first in `hurt()`).
+- **Scope drops after a miss:** a scoped hitscan miss clears `adsDown`, so the player must right-click again; scoped bots
+  wait an extra 0.6 s after a miss. (Crossbow/Mortar with a Scope fitted are not affected: they are slow projectiles.)
+- **Range drop-off:** `falloff(w, dist)` + `fall:[full until, weakest from, weakest ×]` on Carbine, Nail Driver, Arc Pistol,
+  Rampart Minigun, Storm Rifle, Twin Blasters, Crown Repeater, Hand Cannon. Scatter blasters keep their own fade.
+  Ray Lance, Railgun, Crossbow and Siege Mortar do not fade.
+- **Nerfs:** Queen HP 165→150, speed 8.4→8.2, Overdrive fire rate ×2→×1.5; Rook HP 210→195; King HP 185→175, Royal Mend
+  55→45; Storm Rifle 15→13; Twin Blasters 11→10; Railgun 95→88; Rampart Minigun 8→7; Thunder Coach 9→8 per pellet.
+- **Slower credits:** new players start with 150 (was 500); duel win 25–40 (was 100–160), duel loss 8 (was 35); auto-battle
+  15/5 (was 50/15); game win 100/160/240 by level (was 300/500/800), loss 20 (was 60), draw 40 (was 150). Prices unchanged.
+- **Sights:** Armory → Sights (`SIGHTS`, `PROF.sights`, `PROF.sight`, `applySight()`): Classic free, Dot 100, Ring 150,
+  Star 200, Heart 250, Laser Sight 400 (red dot plus a red beam from the muzzle). Looks only.
+- Test: `node tools/tests/balance.js`.
+
 ## Same-network multiplayer ("Play a friend")
 - **Host side:** `launcher/net.go`. Only after "Host on this network" is clicked in the exe's own window does the launcher
   listen on the network (port 47620): it serves the same page plus `/ws`, a tiny WebSocket relay (standard library only).
