@@ -375,9 +375,48 @@ function analyzeCourse(c) {
 }
 
 /* ---------------- Storage ---------------- */
+/* Each player's bot, medals, notebook and courses are saved under their own name */
+const USER_KEYS = ['bot', 'best', 'log', 'courses'];
 const Store = {
-  get(k, d) { try { const v = localStorage.getItem('botshop.' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
-  set(k, v) { try { localStorage.setItem('botshop.' + k, JSON.stringify(v)); } catch (e) { } },
+  user: null,
+  key(k, user = Store.user) { return 'botshop.' + (user && USER_KEYS.includes(k) ? 'u.' + user + '.' : '') + k; },
+  get(k, d, user) { try { const v = localStorage.getItem(Store.key(k, user)); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v, user) { try { localStorage.setItem(Store.key(k, user), JSON.stringify(v)); return true; } catch (e) { return false; } },
+  del(k, user) { try { localStorage.removeItem(Store.key(k, user)); } catch (e) { } },
+};
+/* ---------------- Players ----------------
+   Passwords are scrambled before saving, never stored as typed. This keeps classmates out of each
+   other's saves; it is not bank-grade security, because everything lives on this one computer. */
+function scramble(str) {
+  let a = 0xdeadbeef ^ str.length, b = 0x41c6ce57 ^ str.length;
+  for (let r = 0; r < 600; r++) for (let i = 0; i < str.length; i++) {
+    const c = str.charCodeAt(i) + r; a = Math.imul(a ^ c, 2654435761); b = Math.imul(b ^ c, 1597334677);
+    a = Math.imul(a ^ (a >>> 16), 2246822507) ^ Math.imul(b ^ (b >>> 13), 3266489909); b = Math.imul(b ^ (b >>> 16), 2246822507) ^ Math.imul(a ^ (a >>> 13), 3266489909);
+  }
+  return (b >>> 0).toString(16).padStart(8, '0') + (a >>> 0).toString(16).padStart(8, '0');
+}
+const TEACHER_HASH = '21c61d4965f60268';
+const isTeacherPw = pw => scramble('teacher|' + String(pw).trim()) === TEACHER_HASH;
+const Players = {
+  all() { return Store.get('players', {}); },
+  id: name => String(name).trim().toLowerCase().replace(/\s+/g, ' '),
+  list() { const a = Players.all(); return Object.keys(a).map(id => Object.assign({ id }, a[id])).sort((x, y) => x.name.localeCompare(y.name)); },
+  check(name, pw) { const p = Players.all()[Players.id(name)]; return !!p && p.hash === scramble(p.salt + '|' + pw); },
+  // returns an error message, or '' when the player was made
+  create(name, pw) {
+    name = String(name).trim().replace(/\s+/g, ' '); const id = Players.id(name), a = Players.all();
+    if (!/^[A-Za-z0-9 _-]{2,16}$/.test(name)) return 'Names are 2 to 16 letters or numbers.';
+    if (a[id]) return 'Someone already has that name. Pick another.';
+    if (String(pw).length < 3) return 'Passwords need at least 3 characters.';
+    const first = !Object.keys(a).length, salt = Math.random().toString(36).slice(2, 10);
+    a[id] = { name, salt, hash: scramble(salt + '|' + pw), made: Date.now() };
+    if (!Store.set('players', a)) return 'This computer would not save the new player.';
+    if (first) for (const k of USER_KEYS) { const old = Store.get(k, null, null); if (old != null) { Store.set(k, old, id); Store.del(k, null); } }   // saves from before sign-in existed go to the first player
+    return '';
+  },
+  setPassword(id, pw) { const a = Players.all(); if (!a[id] || String(pw).length < 3) return false; a[id].salt = Math.random().toString(36).slice(2, 10); a[id].hash = scramble(a[id].salt + '|' + pw); return Store.set('players', a); },
+  remove(id) { const a = Players.all(); delete a[id]; Store.set('players', a); for (const k of USER_KEYS) Store.del(k, id); },
+  beaten: id => Object.keys(Store.get('best', {}, id)).length,
 };
 function loadMyCourses() { return Store.get('courses', []).map(o => { try { return unpackCourse(o); } catch (e) { return null; } }).filter(Boolean); }
 function saveMyCourse(c) { const all = Store.get('courses', []); const i = all.findIndex(o => o.id === c.id); const p = packCourse(c); if (i >= 0) all[i] = p; else all.push(p); Store.set('courses', all); }

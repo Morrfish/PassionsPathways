@@ -13,7 +13,7 @@ const isTouch = matchMedia('(pointer:coarse)').matches;
 
 function setMode(m) {
   App.mode = m;
-  $('#home').classList.toggle('on', m === 'home'); $('#garage').classList.toggle('on', m === 'garage');
+  $('#home').classList.toggle('on', m === 'home'); $('#garage').classList.toggle('on', m === 'garage'); $('#login').classList.toggle('on', m === 'login');
   $('#hud').classList.toggle('on', m === 'run'); $('#edUI').classList.toggle('on', m === 'editor');
   $('#touch').classList.toggle('on', m === 'run' && isTouch);
 }
@@ -31,6 +31,44 @@ $('#modal').addEventListener('click', e => {
 const fmtT = t => t.toFixed(2);
 const bestOf = id => Store.get('best', {})[id];
 
+/* ================= Players: sign in ================= */
+/* A small text box dialog. (The built-in prompt() does not exist in desktop app shells.) */
+function askText(o, done) {
+  modal(`<h2>${o.title}</h2>${o.text ? `<p>${o.text}</p>` : ''}<form id="askF"><input type="${o.type || 'text'}" id="askI" maxlength="${o.max || 30}" value="${esc(o.value || '')}" aria-label="${esc(o.label || o.title)}" style="width:100%" autocomplete="off" data-focus>
+    <div class="acts"><button class="primary" type="submit">${o.ok || 'OK'}</button><button type="button" id="askX">Cancel</button></div></form>`);
+  $('#askF').onsubmit = e => { e.preventDefault(); const v = $('#askI').value; closeModal(); done(v); };
+  $('#askX').onclick = () => { closeModal(); if (o.cancel) o.cancel(); };
+}
+let pendingCode = null;
+function signIn(id) {
+  Store.user = id; try { sessionStorage.setItem('botshop.user', id); } catch (e) { }
+  App.cfg = Object.assign({}, DEFAULT_BOT, Store.get('bot', {})); App.lastTips = null; App.free = false;
+  if (pendingCode) { const code = pendingCode; pendingCode = null; try { const c = importCourse(code); showGarage(c, 'home'); return toast(`Loaded “${c.name}”`); } catch (e) { toast('That course link did not work.'); } }
+  showHome();
+}
+function signOut() { Store.user = null; try { sessionStorage.removeItem('botshop.user'); } catch (e) { } teacherOpen = false; showLogin(); }
+function showLogin(pick) {
+  setMode('login'); App.G = null; closeModal();
+  const list = Players.list(), who = pick && list.find(p => p.id === pick);
+  const body = who
+    ? `<h2>Hi, ${esc(who.name)}!</h2><form id="lgF"><label>Password<input type="password" id="lgPw" autocomplete="off" maxlength="30"></label><div class="lgmsg" id="lgMsg" role="alert"></div>
+        <div class="acts"><button class="go" type="submit">Let's build ▶</button><button type="button" data-l="back">← Not me</button></div></form><p class="lgnote">Forgot it? Ask your teacher to reset it. Your bots and medals are safe.</p>`
+    : pick === '+' || !list.length
+      ? `<h2>${list.length ? 'New player' : 'Welcome! Make your player'}</h2><form id="lgF"><label>Pick a name<input type="text" id="lgName" maxlength="16" autocomplete="off" placeholder="Like RoboRosa7"></label><label>Make a password<input type="password" id="lgPw" maxlength="30" autocomplete="off"></label><label>Type it again<input type="password" id="lgPw2" maxlength="30" autocomplete="off"></label><div class="lgmsg" id="lgMsg" role="alert"></div>
+        <div class="acts"><button class="go" type="submit">Create player ▶</button>${list.length ? '<button type="button" data-l="back">← Back</button>' : ''}</div></form><p class="lgnote">Use a password just for this game, not one you use anywhere else.</p>`
+      : `<h2>Who is playing?</h2><div class="who">${list.map(p => `<button data-who="${p.id}"><b>${esc(p.name)}</b><small>${Players.beaten(p.id)} of ${BUILTIN.length} levels beaten</small></button>`).join('')}<button data-who="+" class="add"><b>＋ New player</b><small>Start a fresh save</small></button></div>`;
+  $('#login').innerHTML = `<div class="stripe"></div><div class="lgwrap"><h1>Bot <span>Assembly</span> Shop</h1><div class="lgbox">${body}</div></div>`;
+  const f = $('#lgF'), first = $('#lgName') || $('#lgPw'); if (first) first.focus();
+  if (f) f.onsubmit = e => {
+    e.preventDefault(); const pw = $('#lgPw').value, msg = t => { $('#lgMsg').textContent = t; };
+    if (who) { if (Players.check(who.id, pw)) signIn(who.id); else { msg('That is not the right password. Try again.'); $('#lgPw').value = ''; $('#lgPw').focus(); } return; }
+    if (pw !== $('#lgPw2').value) return msg('The two passwords do not match.');
+    const err = Players.create($('#lgName').value, pw); if (err) return msg(err);
+    signIn(Players.id($('#lgName').value));
+  };
+}
+$('#login').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.who) showLogin(b.dataset.who); else if (b.dataset.l === 'back') showLogin(); });
+
 /* ================= Home ================= */
 const SET = () => Object.assign({ damage: true, coach: true }, Store.get('set', {}));
 function showHome() {
@@ -47,7 +85,7 @@ function showHome() {
   const sect = (kind, title, sub) => { const list = BUILTIN.filter(c => c.kind === kind && !c.boss).sort((a, b) => (a.stars || 1) - (b.stars || 1)); return `<div class="sect"><h2><span class="tag ${kind}">${kind}</span>${title}<small>${sub} ${list.filter(c => bestOf(c.id)).length} of ${list.length} beaten.</small></h2><div class="cards">${list.map(c => card(c)).join('')}</div></div>`; };
   $('#home').innerHTML = `<div class="stripe"></div><div class="wrap">
     <div class="hero"><div><h1>Bot <span>Assembly</span> Shop</h1><p>Build a robot from parts. Then drive it through the course. If it gets stuck, go back to the shop and engineer a better one. <b>${beaten} of ${BUILTIN.length}</b> levels beaten.</p></div>
-      <div class="acts"><button data-h="how">❓ How to play</button><button data-h="log">📓 Engineer's notebook</button><button data-h="paint">🎨 My bot</button><button data-h="set">⚙️ Settings</button></div></div>
+      <div class="acts"><span class="me">👤 <b>${esc((Players.all()[Store.user] || {}).name || '')}</b></span><button data-h="out">Switch player</button><button data-h="how">❓ How to play</button><button data-h="log">📓 Engineer's notebook</button><button data-h="paint">🎨 My bot</button><button data-h="set">⚙️ Settings</button></div></div>
     ${sect('speed', 'Speed courses', 'Fastest time wins.')}
     ${sect('strength', 'Strength courses', 'Climb, push and break through.')}
     ${sect('crazy', 'Crazy courses', 'Expect anything.')}
@@ -59,19 +97,33 @@ function showHome() {
   const all = BUILTIN.concat(mine);
   $$('#home .card[data-id]').forEach(el => drawMini($('canvas', el), all.find(c => c.id === el.dataset.id)));
 }
+let teacherOpen = false;   // unlocked until this player signs out
 function settings() {
   const st = SET();
+  const teacher = !teacherOpen
+    ? `<p style="margin:4px 0 10px">Reset a forgotten password, change game rules, and read the classroom notes.</p><form id="tF" class="namerow"><input type="password" id="tPw" placeholder="Teacher password" aria-label="Teacher password" autocomplete="off" maxlength="30"><button type="submit">Unlock</button></form>`
+    : `<label class="chk"><input type="checkbox" id="sDmg" ${st.damage ? 'checked' : ''}> Damage: hard landings and crashes hurt the bot</label>
+       <label class="chk"><input type="checkbox" id="sCoach" ${st.coach ? 'checked' : ''}> Coach explains what went wrong after a run</label>
+       <h4 class="th">Players on this computer</h4><table>${Players.list().map(p => `<tr><td><b>${esc(p.name)}</b></td><td>${Players.beaten(p.id)} of ${BUILTIN.length} levels</td><td style="text-align:right"><button class="small" data-reset="${p.id}">Reset password</button> <button class="small danger" data-del="${p.id}">Delete</button></td></tr>`).join('')}</table>
+       <p style="font-size:13px">Resetting a password keeps that player's bots, medals, notebook and courses.</p>
+       <div class="acts" style="margin-top:8px"><button id="sTeach">📖 Teacher notes</button><button id="sLock">🔒 Lock teacher area</button></div>`;
   modal(`<h2>⚙️ Settings</h2>
     <label class="chk"><input type="checkbox" id="sSound" ${soundOn ? 'checked' : ''}> Sound effects</label>
-    <label class="chk"><input type="checkbox" id="sDmg" ${st.damage ? 'checked' : ''}> Damage: hard landings and crashes hurt the bot</label>
-    <label class="chk"><input type="checkbox" id="sCoach" ${st.coach ? 'checked' : ''}> Coach explains what went wrong after a run</label>
-    <h3 style="margin-top:18px">🍎 For teachers</h3><p style="margin:4px 0 10px">Classroom ideas, how the physics works, and what gets saved.</p>
-    <div class="acts" style="margin-top:0"><button id="sTeach">Open teacher notes</button><button id="sReset" class="danger">Reset all medals and best times</button></div>
+    <div class="acts" style="margin-top:10px"><button id="sMine">Reset my medals and best times</button><button id="sMyPw">Change my password</button></div>
+    <h3 style="margin-top:20px">🍎 Teacher area ${teacherOpen ? '<small style="color:var(--g);font-size:13px">unlocked</small>' : ''}</h3>${teacher}
     <div class="acts"><button class="primary" data-m="x" data-focus>Done</button></div>`);
-  const save = () => { Store.set('set', { damage: $('#sDmg').checked, coach: $('#sCoach').checked }); soundOn = $('#sSound').checked; Store.set('sound', soundOn); };
-  for (const id of ['sSound', 'sDmg', 'sCoach']) $('#' + id).onchange = save;
-  $('#sTeach').onclick = teacherNotes;
-  $('#sReset').onclick = () => { if (confirm('Erase every medal and best time on this device?')) { Store.set('best', {}); closeModal(); showHome(); } };
+  $('#sSound').onchange = e => { soundOn = e.target.checked; Store.set('sound', soundOn); };
+  $('#sMine').onclick = () => { if (confirm('Erase your medals and best times? Your bot and courses stay.')) { Store.set('best', {}); closeModal(); showHome(); } };
+  $('#sMyPw').onclick = () => askText({ title: 'Change my password', text: 'Type your password now.', type: 'password', cancel: settings }, old => {
+    if (!Players.check(Store.user, old)) { toast('That is not your password.'); return settings(); }
+    askText({ title: 'New password', text: 'At least 3 characters.', type: 'password', cancel: settings }, pw => { toast(Players.setPassword(Store.user, pw) ? 'Password changed.' : 'Too short. Password not changed.'); settings(); });
+  });
+  if (!teacherOpen) { $('#tF').onsubmit = e => { e.preventDefault(); if (isTeacherPw($('#tPw').value)) { teacherOpen = true; settings(); } else { toast('That is not the teacher password.'); $('#tPw').value = ''; } }; return; }
+  const save = () => Store.set('set', { damage: $('#sDmg').checked, coach: $('#sCoach').checked });
+  $('#sDmg').onchange = save; $('#sCoach').onchange = save;
+  $('#sTeach').onclick = teacherNotes; $('#sLock').onclick = () => { teacherOpen = false; settings(); };
+  $$('#modal [data-reset]').forEach(b => b.onclick = () => { const p = Players.all()[b.dataset.reset]; askText({ title: `New password for ${p.name}`, text: 'Give them this password. They can change it themselves in Settings.', cancel: settings, max: 30 }, pw => { toast(Players.setPassword(b.dataset.reset, pw) ? `${p.name} can now sign in with the new password.` : 'Too short. Use at least 3 characters.'); settings(); }); });
+  $$('#modal [data-del]').forEach(b => b.onclick = () => { const p = Players.all()[b.dataset.del]; if (!confirm(`Delete ${p.name} and everything they saved? This cannot be undone.`)) return; Players.remove(b.dataset.del); if (b.dataset.del === Store.user) return signOut(); settings(); });
 }
 $('#home').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('card')) { e.preventDefault(); e.target.click(); } });
 $('#home').addEventListener('click', e => {
@@ -80,7 +132,7 @@ $('#home').addEventListener('click', e => {
     const a = h.dataset.h;
     if (a === 'new') openEditor(starterCourse());
     else if (a === 'import') importDialog();
-    else if (a === 'how') howTo(); else if (a === 'log') notebook(); else if (a === 'set') settings(); else if (a === 'paint') paintDialog();
+    else if (a === 'how') howTo(); else if (a === 'log') notebook(); else if (a === 'set') settings(); else if (a === 'paint') paintDialog(); else if (a === 'out') signOut();
     return;
   }
   if (!cardEl) return;
@@ -103,7 +155,7 @@ function teacherNotes() {
   <p><b>The physics is real, not scripted.</b> Torque, gearing, wheel size, weight and friction are simulated, so the trade-offs students find are the true ones:</p>
   <ul style="color:var(--dim)"><li>Pushing force = torque ÷ wheel radius. Bigger wheels are faster but push less.</li><li>Gearing trades speed for torque. You never get both for free.</li><li>Traction = grip × weight on the driven wheels. Ballast and all-wheel drive help a strong motor actually use its strength.</li><li>Light bots jump higher and glide farther. Heavy bots push harder.</li></ul>
   <p><b>Ways to use it</b></p><ul style="color:var(--dim)"><li><b>One-variable tests.</b> Change only the gearbox, run Hill Climb three times, and graph time against gear.</li><li><b>Budget challenge.</b> Who can beat a course with the cheapest bot?</li><li><b>Course design.</b> Students build a course, prove it can be beaten, then trade share codes or links. A good course has more than one solution.</li><li><b>Notebook.</b> The Engineer's Notebook logs every attempt with the build and the coach's diagnosis. It prints.</li></ul>
-  <p><b>Nothing is pre-picked.</b> Students start with an empty build bay, and the course info lists what is out there without saying what to buy. The coach (Settings) only explains a failure after it happens.</p><p>Everything saves in this browser only. No accounts, no data leaves the device.</p><div class="acts"><button class="primary" data-m="x" data-focus>Close</button></div>`);
+  <p><b>Nothing is pre-picked.</b> Students start with an empty build bay, and the course info lists what is out there without saying what to buy. The coach (Settings) only explains a failure after it happens.</p><p><b>Players.</b> Each student makes a name and password, and their bot, medals, notebook and courses are saved separately on this computer. The teacher area in Settings resets a forgotten password without touching their work.</p><p>Everything saves on this computer only. No accounts, no data leaves the device.</p><div class="acts"><button class="primary" data-m="x" data-focus>Close</button></div>`);
 }
 function notebook() {
   const log = Store.get('log', []);
@@ -478,7 +530,7 @@ function edApply(w, first) {
   } else if (t.k === 'obj' && first) {
     const d = OBJ[t.t], p = edSnapPos(t.t, w);
     if (d.two) { if (!Ed.pend) { Ed.pend = p; edTip(); return; } if (Math.hypot(p.x - Ed.pend.x, p.y - Ed.pend.y) < 2) return toast('Make it longer.'); c.objs.push({ t: t.t, x: Ed.pend.x, y: Ed.pend.y, x2: p.x, y2: p.y }); Ed.pend = null; edTip(); }
-    else { if (d.one) c.objs = c.objs.filter(o => o.t !== t.t); if (c.objs.length >= 400) return toast('That is a lot of things! Remove some first.'); const no = { t: t.t, x: p.x, y: p.y }; if (d.text) { const tx = prompt('What should the sign say?', 'Good luck!'); if (tx == null) return; no.txt = tx.slice(0, 30); Ed.ptr = null; } c.objs.push(no); }
+    else { if (d.one) c.objs = c.objs.filter(o => o.t !== t.t); if (c.objs.length >= 400) return toast('That is a lot of things! Remove some first.'); const no = { t: t.t, x: p.x, y: p.y }; if (d.text) { Ed.ptr = null; Ed.undo.pop(); return askText({ title: 'What should the sign say?', value: 'Good luck!', max: 30 }, tx => { if (!tx.trim()) return; edSnap(); no.txt = tx.trim().slice(0, 30); c.objs.push(no); Ed.dirty = true; }); } c.objs.push(no); }
   }
   Ed.dirty = true;
 }
@@ -547,7 +599,8 @@ function frame(ts) {
 soundOn = Store.get('sound', false);
 (function boot() {
   const m = location.hash.match(/#c=(BOT1\.[A-Za-z0-9_\-]+)/);
-  if (m) { try { const c = importCourse(m[1]); history.replaceState(null, '', location.pathname + location.search); showGarage(c, 'home'); toast(`Loaded “${c.name}”`); } catch (e) { showHome(); toast('That course link did not work.'); } }
-  else showHome();
+  if (m) { pendingCode = m[1]; history.replaceState(null, '', location.pathname + location.search); }
+  let back = null; try { back = sessionStorage.getItem('botshop.user'); } catch (e) { }
+  if (back && Players.all()[back]) signIn(back); else showLogin();   // a page refresh keeps you in; closing the game signs you out
   requestAnimationFrame(frame);
 })();
