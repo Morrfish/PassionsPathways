@@ -130,6 +130,20 @@ box((0.26, 0.28, 0.28), (0, 0, 0.86), MAIN, bevel=0.09)                         
 box((0.2, 0.22, 0.16), (0, 0.02, 0.68), JOINT, bevel=0.06)                        # hand
 finish('Fig_arm', origin=(0, 0, 1.3))
 
+# ---- first-person right hand gripping a blaster (the game mirrors it for the left hand).
+# Pivot = the centre of the grip; the grip runs up/down (Z), forward = +Y, the forearm runs back and down toward the player.
+box((0.1, 0.2, 0.24), (0.1, 0.0, -0.02), JOINT, bevel=0.04)                          # palm on the right of the grip
+for i in range(4):                                                                  # fingers wrapped round the front
+    box((0.2, 0.085, 0.052), (0.0, 0.115, 0.075 - i * 0.058), JOINT, bevel=0.022)
+    box((0.07, 0.11, 0.052), (-0.085, 0.07, 0.075 - i * 0.058), JOINT, bevel=0.022)
+box((0.075, 0.2, 0.075), (-0.075, 0.03, 0.135), JOINT, bevel=0.03, rot=(R(12), 0, 0))  # thumb along the left side
+box((0.17, 0.12, 0.25), (0.11, -0.13, -0.03), JOINT, bevel=0.05)                     # wrist
+box((0.27, 0.12, 0.32), (0.12, -0.24, -0.05), ACC, bevel=0.05, rot=(R(-18), 0, 0))    # cuff
+capsule(0.135, (0.12, -0.32, -0.08), (0.34, -0.92, -0.36), MAIN)                     # gauntlet forearm, angled out and down
+torus(0.14, 0.035, (0.23, -0.62, -0.22), ACC, rot=(R(70), 0, R(-20)), seg=14, mseg=6)   # armour band
+capsule(0.11, (0.34, -0.92, -0.36), (0.62, -1.5, -0.72), JOINT)                      # sleeve back to the elbow
+finish('Fig_hand')
+
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, 'figures.glb'), export_format='GLB', use_selection=True,
                           export_apply=True, export_yup=True)

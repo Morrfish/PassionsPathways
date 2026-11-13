@@ -48,10 +48,10 @@ Optional: the four **neon arenas** (Neon Ruins, Glass Citadel, Ember Forge, Verd
 dark sci-fi look. Courtnee can decide whether to keep, restyle or remove them.
 
 ## Optional smaller sheets
-- **First-person toy hands** (gloved/toy hands holding a blaster from the player's view).
+- **First-person toy hands** — a first version is in (gloved hands in team colours); a sheet would help refine them.
 - **Repair Core detail** — the green diamond with clear white crosses.
 - **Gadgets worn by fighters** — how the Propeller Hat and Jetpack look on a toy fighter (front/side/back).
-- **Board pieces** — if the chessboard should use toy figures instead of classic chess shapes.
+- **Board pieces** — the board now uses the toy fighters (classic shapes are still a menu option).
 
 ## Exact names (for reference)
 **Blasters → who can use them**

@@ -249,6 +249,8 @@ kbd{border:2px solid var(--line);border-bottom-width:3px;border-radius:6px;paddi
     <div class="seg" data-opt="diff"><button data-v="0">Recruit</button><button data-v="1" class="on">Veteran</button><button data-v="2">Warlord</button></div>
     <label class="opt">Captures are settled by</label>
     <div class="seg" data-opt="duel"><button data-v="fps" class="on">FPS duel (mouse + keyboard)</button><button data-v="auto">Auto-battle</button></div>
+    <label class="opt">Board pieces</label>
+    <div class="seg" data-opt="pieces"><button data-v="toy" class="on">Toy fighters</button><button data-v="classic">Classic chess shapes</button></div>
     <label class="opt">Graphics</label>
     <div class="seg" data-opt="gfx"><button data-v="hi" class="on">Glow on</button><button data-v="lo">Fast</button></div>
     <div class="row" style="margin-top:24px">
@@ -741,6 +743,18 @@ function buildPiece(t,c){
   return g;
 }
 
+/** Board piece: the toy fighter on a team-coloured base (classic chess shape if the models aren't loaded or 'Classic' is chosen). */
+function boardPiece(t,c){
+  const f=opts.pieces!=='classic'&&buildFigure(t,c);
+  if(!f){const g=buildPiece(t,c);g.userData.look='classic';return g;}
+  const g=new THREE.Group(),M=pieceMats(c);
+  const base=new THREE.Mesh(new THREE.CylinderGeometry(.37,.4,.07,32),M.body);base.position.y=.035;base.castShadow=base.receiveShadow=true;g.add(base);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(.37,.022,8,40),M.glow);ring.rotation.x=Math.PI/2;ring.position.y=.07;g.add(ring);
+  f.scale.setScalar(t==='r'?.45:.5);f.position.y=.07;if(c==='b')f.rotation.y=Math.PI;g.add(f);
+  g.userData.look='toy';return g;
+}
+const boardLook=()=>opts.pieces!=='classic'&&ASSET.ready?'toy':'classic';
+
 // ---------------------------------------------------------------- board view
 const BOARD={tiles:[],marks:[],dots:[],rings:[],meshes:new Map(),hpSprites:new Map(),group:new THREE.Group()};
 const sqPos=s=>new THREE.Vector3(fileOf(s)-3.5,.1,3.5-rankOf(s));
@@ -811,9 +825,9 @@ function syncBoard(anim){
   for(let s=0;s<64;s++){
     const p=G.st.b[s];if(!p)continue;seen.add(p.id);
     let m=BOARD.meshes.get(p.id);
-    if(m&&m.userData.t!==p.t){BOARD.group.remove(m);m=null;}
-    if(!m){m=buildPiece(p.t,p.c);m.userData.t=p.t;m.userData.id=p.id;BOARD.group.add(m);BOARD.meshes.set(p.id,m);const q=sqPos(s);m.position.set(q.x,.1,q.z);
-      const hs=hpSprite();m.add(hs);hs.position.y=1.25;BOARD.hpSprites.set(p.id,hs);}
+    if(m&&(m.userData.t!==p.t||m.userData.look!==boardLook())){BOARD.group.remove(m);m=null;}
+    if(!m){m=boardPiece(p.t,p.c);m.userData.t=p.t;m.userData.id=p.id;BOARD.group.add(m);BOARD.meshes.set(p.id,m);const q=sqPos(s);m.position.set(q.x,.1,q.z);
+      const hs=hpSprite();m.add(hs);hs.position.y=1.3;BOARD.hpSprites.set(p.id,hs);}
     m.traverse(o=>o.userData.sq=s);
     const target=sqPos(s);
     const moving=anim&&anim.ids&&anim.ids.includes(p.id);
@@ -1028,6 +1042,7 @@ function loadAssets(){
           (Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{if(m._shared)return;m._shared=true;if(m.color)m.color.convertLinearToSRGB();if(m.emissive)m.emissive.convertLinearToSRGB();});});   // materials are shared between models: convert once
         for(const c of g.scene.children)ASSET.objs[c.name]=c;
         ASSET.ready=++ASSET.loaded===keys.length;
+        if(ASSET.ready&&G.st&&G.mode==='board')syncBoard();   // swap in the toy fighters once the models are in
       },e=>console.warn('model load failed',key,e));
     }catch(e){console.warn('model decode failed',key,e);}
   }
@@ -2301,6 +2316,19 @@ function setupWorld(){
 function refreshViewGun(){
   if(D.vgun)duelCam.remove(D.vgun);
   D.vgun=gunModel(D.player.w,D.player.c);D.vgun.scale.setScalar(ASSET.objs['W_'+D.player.w.id]?.78:1);D.vgun.position.set(.28,-.26,-.45);duelCam.add(D.vgun);
+  viewHands(D.vgun,D.player.w.id,D.player.c);
+}
+// Where the hands sit on each blaster, in the blaster's own space: [right x,y,z, left x,y,z]. Left is the support hand (or the second blaster).
+const HAND_POS={def:[0,-.08,.01, 0,-.05,-.24],twin:[.05,-.08,.01, -.05,-.08,.01],arc:[0,-.08,.01, 0,-.1,.02],crown:[0,-.08,.01, 0,-.1,.02],nailer:[0,-.08,.01, 0,-.06,-.16],scatter:[0,-.08,.01, 0,-.04,-.2],handcannon:[0,-.08,.01, 0,-.11,.02]};
+/** First-person arms: gloved toy hands in the player's team colours, gripping the blaster (they follow recoil and reloads). */
+function viewHands(gun,wid,c){
+  if(!ASSET.objs.Fig_hand)return;
+  const tint=o=>{o.traverse(m=>{if(m.isMesh){m.material=Array.isArray(m.material)?m.material.map(x=>figMat(x,c)):figMat(m.material,c);m.castShadow=false;}});return o;};
+  const p=HAND_POS[wid]||HAND_POS.def,twin=wid==='twin',S=.5;
+  const r=tint(asset('Fig_hand',gun));r.scale.setScalar(S);r.position.set(p[0],p[1],p[2]);r.rotation.set(0,-.08,0);
+  const l=tint(asset('Fig_hand',gun));l.scale.set(-S,S,S);l.position.set(p[3],p[4],p[5]);
+  if(twin)l.rotation.set(0,.08,0);else l.rotation.set(0,.25,-.45);   // support arm comes in from the left, under the barrel
+  gun.userData.hands=[r,l];
 }
 function beginFight(){
   show('intro',false);show('roompick',false);show('dhud',true);hudInit();
@@ -2939,7 +2967,7 @@ function resumeDuel(){show('pause',false);D.paused=false;if(!fallbackLook)reques
 
 // ---------------------------------------------------------------- UI wiring
 function show(id,on){document.getElementById(id).classList.toggle('hidden',!on);}
-const opts={side:'w',diff:'1',duel:'fps',gfx:'hi'};
+const opts={side:'w',diff:'1',duel:'fps',gfx:'hi',pieces:'toy'};
 if('ontouchstart' in window&&!matchMedia('(pointer:fine)').matches)opts.duel='auto';
 document.querySelectorAll('.seg').forEach(seg=>{
   const k=seg.dataset.opt;

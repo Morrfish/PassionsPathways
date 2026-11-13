@@ -19,12 +19,16 @@ python3 build.py package                                   # game.src.html + ass
 - `node tools/tests/full_games.js` — 4 computer-vs-computer games in auto-battle mode (slow: ~10–20 min).
 - `node tools/tests/ui_screens.js` — menu, board, loadout, room picker, HUD screenshots.
 - `node tools/tests/equipment_rooms.js` — armory/loadout with everything unlocked, abilities, darts, room interactables.
+- `node tools/tests/board_hands.js` — the board with toy-fighter pieces + the first-person hands on every blaster.
 - `node tools/tests/room_views.js [room ...]` — two screenshots of each room (player start + raised corner) to check props.
 
 ## What exists
 - Real chess + alpha-beta AI; every capture is an FPS duel (attacker loses → attacker removed). Wounds persist.
 - 6 toy fighters (Blender, `figures.glb`), 14 blasters + Scope/Stock/Big Clip/Power I–III + Chrome/Gold/Diamond (`equipment.glb`),
   gadgets (Grappling Hook, Jetpack, Propeller Hat), foam darts/rockets, ability visuals, interactables.
+- Board pieces are the toy fighters on team-coloured bases (`boardPiece()`); the menu option "Board pieces" switches back to
+  classic chess shapes. First-person view has gloved toy arms holding the blaster (`viewHands()`, model `Fig_hand` in
+  `figures.glb`, mirrored for the left hand; per-blaster hand spots in `HAND_POS`).
 - Cream/navy/teal/orange UI: menu, board HUD, loadout screen (turntable), room picker, in-match HUD, armory.
 - 14 rooms. Blender-modelled from reference sheets: **Kid's Bedroom** (`bedroom.glb`), **Chess Park** (`park.glb`).
   Blender-modelled from the written descriptions (no sheets yet): **Library Table, Diner Counter, School Gym, Toy Store,
@@ -43,6 +47,6 @@ blaster-coloured body + orange suction cup; foam rocket teal with orange nose/fi
 1. Courtnee's play-test feedback (performance, difficulty, gadget feel).
 2. When Courtnee's reference sheets for the 8 rooms arrive, restyle the matching props in `blender/rooms_assets.py`
    (keep the footprints in the `prop(...)` calls). Decide whether the 4 neon arenas stay, get restyled, or go.
-3. Polish: first-person toy hands, white crosses on the Repair Core, gadgets visible on enemies,
-   decide if board pieces become toy figures.
+3. Polish: tune the first-person hand positions per blaster after play-testing, give enemy fighters a two-handed hold,
+   white crosses on the Repair Core, gadgets visible on enemies.
 4. Sharing: shareable link, Game Closet, pull request (only when asked).
