@@ -33,7 +33,14 @@ out = src.replace(marker, "<script>\n" + lib + "\n</script>")
 import base64, json
 glb = {p.stem: base64.b64encode(p.read_bytes()).decode() for p in sorted((here / "assets").glob("*.glb"))}
 assert "<script>/*GLB*/</script>" in out, "GLB marker missing"
-out = out.replace("<script>/*GLB*/</script>", "<script>window.__GLB=" + json.dumps(glb) + ";</script>")
+# room picture cards (assets/thumbs/*.jpg, made by tools/make_thumbs.js)
+from PIL import Image
+import io
+thumbs = {}
+for p in sorted((here / "assets" / "thumbs").glob("*.jpg")):
+    im = Image.open(p).convert("RGB"); im.thumbnail((400, 225)); buf = io.BytesIO(); im.save(buf, "JPEG", quality=70)
+    thumbs[p.stem] = "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode()
+out = out.replace("<script>/*GLB*/</script>", "<script>window.__GLB=" + json.dumps(glb) + ";window.__THUMBS=" + json.dumps(thumbs) + ";</script>")
 (here / "index.html").write_text(out, encoding="utf-8")
 
 print(f"built index.html ({len(out)//1024} KB)")
