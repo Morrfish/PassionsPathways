@@ -18,7 +18,8 @@ python3 build.py package                                   # game.src.html + ass
 ## Windows .exe
 `launcher/build_exe.sh` (needs Go) cross-compiles `dist/Checkfire.exe`: one file that carries `index.html`, serves it on
 this computer only (127.0.0.1:47616) and opens it in its own Edge/Chrome app window with a private profile, so saves and
-unlocks persist. `dist/` is not committed — rebuild it after every `build.py`. Not code-signed, and never run on real
+unlocks persist. A copy is committed as `checkfire/Checkfire.exe` so there is a download link; rebuild it after every `build.py`
+(`launcher/build_exe.sh`, then copy `dist/Checkfire.exe` over it). Not code-signed, and never run on real
 Windows from this environment (only the same code as a Linux build was tested).
 
 ## Same-network multiplayer ("Play a friend")
