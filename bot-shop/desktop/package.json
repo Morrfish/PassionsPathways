@@ -1,0 +1,24 @@
+{
+  "name": "bot-assembly-shop",
+  "productName": "Bot Assembly Shop",
+  "version": "1.0.0",
+  "description": "Build a robot and drive it through obstacle courses.",
+  "author": "Passions Pathways",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "prebuild": "node copy-game.js",
+    "build": "electron-builder --win portable --x64"
+  },
+  "build": {
+    "appId": "org.passionspathways.botshop",
+    "files": ["main.js", "game/**"],
+    "win": { "target": "portable", "signAndEditExecutable": false },
+    "portable": { "artifactName": "BotAssemblyShop.exe" },
+    "directories": { "output": "dist" }
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  }
+}
