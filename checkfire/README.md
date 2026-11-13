@@ -24,9 +24,10 @@ python3 build.py package
 ```
 
 ## 3D models (Blender)
-`blender/park_assets.py` and `blender/bedroom_assets.py` build the Chess Park and Kid's Bedroom models in a beveled low-poly toy style (shared helpers in `blender/toykit.py`). They write `assets/*.glb`, which `build.py` embeds into `index.html`, plus preview renders (`blender/previews/`).
+`blender/park_assets.py` and `blender/bedroom_assets.py` build the Chess Park and Kid's Bedroom models, and `blender/rooms_assets.py` builds the props for the other eight rooms (Library Table, Diner Counter, School Gym, Toy Store, Greenhouse, Arcade, Attic, Beach Boardwalk), all in a beveled low-poly toy style (shared helpers in `blender/toykit.py`). They write `assets/*.glb`, which `build.py` embeds into `index.html`, plus preview renders (`blender/previews/`).
 
 ```bash
 blender -b --python blender/park_assets.py -- assets
 blender -b --python blender/bedroom_assets.py -- assets
+blender -b --python blender/rooms_assets.py -- assets
 ```

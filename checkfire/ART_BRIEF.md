@@ -24,7 +24,10 @@ the player picks (a kid's bedroom floor, a park chess table, a diner counter, �
 - Interactables: Jump Pad, Spring Box, Trampoline, Pinball Bumper, Lava, Hot Coffee, Cactus Patch.
 - Game UI (menus, loadout, room picker, in-match HUD).
 
-## STILL NEEDED — the eight remaining rooms (highest priority)
+## FIRST PASS DONE, SHEETS WELCOME — the eight remaining rooms
+These eight rooms now have Blender toy models made from the written descriptions below (see
+`blender/previews/rooms_<room>.png` for a line-up of each room's props). A reference sheet for any of them will be used
+to restyle those props to match — so sheets are still the best way to steer the look.
 Each room is a square play area about 48 × 48 (the toy fighters are ~2 tall, so the room is "giant" around them).
 For each room, please make one sheet with: **an eye-level overview, a top-down layout, and one panel per key prop**
 (front + side, or 3/4). Note anything that moves or can be climbed. The props listed are what's in the game now — feel free
