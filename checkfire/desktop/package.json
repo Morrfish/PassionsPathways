@@ -1,0 +1,43 @@
+{
+  "name": "checkfire",
+  "productName": "Checkfire",
+  "version": "1.0.0",
+  "description": "Checkfire - chess where every capture is a toy-blaster duel",
+  "author": "Mr. Morris",
+  "main": "main.js",
+  "scripts": {
+    "dist": "electron-builder --win portable --x64"
+  },
+  "build": {
+    "appId": "com.mrmorris.checkfire",
+    "files": [
+      "main.js",
+      "index.html",
+      "icon.png"
+    ],
+    "afterPack": "./afterPack.js",
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "icon.ico",
+      "signAndEditExecutable": false
+    },
+    "portable": {
+      "artifactName": "Checkfire.exe"
+    },
+    "directories": {
+      "output": "dist"
+    }
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3",
+    "resedit": "^2.0.3"
+  }
+}

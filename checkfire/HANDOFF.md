@@ -40,3 +40,4 @@ blaster-coloured body + orange suction cup; foam rocket teal with orange nose/fi
 3. Polish: first-person toy hands, white crosses on the Repair Core, gadgets visible on enemies,
    decide if board pieces become toy figures.
 4. Sharing: shareable link, Game Closet, pull request (only when asked).
+5. Windows build: see `desktop/README.md` (Electron portable exe, rebuild after every game change).
