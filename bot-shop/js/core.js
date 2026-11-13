@@ -1,5 +1,6 @@
 /* Bot Assembly Shop — core data: parts, bot math, tiles, courses, storage */
 'use strict';
+const VERSION = '1.1';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
 const pl = planck, V = pl.Vec2;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
