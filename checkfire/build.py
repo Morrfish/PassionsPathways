@@ -22,12 +22,18 @@ parts = [
     pkg / "examples/js/postprocessing/RenderPass.js",
     pkg / "examples/js/postprocessing/ShaderPass.js",
     pkg / "examples/js/postprocessing/UnrealBloomPass.js",
+    pkg / "examples/js/loaders/GLTFLoader.js",
 ]
 lib = "\n;\n".join(p.read_text(encoding="utf-8") for p in parts).replace("</script", "<\\/script")
 src = (here / "game.src.html").read_text(encoding="utf-8")
 marker = "<script>/*THREE*/</script>"
 assert marker in src, "marker missing"
 out = src.replace(marker, "<script>\n" + lib + "\n</script>")
+# Blender models (assets/*.glb, built by blender/*.py) embedded as base64 so the game stays one file
+import base64, json
+glb = {p.stem: base64.b64encode(p.read_bytes()).decode() for p in sorted((here / "assets").glob("*.glb"))}
+assert "<script>/*GLB*/</script>" in out, "GLB marker missing"
+out = out.replace("<script>/*GLB*/</script>", "<script>window.__GLB=" + json.dumps(glb) + ";</script>")
 (here / "index.html").write_text(out, encoding="utf-8")
 
 print(f"built index.html ({len(out)//1024} KB)")
