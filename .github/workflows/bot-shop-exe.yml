@@ -1,0 +1,39 @@
+# Builds the Bot Assembly Shop Windows exe.
+# The exe is kept as a build artifact on the run page: only people signed in
+# to GitHub with access to this repo can download it. Nothing is published.
+name: Bot Assembly Shop exe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, ccr-e56bdd5b-514s4o]
+    paths:
+      - 'bot-shop/**'
+      - '.github/workflows/bot-shop-exe.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bot-shop-exe
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build the exe
+        working-directory: bot-shop/desktop
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BotAssemblyShop
+          path: bot-shop/desktop/dist/BotAssemblyShop.exe
+          retention-days: 90
+          compression-level: 0
