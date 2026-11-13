@@ -15,6 +15,12 @@ python3 build.py package                                   # game.src.html + ass
   (shared helpers in `blender/toykit.py`; previews go to `blender/previews/`).
 - Room picker cards: `node tools/make_thumbs.js`, then rebuild.
 
+## Windows .exe
+`launcher/build_exe.sh` (needs Go) cross-compiles `dist/Checkfire.exe`: one file that carries `index.html`, serves it on
+this computer only (127.0.0.1:47616) and opens it in its own Edge/Chrome app window with a private profile, so saves and
+unlocks persist. `dist/` is not committed — rebuild it after every `build.py`. Not code-signed, and never run on real
+Windows from this environment (only the same code as a Linux build was tested).
+
 ## Tests (Playwright + bundled Chromium, software GL ~9 fps)
 - `node tools/tests/full_games.js` — 4 computer-vs-computer games in auto-battle mode (slow: ~10–20 min).
 - `node tools/tests/ui_screens.js` — menu, board, loadout, room picker, HUD screenshots.
