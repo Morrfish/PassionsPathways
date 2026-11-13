@@ -3,13 +3,14 @@
 A browser game where students build a robot from parts and drive it through obstacle courses.
 Open `index.html` — no install, no accounts, works offline. Progress saves in the browser.
 
-- **Shop:** chassis, wheels, tires, motor, gearbox, battery, drive type and 23 gadgets, all inside a course budget.
-  - Tools: buzz saw, rock drill, heat torch, dozer blade, long pole, ball cannon, grabber claw, magnet.
-  - Movement: grapple hook, jump jack, vault pole, rocket, propeller, glider wing, wall climber, floats, snorkel.
-  - Upgrades: ballast, roll cage, wheelie bar, turbocharger, solar panel, horn.
-- **Courses:** 12 built in — speed, strength and crazy.
-- **Course editor:** paint terrain (dirt, ice, mud, water, lava), drop in obstacles (crates, wood/ice/rock walls, gates and switches, zip lines, hammers, lifts...), test it, then share it as a link or code.
-- **Coach + notebook:** after each run the game explains why the bot stalled, slipped, flipped or ran out of battery, and logs the attempt.
+- **Empty build bay:** nothing is pre-picked. Students choose every part, and the course info says what is out there, never what to buy.
+- **Shop:** 5 chassis, 4 wheel sizes, 4 tire types, 4 motors, gearbox, 3 batteries, drive type and 33 gadgets, all inside a course budget.
+- **Damage:** bots have health. Long falls and hard crashes break them. Shocks, armor, a parachute or a bubble shield help.
+- **Paint shop:** colours, patterns, eyes, hats, words on a flag, and a picture (sticker, photo, or draw your own).
+- **Levels:** 52 built in — speed, strength, crazy, and five legendary ones.
+- **Course editor:** paint terrain (dirt, ice, mud, rubber, sand, water, lava), drop in 38 kinds of things (springboards, bot cannons, teleporters, conveyors, giant propellers, lasers, TNT, gates and switches, signs with your own words...), pick the scenery, test it, then share it as a link or code.
+- **Coach + notebook:** after each run the game explains why the bot stalled, slipped, flipped, broke or ran out of battery, and logs the attempt. The coach can be turned off in Settings.
+- **Settings:** sound, damage, coach, and the teacher notes.
 
-Files: `js/core.js` (parts, courses, sharing), `js/sim.js` (physics and drawing), `js/ui.js` (screens and editor).
+Files: `js/core.js` (parts, courses, sharing), `js/levels.js` (the 40 extra levels, built from reusable sections), `js/sim.js` (physics and drawing), `js/ui.js` (screens and editor).
 Physics by [planck.js](https://github.com/piqnt/planck.js) (MIT, see `js/planck.LICENSE.txt`).

@@ -35,6 +35,15 @@ h1,h2,h3{margin:0;font-weight:800;letter-spacing:.2px}
 .sect h2{font-size:20px;display:flex;align-items:center;gap:10px}
 .sect h2 small{font-weight:500;color:var(--dim);font-size:14px}
 .tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.6px}
+.tag.boss{background:#5a1a1a;color:#ffb3a8}.card.boss{border-color:#7a2a22}
+.stars{color:var(--y);font-size:13px;margin-left:8px;letter-spacing:1px;white-space:nowrap}.stars i{font-style:normal;color:#3a4654}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.chips span{background:var(--panel2);border-radius:99px;padding:4px 10px;font-size:13px}
+.tabs{display:flex;gap:6px;margin:4px 0 8px}.tabs button{flex:1;padding:7px 8px;font-size:13.5px;border:2px solid transparent}.tabs button.on{border-color:var(--y);background:#2b2a16}
+.paint h4{margin:12px 0 5px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--y)}.paint input[type=text]{width:100%}
+.paint input[type=color]{width:30px;height:28px;padding:0;border:0;background:none;cursor:pointer}
+.opts{display:flex;flex-wrap:wrap;gap:5px}.opts button{padding:5px 9px;font-size:12.5px;border:2px solid transparent;border-radius:8px;font-weight:600}.opts button.on{border-color:var(--g);background:#1d3329}
+.stick{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}.stick button{padding:3px 0;font-size:18px;border:2px solid transparent;border-radius:8px}.stick button.on{border-color:var(--g);background:#1d3329}
+.pad{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}.pad canvas{width:216px;height:216px;border-radius:8px;touch-action:none;cursor:crosshair;border:2px solid var(--line)}.pad>div{flex:1;min-width:120px}
 .tag.speed{background:#12406e;color:#9fd0ff}.tag.strength{background:#6a3a12;color:#ffcf9a}.tag.crazy{background:#4a2a7a;color:#e0c4ff}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-top:12px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:transform .12s,border-color .12s}
@@ -99,7 +108,7 @@ label.chk{display:flex;gap:8px;align-items:center;font-size:13.5px;margin-top:12
 /* Editor */
 #edUI{position:fixed;inset:0;display:none;pointer-events:none}#edUI.on{display:block}
 #edTop{position:absolute;left:0;right:0;top:0;background:var(--panel);border-bottom:1px solid var(--line);padding:8px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;pointer-events:auto}
-#edTop input[type=text]{width:170px;font-weight:700}#edTop input[type=number]{width:80px}#edTop .sp{flex:1}
+#edTop input[type=text]{width:170px;font-weight:700}#edTop input[type=number]{width:80px}#edTop select{max-width:150px}#edTop .sp{flex:1}
 #edPal{position:absolute;left:0;top:54px;bottom:0;width:196px;background:var(--panel);border-right:1px solid var(--line);padding:10px;overflow:auto;pointer-events:auto}
 #edPal h4{margin:10px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--y)}#edPal h4:first-child{margin-top:0}
 .tg{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
@@ -134,9 +143,11 @@ label.chk{display:flex;gap:8px;align-items:center;font-size:13.5px;margin-top:12
   <div id="hMsg"></div>
   <div id="hBL" class="hbox">
     <div class="spd"><span id="hSpd">0</span> <small>mph</small></div>
+    <div class="meter" id="hHpBox">Health<div class="bar"><i id="hHp" style="background:var(--g)"></i></div></div>
     <div class="meter">Battery<div class="bar"><i id="hBat" style="background:var(--g)"></i></div></div>
     <div class="meter">Motor effort<span class="badge stall" id="hStall">STALLED</span><span class="badge slip" id="hSlip">WHEELSPIN</span><div class="bar"><i id="hLoad" style="background:var(--t)"></i></div></div>
     <div class="meter" id="hAmmoBox">Cannon <span id="hAmmo" style="color:var(--ink);letter-spacing:1px"></span></div>
+    <div class="meter" id="hExtra" style="text-transform:none;letter-spacing:0;color:var(--ink)"></div>
     <div class="meter" id="hFuelBox">Rocket fuel<div class="bar"><i id="hFuel" style="background:var(--o)"></i></div></div>
   </div>
   <div id="hBR" class="hbox"></div>
@@ -149,6 +160,7 @@ label.chk{display:flex;gap:8px;align-items:center;font-size:13.5px;margin-top:12
 <div id="toast"></div>
 <script src="js/planck.min.js"></script>
 <script src="js/core.js"></script>
+<script src="js/levels.js"></script>
 <script src="js/sim.js"></script>
 <script src="js/ui.js"></script>
 </body>
