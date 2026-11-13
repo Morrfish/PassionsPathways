@@ -632,13 +632,13 @@ function drawPattern(ctx, cfg, L, H) {
   else if (p === 'zigzag') { ctx.lineWidth = 0.07; ctx.beginPath(); for (let i = 0; i <= L / 0.2; i++) ctx.lineTo(-L / 2 + i * 0.2, H * 0.18 + (i % 2 ? 0.1 : -0.02)); ctx.stroke(); }
   ctx.restore();
 }
-function drawEyes(ctx, kind, ex, er, lk, dark) {
+function drawEyes(ctx, kind, ex, ey, er, lk, dark) {
   if (kind === 'none') return;
   const eyes = kind === 'cyclops' ? [[ex - er * 1.1, er * 1.35]] : [[ex, er], [ex - er * 2.3, er]], k = kind === 'wide' ? 1.25 : 1;
-  for (const [x, r] of eyes) { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x, 0.03, r * k, 0, 7); ctx.fill(); ctx.fillStyle = '#12161c'; ctx.beginPath(); ctx.arc(x + r * 0.4 * lk, 0.03, r * (kind === 'wide' ? 0.3 : 0.5), 0, 7); ctx.fill(); }
-  if (kind === 'angry') { ctx.strokeStyle = dark; ctx.lineWidth = er * 0.45; ctx.beginPath(); ctx.moveTo(ex + er, 0.03 + er * 0.7); ctx.lineTo(ex - er * 0.9, 0.03 + er * 1.3); ctx.moveTo(ex - er * 3.3, 0.03 + er * 1.3); ctx.lineTo(ex - er * 1.4, 0.03 + er * 0.7); ctx.stroke(); }
-  else if (kind === 'sleepy') { ctx.fillStyle = dark; for (const [x, r] of eyes) { ctx.beginPath(); ctx.arc(x, 0.03, r * 1.02, 0, Math.PI); ctx.fill(); } }
-  else if (kind === 'shades') { ctx.fillStyle = '#12161c'; rrect(ctx, ex - er * 3.5, 0.03 - er * 0.7, er * 4.7, er * 1.5, er * 0.4); ctx.fill(); ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(ex - er * 3.1, 0.03 + er * 0.2, er * 1.3, er * 0.25); }
+  for (const [x, r] of eyes) { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x, ey, r * k, 0, 7); ctx.fill(); ctx.fillStyle = '#12161c'; ctx.beginPath(); ctx.arc(x + r * 0.4 * lk, ey, r * (kind === 'wide' ? 0.3 : 0.5), 0, 7); ctx.fill(); }
+  if (kind === 'angry') { ctx.strokeStyle = dark; ctx.lineWidth = er * 0.45; ctx.beginPath(); ctx.moveTo(ex + er, ey + er * 0.7); ctx.lineTo(ex - er * 0.9, ey + er * 1.3); ctx.moveTo(ex - er * 3.3, ey + er * 1.3); ctx.lineTo(ex - er * 1.4, ey + er * 0.7); ctx.stroke(); }
+  else if (kind === 'sleepy') { ctx.fillStyle = dark; for (const [x, r] of eyes) { ctx.beginPath(); ctx.arc(x, ey, r * 1.02, 0, Math.PI); ctx.fill(); } }
+  else if (kind === 'shades') { ctx.fillStyle = '#12161c'; rrect(ctx, ex - er * 3.5, ey - er * 0.7, er * 4.7, er * 1.5, er * 0.4); ctx.fill(); ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(ex - er * 3.1, ey + er * 0.2, er * 1.3, er * 0.25); }
 }
 function drawTopper(ctx, kind, L, H, dark, c2) {
   const x = -L * 0.15, y = H / 2;
@@ -691,7 +691,10 @@ function drawBot(ctx, cfg, s, pose, fx) {
   const be = fx.energy == null ? 1 : fx.energy; if (!fx.noBatt) { ctx.fillStyle = '#12161c'; rrect(ctx, -0.1, -H * 0.2, L * 0.2, H * 0.36, 0.04); ctx.fill(); ctx.fillStyle = be > 0.3 ? '#35d07f' : '#ff5a36'; ctx.fillRect(-0.07, -H * 0.2 + 0.03, (L * 0.2 - 0.06) * be, H * 0.36 - 0.06); }
   // face
   const ex = L / 2 - 0.3, er = Math.min(0.15, H * 0.3);
-  drawEyes(ctx, cfg.eyes || 'normal', ex, er, fx.look || 0.3, dark);
+  // the front wheel sits right where the face would be, so the eyes ride in a little cab above it
+  const ey = pose.wheels.length && (cfg.eyes || 'normal') !== 'none' ? Math.max(0.03, wy + s.r + er + 0.05) : 0.03;
+  if (ey + er > H / 2 - 0.04) { ctx.fillStyle = fx.hurt ? '#fff' : col; ctx.strokeStyle = dark; ctx.lineWidth = 0.06; rrect(ctx, ex - er * 3.75, H / 2 - 0.12, er * 5.2, ey + er * 1.45 - H / 2 + 0.12, er * 0.9); ctx.fill(); ctx.stroke(); ctx.fillStyle = fx.hurt ? '#fff' : col; ctx.fillRect(ex - er * 3.75 + 0.04, H / 2 - 0.13, er * 5.2 - 0.08, 0.1); }
+  drawEyes(ctx, cfg.eyes || 'normal', ex, ey, er, fx.look || 0.3, dark);
   drawTopper(ctx, cfg.topper || 'antenna', L, H, dark, cfg.color2 || '#20242b');
   if (s.has.shocks) { ctx.strokeStyle = '#ffc21a'; ctx.lineWidth = 0.06; for (const sx of [-1, 1]) { ctx.beginPath(); for (let k = 0; k <= 4; k++) ctx.lineTo(sx * s.wheelDX + (k % 2 ? 0.08 : -0.08), wy + 0.05 + k * 0.07); ctx.stroke(); } }
   if (s.has.armor) { ctx.strokeStyle = '#8d99a8'; ctx.lineWidth = 0.1; rrect(ctx, -L / 2 - 0.05, -H / 2 - 0.05, L + 0.1, H + 0.1, 0.18); ctx.stroke(); ctx.fillStyle = '#8d99a8'; for (const bx of [-L * 0.4, 0, L * 0.4]) { ctx.beginPath(); ctx.arc(bx, H / 2 + 0.02, 0.05, 0, 7); ctx.fill(); } }
