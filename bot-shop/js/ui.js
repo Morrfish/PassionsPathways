@@ -42,7 +42,7 @@ function askText(o, done) {
 let pendingCode = null;
 function signIn(id) {
   Store.user = id; try { sessionStorage.setItem('botshop.user', id); } catch (e) { }
-  App.cfg = Object.assign({}, DEFAULT_BOT, Store.get('bot', {})); App.lastTips = null; App.free = false;
+  App.cfg = tidyBot(Object.assign({}, DEFAULT_BOT, Store.get('bot', {}))); App.lastTips = null; App.free = false;
   if (pendingCode) { const code = pendingCode; pendingCode = null; try { const c = importCourse(code); showGarage(c, 'home'); return toast(`Loaded “${c.name}”`); } catch (e) { toast('That course link did not work.'); } }
   showHome();
 }
@@ -82,13 +82,15 @@ function showHome() {
       ${custom ? `<div class="row"><span class="tag ${c.kind}">${c.kind}</span><span style="flex:1"></span><button class="small" data-c="edit">✏️ Edit</button><button class="small" data-c="share">🔗 Share</button><button class="small danger" data-c="del" aria-label="Delete">🗑</button></div>` : ''}</div></div>`;
   };
   const beaten = BUILTIN.filter(c => bestOf(c.id)).length;
-  const sect = (kind, title, sub) => { const list = BUILTIN.filter(c => c.kind === kind && !c.boss).sort((a, b) => (a.stars || 1) - (b.stars || 1)); return `<div class="sect"><h2><span class="tag ${kind}">${kind}</span>${title}<small>${sub} ${list.filter(c => bestOf(c.id)).length} of ${list.length} beaten.</small></h2><div class="cards">${list.map(c => card(c)).join('')}</div></div>`; };
+  const sect = (kind, title, sub, group) => { const list = BUILTIN.filter(c => group ? c.group === group : c.kind === kind && !c.group && !c.boss).sort((a, b) => (a.stars || 1) - (b.stars || 1)); return `<div class="sect"><h2><span class="tag ${kind}">${kind}</span>${title}<small>${sub} ${list.filter(c => bestOf(c.id)).length} of ${list.length} beaten.</small></h2><div class="cards">${list.map(c => card(c)).join('')}</div></div>`; };
   $('#home').innerHTML = `<div class="stripe"></div><div class="wrap">
     <div class="hero"><div><h1>Bot <span>Assembly</span> Shop</h1><p>Build a robot from parts. Then drive it through the course. If it gets stuck, go back to the shop and engineer a better one. <b>${beaten} of ${BUILTIN.length}</b> levels beaten.</p></div>
       <div class="acts"><span class="me">👤 <b>${esc((Players.all()[Store.user] || {}).name || '')}</b></span><button data-h="out">Switch player</button><button data-h="how">❓ How to play</button><button data-h="log">📓 Engineer's notebook</button><button data-h="paint">🎨 My bot</button><button data-h="set">⚙️ Settings</button></div></div>
     ${sect('speed', 'Speed courses', 'Fastest time wins.')}
     ${sect('strength', 'Strength courses', 'Climb, push and break through.')}
     ${sect('crazy', 'Crazy courses', 'Expect anything.')}
+    ${sect('puzzle', 'Puzzle courses', 'A rule limits your gadgets. Swap them at pit stops.', 'puzzle')}
+    ${sect('maze', 'Mazes', 'Dark, many floors, and a battery that never stops draining.', 'maze')}
     <div class="sect"><h2><span class="tag boss">legendary</span>The final five<small>Long, mean, and short on checkpoints.</small></h2><div class="cards">${BUILTIN.filter(c => c.boss).map(c => card(c)).join('')}</div></div>
     <div class="sect"><h2>🛠️ My courses<small>Build your own and dare a friend to beat it.</small></h2><div class="cards">
       <div class="card new" data-h="new" tabindex="0" role="button"><div style="font-size:34px">＋</div>Build a course</div>
@@ -147,7 +149,7 @@ $('#home').addEventListener('click', e => {
 });
 function howTo() {
   modal(`<h2>How to play</h2><p><b>1. Scout the course.</b> The shop shows what is ahead: hills, ice, gaps, crates.<br><b>2. Build your bot.</b> Pick a chassis, wheels, tires, motor, gearing, battery and gadgets. Stay inside the budget.<br><b>3. Send it.</b> Drive to the finish flag. Watch your health: long falls and hard crashes break the bot.<br><b>4. Improve.</b> Go back to the shop, change one thing, and try again.</p>
-  <div class="keys"><kbd>→ / D</kbd><span>Drive forward</span><kbd>← / A</kbd><span>Reverse</span><kbd>E</kbd><span>Grapple Hook: grab or let go. Hold <b>↑</b> to reel in, <b>↓</b> to let rope out, <b>← →</b> to swing.</span>${PARTS.gadgets.filter(g => g.key && g.id !== 'hook').map(g => `<kbd>${g.key}</kbd><span>${g.name}: ${g.act.toLowerCase()}</span>`).join('')}<kbd>R</kbd><span>Back to the last checkpoint (+${RESET_PENALTY} seconds)</span><kbd>Backspace</kbd><span>Restart the course</span></div>
+  <div class="keys"><kbd>→ / D</kbd><span>Drive forward</span><kbd>← / A</kbd><span>Reverse</span><kbd>E</kbd><span>Grapple Hook: grab or let go. Hold <b>↑</b> to reel in, <b>↓</b> to let rope out, <b>← →</b> to swing.</span>${PARTS.gadgets.filter(g => g.key && g.id !== 'hook').map(g => `<kbd>${g.key}</kbd><span>${g.name}: ${g.act.toLowerCase()}</span>`).join('')}<kbd>Tab</kbd><span>Turn around, so your tools point the other way</span><kbd>Enter</kbd><span>At a pit stop: swap gadgets</span><kbd>R</kbd><span>Back to the last checkpoint (+${RESET_PENALTY} seconds)</span><kbd>Backspace</kbd><span>Restart the course</span></div>
   <div class="acts"><button class="primary" data-m="x" data-focus>Got it</button></div>`);
 }
 function teacherNotes() {
@@ -187,7 +189,7 @@ function showGarage(course, from) {
   App.course = course; App.from = from || App.from; setMode('garage'); App.G = null;
   const k = course.kind;
   $('#garage').innerHTML = `<div class="stripe"></div>
-  <div class="gtop"><button data-g="back">← ${App.from === 'editor' ? 'Editor' : 'Courses'}</button><div><h2>Assembly Shop</h2><div style="font-size:13px;color:var(--dim)">Building for <b style="color:var(--ink)">${esc(course.name)}</b> <span class="tag ${course.boss ? 'boss' : k}">${course.boss ? 'legendary' : k}</span></div></div>
+  <div class="gtop"><button data-g="back">← ${App.from === 'editor' ? 'Editor' : 'Courses'}</button><div><h2>Assembly Shop</h2><div style="font-size:13px;color:var(--dim)">Building for <b style="color:var(--ink)">${esc(course.name)}</b> <span class="tag ${course.boss ? 'boss' : course.group || k}">${course.boss ? 'legendary' : course.group || k}</span></div></div>
     <div class="sp"></div><div class="budget" id="gBudget"></div><button class="go" data-g="go" id="gGo">Send it ▶</button></div>
   <div class="gbody"><div class="gcol gleft"><canvas id="preview" width="660" height="420"></canvas>
       <div class="namerow"><input type="text" id="gName" maxlength="16" aria-label="Bot name" placeholder="Name your bot" value="${esc(App.cfg.name)}"><button class="small" data-g="strip" title="Take every part off and start again">🧹 Start over</button></div>
@@ -195,7 +197,7 @@ function showGarage(course, from) {
       <div id="gStats"></div><div id="gPaint" class="paint"></div></div>
     <div class="gcol" id="gParts"></div>
     <div class="gcol gright"><h3>What is out there</h3><canvas id="mini" width="560" height="140"></canvas><p style="font-size:13px;color:var(--dim);margin:8px 0 0">${esc(course.desc || '')}</p>
-      <div class="chips">${analyzeCourse(course).map(i => `<span>${i[0]} ${i[1]}</span>`).join('')}</div><div id="gCoach"></div>
+      ${rulesText(course.rules).length ? `<div class="rules"><b>📜 Course rules</b><ul>${rulesText(course.rules).map(t => `<li>${t}</li>`).join('')}</ul></div>` : ''}<div class="chips">${analyzeCourse(course).map(i => `<span>${i[0]} ${i[1]}</span>`).join('')}</div><div id="gCoach"></div>
       <label class="chk"><input type="checkbox" id="gFree" ${App.free ? 'checked' : ''}> Free build (no budget, no medals)</label></div></div>`;
   drawMini($('#mini'), course);
   $('#gName').oninput = e => { App.cfg.name = e.target.value; saveCfg(); };
@@ -205,8 +207,17 @@ function showGarage(course, from) {
   refreshGarage();
 }
 const saveCfg = () => Store.set('bot', App.cfg);
+function rulesText(r) {
+  if (!r) return []; const t = [];
+  if (r.slots) t.push(`Only <b>${r.slots}</b> gadget${r.slots > 1 ? 's' : ''} at a time. Swap at a pit stop.`);
+  if (r.energy) t.push(`The battery holds <b>${r.energy} kJ</b> at most, whichever one you buy.`);
+  if (r.drain) t.push('The battery <b>drains the whole time</b>, even standing still. Find the chargers.');
+  if (r.dark) t.push('It is <b>dark</b>. You only see what is near the bot.');
+  return t;
+}
 function refreshGarage() {
-  const cfg = App.cfg, s = botSpec(cfg), c = App.course;
+  const cfg = App.cfg, c = App.course, s = botSpec(cfg, c.rules);
+  cfg.upgrades = s.upgrades.map(g => g.id);
   cfg.gadgets = s.gadgets.map(g => g.id);
   const sel = (key, p) => cfg[key] === p.id;
   const sec = (title, why, body) => `<div class="psec"><h3>${title}</h3><div class="why">${why}</div>${body}</div>`;
@@ -214,7 +225,7 @@ function refreshGarage() {
   const g = s.ge;
   const sc = $('#gParts'), keep = sc.scrollTop;
   sc.innerHTML =
-    sec('1. Chassis', 'The frame everything bolts onto. Bigger frames carry more gadgets and take more hits, but weigh more.', cards('chassis', PARTS.chassis, p => `${p.mass} kg · ${p.slots} slots · ${p.hp} health`)) +
+    sec('1. Chassis', 'The frame everything bolts onto. Bigger frames carry more gadgets and take more hits, but weigh more.', cards('chassis', PARTS.chassis, p => `${p.mass} kg · ${p.slots} gadgets · ${p.up} upgrades · ${p.hp} health`)) +
     sec('2. Wheels', 'Big wheels roll over obstacles and go faster. Small wheels turn the same motor into more push.', cards('wheels', PARTS.wheels, p => `${Math.round(p.r * 200)} cm across · ${p.mass} kg each`)) +
     sec('3. Tires', 'Grip is what turns motor power into motion. No grip, no go.', cards('tires', PARTS.tires, p => `Grip ${p.mu.toFixed(2)} · on ice ${p.ice.toFixed(2)}`)) +
     sec('4. Motor', 'Speed is how fast it spins. Torque is how hard it twists.', cards('motor', PARTS.motor, p => `Speed ${p.speed} · Torque ${p.torque} · ${p.mass} kg`)) +
@@ -223,8 +234,10 @@ function refreshGarage() {
        <div class="gearinfo"><b>${g.name}</b> gear: wheel speed ×${(1 / g.ratio).toFixed(2)}, torque ×${g.ratio.toFixed(2)}</div>`) +
     sec('6. Battery', 'Strong motors working hard drain it fast. A dead battery ends the run.', cards('battery', PARTS.battery, p => `${p.energy} kJ · ${p.mass} kg`)) +
     sec('7. Drive', 'Which wheels does the motor turn?', cards('drive', PARTS.drive, p => p.mass ? `+${p.mass} kg` : 'No extra weight')) +
-    sec(`8. Gadgets <span style="color:var(--dim);font-weight:500;text-transform:none;letter-spacing:0">(${s.gadgets.length} of ${s.real.chassis ? s.ch.slots : 0} slots used)</span>`, 'Special tools for special problems. Your chassis decides how many you can carry.',
-      ['Tools', 'Movement', 'Upgrades'].map(cat => `<div class="gcat">${cat}</div><div class="parts">${PARTS.gadgets.filter(p => p.cat === cat).map(p => `<button class="part ${s.has[p.id] ? 'on' : ''}" data-k="gadget" data-id="${p.id}" aria-pressed="${!!s.has[p.id]}"><b><span>${p.icon} ${p.name}</span><em>$${p.cost}</em></b><span>${p.desc}</span><i>${p.mass} kg${p.key ? ' · key: ' + p.key : ''}</i></button>`).join('')}</div>`).join(''));
+    sec(`8. Gadgets <span style="color:var(--dim);font-weight:500;text-transform:none;letter-spacing:0">(${s.gadgets.length} of ${s.slots} slots used)</span>`, 'Tools and tricks you switch on for special problems. Your chassis decides how many you can carry' + (c.rules && c.rules.slots ? ', and this course has its own limit.' : '.'),
+      ['Tools', 'Movement', 'Helpers'].map(cat => `<div class="gcat">${cat}</div><div class="parts">${PARTS.gadgets.filter(p => p.cat === cat).map(p => `<button class="part ${s.has[p.id] ? 'on' : ''}" data-k="gadget" data-id="${p.id}" aria-pressed="${!!s.has[p.id]}"><b><span>${p.icon} ${p.name}</span><em>$${p.cost}</em></b><span>${p.desc}</span><i>${p.mass} kg${p.key ? ' · key: ' + p.key : ''}</i></button>`).join('')}</div>`).join('')) +
+    sec(`9. Upgrades <span style="color:var(--dim);font-weight:500;text-transform:none;letter-spacing:0">(${s.upgrades.length} of ${s.upSlots} slots used)</span>`, 'Upgrades make the bot itself better: tougher, grippier, more efficient. They are always on and have their own slots.',
+      `<div class="parts">${PARTS.upgrades.map(p => `<button class="part ${s.has[p.id] ? 'on' : ''}" data-k="upgrade" data-id="${p.id}" aria-pressed="${!!s.has[p.id]}"><b><span>${p.icon} ${p.name}</span><em>$${p.cost}</em></b><span>${p.desc}</span><i>${p.mass ? p.mass + ' kg' : 'No extra weight'}</i></button>`).join('')}</div>`);
   sc.scrollTop = keep;
   $('#gGear').oninput = e => { cfg.gear = +e.target.value; saveCfg(); refreshGarage(); $('#gGear').focus(); };
   const over = !App.free && s.cost > c.budget;
@@ -299,23 +312,24 @@ $('#garage').addEventListener('click', e => {
   if (b.dataset.g === 'back') return App.from === 'editor' ? openEditor(App.course) : showHome();
   if (b.dataset.g === 'go') return startRun();
   if (b.dataset.tab) { App.gtab = b.dataset.tab; return refreshGarage(); }
-  if (b.dataset.g === 'strip') { if (confirm('Take every part off this bot? Your paint job stays.')) { Object.assign(cfg, { chassis: null, wheels: null, tires: null, motor: null, battery: null, drive: null, gear: 2, gadgets: [] }); saveCfg(); refreshGarage(); } return; }
+  if (b.dataset.g === 'strip') { if (confirm('Take every part off this bot? Your paint job stays.')) { Object.assign(cfg, { chassis: null, wheels: null, tires: null, motor: null, battery: null, drive: null, gear: 2, gadgets: [], upgrades: [] }); saveCfg(); refreshGarage(); } return; }
   if (!b.dataset.k) return;
   const k = b.dataset.k, id = b.dataset.id;
-  if (k === 'gadget') {
-    const ch = PARTS.chassis.find(p => p.id === cfg.chassis), i = cfg.gadgets.indexOf(id); if (!ch) return toast('Pick a chassis first. Gadgets bolt onto it.'); const slots = ch.slots;
-    if (i >= 0) cfg.gadgets.splice(i, 1);
-    else if (cfg.gadgets.length >= slots) return toast(`No free slot. This chassis holds ${slots} gadget${slots > 1 ? 's' : ''}. Remove one first.`);
-    else cfg.gadgets.push(id);
+  if (k === 'gadget' || k === 'upgrade') {
+    const up = k === 'upgrade', list = up ? cfg.upgrades : cfg.gadgets, sp = botSpec(cfg, App.course.rules), slots = up ? sp.upSlots : sp.slots, i = list.indexOf(id);
+    if (!sp.real.chassis) return toast('Pick a chassis first. Everything bolts onto it.');
+    if (i >= 0) list.splice(i, 1);
+    else if (list.length >= slots) return toast(up ? `No free upgrade slot. This chassis takes ${slots}. Remove one first.` : `No free slot. You can carry ${slots} gadget${slots > 1 ? 's' : ''} here. Remove one first.`);
+    else list.push(id);
   } else {
     cfg[k] = id;
-    if (k === 'chassis') { const sl = byId(PARTS.chassis, id).slots; if (cfg.gadgets.length > sl) { cfg.gadgets.length = sl; toast('Smaller chassis: some gadgets came off.'); } }
+    if (k === 'chassis') { const sp = botSpec(cfg, App.course.rules); if (cfg.gadgets.length > sp.slots || cfg.upgrades.length > sp.upSlots) { cfg.gadgets.length = Math.min(cfg.gadgets.length, sp.slots); cfg.upgrades.length = Math.min(cfg.upgrades.length, sp.upSlots); toast('Smaller chassis: some things came off.'); } }
   }
   saveCfg(); refreshGarage();
   const again = $(`#gParts [data-k="${k}"][data-id="${id}"]`); if (again) again.focus({ preventScroll: true });
 });
 function renderPreview(ts, pc) {
-  if (!pc) return; const c = pc.getContext('2d'), W = pc.width, H = pc.height, s = botSpec(App.cfg), has = k => !!s.real[k];
+  if (!pc) return; const c = pc.getContext('2d'), W = pc.width, H = pc.height, s = botSpec(App.cfg, App.course && App.mode === 'garage' ? App.course.rules : null), has = k => !!s.real[k];
   c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, W, H);
   c.fillStyle = '#0e1217'; c.fillRect(0, H - 54, W, 54); c.fillStyle = '#ffc21a'; for (let x = -20; x < W; x += 56) { c.beginPath(); c.moveTo(x, H - 54); c.lineTo(x + 28, H - 54); c.lineTo(x + 14, H - 44); c.lineTo(x - 14, H - 44); c.fill(); }
   if (!has('chassis') && !has('wheels')) { c.fillStyle = '#5b6470'; c.font = '700 30px system-ui,sans-serif'; c.textAlign = 'center'; c.fillText('Empty build bay', W / 2, H / 2 - 30); c.font = '500 20px system-ui,sans-serif'; c.fillText('Pick a chassis to start building', W / 2, H / 2 + 6); return; }
@@ -329,20 +343,38 @@ function renderPreview(ts, pc) {
 
 /* ================= Run ================= */
 function startRun() {
-  closeModal(); saveCfg(); if (!botSpec(App.cfg).ready) return toast('Finish building your bot first.');
+  closeModal(); saveCfg(); if (!botSpec(App.cfg, App.course.rules).ready) return toast('Finish building your bot first.');
   App.G = makeGame(App.course, JSON.parse(JSON.stringify(App.cfg)));
   if (!App.G.finish) { toast('This course has no finish flag yet.'); return openEditor(App.course); }
   setMode('run'); App.paused = false; App.shown = false; App.acc = 0; App.edge = {};
   const p = App.G.bot.chassis.getPosition(); App.cam = { x: p.x + 4, y: p.y + 2, ppm: VH / 20 };
   $('#hTL .nm').textContent = App.course.name;
+  startHud();
+}
+function startHud() {
   const s = App.G.spec, keys = [['→ ←', 'Drive / reverse']], tb = (code, label, aria) => `<button data-key="${code}" aria-label="${aria}">${label}</button>`;
   let tR = '';
   for (const g of s.gadgets) if (g.key) { keys.push([g.key, g.act]); tR += tb(g.code, g.icon, g.act); if (g.id === 'hook') { keys.push(['↑ ↓', 'Reel rope in / out'], ['→ ←', 'Swing while hanging']); tR += tb('ArrowUp', '⬆', 'Reel in'); } }
-  keys.push(['R', `Checkpoint (+${RESET_PENALTY}s)`]);
+  keys.push(['Tab', 'Turn around'], ['R', `Checkpoint (+${RESET_PENALTY}s)`]); tR += tb('Tab', '↔', 'Turn around');
+  if (App.course.objs.some(o => o.t === 'pit')) keys.push(['Enter', 'Swap gadgets at a pit stop']);
   $('#hBR').innerHTML = keys.map(k => `<div><kbd>${k[0]}</kbd>${k[1]}</div>`).join('');
   $('#hFuelBox').style.display = s.has.rocket ? '' : 'none'; $('#hAmmoBox').style.display = s.has.cannon ? '' : 'none'; $('#hHpBox').style.display = App.G.dmgOn ? '' : 'none';
   $('#tL').innerHTML = tb('ArrowLeft', '◀', 'Reverse') + tb('ArrowRight', '▶', 'Drive');
   $('#tR').innerHTML = tR + tb('KeyR', '⟲', 'Checkpoint');
+}
+/* Pit stop: swap gadgets in the middle of a run */
+function pitDialog() {
+  const G = App.G, c = App.course; App.paused = true; let pick = G.cfg.gadgets.slice();
+  const draw = () => {
+    const base = botSpec(Object.assign({}, G.cfg, { gadgets: [] }), G.rules), s = botSpec(Object.assign({}, G.cfg, { gadgets: pick }), G.rules), over = !App.free && s.cost > c.budget;
+    modal(`<h2>🛠️ Pit stop</h2><p>Swap gadgets without leaving the course. You can carry <b>${base.slots}</b> here. Cost: <b style="color:${over ? 'var(--o)' : 'var(--ink)'}">$${s.cost}</b>${App.free ? '' : ' of $' + c.budget}${over ? ' — over budget!' : ''}</p>
+      ${['Tools', 'Movement', 'Helpers'].map(cat => `<div class="gcat">${cat}</div><div class="opts">${PARTS.gadgets.filter(p => p.cat === cat).map(p => `<button class="${pick.includes(p.id) ? 'on' : ''}" data-pit="${p.id}" title="${esc(p.desc)}">${p.icon} ${p.name} $${p.cost}</button>`).join('')}</div>`).join('')}
+      <div class="acts"><button class="primary" id="pitGo" ${over ? 'disabled' : ''} data-focus>Bolt them on ▶</button><button id="pitNo">Cancel</button></div>`);
+    $$('#modal [data-pit]').forEach(b => b.onclick = () => { const id = b.dataset.pit, i = pick.indexOf(id); if (i >= 0) pick.splice(i, 1); else if (pick.length >= base.slots) return toast(`Only ${base.slots} at a time. Take one off first.`); else pick.push(id); draw(); });
+    $('#pitNo').onclick = () => { closeModal(); App.paused = false; };
+    $('#pitGo').onclick = () => { closeModal(); swapGadgets(G, pick); App.cfg.gadgets = G.cfg.gadgets.slice(); saveCfg(); App.paused = false; startHud(); };
+  };
+  draw();
 }
 function leaveRun() { if (App.from === 'editor') openEditor(App.course); else showHome(); }
 $('#hTR').addEventListener('click', e => { const a = e.target.closest('button')?.dataset.a; e.target.blur(); if (a === 'restart') startRun(); else if (a === 'shop') { logRun(false); showGarage(App.course, App.from); } else if (a === 'pause') togglePause(); });
@@ -352,10 +384,11 @@ for (const ev of ['pointerup', 'pointercancel']) $('#touch').addEventListener(ev
 addEventListener('keydown', e => {
   if (e.target.matches('input,textarea,select')) return;
   if (App.mode === 'run') {
-    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Backspace'].includes(e.code)) e.preventDefault();
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'Backspace', 'Tab'].includes(e.code)) e.preventDefault();
     if ($('#modal').classList.contains('on')) { if (e.code === 'Escape' && App.paused) { closeModal(); App.paused = false; } return; }
     if (!e.repeat) App.edge[e.code] = true; App.keys[e.code] = true;
     if (e.code === 'Backspace') startRun(); if (e.code === 'KeyP' || e.code === 'Escape') togglePause();
+    if ((e.code === 'Enter' || e.code === 'NumpadEnter') && App.G.live.pit && !App.G.done) { e.preventDefault(); pitDialog(); }   // without this, the same Enter would press the dialog's first button
   } else if (App.mode === 'editor') edKey(e);
   else if (e.code === 'Escape') closeModal();
 });
@@ -363,7 +396,7 @@ addEventListener('keyup', e => { App.keys[e.code] = false; });
 addEventListener('blur', () => { App.keys = {}; });
 function readInput() {
   const k = App.keys, e = App.edge;
-  return { x: ((k.ArrowRight || k.KeyD) ? 1 : 0) - ((k.ArrowLeft || k.KeyA) ? 1 : 0), up: !!(k.ArrowUp || k.KeyW), down: !!(k.ArrowDown || k.KeyS), boost: !!(k.ShiftLeft || k.ShiftRight), hook: !!e.KeyE, jump: !!e.Space, right: !!e.KeyF, reset: !!e.KeyR, fire: !!e.KeyC, vault: !!e.KeyV, sledge: !!e.KeyB, shield: !!e.KeyJ, balloon: !!k.KeyN, grab: !!e.KeyG, horn: !!e.KeyH, magnet: !!k.KeyM, prop: !!k.KeyX, climb: !!k.KeyZ };
+  return { x: ((k.ArrowRight || k.KeyD) ? 1 : 0) - ((k.ArrowLeft || k.KeyA) ? 1 : 0), up: !!(k.ArrowUp || k.KeyW), down: !!(k.ArrowDown || k.KeyS), boost: !!(k.ShiftLeft || k.ShiftRight), hook: !!e.KeyE, jump: !!e.Space, right: !!e.KeyF, reset: !!e.KeyR, fire: !!e.KeyC, vault: !!e.KeyV, sledge: !!e.KeyB, shield: !!e.KeyJ, balloon: !!k.KeyN, grab: !!e.KeyG, horn: !!e.KeyH, magnet: !!k.KeyM, prop: !!k.KeyX, climb: !!k.KeyZ, turn: !!e.Tab, hover: !!k.KeyU, anchor: !!k.KeyY, drone: !!e.KeyQ, bridge: !!e.KeyL, bomb: !!e.KeyK, slowmo: !!e.KeyO, beacon: !!e.KeyI };
 }
 function coachTips(G) {
   const st = G.stats, s = G.spec, t = [], n = (v, w) => `${v} time${v > 1 ? 's' : ''}`;
@@ -383,7 +416,7 @@ function logRun(win) {
   const G = App.G; if (!G || !G.started || G.logged) return; G.logged = true;
   const s = G.spec, tips = coachTips(G), log = Store.get('log', []);
   App.lastTips = { id: App.course.id, tips };
-  log.push({ course: App.course.name, build: `${App.cfg.name}: ${s.ch.name}, ${s.wh.name} ${s.ti.name} wheels, ${s.mo.name}, ${s.ge.name} gear, ${s.ba.name}, ${s.dr.id.toUpperCase()}${s.gadgets.length ? ', ' + s.gadgets.map(g => g.name).join(' + ') : ''} ($${s.cost}, ${Math.round(s.mass)} kg)`, result: win ? `Finished in ${fmtT(G.done.time)}s` + (G.resets ? ` (${G.resets} reset${G.resets > 1 ? 's' : ''})` : '') : 'Did not finish', notes: tips.join(' ').replace(/<[^>]+>/g, '') });
+  log.push({ course: App.course.name, build: `${App.cfg.name}: ${s.ch.name}, ${s.wh.name} ${s.ti.name} wheels, ${s.mo.name}, ${s.ge.name} gear, ${s.ba.name}, ${s.dr.name}${s.gadgets.length ? ', gadgets: ' + s.gadgets.map(g => g.name).join(' + ') : ''}${s.upgrades.length ? ', upgrades: ' + s.upgrades.map(g => g.name).join(' + ') : ''} ($${s.cost}, ${Math.round(s.mass)} kg)`, result: win ? `Finished in ${fmtT(G.done.time)}s` + (G.resets ? ` (${G.resets} reset${G.resets > 1 ? 's' : ''})` : '') : 'Did not finish', notes: tips.join(' ').replace(/<[^>]+>/g, '') });
   Store.set('log', log.slice(-40));
 }
 function showResult() {
@@ -412,13 +445,19 @@ function updateHUD() {
   $('#hLoad').style.width = (L.load || 0) * 100 + '%'; $('#hStall').classList.toggle('on', !!L.stall); $('#hSlip').classList.toggle('on', !!L.slip);
   if (s.has.rocket) $('#hFuel').style.width = clamp(b.fuel / 3, 0, 1) * 100 + '%';
   if (G.dmgOn) { const h = clamp(b.hp / s.hp, 0, 1); $('#hHp').style.width = h * 100 + '%'; $('#hHp').style.background = h > 0.35 ? 'var(--g)' : 'var(--o)'; }
-  const ex = []; if (s.has.shield) ex.push('Shields ' + b.shields); if (s.has.balloon) ex.push('Helium ' + Math.max(0, b.gas).toFixed(1) + 's'); $('#hExtra').textContent = ex.join(' · ');
+  const ex = [], q = b.q, sec = v => Math.max(0, v).toFixed(1) + 's';
+  if (s.has.prop) ex.push('Rotor ' + sec(q.rotor)); if (s.has.vault) ex.push('Vaults ' + q.vaults); if (s.has.hover) ex.push('Hover ' + sec(q.hover)); if (s.has.balloon) ex.push('Helium ' + sec(q.gas));
+  if (s.has.bridge) ex.push('Bridges ' + q.bridges); if (s.has.bomb) ex.push('Bombs ' + b.bombs); if (s.has.beacon) ex.push(G.beacon ? 'Beacon set' : 'Warps ' + q.warp); if (s.has.slowmo) ex.push('Slow-mo ' + b.slows); if (s.has.shield) ex.push('Shields ' + b.shields);
+  $('#hExtra').textContent = ex.join(' · ');
+  const mp = $('#hMap'); if (s.has.map) { mp.style.display = 'block'; if (!mp.done || (G.t * 4 | 0) !== mp.tick) { mp.tick = G.t * 4 | 0; mp.done = true; drawMini(mp, G.course, b.chassis.getPosition().x); } } else mp.style.display = 'none';
   if (s.has.cannon) $('#hAmmo').textContent = '● '.repeat(b.ammo) + '○ '.repeat(6 - b.ammo);
   const px = b.chassis.getPosition().x; $('#hProg i').style.width = clamp((px - G.start.x) / (G.finish.x - G.start.x), 0, 1) * 100 + '%';
   const m = $('#hMsg'); let txt = '', cls = '';
   if (G.flash) { txt = G.flash.text; cls = G.flash.good ? 'good' : 'bad'; }
   else if (L.flipped) { txt = s.has.righter ? 'Flipped! Press F to roll back over' : 'Flipped! Press R to go back to the checkpoint'; cls = 'bad'; }
   else if (b.energy <= 0) { txt = 'Battery dead!'; cls = 'bad'; }
+  else if (L.pit) txt = 'Pit stop: press Enter to swap gadgets';
+  else if (G.slowT > 0) txt = 'Slow motion';
   else if (b.rope) txt = b.rope.ent.t === 'zip' ? 'Press E to let go' : '← → swing · ↑ reel in · E let go';
   else if (!G.started) txt = 'Press → to go!';
   if (m.textContent !== txt) m.textContent = txt; m.className = cls;
@@ -426,6 +465,7 @@ function updateHUD() {
 function runFrame(dt) {
   const G = App.G;
   if (!App.paused) {
+    if (G.slowT > 0) { G.slowT -= dt; dt *= 0.5; }
     App.acc += dt; let n = 0;
     while (App.acc >= DT && n < 4) { stepGame(G, readInput()); App.edge = {}; App.acc -= DT; n++; }
     if (n === 4) App.acc = 0;
@@ -458,13 +498,16 @@ function openEditor(course) {
     <label style="font-size:13px;color:var(--dim)">Budget $ <input type="number" id="eBudget" min="200" max="9999" step="50" value="${course.budget}"></label>
     <span style="font-size:13px;color:var(--dim)">Length <button class="small" data-e="shorter" aria-label="Shorter course">−</button> <b id="eLen">${course.w}</b> m <button class="small" data-e="longer" aria-label="Longer course">＋</button></span>
     <select id="eSky" aria-label="Scenery"><option value="">Scenery: auto</option>${SKIES.map(k => `<option value="${k}" ${course.sky === k ? 'selected' : ''}>${SKY_NAMES[k]}</option>`).join('')}</select>
-    <div class="sp"></div><button data-e="paint">🎨 My bot</button><button data-e="undo" title="Ctrl+Z">↶ Undo</button><button data-e="share">🔗 Share</button><button class="go" style="font-size:15px;padding:8px 16px" data-e="test">▶ Test it</button>`;
+    <div class="sp"></div><button data-e="rules">📜 Rules</button><button data-e="paint">🎨 My bot</button><button data-e="undo" title="Ctrl+Z">↶ Undo</button><button data-e="share">🔗 Share</button><button class="go" style="font-size:15px;padding:8px 16px" data-e="test">▶ Test it</button>`;
   $('#eName').oninput = e => { course.name = e.target.value || 'My Course'; };
   $('#eKind').onchange = e => { course.kind = e.target.value; Ed.dirty = true; };
   $('#eSky').onchange = e => { course.sky = e.target.value; Ed.dirty = true; };
   $('#eBudget').onchange = e => { course.budget = clamp(+e.target.value || 1000, 200, 9999); e.target.value = course.budget; };
-  drawPalette();
+  drawPalette(); fitEditor();
 }
+/* The top bar wraps on narrow screens: keep the palette just below it, never over it */
+function fitEditor() { const h = $('#edTop').offsetHeight; if (h) $('#edPal').style.top = h + 'px'; }
+addEventListener('resize', () => { if (App.mode === 'editor') fitEditor(); });
 function drawPalette() {
   const t = Ed.tool, on = c => c ? ' on' : '';
   $('#edPal').innerHTML = `<h4>Ground</h4><div class="tg">${[1, 2, 3, 8, 4, 5, 6, 7].map(s => `<button class="tool${on(t.k === 'tile' && t.shape === s)}" data-tool="tile" data-shape="${s}" title="${SHAPE_NAMES[s]}" aria-label="${SHAPE_NAMES[s]}">${shapeSvg(s)}</button>`).join('')}</div>
@@ -494,6 +537,7 @@ $('#edTop').addEventListener('click', e => {
   if (a === 'exit') { saveMyCourse(c); showHome(); }
   else if (a === 'undo') edUndo();
   else if (a === 'paint') paintDialog();
+  else if (a === 'rules') rulesDialog(c);
   else if (a === 'share') { saveMyCourse(c); shareDialog(c); }
   else if (a === 'longer' || a === 'shorter') {
     const w = clamp(c.w + (a === 'longer' ? 20 : -20), 40, 400); if (w === c.w) return; edSnap();
@@ -505,6 +549,17 @@ $('#edTop').addEventListener('click', e => {
     saveMyCourse(c); showGarage(c, 'editor');
   }
 });
+function rulesDialog(c) {
+  const r = c.rules || {}, opt = (v, cur, label) => `<option value="${v}" ${String(cur || '') === String(v) ? 'selected' : ''}>${label}</option>`;
+  modal(`<h2>📜 Course rules</h2><p>Rules turn a course into a puzzle. Players see them in the shop before they build.</p>
+    <label class="chk">Gadgets at a time <select id="rSlots">${opt('', r.slots, 'No limit')}${[1, 2, 3].map(n => opt(n, r.slots, n)).join('')}</select></label>
+    <label class="chk">Battery holds at most <select id="rEnergy">${opt('', r.energy, 'No limit')}${[40, 80, 200].map(n => opt(n, r.energy, n + ' kJ')).join('')}</select></label>
+    <label class="chk">Battery drain <select id="rDrain">${opt('', r.drain, 'None')}${opt(0.3, r.drain, 'Slow')}${opt(0.6, r.drain, 'Fast')}</select></label>
+    <label class="chk"><input type="checkbox" id="rDark" ${r.dark ? 'checked' : ''}> Dark: players only see near the bot</label>
+    <p style="font-size:13px">Tip: with a gadget limit, add Pit Stops so players can swap. With drain, add Chargers.</p>
+    <div class="acts"><button class="primary" id="rOk" data-focus>Save rules</button><button data-m="x">Cancel</button></div>`);
+  $('#rOk').onclick = () => { const n = {}; if ($('#rSlots').value) n.slots = +$('#rSlots').value; if ($('#rEnergy').value) n.energy = +$('#rEnergy').value; if ($('#rDrain').value) n.drain = +$('#rDrain').value; if ($('#rDark').checked) n.dark = true; c.rules = Object.keys(n).length ? n : null; Ed.dirty = true; closeModal(); toast('Rules saved.'); };
+}
 function edSnap() { Ed.undo.push(JSON.stringify(packCourse(Ed.course))); if (Ed.undo.length > 40) Ed.undo.shift(); }
 function edUndo() { const s = Ed.undo.pop(); if (!s) return toast('Nothing to undo.'); const c = unpackCourse(JSON.parse(s)); Ed.course.tiles = c.tiles; Ed.course.w = c.w; Ed.course.objs = c.objs; $('#eLen').textContent = c.w; Ed.dirty = true; }
 function edKey(e) {

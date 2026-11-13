@@ -42,6 +42,10 @@ h1,h2,h3{margin:0;font-weight:800;letter-spacing:.2px}
 .who{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}.who button{display:flex;flex-direction:column;gap:3px;text-align:left;padding:14px;border:2px solid var(--line);background:var(--panel2)}.who button:hover{border-color:var(--y)}.who b{font-size:17px}.who small{color:var(--dim);font-weight:500}.who .add{border-style:dashed}
 .ver{text-align:center;color:#5b6470;font-size:12px;margin-top:26px}
 .me{align-self:center;color:var(--dim);font-size:14px}.me b{color:var(--ink)}.th{margin:16px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--y)}
+.tag.puzzle{background:#0f4d48;color:#a8f0e6}.tag.maze{background:#3a2a14;color:#f0cf9a}
+.rules{background:#16283a;border:1px solid #2c5a86;border-radius:12px;padding:10px 12px;font-size:13.5px;margin-top:10px}.rules b{color:#9fd0ff}.rules ul{margin:6px 0 0;padding-left:18px}.rules li{margin-bottom:4px;color:var(--ink)}.rules li b{color:var(--y)}
+#hMap{right:12px;top:54px;width:300px;height:76px;border-radius:10px;border:2px solid rgba(255,255,255,.25);display:none;image-rendering:pixelated}
+label.chk select{margin-left:auto}
 .tag.boss{background:#5a1a1a;color:#ffb3a8}.card.boss{border-color:#7a2a22}
 .stars{color:var(--y);font-size:13px;margin-left:8px;letter-spacing:1px;white-space:nowrap}.stars i{font-style:normal;color:#3a4654}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.chips span{background:var(--panel2);border-radius:99px;padding:4px 10px;font-size:13px}
@@ -149,6 +153,7 @@ label.chk{display:flex;gap:8px;align-items:center;font-size:13.5px;margin-top:12
   <div id="hProg"><i></i></div>
   <div id="hTR"><button class="small" data-a="restart" title="Start the course over (Backspace)">⟲ Restart</button><button class="small" data-a="shop" title="Back to the shop to change parts">🔧 Shop</button><button class="small" data-a="pause" title="Pause (P)">Pause</button></div>
   <div id="hMsg"></div>
+  <canvas id="hMap" width="300" height="76" aria-label="Course map"></canvas>
   <div id="hBL" class="hbox">
     <div class="spd"><span id="hSpd">0</span> <small>mph</small></div>
     <div class="meter" id="hHpBox">Health<div class="bar"><i id="hHp" style="background:var(--g)"></i></div></div>
@@ -167,10 +172,10 @@ label.chk{display:flex;gap:8px;align-items:center;font-size:13.5px;margin-top:12
 <div id="modal"><div class="mbox"></div></div>
 <div id="toast"></div>
 <!-- Bump every ?v= below (and VERSION in js/core.js) with each change, so browsers never run a stale copy -->
-<script src="js/planck.min.js?v=1.1"></script>
-<script src="js/core.js?v=1.1"></script>
-<script src="js/levels.js?v=1.1"></script>
-<script src="js/sim.js?v=1.1"></script>
-<script src="js/ui.js?v=1.1"></script>
+<script src="js/planck.min.js?v=1.2"></script>
+<script src="js/core.js?v=1.2"></script>
+<script src="js/levels.js?v=1.2"></script>
+<script src="js/sim.js?v=1.2"></script>
+<script src="js/ui.js?v=1.2"></script>
 </body>
 </html>
