@@ -9,9 +9,9 @@ const path=require('path');
   await p.waitForFunction(()=>window.ASSET&&ASSET.ready,null,{timeout:60000}).catch(()=>{});
   await p.click('#bStart');await p.waitForTimeout(400);
   // camera spots that show off each room
-  const views={bedroom:[[-14,0,17],2.55,-.18],park:[[-6,0,16],2.6,-.02],library:[[-14,0,17],2.4,-.12],diner:[[-10,0,18],2.7,-.1],
-    gym:[[-12,0,18],2.5,-.12],toystore:[[-10,0,19.5],2.65,-.1],greenhouse:[[-12,0,18],2.55,-.1],arcade:[[-10,0,18],2.6,-.12],
-    attic:[[-12,0,18],2.55,-.1],beach:[[-10,0,19],2.6,-.06],ruins:[[0,0,19],0,-.1],citadel:[[0,0,19],0,-.08],forge:[[0,0,19],0,-.12],maze:[[0,0,19],0,-.1]};
+  const views={};
+  for(const r of ['bedroom','library','diner','gym','toystore','greenhouse','arcade','attic','beach','ruins','citadel','forge','maze'])views[r]=[[0,0,19],0,-.12];
+  views.park=[[0,0,19],-.75,.06];
   await p.evaluate(()=>{const me={t:'n',c:'w',id:900,hp:125},them={t:'p',c:'b',id:901,hp:100};startDuel(me,them,{from:12,to:28,cap:28});
     window.requestLock=()=>{fallbackLook=true;};document.getElementById('intro').classList.add('hidden');D.count=0;D.fighting=false;});
   const fs=require('fs');fs.mkdirSync(path.resolve(__dirname,'../assets/thumbs'),{recursive:true});

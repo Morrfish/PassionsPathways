@@ -693,7 +693,7 @@ function resize(){
 }
 addEventListener('resize',resize);resize();
 function renderScene(scene,cam){
-  if(bloomPass){const b=scene===duelScene&&D.bloom?D.bloom:[.7,.86];bloomPass.strength=b[0];bloomPass.threshold=b[1];}
+  if(bloomPass){const b=scene===duelScene&&D.bloom?D.bloom:[.22,.97];bloomPass.strength=b[0];bloomPass.threshold=b[1];}
   renderer.toneMappingExposure=useBloom?1.05:(scene===duelScene&&D.bloom&&D.bloom[0]<.6?1.45:1.05);
   if(composer&&useBloom){renderPass.scene=scene;renderPass.camera=cam;composer.render();}
   else renderer.render(scene,cam);
