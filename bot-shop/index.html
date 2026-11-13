@@ -68,6 +68,7 @@ h1,h2,h3{margin:0;font-weight:800;letter-spacing:.2px}
 .part b{font-size:14.5px;display:flex;justify-content:space-between;gap:6px}.part b em{font-style:normal;color:var(--y)}
 .part span{font-size:12.5px;color:var(--dim);line-height:1.3}.part i{font-style:normal;font-size:12px;color:var(--t)}
 .part.on{border-color:var(--g);background:#1d3329}.part.on b::before{content:"✓ ";color:var(--g)}
+.gcat{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--t);margin:10px 0 6px}
 .gearrow{display:flex;align-items:center;gap:10px}.gearrow input{flex:1;accent-color:var(--y)}.gearrow span{font-size:13px;color:var(--dim);white-space:nowrap}
 .gearinfo{font-size:13.5px;margin-top:6px}.gearinfo b{color:var(--y)}
 .intel{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:7px}
@@ -135,6 +136,7 @@ label.chk{display:flex;gap:8px;align-items:center;font-size:13.5px;margin-top:12
     <div class="spd"><span id="hSpd">0</span> <small>mph</small></div>
     <div class="meter">Battery<div class="bar"><i id="hBat" style="background:var(--g)"></i></div></div>
     <div class="meter">Motor effort<span class="badge stall" id="hStall">STALLED</span><span class="badge slip" id="hSlip">WHEELSPIN</span><div class="bar"><i id="hLoad" style="background:var(--t)"></i></div></div>
+    <div class="meter" id="hAmmoBox">Cannon <span id="hAmmo" style="color:var(--ink);letter-spacing:1px"></span></div>
     <div class="meter" id="hFuelBox">Rocket fuel<div class="bar"><i id="hFuel" style="background:var(--o)"></i></div></div>
   </div>
   <div id="hBR" class="hbox"></div>

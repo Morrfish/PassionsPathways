@@ -77,7 +77,7 @@ $('#home').addEventListener('click', e => {
 });
 function howTo() {
   modal(`<h2>How to play</h2><p><b>1. Scout the course.</b> The shop shows what is ahead: hills, ice, gaps, crates.<br><b>2. Build your bot.</b> Pick a chassis, wheels, tires, motor, gearing, battery and gadgets. Stay inside the budget.<br><b>3. Send it.</b> Drive to the finish flag. If you get stuck, the coach tells you why.<br><b>4. Improve.</b> Go back to the shop, change one thing, and try again.</p>
-  <div class="keys"><kbd>→ / D</kbd><span>Drive forward</span><kbd>← / A</kbd><span>Reverse</span><kbd>E</kbd><span>Grapple Hook: grab or let go. Hold <b>↑</b> to reel in, <b>↓</b> to let rope out, <b>← →</b> to swing.</span><kbd>Space</kbd><span>Jump Jack</span><kbd>Shift</kbd><span>Rocket Booster</span><kbd>F</kbd><span>Roll Cage: flip back over</span><kbd>R</kbd><span>Back to the last checkpoint (+${RESET_PENALTY} seconds)</span><kbd>Backspace</kbd><span>Restart the course</span></div>
+  <div class="keys"><kbd>→ / D</kbd><span>Drive forward</span><kbd>← / A</kbd><span>Reverse</span><kbd>E</kbd><span>Grapple Hook: grab or let go. Hold <b>↑</b> to reel in, <b>↓</b> to let rope out, <b>← →</b> to swing.</span>${PARTS.gadgets.filter(g => g.key && g.id !== 'hook').map(g => `<kbd>${g.key}</kbd><span>${g.name}: ${g.act.toLowerCase()}</span>`).join('')}<kbd>R</kbd><span>Back to the last checkpoint (+${RESET_PENALTY} seconds)</span><kbd>Backspace</kbd><span>Restart the course</span></div>
   <div class="acts"><button class="primary" data-m="x" data-focus>Got it</button></div>`);
 }
 function teacherNotes() {
@@ -153,7 +153,7 @@ function refreshGarage() {
     sec('6. Battery', 'Strong motors working hard drain it fast. A dead battery ends the run.', cards('battery', PARTS.battery, p => `${p.energy} kJ · ${p.mass} kg`)) +
     sec('7. Drive', 'Which wheels does the motor turn?', cards('drive', PARTS.drive, p => p.mass ? `+${p.mass} kg` : 'No extra weight')) +
     sec(`8. Gadgets <span style="color:var(--dim);font-weight:500;text-transform:none;letter-spacing:0">(${s.gadgets.length} of ${s.ch.slots} slots used)</span>`, 'Special tools for special problems. Your chassis decides how many you can carry.',
-      `<div class="parts">${PARTS.gadgets.map(p => `<button class="part ${s.has[p.id] ? 'on' : ''}" data-k="gadget" data-id="${p.id}" aria-pressed="${!!s.has[p.id]}"><b><span>${p.icon} ${p.name}</span><em>$${p.cost}</em></b><span>${p.desc}</span><i>${p.mass} kg${p.key ? ' · key: ' + p.key : ''}</i></button>`).join('')}</div>`);
+      ['Tools', 'Movement', 'Upgrades'].map(cat => `<div class="gcat">${cat}</div><div class="parts">${PARTS.gadgets.filter(p => p.cat === cat).map(p => `<button class="part ${s.has[p.id] ? 'on' : ''}" data-k="gadget" data-id="${p.id}" aria-pressed="${!!s.has[p.id]}"><b><span>${p.icon} ${p.name}</span><em>$${p.cost}</em></b><span>${p.desc}</span><i>${p.mass} kg${p.key ? ' · key: ' + p.key : ''}</i></button>`).join('')}</div>`).join(''));
   sc.scrollTop = keep;
   $('#gGear').oninput = e => { cfg.gear = +e.target.value; saveCfg(); refreshGarage(); $('#gGear').focus(); };
   $$('#gCol button').forEach(b => b.classList.toggle('on', b.dataset.col === cfg.color));
@@ -192,10 +192,10 @@ function renderPreview(ts) {
   const pc = $('#preview'); if (!pc) return; const c = pc.getContext('2d'), W = pc.width, H = pc.height, s = botSpec(App.cfg);
   c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, W, H);
   c.fillStyle = '#0e1217'; c.fillRect(0, H - 54, W, 54); c.fillStyle = '#ffc21a'; for (let x = -20; x < W; x += 56) { c.beginPath(); c.moveTo(x, H - 54); c.lineTo(x + 28, H - 54); c.lineTo(x + 14, H - 44); c.lineTo(x - 14, H - 44); c.fill(); }
-  const ppm = Math.min(150, W / (s.ch.len + s.r * 2 + 2.2), (H - 80) / (s.r * 2 + s.ch.ht + 1.6));
+  const ppm = Math.min(150, W / (s.ch.len + s.r * 2 + (s.has.lance ? 5.4 : 3)), (H - 80) / (s.r * 2 + s.ch.ht + 1.6));
   c.setTransform(ppm, 0, 0, -ppm, W / 2, H - 54);
   const wy = -(s.ch.ht / 2 - 0.1), cy = s.r - wy + Math.sin(ts / 400) * 0.015, a = -ts / 900;
-  drawBot(c, App.cfg, s, { x: 0, y: cy, a: 0, wheels: [{ x: -s.wheelDX, y: s.r, a }, { x: s.wheelDX, y: s.r, a }] }, { look: Math.sin(ts / 1300) });
+  drawBot(c, App.cfg, s, { x: 0, y: cy, a: 0, wheels: [{ x: -s.wheelDX, y: s.r, a }, { x: s.wheelDX, y: s.r, a }] }, { look: Math.sin(ts / 1300), t: ts / 1000 });
 }
 
 /* ================= Run ================= */
@@ -206,15 +206,14 @@ function startRun() {
   setMode('run'); App.paused = false; App.shown = false; App.acc = 0; App.edge = {};
   const p = App.G.bot.chassis.getPosition(); App.cam = { x: p.x + 4, y: p.y + 2, ppm: VH / 20 };
   $('#hTL .nm').textContent = App.course.name;
-  const s = App.G.spec, keys = [['→ ←', 'Drive / reverse']];
-  if (s.has.hook) keys.push(['E', 'Hook on / let go'], ['↑ ↓', 'Reel rope in / out'], ['→ ←', 'Swing while hanging']);
-  if (s.has.jump) keys.push(['Space', 'Jump']); if (s.has.rocket) keys.push(['Shift', 'Rocket']); if (s.has.righter) keys.push(['F', 'Flip upright']);
+  const s = App.G.spec, keys = [['→ ←', 'Drive / reverse']], tb = (code, label, aria) => `<button data-key="${code}" aria-label="${aria}">${label}</button>`;
+  let tR = '';
+  for (const g of s.gadgets) if (g.key) { keys.push([g.key, g.act]); tR += tb(g.code, g.icon, g.act); if (g.id === 'hook') { keys.push(['↑ ↓', 'Reel rope in / out'], ['→ ←', 'Swing while hanging']); tR += tb('ArrowUp', '⬆', 'Reel in'); } }
   keys.push(['R', `Checkpoint (+${RESET_PENALTY}s)`]);
   $('#hBR').innerHTML = keys.map(k => `<div><kbd>${k[0]}</kbd>${k[1]}</div>`).join('');
-  $('#hFuelBox').style.display = s.has.rocket ? '' : 'none';
-  const tb = (code, label, aria) => `<button data-key="${code}" aria-label="${aria}">${label}</button>`;
+  $('#hFuelBox').style.display = s.has.rocket ? '' : 'none'; $('#hAmmoBox').style.display = s.has.cannon ? '' : 'none';
   $('#tL').innerHTML = tb('ArrowLeft', '◀', 'Reverse') + tb('ArrowRight', '▶', 'Drive');
-  $('#tR').innerHTML = (s.has.hook ? tb('KeyE', '🪝', 'Hook') + tb('ArrowUp', '⬆', 'Reel in') : '') + (s.has.jump ? tb('Space', '🦘', 'Jump') : '') + (s.has.rocket ? tb('ShiftLeft', '🚀', 'Rocket') : '') + (s.has.righter ? tb('KeyF', '🔄', 'Flip') : '') + tb('KeyR', '⟲', 'Checkpoint');
+  $('#tR').innerHTML = tR + tb('KeyR', '⟲', 'Checkpoint');
 }
 function leaveRun() { if (App.from === 'editor') openEditor(App.course); else showHome(); }
 $('#hTR').addEventListener('click', e => { const a = e.target.closest('button')?.dataset.a; e.target.blur(); if (a === 'restart') startRun(); else if (a === 'shop') { logRun(false); showGarage(App.course, App.from); } else if (a === 'pause') togglePause(); });
@@ -235,7 +234,7 @@ addEventListener('keyup', e => { App.keys[e.code] = false; });
 addEventListener('blur', () => { App.keys = {}; });
 function readInput() {
   const k = App.keys, e = App.edge;
-  return { x: ((k.ArrowRight || k.KeyD) ? 1 : 0) - ((k.ArrowLeft || k.KeyA) ? 1 : 0), up: !!(k.ArrowUp || k.KeyW), down: !!(k.ArrowDown || k.KeyS), boost: !!(k.ShiftLeft || k.ShiftRight), hook: !!e.KeyE, jump: !!e.Space, right: !!e.KeyF, reset: !!e.KeyR };
+  return { x: ((k.ArrowRight || k.KeyD) ? 1 : 0) - ((k.ArrowLeft || k.KeyA) ? 1 : 0), up: !!(k.ArrowUp || k.KeyW), down: !!(k.ArrowDown || k.KeyS), boost: !!(k.ShiftLeft || k.ShiftRight), hook: !!e.KeyE, jump: !!e.Space, right: !!e.KeyF, reset: !!e.KeyR, fire: !!e.KeyC, vault: !!e.KeyV, grab: !!e.KeyG, horn: !!e.KeyH, magnet: !!k.KeyM, prop: !!k.KeyX, climb: !!k.KeyZ };
 }
 function coachTips(G) {
   const st = G.stats, s = G.spec, t = [], n = (v, w) => `${v} time${v > 1 ? 's' : ''}`;
@@ -243,7 +242,7 @@ function coachTips(G) {
   if (st.stall > 1.2) t.push(`Your motor <b>stalled</b> for ${st.stall.toFixed(1)}s: it could not turn the wheels. You need more torque. Slide the gearbox toward Tractor, fit a stronger motor, or try smaller wheels.`);
   if (st.slip > 2) t.push(`Your wheels <b>spun without gripping</b> for ${st.slip.toFixed(1)}s. Grippier tires, All-Wheel Drive or Ballast will put that power on the ground.`);
   if (st.flips) t.push(`You <b>flipped over</b> ${n(st.flips)}. A longer chassis, Ballast, or easing off the power keeps you upright. A Roll Cage lets you recover.`);
-  if (st.fell) t.push(`You <b>fell off</b> ${n(st.fell)}. Hit gaps faster, or bring a Grapple Hook, Jump Jack or Glider Wing.`);
+  if (st.fell) t.push(`You <b>fell off</b> ${n(st.fell)}. Hit gaps faster, or bring a Grapple Hook, Vault Pole, Propeller or Glider Wing.`);
   if (st.sank) t.push(`You <b>sank</b> ${n(st.sank)}. Pontoon Floats cross water. So does going over it.`);
   if (st.burned) t.push(`You <b>hit lava</b> ${n(st.burned)}. Look for a zip line or grapple point above it.`);
   if (G.done && G.done.win && !t.length) t.push(st.maxSpeed > s.topSpeed * 0.92 ? 'Clean run, and you were at <b>top speed</b> much of the way. A faster gear or bigger wheels could cut your time.' : 'Clean run! Can you do it faster, or with a cheaper bot?');
@@ -282,6 +281,7 @@ function updateHUD() {
   const e = b.energy / s.energy; $('#hBat').style.width = e * 100 + '%'; $('#hBat').style.background = e > 0.25 ? 'var(--g)' : 'var(--o)';
   $('#hLoad').style.width = (L.load || 0) * 100 + '%'; $('#hStall').classList.toggle('on', !!L.stall); $('#hSlip').classList.toggle('on', !!L.slip);
   if (s.has.rocket) $('#hFuel').style.width = clamp(b.fuel / 3, 0, 1) * 100 + '%';
+  if (s.has.cannon) $('#hAmmo').textContent = '● '.repeat(b.ammo) + '○ '.repeat(6 - b.ammo);
   const px = b.chassis.getPosition().x; $('#hProg i').style.width = clamp((px - G.start.x) / (G.finish.x - G.start.x), 0, 1) * 100 + '%';
   const m = $('#hMsg'); let txt = '', cls = '';
   if (G.flash) { txt = G.flash.text; cls = G.flash.good ? 'good' : 'bad'; }
@@ -434,6 +434,7 @@ function editorFrame(ts) {
         if (o.t === 'lift') g.rect(o.x - 1.95, o.y - 0.4 + 5, 3.9, 0.4); else if (o.t === 'ferry') g.rect(o.x - 1.95 + 6, o.y - 0.4, 3.9, 0.4);
         else if (o.t === 'hammer') g.arc(o.x, o.y, 4.4, -Math.PI / 2 - 1.15, -Math.PI / 2 + 1.15); else if (o.t === 'fan') g.rect(o.x - 1.7, o.y, 3.4, 9);
         else if (o.t === 'spinner') g.arc(o.x, o.y + 3.4, 3.1, 0, 7); else if (o.t === 'anchor') g.arc(o.x, o.y, HOOK_RANGE, 0, 7);
+        else if (o.t === 'switch') { let bg = null, bd = 1e9; for (const q of c.objs) if (q.t === 'gate') { const d = Math.hypot(q.x - o.x, q.y - o.y); if (d < bd) { bd = d; bg = q; } } if (bg) { g.moveTo(o.x, o.y); g.lineTo(bg.x, bg.y + 2); } }
         g.stroke();
       }
       g.setLineDash([]);

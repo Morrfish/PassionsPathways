@@ -11,9 +11,9 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;'
 /* ---------------- Parts catalog ---------------- */
 const PARTS = {
   chassis: [
-    { id: 'scout', name: 'Scout', icon: '🛹', desc: 'Light and quick. 1 gadget slot.', len: 1.8, ht: 0.45, mass: 28, slots: 1, cost: 100 },
-    { id: 'rover', name: 'Rover', icon: '🚙', desc: 'Good at everything. 2 gadget slots.', len: 2.2, ht: 0.55, mass: 50, slots: 2, cost: 180 },
-    { id: 'hauler', name: 'Hauler', icon: '🚛', desc: 'Big and heavy. 3 gadget slots.', len: 2.8, ht: 0.7, mass: 95, slots: 3, cost: 300 },
+    { id: 'scout', name: 'Scout', icon: '🛹', desc: 'Light and quick. 2 gadget slots.', len: 1.8, ht: 0.45, mass: 28, slots: 2, cost: 100 },
+    { id: 'rover', name: 'Rover', icon: '🚙', desc: 'Good at everything. 3 gadget slots.', len: 2.2, ht: 0.55, mass: 50, slots: 3, cost: 180 },
+    { id: 'hauler', name: 'Hauler', icon: '🚛', desc: 'Big and heavy. 5 gadget slots.', len: 2.8, ht: 0.7, mass: 95, slots: 5, cost: 300 },
   ],
   wheels: [
     { id: 'mini', name: 'Mini', desc: 'Tiny. Lots of push, low top speed. Gets stuck on bumps.', r: 0.3, mass: 3, cost: 40 },
@@ -45,15 +45,31 @@ const PARTS = {
     { id: 'rwd', name: 'Rear-Wheel Drive', desc: 'Only the back wheel pushes.', mass: 0, cost: 0 },
     { id: 'awd', name: 'All-Wheel Drive', desc: 'Both wheels push. Much better traction.', mass: 5, cost: 80 },
   ],
+  // key = label shown, code = keyboard code, hold = works while held, act = what the key does
   gadgets: [
-    { id: 'hook', name: 'Grapple Hook', icon: '🪝', key: 'E', desc: 'Grab zip lines and grapple points. Hold ↑ to reel in.', mass: 4, cost: 120 },
-    { id: 'jump', name: 'Jump Jack', icon: '🦘', key: 'Space', desc: 'Spring into the air. Light bots jump higher.', mass: 5, cost: 100 },
-    { id: 'blade', name: 'Dozer Blade', icon: '🚜', desc: 'Pushes crates without climbing on top of them.', mass: 8, cost: 70 },
-    { id: 'rocket', name: 'Rocket Booster', icon: '🚀', key: 'Shift', desc: '3 seconds of serious thrust.', mass: 7, cost: 160 },
-    { id: 'ballast', name: 'Ballast Weights', icon: '🧱', desc: 'Extra weight down low: more traction, harder to flip.', mass: 30, cost: 30 },
-    { id: 'floats', name: 'Pontoon Floats', icon: '🛟', desc: 'Float and paddle across water.', mass: 6, cost: 90 },
-    { id: 'righter', name: 'Roll Cage', icon: '🔄', key: 'F', desc: 'Flip yourself back over when you crash.', mass: 5, cost: 60 },
-    { id: 'wing', name: 'Glider Wing', icon: '🪽', desc: 'Glide over long gaps. Only lifts light, fast bots.', mass: 3, cost: 110 },
+    { id: 'saw', cat: 'Tools', name: 'Buzz Saw', icon: '🪚', desc: 'Cuts through wood walls and crates on contact.', mass: 6, cost: 110 },
+    { id: 'drill', cat: 'Tools', name: 'Rock Drill', icon: '🔩', desc: 'Bores through rock, boulders and ice walls.', mass: 9, cost: 140 },
+    { id: 'torch', cat: 'Tools', name: 'Heat Torch', icon: '🔥', desc: 'Melts ice walls fast. Burns wood slowly.', mass: 4, cost: 90 },
+    { id: 'blade', cat: 'Tools', name: 'Dozer Blade', icon: '🚜', desc: 'Pushes crates without climbing on top of them.', mass: 8, cost: 70 },
+    { id: 'lance', cat: 'Tools', name: 'Long Pole', icon: '🎣', desc: 'A 2 m pole out front. Pokes switches and topples stacks from a distance.', mass: 4, cost: 50 },
+    { id: 'cannon', cat: 'Tools', name: 'Ball Cannon', icon: '💥', key: 'C', code: 'KeyC', act: 'Fire cannon', desc: '6 shots. Hits far-off switches, knocks things over, cracks wood walls.', mass: 8, cost: 150 },
+    { id: 'claw', cat: 'Tools', name: 'Grabber Claw', icon: '🦞', key: 'G', code: 'KeyG', act: 'Grab / drop', desc: 'Pick up a crate or boulder and carry it. Stack crates to make a step.', mass: 7, cost: 130 },
+    { id: 'magnet', cat: 'Tools', name: 'Magnet', icon: '🧲', key: 'M', code: 'KeyM', hold: true, act: 'Magnet (hold)', desc: 'Pulls steel crates toward you so you can drag them out of the way.', mass: 6, cost: 100 },
+    { id: 'hook', cat: 'Movement', name: 'Grapple Hook', icon: '🪝', key: 'E', code: 'KeyE', act: 'Hook on / let go', desc: 'Grab zip lines and grapple points. Hold ↑ to reel in.', mass: 4, cost: 120 },
+    { id: 'jump', cat: 'Movement', name: 'Jump Jack', icon: '🦘', key: 'Space', code: 'Space', act: 'Jump', desc: 'Spring straight up. Light bots jump higher.', mass: 5, cost: 100 },
+    { id: 'vault', cat: 'Movement', name: 'Vault Pole', icon: '🏑', key: 'V', code: 'KeyV', act: 'Pole vault', desc: 'Plant the pole and leap forward. Great for gaps.', mass: 5, cost: 90 },
+    { id: 'rocket', cat: 'Movement', name: 'Rocket Booster', icon: '🚀', key: 'Shift', code: 'ShiftLeft', hold: true, act: 'Rocket (hold)', desc: '3 seconds of serious thrust.', mass: 7, cost: 160 },
+    { id: 'prop', cat: 'Movement', name: 'Propeller', icon: '🚁', key: 'X', code: 'KeyX', hold: true, act: 'Propeller (hold)', desc: 'Lifts bots under about 115 kg. Eats battery.', mass: 8, cost: 170 },
+    { id: 'wing', cat: 'Movement', name: 'Glider Wing', icon: '🪽', desc: 'Glide over long gaps. Only lifts light, fast bots.', mass: 3, cost: 110 },
+    { id: 'suction', cat: 'Movement', name: 'Wall Climber', icon: '🧗', key: 'Z', code: 'KeyZ', hold: true, act: 'Stick to walls (hold)', desc: 'Suction wheels drive straight up walls. Needs All-Wheel Drive.', mass: 5, cost: 140 },
+    { id: 'floats', cat: 'Movement', name: 'Pontoon Floats', icon: '🛟', desc: 'Float and paddle across water.', mass: 6, cost: 90 },
+    { id: 'snorkel', cat: 'Movement', name: 'Snorkel', icon: '🤿', desc: 'Drive along the bottom of pools without shorting out.', mass: 2, cost: 50 },
+    { id: 'ballast', cat: 'Upgrades', name: 'Ballast Weights', icon: '🧱', desc: 'Extra weight down low: more traction, harder to flip.', mass: 30, cost: 30 },
+    { id: 'righter', cat: 'Upgrades', name: 'Roll Cage', icon: '🔄', key: 'F', code: 'KeyF', act: 'Flip upright', desc: 'Flip yourself back over when you crash.', mass: 5, cost: 60 },
+    { id: 'wbar', cat: 'Upgrades', name: 'Wheelie Bar', icon: '🦯', desc: 'A rear arm that stops you flipping over backward on steep climbs.', mass: 4, cost: 40 },
+    { id: 'turbo', cat: 'Upgrades', name: 'Turbocharger', icon: '🌪️', desc: 'Motor spins 30% faster, but uses 50% more battery.', mass: 4, cost: 120 },
+    { id: 'solar', cat: 'Upgrades', name: 'Solar Panel', icon: '☀️', desc: 'Slowly recharges the battery as you drive.', mass: 3, cost: 70 },
+    { id: 'horn', cat: 'Upgrades', name: 'Horn', icon: '📯', key: 'H', code: 'KeyH', act: 'Honk', desc: 'Beep beep! Does nothing useful. Totally worth it.', mass: 0, cost: 5 },
   ],
 };
 const byId = (list, id) => list.find(p => p.id === id) || list[0];
@@ -71,7 +87,7 @@ function botSpec(cfg) {
   const wheelMass = wh.mass + ti.mass;
   const bodyMass = ch.mass + mo.mass + ba.mass + dr.mass + gMass;
   const mass = bodyMass + wheelMass * 2;
-  const T = mo.torque * ge.ratio, w = mo.speed / ge.ratio;
+  const T = mo.torque * ge.ratio, w = mo.speed / ge.ratio * (has.turbo ? 1.3 : 1);
   const awd = dr.id === 'awd', frac = awd ? 1 : 0.55;
   const weight = mass * 10;
   const push = Math.min(T / wh.r, ti.mu * weight * frac);
@@ -81,7 +97,8 @@ function botSpec(cfg) {
   return {
     ch, wh, ti, mo, ge, ba, dr, gadgets, has, awd, r: wh.r, mu: ti.mu, wheelMass, bodyMass, mass, T, w,
     topSpeed: w * wh.r, push, climbDeg: Math.min(climbTorque, climbGrip) * 180 / Math.PI,
-    limitedBy: climbTorque < climbGrip ? 'torque' : 'grip', energy: ba.energy, cost,
+    limitedBy: climbTorque < climbGrip ? 'torque' : 'grip', energy: ba.energy, cost, eff: mo.eff * (has.turbo ? 1.5 : 1),
+    front: Math.max(ch.len / 2, Math.max(ch.len * 0.36, wh.r + 0.04) + wh.r) + 0.1,
     wheelDX: Math.max(ch.len * 0.36, wh.r + 0.04), comY: -0.08 - (has.ballast ? 0.2 : 0),
   };
 }
@@ -186,7 +203,12 @@ const OBJ = {
   checkpoint: { name: 'Checkpoint', icon: '🚩', tip: 'Bots respawn here after a crash.' },
   crate: { name: 'Wood Crate', icon: '📦', tip: 'Light. Easy to push or smash through.' },
   steel: { name: 'Steel Crate', icon: '🗄️', tip: 'Very heavy. Needs real pushing power.' },
-  boulder: { name: 'Boulder', icon: '🪨', tip: 'Heavy and it rolls.' },
+  boulder: { name: 'Boulder', icon: '🪨', tip: 'Heavy and it rolls. A drill breaks it.' },
+  woodwall: { name: 'Wood Wall', icon: '🪵', tip: '3 m tall. Saw it, burn it, shoot it, or get over it.' },
+  iceblock: { name: 'Ice Wall', icon: '🧊', tip: '3 m tall. Melt it with a torch or drill it.' },
+  stone: { name: 'Rock', icon: '⛰️', tip: 'A 2 m rock. Only a drill breaks it.' },
+  gate: { name: 'Gate', icon: '🚧', tip: 'Stays shut until the nearest switch is hit.' },
+  switch: { name: 'Switch', icon: '🔴', air: true, tip: 'Opens the nearest gate when anything hits it: a bot, a pole, a cannonball, a crate.' },
   seesaw: { name: 'Seesaw', icon: '⚖️', tip: 'Tips when you drive across it.' },
   bridge: { name: 'Rope Bridge', icon: '🌉', two: true, tip: 'Click one end, then the other. Sags under heavy bots.' },
   zip: { name: 'Zip Line', icon: '🚡', two: true, air: true, tip: 'Click the start (high end), then the end. Needs a Grapple Hook.' },
@@ -272,6 +294,14 @@ function builtinCourses() {
     .o('checkpoint', -2).gup(2).o('fan', 3, -2).o('anchor', 3, 7.5).gap(6).flat(10).o('checkpoint', -6)
     .flat(10).o('spring', 3).flat(5).step(3).flat(6).o('hammer', 4, 5.5).flat(10).o('checkpoint', -2).mat(MUD).gdown(2).flat(6).mat(DIRT).up(3)
     .flat(4).o('bridge', 0, 0, [8, 0]).gap(8, WATER, 5, 2).flat(6).up(2).flat(5).o('crate', 0).o('crate', 0, 1).o('crate', 1).o('crate', 1, 1).o('crate', 0.5, 2).flat(8).o('finish', -3).flat(6).done());
+
+  L.push(CB('b_demo', 'Demolition Day', 'strength', 1300, 'Wood walls, ice walls and solid rock. Bring the right tool for each, or find another way.', [20, 34])
+    .flat(4).o('start').flat(12).o('woodwall', 0).flat(10).o('crate', 0).o('crate', 0, 1).o('crate', 1).o('crate', 1, 1).o('crate', 0, 2).o('crate', 1, 2).flat(10).o('checkpoint', -3)
+    .o('iceblock', 2).flat(12).o('checkpoint', -3).gup(2).flat(4).o('stone', 2).flat(10).o('checkpoint', -3).o('woodwall', 2).o('woodwall', 3).o('woodwall', 4).flat(12).up(3).flat(8).o('finish', -3).flat(6).done());
+
+  L.push(CB('b_switch', 'Switch Yard', 'crazy', 1300, 'Gates block the track. Find a way to hit each switch: shoot it, poke it, or jump into it.', [15, 26])
+    .flat(4).o('start').flat(14).o('switch', 2, 1.2).o('gate', 6).flat(14).o('checkpoint', -4).o('woodwall', 3).o('switch', 5, 1.2).o('gate', 9).flat(18).o('checkpoint', -4)
+    .gup(2).gap(4, LAVA, 5, 2).flat(10).o('checkpoint', -6).flat(4).gup(2).o('switch', 5, 3.8).flat(10).o('gate', 0).flat(12).o('finish', -3).flat(6).done());
   return L;
 }
 
@@ -303,6 +333,10 @@ function analyzeCourse(c) {
   if (n.zip) out.push(['🚡', 'Zip lines', 'You need the Grapple Hook to ride them.']);
   if (n.anchor) out.push(['📍', 'Grapple points', 'Hook on to swing across or winch up.']);
   if (n.steel || n.boulder) out.push(['🗄️', 'Heavy things to push', 'Pushing power = torque ÷ wheel size, but only if your tires grip.']);
+  if (n.woodwall) out.push(['🪵', 'Wood walls', 'A Buzz Saw cuts them. A torch or cannon works too, slowly.']);
+  if (n.iceblock) out.push(['🧊', 'Ice walls', 'A Heat Torch or Rock Drill gets through.']);
+  if (n.stone) out.push(['⛰️', 'Rocks', 'Only a Rock Drill breaks rock. Or go over it.']);
+  if (n.gate) out.push(['🚧', 'Gates and switches', 'Hit the switch to open the gate. Some are out of reach: think cannon, pole or jump.']);
   if (n.crate) out.push(['📦', 'Wood crates', 'Push through them or smash them at speed.']);
   if (n.hammer || n.spinner) out.push(['🔨', 'Moving hazards', 'Watch the timing before you go.']);
   if (n.bridge) out.push(['🌉', 'Rope bridge', 'Heavy bots make it sag.']);
