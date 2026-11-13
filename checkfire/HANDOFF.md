@@ -40,6 +40,20 @@ Windows from this environment (only the same code as a Linux build was tested).
   Star 200, Heart 250, Laser Sight 400 (red dot plus a red beam from the muzzle). Looks only.
 - Test: `node tools/tests/balance.js`.
 
+## The King's melee and Last Stand
+- **Melee (press V, Kings only):** `MELEE` has three tiers bought in order on the Armory's King tab (`PROF.melee`):
+  Broadsword (free, 45), Glow Blade (400 credits, 60, longer reach, faster), Lightning Hammer (700, 70, and every swing
+  throws a lightning bolt worth 35 up to 22 units if the swing itself did not connect). `meleeSwing()`, `inFront()`,
+  `meleeModel()` (simple built-in shapes, not Blender models yet), `showSwing()`. The computer's King swings when the
+  player is within 3.4 units; its tier follows its level (Recruit sword, Veteran Glow Blade, Warlord hammer).
+  "Starter blasters only" means the plain Broadsword. The middle tier is called Glow Blade rather than the film name.
+- **Last Stand:** once per duel, a King whose health reaches 0 is knocked down instead (`startLastStand()`): he cannot
+  move or be hurt, has 4 seconds and one shot with a Last Stand Pistol (25 damage). A hit stands him back up with 30
+  health (`reviveKing()`); a miss or running out of time ends the duel (`failLastStand()`). The computer's King takes his
+  shot after about a second and hits 30% / 50% / 70% of the time by level. Numbers are in `LAST_STAND`.
+- Network: the swing and bolt are mirrored (`ml`), and a downed King is flagged in the position updates (`ls`).
+- Test: `node tools/tests/king.js`.
+
 ## Same-network multiplayer ("Play a friend")
 - **Host side:** `launcher/net.go`. Only after "Host on this network" is clicked in the exe's own window does the launcher
   listen on the network (port 47620): it serves the same page plus `/ws`, a tiny WebSocket relay (standard library only).

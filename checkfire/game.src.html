@@ -296,7 +296,7 @@ kbd{border:2px solid var(--line);border-bottom-width:3px;border-radius:6px;paddi
     <p><b>Loadout &amp; Armory:</b> every duel pays credits (more for winning, more still for winning with health left; winning the game pays a big bonus). Spend them on blasters for each piece type — including the <b>Crossbow</b>, which Pawns, Knights, Bishops and Kings can all carry — and on attachments: <b>Scope</b> (zoom), <b>Stock</b> (steadier), <b>Big Clip</b> (more darts), <b>Power I–III</b>, and <b>Chrome / Gold / Diamond</b> finishes (each adds damage). Before each duel you pick that piece's blaster, attachments, finish, gadget and room.</p>
     <p><b>Gadgets (F):</b> <b>Grappling Hook</b> zips you to any wall or toy it hits. <b>Jetpack</b> blasts you upward. <b>Propeller Hat</b> — the best — lifts you, slows your fall and lets you steer anywhere in the air.</p>
     <p><b>Rooms:</b> Kid's Bedroom, Chess Park, Library Table, Diner Counter, School Gym, Toy Store, Greenhouse, Arcade, Attic, Beach Boardwalk, plus four neon arenas.</p>
-    <p class="keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move · <kbd>Mouse</kbd> aim · <kbd>Click</kbd> fire · <kbd>Right-click</kbd> aim / scope · <kbd>Space</kbd> jump · <kbd>Shift</kbd> sprint · <kbd>R</kbd> reload · <kbd>Q</kbd> ability · <kbd>F</kbd> gadget · <kbd>Esc</kbd> pause.<br>On the board: click a piece, then a highlighted square. Drag to orbit, scroll to zoom. Hover an enemy target to see your odds.</p>
+    <p class="keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move · <kbd>Mouse</kbd> aim · <kbd>Click</kbd> fire · <kbd>Right-click</kbd> aim / scope · <kbd>Space</kbd> jump · <kbd>Shift</kbd> sprint · <kbd>R</kbd> reload · <kbd>Q</kbd> ability · <kbd>V</kbd> King's melee · <kbd>F</kbd> gadget · <kbd>Esc</kbd> pause.<br>On the board: click a piece, then a highlighted square. Drag to orbit, scroll to zoom. Hover an enemy target to see your odds.</p>
     <button class="btn" id="bRulesClose">Got it</button>
   </div>
 </div>
@@ -351,7 +351,7 @@ kbd{border:2px solid var(--line);border-bottom-width:3px;border-radius:6px;paddi
         <div class="lo-sec hidden" data-lp="progression"><h4>Fighter</h4><div id="progBox"></div></div>
         <div class="lo-sec hidden" data-lp="settings"><h4>Settings</h4>
           <label class="opt" style="margin-top:4px">Mouse sensitivity</label><input type="range" id="sens2" min="0.4" max="3" step="0.1" value="1" style="width:100%">
-          <div class="keys"><kbd>WASD</kbd> move · <kbd>Mouse</kbd> aim · <kbd>Click</kbd> fire · <kbd>Right-click</kbd> zoom · <kbd>Space</kbd> jump · <kbd>Shift</kbd> sprint · <kbd>R</kbd> reload · <kbd>Q</kbd> ability · <kbd>F</kbd> gadget · <kbd>Esc</kbd> pause</div></div>
+          <div class="keys"><kbd>WASD</kbd> move · <kbd>Mouse</kbd> aim · <kbd>Click</kbd> fire · <kbd>Right-click</kbd> zoom · <kbd>Space</kbd> jump · <kbd>Shift</kbd> sprint · <kbd>R</kbd> reload · <kbd>Q</kbd> ability · <kbd>V</kbd> King's melee · <kbd>F</kbd> gadget · <kbd>Esc</kbd> pause</div></div>
         <div id="introB"></div>
         <div id="pickRoom"></div>
       </div>
@@ -1018,6 +1018,89 @@ const MODS={
 };
 const POWER_COST=[200,350,500];
 const BLING=[{name:'Plain'},{name:'Chrome',cost:250,col:0xe3ebf3,em:0x22303c},{name:'Gold',cost:500,col:0xffc23d,em:0x5a3a00},{name:'Diamond',cost:900,col:0xb8f7ff,em:0x1f8fb0}];
+// ---- the King's melee weapon (press V). Three tiers, bought in order in the Armory.
+const MELEE=[
+  {name:'Broadsword',cost:0,dmg:45,range:3.0,cd:.7,desc:'A chunky toy sword. Swing it at anyone who gets close.'},
+  {name:'Glow Blade',cost:400,dmg:60,range:3.3,cd:.6,desc:'A humming blade of light: hits harder, reaches further, swings faster.'},
+  {name:'Lightning Hammer',cost:700,dmg:70,range:3.0,cd:.95,bolt:35,boltRange:22,desc:'A heavy hammer. Every swing also throws a lightning bolt across the room.'},
+];
+const LAST_STAND={time:4,dmg:25,hp:30};   // seconds to take the shot, its damage, health the King gets back
+/** Which melee tier a fighter has (Kings only). The computer's depends on its level; a network opponent's is sent by them. */
+function meleeTier(e){
+  if(RULES().starter)return 0;
+  if(e.isPlayer)return Math.min(2,PROF.melee||0);
+  return G.net&&NET.on?Math.min(2,NET.theirMelee||0):[0,1,2][G.diff]||0;
+}
+/** Is the target in front of e, within reach along where e is looking? (used for the swing and the lightning bolt) */
+function inFront(e,tgt,reach,width){
+  const eye=eyePos(e,new V3()),fwd=forwardOf(e,new V3()),c=new V3(tgt.pos.x,tgt.pos.y+1,tgt.pos.z),to=c.clone().sub(eye),t=to.dot(fwd);
+  if(t<=0||t>reach+tgt.rad)return false;
+  return to.addScaledVector(fwd,-t).length()<tgt.rad+width&&hasLOS(eye,c);
+}
+function meleeModel(tier,c){
+  const g=new THREE.Group(),add=(geo,mat,x,y,z)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);g.add(m);return m;};
+  const gold=stdMat(0xf2b134,{metalness:.45,roughness:.3}),dark=stdMat(0x26324f,{roughness:.5});
+  if(tier===2){add(new THREE.CylinderGeometry(.035,.04,.95,10),dark,0,.4,0);add(new THREE.BoxGeometry(.4,.26,.26),stdMat(0x8a94a6,{metalness:.5,roughness:.35}),0,.92,0);
+    for(const x of [-.17,.17])add(new THREE.BoxGeometry(.05,.29,.29),gold,x,.92,0);
+    add(new THREE.SphereGeometry(.07,10,8),new THREE.MeshBasicMaterial({color:0xfff07a}),0,1.1,0);add(new THREE.SphereGeometry(.05,8,6),gold,0,-.1,0);}
+  else{add(new THREE.CylinderGeometry(.035,.035,.24,10),dark,0,0,0);add(new THREE.BoxGeometry(.3,.06,.08),gold,0,.14,0);add(new THREE.SphereGeometry(.05,8,6),gold,0,-.14,0);
+    if(tier===1)add(new THREE.CylinderGeometry(.035,.04,1.0,10),new THREE.MeshBasicMaterial({color:TEAM[c].glow}),0,.68,0);
+    else{add(new THREE.BoxGeometry(.09,.9,.03),stdMat(0xe6ebf0,{metalness:.55,roughness:.25}),0,.62,0);add(new THREE.ConeGeometry(.045,.12,4),stdMat(0xe6ebf0,{metalness:.55,roughness:.25}),0,1.12,0);}}
+  return g;
+}
+function lightningFx(a,b){
+  const pts=[a.clone()],n=9;for(let i=1;i<n;i++){const p=a.clone().lerp(b,i/n);p.x+=(Math.random()-.5)*.7;p.y+=(Math.random()-.5)*.7;p.z+=(Math.random()-.5)*.7;pts.push(p);}pts.push(b.clone());
+  for(const col of [0xfff07a,0xffffff]){const l=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:col,transparent:true}));duelScene.add(l);FX.tracers.push({l,life:.22,max:.22});}
+  sparks(b,0xfff07a,10,7);Sound.tone(1600,120,.25,'sawtooth',.14);
+}
+/** The King swings. Returns true if a swing happened. */
+function meleeSwing(e){
+  if(e.t!=='k'||e.meleeCd>0||!D.fighting||D.over||e.lastStand>0)return false;
+  const tier=meleeTier(e),m=MELEE[tier],tgt=e.isPlayer?D.bot:D.player,fwd=forwardOf(e,new V3());
+  e.meleeCd=m.cd;showSwing(e,tier);Sound.tone(520,140,.16,'triangle',.14);
+  let hit=false,end=null;
+  if(inFront(e,tgt,m.range,.9)){hit=true;if(e.isPlayer)hitMarker(false);sparks(new V3(tgt.pos.x,tgt.pos.y+1.1,tgt.pos.z),TEAM[tgt.c].glow,10,6);
+    tgt.vel.x+=fwd.x*7;tgt.vel.z+=fwd.z*7;hurt(tgt,m.dmg,e,false);}
+  if(m.bolt){const eye=eyePos(e,new V3()),zap=!hit&&inFront(e,tgt,m.boltRange,.35);
+    if(zap)end=new V3(tgt.pos.x,tgt.pos.y+1,tgt.pos.z);
+    else{RAY.set(eye,fwd);RAY.far=m.boltRange;const w=RAY.intersectObjects(D.solids,false)[0];end=w?w.point.clone():eye.clone().addScaledVector(fwd,m.boltRange);}
+    lightningFx(eye.clone().addScaledVector(fwd,.8).add(new V3(0,-.25,0)),end);
+    if(zap){if(e.isPlayer)hitMarker(false);hurt(tgt,m.bolt,e,false);}}
+  if(e.isPlayer&&G.net&&NET.on)netSend({t:'ml',k:tier,e:end?[r2(end.x),r2(end.y),r2(end.z)]:null});
+  return true;
+}
+/** Show the swing: in first person the blaster drops away for a moment; on other fighters the weapon sweeps in front of them. */
+function showSwing(e,tier){
+  if(e.swing)e.swing.parent&&e.swing.parent.remove(e.swing);
+  const m=meleeModel(tier,e.c);e.swing=m;e.swingT=.3;
+  if(e.isPlayer){m.scale.setScalar(.75);duelCam.add(m);}else{m.scale.setScalar(1.5);e.model.add(m);}
+  poseSwing(e);
+}
+function poseSwing(e){
+  const k=1-Math.max(0,e.swingT)/.3,m=e.swing;if(!m)return;
+  if(e.isPlayer){m.position.set(.5-k*.75,-.5+Math.sin(k*Math.PI)*.12,-.75);m.rotation.set(-.5,0,-1.2+k*2.2);if(D.vgun)D.vgun.visible=false;}
+  else{m.position.set(.7-k*1.2,1.0,-.75);m.rotation.set(-1.0,0,-1.1+k*2.2);}
+  if(e.swingT<=0){m.parent&&m.parent.remove(m);e.swing=null;}
+}
+// ---- the King's Last Stand: knocked down once per duel, he gets one pistol shot. Hit, and he gets back up.
+function startLastStand(e){
+  e.lsUsed=true;e.hp=1;e.lastStand=LAST_STAND.time;e.vel.set(0,0,0);e.reloading=0;
+  if(e.isPlayer){
+    e.lsPrev=e.w;e.w=Object.assign(wstats('crown',{}),{name:'Last Stand Pistol',dmg:LAST_STAND.dmg,mag:1,auto:false,spread:.004,hasScope:false,fall:null});e.ammo=1;e.fireCd=.35;e.eye0=e.eye;e.eye=.75;
+    adsDown=false;D.hook=null;refreshViewGun();banner('Last stand!','One shot. Hit them and the King gets back up.','#ffc23d');Sound.tone(660,220,.5,'sawtooth',.16);
+  }else{e.lsShot=.9+DIFF[G.diff].react;e.lsFired=false;feed('The enemy King is down — he gets one last shot!');}
+}
+function reviveKing(e){
+  e.lastStand=0;e.hp=LAST_STAND.hp;e.barrier=Math.max(e.barrier,1);
+  if(e.isPlayer){e.w=e.lsPrev;e.ammo=e.w.mag;e.eye=e.eye0;e.fireCd=.4;refreshViewGun();banner('The King stands!',`Back up with ${LAST_STAND.hp} health`,'#5dff9e');setTimeout(()=>{if(D.fighting)banner('');},1100);Sound.win();}
+  else feed('The enemy King got back up!');
+}
+function failLastStand(e){
+  if(!(e.lastStand>0)&&e.hp<=0)return;
+  e.lastStand=0;e.hp=0;if(e.isPlayer&&e.eye0)e.eye=e.eye0;
+  if(e.isPlayer&&G.net&&NET.on)netSend({t:'dead'});
+  finishDuel();
+}
 // Sights (the aiming mark in the middle of the screen). Looks only: they do not change where shots go.
 const SIGHTS={
   cross:{name:'Classic',cost:0,desc:'The plain four-line sight.'},
@@ -1063,7 +1146,7 @@ const PROF_KEY='checkfire-profile-v1';
 let PROF=loadProfile();
 function loadProfile(){
   let p=null;try{p=JSON.parse(localStorage.getItem(PROF_KEY));}catch(e){}
-  p=Object.assign({credits:150,weapons:{},mods:{},gadgets:{},gadget:'none',loadout:{},room:'auto',skins:{},skin:'default',story:0,sights:{},sight:'cross'},p||{});
+  p=Object.assign({credits:150,weapons:{},mods:{},gadgets:{},gadget:'none',loadout:{},room:'auto',skins:{},skin:'default',story:0,sights:{},sight:'cross',melee:0},p||{});
   p.sights.cross=true;
   p.loadout=Object.assign({},DEFAULT_W,p.loadout);
   for(const t in DEFAULT_W)p.weapons[DEFAULT_W[t]]=true;
@@ -2247,6 +2330,7 @@ function setRope(a,b){
 function hurt(e,amt,src,head,fromNet){
   if(!D.active||D.over||amt<=0)return;
   if(D.safe>0)return;   // start-of-duel shield: nobody can be hurt for the first 3 seconds
+  if(e.lastStand>0)return;   // a King making his last stand cannot be hurt
   if(G.net&&NET.on&&!fromNet){   // network duel: my machine decides the hits I land; the other player's machine owns their health
     if(!e.isPlayer){if(src&&src.isPlayer){netSend({t:'hit',a:+amt.toFixed(2),h:!!head});D.recentHitBot=1;dmgNumber(tmpV.copy(e.pos).setY(e.pos.y+2.2+Math.random()*.3),amt,head);}return;}
     if(src&&!src.isPlayer)return;
@@ -2255,7 +2339,9 @@ function hurt(e,amt,src,head,fromNet){
   e.hp-=amt;e.flash=.12;
   if(e.isPlayer){D.vig=Math.min(1,D.vig+amt/50);if(amt>3)Sound.hurt();}
   else{D.recentHitBot=1;if(src)dmgNumber(tmpV.copy(e.pos).setY(e.pos.y+2.2+Math.random()*.3),amt,head);}
-  if(e.hp<=0){e.hp=0;if(G.net&&NET.on)netSend({t:'dead'});finishDuel();}
+  if(e.hp<=0){
+    if(e.t==='k'&&!e.lsUsed&&D.fighting){startLastStand(e);return;}   // the King gets one last shot
+    e.hp=0;if(G.net&&NET.on)netSend({t:'dead'});finishDuel();}
 }
 function hitMarker(head){const h=document.getElementById('hitm');h.className=head?'head':'';h.style.opacity=1;clearTimeout(h._t);h._t=setTimeout(()=>h.style.opacity=0,110);Sound.hit(head);}
 // --- weapons
@@ -2299,7 +2385,8 @@ function playerFire(){
   }
   if(G.net&&NET.on)netSend({t:'f',e:ends});
   if(total>0){hitMarker(anyHead);hurt(D.bot,total,e,anyHead);}
-  else if(w.hasScope&&adsDown){adsDown=false;feed('Missed — scope down. Right-click to raise it again.');}   // a scoped miss costs you the scope
+  else if(w.hasScope&&adsDown){adsDown=false;feed('Missed — scope down. Right-click to raise it again.');}
+  if(e.lastStand>0){if(total>0)reviveKing(e);else failLastStand(e);}   // a scoped miss costs you the scope
   return true;
 }
 function botFire(e,target){
@@ -2417,7 +2504,7 @@ function fireHook(){
 }
 function updateGadget(P,dt,live){
   const g=D.gad;g.cd=Math.max(0,g.cd-dt);P.gravScale=1;let airAcc=2.2;
-  const hold=live&&(keys.KeyF||(keys.Space&&!P.onGround&&P.airT>.18));
+  const hold=live&&!(P.lastStand>0)&&(keys.KeyF||(keys.Space&&!P.onGround&&P.airT>.18));
   if(g.type==='jetpack'){
     if(hold&&g.fuel>0){P.vy=Math.min(9,P.vy+46*dt);g.fuel=Math.max(0,g.fuel-dt/2.6);airAcc=6;g.thrust=true;
       if(Math.random()<dt*16)puff(new V3(P.pos.x+(Math.random()-.5)*.4,P.pos.y+.1,P.pos.z+(Math.random()-.5)*.4),.9,new V3((Math.random()-.5)*.8,-1.6,(Math.random()-.5)*.8));if(Math.random()<dt*8)Sound.jet();}
@@ -2630,7 +2717,7 @@ function updateDuel(rdt){
   if(!D.over&&!D.fighting&&D.count>0){
     const before=Math.ceil(D.count);D.count-=rdt;const after=Math.ceil(D.count);
     if(after!==before&&after>0){banner(String(after),'Get ready');Sound.click();}
-    if(D.count<=0){D.fighting=true;D.safe=3;feed('Shields up for 3 seconds — get to cover!');banner('Fight!','',D.cfg.humanAtk?'#2ec4b6':'#ff8c32');Sound.tone(220,880,.3,'sawtooth',.15);setTimeout(()=>{if(D.fighting)banner('');},700);}
+    if(D.count<=0){D.fighting=true;D.safe=3;feed('Shields up for 3 seconds — get to cover!');if(P.t==='k')feed(`King: press V to swing your ${MELEE[meleeTier(P)].name}.`);banner('Fight!','',D.cfg.humanAtk?'#2ec4b6':'#ff8c32');Sound.tone(220,880,.3,'sawtooth',.15);setTimeout(()=>{if(D.fighting)banner('');},700);}
   }
   const live=D.fighting&&!D.over;
   if(D.safe>0&&live){D.safe-=rdt;if(D.safe<=0){D.safe=0;feed('Shields down!');}}
@@ -2638,6 +2725,8 @@ function updateDuel(rdt){
     e.fireCd=Math.max(0,e.fireCd-dt);e.abCd=Math.max(0,e.abCd-dt);e.barrier=Math.max(0,e.barrier-dt);e.over=Math.max(0,e.over-dt);e.flash=Math.max(0,e.flash-dt);
     if(e.reloading>0){e.reloading-=dt;if(e.reloading<=0){e.reloading=0;e.ammo=e.w.mag;}}
     e.airT=e.onGround?0:e.airT+dt;
+    e.meleeCd=Math.max(0,(e.meleeCd||0)-dt);if(e.swingT>0){e.swingT-=dt;poseSwing(e);}
+    if(e.lastStand>0&&live&&!(G.net&&NET.on&&!e.isPlayer)){e.lastStand-=dt;e.vel.x=0;e.vel.z=0;if(e.lastStand<=0)failLastStand(e);}
     if(e.pounceT>0){e.pounceT-=dt;if(Math.random()<dt*35)puff(new V3(e.pos.x,e.pos.y+.8,e.pos.z),.55,new V3(0,0,0),0xffd23f);}
     if(e.over>0&&Math.random()<dt*18){const a=Math.random()*Math.PI*2;puff(new V3(e.pos.x+Math.cos(a)*.8,e.pos.y+.1,e.pos.z+Math.sin(a)*.8),.4,new V3(0,2.4,0),0xffc23d);}
     if(live){const hz=inHazard(e.pos.x,e.pos.z,e.pos.y);if(hz&&e.onGround){if(e.isPlayer&&!(D.hzT>0)){feed(`Ouch — ${hz.name||'hazard'}!`);D.hzT=2;}hurt(e,hz.dps*dt,null,false);if(Math.random()<dt*10)sparks(new V3(e.pos.x,.2,e.pos.z),0xff7a20,1,4);}}
@@ -2652,7 +2741,7 @@ function updateDuel(rdt){
     const f=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),s=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);
     const sprint=(keys.ShiftLeft||keys.ShiftRight)&&f>0&&!adsDown;
     const flying=D.gad.type==='hat'&&!P.onGround;
-    const spd=live?c.speed*(sprint?1.35:1)*(P.over>0?1.3:1)*(adsDown?.55:1)*(flying?1.15:1):0;
+    const spd=live&&!(P.lastStand>0)?c.speed*(sprint?1.35:1)*(P.over>0?1.3:1)*(adsDown?.55:1)*(flying?1.15:1):0;
     const fx=-Math.sin(P.yaw),fz=-Math.cos(P.yaw),rx=Math.cos(P.yaw),rz=-Math.sin(P.yaw);
     let wx=fx*f+rx*s,wz=fz*f+rz*s;const l=Math.hypot(wx,wz)||1;wx=wx/l*spd;wz=wz/l*spd;
     if(gad!=='hooked'&&!(P.bounceT>0)){
@@ -2660,13 +2749,19 @@ function updateDuel(rdt){
       P.vel.x+=(wx-P.vel.x)*Math.min(1,acc*dt);P.vel.z+=(wz-P.vel.z)*Math.min(1,acc*dt);
     }
     if(P.bounceT>0)P.bounceT-=dt;
-    if(live&&keys.Space&&P.onGround){P.vy=c.jump;P.onGround=false;}
+    if(live&&keys.Space&&P.onGround&&!(P.lastStand>0)){P.vy=c.jump;P.onGround=false;}
     if(live&&mouseDown&&(P.w.auto||P.triggerReleased)){if(playerFire())P.triggerReleased=false;}
     D.bobT=(D.bobT||0)+dt*Math.hypot(P.vel.x,P.vel.z)*(P.onGround?1.6:0);
   }
   P.blocked=false;moveEntity(P,dt);
   if(G.net&&NET.on){netTick(rdt);netRemote(B,dt);}
-  else{if(live)updateBot(B,P,dt);else{B.vel.x*=.9;B.vel.z*=.9;}
+  else{if(live&&B.lastStand>0){   // the computer's King takes his last shot
+      B.vel.set(0,0,0);B.lsShot-=dt;
+      if(B.lsShot<=0&&!B.lsFired){B.lsFired=true;const eye=eyePos(B,new V3()),c=new V3(P.pos.x,P.pos.y+1,P.pos.z),ok=hasLOS(eye,c)&&Math.random()<[.3,.5,.7][G.diff];
+        flashGun(B.gun);Sound.shot('pistol',.8);dartFx(muzzleWorld(B,new V3()),ok?c:c.clone().add(new V3((Math.random()-.5)*4,1+Math.random()*2,(Math.random()-.5)*4)),TEAM[B.c].glow,ok);
+        if(ok){B.lastStand=0;hurt(P,LAST_STAND.dmg,B,false);if(!D.over)reviveKing(B);}else failLastStand(B);}}
+    else if(live){updateBot(B,P,dt);if(B.t==='k'&&B.los&&B.pos.distanceTo(P.pos)<3.4)meleeSwing(B);}
+    else{B.vel.x*=.9;B.vel.z*=.9;}
     B.blocked=false;moveEntity(B,dt);}
   updateProjs(dt);
   for(const pk of D.pickups){
@@ -2679,7 +2774,7 @@ function updateDuel(rdt){
   if(B.model){
     B.model.position.copy(B.pos);B.model.rotation.y=B.yaw;B.gun.rotation.x=B.pitch;if(B.fig&&B.fig.userData.ghost){B.fig.userData.ghost.rotation.x=B.pitch;poseArms(B.fig);}if(B.gearSpin)B.gearSpin.rotation.y+=dt*(6+Math.hypot(B.vel.x,B.vel.z)*2);B.bubble.visible=B.barrier>0||D.safe>0;
     B.model.position.y+=Math.sin(performance.now()/240)*.03;
-    B.pieceModel.scale.setScalar(B.baseScale*(B.flash>0?1.06:1));
+    B.pieceModel.scale.setScalar(B.baseScale*(B.flash>0?1.06:1));B.pieceModel.rotation.x=B.lastStand>0?1.25:0;B.pieceModel.position.y=B.lastStand>0?.45:0;B.pieceModel.position.z=B.lastStand>0?.9:0;
     if(B.fig){const sp=Math.hypot(B.vel.x,B.vel.z),U=B.fig.userData;B.walk=(B.walk||0)+dt*sp*1.7;const a=Math.sin(B.walk)*Math.min(.7,sp/7);
       if(B.onGround){U.legs[0].rotation.x=a;U.legs[1].rotation.x=-a;U.arms[0].rotation.x=-a*.9;}else{U.legs[0].rotation.x=-.6;U.legs[1].rotation.x=.35;U.arms[0].rotation.x=-1.1;}}
   }
@@ -2687,7 +2782,7 @@ function updateDuel(rdt){
   const bob=Math.sin(D.bobT||0)*.012,w=P.w;
   D.vgun.position.set(.3+(adsDown?-.3:0),-.28+bob+(adsDown?.12:0),-.5+D.recoil*.6);
   D.vgun.rotation.x=D.recoil*1.2;
-  D.vgun.visible=!(adsDown&&w.hasScope);
+  D.vgun.visible=!(adsDown&&w.hasScope)&&!(P.swingT>0);
   if(P.reloading>0)D.vgun.rotation.x=-.6*Math.sin(Math.PI*(1-P.reloading/w.reload));
   const fov=adsDown?w.adsFov:78;
   if(Math.abs(duelCam.fov-fov)>.1){duelCam.fov+=(fov-duelCam.fov)*Math.min(1,rdt*14);duelCam.updateProjectionMatrix();}
@@ -2734,6 +2829,11 @@ function renderArmory(){
       <div class="wdesc">${g.desc}</div><div class="row">${own?(eq?`<button class="btn small" data-gequip="none">Unequip</button>`:`<button class="btn small" data-gequip="${id}">Equip</button>`):`<button class="btn small" data-gbuy="${id}">Buy ◈${g.cost}</button>`}</div></div>`;}
   }else{
     const t=ARM.tab,ids=weaponsFor(t);
+    if(t==='k'){const tier=Math.min(2,PROF.melee||0),m=MELEE[tier],nx=MELEE[tier+1];
+      html+=`<div class="wcard" style="border-style:dashed"><div class="row" style="justify-content:space-between"><b>Melee: ${m.name}</b><span class="tag">Press V in a duel</span></div>
+        <div class="wdesc">${m.desc} ${m.dmg} per swing${m.bolt?', lightning bolt '+m.bolt:''}.</div>
+        <div class="row" style="margin-top:6px">${nx?`<button class="btn small pink" data-melee="${tier+1}" title="${nx.desc}">Upgrade to ${nx.name} ◈${nx.cost}</button>`:'<span class="tag ok">✓ Fully upgraded</span>'}</div>
+        <div class="wdesc" style="margin-top:6px"><b>Last Stand:</b> once per duel, a King who is knocked down gets ${LAST_STAND.time} seconds and one pistol shot. A hit puts him back on his feet with ${LAST_STAND.hp} health.</div></div>`;}
     if(!ARM.sel||!ids.includes(ARM.sel))ARM.sel=PROF.loadout[t];
     for(const id of ids){
       const b=WEAPONS[id],own=PROF.weapons[id],m=modsOf(id),w=wstats(id,m),isDef=PROF.loadout[t]===id;
@@ -2791,6 +2891,7 @@ document.getElementById('armory').addEventListener('click',e=>{
   else if(d.bling){const m=modsOf(d.bling),lv=m.bling||0;if(lv<3&&spend(BLING[lv+1].cost)){m.bling=lv+1;saveProfile();armMsg(`${BLING[m.bling].name} bling! +${m.bling*5}% damage.`);}}
   else if(d.gbuy){if(spend(GADGETS[d.gbuy].cost)){PROF.gadgets[d.gbuy]=true;PROF.gadget=d.gbuy;saveProfile();armMsg(`${GADGETS[d.gbuy].name} unlocked and equipped!`);}}
   else if(d.gequip){PROF.gadget=d.gequip;saveProfile();Sound.click();}
+  else if(d.melee){const k=+d.melee;if(k===(PROF.melee||0)+1&&MELEE[k]&&spend(MELEE[k].cost)){PROF.melee=k;saveProfile();armMsg(`${MELEE[k].name} forged for the King!`);}}
   else if(d.sbuy){if(spend(SIGHTS[d.sbuy].cost)){PROF.sights[d.sbuy]=true;PROF.sight=d.sbuy;saveProfile();applySight();armMsg(`${SIGHTS[d.sbuy].name} sight unlocked and in use!`);}}
   else if(d.suse){PROF.sight=d.suse;saveProfile();applySight();Sound.click();}
   else if(d.sel){ARM.sel=d.sel;}
@@ -3224,8 +3325,9 @@ addEventListener('keydown',e=>{
   keys[e.code]=true;
   if(G.mode==='duel'&&D.active){
     if(e.code==='Space')e.preventDefault();
-    if(e.code==='KeyR'&&D.fighting)startReload(D.player);
-    if((e.code==='KeyQ'||e.code==='KeyE')&&D.fighting){const P=D.player,was=P.abCd;useAbility(P);if(G.net&&NET.on&&was<=0&&P.abCd>0)netSend({t:'ab'});}
+    if(e.code==='KeyR'&&D.fighting&&!(D.player.lastStand>0))startReload(D.player);
+    if(e.code==='KeyV'&&D.fighting)meleeSwing(D.player);
+    if((e.code==='KeyQ'||e.code==='KeyE')&&D.fighting&&!(D.player.lastStand>0)){const P=D.player,was=P.abCd;useAbility(P);if(G.net&&NET.on&&was<=0&&P.abCd>0)netSend({t:'ab'});}
     if(e.code==='KeyF'&&!e.repeat&&D.fighting&&D.gad&&D.gad.type==='grapple')fireHook();
     if(e.code==='Escape'&&fallbackLook&&D.fighting)pauseDuel();
   }
@@ -3306,7 +3408,7 @@ function netPump(){
 /** I pressed "Enter the room": tell the other player my blaster and gadget (and, if I am attacking, the room). */
 function netReady(){
   if(NET.rdy.me)return;const P=D.player;
-  NET.rdy.me={w:P.w.id,mods:P.w.mods||{},gad:D.gad.type,room:D.cfg.humanAtk?D.room:null,seed:D.cfg.seed};
+  NET.rdy.me={ml:meleeTier(P),w:P.w.id,mods:P.w.mods||{},gad:D.gad.type,room:D.cfg.humanAtk?D.room:null,seed:D.cfg.seed};
   netSend(Object.assign({t:'rdy'},NET.rdy.me));
   document.getElementById('bFight').textContent='Waiting for the other player…';
   netMaybeBegin();
@@ -3316,7 +3418,7 @@ function netMaybeBegin(){
   const B=D.bot;
   if(!D.cfg.humanAtk){D.netRoom=th.room;D.cfg.seed=th.seed;}   // the attacker picks the room
   if(WEAPONS[th.w]){B.w=wstats(th.w,th.mods||{});B.ammo=B.w.mag;}
-  NET.theirGad=th.gad;
+  NET.theirGad=th.gad;NET.theirMelee=th.ml||0;
   if(B.model)duelScene.remove(B.model);buildBotModel(B);
   setupWorld();
   document.getElementById('bFight').textContent='Enter the room ▶';
@@ -3325,7 +3427,7 @@ function netMaybeBegin(){
 /** Send where my fighter is. */
 function netTick(rdt){
   NET.tSend+=rdt;if(NET.tSend<.05)return;NET.tSend=0;const P=D.player;
-  netSend({t:'s',p:[r2(P.pos.x),r2(P.pos.y),r2(P.pos.z)],yw:+P.yaw.toFixed(3),pt:+P.pitch.toFixed(3),hp:r2(P.hp),og:P.onGround?1:0,br:P.barrier>0?1:0,ov:P.over>0?1:0});
+  netSend({t:'s',p:[r2(P.pos.x),r2(P.pos.y),r2(P.pos.z)],yw:+P.yaw.toFixed(3),pt:+P.pitch.toFixed(3),hp:r2(P.hp),ls:P.lastStand>0?1:0,og:P.onGround?1:0,br:P.barrier>0?1:0,ov:P.over>0?1:0});
 }
 /** Move the other player's fighter smoothly toward where their machine says it is. */
 function netRemote(B,dt){
@@ -3335,7 +3437,7 @@ function netRemote(B,dt){
   B.vel.set((B.pos.x-px)/dt,0,(B.pos.z-pz)/dt);
   B.yaw+=angDiff(B.yaw,t.yw)*k;B.pitch+=(t.pt-B.pitch)*k;B.onGround=!!t.og;
   if(!D.over)B.hp=t.hp;
-  B.barrier=t.br?Math.max(B.barrier,.15):0;B.over=t.ov?Math.max(B.over,.15):0;
+  B.barrier=t.br?Math.max(B.barrier,.15):0;B.over=t.ov?Math.max(B.over,.15):0;B.lastStand=t.ls?1:0;
 }
 function netOnMessage(o){
   if(o.t==='mv'){NET.q.push(o);netPump();return;}
@@ -3343,7 +3445,7 @@ function netOnMessage(o){
   if(!D.active)return;
   const P=D.player,B=D.bot;
   if(o.t==='rdy'){NET.rdy.them=o;if(!NET.rdy.me)toast('The other player is ready.');netMaybeBegin();}
-  else if(o.t==='s'){NET.target={p:new V3(o.p[0],o.p[1],o.p[2]),yw:o.yw,pt:o.pt,hp:o.hp,og:o.og,br:o.br,ov:o.ov};}
+  else if(o.t==='s'){NET.target={p:new V3(o.p[0],o.p[1],o.p[2]),yw:o.yw,pt:o.pt,hp:o.hp,og:o.og,br:o.br,ov:o.ov,ls:o.ls};}
   else if(o.t==='hit'){hurt(P,o.a,B,o.h,true);}
   else if(o.t==='f'||o.t==='pj'){
     flashGun(B.gun);Sound.shot(B.w.snd,Math.max(.25,1-B.pos.distanceTo(P.pos)/50));
@@ -3351,6 +3453,7 @@ function netOnMessage(o){
     else{const mz=muzzleWorld(B,new V3()),col=B.w.bling?BLING[B.w.bling].col:(WCOL[B.w.id]||0xf07a22);for(const e of o.e)dartFx(mz,new V3(e[0],e[1],e[2]),col,!!e[3]);}
   }
   else if(o.t==='ab'){B.abCd=0;useAbility(B);}
+  else if(o.t==='ml'){showSwing(B,o.k|0);Sound.tone(520,140,.16,'triangle',.1);if(o.e){const f=forwardOf(B,new V3());lightningFx(eyePos(B,new V3()).addScaledVector(f,.8),new V3(o.e[0],o.e[1],o.e[2]));}}
   else if(o.t==='dead'){
     if(D.over){   // we both fell at the same moment: the defender keeps the square
       if(D.result&&!D.cfg.humanAtk){D.result.attackerWon=false;D.result.defHp=1;banner('Defended','You both fell — the defender keeps the square','#5dff9e');}
@@ -3440,7 +3543,7 @@ const tryCode=()=>{const el=document.getElementById('codeIn');
 document.getElementById('bCode').onclick=tryCode;
 document.getElementById('codeIn').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')tryCode();});
 document.getElementById('bPractice').onclick=()=>{if(!confirm('Practice mode: unlock every blaster, attachment, finish and gadget for free?'))return;
-  for(const id in WEAPONS){PROF.weapons[id]=true;Object.assign(modsOf(id),{stock:true,scope:!WEAPONS[id].scope,mag:true,lvl:3,bling:3});}for(const g in GADGETS)PROF.gadgets[g]=true;for(const k in SIGHTS)PROF.sights[k]=true;PROF.gadget='hat';saveProfile();setMsg('Everything in the Armory is unlocked.');};
+  for(const id in WEAPONS){PROF.weapons[id]=true;Object.assign(modsOf(id),{stock:true,scope:!WEAPONS[id].scope,mag:true,lvl:3,bling:3});}for(const g in GADGETS)PROF.gadgets[g]=true;for(const k in SIGHTS)PROF.sights[k]=true;PROF.melee=2;PROF.gadget='hat';saveProfile();setMsg('Everything in the Armory is unlocked.');};
 document.getElementById('bAllSkins').onclick=()=>{for(const c of STORY)PROF.skins[c.id]=true;PROF.story=STORY.length;saveProfile();setMsg('All story colours and opponents are unlocked.');};
 document.getElementById('bCredits').onclick=()=>{addCredits(1000);setMsg('Added 1000 credits.');};
 // ---- story mode

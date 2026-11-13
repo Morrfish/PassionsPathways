@@ -66,4 +66,10 @@ still flickers or flashes? Which room, and where were you standing? ____________
 - Long-range damage drop-off: noticeable? Too much on any blaster? ____________________
 - Credits: about how many games before a student can afford a new blaster? Too slow, too fast? ____________________
 
-## 9. Anything else
+## 9. The King's melee and Last Stand
+- Is the sword worth using, or is the blaster always better? ____________________
+- Lightning Hammer: too strong at range? ____________________
+- Last Stand: is 4 seconds and one shot the right amount? Does it make the King too hard to finish? ____________________
+- When the computer's King gets back up, does it feel fair? ____________________
+
+## 10. Anything else
