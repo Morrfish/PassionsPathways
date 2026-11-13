@@ -15,3 +15,13 @@ Open `index.html` — no install, no accounts, works offline. Progress saves in 
 
 Files: `js/core.js` (parts, courses, sharing), `js/levels.js` (the 40 extra levels, built from reusable sections), `js/sim.js` (physics and drawing), `js/ui.js` (screens and editor).
 Physics by [planck.js](https://github.com/piqnt/planck.js) (MIT, see `js/planck.LICENSE.txt`).
+
+## Windows app
+
+`desktop/` wraps the game in a desktop window (Electron). To rebuild the exe:
+
+    cd desktop
+    npm install
+    npm run build        # writes desktop/dist/BotAssemblyShop.exe
+
+The exe is a single portable file: no installer. Saves are kept in the Windows user's app data folder.

@@ -395,7 +395,7 @@ function scramble(str) {
   }
   return (b >>> 0).toString(16).padStart(8, '0') + (a >>> 0).toString(16).padStart(8, '0');
 }
-const TEACHER_HASH = '21c61d4965f60268';
+const TEACHER_HASH = '2bce514a6dffff96';
 const isTeacherPw = pw => scramble('teacher|' + String(pw).trim()) === TEACHER_HASH;
 const Players = {
   all() { return Store.get('players', {}); },
