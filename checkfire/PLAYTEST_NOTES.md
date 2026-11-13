@@ -59,4 +59,17 @@ still flickers or flashes? Which room, and where were you standing? ____________
 - In a duel, does the other player move smoothly or jump about? Do hits feel fair on both sides? ____________________
 - Anything that looked different on the two screens (room, health, who won)? ____________________
 
-## 8. Anything else
+## 8. Balance (the numbers are first guesses — please say what still feels wrong)
+- Which piece or blaster still feels too strong? Too weak now? ____________________
+- Is the 3-second shield at the start the right length? ____________________
+- Scope dropping after a miss: fair, or too harsh? ____________________
+- Long-range damage drop-off: noticeable? Too much on any blaster? ____________________
+- Credits: about how many games before a student can afford a new blaster? Too slow, too fast? ____________________
+
+## 9. The King's melee and Last Stand
+- Is the sword worth using, or is the blaster always better? ____________________
+- Lightning Hammer: too strong at range? ____________________
+- Last Stand: is 4 seconds and one shot the right amount? Does it make the King too hard to finish? ____________________
+- When the computer's King gets back up, does it feel fair? ____________________
+
+## 10. Anything else
