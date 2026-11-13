@@ -21,6 +21,21 @@ this computer only (127.0.0.1:47616) and opens it in its own Edge/Chrome app win
 unlocks persist. `dist/` is not committed — rebuild it after every `build.py`. Not code-signed, and never run on real
 Windows from this environment (only the same code as a Linux build was tested).
 
+## Same-network multiplayer ("Play a friend")
+- **Host side:** `launcher/net.go`. Only after "Host on this network" is clicked in the exe's own window does the launcher
+  listen on the network (port 47620): it serves the same page plus `/ws`, a tiny WebSocket relay (standard library only).
+  Players pair by a 4-letter room code; the relay just passes messages between the two. No names, no accounts.
+- **Game side:** the `NET` block in `game.src.html`. The player who makes the game is White. Moves are sent as made
+  (`mv`). A capture sends both players to the loadout; when both press "Enter the room" they exchange blaster, gadget and
+  (from the attacker) room and seed (`rdy`), then fight in one shared room, attacker at one end, defender at the other.
+  In the duel each machine sends its position ~20×/s (`s`), decides the hits it lands (`hit`), and owns its own health;
+  `dead` / `fin` settle the result so both boards agree. Shots, rockets and abilities are mirrored for looks
+  (`f`, `pj`, `ab`). If a player leaves, the computer takes over their side. Network games are not saved.
+- **Limits:** needs the exe (a page opened as a plain file or from an https site cannot host or join); not cheat-proof
+  (each machine is trusted about its own hits); moving props such as the train are simulated separately on each machine;
+  the grappling rope is not shown on the other player; team colours are the classic two.
+- Test: build the launcher for this machine, then `node tools/tests/network.js <launcher binary>` (two browsers, ~3 min).
+
 ## Tests (Playwright + bundled Chromium, software GL ~9 fps)
 - `node tools/tests/full_games.js` — 4 computer-vs-computer games in auto-battle mode (slow: ~10–20 min).
 - `node tools/tests/ui_screens.js` — menu, board, loadout, room picker, HUD screenshots.

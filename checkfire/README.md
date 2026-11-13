@@ -4,6 +4,7 @@ Chess where every capture is a firefight. Open `index.html` in a browser — it'
 
 - **Real chess:** castling, en passant, promotion, check, checkmate, stalemate, draw by threefold repetition and the fifty-move rule.
 - **Story mode:** beat eight toy parodies of famous chess champions, one after another; each one you beat unlocks their colours for your own pieces.
+- **Play a friend (same network):** run `Checkfire.exe` on one computer, choose Host, and other players on the same Wi-Fi open the address it shows; pair up with a 4-letter code. Every capture is a live duel between the two players.
 - **Settings:** teacher tools (practice unlock and more) open with a code.
 - **Captures become FPS duels.** Win and you take the square; lose and your attacker is destroyed.
 - **Six classes:** each piece has its own HP, weapon and ability (Vanguard, Lancer, Oracle, Bastion, Sovereign, Monarch).

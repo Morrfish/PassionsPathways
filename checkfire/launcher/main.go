@@ -73,6 +73,7 @@ func main() {
 		w.Header().Set("Cache-Control", "no-store")
 		w.Write(html)
 	})
+	netHandlers(mux, mux) // same-network multiplayer: see net.go
 	go http.Serve(ln, mux)
 
 	done := openWindow(fmt.Sprintf("http://127.0.0.1:%d/", port), true)

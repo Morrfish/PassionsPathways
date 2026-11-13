@@ -264,6 +264,7 @@ kbd{border:2px solid var(--line);border-bottom-width:3px;border-radius:6px;paddi
       <button class="btn big" id="bStart">Start battle</button>
       <button class="btn big pink hidden" id="bCont">Continue</button>
       <button class="btn big" id="bStory" style="background:var(--navy)">Story mode</button>
+      <button class="btn big" id="bNet" style="background:var(--navy)">Play a friend</button>
       <button class="btn ghost" id="bRules1">How to play</button>
       <button class="btn ghost" id="bArmory1">Armory · <span class="credval"></span> ◈</button>
       <button class="btn ghost" id="bSettings">Settings</button>
@@ -439,6 +440,24 @@ kbd{border:2px solid var(--line);border-bottom-width:3px;border-radius:6px;paddi
     <p style="color:var(--dim);font-weight:700;margin:6px 0 12px">Beat eight chess champions (well, toy versions of them) one after another. You play White. Every champion you beat unlocks their colours for your own pieces.</p>
     <h4 style="margin:0 0 6px">Your colours</h4><div class="swatches" id="skinPick" style="margin-bottom:14px"></div>
     <div id="storyList"></div>
+  </div>
+</div>
+<!-- SAME-NETWORK MULTIPLAYER -->
+<div id="net" class="overlay hidden">
+  <div class="card" style="max-width:640px">
+    <div class="row" style="justify-content:space-between;align-items:center"><h2 class="title" style="margin:0;font-size:34px">Play a friend</h2><button class="btn ghost" id="bNetClose">Back</button></div>
+    <p style="color:var(--dim);font-weight:700;margin:6px 0 12px">Two players on the same Wi-Fi or school network. One makes a game and reads out the 4-letter code; the other types it in. The player who makes the game is White.</p>
+    <div id="netHost"></div>
+    <div id="netPlay" class="hidden">
+      <div class="row" style="gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="btn big" id="bNetCreate">Make a game</button>
+        <span style="font-weight:900;color:var(--dim)">or</span>
+        <input id="netCode" type="text" maxlength="4" autocomplete="off" spellcheck="false" placeholder="CODE" style="width:120px;padding:12px;border-radius:12px;border:3px solid var(--line);font:inherit;font-weight:900;font-size:22px;text-align:center;text-transform:uppercase;letter-spacing:4px">
+        <button class="btn big" id="bNetJoin">Join</button>
+      </div>
+      <div id="netRoom" style="margin-top:14px"></div>
+    </div>
+    <div id="netMsg" style="min-height:22px;font-weight:800;color:var(--dim);margin-top:10px"></div>
   </div>
 </div>
 <!-- SETTINGS -->
@@ -951,6 +970,7 @@ function updateBoardCam(dt){
 const G={st:null,human:'w',diff:1,duelMode:'fps',sel:-1,selMoves:[],last:null,busy:false,over:false,log:[],fallen:{w:[],b:[]},mode:'menu'};
 const SAVE_KEY='checkfire-save-v1';
 function save(){
+  if(G.net)return;   // network games are not saved
   if(G.over){try{localStorage.removeItem(SAVE_KEY);}catch(e){}return;}
   try{localStorage.setItem(SAVE_KEY,JSON.stringify({st:{b:G.st.b.map(p=>p&&[p.t,p.c,p.hp,p.w||null]),turn:G.st.turn,castle:G.st.castle,ep:G.st.ep},
     human:G.human,diff:G.diff,duelMode:G.duelMode,log:G.log.slice(-80),fallen:G.fallen,last:G.last,
@@ -1831,7 +1851,8 @@ function buildBotModel(e){
   const fig=armedFigure(e.t,e.c,e.w);let p;
   if(fig){p=fig;e.fig=fig;e.baseScale=e.t==='r'?1.08:1;fig.scale.setScalar(e.baseScale);g.add(fig);e.gun=fig.userData.gun;
     // enemies wear a Propeller Hat or a Jetpack in their team colours: looks only, it changes nothing about how they move or fight
-    if(!e.isPlayer&&ASSET.objs.G_hat&&ASSET.objs.G_jetpack){e.gear=['hat','jetpack'][e.piece.id%2];e.gearSpin=wearGear(fig,e.t,e.c,e.gear,true).userData.spin||null;}}
+    if(!e.isPlayer&&ASSET.objs.G_hat&&ASSET.objs.G_jetpack){e.gear=G.net&&NET.on?(NET.theirGad==='hat'||NET.theirGad==='jetpack'?NET.theirGad:null):['hat','jetpack'][e.piece.id%2];   // a real opponent wears what they actually picked
+      e.gearSpin=e.gear?wearGear(fig,e.t,e.c,e.gear,true).userData.spin||null:null;}}
   else{p=buildPiece(e.t,e.c);e.baseScale=2.05;p.scale.setScalar(2.05);g.add(p);const gun=gunModel(e.w,e.c);gun.scale.setScalar(1.6);gun.position.set(.55,1.25,-.35);g.add(gun);e.gun=gun;}
   const body=new THREE.Mesh(new THREE.BoxGeometry(e.rad*2,1.45,e.rad*2),INV);body.position.y=.72;body.userData.hit='body';g.add(body);
   const head=new THREE.Mesh(new THREE.SphereGeometry(.36,12,10),INV);head.position.y=1.72;head.userData.hit='head';g.add(head);
@@ -2189,13 +2210,17 @@ function setRope(a,b){
   U.claw.position.copy(b);U.claw.lookAt(a);D.rope.visible=true;
 }
 // --- damage
-function hurt(e,amt,src,head){
+function hurt(e,amt,src,head,fromNet){
   if(!D.active||D.over||amt<=0)return;
+  if(G.net&&NET.on&&!fromNet){   // network duel: my machine decides the hits I land; the other player's machine owns their health
+    if(!e.isPlayer){if(src&&src.isPlayer){netSend({t:'hit',a:+amt.toFixed(2),h:!!head});D.recentHitBot=1;dmgNumber(tmpV.copy(e.pos).setY(e.pos.y+2.2+Math.random()*.3),amt,head);}return;}
+    if(src&&!src.isPlayer)return;
+  }
   if(e.barrier>0)amt*=.25;
   e.hp-=amt;e.flash=.12;
   if(e.isPlayer){D.vig=Math.min(1,D.vig+amt/50);if(amt>3)Sound.hurt();}
   else{D.recentHitBot=1;if(src)dmgNumber(tmpV.copy(e.pos).setY(e.pos.y+2.2+Math.random()*.3),amt,head);}
-  if(e.hp<=0){e.hp=0;finishDuel();}
+  if(e.hp<=0){e.hp=0;if(G.net&&NET.on)netSend({t:'dead'});finishDuel();}
 }
 function hitMarker(head){const h=document.getElementById('hitm');h.className=head?'head':'';h.style.opacity=1;clearTimeout(h._t);h._t=setTimeout(()=>h.style.opacity=0,110);Sound.hit(head);}
 // --- weapons
@@ -2218,18 +2243,19 @@ function playerFire(){
   const heavy=w.pellets>2||w.kind!=='hit'||w.scope;
   D.recoil=Math.min(.25,D.recoil+(heavy?.12:.035)*w.recoilMul);
   e.pitch+=(heavy?.016:.004)*w.recoilMul;
-  if(w.kind==='rocket'){spawnProj(e,mz,fwd);return true;}
-  if(w.kind==='bolt'){spawnProj(e,origin.clone().addScaledVector(fwd,.6).add(new V3(0,-.08,0)),fwd);return true;}
+  if(w.kind==='rocket'){spawnProj(e,mz,fwd);netProj(mz,fwd);return true;}
+  if(w.kind==='bolt'){const from=origin.clone().addScaledVector(fwd,.6).add(new V3(0,-.08,0));spawnProj(e,from,fwd);netProj(from,fwd);return true;}
   const moving=Math.hypot(e.vel.x,e.vel.z)>1.5,air=!e.onGround;
   let spread=w.spread*(adsDown?w.adsSpread:1)*(moving?1.6:1)*(air?2:1);
   if(w.scope&&!adsDown)spread=.05;
-  let total=0,anyHead=false;
+  let total=0,anyHead=false;const ends=[];
   for(let i=0;i<w.pellets;i++){
     const dir=fwd.clone().add(new V3((Math.random()-.5)*2*spread,(Math.random()-.5)*2*spread,(Math.random()-.5)*2*spread)).normalize();
     RAY.set(origin,dir);RAY.far=200;
     const h=RAY.intersectObjects(D.solids.concat(D.bot.hitboxes),false)[0];
     const end=h?h.point:origin.clone().addScaledVector(dir,120);
     dartFx(mz,end,w.bling?BLING[w.bling].col:(WCOL[w.id]||0xf07a22),!!(h&&h.object.userData.hit));
+    ends.push([+end.x.toFixed(2),+end.y.toFixed(2),+end.z.toFixed(2),h&&h.object.userData.hit?1:0]);
     if(h&&h.object.userData.hit){
       const head=h.object.userData.hit==='head';
       let dmg=w.dmg*(head?w.head:1);
@@ -2237,6 +2263,7 @@ function playerFire(){
       total+=dmg;anyHead=anyHead||head;
     }
   }
+  if(G.net&&NET.on)netSend({t:'f',e:ends});
   if(total>0){hitMarker(anyHead);hurt(D.bot,total,e,anyHead);}
   return true;
 }
@@ -2467,6 +2494,7 @@ function startDuel(atk,def,m){
     const humanAtk=atk.c===G.human;
     const me=humanAtk?atk:def,them=humanAtk?def:atk;
     D.cfg={atk,def,m,humanAtk,me,them,seed:(m.to*7919+G.log.length*104729)|0};
+    D.netRoom=null;NET.rdy={me:null,them:null};NET.target=null;NET.theirGad=null;document.getElementById('bFight').textContent='Enter the room ▶';
     if(D.bot&&D.bot.model)duelScene.remove(D.bot.model);
     D.player=makeFighter(me,true);D.bot=makeFighter(them,false);
     buildBotModel(D.bot);
@@ -2481,13 +2509,14 @@ function startDuel(atk,def,m){
 }
 /** (Re)builds the room and puts both fighters at their spawns. Used on start and when the player picks a room. */
 function setupWorld(){
-  const room=PROF.room==='auto'&&storyChar()?storyChar().room:resolveRoom(PROF.room,D.cfg.m.to);   // story opponents fight on home turf unless you pick a room
+  const room=D.netRoom||(PROF.room==='auto'&&storyChar()?storyChar().room:resolveRoom(PROF.room,D.cfg.m.to));   // story opponents fight on home turf unless you pick a room
   buildArena(room,D.cfg.seed,[D.cfg.atk.t,D.cfg.def.t]);
   clearFX();
   const P=D.player,B=D.bot;
   P.pos.set(0,0,19);P.vel.set(0,0,0);P.vy=0;P.yaw=0;P.pitch=0;B.pos.set(0,0,-19);B.vel.set(0,0,0);B.yaw=Math.PI;
   Object.assign(B,{los:false,losT:0,seen:0,lostFor:0,last:P.pos.clone(),aim:new V3(0,1,19),wish:new V3(),strafe:1,strafeT:0,charge:0});
   if(B.laser){duelScene.remove(B.laser);B.laser=null;}
+  if(G.net&&NET.on&&!D.cfg.humanAtk){P.pos.set(0,0,-19);P.yaw=Math.PI;B.pos.set(0,0,19);B.yaw=0;}   // network duel: both players share one room, attacker at one end, defender at the other
   B.model.position.copy(B.pos);B.model.rotation.y=B.yaw;
   D.gad={type:PROF.gadget&&PROF.gadgets[PROF.gadget]?PROF.gadget:'none',fuel:1,cd:0};
   refreshViewGun();
@@ -2595,8 +2624,9 @@ function updateDuel(rdt){
     D.bobT=(D.bobT||0)+dt*Math.hypot(P.vel.x,P.vel.z)*(P.onGround?1.6:0);
   }
   P.blocked=false;moveEntity(P,dt);
-  if(live)updateBot(B,P,dt);else{B.vel.x*=.9;B.vel.z*=.9;}
-  B.blocked=false;moveEntity(B,dt);
+  if(G.net&&NET.on){netTick(rdt);netRemote(B,dt);}
+  else{if(live)updateBot(B,P,dt);else{B.vel.x*=.9;B.vel.z*=.9;}
+    B.blocked=false;moveEntity(B,dt);}
   updateProjs(dt);
   for(const pk of D.pickups){
     pk.mesh.rotation.y+=dt*2;pk.mesh.position.y=1+Math.sin(performance.now()/300)*.15;
@@ -2935,7 +2965,7 @@ function updateTurnLabel(){
 }
 function newGame(opts){
   PID=0;G.st=initialState();G.sel=-1;G.selMoves=[];G.last=null;G.busy=false;G.over=false;G.log=[];G.fallen={w:[],b:[]};
-  G.hist=[];G.half=0;G.sig='';G.skipHist=false;G.story=null;
+  G.hist=[];G.half=0;G.sig='';G.skipHist=false;G.story=null;G.net=false;
   Object.assign(G,opts);applySkins();
   for(const m of BOARD.meshes.values())BOARD.group.remove(m);BOARD.meshes.clear();BOARD.hpSprites.clear();
   syncBoard();renderLog();renderFallen();resetView();updateTurnLabel();
@@ -2943,6 +2973,7 @@ function newGame(opts){
   if(ch)logLine(`Story battle ${STORY.indexOf(ch)+1} of ${STORY.length} · You face <b>${ch.name}</b>, ${ch.title} · ${DIFF[G.diff].name}`);
   else logLine(`New battle · You command <b class="${G.human==='w'?'glow-w':'glow-b'}">${G.human==='w'?'White':'Black'}</b> · ${DIFF[G.diff].name}`);
   if(ch)logLine(`${ch.name}: “${ch.hello}”`);
+  if(G.net)logLine('Network game: you are playing another person. Every capture is a live duel.');
   enterBoard();
   save();
   nextTurn();
@@ -2961,6 +2992,9 @@ function nextTurn(){
   if(G.st.turn===G.human){
     const chk=inCheck(G.st,G.human);
     caption(chk?'<span style="color:#ff5a5a">Your king is in check!</span> Defend it.':'Your move — click a piece.');
+  }else if(G.net&&NET.on){
+    caption(`<span class="${G.st.turn==='w'?'glow-w':'glow-b'}">The other player</span> is thinking…`);
+    G.busy=true;NET.waiting=true;netPump();
   }else{
     caption(`<span class="${G.st.turn==='w'?'glow-w':'glow-b'}">${storyChar()?storyChar().name:'Enemy commander'}</span> is thinking…`);
     G.busy=true;
@@ -3014,6 +3048,7 @@ function endGame(winner,why){
 }
 async function performMove(m){
   G.busy=true;G.sel=-1;G.selMoves=[];show('tip',false);
+  if(G.net&&NET.on&&G.st.turn===G.human)netSend({t:'mv',f:m.from,to:m.to,p:m.promo||null});   // tell the other player my move
   const st=G.st,atk=st.b[m.from],def=m.cap>=0?st.b[m.cap]:null;
   const san=`${GLYPH[atk.c][atk.t]} ${sqName(m.from)}${def?'×':'→'}${sqName(m.to)}`;
   if(def){
@@ -3023,7 +3058,7 @@ async function performMove(m){
     refreshMarks();BOARD.rings[m.cap].visible=true;
     await wait(700);
     let r;
-    if(G.duelMode==='fps'&&humanInvolved)r=await duelOrAuto(atk,def,m);
+    if((G.duelMode==='fps'||G.net)&&humanInvolved)r=await duelOrAuto(atk,def,m);
     else r=await autoBattle(atk,def);
     if(r.attackerWon){
       atk.hp=Math.max(1,r.atkHp);
@@ -3138,7 +3173,7 @@ addEventListener('keydown',e=>{
   if(G.mode==='duel'&&D.active){
     if(e.code==='Space')e.preventDefault();
     if(e.code==='KeyR'&&D.fighting)startReload(D.player);
-    if((e.code==='KeyQ'||e.code==='KeyE')&&D.fighting)useAbility(D.player);
+    if((e.code==='KeyQ'||e.code==='KeyE')&&D.fighting){const P=D.player,was=P.abCd;useAbility(P);if(G.net&&NET.on&&was<=0&&P.abCd>0)netSend({t:'ab'});}
     if(e.code==='KeyF'&&!e.repeat&&D.fighting&&D.gad&&D.gad.type==='grapple')fireHook();
     if(e.code==='Escape'&&fallbackLook&&D.fighting)pauseDuel();
   }
@@ -3164,7 +3199,8 @@ document.addEventListener('pointerlockchange',()=>{
   if(!locked&&G.mode==='duel'&&D.active&&!D.over&&!fallbackLook&&(D.fighting||D.count>0))pauseDuel();
 });
 document.addEventListener('pointerlockerror',()=>{fallbackLook=true;});
-function pauseDuel(){D.paused=true;mouseDown=false;adsDown=false;show('pause',true);}
+function pauseDuel(){mouseDown=false;adsDown=false;show('pause',true);if(G.net&&NET.on)return;   // a network duel keeps running while your menu is open
+  D.paused=true;}
 function resumeDuel(){show('pause',false);D.paused=false;if(!fallbackLook)requestLock();}
 
 // ---------------------------------------------------------------- UI wiring
@@ -3188,7 +3224,7 @@ document.getElementById('bRulesClose').onclick=()=>show('rules',false);
 document.getElementById('bMenu').onclick=()=>{if(G.busy&&!G.over)return;G.mode='menu';show('bhud',false);show('tip',false);refreshMenu();show('menu',true);};
 document.getElementById('bView').onclick=()=>resetView();
 document.getElementById('bSound').onclick=e=>{Sound.on=!Sound.on;e.target.textContent='Sound: '+(Sound.on?'on':'off');};
-document.getElementById('bFight').onclick=()=>{Sound.init();beginFight();};
+document.getElementById('bFight').onclick=()=>{Sound.init();if(G.net&&NET.on)netReady();else beginFight();};
 document.getElementById('bAutoOnce').onclick=async()=>{
   show('intro',false);D.active=false;G.mode='board';show('bhud',true);
   if(D.bot&&D.bot.model)duelScene.remove(D.bot.model);
@@ -3197,6 +3233,133 @@ document.getElementById('bAutoOnce').onclick=async()=>{
 document.getElementById('bResume').onclick=resumeDuel;
 ['bArmory1','bArmory2','bArmory3'].forEach(id=>document.getElementById(id).onclick=()=>{Sound.init();if(id==='bArmory2'&&G.busy&&!G.over)return;openArmory(id==='bArmory3');});
 document.getElementById('bArmClose').onclick=closeArmory;
+// ---------------------------------------------------------------- same-network multiplayer
+// Checkfire.exe on one computer passes messages between two players who share a room code (see launcher/net.go).
+// Chess moves are sent as they are made. In a duel each machine sends where its fighter is ~20 times a second,
+// decides the hits it lands, and owns its own fighter's health.
+const NET={on:false,ws:null,info:null,q:[],waiting:false,rdy:{me:null,them:null},target:null,theirGad:null,tSend:0};
+function netSend(o){if(NET.ws&&NET.ws.readyState===1)NET.ws.send(JSON.stringify(o));}
+const netMsgEl=t=>{document.getElementById('netMsg').textContent=t||'';};
+const r2=v=>+v.toFixed(2);
+function netProj(from,dir){if(G.net&&NET.on)netSend({t:'pj',o:[r2(from.x),r2(from.y),r2(from.z)],d:[+dir.x.toFixed(3),+dir.y.toFixed(3),+dir.z.toFixed(3)]});}
+/** The next waiting move from the other player, once the board is ready for it. */
+function netPump(){
+  if(!NET.waiting||!NET.q.length||G.over)return;
+  const o=NET.q.shift(),m=legalMoves(G.st).find(x=>x.from===o.f&&x.to===o.to&&(x.promo||null)===(o.p||null));
+  if(!m){toast('The two boards no longer match. Please start a new network game.');return;}
+  NET.waiting=false;performMove(m);
+}
+/** I pressed "Enter the room": tell the other player my blaster and gadget (and, if I am attacking, the room). */
+function netReady(){
+  if(NET.rdy.me)return;const P=D.player;
+  NET.rdy.me={w:P.w.id,mods:P.w.mods||{},gad:D.gad.type,room:D.cfg.humanAtk?D.room:null,seed:D.cfg.seed};
+  netSend(Object.assign({t:'rdy'},NET.rdy.me));
+  document.getElementById('bFight').textContent='Waiting for the other player…';
+  netMaybeBegin();
+}
+function netMaybeBegin(){
+  const me=NET.rdy.me,th=NET.rdy.them;if(!me||!th||!D.active)return;
+  const B=D.bot;
+  if(!D.cfg.humanAtk){D.netRoom=th.room;D.cfg.seed=th.seed;}   // the attacker picks the room
+  if(WEAPONS[th.w]){B.w=wstats(th.w,th.mods||{});B.ammo=B.w.mag;}
+  NET.theirGad=th.gad;
+  if(B.model)duelScene.remove(B.model);buildBotModel(B);
+  setupWorld();
+  document.getElementById('bFight').textContent='Enter the room ▶';
+  beginFight();
+}
+/** Send where my fighter is. */
+function netTick(rdt){
+  NET.tSend+=rdt;if(NET.tSend<.05)return;NET.tSend=0;const P=D.player;
+  netSend({t:'s',p:[r2(P.pos.x),r2(P.pos.y),r2(P.pos.z)],yw:+P.yaw.toFixed(3),pt:+P.pitch.toFixed(3),hp:r2(P.hp),og:P.onGround?1:0,br:P.barrier>0?1:0,ov:P.over>0?1:0});
+}
+/** Move the other player's fighter smoothly toward where their machine says it is. */
+function netRemote(B,dt){
+  const t=NET.target;if(!t||dt<=0)return;
+  const px=B.pos.x,pz=B.pos.z,k=Math.min(1,dt*16);
+  if(B.pos.distanceTo(t.p)>8)B.pos.copy(t.p);else B.pos.lerp(t.p,k);   // a blink or a pounce: jump straight there
+  B.vel.set((B.pos.x-px)/dt,0,(B.pos.z-pz)/dt);
+  B.yaw+=angDiff(B.yaw,t.yw)*k;B.pitch+=(t.pt-B.pitch)*k;B.onGround=!!t.og;
+  if(!D.over)B.hp=t.hp;
+  B.barrier=t.br?Math.max(B.barrier,.15):0;B.over=t.ov?Math.max(B.over,.15):0;
+}
+function netOnMessage(o){
+  if(o.t==='mv'){NET.q.push(o);netPump();return;}
+  if(!D.active)return;
+  const P=D.player,B=D.bot;
+  if(o.t==='rdy'){NET.rdy.them=o;if(!NET.rdy.me)toast('The other player is ready.');netMaybeBegin();}
+  else if(o.t==='s'){NET.target={p:new V3(o.p[0],o.p[1],o.p[2]),yw:o.yw,pt:o.pt,hp:o.hp,og:o.og,br:o.br,ov:o.ov};}
+  else if(o.t==='hit'){hurt(P,o.a,B,o.h,true);}
+  else if(o.t==='f'||o.t==='pj'){
+    flashGun(B.gun);Sound.shot(B.w.snd,Math.max(.25,1-B.pos.distanceTo(P.pos)/50));
+    if(o.t==='pj')spawnProj(B,new V3(o.o[0],o.o[1],o.o[2]),new V3(o.d[0],o.d[1],o.d[2]));
+    else{const mz=muzzleWorld(B,new V3()),col=B.w.bling?BLING[B.w.bling].col:(WCOL[B.w.id]||0xf07a22);for(const e of o.e)dartFx(mz,new V3(e[0],e[1],e[2]),col,!!e[3]);}
+  }
+  else if(o.t==='ab'){B.abCd=0;useAbility(B);}
+  else if(o.t==='dead'){
+    if(D.over){   // we both fell at the same moment: the defender keeps the square
+      if(D.result&&!D.cfg.humanAtk){D.result.attackerWon=false;D.result.defHp=1;banner('Defended','You both fell — the defender keeps the square','#5dff9e');}
+      return;}
+    B.hp=0;if(P.hp<=0)P.hp=1;finishDuel();netSend({t:'fin',hp:r2(P.hp)});
+  }
+  else if(o.t==='fin'){   // the winner's exact health, so both boards agree
+    B.hp=o.hp;if(D.result){if(D.cfg.humanAtk)D.result.defHp=Math.max(1,o.hp);else D.result.atkHp=o.hp;}
+  }
+}
+/** The other player closed the game or lost their connection: the computer takes over their side. */
+function netPeerLeft(){
+  const playing=G.net&&NET.on;NET.on=false;NET.q=[];
+  if(!playing){document.getElementById('netRoom').innerHTML='';netMsgEl('The other player left.');return;}
+  G.net=false;toast('The other player left. The computer takes over their side.');
+  if(G.mode==='board'&&!G.over&&NET.waiting){NET.waiting=false;nextTurn();}
+  if(D.active&&!D.fighting&&!D.over&&NET.rdy.me){document.getElementById('bFight').textContent='Enter the room ▶';beginFight();}
+}
+function netLeave(){
+  if(NET.ws){try{NET.ws.onclose=null;NET.ws.send('!leave');NET.ws.close();}catch(e){}NET.ws=null;}
+  NET.on=false;G.net=false;NET.q=[];NET.waiting=false;
+}
+function netConnect(){
+  return new Promise((ok,fail)=>{
+    if(NET.ws&&NET.ws.readyState===1)return ok();
+    const url=NET.info.mode==='lan'?`ws://${location.host}/ws`:`ws://127.0.0.1:${NET.info.port}/ws`;
+    let ws;try{ws=new WebSocket(url);}catch(e){return fail(e);}
+    NET.ws=ws;ws.onopen=()=>ok();ws.onerror=()=>fail(new Error('no connection'));
+    ws.onclose=()=>{if(NET.ws===ws){NET.ws=null;netPeerLeft();}};
+    ws.onmessage=ev=>{const d=String(ev.data);
+      if(d[0]==='!'){const sp=d.indexOf(' '),cmd=sp<0?d:d.slice(0,sp),arg=sp<0?'':d.slice(sp+1);
+        if(cmd==='!room'){document.getElementById('netRoom').innerHTML=`<div style="font-weight:800;color:var(--dim)">Your code</div><div id="netCodeBig" style="font-size:56px;font-weight:900;letter-spacing:10px;color:var(--navy)">${arg}</div><div style="font-weight:800;color:var(--dim)">Waiting for a player to type it in…</div>`;netMsgEl('');}
+        else if(cmd==='!start')netStartGame(arg==='b'?'b':'w');
+        else if(cmd==='!left')netPeerLeft();
+        else if(cmd==='!err')netMsgEl(arg);
+        return;}
+      let o;try{o=JSON.parse(d);}catch(e){return;}
+      try{netOnMessage(o);}catch(e){console.error(e);}};
+  });
+}
+function netStartGame(side){
+  NET.on=true;NET.q=[];NET.waiting=false;show('net',false);applyGfx();
+  newGame({human:side,diff:1,duelMode:'fps',story:null,net:true});
+  toast(side==='w'?'A player joined. You are White: your move.':'You joined. You are Black: White moves first.');
+}
+function netRenderHost(){
+  const i=NET.info,H=document.getElementById('netHost');
+  if(!i){H.innerHTML='<p style="font-weight:800">Playing a friend needs <b>Checkfire.exe</b> running on one computer. That computer chooses “Host on this network”, and the other players open the address it shows in their browser.</p>';show('netPlay',false);return;}
+  if(i.mode==='host'&&!i.hosting){H.innerHTML='<p style="font-weight:800;margin:0 0 8px">This computer can host. Windows may ask once to allow Checkfire on the network: choose Allow.</p><button class="btn big" id="bNetHost">Host on this network</button>';show('netPlay',false);
+    document.getElementById('bNetHost').onclick=async()=>{try{NET.info=await (await fetch('/__host',{method:'POST'})).json();if(!NET.info.hosting)netMsgEl('Could not start hosting: '+(NET.info.error||'unknown problem'));}catch(e){netMsgEl('Could not start hosting.');}netRenderHost();};return;}
+  if(i.mode==='host'){const urls=i.urls&&i.urls.length?i.urls:['(no network found — check this computer is on Wi-Fi)'];
+    H.innerHTML='<div style="font-weight:800;color:var(--dim)">Hosting. Other players open this address in their browser:</div>'+urls.map(u=>`<div class="netaddr" style="font-size:26px;font-weight:900;color:var(--navy);user-select:all">${u}</div>`).join('')+'<div style="font-weight:700;color:var(--dim);margin:4px 0 12px">You can play too: make or join a game below.</div>';}
+  else H.innerHTML='<div style="font-weight:800;color:var(--dim);margin-bottom:10px">Connected to the host computer.</div>';
+  show('netPlay',true);
+}
+document.getElementById('bNet').onclick=async()=>{Sound.init();netMsgEl('');document.getElementById('netRoom').innerHTML='';show('net',true);
+  NET.info=null;try{if(location.protocol.indexOf('http')===0){const r=await fetch('/__net');if(r.ok)NET.info=await r.json();}}catch(e){}
+  netRenderHost();};
+document.getElementById('bNetClose').onclick=()=>{netLeave();show('net',false);};
+document.getElementById('bNetCreate').onclick=async()=>{try{await netConnect();NET.ws.send('!create');}catch(e){netMsgEl('Could not reach the host computer.');}};
+const netJoin=async()=>{const code=document.getElementById('netCode').value.trim().toUpperCase();if(code.length!==4){netMsgEl('Type the 4-letter code first.');return;}
+  try{await netConnect();NET.ws.send('!join '+code);}catch(e){netMsgEl('Could not reach the host computer.');}};
+document.getElementById('bNetJoin').onclick=netJoin;
+document.getElementById('netCode').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')netJoin();});
 // ---- settings: the practice unlock and other teacher tools sit behind a code
 const CODE_HASH=3131396511;   // hash of the teacher code, so the code itself is not sitting in the page
 const codeHash=t=>{let h=5381;for(const ch of t.trim().toUpperCase())h=(h*33^ch.charCodeAt(0))>>>0;return h;};
@@ -3235,11 +3398,11 @@ document.getElementById('story').addEventListener('click',e=>{const b=e.target.c
   if(loadSave()&&!confirm('Start this story battle? Your saved battle will be replaced.'))return;
   applyGfx();show('story',false);newGame({human:'w',diff:ch.diff,duelMode:opts.duel,story:ch.id});});
 document.getElementById('intro').addEventListener('click',introClick);
-document.getElementById('bForfeit').onclick=()=>{show('pause',false);D.paused=false;D.player.hp=0;D.over=false;D.fighting=true;finishDuel();};
+document.getElementById('bForfeit').onclick=()=>{show('pause',false);D.paused=false;D.player.hp=0;D.over=false;D.fighting=true;if(G.net&&NET.on)netSend({t:'dead'});finishDuel();};
 document.getElementById('sens').oninput=e=>{sens=+e.target.value;document.getElementById('sens2').value=sens;};
 document.getElementById('sens2').oninput=e=>{sens=+e.target.value;document.getElementById('sens').value=sens;};
 document.getElementById('sens3').oninput=e=>{sens=+e.target.value;document.getElementById('sens').value=sens;document.getElementById('sens2').value=sens;};
-document.getElementById('bAgain').onclick=()=>{show('end',false);refreshMenu();G.mode='menu';show('bhud',false);show('menu',true);};
+document.getElementById('bAgain').onclick=()=>{netLeave();show('end',false);refreshMenu();G.mode='menu';show('bhud',false);show('menu',true);};
 document.getElementById('bLook').onclick=()=>show('end',false);
 function refreshMenu(){show('bCont',!!loadSave());updateCreditsUI();}
 

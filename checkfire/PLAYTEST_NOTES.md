@@ -52,4 +52,11 @@ still flickers or flashes? Which room, and where were you standing? ____________
 - Can you tell your pieces from the champion's at a glance, for every colour set? Which pairs are too close? ____________________
 - Is the order of difficulty right (2 Recruit, 3 Veteran, 3 Warlord)? ____________________
 
-## 7. Anything else
+## 7. Play a friend (same network) — needs two real computers
+- Did Windows ask to allow Checkfire on the network, and did choosing Allow work? ____________________
+- Could the second computer open the address shown? (If not: same Wi-Fi? school network blocking it?) ____________________
+- Did the code pair you up? ____________________
+- In a duel, does the other player move smoothly or jump about? Do hits feel fair on both sides? ____________________
+- Anything that looked different on the two screens (room, health, who won)? ____________________
+
+## 8. Anything else
