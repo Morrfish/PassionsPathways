@@ -32,6 +32,8 @@ Windows from this environment (only the same code as a Linux build was tested).
   In the duel each machine sends its position ~20×/s (`s`), decides the hits it lands (`hit`), and owns its own health;
   `dead` / `fin` settle the result so both boards agree. Shots, rockets and abilities are mirrored for looks
   (`f`, `pj`, `ab`). If a player leaves, the computer takes over their side. Network games are not saved.
+- **Only one computer hosts.** A code only pairs players who opened the same host's address. A second exe joins instead
+  of hosting: "Look for the host" (`/__find` scans this computer's 254 neighbours on port 47620) or type its address.
 - **Limits:** needs the exe (a page opened as a plain file or from an https site cannot host or join); not cheat-proof
   (each machine is trusted about its own hits); moving props such as the train are simulated separately on each machine;
   the grappling rope is not shown on the other player; team colours are the classic two.
