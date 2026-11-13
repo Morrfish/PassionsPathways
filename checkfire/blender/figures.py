@@ -130,19 +130,53 @@ box((0.26, 0.28, 0.28), (0, 0, 0.86), MAIN, bevel=0.09)                         
 box((0.2, 0.22, 0.16), (0, 0.02, 0.68), JOINT, bevel=0.06)                        # hand
 finish('Fig_arm', origin=(0, 0, 1.3))
 
-# ---- first-person right hand gripping a blaster (the game mirrors it for the left hand).
-# Pivot = the centre of the grip; the grip runs up/down (Z), forward = +Y, the forearm runs back and down toward the player.
-box((0.1, 0.2, 0.24), (0.1, 0.0, -0.02), JOINT, bevel=0.04)                          # palm on the right of the grip
-for i in range(4):                                                                  # fingers wrapped round the front
-    box((0.2, 0.085, 0.052), (0.0, 0.115, 0.075 - i * 0.058), JOINT, bevel=0.022)
-    box((0.07, 0.11, 0.052), (-0.085, 0.07, 0.075 - i * 0.058), JOINT, bevel=0.022)
-box((0.075, 0.2, 0.075), (-0.075, 0.03, 0.135), JOINT, bevel=0.03, rot=(R(12), 0, 0))  # thumb along the left side
-box((0.17, 0.12, 0.25), (0.11, -0.13, -0.03), JOINT, bevel=0.05)                     # wrist
+# ---- gloved hands for holding blasters (first-person view and the fighters' two-handed holds)
+def fist():
+    """Right hand closed round a grip. Pivot = centre of the grip; the grip runs up/down (Z), forward = +Y, wrist at the back."""
+    box((0.1, 0.2, 0.24), (0.1, 0.0, -0.02), JOINT, bevel=0.04)                          # palm on the right of the grip
+    for i in range(4):                                                                  # fingers wrapped round the front
+        box((0.2, 0.085, 0.052), (0.0, 0.115, 0.075 - i * 0.058), JOINT, bevel=0.022)
+        box((0.07, 0.11, 0.052), (-0.085, 0.07, 0.075 - i * 0.058), JOINT, bevel=0.022)
+    box((0.075, 0.2, 0.075), (-0.075, 0.03, 0.135), JOINT, bevel=0.03, rot=(R(12), 0, 0))  # thumb along the left side
+    box((0.17, 0.12, 0.25), (0.11, -0.13, -0.03), JOINT, bevel=0.05)                     # wrist
+
+# first-person right arm: fist + cuff + forearm running back and down toward the player (the game mirrors it for a left fist)
+fist()
 box((0.27, 0.12, 0.32), (0.12, -0.24, -0.05), ACC, bevel=0.05, rot=(R(-18), 0, 0))    # cuff
 capsule(0.135, (0.12, -0.32, -0.08), (0.34, -0.92, -0.36), MAIN)                     # gauntlet forearm, angled out and down
 torus(0.14, 0.035, (0.23, -0.62, -0.22), ACC, rot=(R(70), 0, R(-20)), seg=14, mseg=6)   # armour band
 capsule(0.11, (0.34, -0.92, -0.36), (0.62, -1.5, -0.72), JOINT)                      # sleeve back to the elbow
 finish('Fig_hand')
+
+# fist on its own (the fighters' arms are posed to reach it)
+fist()
+finish('Fig_fist')
+
+# open left hand cradling a blaster from underneath. Pivot = where the blaster rests (top of the palm);
+# the blaster runs along Y, fingers come up its right side (+X), thumb up its left side, wrist toward -X.
+box((0.24, 0.22, 0.07), (-0.01, 0, -0.04), JOINT, bevel=0.03)                         # palm
+for i in range(4):
+    y = 0.085 - i * 0.057
+    box((0.07, 0.05, 0.07), (0.115, y, -0.02), JOINT, bevel=0.022)                    # knuckles
+    box((0.06, 0.05, 0.13), (0.125, y, 0.045), JOINT, bevel=0.022, rot=(0, R(-12), 0))   # fingers curling up
+box((0.065, 0.075, 0.13), (-0.105, 0.075, 0.03), JOINT, bevel=0.026, rot=(0, R(14), 0))  # thumb
+box((0.12, 0.2, 0.1), (-0.17, 0, -0.045), JOINT, bevel=0.04)                          # wrist
+finish('Fig_palm')
+
+# arm pieces the game stretches between shoulder, elbow and wrist. Pivot at the top, pointing down, 0.4 long.
+box((0.2, 0.22, 0.4), (0, 0, -0.2), JOINT, bevel=0.07)
+uvs(0.13, (0, 0, -0.4), JOINT, seg=12, rings=8)                                       # elbow
+finish('Fig_upper')
+box((0.25, 0.27, 0.34), (0, 0, -0.19), MAIN, bevel=0.09)                              # gauntlet
+box((0.27, 0.29, 0.07), (0, 0, -0.33), ACC, bevel=0.03)                               # cuff
+finish('Fig_fore')
+
+# first-person left forearm (for the open hand): starts at the wrist, points down, same look as the right arm
+box((0.27, 0.3, 0.12), (0, 0, -0.07), ACC, bevel=0.05)
+capsule(0.135, (0, 0, -0.14), (0, 0, -0.78), MAIN)
+torus(0.14, 0.035, (0, 0, -0.46), ACC, seg=14, mseg=6)
+capsule(0.11, (0, 0, -0.78), (0, 0, -1.5), JOINT)
+finish('Fig_sleeve')
 
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, 'figures.glb'), export_format='GLB', use_selection=True,

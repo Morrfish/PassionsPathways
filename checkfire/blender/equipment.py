@@ -363,8 +363,9 @@ g_grapple(); g_claw(); g_jetpack(); g_hat()
 # ---- pickups, projectiles, ability props ----------------------------------------------------
 GREEN = mat('CoreGreen', 0x5cd63a, rough=0.3)
 GREEN_D = mat('CoreGreenDark', 0x3aa828, rough=0.3)
+CROSS = mat('CoreCross', 0xffffff, rough=0.4, emit=1.2)
 def p_core():
-    # rounded diamond (octahedron) with white crosses on the four upper faces
+    # rounded diamond (octahedron) with a big white cross on every face
     import bmesh as _bm
     bm = _bm.new()
     pts = [(0.45, 0, 0), (-0.45, 0, 0), (0, 0.45, 0), (0, -0.45, 0), (0, 0, 0.5), (0, 0, -0.5)]
@@ -376,10 +377,12 @@ def p_core():
     _fin(o, GREEN, bevel=0.06, segs=3)
     for a in range(4):
         ang = a * math.pi / 2 + math.pi / 4
-        n = (math.cos(ang) * 0.577, math.sin(ang) * 0.577, 0.5)
-        c = (n[0] * 0.27, n[1] * 0.27, 0.17)
-        for (w, h) in ((0.13, 0.04), (0.04, 0.13)):
-            box((w, 0.02, h), c, WHITE, bevel=0.008, rot=(R(-35), 0, ang + math.pi / 2))
+        # each cross lies on its face: centred on the face's middle and nudged just clear of the surface
+        r, zc = 0.2121 + 0.014, 0.1667 + 0.009
+        for up in (1, -1):
+            c = (math.cos(ang) * r, math.sin(ang) * r, up * zc)
+            for (w, h) in ((0.25, 0.08), (0.08, 0.25)):
+                box((w, 0.03, h), c, CROSS, bevel=0.01, rot=(R(-33 * up), 0, ang + math.pi / 2))
     torus(0.34, 0.025, (0, 0, 0), GREEN_D, seg=4, mseg=6)
     return finish('P_core')
 

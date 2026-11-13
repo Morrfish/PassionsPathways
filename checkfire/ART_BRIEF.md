@@ -49,8 +49,9 @@ dark sci-fi look. Courtnee can decide whether to keep, restyle or remove them.
 
 ## Optional smaller sheets
 - **First-person toy hands** — a first version is in (gloved hands in team colours); a sheet would help refine them.
-- **Repair Core detail** — the green diamond with clear white crosses.
-- **Gadgets worn by fighters** — how the Propeller Hat and Jetpack look on a toy fighter (front/side/back).
+- **Repair Core detail** — done: the green diamond now has a large white cross on every face.
+- **Gadgets worn by fighters** — a first version is in (see `tools/tests/shots/gear_*.jpg`); a sheet would refine how the
+  Propeller Hat sits on crowns, plumes and mitres.
 - **Board pieces** — the board now uses the toy fighters (classic shapes are still a menu option).
 
 ## Exact names (for reference)

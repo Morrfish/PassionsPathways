@@ -20,6 +20,12 @@ python3 build.py package                                   # game.src.html + ass
 - `node tools/tests/ui_screens.js` — menu, board, loadout, room picker, HUD screenshots.
 - `node tools/tests/equipment_rooms.js` — armory/loadout with everything unlocked, abilities, darts, room interactables.
 - `node tools/tests/board_hands.js` — the board with toy-fighter pieces + the first-person hands on every blaster.
+- `node tools/tests/holds.js [index.html] [prefix]` — every blaster's two-handed hold: on a fighter (3 angles + aiming up/down)
+  and in first person (idle, aiming, mid-reload). Point it at an older build to make "before" shots.
+- `node tools/tests/gear.js` — Propeller Hat / Jetpack on all six fighter types in both teams; Repair Core in five rooms.
+- `node tools/tests/board_gadgets.js` — both board styles through a move and a capture; loadout preview with each gadget.
+- `GAME_MS=600000 node tools/tests/full_games.js` — the per-game time limit is adjustable; unfinished games are reported.
+- Latest results: `TEST_RESULTS.md`; comparison sheets: `tools/tests/shots/`. Things only a real PC can answer: `PLAYTEST_NOTES.md`.
 - `node tools/tests/room_views.js [room ...]` — two screenshots of each room (player start + raised corner) to check props.
 
 ## What exists
@@ -27,8 +33,18 @@ python3 build.py package                                   # game.src.html + ass
 - 6 toy fighters (Blender, `figures.glb`), 14 blasters + Scope/Stock/Big Clip/Power I–III + Chrome/Gold/Diamond (`equipment.glb`),
   gadgets (Grappling Hook, Jetpack, Propeller Hat), foam darts/rockets, ability visuals, interactables.
 - Board pieces are the toy fighters on team-coloured bases (`boardPiece()`); the menu option "Board pieces" switches back to
-  classic chess shapes. First-person view has gloved toy arms holding the blaster (`viewHands()`, model `Fig_hand` in
-  `figures.glb`, mirrored for the left hand; per-blaster hand spots in `HAND_POS`).
+  classic chess shapes.
+- Two-handed holds everywhere (first person, enemies, loadout turntable) from one function, `holdHands()`:
+  a fist on the grip plus, per blaster (`HOLD` table), an open palm under the fore-end, both hands round the grip
+  (pistols: Arc Pistol, Crown Repeater, Hand Cannon) or one blaster per hand (Twin Blasters). The palm's height and width
+  are measured from each blaster model (`gunUnder()`). Fighters' arms are stretched shoulder→elbow→wrist every frame
+  (`poseArms()`), so the hands stay on when the enemy aims up or down. Bot shots still start from the old one-handed
+  muzzle spot (`shotMuzzle`), so gameplay is unchanged. Models: `Fig_hand`, `Fig_fist`, `Fig_palm`, `Fig_upper`, `Fig_fore`,
+  `Fig_sleeve` in `figures.glb`.
+- Enemies wear a Propeller Hat or Jetpack (by piece id, even/odd) in team colours — looks only (`wearGear()`; it measures
+  each fighter's head gear and back so hats clear crowns/plumes and jetpacks sit outside capes). The loadout preview uses
+  the same placement.
+- Repair Core has a large glowing white cross on all eight faces (the old ones were buried under the surface).
 - Cream/navy/teal/orange UI: menu, board HUD, loadout screen (turntable), room picker, in-match HUD, armory.
 - 14 rooms. Blender-modelled from reference sheets: **Kid's Bedroom** (`bedroom.glb`), **Chess Park** (`park.glb`).
   Blender-modelled from the written descriptions (no sheets yet): **Library Table, Diner Counter, School Gym, Toy Store,
@@ -47,6 +63,5 @@ blaster-coloured body + orange suction cup; foam rocket teal with orange nose/fi
 1. Courtnee's play-test feedback (performance, difficulty, gadget feel).
 2. When Courtnee's reference sheets for the 8 rooms arrive, restyle the matching props in `blender/rooms_assets.py`
    (keep the footprints in the `prop(...)` calls). Decide whether the 4 neon arenas stay, get restyled, or go.
-3. Polish: tune the first-person hand positions per blaster after play-testing, give enemy fighters a two-handed hold,
-   white crosses on the Repair Core, gadgets visible on enemies.
-4. Sharing: shareable link, Game Closet, pull request (only when asked).
+3. Act on `PLAYTEST_NOTES.md` when Courtnee returns it (hand spots per blaster live in `HOLD`; board readability; difficulty).
+4. Still pending Courtnee's say-so: the four neon arenas (left as-is), publishing, a main-branch pull request, the Game Closet.
