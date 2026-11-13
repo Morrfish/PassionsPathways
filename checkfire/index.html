@@ -7886,7 +7886,7 @@ function netConnect(){
         if(cmd==='!room'){document.getElementById('netRoom').innerHTML=`<div style="font-weight:800;color:var(--dim)">Your code</div><div id="netCodeBig" style="font-size:56px;font-weight:900;letter-spacing:10px;color:var(--navy)">${arg}</div><div style="font-weight:800;color:var(--dim)">Waiting for a player to type it in…</div>`;netMsgEl('');}
         else if(cmd==='!start')netStartGame(arg==='b'?'b':'w');
         else if(cmd==='!left')netPeerLeft();
-        else if(cmd==='!err')netMsgEl(arg);
+        else if(cmd==='!err')netMsgEl(arg+(NET.info&&NET.info.mode==='host'&&arg.indexOf('No game')===0?' If the code was made on another computer, that computer is the host: go Back and join it instead of hosting here.':''));
         return;}
       let o;try{o=JSON.parse(d);}catch(e){return;}
       try{netOnMessage(o);}catch(e){console.error(e);}};
@@ -7900,11 +7900,23 @@ function netStartGame(side){
 function netRenderHost(){
   const i=NET.info,H=document.getElementById('netHost');
   if(!i){H.innerHTML='<p style="font-weight:800">Playing a friend needs <b>Checkfire.exe</b> running on one computer. That computer chooses “Host on this network”, and the other players open the address it shows in their browser.</p>';show('netPlay',false);return;}
-  if(i.mode==='host'&&!i.hosting){H.innerHTML='<p style="font-weight:800;margin:0 0 8px">This computer can host. Windows may ask once to allow Checkfire on the network: choose Allow.</p><button class="btn big" id="bNetHost">Host on this network</button>';show('netPlay',false);
+  if(i.mode==='host'&&!i.hosting){H.innerHTML='<p style="font-weight:800;margin:0 0 6px"><b>Only one computer hosts.</b> Everyone else joins that computer, even if they also have Checkfire.exe.</p>'
+      +'<div style="border:3px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:10px"><div style="font-weight:900;margin-bottom:6px">Joining someone else\'s game?</div>'
+      +'<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center"><button class="btn" id="bNetFind">Look for the host</button><span style="font-weight:900;color:var(--dim)">or type its address</span>'
+      +'<input id="netAddr" type="text" autocomplete="off" spellcheck="false" placeholder="192.168.1.23" style="width:190px;padding:9px 10px;border-radius:12px;border:3px solid var(--line);font:inherit;font-weight:800"><button class="btn" id="bNetGo">Go</button></div><div id="netFound" style="margin-top:8px"></div></div>'
+      +'<div style="border:3px solid var(--line);border-radius:14px;padding:10px 12px"><div style="font-weight:900;margin-bottom:6px">Hosting for everyone?</div><div style="font-weight:700;color:var(--dim);margin-bottom:8px">Windows may ask once to allow Checkfire on the network: choose Allow.</div><button class="btn big" id="bNetHost">Host on this network</button></div>';show('netPlay',false);
+    const goHost=a=>{a=String(a||'').trim().replace(/^https?:\/\//i,'').replace(/\/.*$/,'');if(!a){netMsgEl('Type the address shown on the host computer.');return;}if(!/:\d+$/.test(a))a+=':'+i.port;netMsgEl('Opening '+a+' …');location.href='http://'+a+'/#friend';};
+    document.getElementById('bNetGo').onclick=()=>goHost(document.getElementById('netAddr').value);
+    document.getElementById('netAddr').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')goHost(e.target.value);});
+    document.getElementById('bNetFind').onclick=async()=>{const F=document.getElementById('netFound');F.innerHTML='<span style="font-weight:800;color:var(--dim)">Looking…</span>';
+      try{const r=await (await fetch('/__find')).json();
+        F.innerHTML=r.hosts&&r.hosts.length?r.hosts.map(u=>`<button class="btn" data-hosturl="${u}" style="margin:0 6px 6px 0">Join ${u.replace('http://','')}</button>`).join(''):'<span style="font-weight:800;color:var(--dim)">No host found. Check the other computer has clicked “Host on this network” and allowed it in Windows, and that you are on the same Wi-Fi. Some school networks stop computers seeing each other.</span>';
+        F.querySelectorAll('[data-hosturl]').forEach(b=>b.onclick=()=>goHost(b.dataset.hosturl));}
+      catch(e){F.innerHTML='<span style="font-weight:800;color:var(--dim)">Could not search the network.</span>';}};
     document.getElementById('bNetHost').onclick=async()=>{try{NET.info=await (await fetch('/__host',{method:'POST'})).json();if(!NET.info.hosting)netMsgEl('Could not start hosting: '+(NET.info.error||'unknown problem'));}catch(e){netMsgEl('Could not start hosting.');}netRenderHost();};return;}
   if(i.mode==='host'){const urls=i.urls&&i.urls.length?i.urls:['(no network found — check this computer is on Wi-Fi)'];
-    H.innerHTML='<div style="font-weight:800;color:var(--dim)">Hosting. Other players open this address in their browser:</div>'+urls.map(u=>`<div class="netaddr" style="font-size:26px;font-weight:900;color:var(--navy);user-select:all">${u}</div>`).join('')+'<div style="font-weight:700;color:var(--dim);margin:4px 0 12px">You can play too: make or join a game below.</div>';}
-  else H.innerHTML='<div style="font-weight:800;color:var(--dim);margin-bottom:10px">Connected to the host computer.</div>';
+    H.innerHTML='<div style="font-weight:800;color:var(--dim)">Hosting. Other players open this address in their browser:</div>'+urls.map(u=>`<div class="netaddr" style="font-size:26px;font-weight:900;color:var(--navy);user-select:all">${u}</div>`).join('')+'<div style="font-weight:700;color:var(--dim);margin:4px 0 12px">They should not host as well: a code only works for players who opened <b>this</b> address. You can play too: make or join a game below.</div>';}
+  else H.innerHTML=`<div style="font-weight:800;color:var(--dim);margin-bottom:10px">Connected to the host computer at ${location.host}. Codes work between everyone who opened this address.</div>`;
   show('netPlay',true);
 }
 document.getElementById('bNet').onclick=async()=>{Sound.init();netMsgEl('');document.getElementById('netRoom').innerHTML='';show('net',true);
@@ -7960,6 +7972,7 @@ document.getElementById('sens2').oninput=e=>{sens=+e.target.value;document.getEl
 document.getElementById('sens3').oninput=e=>{sens=+e.target.value;document.getElementById('sens').value=sens;document.getElementById('sens2').value=sens;};
 document.getElementById('bAgain').onclick=()=>{netLeave();show('end',false);refreshMenu();G.mode='menu';show('bhud',false);show('menu',true);};
 document.getElementById('bLook').onclick=()=>show('end',false);
+if(location.hash==='#friend')setTimeout(()=>document.getElementById('bNet').click(),600);
 function refreshMenu(){show('bCont',!!loadSave());updateCreditsUI();}
 
 // ---------------------------------------------------------------- main loop

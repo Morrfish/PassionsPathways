@@ -21,6 +21,7 @@ import (
 	"net/http"
 	"strings"
 	"sync"
+	"time"
 )
 
 const lanPort = 47620
@@ -117,6 +118,13 @@ func netHandlers(mux *http.ServeMux, gameMux http.Handler) {
 		lanMu.Unlock()
 		writeJSON(w, map[string]any{"mode": "host", "hosting": on, "port": lanPort, "urls": lanAddresses()})
 	})
+	mux.HandleFunc("/__find", func(w http.ResponseWriter, r *http.Request) {
+		if !isLoopback(r) {
+			http.Error(w, "only this computer can do this", http.StatusForbidden)
+			return
+		}
+		writeJSON(w, map[string]any{"hosts": findHosts(r.URL.Query().Get("self") == "1")})
+	})
 	mux.HandleFunc("/__host", func(w http.ResponseWriter, r *http.Request) {
 		if !isLoopback(r) || r.Method != http.MethodPost {
 			http.Error(w, "only the host computer can do this", http.StatusForbidden)
@@ -128,6 +136,59 @@ func netHandlers(mux *http.ServeMux, gameMux http.Handler) {
 		}
 		writeJSON(w, map[string]any{"mode": "host", "hosting": true, "port": lanPort, "urls": lanAddresses()})
 	})
+}
+
+// findHosts looks for other computers on this network that are hosting Checkfire: it tries every address in
+// this computer's own neighbourhood (the usual 254) on the Checkfire port, all at once, for under a second.
+func findHosts(includeSelf bool) []string {
+	found := []string{}
+	var mu sync.Mutex
+	var wg sync.WaitGroup
+	client := http.Client{Timeout: 700 * time.Millisecond}
+	seen := map[string]bool{}
+	ifs, _ := net.Interfaces()
+	for _, in := range ifs {
+		if in.Flags&net.FlagUp == 0 || in.Flags&net.FlagLoopback != 0 {
+			continue
+		}
+		addrs, _ := in.Addrs()
+		for _, a := range addrs {
+			ipn, ok := a.(*net.IPNet)
+			if !ok {
+				continue
+			}
+			me := ipn.IP.To4()
+			if me == nil || me.IsLinkLocalUnicast() {
+				continue
+			}
+			for last := 1; last < 255; last++ {
+				ip := net.IPv4(me[0], me[1], me[2], byte(last)).String()
+				if seen[ip] || (ip == me.String() && !includeSelf) {
+					continue
+				}
+				seen[ip] = true
+				wg.Add(1)
+				go func(ip string) {
+					defer wg.Done()
+					r, err := client.Get(fmt.Sprintf("http://%s:%d/__net", ip, lanPort))
+					if err != nil {
+						return
+					}
+					defer r.Body.Close()
+					var v struct {
+						Mode string `json:"mode"`
+					}
+					if json.NewDecoder(r.Body).Decode(&v) == nil && v.Mode == "lan" {
+						mu.Lock()
+						found = append(found, fmt.Sprintf("http://%s:%d", ip, lanPort))
+						mu.Unlock()
+					}
+				}(ip)
+			}
+		}
+	}
+	wg.Wait()
+	return found
 }
 
 // ---------------------------------------------------------------- WebSocket relay
