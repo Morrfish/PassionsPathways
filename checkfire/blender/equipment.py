@@ -506,6 +506,73 @@ def i_lavaframe():
 i_jumppad(); i_spring(); i_tramp(); i_bumper(); i_coffee(); i_cactus(); i_lavaframe()
 
 # ---- export ----------------------------------------------------------------------------------
+
+# ---- the King's melee weapons ---------------------------------------------------------------
+# Pivot = the middle of the grip; the weapon points up (+Z). About 1.2 long, like the stand-in shapes they replace.
+# 'MeleeGlow' / 'MeleeHalo' are recoloured in the game to the King's team colour.
+BLADE = mat('MeleeBlade', 0xe3e9ef, metal=0.35, rough=0.28)
+BLADE_D = mat('MeleeBladeDark', 0xb9c2cc, metal=0.35, rough=0.3)
+M_GLOW = mat('MeleeGlow', 0x4fe3d6, emit=3.0)
+M_HALO = mat('MeleeHalo', 0x4fe3d6, alpha=0.26, emit=1.4)
+M_SPARK = mat('MeleeSpark', 0xfff07a, emit=3.2)
+HEADM = mat('MeleeHammer', 0x8d97a8, metal=0.4, rough=0.35)
+HEADM_D = mat('MeleeHammerDark', 0x6b7486, metal=0.4, rough=0.38)
+
+def wrapped_grip(z0, z1, r=0.036, m=NAVY, band=GOLDTRIM, n=5):
+    cyl(r, z1 - z0, (0, 0, (z0 + z1) / 2), m, verts=14, bevel=0.008)
+    for k in range(n):
+        torus(r + 0.004, 0.009, (0, 0, z0 + (k + 0.5) * (z1 - z0) / n), band, seg=14, mseg=6)
+
+def m_sword():
+    wrapped_grip(-0.12, 0.12)
+    uvs(0.06, (0, 0, -0.165), GOLDTRIM, seg=12, rings=8)                              # pommel
+    cyl(0.03, 0.03, (0, 0, -0.12), GOLDTRIM, verts=12)
+    box((0.34, 0.075, 0.07), (0, 0, 0.155), GOLDTRIM, bevel=0.022)                    # crossguard
+    for sx in (-1, 1):
+        box((0.075, 0.09, 0.11), (sx * 0.17, 0, 0.165), GOLDTRIM, bevel=0.03)        # flared ends
+    uvs(0.034, (0, -0.04, 0.155), TEAL, seg=10, rings=8, scale=(1, 0.6, 1))            # gems front and back
+    uvs(0.034, (0, 0.04, 0.155), TEAL, seg=10, rings=8, scale=(1, 0.6, 1))
+    box((0.15, 0.05, 0.78), (0, 0, 0.58), BLADE, bevel=0.018)                          # chunky foam blade
+    box((0.05, 0.058, 0.6), (0, 0, 0.52), BLADE_D, bevel=0.008)                        # fuller
+    cyl(0.104, 0.17, (0, 0, 1.052), BLADE, verts=4, r2=0.014, rot=(0, 0, R(45)))       # tip: a flattened point
+    bpy.ops.object.transform_apply(rotation=True)
+    bpy.context.object.scale = (1, 0.34, 1)
+    bpy.ops.object.transform_apply(scale=True)
+    return finish('M_sword')
+
+def m_glowblade():
+    cyl(0.042, 0.3, (0, 0, 0.0), STEEL, verts=16, bevel=0.01)                          # hilt
+    for z in (-0.1, -0.05, 0.0, 0.05):
+        torus(0.044, 0.008, (0, 0, z), NAVY, seg=16, mseg=6)                           # grip ribs
+    cyl(0.05, 0.03, (0, 0, -0.16), NAVY, verts=16, bevel=0.008)                        # pommel cap
+    cyl(0.052, 0.05, (0, 0, 0.13), GOLDTRIM, verts=16, bevel=0.01)                     # collar
+    cyl(0.06, 0.03, (0, 0, 0.17), NAVY, verts=16, bevel=0.008, r2=0.046)               # emitter
+    box((0.03, 0.02, 0.05), (0, -0.045, 0.06), ORANGE, bevel=0.006)                    # button
+    cyl(0.012, 0.02, (0, -0.045, -0.02), GLOW_O, verts=8, rot=(R(90), 0, 0))           # light
+    lathe([(0, 0.18), (0.034, 0.18), (0.036, 1.1), (0.028, 1.17), (0, 1.2)], M_GLOW, steps=14, angle=80)
+    lathe([(0, 0.19), (0.062, 0.2), (0.066, 1.1), (0.05, 1.21), (0, 1.25)], M_HALO, steps=14, angle=80)
+    return finish('M_glowblade')
+
+def m_hammer():
+    wrapped_grip(-0.12, 0.2, r=0.034, n=6)
+    cyl(0.034, 0.56, (0, 0, 0.48), NAVY, verts=14, bevel=0.006)                        # shaft
+    for z in (0.26, 0.7):
+        cyl(0.042, 0.035, (0, 0, z), GOLDTRIM, verts=14, bevel=0.008)
+    torus(0.04, 0.012, (0, 0, -0.16), GOLDTRIM, rot=(R(90), 0, 0), seg=14, mseg=6)     # wrist loop
+    box((0.46, 0.27, 0.27), (0, 0, 0.9), HEADM, bevel=0.045, segs=3)                   # head
+    for sx in (-1, 1):
+        box((0.05, 0.3, 0.3), (sx * 0.2, 0, 0.9), GOLDTRIM, bevel=0.014)               # bands
+        box((0.035, 0.2, 0.2), (sx * 0.24, 0, 0.9), HEADM_D, bevel=0.03)               # striking faces
+    for sy in (-1, 1):                                                               # lightning bolt on both sides
+        y = sy * 0.139
+        for (x, z, w, h, a) in ((0.03, 0.965, 0.045, 0.1, 28), (0.0, 0.9, 0.11, 0.04, 0), (-0.03, 0.835, 0.045, 0.1, 28)):
+            box((w, 0.014, h), (x, y, z), M_SPARK, bevel=0.004, rot=(0, R(a), 0), segs=1)
+    cyl(0.03, 0.05, (0, 0, 1.055), GOLDTRIM, verts=12)                                 # spark post
+    ico(0.062, (0, 0, 1.12), M_SPARK, sub=1)
+    return finish('M_hammer')
+
+m_sword(); m_glowblade(); m_hammer()
+
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.export_scene.gltf(filepath=os.path.join(OUT, 'equipment.glb'), export_format='GLB', use_selection=True,
                           export_apply=True, export_yup=True)
@@ -581,5 +648,12 @@ bpy.ops.mesh.primitive_plane_add(size=120, location=(15, 0, 0))
 bpy.context.object.data.materials.append(mat('Floor', 0xf3e6cf, rough=0.9))
 preview_setup(OUT, 'equip_interactables.png', res=(1800, 520), samples=48)
 cam.data.type = 'ORTHO'; cam.data.ortho_scale = 36; cam.location = (15, -30, 9); aim.location = (15, 0, 1.0)
+render()
+hide_sources()
+for i, n in enumerate(('M_sword', 'M_glowblade', 'M_hammer')):
+    place(n, (i * 0.75, 0, 0), R(25))
+    place(n, (i * 0.75 + 2.6, 0, 0), R(110))
+preview_setup(OUT, 'equip_melee.png', res=(1500, 760), samples=48)
+cam.data.type = 'ORTHO'; cam.data.ortho_scale = 4.9; cam.location = (2.05, -8, 0.9); aim.location = (2.05, 0, 0.52)
 render()
 print('EQUIP DONE')
