@@ -44,7 +44,9 @@ Windows from this environment (only the same code as a Linux build was tested).
 - **Melee (press V, Kings only):** `MELEE` has three tiers bought in order on the Armory's King tab (`PROF.melee`):
   Broadsword (free, 45), Glow Blade (400 credits, 60, longer reach, faster), Lightning Hammer (700, 70, and every swing
   throws a lightning bolt worth 35 up to 22 units if the swing itself did not connect). `meleeSwing()`, `inFront()`,
-  `meleeModel()` (simple built-in shapes, not Blender models yet), `showSwing()`. The computer's King swings when the
+  `meleeModel()` (Blender models `M_sword`, `M_glowblade`, `M_hammer` in `equipment.glb`, built by
+  `blender/equipment.py`; the Glow Blade's blade and halo take the King's team colour; plain shapes are the fallback),
+  `showSwing()`. The computer's King swings when the
   player is within 3.4 units; its tier follows its level (Recruit sword, Veteran Glow Blade, Warlord hammer).
   "Starter blasters only" means the plain Broadsword. The middle tier is called Glow Blade rather than the film name.
 - **Last Stand:** once per duel, a King whose health reaches 0 is knocked down instead (`startLastStand()`): he cannot

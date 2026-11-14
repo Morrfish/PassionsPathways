@@ -63,5 +63,15 @@ const {chromium}=require('playwright'),path=require('path');
   out.computerKing.after=await p.evaluate(()=>({gotBackUp:!D.over&&D.bot.hp===LAST_STAND.hp,fell:D.over&&D.bot.hp===0,shotFired:D.bot.lsFired}));
   // --- rules: starter blasters only means the plain Broadsword
   out.starterRuleTier=await p.evaluate(()=>{PROF.melee=2;G.rules={fly:true,starter:true};const t=meleeTier(D.player);G.rules={fly:true,starter:false};return t;});
+  out.models=await p.evaluate(()=>({loaded:MELEE_ASSET.map(n=>!!ASSET.objs[n]),usesModels:[0,1,2].map(t=>!!meleeModel(t,'w').children[0]&&meleeModel(t,'w').children[0].name.indexOf('M_')===0),
+    glowFollowsTeam:(()=>{const find=(g)=>{let c=null;g.traverse(x=>{if(x.isMesh){(Array.isArray(x.material)?x.material:[x.material]).forEach(m=>{if(m.name==='MeleeHalo')c=m.color.getHex();});}});return c;};
+      return find(meleeModel(1,'w'))===TEAM.w.glow&&find(meleeModel(1,'b'))===TEAM.b.glow&&TEAM.w.glow!==TEAM.b.glow;})()}));
+  // each weapon mid-swing in first person, and on the computer's King
+  await duel('k','r');
+  for(const tier of [0,1,2]){await p.evaluate(tier=>{const P=D.player,B=D.bot;PROF.melee=tier;P.meleeCd=0;P.pos.set(9,0,10);B.pos.set(9,0,4);B.vel.set(0,0,0);P.yaw=0;P.pitch=0;D.paused=true;meleeSwing(P);P.swingT=.17;poseSwing(P);placeDuelCam();},tier);
+    await p.waitForTimeout(350);await p.screenshot({path:`king-swing-${tier}.png`});await p.evaluate(()=>{D.player.swingT=0;poseSwing(D.player);D.paused=false;});await p.waitForTimeout(150);}
+  await duel('q','k');
+  for(const tier of [0,1,2]){await p.evaluate(tier=>{const P=D.player,B=D.bot;G.diff=tier;P.hp=P.max=999;B.meleeCd=0;P.pos.set(9,0,10);B.pos.set(9.4,0,7.2);B.yaw=Math.PI;B.vel.set(0,0,0);B.model.position.copy(B.pos);B.model.rotation.y=B.yaw;P.yaw=0;P.pitch=-.12;D.paused=true;meleeSwing(B);B.swingT=.15;poseSwing(B);D.vgun.visible=false;placeDuelCam();},tier);
+    await p.waitForTimeout(350);await p.screenshot({path:`king-enemy-swing-${tier}.png`});await p.evaluate(()=>{D.bot.swingT=0;poseSwing(D.bot);D.paused=false;G.diff=1;});await p.waitForTimeout(150);}
   out.errors=errs;console.log(JSON.stringify(out,null,1));await b.close();
 })();

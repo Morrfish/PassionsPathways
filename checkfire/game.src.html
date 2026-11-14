@@ -1037,7 +1037,25 @@ function inFront(e,tgt,reach,width){
   if(t<=0||t>reach+tgt.rad)return false;
   return to.addScaledVector(fwd,-t).length()<tgt.rad+width&&hasLOS(eye,c);
 }
+const MELEE_ASSET=['M_sword','M_glowblade','M_hammer'],MGLOW={};
+/** The King's melee weapon model: grip at the centre, pointing up. The Glow Blade shines in the King's team colour. */
 function meleeModel(tier,c){
+  const src=ASSET.objs[MELEE_ASSET[tier]];
+  if(src){const g=new THREE.Group(),o=asset(MELEE_ASSET[tier],g),col=TEAM[c].glow;
+    // glowing parts are drawn at full brightness whatever the room lighting: the blade (team colour), its halo, and the hammer's sparks
+    const tint=m=>{if(m.name!=='MeleeGlow'&&m.name!=='MeleeHalo'&&m.name!=='MeleeSpark')return m;const k=m.name+col;
+      if(!MGLOW[k]){MGLOW[k]=m.name==='MeleeSpark'?new THREE.MeshBasicMaterial({color:0xffe95a}):m.name==='MeleeGlow'?new THREE.MeshBasicMaterial({color:col})
+        :new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:.3,depthWrite:false});MGLOW[k].name=m.name;MGLOW[k]._shared=true;}return MGLOW[k];};
+    o.traverse(x=>{if(x.isMesh){x.material=Array.isArray(x.material)?x.material.map(tint):tint(x.material);x.castShadow=false;}});
+    return g;}
+  return meleeModelSimple(tier,c);
+}
+function meleeThumb(tier){
+  const key='melee'+tier,T=thumbRenderer();if(T.cache[key])return T.cache[key];
+  const h=new THREE.Group(),m=meleeModel(tier,'w');m.position.y=-.52;h.add(m);h.rotation.z=-.9;h.rotation.y=.35;
+  return T.cache[key]=snap(h,c=>{c.position.set(0,.05,1.75);c.lookAt(0,0,0);},224,132);
+}
+function meleeModelSimple(tier,c){
   const g=new THREE.Group(),add=(geo,mat,x,y,z)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);g.add(m);return m;};
   const gold=stdMat(0xf2b134,{metalness:.45,roughness:.3}),dark=stdMat(0x26324f,{roughness:.5});
   if(tier===2){add(new THREE.CylinderGeometry(.035,.04,.95,10),dark,0,.4,0);add(new THREE.BoxGeometry(.4,.26,.26),stdMat(0x8a94a6,{metalness:.5,roughness:.35}),0,.92,0);
@@ -2831,7 +2849,8 @@ function renderArmory(){
     const t=ARM.tab,ids=weaponsFor(t);
     if(t==='k'){const tier=Math.min(2,PROF.melee||0),m=MELEE[tier],nx=MELEE[tier+1];
       html+=`<div class="wcard" style="border-style:dashed"><div class="row" style="justify-content:space-between"><b>Melee: ${m.name}</b><span class="tag">Press V in a duel</span></div>
-        <div class="wdesc">${m.desc} ${m.dmg} per swing${m.bolt?', lightning bolt '+m.bolt:''}.</div>
+        <div class="row" style="gap:10px;align-items:center"><img src="${meleeThumb(tier)}" alt="" style="width:112px;height:66px;flex:none;background:#fff8ea;border-radius:10px;border:2px solid var(--line)">
+        <div class="wdesc" style="flex:1">${m.desc} ${m.dmg} per swing${m.bolt?', lightning bolt '+m.bolt:''}.</div></div>
         <div class="row" style="margin-top:6px">${nx?`<button class="btn small pink" data-melee="${tier+1}" title="${nx.desc}">Upgrade to ${nx.name} ◈${nx.cost}</button>`:'<span class="tag ok">✓ Fully upgraded</span>'}</div>
         <div class="wdesc" style="margin-top:6px"><b>Last Stand:</b> once per duel, a King who is knocked down gets ${LAST_STAND.time} seconds and one pistol shot. A hit puts him back on his feet with ${LAST_STAND.hp} health.</div></div>`;}
     if(!ARM.sel||!ids.includes(ARM.sel))ARM.sel=PROF.loadout[t];
