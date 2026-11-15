@@ -323,15 +323,61 @@ function quad(a, b, c, d, tex, rep) {
   g.computeVertexNormals();
   const m = new THREE.Mesh(g, mat(0xffffff, {side: THREE.DoubleSide, map: tex})); m.receiveShadow = true; scene.add(m); solids.push(m); return m;
 }
-// Blender models (assets/models.glb): material names say how to paint each part
+// Hand-inked models: every model surface gets drawn wear marks, hatch lines in its shadows, and a heavy black outline
+const INK_GRIT = drawn(512, 512, (g, W, H) => {          // scratches, nicks and worn patches
+  g.fillStyle = '#fff'; g.fillRect(0, 0, W, H);
+  for (let i = 0; i < 16; i++) { g.fillStyle = `rgba(0,0,0,${.07 + rnd() * .1})`; g.beginPath(); g.ellipse(rnd() * W, rnd() * H, 20 + rnd() * 50, 10 + rnd() * 26, rnd() * 3, 0, 7); g.fill(); }
+  g.strokeStyle = '#000';
+  for (let i = 0; i < 70; i++) {                         // little clusters of parallel strokes
+    const x = rnd() * W, y = rnd() * H, a = rnd() * 6.28, n = 2 + Math.floor(rnd() * 3), l = 10 + rnd() * 26;
+    for (let k = 0; k < n; k++) {
+      const ox = Math.cos(a + 1.57) * k * 5, oy = Math.sin(a + 1.57) * k * 5, ll = l * (.5 + rnd() * .6);
+      g.lineWidth = 1.2 + rnd() * 2.2; g.beginPath(); g.moveTo(x + ox, y + oy); g.lineTo(x + ox + Math.cos(a) * ll, y + oy + Math.sin(a) * ll); g.stroke();
+    }
+  }
+  g.fillStyle = '#000'; for (let i = 0; i < 160; i++) g.fillRect(rnd() * W, rnd() * H, 1 + rnd() * 2.5, 1 + rnd() * 2.5);
+});
+const INK_HATCH = drawn(512, 512, (g, W, H) => {         // loose diagonal hatching for the shadow side
+  g.fillStyle = '#fff'; g.fillRect(0, 0, W, H); g.strokeStyle = '#000';
+  for (let d = -H; d < W; d += 9) {
+    let t = rnd() * 30;
+    while (t < H * 1.5) {
+      const l = 30 + rnd() * 90, j = (rnd() - .5) * 3; g.lineWidth = 1.5 + rnd() * 3;
+      g.beginPath(); g.moveTo(d + t + j, t); g.lineTo(d + t + l + j, t + l); g.stroke(); t += l + 8 + rnd() * 30;
+    }
+  }
+});
+function inkMat(c) {
+  const m = mat(c);
+  m.onBeforeCompile = sh => {
+    sh.uniforms.tGrit = {value: INK_GRIT}; sh.uniforms.tHatch = {value: INK_HATCH};
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', 'varying vec3 vInkP; varying vec3 vInkN;\n#include <common>')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvInkP = position; vInkN = normal;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', 'varying vec3 vInkP; varying vec3 vInkN; uniform sampler2D tGrit, tHatch;\n#include <common>')
+      .replace('#include <color_fragment>', `#include <color_fragment>
+        vec3 inkN = abs(vInkN); vec2 inkUv = inkN.x > inkN.y && inkN.x > inkN.z ? vInkP.yz : inkN.y > inkN.z ? vInkP.xz : vInkP.xy;
+        vec3 inkBase = diffuseColor.rgb;
+        diffuseColor.rgb *= mix(.3, 1., texture2D(tGrit, inkUv * .9).r);`)
+      .replace('#include <tonemapping_fragment>', `float inkLit = dot(outgoingLight, vec3(.3, .59, .11)) / max(dot(inkBase, vec3(.3, .59, .11)), .04);
+        float inkShade = 1. - smoothstep(.5, .78, inkLit);
+        gl_FragColor.rgb *= mix(1., mix(.22, 1., texture2D(tHatch, inkUv * 1.5).r), inkShade);
+        #include <tonemapping_fragment>`);
+  };
+  return m;
+}
+const hullMat = new THREE.MeshBasicMaterial({color: 0x0e0e14, side: THREE.BackSide});      // the outline: a black shell, pushed out along the normals
+hullMat.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ntransformed += normalize(normal) * .034;'); };
+const NO_HULL = /^(ship|lighthouse|piling|rock|link|coil|cleat|lamp|barrel)/;
 const matCache = {};
 function namedMat(n, ov) {
   const unlit = n.startsWith('glow_'), c = ov && n in ov ? ov[n] : parseInt(n.split('_')[1], 16) || 0x888888, k = (unlit ? 'g' : 't') + c;
-  return matCache[k] || (matCache[k] = unlit ? glow(c) : mat(c));
+  return matCache[k] || (matCache[k] = unlit ? glow(c) : inkMat(c));
 }
 function model(name, ov) {
   const o = MODELS[name].clone(true);
-  o.traverse(m => { if (m.isMesh) { m.material = namedMat(m.material.name, ov); m.castShadow = !m.material.name.startsWith('glow') && m.material.type !== 'MeshBasicMaterial'; m.receiveShadow = true; } });
+  const parts = [];
+  o.traverse(m => { if (m.isMesh) { parts.push(m); m.material = namedMat(m.material.name, ov); m.castShadow = !m.material.name.startsWith('glow') && m.material.type !== 'MeshBasicMaterial'; m.receiveShadow = true; } });
+  if (!NO_HULL.test(name)) for (const m of parts) if (m.material.type !== 'MeshBasicMaterial') m.add(new THREE.Mesh(m.geometry, hullMat));
   scene.add(o); return o;
 }
 
