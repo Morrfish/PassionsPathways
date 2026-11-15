@@ -95,22 +95,11 @@ def tone(hexname, k):       # a lighter or darker shade of a c_RRGGBB colour, fo
     h = hexname.split('_')[1]; c = [min(255, int(int(h[i:i + 2], 16) * k)) for i in (0, 2, 4)]
     return hexname.split('_')[0] + '_%02x%02x%02x' % tuple(c)
 def face(z, y, w, brow='c_2c2420', style='open', nose=1.0):
+    """The sculpted part of a face: jaw, cheeks and nose. Eyes, brows, mouth and lines are drawn on in the game (FACES in game.src.html)."""
     skin = CUR['skin'].replace('skin_', 'face_')      # face_ parts take no outline, so features do not ring themselves in black
-    sph(.17, (0, -.1, z - .1), skin, scale=(1.05, 1, .95))                               # full jaw
-    for s in (-1, 1):
-        sph(.095, (s * .125, y + .075, z - .075), skin, scale=(1, .8, .95))             # rounded cheek
-        sph(.05, (s * .15, y + .028, z - .085), 'face_e08f78', scale=(1.1, .35, .8))       # blush
-        if style == 'happy':                                                              # eyes creased shut in a smile
-            box((.1, .03, .028), (s * w, y + .02, z + .005), INK, rot=(0, s * R(14), 0))
-            sph(.07, (s * w, y + .03, z + .09), brow, scale=(1.5, .6, .6))
-        else:
-            sph(.05, (s * w, y + .04, z), 'face_f4f0e6', scale=(1.05, .5, 1.1))
-            sph(.027, (s * w, y + .016, z - .008), 'c_3a2618', scale=(1, .6, 1.1))
-            sph(.012, (s * w - .012, y - .004, z + .012), 'glow_ffffff')
-            box((.13, .045, .05 if style == 'stern' else .032), (s * w, y + .008, z + (.034 if style == 'stern' else .046)), INK, rot=(0, s * R(-12 if style == 'stern' else -5), 0), r=.012)
-            box((.15, .05, .05), (s * w, y + .012, z + .1), brow, rot=(0, s * R(-14 if style == 'stern' else -7), 0), r=.02)
-    sph(.055 * nose, (0, y - .012, z - .06), tone(skin, .93), scale=(.95, 1, 1.15))
-    if style != 'happy': box((.11, .03, .024), (0, y + .025, z - .155), 'c_8a4a3e', r=.01)
+    sph(.17, (0, -.08, z - .1), skin, scale=(1.05, 1, .95))                              # full jaw
+    sph(.04 * nose, (0, y + .012, z - .06), tone(skin, .9), scale=(.85, 1.1, 1.2))        # nose, with a bridge
+    limb((0, y + .03, z + .02), (0, y - .0, z - .05), .022 * nose, .036 * nose, tone(skin, .9), v=6)
 def hair_frame(col, z=1.86, long=False):      # what shows under the hat: a fringe and locks at the temples
     for x in (-.15, -.05, .05, .15): sph(.075, (x, -.2 + abs(x) * .25, z - .03), col, scale=(1, .7, .8))
     for s in (-1, 1): sph(.1, (s * .215, -.08, z - (.2 if long else .14)), col, scale=(.6, 1, 1.9 if long else 1.3))

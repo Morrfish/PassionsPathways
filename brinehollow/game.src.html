@@ -396,6 +396,79 @@ function inkMat(c, kind) {
 const hullMat = new THREE.MeshBasicMaterial({color: 0x0b0b10, side: THREE.BackSide});      // the outline: a black shell whose thickness wavers like a brush line
 hullMat.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
   transformed += normalize(normal) * (.026 + .03 * abs(sin(position.x * 9. + position.y * 6.) * sin(position.z * 8. - position.y * 5.)) + .012 * sin(position.y * 23. + position.x * 17.));`); };
+// Drawn faces: each character's eyes, brows, mouth and lines are inked on a canvas and wrapped over the front of the head.
+const WHITE = '#efe9df', DARK = '#2a201c', BLACK = '#17120f';
+const FACES = {
+  breakwater: {k: 1.06, eyes: 'narrow', brow: 1.1, browCol: WHITE, browW: 11, old: 1, mouth: 'none'},
+  mainsail:   {k: 1.1, eyes: 'open', brow: .25, lashes: 1, freckles: 1, mouth: 'flat'},
+  drift:      {k: .95, eyes: 'open', brow: 1, scar: 1, freckles: 1, mouth: 'frown'},
+  rivet:      {k: 1.02, eyes: 'narrow', brow: 1, browW: 10, scar: 1, mouth: 'none'},
+  bell:       {k: .88, eyes: 'wide', brow: -.3, lashes: 1, freckles: 1, blush: 1, mouth: 'smile', iris: '#4f6a34'},
+  kelp:       {k: 1.0, eyes: 'open', brow: .2, lashes: 1, freckles: 1, mouth: 'flat', browCol: BLACK},
+  skiff:      {k: .86, eyes: 'open', brow: .5, browW: 10, mouth: 'smirk', browCol: BLACK, blush: 1},
+  brine:      {k: .98, eyes: 'open', brow: 0, lashes: 1, freckles: 1, mouth: 'smile', browCol: BLACK},
+  glimmer:    {k: 1.08, eyes: 'narrow', brow: 1, browW: 9, mouth: 'frown', browCol: BLACK},
+  wickie:     {k: .68, eyes: 'happy', brow: -.4, browCol: WHITE, browW: 11, old: 1, blush: 1, mouth: 'none'},
+  netter:     {k: .98, eyes: 'open', brow: .9, lashes: 1, scar: 1, mouth: 'frown'},
+  cinder:     {k: 1.04, eyes: 'narrow', brow: 1.2, browCol: BLACK, browW: 12, scar: 1, mouth: 'none'},
+  gaff:       {k: 1.1, eyes: 'narrow', brow: 1, scar: 1, mouth: 'frown'},
+  knuckle:    {k: 1.04, eyes: 'narrow', brow: 1.2, browW: 11, stubble: 1, mouth: 'frown'},
+  soot:       {k: .92, eyes: 'open', brow: 1, mouth: 'none'},
+  ember:      {k: 1.0, eyes: 'open', brow: .1, lashes: 1, scar: 1, freckles: 1, mouth: 'smile'},
+  tiller:     {k: 1.0, eyes: 'open', brow: .1, lashes: 1, freckles: 1, mouth: 'smile'},
+  copper:     {k: 1.02, eyes: 'open', brow: .5, browW: 9, mouth: 'none'},
+  undertow:   {k: 1.02, eyes: 'narrow', brow: .9, scar: 1, freckles: 1, mouth: 'smirk'},
+};
+const facePatch = new THREE.SphereGeometry(1, 20, 14, Math.PI / 2 - .85, 1.7, .75, 1.64);
+function faceTex(f) {
+  return drawn(256, 256, g => {
+    const line = (w, path) => { g.lineWidth = w; g.strokeStyle = BLACK; g.beginPath(); path(); g.stroke(); };
+    const ey = 122, h = {narrow: 9, open: 13, wide: 17, happy: 6}[f.eyes], browCol = f.browCol || DARK, t = f.brow;
+    if (f.blush) for (const s of [-1, 1]) { g.fillStyle = 'rgba(225,95,75,.3)'; g.beginPath(); g.ellipse(128 + s * 56, 156, 20, 12, 0, 0, 7); g.fill(); }
+    if (f.old) for (const y of [70, 82]) line(2.2, () => { g.moveTo(92, y + 3); g.quadraticCurveTo(128, y - 5, 164, y + 3); });
+    for (const s of [-1, 1]) {
+      const ex = 128 + s * 46;
+      g.fillStyle = 'rgba(70,35,25,.3)'; g.beginPath(); g.ellipse(ex, ey - 5, 31, 16, 0, 0, 7); g.fill();          // the socket sits in shadow under the brow
+      if (f.eyes === 'happy') line(5.5, () => g.arc(ex, ey + 8, 17, Math.PI * 1.15, Math.PI * 1.85));
+      else {
+        g.beginPath(); g.moveTo(ex - 27, ey + 1); g.quadraticCurveTo(ex, ey - h * 1.7, ex + 27, ey); g.quadraticCurveTo(ex, ey + h * 1.1, ex - 27, ey + 1); g.closePath();
+        g.fillStyle = '#f3ecdc'; g.fill(); g.save(); g.clip();
+        g.fillStyle = f.iris || '#3a2416'; g.beginPath(); g.arc(ex - s * 2, ey - 1, 11, 0, 7); g.fill();
+        g.fillStyle = '#000'; g.beginPath(); g.arc(ex - s * 2, ey - 1, 5, 0, 7); g.fill();
+        g.fillStyle = '#fff'; g.beginPath(); g.arc(ex - s * 2 - 4, ey - 5, 2.6, 0, 7); g.fill(); g.restore();
+        line(7, () => { g.moveTo(ex - 29, ey + 3); g.quadraticCurveTo(ex, ey - h * 1.7 - 1, ex + 29, ey); });           // heavy upper lid
+        line(2.4, () => { g.moveTo(ex - 20, ey + h * .7); g.quadraticCurveTo(ex, ey + h * 1.15, ex + 21, ey + h * .5); });
+        if (f.lashes) line(3.2, () => { g.moveTo(ex + s * 28, ey); g.lineTo(ex + s * 37, ey - 8); });
+        if (t > .6 || f.old) line(1.8, () => g.arc(ex, ey + 4, 19, Math.PI * .2, Math.PI * .8));                        // bags under hard eyes
+      }
+      if (f.old) for (let i = 0; i < 3; i++) line(1.8, () => { g.moveTo(ex + s * 25, ey + i * 4 - 2); g.lineTo(ex + s * 35, ey + i * 7 - 6); });
+      const by = ey - 19 - h * .8, w = f.browW || 7, ix = ex - s * 29, ox = ex + s * 33, iy = by + t * 9, oy = by - t * 5 + 3;   // brow: a tapered slab
+      g.beginPath(); g.moveTo(ix, iy - w / 2); g.quadraticCurveTo(ex, Math.min(iy, oy) - w * .9, ox, oy); g.quadraticCurveTo(ex, Math.min(iy, oy) + w * .5, ix, iy + w / 2); g.closePath();
+      g.fillStyle = browCol; g.fill(); g.lineWidth = 2; g.strokeStyle = BLACK; g.stroke();
+      line(2.6, () => { g.moveTo(128 + s * 9, ey - 4); g.quadraticCurveTo(128 + s * 8, 150, 128 + s * 18, 166); });     // nose: bridge and wing
+      line(2.6, () => g.arc(128 + s * 12, 169, 7, s > 0 ? -.3 : Math.PI * .4, s > 0 ? Math.PI * .6 : Math.PI * 1.3));
+      line(f.old ? 3 : 2, () => { g.moveTo(128 + s * 23, 168); g.quadraticCurveTo(128 + s * 35, 186, 128 + s * 30, 206); });   // fold from nose to mouth
+      for (let i = 0; i < 3; i++) line(2, () => { g.moveTo(128 + s * (64 + i * 5), 148 + i * 7); g.lineTo(128 + s * (52 + i * 5), 163 + i * 7); });   // cheekbone hatching
+    }
+    if (t > .6) for (const s of [-1, 1]) line(2.4, () => { g.moveTo(128 + s * 5, ey - 30); g.lineTo(128 + s * 7, ey - 16); });   // frown lines
+    g.fillStyle = 'rgba(60,30,20,.38)'; g.beginPath(); g.ellipse(128, 179, 17, 5, 0, 0, 7); g.fill();
+    const my = 205;
+    if (f.mouth === 'flat') line(4, () => { g.moveTo(103, my); g.quadraticCurveTo(128, my + 2, 153, my); });
+    if (f.mouth === 'frown') line(4.5, () => { g.moveTo(101, my + 6); g.quadraticCurveTo(128, my - 6, 155, my + 6); });
+    if (f.mouth === 'smile') { line(4, () => { g.moveTo(99, my - 4); g.quadraticCurveTo(128, my + 11, 157, my - 4); }); for (const s of [-1, 1]) line(2.5, () => { g.moveTo(128 + s * 31, my - 9); g.lineTo(128 + s * 28, my - 1); }); }
+    if (f.mouth === 'smirk') line(4, () => { g.moveTo(104, my + 3); g.quadraticCurveTo(132, my + 5, 157, my - 7); });
+    if (f.mouth !== 'none') line(2, () => { g.moveTo(116, my + 13); g.lineTo(140, my + 13); });
+    if (f.scar) { line(3, () => { g.moveTo(66, 134); g.lineTo(84, 168); }); for (let i = 0; i < 3; i++) line(2, () => { g.moveTo(66 + i * 6, 146 + i * 8); g.lineTo(78 + i * 6, 140 + i * 8); }); }
+    if (f.freckles) { g.fillStyle = 'rgba(110,55,30,.75)'; for (let i = 0; i < 22; i++) { g.beginPath(); g.arc(70 + rnd() * 116, 140 + rnd() * 20, 1.5, 0, 7); g.fill(); } }
+    if (f.stubble) { g.fillStyle = 'rgba(25,18,14,.55)'; for (let i = 0; i < 150; i++) g.fillRect(74 + rnd() * 108, 184 + rnd() * 56, 1.6, 1.6); }
+  });
+}
+function addFace(o, name) {
+  const f = FACES[name];
+  f.mat = f.mat || new THREE.MeshBasicMaterial({map: faceTex(f), transparent: true, depthWrite: false});
+  const m = new THREE.Mesh(facePatch, f.mat);
+  m.scale.set(.335 * f.k, .37 * f.k, .365 * f.k); m.position.set(0, 2.206 * f.k, .039 * f.k); o.add(m);
+}
 const NO_HULL = /^(ship|lighthouse|piling|rock|link|coil|cleat|lamp|barrel)/;
 const matCache = {};
 function namedMat(n, ov) {
@@ -408,6 +481,7 @@ function model(name, ov) {
   const parts = [];
   o.traverse(m => { if (m.isMesh) { parts.push(m); const n = m.material.name; m.material = namedMat(n, ov); m.castShadow = m.material.type !== 'MeshBasicMaterial'; m.receiveShadow = !/^(skin|face)_/.test(n); m.userData.noHull = n.startsWith('face_'); } });   // faces are never lost in hat shadow
   if (!NO_HULL.test(name)) for (const m of parts) if (m.material.type !== 'MeshBasicMaterial' && !m.userData.noHull) m.add(new THREE.Mesh(m.geometry, hullMat));
+  if (FACES[name]) addFace(o, name);
   scene.add(o); return o;
 }
 
