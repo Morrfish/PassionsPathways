@@ -105,9 +105,9 @@ def face(z, y, w, brow='c_2c2420', style='open', nose=1.0):
             sph(.07, (s * w, y + .03, z + .09), brow, scale=(1.5, .6, .6))
         else:
             sph(.05, (s * w, y + .04, z), 'face_f4f0e6', scale=(1.05, .5, 1.1))
-            sph(.036, (s * w, y + .016, z - .004), 'c_3a2618', scale=(1, .6, 1.15))
+            sph(.027, (s * w, y + .016, z - .008), 'c_3a2618', scale=(1, .6, 1.1))
             sph(.012, (s * w - .012, y - .004, z + .012), 'glow_ffffff')
-            box((.125, .035, .03), (s * w, y + .012, z + .048), INK, rot=(0, s * R(-6), 0), r=.012)
+            box((.13, .045, .05 if style == 'stern' else .032), (s * w, y + .008, z + (.034 if style == 'stern' else .046)), INK, rot=(0, s * R(-12 if style == 'stern' else -5), 0), r=.012)
             box((.15, .05, .05), (s * w, y + .012, z + .1), brow, rot=(0, s * R(-14 if style == 'stern' else -7), 0), r=.02)
     sph(.055 * nose, (0, y - .012, z - .06), tone(skin, .93), scale=(.95, 1, 1.15))
     if style != 'happy': box((.11, .03, .024), (0, y + .025, z - .155), 'c_8a4a3e', r=.01)
@@ -403,7 +403,9 @@ done('ember', 1.0)
 sx = person(w=.98, hem=.54, waist=.38, chest=.44, coat=.5, legs='c_4a3a34', legw=.34, aw=.2, cuff=False, bare=True, long_hair=True, skin='skin_e0aa80')
 face(1.72, -.28, .09); hat(.62, 1.86); braid(0, 5); strap(.4); strap(.4, -1)
 box((.24, .26, .2), (-sx - .07, -.02, 1.02), CREAM); box((.24, .2, .24), (sx - .03, -.56, 1.33), CREAM)
-cyl(.06, .06, 1.7, (-sx - .28, -.2, 1.55), WOOD); box((.36, .08, .95), (-sx - .28, -.2, .48), 'c_8a6a48'); box((.22, .1, .1), (-sx - .28, -.2, 2.42), WOOD)
+RIG['lift'] = 0.0      # the oar stands on the ground
+cyl(.06, .06, 1.9, (-sx - .28, -.2, 1.75), WOOD); box((.36, .08, .95), (-sx - .28, -.2, .48), 'c_8a6a48'); box((.22, .1, .1), (-sx - .28, -.2, 2.72), WOOD)
+RIG['lift'] = LIFT
 pouch(.36, -.44, .95); pouch(-.3, -.44, .95)
 done('tiller', 1.0)
 

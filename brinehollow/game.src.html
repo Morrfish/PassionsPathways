@@ -337,42 +337,71 @@ const INK_GRIT = drawn(512, 512, (g, W, H) => {          // scratches, nicks and
   }
   g.fillStyle = '#000'; for (let i = 0; i < 160; i++) g.fillRect(rnd() * W, rnd() * H, 1 + rnd() * 2.5, 1 + rnd() * 2.5);
 });
-const INK_HATCH = drawn(512, 512, (g, W, H) => {         // loose diagonal hatching for the shadow side
+const INK_HATCH = drawn(512, 512, (g, W, H) => {         // loose diagonal hatching, in patches with gaps between them
   g.fillStyle = '#fff'; g.fillRect(0, 0, W, H); g.strokeStyle = '#000';
   for (let d = -H; d < W; d += 9) {
     let t = rnd() * 30;
     while (t < H * 1.5) {
       const l = 30 + rnd() * 90, j = (rnd() - .5) * 3; g.lineWidth = 1.5 + rnd() * 3;
-      g.beginPath(); g.moveTo(d + t + j, t); g.lineTo(d + t + l + j, t + l); g.stroke(); t += l + 8 + rnd() * 30;
+      if (rnd() > .28) { g.beginPath(); g.moveTo(d + t + j, t); g.lineTo(d + t + l + j, t + l); g.stroke(); }
+      t += l + 8 + rnd() * 40;
     }
   }
 });
-function inkMat(c, skin) {      // skin takes only faint marks, so faces stay readable
-  const m = mat(c), gLo = skin ? '.82' : '.3', hLo = skin ? '.72' : '.22';
-  m.customProgramCacheKey = () => 'ink' + gLo;
+const INK_CHIP = drawn(512, 512, (g, W, H) => {          // soft blobs: thresholded in the shader into ragged chips of wear
+  g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+  for (let i = 0; i < 120; i++) {
+    const x = rnd() * W, y = rnd() * H, r = 8 + rnd() * 34, gr = g.createRadialGradient(x, y, 0, x, y, r);
+    gr.addColorStop(0, `rgba(255,255,255,${.35 + rnd() * .5})`); gr.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = gr; g.beginPath(); g.ellipse(x, y, r, r * (.4 + rnd() * .6), rnd() * 3, 0, 7); g.fill();
+  }
+  g.fillStyle = '#fff'; for (let i = 0; i < 260; i++) g.fillRect(rnd() * W, rnd() * H, 1 + rnd() * 3, 1 + rnd() * 3);
+});
+const inkBands = new THREE.DataTexture(new Uint8Array([64, 64, 64, 255, 168, 168, 168, 255, 255, 255, 255, 255]), 3, 1, THREE.RGBAFormat);   // harder shadow than the scenery
+inkBands.minFilter = inkBands.magFilter = THREE.NearestFilter; inkBands.needsUpdate = true;
+// Wear is localized: it gathers on seams and edges, and each kind of surface wears its own way.
+const WEAR = {
+  cloth:   {chip: 'mix(inkBase, vec3(.82, .76, .6), .62)', amt: '.85', at: '.7',  grit: '.45', seam: '.5',  hatch: '.2'},    // pale threadbare patches
+  leather: {chip: 'inkBase * .45',                          amt: '.9',  at: '.52', grit: '.25', seam: '.6',  hatch: '.2'},    // dark scuffs and cracks
+  metal:   {chip: 'vec3(.38, .2, .11)',                     amt: '.85', at: '.55', grit: '.3',  seam: '.6',  hatch: '.25'},   // rust and pitting
+  skin:    {chip: 'inkBase',                                amt: '0.',  at: '.9',  grit: '.86', seam: '.22', hatch: '.72'},   // faces stay clean and readable
+};
+const METALS = new Set(['d9a520', '8c8f90', '33363f', '4a5568', 'b8862a', 'f0c040', 'aeb2ba', '6a6e78', '4a4e58', '55555e', '9a9ea6', '7a4a36', '2c2c34']);
+const LEATHERS = new Set(['5a4030', '7a5a40', '6b4a34', '2c2630', '4a3a30', '8a6a48', '3a3038', '4a3424']);
+function inkMat(c, kind) {
+  const m = mat(c, {gradientMap: inkBands}), w = WEAR[kind];
+  m.customProgramCacheKey = () => 'ink-' + kind;
+  m.extensions = {derivatives: true};
   m.onBeforeCompile = sh => {
-    sh.uniforms.tGrit = {value: INK_GRIT}; sh.uniforms.tHatch = {value: INK_HATCH};
+    sh.uniforms.tGrit = {value: INK_GRIT}; sh.uniforms.tHatch = {value: INK_HATCH}; sh.uniforms.tChip = {value: INK_CHIP};
     sh.vertexShader = sh.vertexShader.replace('#include <common>', 'varying vec3 vInkP; varying vec3 vInkN;\n#include <common>')
       .replace('#include <begin_vertex>', '#include <begin_vertex>\nvInkP = position; vInkN = normal;');
-    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', 'varying vec3 vInkP; varying vec3 vInkN; uniform sampler2D tGrit, tHatch;\n#include <common>')
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', 'varying vec3 vInkP; varying vec3 vInkN; uniform sampler2D tGrit, tHatch, tChip;\n#include <common>')
       .replace('#include <color_fragment>', `#include <color_fragment>
         vec3 inkN = abs(vInkN); vec2 inkUv = inkN.x > inkN.y && inkN.x > inkN.z ? vInkP.yz : inkN.y > inkN.z ? vInkP.xz : vInkP.xy;
         vec3 inkBase = diffuseColor.rgb;
-        diffuseColor.rgb *= mix(${gLo}, 1., texture2D(tGrit, inkUv * .9).r);`)
-      .replace('#include <tonemapping_fragment>', `float inkLit = dot(outgoingLight, vec3(.3, .59, .11)) / max(dot(inkBase, vec3(.3, .59, .11)), .04);
-        float inkShade = 1. - smoothstep(.5, .78, inkLit);
-        gl_FragColor.rgb *= mix(1., mix(${hLo}, 1., texture2D(tHatch, inkUv * 1.5).r), inkShade);
+        float inkSeam = clamp(length(fwidth(normalize(vInkN))) * 2.4, 0., 1.);                 // high where the surface turns sharply: seams, rims, edges
+        float inkWear = smoothstep(${w.at}, ${w.at} + .07, texture2D(tChip, inkUv * .75).r + inkSeam * .5);
+        diffuseColor.rgb = mix(diffuseColor.rgb, ${w.chip}, inkWear * ${w.amt});
+        diffuseColor.rgb *= mix(${w.grit}, 1., texture2D(tGrit, inkUv * .9).r);
+        diffuseColor.rgb *= 1. - ${w.seam} * smoothstep(.4, .85, inkSeam);`)
+      .replace('#include <tonemapping_fragment>', `float inkLit = dot(outgoingLight, vec3(.3, .59, .11)) / max(dot(diffuseColor.rgb, vec3(.3, .59, .11)), .04);
+        float inkS1 = 1. - smoothstep(.5, .7, inkLit), inkS2 = 1. - smoothstep(.34, .44, inkLit);   // hatch in shadow, cross-hatch only in the deepest
+        gl_FragColor.rgb *= mix(1., mix(${w.hatch}, 1., texture2D(tHatch, inkUv * 1.5).r), inkS1);
+        gl_FragColor.rgb *= mix(1., mix(${w.hatch}, 1., texture2D(tHatch, vec2(-inkUv.y, inkUv.x) * 1.5).r), inkS2);
         #include <tonemapping_fragment>`);
   };
   return m;
 }
-const hullMat = new THREE.MeshBasicMaterial({color: 0x0e0e14, side: THREE.BackSide});      // the outline: a black shell, pushed out along the normals
-hullMat.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ntransformed += normalize(normal) * .034;'); };
+const hullMat = new THREE.MeshBasicMaterial({color: 0x0b0b10, side: THREE.BackSide});      // the outline: a black shell whose thickness wavers like a brush line
+hullMat.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+  transformed += normalize(normal) * (.026 + .03 * abs(sin(position.x * 9. + position.y * 6.) * sin(position.z * 8. - position.y * 5.)) + .012 * sin(position.y * 23. + position.x * 17.));`); };
 const NO_HULL = /^(ship|lighthouse|piling|rock|link|coil|cleat|lamp|barrel)/;
 const matCache = {};
 function namedMat(n, ov) {
-  const unlit = n.startsWith('glow_'), skin = /^(skin|face)_/.test(n), c = ov && n in ov ? ov[n] : parseInt(n.split('_')[1], 16) || 0x888888, k = (unlit ? 'g' : skin ? 's' : 't') + c;
-  return matCache[k] || (matCache[k] = unlit ? glow(c) : inkMat(c, skin));
+  const unlit = n.startsWith('glow_'), hx = n.split('_')[1], c = ov && n in ov ? ov[n] : parseInt(hx, 16) || 0x888888;
+  const kind = /^(skin|face)_/.test(n) ? 'skin' : METALS.has(hx) ? 'metal' : LEATHERS.has(hx) ? 'leather' : 'cloth', k = (unlit ? 'glow' : kind) + c;
+  return matCache[k] || (matCache[k] = unlit ? glow(c) : inkMat(c, kind));
 }
 function model(name, ov) {
   const o = MODELS[name].clone(true);

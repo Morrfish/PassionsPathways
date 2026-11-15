@@ -15,10 +15,10 @@ A playable prototype of the **tide and lantern loop** from the Brinehollow desig
 - **Foghorns** knock heroes back with a sound-cannon blast, and guard the chain until they fall.
 
 ## Look
-The game is drawn as a graphic novel, following the art sheets in `reference/` (first look, tides and dock, props, the Teal and Rust crew turnarounds, and the face and gear-pose sheets):
+The game is drawn as a graphic novel, following the art sheets in `reference/` (first look, tides and dock, props, the Teal and Rust crew turnarounds, the face and gear-pose sheets, and the inked style sheets):
 - **Dusk harbour:** deep blue sky with cloud banks, timber fronts with lamp-lit windows that glow in shadow, a slab dock, a muddy seabed at low tide and a navy sea at high tide.
 - **Ink and cel shadows:** flat three-band toon shading, hard cast shadows, black ink outlines found from scene depth, halftone dots in the shadows and sky, and paper grain.
-- **Hand-inked models:** every model has a heavy black outline (a black shell pushed out along the normals), drawn scratch and wear marks on its flat colours, and loose diagonal hatch lines on its shadow side.
+- **Hand-inked models:** every model has a heavy black outline whose thickness wavers like a brush line, a hard two-tone shadow, hatching in shadow with cross-hatching only in the deepest parts, and ink in its seams. Wear is localized: it gathers on seams and edges, and each surface wears its own way (pale threadbare patches on cloth, dark scuffs on leather and wood, rust and pitting on metal). Skin takes only faint marks.
 - **Proportions and faces:** characters have long legs, heads a third larger than the body suggests, and big hands. Skin takes only faint ink marks and never falls into hat shadow, so faces stay readable.
 - **Rounded forms:** models are smooth-shaded with rounded edges, tapered limbs and soft shoulders. Faces have rounded cheeks and noses, lidded eyes, brows and framing hair; coats have open tilted collars, buttons, turned cuffs and pleated skirts, so the cel shading reads as folds. Mainsail's ribbon comes over the shoulder, Undertow's wave is on the chest, and Wickie has open cheeks over a parted beard.
 - **The starting cast (Blender):** twenty characters built from one rig in `blender/models.py`, each with its own build, coat length, headgear and one piece of signature gear. Every hero carries the harpoon gun; the signature gear is in the free hand or on the back.
