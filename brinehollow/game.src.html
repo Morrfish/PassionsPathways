@@ -400,7 +400,7 @@ hullMat.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#in
 const WHITE = '#efe9df', DARK = '#2a201c', BLACK = '#17120f';
 const FACES = {
   breakwater: {k: 1.06, eyes: 'narrow', brow: 1.1, browCol: WHITE, browW: 11, old: 1, mouth: 'none'},
-  mainsail:   {k: 1.1, eyes: 'open', brow: .25, lashes: 1, freckles: 1, mouth: 'flat'},
+  mainsail:   {k: 1.05, sculpt: 1, eyes: 'open', brow: .25, lashes: 1, freckles: 1, mouth: 'flat'},
   drift:      {k: .95, eyes: 'open', brow: 1, scar: 1, freckles: 1, mouth: 'frown'},
   rivet:      {k: 1.02, eyes: 'narrow', brow: 1, browW: 10, scar: 1, mouth: 'none'},
   bell:       {k: .88, eyes: 'wide', brow: -.3, lashes: 1, freckles: 1, blush: 1, mouth: 'smile', iris: '#4f6a34'},
@@ -430,7 +430,7 @@ function faceTex(f) {
       const ex = 128 + s * 46;
       g.fillStyle = 'rgba(70,35,25,.3)'; g.beginPath(); g.ellipse(ex, ey - 5, 31, 16, 0, 0, 7); g.fill();          // the socket sits in shadow under the brow
       if (f.eyes === 'happy') line(5.5, () => g.arc(ex, ey + 8, 17, Math.PI * 1.15, Math.PI * 1.85));
-      else {
+      else if (!f.sculpt) {
         g.beginPath(); g.moveTo(ex - 27, ey + 1); g.quadraticCurveTo(ex, ey - h * 1.7, ex + 27, ey); g.quadraticCurveTo(ex, ey + h * 1.1, ex - 27, ey + 1); g.closePath();
         g.fillStyle = '#f3ecdc'; g.fill(); g.save(); g.clip();
         g.fillStyle = f.iris || '#3a2416'; g.beginPath(); g.arc(ex - s * 2, ey - 1, 11, 0, 7); g.fill();
@@ -453,6 +453,10 @@ function faceTex(f) {
     if (t > .6) for (const s of [-1, 1]) line(2.4, () => { g.moveTo(128 + s * 5, ey - 30); g.lineTo(128 + s * 7, ey - 16); });   // frown lines
     g.fillStyle = 'rgba(60,30,20,.38)'; g.beginPath(); g.ellipse(128, 179, 17, 5, 0, 0, 7); g.fill();
     const my = 205;
+    if (f.sculpt) {                                           // lips, painted over the sculpted mouth
+      g.fillStyle = 'rgba(150,62,52,.85)'; g.beginPath(); g.moveTo(102, my); g.quadraticCurveTo(116, my - 11, 128, my - 6); g.quadraticCurveTo(140, my - 11, 154, my);
+      g.quadraticCurveTo(128, my + 15, 102, my); g.fill();
+    }
     if (f.mouth === 'flat') line(4, () => { g.moveTo(103, my); g.quadraticCurveTo(128, my + 2, 153, my); });
     if (f.mouth === 'frown') line(4.5, () => { g.moveTo(101, my + 6); g.quadraticCurveTo(128, my - 6, 155, my + 6); });
     if (f.mouth === 'smile') { line(4, () => { g.moveTo(99, my - 4); g.quadraticCurveTo(128, my + 11, 157, my - 4); }); for (const s of [-1, 1]) line(2.5, () => { g.moveTo(128 + s * 31, my - 9); g.lineTo(128 + s * 28, my - 1); }); }
@@ -465,22 +469,39 @@ function faceTex(f) {
 }
 function addFace(o, name) {
   const f = FACES[name];
+  if (f.sculpt) {            // paint the ink over the sculpted head itself, projected from the front
+    if (!f.mat) {
+      f.mat = new THREE.MeshBasicMaterial({map: faceTex(f), transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2});
+      f.mat.customProgramCacheKey = () => 'face-' + name;
+      f.mat.onBeforeCompile = sh => {
+        sh.vertexShader = sh.vertexShader.replace('#include <common>', 'varying float vFront;\n#include <common>')
+          .replace('#include <uv_vertex>', `vUv = vec2(position.x / ${(f.k * .36).toFixed(4)} + .5, (position.y / ${f.k.toFixed(4)} - 2.25) / .36 + .5); vFront = normal.z;`);
+        sh.fragmentShader = sh.fragmentShader.replace('#include <common>', 'varying float vFront;\n#include <common>')
+          .replace('#include <map_fragment>', '#include <map_fragment>\ndiffuseColor.a *= smoothstep(.1, .4, vFront);');
+      };
+    }
+    o.traverse(m => { if (m.isMesh && m.userData.mn && m.userData.mn.startsWith('head_')) m.add(new THREE.Mesh(m.geometry, f.mat)); });
+    return;
+  }
   f.mat = f.mat || new THREE.MeshBasicMaterial({map: faceTex(f), transparent: true, depthWrite: false});
   const m = new THREE.Mesh(facePatch, f.mat);
   m.scale.set(.335 * f.k, .37 * f.k, .365 * f.k); m.position.set(0, 2.206 * f.k, .039 * f.k); o.add(m);
 }
+const thinHull = new THREE.MeshBasicMaterial({color: 0x0b0b10, side: THREE.BackSide});   // finer line for the finer anatomical models
+thinHull.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
+  transformed += normalize(normal) * (.009 + .009 * abs(sin(position.x * 14. + position.y * 9.) * sin(position.z * 12. - position.y * 7.)));`); };
 const NO_HULL = /^(ship|lighthouse|piling|rock|link|coil|cleat|lamp|barrel)/;
 const matCache = {};
 function namedMat(n, ov) {
   const unlit = n.startsWith('glow_'), hx = n.split('_')[1], c = ov && n in ov ? ov[n] : parseInt(hx, 16) || 0x888888;
-  const kind = /^(skin|face)_/.test(n) ? 'skin' : METALS.has(hx) ? 'metal' : LEATHERS.has(hx) ? 'leather' : 'cloth', k = (unlit ? 'glow' : kind) + c;
+  const kind = /^(skin|face|head)_/.test(n) ? 'skin' : METALS.has(hx) ? 'metal' : LEATHERS.has(hx) ? 'leather' : 'cloth', k = (unlit ? 'glow' : kind) + c;
   return matCache[k] || (matCache[k] = unlit ? glow(c) : inkMat(c, kind));
 }
 function model(name, ov) {
   const o = MODELS[name].clone(true);
   const parts = [];
-  o.traverse(m => { if (m.isMesh) { parts.push(m); const n = m.material.name; m.material = namedMat(n, ov); m.castShadow = m.material.type !== 'MeshBasicMaterial'; m.receiveShadow = !/^(skin|face)_/.test(n); m.userData.noHull = n.startsWith('face_'); } });   // faces are never lost in hat shadow
-  if (!NO_HULL.test(name)) for (const m of parts) if (m.material.type !== 'MeshBasicMaterial' && !m.userData.noHull) m.add(new THREE.Mesh(m.geometry, hullMat));
+  o.traverse(m => { if (m.isMesh) { parts.push(m); const n = m.material.name; m.material = namedMat(n, ov); m.castShadow = m.material.type !== 'MeshBasicMaterial'; m.receiveShadow = !/^(skin|face|head)_/.test(n); m.userData.noHull = n.startsWith('face_'); m.userData.mn = n; } });   // faces are never lost in hat shadow
+  if (!NO_HULL.test(name)) for (const m of parts) if (m.material.type !== 'MeshBasicMaterial' && !m.userData.noHull) m.add(new THREE.Mesh(m.geometry, FACES[name] && FACES[name].sculpt ? thinHull : hullMat));
   if (FACES[name]) addFace(o, name);
   scene.add(o); return o;
 }
