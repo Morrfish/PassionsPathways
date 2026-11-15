@@ -1,3 +1,4 @@
 # PassionsPathways
 
 - [Bot Assembly Shop](bot-shop/) — build a robot and drive it through obstacle courses.
+- [Brinehollow](brinehollow/) — tide-and-lantern lane shooter prototype.

@@ -1,0 +1,796 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brinehollow — tide &amp; lantern prototype</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#0c1a22;color:#e9f3f0;font-family:system-ui,Segoe UI,Roboto,sans-serif;user-select:none}
+  canvas{display:block}
+  #gl,#fx{position:fixed;inset:0;width:100%;height:100%}
+  #fx{pointer-events:none}
+  .hud{position:fixed;pointer-events:none;text-shadow:0 1px 2px #000a}
+  #top{top:8px;left:50%;transform:translateX(-50%);display:flex;gap:14px;align-items:stretch}
+  .side{background:#0b1d26cc;border-radius:10px;padding:6px 10px;min-width:190px;font-size:12px}
+  .side b{font-size:13px}
+  .teal{color:#5fe0c8}.rust{color:#ff9a5c}
+  .bar{height:7px;background:#0006;border-radius:4px;margin:2px 0 4px;overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:4px}
+  #tide{background:#0b1d26e6;border-radius:12px;padding:6px 16px;text-align:center;min-width:210px;border:1px solid #ffffff22}
+  #tideName{font-size:17px;font-weight:700;letter-spacing:.12em}
+  #tideSub{font-size:12px;opacity:.9}
+  #tideBar{height:5px;background:#0007;border-radius:3px;margin-top:4px;overflow:hidden}
+  #tideBar i{display:block;height:100%;background:#7fd4ff}
+  #feed{top:86px;left:12px;font-size:13px;line-height:1.5;max-width:340px}
+  #feed div{background:#0b1d26b0;border-radius:6px;padding:2px 8px;margin-bottom:3px;width:fit-content}
+  #bl{left:14px;bottom:14px;background:#0b1d26cc;border-radius:10px;padding:8px 12px;min-width:220px;font-size:13px}
+  #hpbar{height:14px}
+  #hpbar i{background:linear-gradient(#7df0a0,#3cbf6e)}
+  #res span{margin-right:14px;font-weight:700}
+  #bc{left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:8px;align-items:flex-end}
+  .slot{background:#0b1d26cc;border-radius:10px;padding:6px 8px;width:138px;font-size:11px;border:1px solid #ffffff1c}
+  .slot.own{border-color:#ffd66b}
+  .slot h4{margin:0 0 3px;font-size:12px;display:flex;justify-content:space-between}
+  .face{opacity:.45;padding:1px 4px;border-radius:4px}
+  .face.on{opacity:1;background:#ffffff1f}
+  .ab{background:#0b1d26cc;border-radius:10px;padding:6px 8px;width:62px;text-align:center;font-size:11px;position:relative;overflow:hidden}
+  .ab kbd{display:block;font-size:15px;font-weight:700;font-family:inherit}
+  .ab i{position:absolute;left:0;bottom:0;width:100%;background:#0009}
+  #mm{right:14px;bottom:14px;background:#0b1d26cc;border-radius:10px;padding:6px}
+  #mm canvas{width:130px;height:290px}
+  #overlay{position:fixed;inset:0;background:#07141bd9;display:flex;align-items:center;justify-content:center;z-index:5}
+  #card{max-width:680px;background:#10272f;border:1px solid #ffffff25;border-radius:16px;padding:24px 30px;line-height:1.5;font-size:14px}
+  #card h1{margin:0 0 4px;letter-spacing:.14em;color:#ffd66b}
+  #card table{border-collapse:collapse;margin:8px 0}
+  #card td{padding:2px 14px 2px 0;vertical-align:top}
+  #card td:first-child{font-weight:700;color:#7fd4ff;white-space:nowrap}
+  #go{margin-top:12px;padding:10px 26px;font-size:16px;font-weight:700;border:0;border-radius:10px;background:#ffd66b;color:#10272f;cursor:pointer}
+  #dead{top:24%;left:50%;transform:translateX(-50%);font-size:24px;font-weight:700;display:none;text-align:center}
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas><canvas id="fx"></canvas>
+
+<div id="top" class="hud">
+  <div class="side"><b class="teal">TEAL CREW</b> · <span id="sp0">0</span> Spark
+    <div>Foghorn</div><div class="bar"><i id="t0" style="background:#5fe0c8"></i></div>
+    <div>Anchor Chain</div><div class="bar"><i id="c0" style="background:#5fe0c8"></i></div></div>
+  <div id="tide"><div id="tideName">LOW TIDE</div><div id="tideSub"></div><div id="tideBar"><i id="tideFill"></i></div></div>
+  <div class="side"><b class="rust">RUST CREW</b> · <span id="sp1">0</span> Spark
+    <div>Foghorn</div><div class="bar"><i id="t1" style="background:#ff9a5c"></i></div>
+    <div>Anchor Chain</div><div class="bar"><i id="c1" style="background:#ff9a5c"></i></div></div>
+</div>
+<div id="feed" class="hud"></div>
+<div id="dead" class="hud"></div>
+<div id="bl" class="hud">
+  <div class="bar" id="hpbar"><i id="hp"></i></div>
+  <div id="hptxt"></div>
+  <div id="res"><span style="color:#ffd66b">✦ <span id="spark">0</span> Spark</span><span style="color:#d9c7ff">● <span id="pearl">0</span> Pearl</span></div>
+</div>
+<div id="bc" class="hud">
+  <div class="ab"><kbd>E</kbd>Tether<i id="cdE"></i></div>
+  <div class="ab"><kbd>F</kbd>Shove<i id="cdF"></i></div>
+  <div class="ab"><kbd>Q</kbd>Brace<i id="cdQ"></i></div>
+  <div id="rig" style="display:flex;gap:8px"></div>
+</div>
+<div id="mm" class="hud"><canvas id="map" width="130" height="290"></canvas></div>
+
+<div id="overlay"><div id="card">
+  <h1>BRINEHOLLOW</h1>
+  <div id="blurb">One lane of the harbor, 3 v 3. Kill the Rust crew's <b>Foghorn</b>, then cut their <b>Anchor Chain</b> to win.
+  The <b>tide</b> turns every 70 seconds: at low tide the seabed trench on your left is a dry flank with Reef Crabs (Pearls);
+  at high tide the street floods and the trench becomes a fast current. Each wave has a glowing <b>Lantern-Bearer</b> —
+  kill it, grab the lantern and run it to one of your buoys for a big Spark payout and a bigger next wave.</div>
+  <table>
+    <tr><td>WASD · Space</td><td>Move · jump</td></tr>
+    <tr><td>Mouse · Click</td><td>Aim · fire (R reloads)</td></tr>
+    <tr><td>E / Right-click</td><td>Harpoon tether — pulls you to what you hit, or yanks an enemy hero</td></tr>
+    <tr><td>F · Q</td><td>Shove (knockback) · Brace (throws a Shove back at the attacker)</td></tr>
+    <tr><td>1 · 2 · 3</td><td>Buy Rigging. Every item has a Low-Tide face and a High-Tide face</td></tr>
+    <tr><td>Wake</td><td>Move fast (tether, current) to fill the blue ring. Full Wake: next shot hits ×3 and refills your magazine</td></tr>
+  </table>
+  <button id="go">Cast off</button>
+</div></div>
+
+<script>/*THREE*/</script>
+<script>
+'use strict';
+const Q = new URLSearchParams(location.search);
+const AUTO = Q.has('auto'), TEST = Q.has('test') || AUTO, SPEED = +Q.get('speed') || 1;
+const V3 = THREE.Vector3, $ = id => document.getElementById(id);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v)), lerp = (a, b, t) => a + (b - a) * t;
+const TEAM_COL = [0x3fd6bd, 0xf08442], TEAM_NAME = ['Teal', 'Rust'];
+const dirOf = t => t === 0 ? 1 : -1;
+
+/* ---------- tuning ---------- */
+const TIDE_LEN = 70, TIDE_LOW = -4.6, TIDE_HIGH = 0.55, WAVE_EVERY = 24;
+const TOWER_Z = 40, CHAIN_Z = 74, SPAWN_Z = 90;
+const RIG = [
+  {name: 'Gaff Rounds', cost: 250, pearl: 0, low: '+25% damage', high: '+25% fire rate'},
+  {name: 'Tar Boots', cost: 200, pearl: 0, low: '+15% move speed', high: 'no wading slow'},
+  {name: 'Bilge Pump', cost: 150, pearl: 2, low: 'regen 4 HP/s', high: '15% lifesteal'},
+];
+
+/* ---------- renderer & scene ---------- */
+const renderer = new THREE.WebGLRenderer({canvas: $('gl'), antialias: true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x8fb7c4);
+scene.fog = new THREE.Fog(0x8fb7c4, 60, 210);
+const camera = new THREE.PerspectiveCamera(68, 1, 0.1, 400);
+scene.add(new THREE.HemisphereLight(0xdff3ff, 0x39504a, 0.95));
+const sun = new THREE.DirectionalLight(0xfff0d0, 0.75); sun.position.set(-40, 80, 30); scene.add(sun);
+const fx = $('fx'), fxc = fx.getContext('2d');
+function resize() {
+  renderer.setSize(innerWidth, innerHeight, false);
+  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  fx.width = innerWidth; fx.height = innerHeight;
+}
+addEventListener('resize', resize); resize();
+
+const mat = (c, o) => new THREE.MeshLambertMaterial(Object.assign({color: c}, o || {}));
+const glow = c => new THREE.MeshBasicMaterial({color: c});
+const solids = [];   // meshes the camera ray / tether can hit
+const boxes = [];    // walkable, blocking AABBs
+
+function addBox(x0, x1, y0, y1, z0, z1, color, opts) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(x1 - x0, y1 - y0, z1 - z0), mat(color));
+  m.position.set((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2);
+  scene.add(m); solids.push(m);
+  if (!opts || !opts.visualOnly) boxes.push({x0, x1, y0, y1, z0, z1});
+  return m;
+}
+function quad(a, b, c, d, color) {
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute([].concat(a, b, c, a, c, d), 3));
+  g.computeVertexNormals();
+  const m = new THREE.Mesh(g, mat(color, {side: THREE.DoubleSide})); scene.add(m); solids.push(m); return m;
+}
+
+/* ---------- map: one lane running along Z, Teal ship at -Z, Rust ship at +Z ---------- */
+const L = 100;
+function heightfield(x) {            // street at 0; seabed trench on the east side
+  if (x <= 9) return 0;
+  if (x < 13) return -(x - 9);
+  return -4;
+}
+quad([-15, 0, -L], [9, 0, -L], [9, 0, L], [-15, 0, L], 0x6d756f);           // cobbled street
+quad([9, 0, -L], [13, -4, -L], [13, -4, L], [9, 0, L], 0x74674f);            // bank
+quad([13, -4, -L], [23, -4, -L], [23, -4, L], [13, -4, L], 0x94855f);        // seabed
+for (let z = -L; z < L; z += 25) {                                           // buildings both sides
+  const hW = 8 + ((z * 7 + 300) % 5), hE = 7 + ((z * 3 + 300) % 6);
+  addBox(-27, -15, 0, hW, z, z + 25, [0x4e5d63, 0x5d5148, 0x47585a, 0x66584a][((z + 100) / 25) % 4]);
+  addBox(23, 31, -4, hE, z, z + 25, [0x5a4d47, 0x4a5a5e, 0x62574c, 0x465457][((z + 100) / 25) % 4]);
+}
+for (const [a, b] of [[-70, -40], [-30, -5], [5, 30], [40, 70]]) addBox(-15, -9.5, 2.0, 2.4, a, b, 0x8b6b45); // west boardwalk
+for (const z of [-62, -22, 12, 48]) addBox(-9.3, -7.7, 0, 1.2, z, z + 1.8, 0x9a7a4a);                            // step-up crates
+for (const [x, z, h] of [[6, -64, 1.2], [-6, -48, 2.4], [6.5, -20, 2.4], [-6.5, -8, 1.2], [6.5, 8, 1.2], [-6.5, 20, 2.4], [6, 48, 2.4], [-6, 64, 1.2]])
+  addBox(x - 1.1, x + 1.1, 0, h, z - 1.1, z + 1.1, 0xa0814f);                                                    // cover crates
+for (const z of [-60, -30, 0, 30, 60]) {                                                                         // masts: tether points
+  addBox(21.9, 22.5, -4, 9, z - .3, z + .3, 0x3b2f27);                                                          // kept to the far wall so the current stays clear
+  addBox(18.5, 23, 6.6, 7, z - 1.2, z + 1.2, 0x7b5d3b);                                                        // crow's nest platform
+}
+addBox(-27, 31, -6, 14, -L - 2, -L, 0x2b3a40); addBox(-27, 31, -6, 14, L, L + 2, 0x2b3a40);                      // end walls
+
+const water = new THREE.Mesh(new THREE.PlaneGeometry(64, 2 * L), new THREE.MeshLambertMaterial({color: 0x2d8fa8, transparent: true, opacity: 0.72}));
+water.rotation.x = -Math.PI / 2; water.position.set(2, TIDE_LOW, 0); scene.add(water);
+
+// ships: the bases. The hull lists when its anchor chain is cut.
+const ships = [0, 1].map(t => {
+  const g = new THREE.Group(), d = dirOf(t);
+  const hull = new THREE.Mesh(new THREE.BoxGeometry(44, 16, 16), mat(t ? 0x5b2f22 : 0x1f4b4b)); hull.position.y = 6; g.add(hull);
+  const stripe = new THREE.Mesh(new THREE.BoxGeometry(44.2, 1.6, 16.2), mat(TEAM_COL[t])); stripe.position.y = 11; g.add(stripe);
+  const stack = new THREE.Mesh(new THREE.CylinderGeometry(2, 2.4, 9, 10), mat(0x2a2a2a)); stack.position.set(6, 18, 0); g.add(stack);
+  g.position.set(2, 0, -d * (L + 11)); scene.add(g); return g;
+});
+
+/* ---------- entities ---------- */
+const ents = [], heroes = [];
+const state = {
+  time: 0, over: null, started: false,
+  tide: {high: false, t: TIDE_LEN, level: TIDE_LOW, flow: -1},
+  waveT: 4, waveN: 0, surge: [0, 0], teamSpark: [0, 0],
+  lantern: null,     // {pos, life, mesh, carrier}
+};
+
+function figure(color, scale, hat) {
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(.42, .5, 1.1, 10), mat(color)); body.position.y = .75; g.add(body);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(.34, 10, 8), mat(0xe8cfae)); head.position.y = 1.55; g.add(head);
+  if (hat) { const h = new THREE.Mesh(new THREE.CylinderGeometry(.2, .46, .3, 10), mat(hat)); h.position.y = 1.86; g.add(h); }
+  const gun = new THREE.Mesh(new THREE.BoxGeometry(.14, .14, .9), mat(0x222222)); gun.position.set(.36, 1.05, .45); g.add(gun);
+  g.scale.setScalar(scale); scene.add(g); return g;
+}
+function spawn(e) {
+  Object.assign(e, {vel: new V3(), alive: true, onGround: true, knock: 0, slow: 0, face: 0, atkT: Math.random()});
+  e.maxHp = e.hp; ents.push(e); return e;
+}
+function makeHero(team, i, isPlayer) {
+  const d = dirOf(team), laneX = [-4, 0, 4][i];
+  const h = spawn({kind: 'hero', team, hp: 220, r: .6, h: 1.9, pos: new V3(laneX, 0, -d * SPAWN_Z),
+    spheres: [[.7, .7], [1.5, .6]], laneX, seed: Math.random() * 9, isPlayer,
+    mesh: figure(isPlayer ? 0xf4f0d8 : TEAM_COL[team], 1, TEAM_COL[team])});
+  Object.assign(h, {spark: 0, pearl: 0, rig: [false, false, false], ammo: 24, reload: 0, wake: 0, fireT: 0,
+    tetherCd: 0, tether: null, shoveCd: 0, braceCd: 0, brace: 0, windup: 0, stun: 0, respawn: 0, carry: false, lastHit: -9,
+    name: isPlayer ? 'You' : TEAM_NAME[team] + ' ' + ['Gaffer', 'Netter', 'Diver'][i]});
+  heroes.push(h); return h;
+}
+function makeWickie(team, i, bearer) {
+  const d = dirOf(team);
+  const g = figure(TEAM_COL[team], bearer ? 1.25 : .8, 0x2c2c2c);
+  if (bearer) { const l = new THREE.Mesh(new THREE.SphereGeometry(.45, 10, 8), glow(0xffe27a)); l.position.y = 2.5; g.add(l); }
+  return spawn({kind: 'wickie', team, bearer, hp: bearer ? 120 : 55, r: .45, h: bearer ? 2.2 : 1.5, mesh: g,
+    spheres: bearer ? [[.9, .8], [1.9, .7]] : [[.7, .6]], laneX: (i % 3 - 1) * 2.6,
+    pos: new V3((i % 3 - 1) * 2.6, 0, -d * (SPAWN_Z - 4) - d * Math.floor(i / 3) * 2)});
+}
+function makeTower(team) {
+  const d = dirOf(team), g = new THREE.Group();
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 2.1, 6, 12), mat(0x7d8587)); base.position.y = 3; g.add(base);
+  const band = new THREE.Mesh(new THREE.CylinderGeometry(1.75, 1.75, .8, 12), mat(TEAM_COL[team])); band.position.y = 5; g.add(band);
+  const horn = new THREE.Mesh(new THREE.ConeGeometry(1.7, 2.6, 12, 1, true), mat(0xc9a13a, {side: THREE.DoubleSide}));
+  horn.rotation.x = d * Math.PI / 2; horn.position.set(0, 7.2, d * .8); g.add(horn);
+  g.position.set(0, 0, -d * TOWER_Z); scene.add(g); solids.push(base);
+  return spawn({kind: 'tower', team, hp: 900, r: 2.1, h: 8, mesh: g, structure: true, pos: g.position.clone(),
+    spheres: [[1.5, 2], [4, 2], [6.8, 2]], solid: base});
+}
+function makeChain(team) {
+  const d = dirOf(team), g = new THREE.Group();
+  const block = new THREE.Mesh(new THREE.BoxGeometry(3, 2, 3), mat(0x33393b)); block.position.y = 1; g.add(block);
+  for (let i = 0; i < 9; i++) {
+    const link = new THREE.Mesh(new THREE.TorusGeometry(.8, .22, 6, 12), mat(i % 2 ? 0x8c8f90 : TEAM_COL[team]));
+    link.position.set(0, 2.4 + i * 1.15, -d * i * 1.7); link.rotation.y = i % 2 ? Math.PI / 2 : 0; g.add(link);
+  }
+  g.position.set(0, 0, -d * CHAIN_Z); scene.add(g);
+  return spawn({kind: 'chain', team, hp: 1100, r: 1.8, h: 6, mesh: g, structure: true, pos: g.position.clone(),
+    spheres: [[1, 1.8], [3.2, 1.3], [5.4, 1.3]]});
+}
+function makeCrab(z) {
+  const g = new THREE.Group();
+  const b = new THREE.Mesh(new THREE.SphereGeometry(1, 12, 8), mat(0xd9583a)); b.scale.set(1.3, .6, 1); b.position.y = .7; g.add(b);
+  for (const s of [-1, 1]) { const c = new THREE.Mesh(new THREE.SphereGeometry(.4, 8, 6), mat(0xf07a50)); c.position.set(s * 1.3, .8, .8); g.add(c); }
+  scene.add(g);
+  return spawn({kind: 'crab', team: 2, hp: 160, r: 1.1, h: 1.4, mesh: g, home: new V3(18, -4, z), pos: new V3(18, -4, z), spheres: [[.7, 1.2]]});
+}
+function makeBuoy(team, x, z, bonus) {
+  const g = new THREE.Group();
+  const b = new THREE.Mesh(new THREE.CylinderGeometry(.9, 1.1, 1.2, 10), mat(TEAM_COL[team])); b.position.y = .6; g.add(b);
+  const c = new THREE.Mesh(new THREE.ConeGeometry(.7, 1.6, 10), mat(0xf4f0d8)); c.position.y = 2; g.add(c);
+  const l = new THREE.Mesh(new THREE.SphereGeometry(.28, 8, 6), glow(bonus > 1 ? 0xffe27a : 0xffffff)); l.position.y = 3; g.add(l);
+  g.position.set(x, 0, z); scene.add(g);
+  return {team, x, z, bonus, mesh: g};
+}
+
+const player = makeHero(0, 1, true); makeHero(0, 0); makeHero(0, 2);
+for (let i = 0; i < 3; i++) makeHero(1, i);
+const towers = [makeTower(0), makeTower(1)], chains = [makeChain(0), makeChain(1)];
+const crabs = [makeCrab(-32), makeCrab(32)];
+const buoys = [makeBuoy(0, 6, -56, 1), makeBuoy(0, 18, -14, 1.5), makeBuoy(1, -6, 56, 1), makeBuoy(1, 18, 14, 1.5)];
+const lanternMesh = new THREE.Mesh(new THREE.SphereGeometry(.5, 12, 8), glow(0xffe27a)); lanternMesh.visible = false; scene.add(lanternMesh);
+
+/* ---------- small effects ---------- */
+const tracers = [];
+function tracer(a, b, color) {
+  const g = new THREE.BufferGeometry().setFromPoints([a, b]);
+  const l = new THREE.Line(g, new THREE.LineBasicMaterial({color, transparent: true, opacity: .9}));
+  scene.add(l); tracers.push({l, life: .07});
+}
+const rings = [];
+function ring(pos, color, size) {
+  const m = new THREE.Mesh(new THREE.TorusGeometry(1, .12, 6, 24), new THREE.MeshBasicMaterial({color, transparent: true}));
+  m.rotation.x = Math.PI / 2; m.position.copy(pos); scene.add(m); rings.push({m, life: .45, size});
+}
+const tetherLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new V3(), new V3()]), new THREE.LineBasicMaterial({color: 0xf4f0d8}));
+tetherLine.visible = false; tetherLine.frustumCulled = false; scene.add(tetherLine);
+
+let actx = null;
+function beep(freq, dur, type, vol) {
+  if (!actx) return;
+  try {
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = type || 'square'; o.frequency.value = freq; g.gain.value = vol || .04;
+    g.gain.exponentialRampToValueAtTime(.0001, actx.currentTime + dur);
+    o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime + dur);
+  } catch (e) {}
+}
+const feed = [];
+function say(html) { feed.unshift({html, t: 7}); if (feed.length > 6) feed.pop(); }
+
+/* ---------- physics ---------- */
+function groundAt(x, z, y) {
+  let h = heightfield(x);
+  for (const b of boxes) if (x > b.x0 && x < b.x1 && z > b.z0 && z < b.z1 && b.y1 <= y + .6 && b.y1 > h) h = b.y1;
+  return h;
+}
+function collideBoxes(e) {
+  const p = e.pos;
+  for (const b of boxes) {
+    if (p.y >= b.y1 - .55 || p.y + e.h <= b.y0) continue;
+    const cx = clamp(p.x, b.x0, b.x1), cz = clamp(p.z, b.z0, b.z1);
+    let dx = p.x - cx, dz = p.z - cz; const d2 = dx * dx + dz * dz;
+    if (d2 >= e.r * e.r) continue;
+    if (d2 > 1e-8) { const d = Math.sqrt(d2), k = (e.r - d) / d; p.x += dx * k; p.z += dz * k; }
+    else {   // centre is inside: leave by the nearest face
+      const m = [p.x - b.x0, b.x1 - p.x, p.z - b.z0, b.z1 - p.z], i = m.indexOf(Math.min(...m));
+      if (i === 0) p.x = b.x0 - e.r; else if (i === 1) p.x = b.x1 + e.r; else if (i === 2) p.z = b.z0 - e.r; else p.z = b.z1 + e.r;
+    }
+  }
+  p.x = clamp(p.x, -26, 30); p.z = clamp(p.z, -L + 1, L - 1);
+}
+const waterDepth = e => state.tide.level - e.pos.y;
+function moveEnt(e, dt, wx, wz, speed) {
+  const depth = waterDepth(e), swim = depth > 1.0, wade = depth > .2 && !swim;
+  if (wade && e.kind === 'hero' && !e.noWade) speed *= e.isPlayer ? .65 : .8;
+  if (swim) speed *= .6;
+  if (e.slow > 0) speed *= .55;
+  const sp = Math.hypot(e.vel.x, e.vel.z);
+  const acc = (e.knock > 0 ? 6 : e.onGround ? (sp > speed * 1.08 ? 12 : 70) : swim ? 30 : 14) * dt;
+  let dx = wx * speed - e.vel.x, dz = wz * speed - e.vel.z; const dl = Math.hypot(dx, dz);
+  if (dl > acc) { dx *= acc / dl; dz *= acc / dl; }
+  e.vel.x += dx; e.vel.z += dz;
+  if (swim) e.vel.y += ((state.tide.level - 1.25 - e.pos.y) * 22 - e.vel.y * 5) * dt;
+  else if (!e.tether) e.vel.y -= 24 * dt;
+  const wasGround = e.onGround, ox = e.pos.x, oz = e.pos.z;
+  e.pos.addScaledVector(e.vel, dt);
+  if (swim && e.pos.x > 9 && e.pos.x < 23) e.pos.z += state.tide.flow * 12 * dt;   // the trench current
+  collideBoxes(e);
+  const g = groundAt(e.pos.x, e.pos.z, e.pos.y);
+  if (e.pos.y <= g) { e.pos.y = g; if (e.vel.y < 0) e.vel.y = 0; e.onGround = true; }
+  else if (wasGround && e.vel.y <= 0 && e.pos.y - g < .5) { e.pos.y = g; e.vel.y = 0; e.onGround = true; }
+  else e.onGround = false;
+  e.swim = swim;
+  e.speedNow = Math.hypot(e.pos.x - ox, e.pos.z - oz) / dt;
+}
+
+/* ---------- combat ---------- */
+const ray = new THREE.Raycaster();
+function worldHit(origin, dir, max) {
+  ray.set(origin, dir); ray.far = max;
+  const h = ray.intersectObjects(solids, false)[0];
+  return h ? h.distance : Infinity;
+}
+function rayEnts(origin, dir, max, filter) {   // nearest entity hit-sphere along a ray
+  let best = null, bt = max;
+  for (const e of ents) {
+    if (!e.alive || !filter(e)) continue;
+    for (const [oy, r] of e.spheres) {
+      const cx = e.pos.x - origin.x, cy = e.pos.y + oy - origin.y, cz = e.pos.z - origin.z;
+      const t = cx * dir.x + cy * dir.y + cz * dir.z; if (t < 0 || t > bt) continue;
+      const d2 = cx * cx + cy * cy + cz * cz - t * t;
+      if (d2 < r * r) { bt = t; best = e; }
+    }
+  }
+  return best ? {e: best, t: bt} : null;
+}
+function giveSpark(team, amount, near, range) {
+  const hs = heroes.filter(h => h.team === team && h.alive && (!near || h.pos.distanceTo(near) < range));
+  for (const h of hs) h.spark += Math.round(amount / hs.length);
+  if (hs.length) state.teamSpark[team] += amount;
+}
+function damage(t, amt, src) {
+  if (!t.alive || state.over) return;
+  if (t.kind === 'chain' && towers[t.team].alive) return;          // the Foghorn guards the chain
+  if (t.kind === 'crab' && !t.active) return;
+  t.hp -= amt; t.lastHit = state.time;
+  if (src && src.isPlayer && player.rig[2] && state.tide.high) player.hp = Math.min(player.maxHp, player.hp + amt * .15);
+  if (src === player) beep(900, .03, 'square', .02);
+  if (t.hp > 0) return;
+  t.hp = 0; t.alive = false; t.mesh.visible = false;
+  if (t.solid) solids.splice(solids.indexOf(t.solid), 1);   // a fallen Foghorn no longer blocks shots or tethers
+  const foe = src && src.team < 2 ? src.team : 1 - t.team;
+  if (t.kind === 'wickie') {
+    giveSpark(foe, t.bearer ? 60 : 30, t.pos, 30);
+    if (t.bearer) dropLantern(t.pos, TEAM_NAME[t.team] + " Lantern-Bearer is down — the lantern is loose!");
+  } else if (t.kind === 'hero') {
+    t.respawn = 8; t.tether = null;
+    if (t.carry) { t.carry = false; state.lantern = null; dropLantern(t.pos, 'The lantern carrier fell — the lantern is loose!'); }
+    giveSpark(foe, 150, null); say(`<b class="${foe ? 'rust' : 'teal'}">${src && src.name || TEAM_NAME[foe]}</b> downed ${t.name}`);
+  } else if (t.kind === 'tower') {
+    giveSpark(foe, 600, null); say(`The ${TEAM_NAME[t.team]} Foghorn is silenced. Their Anchor Chain is exposed!`); beep(110, .8, 'sawtooth', .08);
+  } else if (t.kind === 'crab') {
+    if (src && src.kind === 'hero') { src.pearl++; src.spark += 40; if (src.isPlayer) say('Reef Crab cracked: +1 Pearl'); }
+  } else if (t.kind === 'chain') {
+    state.over = {winner: foe, t: 0};
+    say(`The ${TEAM_NAME[t.team]} Anchor Chain is cut!`); beep(80, 1.4, 'sawtooth', .1);
+  }
+}
+function dropLantern(pos, msg) {
+  if (state.lantern) return;
+  state.lantern = {pos: new V3(clamp(pos.x, -14, 22), 0, pos.z), life: 28, carrier: null};
+  say('🏮 ' + msg); beep(660, .25, 'triangle', .06);
+}
+function knockback(t, fromX, fromZ, power, up) {
+  let dx = t.pos.x - fromX, dz = t.pos.z - fromZ; const d = Math.hypot(dx, dz) || 1;
+  t.vel.x = dx / d * power; t.vel.z = dz / d * power; t.vel.y = up; t.onGround = false; t.knock = .5;
+}
+function shove(h) {
+  h.shoveCd = 4; ring(h.pos.clone().setY(h.pos.y + 1), 0xffffff, 3.4);
+  for (const t of ents) {
+    if (!t.alive || t.team === h.team || t.structure || t.pos.distanceTo(h.pos) > 3.6) continue;
+    if (t.kind === 'hero' && t.brace > 0) {                         // Brace throws it back
+      knockback(h, t.pos.x, t.pos.z, 20, 7); h.stun = 1.2; damage(h, 25, t); t.brace = 0;
+      say(`${t.name} Braced — ${h.name} is thrown back!`); return;
+    }
+    damage(t, 22, h); if (t.alive) knockback(t, h.pos.x, h.pos.z, 18, 6.5);
+  }
+}
+
+/* ---------- player ---------- */
+const keys = {}, mouse = {down: false};
+let yaw = Math.PI, pitch = -.08;
+const locked = () => TEST || document.pointerLockElement === renderer.domElement;
+addEventListener('keydown', e => { keys[e.code] = true; if (e.code === 'Space') e.preventDefault(); onKey(e.code); });
+addEventListener('keyup', e => keys[e.code] = false);
+addEventListener('mousemove', e => {
+  if (!locked() || TEST) return;
+  yaw -= e.movementX * .0023; pitch = clamp(pitch - e.movementY * .0023, -1.2, 1.2);
+});
+addEventListener('mousedown', e => { if (!locked()) return; if (e.button === 0) mouse.down = true; if (e.button === 2) fireTether(); });
+addEventListener('mouseup', e => { if (e.button === 0) mouse.down = false; });
+addEventListener('contextmenu', e => e.preventDefault());
+function onKey(c) {
+  if (!state.started || !player.alive || state.over) return;
+  if (c === 'KeyE') fireTether();
+  if (c === 'KeyF' && player.shoveCd <= 0 && player.stun <= 0) shove(player);
+  if (c === 'KeyQ' && player.braceCd <= 0) { player.brace = .7; player.braceCd = 5; ring(player.pos.clone().setY(player.pos.y + 1), 0x7fd4ff, 1.6); }
+  if (c === 'KeyR' && player.ammo < 24 && player.reload <= 0) player.reload = 1.5;
+  const i = ['Digit1', 'Digit2', 'Digit3'].indexOf(c); if (i >= 0) buy(i);
+}
+function buy(i) {
+  const it = RIG[i];
+  if (player.rig[i]) return;
+  if (player.spark < it.cost || player.pearl < it.pearl) { say(`Not enough for ${it.name} (${it.cost} Spark${it.pearl ? ' + ' + it.pearl + ' Pearl' : ''})`); return; }
+  player.spark -= it.cost; player.pearl -= it.pearl; player.rig[i] = true;
+  say(`Rigged: <b>${it.name}</b>`); beep(520, .15, 'triangle', .06); buildRig();
+}
+const camDir = new V3(), camPos = new V3(), tmp = new V3(), tmp2 = new V3();
+function aimDir() {
+  const cp = Math.cos(pitch);
+  return camDir.set(-Math.sin(yaw) * cp, Math.sin(pitch), -Math.cos(yaw) * cp);
+}
+function playerAim(max) {   // what the crosshair is on: an enemy, the world, or thin air
+  const d = aimDir(), back = camPos.distanceTo(player.pos);
+  const w = worldHit(camPos, d, max + back);
+  const hit = rayEnts(camPos, d, Math.min(w, max + back), e => e.team !== 0 && !(e.kind === 'crab' && !e.active));
+  const t = hit ? hit.t : Math.min(w, max + back);
+  return {ent: hit && hit.e, point: tmp.copy(camPos).addScaledVector(d, t).clone(), solid: !!hit || w < max + back};
+}
+function fireTether() {
+  if (!state.started || !player.alive || player.tetherCd > 0 || player.carry || player.stun > 0) return;
+  const a = playerAim(45);
+  if (!a.solid) { say('Tether: nothing in reach'); return; }
+  player.tetherCd = 3.5; beep(300, .12, 'sawtooth', .05);
+  if (a.ent && a.ent.kind === 'hero') {       // trip an enemy hero: yank them in and slow them
+    knockback(a.ent, a.ent.pos.x * 2 - player.pos.x, a.ent.pos.z * 2 - player.pos.z, 13, 5); a.ent.slow = 2;
+    tracer(player.pos.clone().setY(player.pos.y + 1.2), a.point, 0xf4f0d8); return;
+  }
+  player.tether = {p: a.point, t: 1.5}; player.onGround = false;
+}
+function updatePlayer(dt) {
+  const p = player, high = state.tide.high;
+  p.noWade = p.rig[1] && high;
+  const speedMul = p.rig[1] && !high ? 1.15 : 1;
+  let fx_ = 0, fz_ = 0;
+  if (p.stun <= 0) {
+    const f = (keys.KeyW ? 1 : 0) - (keys.KeyS ? 1 : 0), s = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0);
+    fx_ = -Math.sin(yaw) * f + Math.cos(yaw) * s; fz_ = -Math.cos(yaw) * f - Math.sin(yaw) * s;
+    const l = Math.hypot(fx_, fz_); if (l > 1) { fx_ /= l; fz_ /= l; }
+    if (keys.Space && (p.onGround || p.swim) && !p.tether) { p.vel.y = p.swim ? 7.5 : 8.6; p.onGround = false; }
+  }
+  if (p.tether) {
+    const t = p.tether; t.t -= dt;
+    tmp2.copy(t.p).sub(p.pos).setY(t.p.y - p.pos.y - 1); const d = tmp2.length();
+    if (d < 2.4 || t.t <= 0 || keys.Space && t.t < 1.3) { p.tether = null; if (p.vel.y < 6) p.vel.y += 5; }
+    else { p.vel.addScaledVector(tmp2.normalize(), 70 * dt); if (p.vel.length() > 28) p.vel.setLength(28); }
+  }
+  moveEnt(p, dt, fx_, fz_, 9 * speedMul * (p.carry ? .9 : 1));
+  p.face = yaw + Math.PI;
+  // Wake: speed is the resource
+  if (p.speedNow > 10.5) p.wake = Math.min(100, p.wake + (p.speedNow - 8) * 4.2 * dt); else if (p.wake < 100) p.wake = Math.max(0, p.wake - 2.5 * dt);   // a full Wake holds until it is spent
+  // weapon
+  p.fireT -= dt;
+  if (p.reload > 0) { p.reload -= dt; if (p.reload <= 0) p.ammo = 24; }
+  if (mouse.down && p.fireT <= 0 && p.reload <= 0 && p.stun <= 0 && !p.carry) {
+    if (p.ammo <= 0) p.reload = 1.5;
+    else {
+      const wakeShot = p.wake >= 100;
+      p.fireT = .13 / (p.rig[0] && high ? 1.25 : 1);
+      const a = playerAim(90);
+      let dmg = 16 * (p.rig[0] && !high ? 1.25 : 1);
+      if (wakeShot) { dmg *= 3; p.wake = 0; p.ammo = 24; ring(a.point, 0x7fd4ff, 2.5); beep(1300, .12, 'triangle', .07); } else p.ammo--;
+      if (a.ent) damage(a.ent, a.ent.structure ? dmg * .8 : dmg, p);
+      tracer(tmp2.copy(p.pos).setY(p.pos.y + 1.2).clone(), a.point, wakeShot ? 0x7fd4ff : 0xfff2b0);
+      beep(wakeShot ? 240 : 180, .05, 'square', .03);
+    }
+  }
+  if (p.rig[2] && !high) p.hp = Math.min(p.maxHp, p.hp + 4 * dt);
+}
+
+/* ---------- AI ---------- */
+function nearest(e, range, filter) {
+  let best = null, bd = range;
+  for (const o of ents) {
+    if (!o.alive || o.team === e.team || !filter(o)) continue;
+    const d = Math.hypot(o.pos.x - e.pos.x, o.pos.z - e.pos.z);
+    if (d < bd) { bd = d; best = o; }
+  }
+  return best;
+}
+const attackable = o => !(o.kind === 'chain' && towers[o.team].alive) && !(o.kind === 'crab');
+function frontOf(team) {         // how far down the lane this team's wave has reached (in "forward" units)
+  const d = dirOf(team); let f = -TOWER_Z;
+  for (const w of ents) if (w.alive && w.kind === 'wickie' && w.team === team) f = Math.max(f, w.pos.z * d);
+  return f;
+}
+function wickiesNear(team, z, range) {
+  return ents.some(w => w.alive && w.kind === 'wickie' && w.team === team && Math.abs(w.pos.z - z) < range);
+}
+function shootAt(e, t, dmg, chance, color) {
+  const a = e.pos.clone().setY(e.pos.y + e.h * .7), b = t.pos.clone().setY(t.pos.y + (t.spheres[0][0]));
+  let hit = Math.random() < chance;
+  if (hit && t.isPlayer) { tmp.copy(b).sub(a); const d = tmp.length(); if (worldHit(a, tmp.normalize(), d) < d - .5) hit = false; }  // cover works
+  if (!hit) b.add(tmp.set(Math.random() - .5, Math.random() - .3, Math.random() - .5).multiplyScalar(2.4));
+  tracer(a, b, color); if (hit) damage(t, dmg, e);
+}
+function updateBot(h, dt) {
+  const d = dirOf(h.team), foe = 1 - h.team, lan = state.lantern;
+  let gx = h.laneX + Math.sin(state.time * .7 + h.seed) * 3, gz;
+  if (h.hp < h.maxHp * .3) h.retreat = true; else if (h.hp > h.maxHp * .8) h.retreat = false;
+  if (h.carry) { const b = buoys.find(b => b.team === h.team && b.bonus === 1); gx = b.x; gz = b.z; }
+  else if (lan && !lan.carrier && lan.pos.x < 9 && Math.abs(lan.pos.z - h.pos.z) < 45 && !h.retreat) { gx = lan.pos.x; gz = lan.pos.z; }
+  else if (h.retreat) gz = -d * SPAWN_Z;
+  else {
+    let f = frontOf(h.team) - 6;
+    const tw = towers[foe];
+    if (tw.alive && !wickiesNear(h.team, tw.pos.z, 20)) f = Math.min(f, tw.pos.z * d - 25);   // respect the Foghorn
+    gz = clamp(f, -SPAWN_Z, CHAIN_Z - 8) * d;
+  }
+  let wx = gx - h.pos.x, wz = gz - h.pos.z; const l = Math.hypot(wx, wz);
+  if (l > 1) { wx /= l; wz /= l; } else wx = wz = 0;
+  if (h.stun > 0 || h.windup > 0) wx = wz = 0;
+  moveEnt(h, dt, wx, wz, 8.2);
+  const t = nearest(h, 34, o => o.kind === 'hero' && o.carry) || nearest(h, 26, o => o.kind === 'hero')
+    || nearest(h, 26, o => o.bearer) || nearest(h, 22, o => o.kind === 'wickie') || nearest(h, 24, o => o.structure && attackable(o));
+  if (t) h.face = Math.atan2(t.pos.x - h.pos.x, t.pos.z - h.pos.z); else if (l > 1) h.face = Math.atan2(wx, wz);
+  h.fireT -= dt;
+  if (t && h.fireT <= 0 && h.stun <= 0 && !h.carry) {
+    h.fireT = .26;
+    const dist = t.pos.distanceTo(h.pos);
+    shootAt(h, t, (h.isPlayer ? 15 : 9) * (t.structure ? 2 : 1), t.kind === 'hero' ? .42 - dist * .007 : .6, TEAM_COL[h.team]);
+  }
+  // Shove with a tell, so the player can Brace
+  if (h.windup > 0) { h.windup -= dt; h.mesh.scale.setScalar(1.25); if (h.windup <= 0) { h.mesh.scale.setScalar(1); shove(h); } }
+  else if (h.shoveCd <= 0 && h.stun <= 0 && nearest(h, 2.8, o => o.kind === 'hero')) h.windup = .45;
+}
+function updateWickie(w, dt) {
+  const d = dirOf(w.team);
+  const t = nearest(w, 12, o => attackable(o));
+  let wx = 0, wz = 0;
+  if (!t) { wx = clamp((w.laneX - w.pos.x) * .3, -1, 1); wz = d; const l = Math.hypot(wx, wz); wx /= l; wz /= l; w.face = Math.atan2(wx, wz); }
+  else {
+    w.face = Math.atan2(t.pos.x - w.pos.x, t.pos.z - w.pos.z); w.atkT -= dt;
+    if (w.atkT <= 0) { w.atkT = .8; shootAt(w, t, t.structure ? 9 * (1 + state.waveN * .08) : t.kind === 'hero' ? 5 : 7, .85, TEAM_COL[w.team]); }
+  }
+  moveEnt(w, dt, wx, wz, 4.4);
+}
+function updateTower(tw, dt) {
+  tw.atkT -= dt; if (tw.atkT > 0) return;
+  const t = nearest(tw, 22, o => o.kind === 'wickie') || nearest(tw, 22, o => o.kind === 'hero');
+  if (!t) return;
+  tw.atkT = 1.5; ring(tw.pos.clone().setY(7), TEAM_COL[tw.team], 6);
+  tracer(tw.pos.clone().setY(7.2), t.pos.clone().setY(t.pos.y + 1), 0xffffff);
+  damage(t, t.kind === 'hero' ? 26 : 32, tw);
+  if (t.kind === 'hero' && t.alive) { knockback(t, tw.pos.x, tw.pos.z, 15, 6); t.tether = null; }   // the sound-cannon throws you back
+}
+function updateCrab(c, dt) {
+  const dry = state.tide.level < -3.6;
+  if (dry && !c.active && !state.tide.high) { c.active = true; c.alive = true; c.hp = c.maxHp; c.pos.copy(c.home); c.mesh.visible = true; }
+  if (!dry && c.active) { c.active = false; c.alive = false; c.mesh.visible = false; }
+  if (!c.alive) return;
+  const t = nearest(c, 9, o => o.kind === 'hero');
+  let wx = 0, wz = 0;
+  const to = t && c.pos.distanceTo(c.home) < 12 ? t.pos : c.home;
+  wx = to.x - c.pos.x; wz = to.z - c.pos.z; const l = Math.hypot(wx, wz);
+  if (l > 1.6) { wx /= l; wz /= l; c.face = Math.atan2(wx, wz); } else wx = wz = 0;
+  c.atkT -= dt;
+  if (t && c.pos.distanceTo(t.pos) < 2.6 && c.atkT <= 0) { c.atkT = .8; damage(t, 11, c); }
+  moveEnt(c, dt, wx, wz, 5);
+}
+
+/* ---------- match flow ---------- */
+function spawnWave() {
+  state.waveN++;
+  for (const team of [0, 1]) {
+    const n = 4 + Math.min(4, Math.floor(state.waveN / 6)) + state.surge[team];   // waves grow so matches end
+    for (let i = 0; i < n; i++) makeWickie(team, i, false);
+    makeWickie(team, n, true);
+    if (state.surge[team]) say(`<b class="${team ? 'rust' : 'teal'}">${TEAM_NAME[team]}</b> lantern surge: +${state.surge[team]} Wickies this wave`);
+    state.surge[team] = 0;
+  }
+}
+function updateTide(dt) {
+  const T = state.tide; T.t -= dt;
+  if (T.t <= 0) {
+    T.t = TIDE_LEN; T.high = !T.high;
+    if (T.high) { T.flow = -T.flow; say(`🌊 <b>HIGH TIDE</b> — the street floods. Trench current runs toward the <b class="${T.flow > 0 ? 'rust' : 'teal'}">${TEAM_NAME[T.flow > 0 ? 1 : 0]}</b> ship.`); }
+    else say('🏖️ <b>LOW TIDE</b> — the seabed trench is open. Reef Crabs are out.');
+    beep(98, 1.1, 'sawtooth', .08); buildRig();
+  }
+  const target = T.high ? TIDE_HIGH : TIDE_LOW, step = (TIDE_HIGH - TIDE_LOW) / 6 * dt;
+  T.level += clamp(target - T.level, -step, step);
+  water.position.y = T.level;
+}
+function updateLantern(dt) {
+  const lan = state.lantern;
+  lanternMesh.visible = !!lan;
+  if (!lan) return;
+  if (lan.carrier) {
+    const c = lan.carrier; lan.pos.copy(c.pos);
+    lanternMesh.position.set(c.pos.x, c.pos.y + 2.6, c.pos.z);
+    for (const b of buoys) if (b.team === c.team && Math.hypot(b.x - c.pos.x, b.z - c.pos.z) < 3.6) {
+      const pay = Math.round(300 * b.bonus);
+      giveSpark(c.team, pay, null); state.surge[c.team] += 3; c.carry = false; state.lantern = null;
+      say(`🏮 <b class="${c.team ? 'rust' : 'teal'}">${c.name}</b> banked the lantern: +${Math.round(pay / 3)} Spark each${b.bonus > 1 ? ' (forward buoy bonus)' : ''}`);
+      beep(880, .3, 'triangle', .07); ring(new V3(b.x, b.mesh.position.y + 2, b.z), 0xffe27a, 5); return;
+    }
+    return;
+  }
+  lan.life -= dt;
+  lan.pos.y = Math.max(heightfield(lan.pos.x), state.tide.level);
+  lanternMesh.position.set(lan.pos.x, lan.pos.y + .9 + Math.sin(state.time * 3) * .15, lan.pos.z);
+  if (lan.life <= 0) { state.lantern = null; say('The lantern guttered out.'); return; }
+  for (const h of heroes) if (h.alive && Math.hypot(h.pos.x - lan.pos.x, h.pos.z - lan.pos.z) < 1.8 && Math.abs(h.pos.y - lan.pos.y) < 3) {
+    lan.carrier = h; h.carry = true; h.tether = null;
+    say(`🏮 <b class="${h.team ? 'rust' : 'teal'}">${h.name}</b> ${h.isPlayer ? 'have' : 'has'} the lantern${h.isPlayer ? ' — run it to a Teal buoy!' : ''}`); break;
+  }
+}
+function step(dt) {
+  if (state.over) { state.over.t += dt; const s = ships[1 - state.over.winner]; s.rotation.z = Math.min(.42, s.rotation.z + dt * .12); s.position.y -= dt * .5; return; }
+  state.time += dt;
+  updateTide(dt);
+  state.waveT -= dt; if (state.waveT <= 0) { state.waveT = WAVE_EVERY; spawnWave(); }
+  for (const e of ents) {
+    if (e.kind === 'crab') { updateCrab(e, dt); continue; }
+    if (!e.alive) {
+      if (e.kind === 'hero') { e.respawn -= dt; if (e.respawn <= 0) { e.alive = true; e.hp = e.maxHp; e.mesh.visible = true; e.pos.set(e.laneX, 0, -dirOf(e.team) * SPAWN_Z); e.vel.set(0, 0, 0); e.ammo = 24; e.retreat = false; } }
+      continue;
+    }
+    for (const k of ['knock', 'slow', 'stun', 'brace', 'tetherCd', 'shoveCd', 'braceCd']) if (e[k] > 0) e[k] -= dt;
+    if (e.kind === 'hero') {
+      if (e.isPlayer && !AUTO) updatePlayer(dt); else updateBot(e, dt);
+      const home = e.pos.z * dirOf(e.team) < -78;
+      e.hp = Math.min(e.maxHp, e.hp + (home ? 45 : state.time - e.lastHit > 6 ? 5 : 0) * dt);
+    } else if (e.kind === 'wickie') updateWickie(e, dt);
+    else if (e.kind === 'tower') updateTower(e, dt);
+  }
+  updateLantern(dt);
+  for (let i = ents.length - 1; i >= 0; i--) { const e = ents[i]; if (!e.alive && e.kind === 'wickie') { scene.remove(e.mesh); ents.splice(i, 1); } }
+}
+
+/* ---------- drawing ---------- */
+function buildRig() {
+  $('rig').innerHTML = RIG.map((it, i) => `<div class="slot ${player.rig[i] ? 'own' : ''}"><h4><span>${i + 1} · ${it.name}</span></h4>
+    <div class="face ${!state.tide.high ? 'on' : ''}">Low: ${it.low}</div><div class="face ${state.tide.high ? 'on' : ''}">High: ${it.high}</div>
+    <div style="margin-top:2px;color:#ffd66b">${player.rig[i] ? 'Rigged' : it.cost + ' Spark' + (it.pearl ? ' + ' + it.pearl + ' Pearl' : '')}</div></div>`).join('');
+}
+buildRig();
+const pv = new V3();
+function drawFx() {
+  const W = fx.width, H = fx.height; fxc.clearRect(0, 0, W, H);
+  for (const e of ents) {            // world health bars
+    if (!e.alive || e === player && !AUTO || e.kind === 'crab' && !e.active) continue;
+    if (e.kind === 'wickie' && e.hp === e.maxHp && !e.bearer) continue;
+    pv.set(e.pos.x, e.pos.y + e.h + .5, e.pos.z).project(camera);
+    if (pv.z > 1 || Math.abs(pv.x) > 1.1) continue;
+    const x = (pv.x + 1) / 2 * W, y = (1 - pv.y) / 2 * H, w = e.structure ? 90 : e.kind === 'hero' ? 54 : 30;
+    fxc.fillStyle = '#000a'; fxc.fillRect(x - w / 2 - 1, y - 1, w + 2, 7);
+    fxc.fillStyle = e.team === 0 ? '#5fe0c8' : e.team === 1 ? '#ff9a5c' : '#e8d36a'; fxc.fillRect(x - w / 2, y, w * e.hp / e.maxHp, 5);
+    if (e.kind === 'hero' && e.carry) { fxc.fillStyle = '#ffe27a'; fxc.font = 'bold 13px system-ui'; fxc.textAlign = 'center'; fxc.fillText('LANTERN', x, y - 5); }
+    if (e.kind === 'hero' && e.windup > 0) { fxc.fillStyle = '#fff'; fxc.font = 'bold 14px system-ui'; fxc.textAlign = 'center'; fxc.fillText('SHOVE! [Q]', x, y - 5); }
+  }
+  // reticle: ammo arc (left), Wake arc (right), tether dot
+  const cx = W / 2, cy = H / 2, p = player;
+  fxc.lineWidth = 2; fxc.strokeStyle = '#fff'; fxc.beginPath(); fxc.arc(cx, cy, 3, 0, 7); fxc.stroke();
+  const arc = (r, a0, a1, f, col, lw) => {
+    fxc.lineWidth = lw; fxc.strokeStyle = '#0007'; fxc.beginPath(); fxc.arc(cx, cy, r, a0, a1); fxc.stroke();
+    if (f > 0) { fxc.strokeStyle = col; fxc.beginPath(); fxc.arc(cx, cy, r, a1 - (a1 - a0) * f, a1); fxc.stroke(); }
+  };
+  arc(34, Math.PI * .7, Math.PI * 1.3, p.reload > 0 ? 1 - p.reload / 1.5 : p.ammo / 24, p.reload > 0 ? '#aaa' : '#fff2b0', 4);
+  arc(34, -Math.PI * .3, Math.PI * .3, p.wake / 100, p.wake >= 100 ? '#fff' : '#7fd4ff', p.wake >= 100 ? 6 : 4);
+  fxc.fillStyle = p.tetherCd > 0 ? '#0008' : '#f4f0d8'; fxc.beginPath(); fxc.arc(cx, cy + 46, 4, 0, 7); fxc.fill();
+  if (p.wake >= 100) { fxc.fillStyle = '#fff'; fxc.font = 'bold 12px system-ui'; fxc.textAlign = 'left'; fxc.fillText('WAKE SHOT', cx + 44, cy + 4); }
+  if (p.carry) { fxc.fillStyle = '#ffe27a'; fxc.font = 'bold 15px system-ui'; fxc.textAlign = 'center'; fxc.fillText('Carrying the lantern — weapons and tether stowed. Reach a Teal buoy.', cx, cy + 90); }
+}
+const mapc = $('map').getContext('2d');
+function drawMap() {
+  const c = mapc, W = 130, H = 290, X = x => (31 - x) / 58 * W, Z = z => H - (z + L) / (2 * L) * H;
+  c.clearRect(0, 0, W, H);
+  c.fillStyle = '#2d3a3d'; c.fillRect(0, 0, W, H);
+  const hi = state.tide.level > -.2;
+  c.fillStyle = hi ? '#2f7f95' : '#6d756f'; c.fillRect(X(9), 0, X(-15) - X(9), H);
+  c.fillStyle = state.tide.level > -3.6 ? '#1f6c8c' : '#b7a377'; c.fillRect(X(23), 0, X(9) - X(23), H);
+  c.fillStyle = '#8b6b45'; for (const [a, b] of [[-70, -40], [-30, -5], [5, 30], [40, 70]]) c.fillRect(X(-9.5), Z(b), X(-15) - X(-9.5), Z(a) - Z(b));
+  if (state.tide.level > -3.6) { c.fillStyle = '#bfe9ff'; c.font = '11px system-ui'; c.textAlign = 'center'; for (const z of [-60, 0, 60]) c.fillText(state.tide.flow > 0 ? '▲' : '▼', X(16), Z(z)); }
+  const dot = (x, z, r, col) => { c.fillStyle = col; c.beginPath(); c.arc(X(x), Z(z), r, 0, 7); c.fill(); };
+  for (const b of buoys) { c.strokeStyle = b.team ? '#ff9a5c' : '#5fe0c8'; c.lineWidth = 2; c.beginPath(); c.arc(X(b.x), Z(b.z), 4, 0, 7); c.stroke(); }
+  for (const e of ents) {
+    if (!e.alive) continue;
+    const col = e.team === 0 ? '#5fe0c8' : e.team === 1 ? '#ff9a5c' : '#e8d36a';
+    if (e.structure) { c.fillStyle = col; c.fillRect(X(e.pos.x) - 4, Z(e.pos.z) - 4, 8, 8); }
+    else dot(e.pos.x, e.pos.z, e.kind === 'hero' ? 3.5 : e.bearer ? 2.6 : 1.6, e === player ? '#fff' : e.bearer ? '#ffe27a' : col);
+  }
+  if (state.lantern) dot(state.lantern.pos.x, state.lantern.pos.z, 4 + Math.sin(state.time * 6), '#ffe27a');
+}
+const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+let hudT = 0;
+function drawHud(dt) {
+  hudT -= dt; if (hudT > 0) return; hudT = .1;
+  const T = state.tide, p = player;
+  $('tideName').textContent = T.high ? 'HIGH TIDE' : 'LOW TIDE'; $('tideName').style.color = T.high ? '#7fd4ff' : '#f0d9a0';
+  $('tideSub').textContent = (T.high ? 'Ebbs in ' : 'Floods in ') + fmt(T.t) + (T.high ? ` · current → ${TEAM_NAME[T.flow > 0 ? 1 : 0]} ship` : ` · next current → ${TEAM_NAME[T.flow > 0 ? 0 : 1]} ship`);
+  $('tideFill').style.width = (1 - T.t / TIDE_LEN) * 100 + '%';
+  for (const t of [0, 1]) {
+    $('sp' + t).textContent = state.teamSpark[t];
+    $('t' + t).style.width = towers[t].hp / towers[t].maxHp * 100 + '%'; $('c' + t).style.width = chains[t].hp / chains[t].maxHp * 100 + '%';
+  }
+  $('hp').style.width = p.hp / p.maxHp * 100 + '%'; $('hptxt').textContent = `${Math.ceil(p.hp)} / ${p.maxHp} HP · ${p.reload > 0 ? 'reloading' : p.ammo + ' / 24'}`;
+  $('spark').textContent = p.spark; $('pearl').textContent = p.pearl;
+  $('cdE').style.height = clamp(p.tetherCd / 3.5, 0, 1) * 100 + '%'; $('cdF').style.height = clamp(p.shoveCd / 4, 0, 1) * 100 + '%'; $('cdQ').style.height = clamp(p.braceCd / 5, 0, 1) * 100 + '%';
+  $('feed').innerHTML = feed.map(f => `<div style="opacity:${clamp(f.t, 0, 1)}">${f.html}</div>`).join('');
+  const dead = $('dead');
+  if (state.over) { dead.style.display = 'block'; dead.innerHTML = (state.over.winner === 0 ? 'CHAIN CUT — the Rust ship drifts for the Maelstrom. <span class="teal">Teal wins!</span>' : 'Your Anchor Chain is cut. <span class="rust">Rust wins.</span>') + '<br><small>Press Enter to play again</small>'; }
+  else if (!p.alive) { dead.style.display = 'block'; dead.textContent = 'Overboard — back on deck in ' + Math.ceil(p.respawn); }
+  else dead.style.display = 'none';
+  drawMap();
+}
+addEventListener('keydown', e => { if (e.code === 'Enter' && state.over) location.reload(); });
+
+function render(dt) {
+  for (const e of ents) {
+    if (!e.alive) continue;
+    if (!e.structure) { e.mesh.position.copy(e.pos); e.mesh.rotation.y = e.face; if (e.swim) e.mesh.position.y += .2; }
+  }
+  for (const b of buoys) b.mesh.position.y = Math.max(heightfield(b.x), state.tide.level - .3) + Math.sin(state.time * 1.5 + b.z) * .06;
+  for (let i = tracers.length - 1; i >= 0; i--) { const t = tracers[i]; t.life -= dt; t.l.material.opacity = t.life / .07; if (t.life <= 0) { scene.remove(t.l); t.l.geometry.dispose(); tracers.splice(i, 1); } }
+  for (let i = rings.length - 1; i >= 0; i--) { const r = rings[i]; r.life -= dt; const k = 1 - r.life / .45; r.m.scale.setScalar(1 + k * r.size); r.m.material.opacity = 1 - k; if (r.life <= 0) { scene.remove(r.m); rings.splice(i, 1); } }
+  tetherLine.visible = !!player.tether;
+  if (player.tether) { tetherLine.geometry.setFromPoints([player.pos.clone().setY(player.pos.y + 1.2), player.tether.p]); }
+  for (const f of feed) f.t -= dt; while (feed.length && feed[feed.length - 1].t <= 0) feed.pop();
+  updateCamera();
+  water.material.opacity = .68 + Math.sin(state.time * .8) * .04;
+  renderer.render(scene, camera);
+  drawFx(); drawHud(dt);
+}
+function updateCamera() {   // third-person camera over the right shoulder
+  if (AUTO) { yaw = player.face - Math.PI; pitch = -.25; }
+  const d = aimDir(), head = tmp2.copy(player.pos).setY(player.pos.y + 2.1);
+  const back = Math.min(6, worldHit(head, d.clone().negate(), 6.3) - .3);
+  camPos.copy(head).addScaledVector(d, -Math.max(1.2, back)).add(tmp.set(Math.cos(yaw), 0, -Math.sin(yaw)).multiplyScalar(.9));
+  camPos.y = Math.max(camPos.y, heightfield(camPos.x) + .4);
+  camera.position.copy(camPos); camera.lookAt(tmp.copy(camPos).add(d));
+}
+
+let last = performance.now(), acc = 0;
+function frame(now) {
+  const real = Math.min(.1, (now - last) / 1000); last = now;
+  if (state.started && locked()) { acc += real * SPEED; let n = 0; while (acc >= 1 / 60 && n++ < 40) { step(1 / 60); acc -= 1 / 60; } }
+  render(real);
+  requestAnimationFrame(frame);
+}
+function start() {
+  $('overlay').style.display = 'none'; state.started = true;
+  try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+  if (!TEST) renderer.domElement.requestPointerLock();
+}
+$('go').onclick = start;
+renderer.domElement.addEventListener('click', () => { if (state.started && !locked()) renderer.domElement.requestPointerLock(); });
+document.addEventListener('pointerlockchange', () => {
+  if (state.started && !locked() && !state.over) { $('overlay').style.display = 'flex'; $('go').textContent = 'Resume'; mouse.down = false; }
+});
+if (TEST) start();
+say('Kill the Rust Foghorn, then cut their Anchor Chain. Watch the tide clock.');
+window.__bh = {state, ents, heroes, player, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
+  setAim: (y, p) => { yaw = y; pitch = p; updateCamera(); }};
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
