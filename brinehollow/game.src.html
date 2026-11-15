@@ -50,6 +50,9 @@
   #card td{padding:3px 14px 3px 0;vertical-align:top;border-top:2px dotted #14141440}
   #card td:first-child{font-family:var(--head);font-weight:900;font-size:15px;letter-spacing:.04em;color:#0c8a78;white-space:nowrap}
   #go{margin-top:12px;padding:8px 28px;font-family:var(--head);font-weight:900;font-size:24px;letter-spacing:.06em;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);border-radius:3px;background:#ffd23f;color:var(--ink);cursor:pointer}
+  #pickrow{margin-top:6px;font-size:12px;text-transform:uppercase}
+  #pick button{font-family:var(--head);font-weight:900;font-size:15px;letter-spacing:.04em;margin:3px 3px 0 0;padding:3px 10px;border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);background:#fff;color:var(--ink);cursor:pointer;border-radius:2px}
+  #pick button.on{background:#238a7c;color:#fff}
   #dead{top:22%;left:50%;transform:translateX(-50%) rotate(-1.5deg);font-family:var(--head);font-weight:900;font-size:30px;letter-spacing:.04em;display:none;text-align:center;background:#fff;border:4px solid var(--ink);box-shadow:7px 7px 0 var(--ink);padding:8px 22px}
   #dead small{font-family:"Comic Sans MS","Chalkboard SE",sans-serif;font-size:13px;font-weight:700}
   #banner{top:132px;left:50%;transform:translateX(-50%) rotate(-2deg);font-family:var(--head);font-weight:900;font-size:34px;letter-spacing:.06em;background:#ffe27a;border:4px solid var(--ink);box-shadow:7px 7px 0 var(--ink);padding:4px 24px;display:none;white-space:nowrap}
@@ -98,6 +101,7 @@
     <tr><td>1 · 2 · 3</td><td>Buy Rigging. Every item has a Low-Tide face and a High-Tide face</td></tr>
     <tr><td>Wake</td><td>Move fast (tether, current) to fill the blue ring. Full Wake: next shot hits ×3 and refills your magazine</td></tr>
   </table>
+  <div id="pickrow"><b>Your hand:</b> <span id="pick"></span></div>
   <button id="go">Cast off</button>
 </div></div>
 
@@ -111,6 +115,13 @@ const V3 = THREE.Vector3, $ = id => document.getElementById(id);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v)), lerp = (a, b, t) => a + (b - a) * t;
 const TEAM_COL = [0x238a7c, 0xc0522d], TEAM_TRIM = [0x55b3a2, 0x8a3520], TEAM_NAME = ['Teal', 'Rust'];
 const dirOf = t => t === 0 ? 1 : -1;
+// The starting cast. Heroes are playable looks; Wickie is the crew unit and Glimmer / Ember carry the lanterns.
+const ROSTER = [
+  ['Breakwater', 'Mainsail', 'Drift', 'Rivet', 'Bell', 'Kelp', 'Skiff', 'Brine'],
+  ['Netter', 'Cinder', 'Gaff', 'Knuckle', 'Soot', 'Tiller', 'Barnacle', 'Copper', 'Undertow'],
+];
+const BEARER = ['glimmer', 'ember'];
+const shuffled = a => a.map(v => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map(v => v[1]);
 
 /* ---------- tuning ---------- */
 const TIDE_LEN = 70, TIDE_LOW = -4.6, TIDE_HIGH = 0.55, WAVE_EVERY = 24;
@@ -399,21 +410,25 @@ function spawn(e) {
   Object.assign(e, {vel: new V3(), alive: true, onGround: true, knock: 0, slow: 0, face: 0, atkT: Math.random()});
   e.maxHp = e.hp; ents.push(e); return e;
 }
-function makeHero(team, i, isPlayer) {
+function heroLook(h, who) {      // dress a hero as one of the roster
+  if (h.mesh) scene.remove(h.mesh);
+  h.who = who; h.mesh = model(who.toLowerCase(), {team: TEAM_COL[h.team], team2: TEAM_TRIM[h.team]});
+  if (!h.isPlayer) h.name = who;
+}
+function makeHero(team, i, isPlayer, who) {
   const d = dirOf(team), laneX = [-4, 0, 4][i];
   const h = spawn({kind: 'hero', team, hp: 220, r: .6, h: 1.9, pos: new V3(laneX, 0, -d * SPAWN_Z),
-    spheres: [[.7, .7], [1.5, .6]], laneX, seed: Math.random() * 9, isPlayer,
-    mesh: model(team ? 'hero_rust' : 'hero_teal', {team: isPlayer ? 0x2c9e8e : TEAM_COL[team], team2: TEAM_TRIM[team]})});
+    spheres: [[.7, .7], [1.5, .6]], laneX, seed: Math.random() * 9, isPlayer, mesh: null});
   Object.assign(h, {spark: 0, pearl: 0, rig: [false, false, false], ammo: 24, reload: 0, wake: 0, fireT: 0,
     tetherCd: 0, tether: null, shoveCd: 0, braceCd: 0, brace: 0, windup: 0, stun: 0, respawn: 0, carry: false, lastHit: -9,
-    name: isPlayer ? 'You' : TEAM_NAME[team] + ' ' + ['Gaffer', 'Netter', 'Diver'][i]});
-  heroes.push(h); return h;
+    name: 'You'});
+  heroLook(h, who); heroes.push(h); return h;
 }
 function makeWickie(team, i, bearer) {
   const d = dirOf(team);
-  const g = model(bearer ? 'bearer' : 'wickie', {team: TEAM_COL[team], team2: TEAM_TRIM[team]});
+  const g = model(bearer ? BEARER[team] : 'wickie', {team: TEAM_COL[team], team2: TEAM_TRIM[team]});
   return spawn({kind: 'wickie', team, bearer, hp: bearer ? 120 : 55, r: .45, h: bearer ? 2.3 : 1.5, mesh: g,
-    spheres: bearer ? [[.8, .65], [1.6, .55], [1.95, .4]] : [[.5, .5], [1.05, .45]], laneX: (i % 3 - 1) * 2.6,
+    spheres: bearer ? [[.8, .7], [1.6, .6]] : [[.5, .5], [1.05, .45]], laneX: (i % 3 - 1) * 2.6,
     pos: new V3((i % 3 - 1) * 2.6, 0, -d * (SPAWN_Z - 4) - d * Math.floor(i / 3) * 2)});
 }
 function makeTower(team) {
@@ -445,8 +460,18 @@ function makeBuoy(team, x, z, bonus) {
   return {team, x, z, bonus, mesh: g};
 }
 
-const player = makeHero(0, 1, true); makeHero(0, 0); makeHero(0, 2);
-for (let i = 0; i < 3; i++) makeHero(1, i);
+const picks = [shuffled(ROSTER[0].slice(1)), shuffled(ROSTER[1])];
+const player = makeHero(0, 1, true, ROSTER[0][0]); makeHero(0, 0, false, picks[0][0]); makeHero(0, 2, false, picks[0][1]);
+for (let i = 0; i < 3; i++) makeHero(1, i, false, picks[1][i]);
+function pickHero(who) {            // the title-screen picker: an ally already wearing that look takes your old one
+  const twin = heroes.find(h => h.team === 0 && !h.isPlayer && h.who === who);
+  if (twin) heroLook(twin, player.who);
+  heroLook(player, who);
+  for (const b of document.querySelectorAll('#pick button')) b.classList.toggle('on', b.textContent === who);
+}
+$('pick').innerHTML = ROSTER[0].map(n => `<button>${n}</button>`).join('');
+for (const b of document.querySelectorAll('#pick button')) b.onclick = () => pickHero(b.textContent);
+pickHero(ROSTER[0][0]);
 const towers = [makeTower(0), makeTower(1)], chains = [makeChain(0), makeChain(1)];
 const crabs = [makeCrab(-32), makeCrab(32)];
 const buoys = [makeBuoy(0, 6, -56, 1), makeBuoy(0, 18, -14, 1.5), makeBuoy(1, -6, 56, 1), makeBuoy(1, 18, 14, 1.5)];
@@ -573,7 +598,7 @@ function damage(t, amt, src) {
   if (t.kind === 'wickie') {
     giveSpark(foe, t.bearer ? 60 : 30, t.pos, 30);
     if (t.bearer) pop('CRASH!', t.pos.clone().setY(3), '#ffd23f', 34);
-    if (t.bearer) dropLantern(t.pos, TEAM_NAME[t.team] + " Lantern-Bearer is down — the lantern is loose!");
+    if (t.bearer) dropLantern(t.pos, (t.team ? 'Ember' : 'Glimmer') + " is down — the lantern is loose!");
   } else if (t.kind === 'hero') {
     t.respawn = 8; t.tether = null; pop('SPLASH!', t.pos.clone().setY(t.pos.y + 2), '#ff5a3c', 38);
     if (t.carry) { t.carry = false; state.lantern = null; dropLantern(t.pos, 'The lantern carrier fell — the lantern is loose!'); }
@@ -904,6 +929,7 @@ function drawFx(dt) {
     fxc.fillStyle = '#fff'; fxc.fillRect(x - w / 2, y, w, 6);
     fxc.fillStyle = e.team === 0 ? '#238a7c' : e.team === 1 ? '#c0522d' : '#e8b93a'; fxc.fillRect(x - w / 2, y, w * e.hp / e.maxHp, 6);
     if (e.kind === 'hero' && e.windup > 0) inked('SHOVE! [Q]', x, y - 16, 20, '#fff');
+    else if (e.kind === 'hero' && !e.carry) inked(e.who.toUpperCase(), x, y - 12, 13, e.team ? '#ffb48c' : '#9fe6d8');
     else if (e.kind === 'hero' && e.carry) inked('LANTERN', x, y - 14, 17, '#ffd23f');
   }
   for (let i = pops.length - 1; i >= 0; i--) {       // sound effects
@@ -1021,7 +1047,7 @@ document.addEventListener('pointerlockchange', () => {
 });
 if (TEST) start();
 say('Kill the Rust Foghorn, then cut their Anchor Chain. Watch the tide clock.');
-window.__bh = {state, ents, heroes, player, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
+window.__bh = {state, ents, heroes, player, ROSTER, heroLook, pickHero, model, scene, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
   setAim: (y, p) => { yaw = y; pitch = p; updateCamera(); }};
 requestAnimationFrame(frame);
 }

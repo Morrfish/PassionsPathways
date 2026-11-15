@@ -42,11 +42,13 @@ def sph(r, loc, m, scale=(1, 1, 1)):
 def tor(R_, r, loc, m, rot=(0, 0, 0), scale=(1, 1, 1)):
     bpy.ops.mesh.primitive_torus_add(major_radius=R_, minor_radius=r, major_segments=12, minor_segments=5, location=loc, rotation=rot)
     bpy.context.object.scale = scale; return fin(m)
-def done(name):
+def done(name, k=1.0):
     bpy.ops.object.select_all(action='DESELECT')
     for o in P: o.select_set(True)
     bpy.context.view_layer.objects.active = P[0]
     bpy.ops.object.join(); o = bpy.context.object; o.name = name; o.data.name = name
+    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)   # bake the first part's own scale before sizing the whole figure
+    o.scale = (k, k, k)
     bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
     bpy.context.scene.cursor.location = (0, 0, 0); bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
     P.clear()
@@ -80,60 +82,6 @@ def harpoon_gun(x, y, z):
     cyl(.06, .06, .55, (x, y - .62, z + .04), STEEL, rot=(R(90), 0, 0))
     cyl(.11, 0, .26, (x, y - 1.0, z + .04), BRASS, rot=(R(90), 0, 0), v=4)
 
-# ---- Teal hero: broad and heavy, big cuffs, rope slung across the chest, gaff on the back
-for s in (-1, 1):
-    box((.32, .44, .28), (s * .25, -.05, .14), LEATHER)
-    box((.3, .32, .42), (s * .25, 0, .5), 'c_2a2a30')
-cyl(.68, .52, .72, (0, 0, .78), 'team')
-cyl(.7, .69, .09, (0, 0, .44), 'team2')
-cyl(.5, .6, .56, (0, 0, 1.33), 'team')
-cyl(.55, .55, .11, (0, 0, 1.05), LEATHER)
-box((.18, .07, .16), (0, -.55, 1.05), BRASS)
-box((.1, .06, .5), (0, -.55, 1.33), 'team2')
-cyl(.36, .42, .17, (0, 0, 1.64), 'team2')
-sph(.26, (0, -.03, 1.74), SKIN)
-face(1.74, -.28, .1)
-hat(.66, 1.86)
-box((.26, .28, .5), (-.7, -.02, 1.27), 'team', rot=(0, R(-8), 0))
-box((.33, .33, .2), (-.74, -.02, .97), 'team2')
-sph(.14, (-.75, -.04, .83), SKIN)
-box((.26, .6, .26), (.64, -.3, 1.33), 'team', rot=(R(-6), 0, R(6)))
-box((.33, .2, .33), (.62, -.64, 1.33), 'team2')
-sph(.14, (.62, -.78, 1.33), SKIN)
-harpoon_gun(.62, -.95, 1.3)
-tor(.55, .09, (0, 0, 1.3), ROPE, rot=(R(90), R(38), 0), scale=(1, 1.15, 1))
-tor(.55, .09, (.04, 0, 1.24), ROPE, rot=(R(90), R(46), 0), scale=(1, 1.15, 1))
-cyl(.045, .045, 2.1, (-.2, .5, 1.25), DARKWOOD, rot=(0, R(14), 0))
-tor(.16, .045, (-.56, .5, 2.26), STEEL, rot=(R(90), 0, 0))
-done('hero_teal')
-
-# ---- Rust hero: lean, flared coat, long braid, paddle on the back
-for s in (-1, 1):
-    box((.26, .38, .26), (s * .2, -.05, .13), LEATHER)
-    box((.3, .32, .44), (s * .2, 0, .48), 'c_4a3a34')
-cyl(.62, .34, .82, (0, 0, .82), 'team')
-cyl(.64, .63, .08, (0, 0, .43), 'team2')
-cyl(.34, .42, .5, (0, 0, 1.3), 'team')
-cyl(.37, .37, .1, (0, 0, 1.05), LEATHER)
-box((.15, .06, .14), (0, -.37, 1.05), BRASS)
-box((.2, .14, .24), (.36, -.1, .96), 'c_7a5a40')
-cyl(.26, .3, .14, (0, 0, 1.58), 'team2')
-sph(.24, (0, -.03, 1.68), SKIN)
-face(1.68, -.26, .09)
-hat(.6, 1.8)
-for i in range(5): sph(.1 - i * .008, (0, .26 + i * .05, 1.6 - i * .16), INK)
-box((.26, .05, .1), (0, .5, .88), 'team2', rot=(0, R(20), 0))
-box((.2, .22, .44), (-.5, -.02, 1.3), 'team', rot=(0, R(-10), 0))
-box((.22, .24, .12), (-.54, -.02, 1.04), INK)
-sph(.12, (-.55, -.04, .92), SKIN)
-box((.2, .55, .2), (.48, -.28, 1.33), 'team', rot=(R(-6), 0, R(6)))
-box((.22, .12, .22), (.46, -.6, 1.33), INK)
-sph(.12, (.46, -.72, 1.33), SKIN)
-harpoon_gun(.46, -.9, 1.3)
-cyl(.045, .045, 1.5, (.12, .42, 1.35), WOOD, rot=(0, R(-22), 0))
-box((.34, .06, .8), (-.3, .42, .55), 'c_8a7a6a', rot=(0, R(-22), 0))
-done('hero_rust')
-
 # ---- Wickie: a stout little lamplighter with a white beard and a rope coil on the back
 for s in (-1, 1): box((.22, .3, .2), (s * .16, -.04, .1), LEATHER)
 cyl(.44, .34, .62, (0, 0, .5), 'team')
@@ -151,21 +99,260 @@ cyl(.03, .03, 1.1, (.5, -.14, .7), DARKWOOD)
 sph(.08, (.5, -.14, 1.28), LAMP)
 done('wickie')
 
-# ---- Lantern-Bearer: caped, braided, holding the prize aloft
+# ================================================================= the starting cast (reference/teal-crew-*.webp, rust-crew-*.webp)
+# One rig, many silhouettes: build, coat length, headgear and one piece of signature gear per character.
+# Every hero carries the harpoon gun in the +X hand; signature gear goes in the free hand or on the back.
+CREAM, GLASS, IRONHAT = 'c_e8dcc4', 'c_3f7f86', 'c_6a6e78'
+
+def person(w=1.0, hem=.6, waist=.36, chest=.42, coat=.42, legs='c_2a2a30', legw=.3, aw=.2, cuff=True, bare=False,
+           glove=None, wraps=False, raise_arm=False, collar=.16, gun=True):
+    """Body with a coat. Returns the shoulder x so gear can be placed against it."""
+    for s in (-1, 1):
+        box((.28 * w, .4, .26), (s * .2 * w, -.05, .13), LEATHER)
+        box((legw * w, legw + .02, .44), (s * .2 * w, 0, .48), legs)
+        if wraps: box((legw * w + .03, legw + .05, .2), (s * .2 * w, 0, .36), CREAM)
+    cyl(hem * w, waist * w, 1.05 - coat, (0, 0, (1.05 + coat) / 2), 'team')
+    cyl(hem * w + .02, hem * w + .01, .08, (0, 0, coat + .03), 'team2')
+    cyl(waist * w, chest * w, .55, (0, 0, 1.33), 'team')
+    cyl(waist * w + .03, waist * w + .03, .1, (0, 0, 1.05), LEATHER)
+    box((.16, .06, .14), (0, -waist * w - .04, 1.05), BRASS)
+    cyl(chest * w * .62, chest * w * .72, collar, (0, 0, 1.6 + collar / 2 - .06), 'team2')
+    sph(.25, (0, -.03, 1.72), SKIN)
+    sx = chest * w + aw / 2
+    sleeve = SKIN if bare else 'team'
+    hand = glove or SKIN
+    # free arm (-X): down at the side, or raised to hold something up
+    if raise_arm:
+        box((aw, aw + .02, .52), (-sx - .08, -.12, 1.62), sleeve, rot=(R(24), R(-22), 0))
+        if cuff: box((aw + .08, aw + .1, .16), (-sx - .17, -.22, 1.84), 'team2', rot=(R(24), R(-22), 0))
+        sph(.12 if not glove else .15, (-sx - .2, -.26, 1.96), hand)
+    else:
+        box((aw, aw + .02, .5), (-sx - .04, -.02, 1.27), sleeve, rot=(0, R(-7), 0))
+        if cuff: box((aw + .08, aw + .1, .18), (-sx - .08, -.02, .98), 'team2')
+        sph(.12 if not glove else .16, (-sx - .09, -.04, .84), hand)
+    if bare: box((aw + .04, aw + .06, .2), (-sx - .02, -.02, 1.46), 'team')
+    # gun arm (+X): forward
+    box((aw, .58, aw), (sx - .02, -.3, 1.33), sleeve, rot=(R(-6), 0, R(6)))
+    if cuff: box((aw + .08, .18, aw + .08), (sx - .04, -.62, 1.33), 'team2')
+    if bare: box((aw + .04, .2, aw + .04), (sx, -.1, 1.36), 'team')
+    sph(.12 if not glove else .16, (sx - .04, -.76, 1.33), hand)
+    if gun: harpoon_gun(sx - .04, -.93, 1.3)
+    return sx
+
+def braid(x=0, n=5, ribbon=None, out=0.0):
+    for i in range(n): sph(.1 - i * .008, (x + out * i * .06, .25 + i * .05, 1.62 - i * .16), INK)
+    if ribbon:
+        z = 1.62 - n * .16
+        box((.3, .05, .09), (x + out * n * .06 + .14, .5, z + .06), ribbon, rot=(0, R(22), R(18)))
+        box((.26, .05, .08), (x + out * n * .06 + .1, .5, z - .08), ribbon, rot=(0, R(-12), R(-10)))
+def beard(col, length=.4, wide=.22):
+    cyl(wide, .03, length, (0, -.2, 1.62 - length / 2), col, rot=(R(180), 0, 0), v=7)
+    box((.3, .05, .07), (0, -.27, 1.66), col)
+def pouch(x, y, z, s=1.0): box((.2 * s, .13 * s, .22 * s), (x, y, z), 'c_7a5a40'); box((.2 * s, .14 * s, .06 * s), (x, y - .01, z + .1 * s), LEATHER)
+def strap(chestw, flip=1): box((.09, .04, .95), (0, -chestw - .02, 1.33), LEATHER, rot=(0, R(38 * flip), 0)); box((.09, .04, .95), (0, chestw + .02, 1.33), LEATHER, rot=(0, R(-38 * flip), 0))
+def coil(loc, big, rot, n=3, step=(0, .1, 0)):
+    for i in range(n): tor(big, big * .22, (loc[0] + step[0] * i, loc[1] + step[1] * i, loc[2] + step[2] * i), ROPE, rot=rot)
+def scarf(col, tails=2):
+    cyl(.3, .26, .16, (0, 0, 1.56), col)
+    for i in range(tails): box((.42, .05, .11), (.3 + i * .05, .3, 1.5 - i * .12), col, rot=(0, R(18 - i * 22), R(28 + i * 10)))
+def goggles(y, z):
+    for s in (-1, 1): cyl(.085, .085, .07, (s * .1, y, z), BRASS, rot=(R(90), 0, 0)); cyl(.06, .06, .08, (s * .1, y - .01, z), 'c_22262b', rot=(R(90), 0, 0))
+    box((.42, .03, .05), (0, y + .06, z), LEATHER)
+
+# ---------------- TEAL ----------------
+# Breakwater: the biggest body on the roster — heavy coat, long white beard, a huge rope coil standing on one shoulder
+sx = person(w=1.3, hem=.62, waist=.46, chest=.52, coat=.4, legw=.3, aw=.3)
+face(1.74, -.28, .1); beard('c_f0ece0', .62, .3); hat(.7, 1.86); strap(.68)
+coil((-.62, .0, 1.72), .52, (0, R(72), 0), n=4, step=(.09, 0, .03))
+pouch(-.4, -.62, .95, 1.2); pouch(.42, -.62, .95)
+done('breakwater', 1.06)
+
+# Mainsail: tall and narrow, floor-length coat, high collar, one long braid with a red ribbon streaming, spyglass in hand
+sx = person(w=.86, hem=.66, waist=.32, chest=.38, coat=.2, aw=.17, collar=.26)
+face(1.72, -.28, .09); hat(.56, 1.86); braid(0, 7, 'c_b8431c'); strap(.33, -1)
+cyl(.07, .05, .5, (-sx - .1, -.3, .86), BRASS, rot=(R(72), 0, 0), v=8)
+cyl(.09, .09, .08, (-sx - .1, -.53, .93), 'c_22262b', rot=(R(72), 0, 0), v=8)
+pouch(-.3, -.38, .95)
+done('mainsail', 1.1)
+
+# Drift: small and quick — short tunic, baggy trousers, shin wraps, red neck scarf, gloves, a knife in the free hand
+sx = person(w=.9, hem=.5, waist=.36, chest=.4, coat=.74, legs='c_3a3a40', legw=.36, aw=.18, cuff=False, glove='c_3a3038', wraps=True)
+face(1.72, -.28, .09); hat(.6, 1.86); scarf('c_b8431c'); braid(0, 3)
+box((.05, .34, .09), (-sx - .09, -.3, .82), STEEL, rot=(R(-12), 0, 0)); box((.07, .12, .1), (-sx - .09, -.08, .84), WOOD)
+pouch(.3, -.4, .95); pouch(-.3, -.4, .95)
+done('drift', .95)
+
+# Rivet: broad shipwright — bare arms, big gloves, leather apron, goggles on the hat, a great wrench across the back
+sx = person(w=1.18, hem=.56, waist=.44, chest=.52, coat=.5, aw=.26, cuff=False, bare=True, glove='c_5a4030')
+face(1.72, -.28, .1); beard('c_3a2c24', .16, .2); hat(.6, 1.86); goggles(-.5, 1.93)
+box((.62, .05, .8), (0, -.56, .98), 'c_4a3a30'); strap(.62); strap(.62, -1)
+cyl(.06, .06, 1.5, (.1, .58, 1.3), STEEL, rot=(0, R(38), 0))
+tor(.2, .07, (.62, .58, 1.95), STEEL, rot=(R(90), 0, 0)); box((.2, .1, .2), (.78, .58, 2.1), STEEL) 
+pouch(-.52, -.5, .95); pouch(.52, -.5, .95)
+done('rivet', 1.02)
+
+# Bell: the smallest Teal — twin braids out to the sides and a brass bell held high (never a single ribbon braid: that is Mainsail)
+sx = person(w=.82, hem=.52, waist=.3, chest=.36, coat=.3, aw=.16, raise_arm=True)
+face(1.72, -.28, .09); hat(.6, 1.86)
 for s in (-1, 1):
-    box((.24, .34, .24), (s * .18, -.04, .12), LEATHER)
-    box((.24, .26, .34), (s * .18, 0, .4), 'c_4a3a34')
-cyl(.66, .22, .86, (0, 0, .98), 'team')
-cyl(.68, .67, .07, (0, 0, .57), 'team2')
-cyl(.3, .34, .16, (0, 0, 1.42), 'team2')
-sph(.24, (0, -.03, 1.56), SKIN)
-face(1.56, -.26, .09)
-hat(.6, 1.68)
-for i in range(4): sph(.09, (0, .26 + i * .05, 1.48 - i * .15), INK)
-box((.18, .2, .62), (.52, -.14, 1.55), 'team', rot=(R(18), R(14), 0))
-sph(.11, (.6, -.25, 1.9), SKIN)
-lantern(.6, -.25, 1.02, .95)
-done('bearer')
+    for i in range(4): sph(.09, (s * (.24 + i * .05), .12, 1.56 - i * .15), INK)
+cyl(.26, .09, .3, (-sx - .2, -.28, 2.2), BRASS, rot=(R(180), 0, 0), v=10)
+cyl(.28, .26, .05, (-sx - .2, -.28, 2.33), 'c_f0c040', v=10)
+sph(.07, (-sx - .2, -.28, 2.38), 'c_b8862a'); cyl(.03, .03, .16, (-sx - .2, -.28, 2.04), BRASS)
+box((.34, .16, .3), (.2, .36, 1.0), 'c_7a5a40'); strap(.33)
+done('bell', .88)
+
+# Kelp: a walking kelp bundle — weed draped off both shoulders, a wicker basket on the back, sickle in the free hand
+sx = person(w=.95, hem=.56, waist=.36, chest=.42, coat=.42, aw=.19)
+face(1.72, -.28, .09); hat(.6, 1.86); braid(.12, 5)
+for i in range(11):
+    a = R(-200 + i * 22); cyl(.11, .01, .85 + (i % 3) * .14, (math.cos(a) * .52, -math.sin(a) * .4 + .06, 1.12 - (i % 3) * .06), WEED, rot=(R(180), 0, 0), v=5)
+cyl(.34, .26, .5, (0, .5, 1.25), 'c_b08a50', v=9); tor(.34, .04, (0, .5, 1.5), 'c_8a6a3a')
+cyl(.035, .035, .3, (-sx - .09, -.14, .82), WOOD, rot=(R(90), 0, 0)); tor(.16, .03, (-sx - .09, -.44, .9), STEEL, rot=(0, R(90), 0))
+done('kelp', 1.0)
+
+# Skiff: short and square — bedroll and pack on the back, and an oar taller than the hat
+sx = person(w=1.2, hem=.56, waist=.44, chest=.5, coat=.5, legw=.3, aw=.26)
+face(1.72, -.28, .1); hat(.62, 1.86); strap(.64)
+box((.7, .34, .6), (0, .56, 1.3), 'c_7a5a40'); cyl(.2, .2, .86, (0, .56, 1.78), 'c_b89a6a', rot=(0, R(90), 0), v=9)
+for x in (-.25, .25): cyl(.215, .215, .07, (x, .56, 1.78), LEATHER, rot=(0, R(90), 0), v=9)
+cyl(.05, .05, 2.0, (-.5, .8, 1.5), WOOD); box((.3, .07, .8), (-.5, .8, 2.7), 'c_8a6a48'); box((.2, .08, .1), (-.5, .8, .5), WOOD)
+pouch(.46, -.5, .95, 1.2)
+done('skiff', .86)
+
+# Brine: the medic — no straw hat: a white headscarf with knot tails and a bun, white apron with a cross, bottle held up
+sx = person(w=.95, hem=.56, waist=.36, chest=.42, coat=.38, aw=.19, raise_arm=True)
+face(1.72, -.28, .09)
+sph(.275, (0, .0, 1.78), CREAM, scale=(1, 1, .8)); box((.5, .05, .09), (0, -.25, 1.83), CREAM)
+sph(.14, (0, .26, 1.84), INK)
+for s in (-1, 1): box((.3, .05, .1), (s * .2, .3, 1.66), CREAM, rot=(0, s * R(35), 0))
+box((.08, .03, .08), (0, -.285, 1.83), 'team'); box((.03, .03, .16), (0, -.287, 1.83), 'team')
+box((.44, .05, .86), (0, -.47, .86), CREAM); box((.3, .05, .3), (0, -.44, 1.38), CREAM)
+box((.16, .03, .05), (0, -.47, 1.4), 'team'); box((.05, .03, .16), (0, -.47, 1.4), 'team')
+cyl(.07, .07, .16, (-sx - .2, -.3, 2.1), 'c_cfe6ea', v=8); cyl(.035, .035, .07, (-sx - .2, -.3, 2.21), 'c_9c7a45', v=8)
+box((.36, .16, .3), (.44, .1, .92), 'c_7a5a40'); box((.12, .03, .04), (.44, .01, .92), CREAM); box((.04, .03, .12), (.44, .01, .92), CREAM)
+done('brine', .98)
+
+# Glimmer: Teal's Lantern-Bearer — tall double-breasted coat, a rope sash, the lantern carried low at the side
+sx = person(w=1.12, hem=.6, waist=.42, chest=.5, coat=.24, aw=.24, collar=.26, gun=False)
+face(1.72, -.28, .1); hat(.62, 1.86)
+for s in (-1, 1):
+    for z in (1.2, 1.36, 1.52): sph(.045, (s * .14, -.5, z), BRASS)
+tor(.56, .09, (0, 0, 1.36), ROPE, rot=(R(90), R(40), 0), scale=(1, 1.1, 1))
+tor(.56, .09, (.05, 0, 1.3), ROPE, rot=(R(90), R(48), 0), scale=(1, 1.1, 1))
+lantern(-sx - .1, -.06, .0, 1.0)
+pouch(.4, -.52, .95, 1.2)
+done('glimmer', 1.08)
+
+# ---------------- RUST ----------------
+# Netter: lean, twin ribboned braids, baggy trousers, a net bundle with floats slung at the hip
+sx = person(w=.9, hem=.54, waist=.34, chest=.4, coat=.5, legs='c_4a3a34', legw=.36, aw=.18)
+face(1.72, -.28, .09); hat(.62, 1.86); strap(.36)
+for s in (-1, 1):
+    for i in range(5): sph(.09, (s * (.2 + i * .07), .2 + i * .03, 1.58 - i * .15), INK)
+    box((.22, .05, .08), (s * .58, .34, .84), 'team2', rot=(0, s * R(30), 0))
+sph(.4, (-sx - .1, .2, .62), 'c_4f7a70', scale=(1, 1.1, .8))
+for rot in ((0, 0, 0), (R(90), 0, 0), (0, R(90), 0), (R(90), 0, R(45))): tor(.41, .04, (-sx - .1, .2, .62), ROPE, rot=rot, scale=(1, 1.1, .8) if rot == (0, 0, 0) else (1, 1, 1))
+for a in (0, 1.6, 3.2): sph(.08, (-sx - .1 + math.cos(a) * .4, .2 + math.sin(a) * .4, .32), 'c_e8703f')
+done('netter', .98)
+
+# Cinder: the widest Rust — no straw hat: leather cap and goggles, black beard, cowl, forge apron, huge gloves, shovel on the back
+sx = person(w=1.36, hem=.6, waist=.48, chest=.54, coat=.5, legs='c_4a3a34', legw=.32, aw=.3, cuff=False, glove='c_5a4030')
+face(1.72, -.28, .1); beard('c_22201e', .3, .28)
+sph(.275, (0, .02, 1.79), 'c_4a3a30', scale=(1, 1, .75)); goggles(-.24, 1.9)
+cyl(.52, .34, .26, (0, 0, 1.56), 'team2'); cyl(.34, .5, .1, (0, 0, 1.44), 'team2')
+box((.7, .06, .86), (0, -.66, .98), 'c_3a3a42'); box((.5, .06, .3), (0, -.7, 1.4), 'c_3a3a42')
+for s in (-1, 1): box((.36, .38, .32), (s * (sx + .06) - (0 if s < 0 else .02), -.02 if s < 0 else -.72, .92 if s < 0 else 1.33), 'c_5a4030')
+cyl(.05, .05, 1.5, (.15, .72, 1.4), WOOD, rot=(0, R(-24), 0)); box((.4, .06, .5), (.56, .72, .6), 'c_55555e', rot=(0, R(-24), 0)); box((.26, .07, .08), (-.16, .72, 2.1), WOOD, rot=(0, R(-24), 0))
+done('cinder', 1.04)
+
+# Gaff: tall, straight and plain — long coat, big square cuffs, upturned collar, a gaff hook standing high over the shoulder
+sx = person(w=.88, hem=.6, waist=.32, chest=.4, coat=.22, aw=.18, collar=.28)
+for s in (-1, 1): box((.34, .36, .24), (s * (sx + .07) - (0 if s < 0 else .11), -.02 if s < 0 else -.62, .98 if s < 0 else 1.33), 'team2')
+face(1.72, -.28, .09); hat(.5, 1.86); strap(.36, -1)
+cyl(.045, .045, 2.3, (.2, .46, 1.5), DARKWOOD, rot=(0, R(-10), 0))
+tor(.2, .05, (-.2, .46, 2.66), STEEL, rot=(R(90), 0, 0)); cyl(.06, 0, .22, (-.4, .46, 2.52), STEEL, rot=(R(180), 0, 0), v=4)
+for z in (.9, 1.1): tor(.06, .03, (.31 - z * .17, .46, z), ROPE)
+pouch(-.3, -.38, .95)
+done('gaff', 1.1)
+
+# Knuckle: armoured bruiser — iron hat, riveted pauldrons, knee plates, gauntlets, rope and hook over the shoulder
+sx = person(w=1.3, hem=.56, waist=.48, chest=.54, coat=.56, legs='c_4a3a34', legw=.32, aw=.3, cuff=False, glove='c_55555e')
+face(1.72, -.28, .1)
+cyl(.52, .05, .26, (0, 0, 1.98), IRONHAT, v=10); cyl(.52, .5, .05, (0, 0, 1.85), 'c_4a4e58', v=10); sph(.05, (0, 0, 2.12), BRASS)
+cyl(.34, .3, .14, (0, 0, 1.56), 'team2')
+for s in (-1, 1):
+    sph(.36, (s * (sx + .02), 0, 1.58), IRONHAT, scale=(1.1, 1.15, .7)); box((.5, .56, .1), (s * (sx + .04), 0, 1.42), 'c_4a4e58')
+    for y in (-.22, .22): sph(.05, (s * (sx + .2), y, 1.5), BRASS)
+    sph(.2, (s * .26, -.2, .5), IRONHAT, scale=(1, .6, 1.1))
+tor(.6, .1, (0, 0, 1.36), ROPE, rot=(R(90), R(-42), 0), scale=(1, 1.15, 1))
+tor(.2, .06, (-.5, .5, .9), STEEL, rot=(R(90), 0, 0))
+pouch(.5, -.56, .95, 1.2); pouch(-.5, -.56, .95, 1.2)
+done('knuckle', 1.04)
+
+# Soot: small and ragged — face mask, torn scarf tails streaming, shin wraps, brass canisters on the belt
+sx = person(w=.88, hem=.5, waist=.36, chest=.4, coat=.66, legs='c_4a3a34', legw=.34, aw=.18, cuff=False, glove='c_3a3038', wraps=True)
+box((.07, .04, .04), (-.09, -.28, 1.78), INK); box((.07, .04, .04), (.09, -.28, 1.78), INK)
+sph(.262, (0, -.04, 1.69), 'c_2a2a30', scale=(1, 1, .62)); hat(.6, 1.86)
+cyl(.32, .27, .18, (0, 0, 1.56), 'team2')
+for i in range(4): box((.5 + (i % 2) * .16, .05, .12), (.38 + i * .04, .28 + i * .05, 1.58 - i * .15), 'team2', rot=(0, R(20 - i * 16), R(30 + i * 8)))
+for x in (-.34, -.14, .14, .34): cyl(.07, .07, .2, (x, -.42, .9), BRASS, v=8); cyl(.04, .04, .06, (x, -.42, 1.02), 'c_b8862a', v=8)
+for s in (-1, 1): sph(.11, (s * .46, .1, .88), 'c_3a3038')
+done('soot', .92)
+
+# Ember: Rust's Lantern-Bearer — a wide cape with the crew mark on the back, braid, the lantern carried low
+sx = person(w=.95, hem=.5, waist=.36, chest=.42, coat=.5, legs='c_4a3a34', legw=.34, aw=.19, gun=False)
+face(1.72, -.28, .09); hat(.64, 1.86); braid(0, 5, 'team2')
+cyl(.86, .34, 1.05, (0, .04, 1.08), 'team'); cyl(.88, .87, .07, (0, .04, .58), 'team2')
+cyl(.36, .3, .16, (0, 0, 1.6), 'team2'); sph(.06, (.12, -.33, 1.56), BRASS)
+tor(.2, .045, (0, .76, 1.05), CREAM, rot=(R(78), 0, 0)); box((.05, .04, .3), (0, .78, 1.05), CREAM); box((.26, .04, .05), (0, .79, .98), CREAM)
+lantern(-.8, -.3, .3, 1.0); sph(.11, (-.8, -.3, 1.14), SKIN)
+done('ember', 1.0)
+
+# Tiller: bare forearms with wraps, and a tiller oar planted beside her that tops the hat
+sx = person(w=.98, hem=.54, waist=.38, chest=.44, coat=.5, legs='c_4a3a34', legw=.34, aw=.2, cuff=False, bare=True)
+face(1.72, -.28, .09); hat(.62, 1.86); braid(0, 5); strap(.4); strap(.4, -1)
+box((.24, .26, .2), (-sx - .07, -.02, 1.02), CREAM); box((.24, .2, .24), (sx - .03, -.56, 1.33), CREAM)
+cyl(.06, .06, 1.7, (-sx - .28, -.2, 1.55), WOOD); box((.36, .08, .95), (-sx - .28, -.2, .48), 'c_8a6a48'); box((.22, .1, .1), (-sx - .28, -.2, 2.42), WOOD)
+pouch(.36, -.44, .95); pouch(-.3, -.44, .95)
+done('tiller', 1.0)
+
+# Barnacle: short, round diver — brass helmet with a grille, white beard out of the collar, tank frame with rope on top, glass floats
+sx = person(w=1.22, hem=.56, waist=.46, chest=.52, coat=.56, legs='c_4a3a34', legw=.32, aw=.27, cuff=True, glove='c_5a4030')
+sph(.4, (0, -.02, 1.8), BRASS, scale=(1, 1, .95)); cyl(.44, .44, .1, (0, 0, 1.52), 'c_b8862a', v=10)
+cyl(.2, .2, .1, (0, -.38, 1.82), 'c_22262b', rot=(R(90), 0, 0), v=8)
+for x in (-.1, 0, .1): box((.025, .05, .36), (x, -.44, 1.82), BRASS)
+for z in (1.72, 1.92): box((.36, .05, .025), (0, -.44, z), BRASS)
+for s in (-1, 1): cyl(.1, .1, .08, (s * .38, -.02, 1.84), 'c_22262b', rot=(0, R(90), 0), v=8)
+cyl(.08, .08, .12, (0, 0, 2.22), 'c_b8862a', v=8)
+cyl(.26, .03, .5, (0, -.36, 1.3), 'c_f0ece0', rot=(R(180), 0, 0), v=7)
+box((.7, .3, .8), (0, .6, 1.25), 'c_6b4a34'); box((.74, .32, .08), (0, .6, 1.25), IRON2)
+coil((0, .6, 1.72), .34, (0, 0, 0), n=3, step=(0, 0, .12))
+for s in (-1, 1):
+    sph(.2, (s * .72, .34, .7), GLASS)
+    for rot in ((0, 0, 0), (R(90), 0, 0), (0, R(90), 0)): tor(.205, .025, (s * .72, .34, .7), ROPE, rot=rot)
+done('barnacle', .84)
+
+# Copper: flat cap, goggles and a moustache, with a brass horn rig rising off the back over one shoulder
+sx = person(w=.92, hem=.52, waist=.34, chest=.4, coat=.34, legs='c_4a3a34', aw=.18, cuff=False, bare=True, glove='c_5a4030')
+face(1.72, -.28, .09); box((.26, .05, .06), (0, -.28, 1.64), 'c_3a2c24')
+cyl(.3, .26, .1, (0, -.02, 1.93), 'team2', v=9); box((.3, .2, .04), (0, -.3, 1.9), 'team2'); goggles(-.27, 1.97)
+for x in (-.16, .16): cyl(.13, .13, .6, (x, .46, 1.25), BRASS, v=8); sph(.13, (x, .46, 1.56), BRASS)
+cyl(.07, .07, .8, (.3, .46, 1.9), BRASS, v=8)
+cyl(.09, .09, .5, (.3, .26, 2.3), BRASS, rot=(R(90), 0, 0), v=8)
+cyl(.5, .1, .7, (.3, -.2, 2.36), BRASS, rot=(R(-84), 0, 0), v=12); cyl(.42, .08, .6, (.3, -.29, 2.36), 'c_3a2a12', rot=(R(-84), 0, 0), v=12)
+cyl(.04, .04, .5, (-sx - .09, -.2, .78), STEEL, rot=(R(70), 0, 0)); tor(.09, .035, (-sx - .09, -.46, .87), STEEL, rot=(0, R(90), 0))
+strap(.36); strap(.36, -1)
+done('copper', 1.02)
+
+# Undertow: long coat with a pale wave on the back, ribboned braid, a heavy cleaver hanging from the free hand
+sx = person(w=1.0, hem=.62, waist=.38, chest=.44, coat=.22, legs='c_4a3a34', aw=.2)
+face(1.72, -.28, .09); hat(.62, 1.86); braid(0, 5, 'team2'); strap(.4)
+cyl(.32, .27, .16, (0, 0, 1.56), 'team2')
+for i, (x, z, r) in enumerate(((-.22, .52, .16), (.02, .6, .2), (.26, .5, .15))): tor(r, .04, (x, .56 - abs(x) * .12, z), CREAM, rot=(R(84), 0, 0))
+box((.5, .04, .06), (0, .58, .38), CREAM)
+box((.07, .2, .1), (-sx - .09, -.06, .78), WOOD); box((.05, .2, .62), (-sx - .09, -.1, .4), 'c_9a9ea6'); box((.06, .22, .12), (-sx - .09, -.1, .12), 'c_6a6e78')
+done('undertow', 1.02)
 
 # ---- Foghorn: a riveted brass horn on an iron pedestal, bracketed off a braced timber tower (reference/props.webp)
 box((4.4, 4.4, 1.1), (0, 0, .55), STONE)
