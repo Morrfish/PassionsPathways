@@ -244,36 +244,38 @@ from mathutils import Matrix
 HC = 2.25            # height of the centre of the head
 def head(skin, fem=True, brow=1.0):
     hx = skin.split('_')[1]
-    bpy.ops.mesh.primitive_uv_sphere_add(segments=40, ring_count=24, radius=1, location=(0, 0, 0))
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=56, ring_count=32, radius=1, location=(0, 0, 0))
     o = bpy.context.object
     for v in o.data.vertices:
         x, y, z = v.co.x * .125, v.co.y * .15, v.co.z * .185
         t = max(0., -z) / .185
-        x *= 1 - (.45 if fem else .3) * t ** 1.6                                      # jaw tapers to the chin
+        x *= 1 - (.4 if fem else .28) * max(0., t - .25) ** 1.2 * 1.5                 # the jaw runs straight, then angles in to the chin
         if y < 0:
             f = -y / .15
             g = lambda cx, cz, sx, sz: math.exp(-((abs(x) - cx) / sx) ** 2 - ((z - cz) / sz) ** 2)
-            y -= .013 * brow * f * math.exp(-((z - .052) / .016) ** 2) * (1 if abs(x) < .1 else .3)   # brow ridge
-            y += .026 * f * g(.065, .0085, .03, .02)                                  # eye sockets
-            y -= .012 * f * g(.085, -.04, .03, .03)                                   # cheekbones
-            y += .008 * f * g(.06, -.1, .03, .03)                                     # hollow under them
-            y -= .011 * f * math.exp(-(x / .036) ** 2 - ((z + .108) / .014) ** 2)     # lips
+            y -= .017 * brow * f * math.exp(-((z - .056) / .014) ** 2) * (1 if abs(x) < .1 else .3)   # brow ridge
+            y += .03 * f * g(.065, .0085, .034, .024)                                 # eye sockets
+            y -= .02 * f * g(.088, -.036, .026, .02)                                  # cheekbones: a hard shelf
+            y += .016 * f * g(.07, -.095, .03, .03)                                   # the plane under them falls away
+            y -= .012 * f * math.exp(-(x / .034) ** 2 - ((z + .1) / .008) ** 2)        # upper lip
+            y -= .014 * f * math.exp(-(x / .03) ** 2 - ((z + .118) / .009) ** 2)       # lower lip
             y -= .016 * f * math.exp(-(x / .05) ** 2 - ((z + .162) / .024) ** 2)      # chin
         elif z < -.08:
             k = 1 - .45 * min(1, (-z - .08) / .1); x *= k; y *= k                     # back of the skull into the neck
         v.co = (x, y, z + HC)
     fin('head_' + hx)
     face_ = 'face_' + hx
-    limb((0, -.138, HC + .034), (0, -.168, HC - .04), .011, .019, tone(face_, .96), v=8)      # nose: bridge, tip, wings
-    sph(.022, (0, -.17, HC - .048), tone(face_, .96), scale=(1, 1, .85))
-    for s in (-1, 1): sph(.014, (s * .02, -.152, HC - .057), tone(face_, .93))
+    limb((0, -.14, HC + .03), (0, -.163, HC - .038), .009, .015, tone(face_, .96), v=8)       # nose: bridge, tip, wings
+    sph(.017, (0, -.165, HC - .045), tone(face_, .96), scale=(1, 1, .85))
+    for s in (-1, 1): sph(.011, (s * .016, -.151, HC - .052), tone(face_, .93))
     for s in (-1, 1):                                                                         # eyes: ball, iris, and lids that close over them
         ex = s * .065
-        sph(.024, (ex, -.1, HC + .0085), 'face_f3ecdc')
-        sph(.012, (ex - s * .002, -.114, HC + .0065), 'face_3a2416')
-        sph(.004, (ex - s * .006, -.1245, HC + .009), 'glow_ffffff')
-        sph(.026, (ex, -.101, HC + .0225), face_)
-        sph(.0255, (ex, -.1005, HC - .0075), face_)
+        sph(.027, (ex, -.1, HC + .0085), 'face_f3ecdc')
+        sph(.0135, (ex - s * .002, -.1145, HC + .0065), 'face_4a3018')
+        sph(.006, (ex - s * .002, -.1235, HC + .0065), 'face_0c0808')
+        sph(.004, (ex - s * .008, -.1265, HC + .008), 'glow_ffffff')
+        sph(.029, (ex, -.1005, HC + .0285), face_)                                            # a clear upper lid
+        sph(.0285, (ex, -.1, HC - .0105), face_)
         sph(.03, (s * .123, .012, HC - .005), 'skin_' + hx, scale=(.4, .8, 1.25))             # ear
     limb((0, .012, 1.97), (0, .0, HC - .12), .062, .052, 'skin_' + hx)                        # neck
 
@@ -281,11 +283,14 @@ def hand(wrist, fwd, side, mat, curl=1.0, s=1.0):
     """An articulated hand: palm, four two-jointed fingers and a thumb. fwd points down the fingers; side points to the thumb."""
     w = Vector(wrist); f = Vector(fwd).normalized(); sd = (Vector(side) - f * Vector(side).dot(f)).normalized(); n = f.cross(sd)
     rot = Matrix((sd, f, n)).transposed().to_euler()
-    box((.078 * s, .09 * s, .03 * s), w + f * .045 * s, mat, rot=rot, r=.012 * s)
+    box((.082 * s, .092 * s, .034 * s), w + f * .045 * s, mat, rot=rot, r=.014 * s)
+    limb(w - f * .075 * s, w + f * .005 * s, .052 * s, .043 * s, mat, v=12)                  # gauntlet cuff, strap and stud
+    tor(.05 * s, .009 * s, w - f * .04 * s, 'c_4a3a30', rot=Vector((0, 0, 1)).rotation_difference(f).to_euler()); sph(.008 * s, w - f * .04 * s + n * .05 * s, BRASS)
+    for i in range(4): sph(.012 * s, w + f * .09 * s + sd * ((1.5 - i) * .0195 * s) + n * .012 * s, 'c_4a4650', scale=(1, 1, .6))   # knuckle plates
     for i in range(4):
         b = w + f * .088 * s + sd * ((1.5 - i) * .0195 * s); L = (1, 1.1, 1.04, .86)[i]
         m1 = b + (f * .04 - n * .01 * curl) * s * L; m2 = m1 + (f * (.032 - .012 * curl) - n * .022 * curl) * s * L
-        limb(b, m1, .0105 * s, .0095 * s, mat, v=7); sph(.0098 * s, m1, mat); limb(m1, m2, .0092 * s, .0075 * s, mat, v=7); sph(.0075 * s, m2, mat)
+        limb(b, m1, .0115 * s, .0105 * s, mat, v=7); sph(.0108 * s, m1, mat); limb(m1, m2, .0102 * s, .0085 * s, mat, v=7); sph(.0085 * s, m2, mat)
     b = w + f * .022 * s + sd * .04 * s
     m1 = b + (sd * .03 + f * .03 - n * .006 * curl) * s; m2 = m1 + (f * .032 - n * .012 * curl - sd * .008 * curl) * s
     limb(b, m1, .013 * s, .011 * s, mat, v=7); sph(.0112 * s, m1, mat); limb(m1, m2, .0105 * s, .009 * s, mat, v=7); sph(.009 * s, m2, mat)
@@ -301,6 +306,20 @@ def sleeve(sh, el, wr, r, m, cuff='team2', cuff_at=.5):
     limb(q, q2, r * 1.08, r * 1.12, cuff)                                                                     # the rolled cuff
     return q2
 
+def split_skirt(r_bot, r_top, h, zc, m, folds=9, amp=.1, amp_top=0.0, gap=.3, v=44):
+    """A coat skirt open down the front (it parts wider toward the hem), with thickness so the lining shows."""
+    import bmesh
+    bpy.ops.mesh.primitive_cone_add(vertices=v, radius1=r_bot, radius2=r_top, depth=h, location=(0, 0, zc), end_fill_type='NOTHING')
+    o = bpy.context.object; bm = bmesh.new(); bm.from_mesh(o.data)
+    bmesh.ops.delete(bm, geom=[f for f in bm.faces if abs(math.atan2(f.calc_center_median().x, -f.calc_center_median().y)) < gap * .5], context='FACES')
+    for vert in bm.verts:
+        a = math.atan2(vert.co.y, vert.co.x); low = vert.co.z < 0
+        k = 1 + (amp if low else amp_top) * math.sin(folds * a + 1.3); vert.co.x *= k; vert.co.y *= k
+    bm.to_mesh(o.data); bm.free()
+    md = o.modifiers.new('thick', 'SOLIDIFY'); md.thickness = .016; md.offset = 0
+    bpy.ops.object.modifier_apply(modifier='thick')
+    return fin(m)
+
 def adult(skin, sw=.25, hw=.19, fem=True, legs='c_33302e', coat_hem=.5, hem_r=.36, glove='c_2a2c34', brow=1.0, bulk=1.0):
     """The body: boots, trousers, a belted long coat, arms and hands. The gun is held at the hip in the +X hand."""
     RIG['on'] = False
@@ -312,10 +331,11 @@ def adult(skin, sw=.25, hw=.19, fem=True, legs='c_33302e', coat_hem=.5, hem_r=.3
         for z in (.2, .34): tor(.07 * bulk, .011, (fx, 0, z), 'c_3a2c22'); box((.03, .012, .03), (fx + s * .02, -.07 * bulk, z), BRASS, r=.004)
         sph(.1 * bulk, (fx, 0, .56), legs, scale=(1, 1, .8))                                   # trousers bloused into the boot
         limb((fx, 0, .52), (kx, -.01, .72), .09 * bulk, .086 * bulk, legs)
-        limb((kx, -.01, .72), (hx + s * .06, 0, 1.26), .09 * bulk, .12 * bulk, legs)
+        limb((kx, -.01, .72), (hx + s * .06, 0, 1.26), .105 * bulk, .135 * bulk, legs)        # baggy trousers
+        sph(.11 * bulk, (kx, -.015, .74), legs)
     sph(1, (0, 0, 1.27), legs, scale=(hw + .07, .13 * bulk, .13))
-    skirt(hem_r, .165 * bulk, 1.5 - coat_hem, (1.5 + coat_hem) / 2, 'team', folds=9, amp=.1)   # coat skirt in hanging folds, pale hem band
-    skirt(hem_r + .012, hem_r - .022, .1, coat_hem + .05, 'team2', folds=9, amp=.1, amp_top=.092)
+    split_skirt(hem_r, .165 * bulk, 1.5 - coat_hem, (1.5 + coat_hem) / 2, 'team')              # coat skirt, open at the front over the trousers
+    split_skirt(hem_r + .014, hem_r - .02, .1, coat_hem + .05, 'team2', amp_top=.092)          # pale hem band
     o = cyl(.16 * bulk, sw * .82, .36, (0, 0, 1.67), 'team', v=24); o.scale = (1, .7, 1)       # torso
     sph(1, (0, .005, 1.88), 'team', scale=(sw + .035, .128 * bulk, .12))
     if fem:
@@ -340,7 +360,7 @@ done('breakwater', 1.06)
 
 # Mainsail (pilot for the anatomical rig): tall and athletic, a long coat, a wide hat on a cord, braid over the shoulder
 SK = 'skin_b9794f'
-sw = adult(SK, sw=.24, hw=.18, fem=True)
+sw = adult(SK, sw=.24, hw=.18, fem=True, legs='c_2e2a2c')
 head(SK, fem=True)
 HAIR = 'c_1c1820'
 sph(1, (0, .022, HC + .05), HAIR, scale=(.137, .162, .17))                                    # hair: cap, loose locks, a mass at the back
@@ -348,14 +368,23 @@ sph(1, (0, .1, HC - .1), HAIR, scale=(.125, .09, .2))
 for s in (-1, 1):
     limb((s * .125, -.02, HC + .1), (s * .143, -.015, HC - .06), .026, .022, HAIR); limb((s * .143, -.015, HC - .06), (s * .125, .0, HC - .2), .022, .01, HAIR)
     tor(.022, .006, (s * .128, .0, HC - .06), BRASS, rot=(0, R(90), 0))                       # earrings
-pts = ((-.1, .09, 2.1), (-.17, .0, 2.02), (-.185, -.09, 1.9), (-.17, -.13, 1.77), (-.155, -.14, 1.64))
+for s, x, y in ((-1, .1, -.09), (1, .1, -.09), (-1, .135, -.045), (1, .135, -.045), (-1, .14, .03), (1, .14, .03)):      # loose waves framing the face
+    a = (s * x, y, HC + .1); b = (s * (x + .035), y + .01, HC - .05); c = (s * (x + .01), y + .03, HC - .19)
+    limb(a, b, .02, .017, HAIR, v=7); sph(.017, b, HAIR); limb(b, c, .017, .006, HAIR, v=7)
+pts = ((0, .13, 2.14), (.0, .17, 2.02), (.01, .185, 1.9), (.015, .185, 1.78), (.02, .18, 1.66), (.02, .17, 1.55))   # the braid, down the back
 for i, q in enumerate(pts):
-    sph(.045 - i * .004, q, HAIR)
-    if i: sph(.042 - i * .004, [(a + b) / 2 for a, b in zip(q, pts[i - 1])], HAIR)
-for q in (pts[2], pts[4]): tor(.04, .012, q, BRASS, rot=(R(70), 0, 0))
-hat(.47, HC + .095)
-for s in (-1, 1): limb((s * .2, 0, HC + .1), (s * .03, -.11, 1.93), .005, .005, 'c_3a3038', v=5)   # the hat cord
-box((.34, .03, .09), (.2, .22, 2.02), 'c_b8431c', rot=(0, R(-20), R(30)), r=.012); box((.3, .03, .08), (.28, .3, 1.88), 'c_b8431c', rot=(0, R(16), R(42)), r=.012)
+    sph(.05 - i * .004, q, HAIR)
+    if i: sph(.047 - i * .004, [(a + b) / 2 for a, b in zip(q, pts[i - 1])], HAIR)
+for q in (pts[1], pts[4]):
+    for dz in (-.012, .012): tor(.046, .011, (q[0], q[1], q[2] + dz), BRASS)
+for i, (dx, dz, ry, ln) in enumerate(((-.16, -.08, 38, .36), (-.2, -.2, 62, .4), (-.1, -.26, 80, .3))):          # red ribbon streamers
+    box((ln, .012, .05), (pts[2][0] + dx, .2 + i * .012, pts[2][2] + dz), 'c_a8281c', rot=(0, R(-ry), 0), r=.005)
+sph(.03, (pts[2][0] - .03, .2, pts[2][2]), 'c_a8281c')
+n0 = len(P); hat(.47, HC + .125)
+for o in P[n0:]:                                                              # brim raised at the front so the eyes show
+    d = o.location - Vector((0, 0, HC + .1)); a_ = R(-13)
+    o.location = Vector((0, 0, HC + .1)) + Vector((d.x, d.y * math.cos(a_) - d.z * math.sin(a_), d.y * math.sin(a_) + d.z * math.cos(a_))); o.rotation_euler = (a_, 0, 0)
+for s in (-1, 1): limb((s * .2, .0, HC + .12), (s * .03, -.11, 1.93), .005, .005, 'c_3a3038', v=5)   # the hat cord
 tor(.215, .022, (0, 0, 1.74), LEATHER, rot=(R(90), R(42), 0), scale=(1, 1.25, 1))               # cross strap, satchel, spyglass tube on the back
 box((.17, .075, .17), (-.25, -.06, 1.3), 'c_7a5a40', r=.03); box((.18, .08, .08), (-.25, -.065, 1.37), LEATHER, r=.025); sph(.014, (-.25, -.108, 1.33), BRASS)
 cyl(.035, .03, .34, (.12, .16, 2.0), 'c_5a4030', rot=(0, R(38), 0)); tor(.036, .008, (.2, .16, 2.11), BRASS, rot=(0, R(38), 0))
@@ -372,7 +401,7 @@ limb(q, (sw + .02, -.24, 1.53), .045, .04, GL)
 hand((sw + .02, -.24, 1.53), (0, -1, -.25), (-1, 0, .3), GL, curl=2.6, s=1.12)
 n0 = len(P); harpoon_gun(sw + .01, -.38, 1.62)
 for o in P[n0:]:                                  # the gun, at adult scale, shrunk about the grip
-    o.location = Vector((sw + .02, -.3, 1.56)) + (o.location - Vector((sw + .02, -.3, 1.56))) * .62; o.scale = [c * .62 for c in o.scale]
+    o.location = Vector((sw + .02, -.3, 1.56)) + (o.location - Vector((sw + .02, -.3, 1.56))) * .56; o.scale = [c * .56 for c in o.scale]
 done('mainsail', 1.05)
 
 # Drift: small and quick — short tunic, baggy trousers, shin wraps, red neck scarf, gloves, a knife in the free hand

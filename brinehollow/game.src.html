@@ -400,7 +400,7 @@ hullMat.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#in
 const WHITE = '#efe9df', DARK = '#2a201c', BLACK = '#17120f';
 const FACES = {
   breakwater: {k: 1.06, eyes: 'narrow', brow: 1.1, browCol: WHITE, browW: 11, old: 1, mouth: 'none'},
-  mainsail:   {k: 1.05, sculpt: 1, eyes: 'open', brow: .25, lashes: 1, freckles: 1, mouth: 'flat'},
+  mainsail:   {k: 1.05, sculpt: 1, eyes: 'open', brow: 1, browW: 10, browCol: BLACK, scar: 1, freckles: 1, mouth: 'none'},
   drift:      {k: .95, eyes: 'open', brow: 1, scar: 1, freckles: 1, mouth: 'frown'},
   rivet:      {k: 1.02, eyes: 'narrow', brow: 1, browW: 10, scar: 1, mouth: 'none'},
   bell:       {k: .88, eyes: 'wide', brow: -.3, lashes: 1, freckles: 1, blush: 1, mouth: 'smile', iris: '#4f6a34'},
@@ -442,20 +442,27 @@ function faceTex(f) {
         if (t > .6 || f.old) line(1.8, () => g.arc(ex, ey + 4, 19, Math.PI * .2, Math.PI * .8));                        // bags under hard eyes
       }
       if (f.old) for (let i = 0; i < 3; i++) line(1.8, () => { g.moveTo(ex + s * 25, ey + i * 4 - 2); g.lineTo(ex + s * 35, ey + i * 7 - 6); });
-      const by = ey - 19 - h * .8, w = f.browW || 7, ix = ex - s * 29, ox = ex + s * 33, iy = by + t * 9, oy = by - t * 5 + 3;   // brow: a tapered slab
+      const by = ey - 19 - h * .8 - (f.sculpt ? 16 : 0), w = f.browW || 7, ix = ex - s * 29, ox = ex + s * 33, iy = by + t * 9, oy = by - t * 5 + 3;   // brow: a tapered slab
       g.beginPath(); g.moveTo(ix, iy - w / 2); g.quadraticCurveTo(ex, Math.min(iy, oy) - w * .9, ox, oy); g.quadraticCurveTo(ex, Math.min(iy, oy) + w * .5, ix, iy + w / 2); g.closePath();
       g.fillStyle = browCol; g.fill(); g.lineWidth = 2; g.strokeStyle = BLACK; g.stroke();
-      line(2.6, () => { g.moveTo(128 + s * 9, ey - 4); g.quadraticCurveTo(128 + s * 8, 150, 128 + s * 18, 166); });     // nose: bridge and wing
-      line(2.6, () => g.arc(128 + s * 12, 169, 7, s > 0 ? -.3 : Math.PI * .4, s > 0 ? Math.PI * .6 : Math.PI * 1.3));
-      line(f.old ? 3 : 2, () => { g.moveTo(128 + s * 23, 168); g.quadraticCurveTo(128 + s * 35, 186, 128 + s * 30, 206); });   // fold from nose to mouth
+      if (!f.sculpt) line(2.6, () => { g.moveTo(128 + s * 9, ey - 4); g.quadraticCurveTo(128 + s * 8, 150, 128 + s * 18, 166); });     // nose: bridge and wing
+      if (!f.sculpt) line(2.6, () => g.arc(128 + s * 12, 169, 7, s > 0 ? -.3 : Math.PI * .4, s > 0 ? Math.PI * .6 : Math.PI * 1.3));
+      if (!f.sculpt || f.old) line(f.old ? 3 : 2, () => { g.moveTo(128 + s * 23, 168); g.quadraticCurveTo(128 + s * 35, 186, 128 + s * 30, 206); });   // fold from nose to mouth
       for (let i = 0; i < 3; i++) line(2, () => { g.moveTo(128 + s * (64 + i * 5), 148 + i * 7); g.lineTo(128 + s * (52 + i * 5), 163 + i * 7); });   // cheekbone hatching
     }
-    if (t > .6) for (const s of [-1, 1]) line(2.4, () => { g.moveTo(128 + s * 5, ey - 30); g.lineTo(128 + s * 7, ey - 16); });   // frown lines
+    if (t > .6 && !f.sculpt) for (const s of [-1, 1]) line(2.4, () => { g.moveTo(128 + s * 5, ey - 30); g.lineTo(128 + s * 7, ey - 16); });   // frown lines
     g.fillStyle = 'rgba(60,30,20,.38)'; g.beginPath(); g.ellipse(128, 179, 17, 5, 0, 0, 7); g.fill();
     const my = 205;
+    if (f.sculpt) for (const s of [-1, 1]) {                  // hard shadow planes under the cheekbone and along the jaw
+      g.fillStyle = 'rgba(95,42,22,.42)'; g.beginPath(); g.moveTo(128 + s * 78, 150); g.lineTo(128 + s * 44, 176); g.lineTo(128 + s * 52, 214); g.lineTo(128 + s * 84, 190); g.closePath(); g.fill();
+      g.fillStyle = 'rgba(95,42,22,.3)'; g.beginPath(); g.moveTo(128 + s * 10, ey - 8); g.lineTo(128 + s * 22, ey - 12); g.lineTo(128 + s * 20, 160); g.lineTo(128 + s * 9, 150); g.closePath(); g.fill();
+      line(3, () => { g.moveTo(128 + s * 18, ey + 12); g.lineTo(128 + s * 44, ey + 17); });           // the lower lid's shadow
+    }
     if (f.sculpt) {                                           // lips, painted over the sculpted mouth
-      g.fillStyle = 'rgba(150,62,52,.85)'; g.beginPath(); g.moveTo(102, my); g.quadraticCurveTo(116, my - 11, 128, my - 6); g.quadraticCurveTo(140, my - 11, 154, my);
-      g.quadraticCurveTo(128, my + 15, 102, my); g.fill();
+      g.fillStyle = 'rgba(128,52,46,.9)'; g.beginPath(); g.moveTo(100, my - 3); g.quadraticCurveTo(116, my - 15, 128, my - 9); g.quadraticCurveTo(140, my - 15, 156, my - 3);
+      g.quadraticCurveTo(128, my + 22, 100, my - 3); g.fill();
+      line(3.5, () => { g.moveTo(98, my - 2); g.quadraticCurveTo(128, my - 5, 158, my - 2); });
+      line(2, () => { g.moveTo(112, my + 14); g.quadraticCurveTo(128, my + 18, 144, my + 14); });
     }
     if (f.mouth === 'flat') line(4, () => { g.moveTo(103, my); g.quadraticCurveTo(128, my + 2, 153, my); });
     if (f.mouth === 'frown') line(4.5, () => { g.moveTo(101, my + 6); g.quadraticCurveTo(128, my - 6, 155, my + 6); });
