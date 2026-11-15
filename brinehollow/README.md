@@ -15,10 +15,11 @@ A playable prototype of the **tide and lantern loop** from the Brinehollow desig
 - **Foghorns** knock heroes back with a sound-cannon blast, and guard the chain until they fall.
 
 ## Look
-The game is drawn as a graphic novel:
-- **Ink and dots:** flat three-band toon shading, black ink outlines found from scene depth, Ben-Day halftone dots in the shadows and the sky, and paper grain.
-- **Drawn surfaces:** building fronts, cobbles, planks, sand and water are inked onto canvases when the game starts.
-- **Blender models:** heroes in oilskin coats and sou'westers, lamp-headed Wickies on stilts, the Lantern-Bearer, the Foghorn, Reef Crabs, buoys and the ships.
+The game is drawn as a graphic novel, following the art sheet in `reference/art-sheet.webp`:
+- **Dusk harbour:** deep blue sky with cloud banks, timber fronts with lamp-lit windows that glow in shadow, a slab dock, a muddy seabed at low tide and a navy sea at high tide.
+- **Ink and cel shadows:** flat three-band toon shading, hard cast shadows, black ink outlines found from scene depth, halftone dots in the shadows and sky, and paper grain.
+- **Faction silhouettes (Blender):** every crew wears a conical straw hat. Teal heroes are broad, with big cuffs, rope slung across the chest and a gaff on the back. Rust heroes are lean, with a flared coat, a long braid and a paddle on the back.
+- **The rest of the cast:** a stout bearded Wickie with a rope coil, a caped Lantern-Bearer holding the lantern up, a brass Foghorn on a braced timber tower, a stepped anchor block with great rusted links, Reef Crabs, buoys, timber ships, and dock dressing (rope-wrapped pilings, barrels, wall lamps, cross-braced crates).
 - **Lettering:** the HUD is paper panels and caption boxes, with sound effects (BWAAAM!, THWIP!, KRAK!) over the action, speed lines when you move fast, and a "Meanwhile…" banner when the tide turns.
 
 ## Controls
