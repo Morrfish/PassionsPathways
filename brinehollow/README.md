@@ -14,6 +14,13 @@ A playable prototype of the **tide and lantern loop** from the Brinehollow desig
 - **Rigging:** three items, each with a Low-Tide face and a High-Tide face. Bilge Pump also costs Pearls, so it needs a trip to the seabed.
 - **Foghorns** knock heroes back with a sound-cannon blast, and guard the chain until they fall.
 
+## Look
+The game is drawn as a graphic novel:
+- **Ink and dots:** flat three-band toon shading, black ink outlines found from scene depth, Ben-Day halftone dots in the shadows and the sky, and paper grain.
+- **Drawn surfaces:** building fronts, cobbles, planks, sand and water are inked onto canvases when the game starts.
+- **Blender models:** heroes in oilskin coats and sou'westers, lamp-headed Wickies on stilts, the Lantern-Bearer, the Foghorn, Reef Crabs, buoys and the ships.
+- **Lettering:** the HUD is paper panels and caption boxes, with sound effects (BWAAAM!, THWIP!, KRAK!) over the action, speed lines when you move fast, and a "Meanwhile…" banner when the tide turns.
+
 ## Controls
 | Key | Action |
 | --- | --- |
@@ -32,6 +39,12 @@ Change `game.src.html`, then rebuild:
 ```bash
 npm pack three@0.128.0 && tar xzf three-0.128.0.tgz
 python3 build.py package
+```
+
+The models are built by `blender/models.py`, which writes `assets/models.glb`; `build.py` embeds it. Material names carry the paint: `c_RRGGBB` is a flat colour, `glow_RRGGBB` is unlit, and `team`, `team2` and `hull` are recoloured per crew.
+
+```bash
+blender -b --python blender/models.py -- assets
 ```
 
 Add `?auto=1` to the address to watch the bots play your hero, and `?speed=3` to run the match faster.

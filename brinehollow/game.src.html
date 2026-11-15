@@ -3,49 +3,56 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Brinehollow — tide &amp; lantern prototype</title>
+<title>Brinehollow — Issue #1</title>
 <style>
-  html,body{margin:0;height:100%;overflow:hidden;background:#0c1a22;color:#e9f3f0;font-family:system-ui,Segoe UI,Roboto,sans-serif;user-select:none}
+  :root{--head:Impact,Haettenschweiler,"Arial Narrow Bold","Arial Black",sans-serif;--ink:#141414;--paper:#f6ecd2}
+  html,body{margin:0;height:100%;overflow:hidden;background:#e9d9b0;color:var(--ink);font-family:"Comic Sans MS","Chalkboard SE","Comic Neue","Trebuchet MS",sans-serif;font-weight:700;user-select:none}
   canvas{display:block}
   #gl,#fx{position:fixed;inset:0;width:100%;height:100%}
   #fx{pointer-events:none}
-  .hud{position:fixed;pointer-events:none;text-shadow:0 1px 2px #000a}
-  #top{top:8px;left:50%;transform:translateX(-50%);display:flex;gap:14px;align-items:stretch}
-  .side{background:#0b1d26cc;border-radius:10px;padding:6px 10px;min-width:190px;font-size:12px}
-  .side b{font-size:13px}
-  .teal{color:#5fe0c8}.rust{color:#ff9a5c}
-  .bar{height:7px;background:#0006;border-radius:4px;margin:2px 0 4px;overflow:hidden}
-  .bar i{display:block;height:100%;border-radius:4px}
-  #tide{background:#0b1d26e6;border-radius:12px;padding:6px 16px;text-align:center;min-width:210px;border:1px solid #ffffff22}
-  #tideName{font-size:17px;font-weight:700;letter-spacing:.12em}
-  #tideSub{font-size:12px;opacity:.9}
-  #tideBar{height:5px;background:#0007;border-radius:3px;margin-top:4px;overflow:hidden}
-  #tideBar i{display:block;height:100%;background:#7fd4ff}
-  #feed{top:86px;left:12px;font-size:13px;line-height:1.5;max-width:340px}
-  #feed div{background:#0b1d26b0;border-radius:6px;padding:2px 8px;margin-bottom:3px;width:fit-content}
-  #bl{left:14px;bottom:14px;background:#0b1d26cc;border-radius:10px;padding:8px 12px;min-width:220px;font-size:13px}
-  #hpbar{height:14px}
-  #hpbar i{background:linear-gradient(#7df0a0,#3cbf6e)}
-  #res span{margin-right:14px;font-weight:700}
-  #bc{left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:8px;align-items:flex-end}
-  .slot{background:#0b1d26cc;border-radius:10px;padding:6px 8px;width:138px;font-size:11px;border:1px solid #ffffff1c}
-  .slot.own{border-color:#ffd66b}
-  .slot h4{margin:0 0 3px;font-size:12px;display:flex;justify-content:space-between}
-  .face{opacity:.45;padding:1px 4px;border-radius:4px}
-  .face.on{opacity:1;background:#ffffff1f}
-  .ab{background:#0b1d26cc;border-radius:10px;padding:6px 8px;width:62px;text-align:center;font-size:11px;position:relative;overflow:hidden}
-  .ab kbd{display:block;font-size:15px;font-weight:700;font-family:inherit}
-  .ab i{position:absolute;left:0;bottom:0;width:100%;background:#0009}
-  #mm{right:14px;bottom:14px;background:#0b1d26cc;border-radius:10px;padding:6px}
-  #mm canvas{width:130px;height:290px}
-  #overlay{position:fixed;inset:0;background:#07141bd9;display:flex;align-items:center;justify-content:center;z-index:5}
-  #card{max-width:680px;background:#10272f;border:1px solid #ffffff25;border-radius:16px;padding:24px 30px;line-height:1.5;font-size:14px}
-  #card h1{margin:0 0 4px;letter-spacing:.14em;color:#ffd66b}
+  .hud{position:fixed;pointer-events:none}
+  .side,#tide,#bl,.slot,.ab,#mm{background:var(--paper);border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);border-radius:3px}
+  #top{top:10px;left:50%;transform:translateX(-50%);display:flex;gap:16px;align-items:stretch}
+  .side{padding:5px 10px;min-width:190px;font-size:11px;text-transform:uppercase}
+  .side b{font-family:var(--head);font-weight:900;font-size:17px;font-weight:400;letter-spacing:.06em}
+  .side:first-child{transform:rotate(-1deg)}.side:last-child{transform:rotate(1deg)}
+  .teal{color:#0c8a78}.rust{color:#c94f16}
+  .bar{height:8px;background:#fff;border:2px solid var(--ink);margin:1px 0 4px;overflow:hidden}
+  .bar i{display:block;height:100%}
+  #tide{padding:4px 18px 7px;text-align:center;min-width:230px;background:#fff}
+  #tideName{font-family:var(--head);font-weight:900;font-size:27px;font-weight:400;letter-spacing:.1em}
+  #tideSub{font-size:11px;text-transform:uppercase}
+  #tideBar{height:7px;background:#fff;border:2px solid var(--ink);margin-top:4px;overflow:hidden}
+  #tideBar i{display:block;height:100%;background:#2f9db0}
+  #feed{top:104px;left:14px;font-size:12px;line-height:1.35;max-width:330px;text-transform:uppercase}
+  #feed div{background:#ffe27a;border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);padding:3px 9px;margin-bottom:7px;width:fit-content}
+  #feed div:nth-child(odd){transform:rotate(-.7deg)}#feed div:nth-child(even){transform:rotate(.5deg);background:#fff}
+  #bl{left:16px;bottom:16px;padding:8px 12px;min-width:220px;font-size:12px;text-transform:uppercase;transform:rotate(-1deg)}
+  #hpbar{height:16px}
+  #hpbar i{background:#e2432a}
+  #res span{margin-right:14px}
+  #bc{left:50%;bottom:16px;transform:translateX(-50%);display:flex;gap:10px;align-items:flex-end}
+  .slot{padding:5px 8px;width:140px;font-size:10px;text-transform:uppercase}
+  .slot.own{background:#ffe27a}
+  .slot h4{margin:0 0 3px;font-family:var(--head);font-weight:900;font-size:14px;letter-spacing:.04em}
+  .face{opacity:.4;padding:1px 4px}
+  .face.on{opacity:1;background:var(--ink);color:#fff}
+  .ab{padding:5px 8px;width:60px;text-align:center;font-size:10px;position:relative;overflow:hidden;text-transform:uppercase}
+  .ab kbd{display:block;font-family:var(--head);font-weight:900;font-size:22px;font-weight:400}
+  .ab i{position:absolute;left:0;bottom:0;width:100%;background:repeating-linear-gradient(45deg,#141414cc 0 3px,#14141455 3px 6px)}
+  #mm{right:16px;bottom:16px;padding:5px;transform:rotate(1deg)}
+  #mm canvas{width:130px;height:290px;display:block}
+  #overlay{position:fixed;inset:0;background:#e9d9b0 radial-gradient(#1414142e 24%,transparent 26%) 0 0/10px 10px;display:flex;align-items:center;justify-content:center;z-index:5}
+  #card{max-width:700px;background:#fff;border:5px solid var(--ink);box-shadow:12px 12px 0 var(--ink);padding:20px 30px 24px;line-height:1.45;font-size:13px;transform:rotate(-.6deg)}
+  #card h1{margin:0;font-family:var(--head);font-weight:900;font-size:74px;letter-spacing:.05em;color:#e2632a;-webkit-text-stroke:2.5px var(--ink);text-shadow:5px 5px 0 var(--ink);line-height:1}
+  #issue{display:inline-block;background:#ffe27a;border:2px solid var(--ink);padding:1px 9px;margin:10px 0 8px;text-transform:uppercase;font-size:12px;transform:rotate(-1deg)}
   #card table{border-collapse:collapse;margin:8px 0}
-  #card td{padding:2px 14px 2px 0;vertical-align:top}
-  #card td:first-child{font-weight:700;color:#7fd4ff;white-space:nowrap}
-  #go{margin-top:12px;padding:10px 26px;font-size:16px;font-weight:700;border:0;border-radius:10px;background:#ffd66b;color:#10272f;cursor:pointer}
-  #dead{top:24%;left:50%;transform:translateX(-50%);font-size:24px;font-weight:700;display:none;text-align:center}
+  #card td{padding:3px 14px 3px 0;vertical-align:top;border-top:2px dotted #14141440}
+  #card td:first-child{font-family:var(--head);font-weight:900;font-size:15px;letter-spacing:.04em;color:#0c8a78;white-space:nowrap}
+  #go{margin-top:12px;padding:8px 28px;font-family:var(--head);font-weight:900;font-size:24px;letter-spacing:.06em;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);border-radius:3px;background:#ffd23f;color:var(--ink);cursor:pointer}
+  #dead{top:22%;left:50%;transform:translateX(-50%) rotate(-1.5deg);font-family:var(--head);font-weight:900;font-size:30px;letter-spacing:.04em;display:none;text-align:center;background:#fff;border:4px solid var(--ink);box-shadow:7px 7px 0 var(--ink);padding:8px 22px}
+  #dead small{font-family:"Comic Sans MS","Chalkboard SE",sans-serif;font-size:13px;font-weight:700}
+  #banner{top:132px;left:50%;transform:translateX(-50%) rotate(-2deg);font-family:var(--head);font-weight:900;font-size:34px;letter-spacing:.06em;background:#ffe27a;border:4px solid var(--ink);box-shadow:7px 7px 0 var(--ink);padding:4px 24px;display:none;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -53,19 +60,20 @@
 
 <div id="top" class="hud">
   <div class="side"><b class="teal">TEAL CREW</b> · <span id="sp0">0</span> Spark
-    <div>Foghorn</div><div class="bar"><i id="t0" style="background:#5fe0c8"></i></div>
-    <div>Anchor Chain</div><div class="bar"><i id="c0" style="background:#5fe0c8"></i></div></div>
+    <div>Foghorn</div><div class="bar"><i id="t0" style="background:#2bb5a0"></i></div>
+    <div>Anchor Chain</div><div class="bar"><i id="c0" style="background:#2bb5a0"></i></div></div>
   <div id="tide"><div id="tideName">LOW TIDE</div><div id="tideSub"></div><div id="tideBar"><i id="tideFill"></i></div></div>
   <div class="side"><b class="rust">RUST CREW</b> · <span id="sp1">0</span> Spark
-    <div>Foghorn</div><div class="bar"><i id="t1" style="background:#ff9a5c"></i></div>
-    <div>Anchor Chain</div><div class="bar"><i id="c1" style="background:#ff9a5c"></i></div></div>
+    <div>Foghorn</div><div class="bar"><i id="t1" style="background:#e2632a"></i></div>
+    <div>Anchor Chain</div><div class="bar"><i id="c1" style="background:#e2632a"></i></div></div>
 </div>
 <div id="feed" class="hud"></div>
 <div id="dead" class="hud"></div>
+<div id="banner" class="hud"></div>
 <div id="bl" class="hud">
   <div class="bar" id="hpbar"><i id="hp"></i></div>
   <div id="hptxt"></div>
-  <div id="res"><span style="color:#ffd66b">✦ <span id="spark">0</span> Spark</span><span style="color:#d9c7ff">● <span id="pearl">0</span> Pearl</span></div>
+  <div id="res"><span style="color:#a8641a">✦ <span id="spark">0</span> Spark</span><span style="color:#6a4fb0">● <span id="pearl">0</span> Pearl</span></div>
 </div>
 <div id="bc" class="hud">
   <div class="ab"><kbd>E</kbd>Tether<i id="cdE"></i></div>
@@ -77,6 +85,7 @@
 
 <div id="overlay"><div id="card">
   <h1>BRINEHOLLOW</h1>
+  <div id="issue">Issue #1 · The Tide and the Lantern</div>
   <div id="blurb">One lane of the harbor, 3 v 3. Kill the Rust crew's <b>Foghorn</b>, then cut their <b>Anchor Chain</b> to win.
   The <b>tide</b> turns every 70 seconds: at low tide the seabed trench on your left is a dry flank with Reef Crabs (Pearls);
   at high tide the street floods and the trench becomes a fast current. Each wave has a glowing <b>Lantern-Bearer</b> —
@@ -93,6 +102,7 @@
 </div></div>
 
 <script>/*THREE*/</script>
+<script>/*GLB*/</script>
 <script>
 'use strict';
 const Q = new URLSearchParams(location.search);
@@ -111,40 +121,173 @@ const RIG = [
   {name: 'Bilge Pump', cost: 150, pearl: 2, low: 'regen 4 HP/s', high: '15% lifesteal'},
 ];
 
+const MODELS = {};
+function main() {
 /* ---------- renderer & scene ---------- */
 const renderer = new THREE.WebGLRenderer({canvas: $('gl'), antialias: true});
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+const PAPER = 0xe9d9b0;
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x8fb7c4);
-scene.fog = new THREE.Fog(0x8fb7c4, 60, 210);
-const camera = new THREE.PerspectiveCamera(68, 1, 0.1, 400);
-scene.add(new THREE.HemisphereLight(0xdff3ff, 0x39504a, 0.95));
-const sun = new THREE.DirectionalLight(0xfff0d0, 0.75); sun.position.set(-40, 80, 30); scene.add(sun);
+scene.background = new THREE.Color(PAPER);
+scene.fog = new THREE.Fog(PAPER, 75, 230);
+const camera = new THREE.PerspectiveCamera(68, 1, 0.3, 400);
+scene.add(new THREE.HemisphereLight(0xfff6e0, 0x4a5560, 0.8));
+const sun = new THREE.DirectionalLight(0xfff0d0, 0.85); sun.position.set(-40, 70, -25); scene.add(sun);
 const fx = $('fx'), fxc = fx.getContext('2d');
+
+// Comic look, part 1: three flat bands of light instead of smooth shading
+const bands = new THREE.DataTexture(new Uint8Array([105, 105, 105, 255, 185, 185, 185, 255, 255, 255, 255, 255]), 3, 1, THREE.RGBAFormat);
+bands.minFilter = bands.magFilter = THREE.NearestFilter; bands.needsUpdate = true;
+const mat = (c, o) => new THREE.MeshToonMaterial(Object.assign({color: c, gradientMap: bands}, o || {}));
+const glow = c => new THREE.MeshBasicMaterial({color: c});
+const hex = c => '#' + c.toString(16).padStart(6, '0');
+
+// Comic look, part 2: hand-inked surface textures drawn on canvases
+let seed = 11; const rnd = () => (seed = seed * 16807 % 2147483647) / 2147483647;
+function drawn(w, h, draw) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d'); g.lineCap = g.lineJoin = 'round'; draw(g, w, h);
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t;
+}
+const tiled = (t, rx, ry) => { const c = t.clone(); c.repeat.set(rx, ry); c.needsUpdate = true; return c; };
+function scribble(g, x, y, w, h, n, a) {      // loose ink hatching
+  g.strokeStyle = `rgba(20,20,20,${a})`; g.lineWidth = 1.6; g.beginPath();
+  for (let i = 0; i < n; i++) { const t = i / n; g.moveTo(x + t * w + rnd() * 4, y + rnd() * 3); g.lineTo(x + t * w - h * .5 + rnd() * 4, y + h - rnd() * 3); }
+  g.stroke();
+}
+function facade(base) {
+  return drawn(512, 256, (g, W, H) => {
+    g.fillStyle = hex(base); g.fillRect(0, 0, W, H);
+    g.strokeStyle = 'rgba(20,20,20,.28)'; g.lineWidth = 1.5;                        // brick courses
+    for (let y = 14; y < H; y += 14) { g.beginPath(); for (let x = (y / 14 % 2) * 20; x < W; x += 40 + rnd() * 30) { g.moveTo(x, y + rnd() * 2); g.lineTo(x + 14 + rnd() * 16, y + rnd() * 2); } g.stroke(); }
+    scribble(g, 0, 0, 90, H, 22, .3); scribble(g, W - 60, 0, 70, H, 14, .22);
+    for (let j = 0; j < 3; j++) for (let i = 0; i < 6; i++) {
+      const x = 26 + i * 82 + rnd() * 6, y = 24 + j * 74, w = 46, h = j === 2 ? 58 : 46;
+      if (j === 2 && i % 3 === 1) {                                                 // a doorway with a striped awning
+        g.fillStyle = '#16191c'; g.fillRect(x, y + 6, w, h + 6);
+        for (let k = 0; k < 6; k++) { g.fillStyle = k % 2 ? '#f4f0d8' : '#c94f16'; g.fillRect(x - 10 + k * 11, y - 8, 11, 16); }
+        g.strokeStyle = '#141414'; g.lineWidth = 4; g.strokeRect(x - 10, y - 8, 66, 16); g.strokeRect(x, y + 8, w, h + 4); continue;
+      }
+      g.fillStyle = rnd() < .38 ? '#ffd96a' : '#1b2a33'; g.fillRect(x, y, w, h);
+      g.strokeStyle = '#141414'; g.lineWidth = 4; g.strokeRect(x, y, w, h);
+      g.lineWidth = 2.5; g.beginPath(); g.moveTo(x + w / 2, y); g.lineTo(x + w / 2, y + h); g.moveTo(x, y + h / 2); g.lineTo(x + w, y + h / 2); g.stroke();
+      g.lineWidth = 5; g.beginPath(); g.moveTo(x - 6, y + h + 3); g.lineTo(x + w + 6, y + h + 3); g.stroke();
+    }
+    g.fillStyle = 'rgba(20,20,20,.55)'; g.fillRect(0, 0, W, 9); g.fillRect(0, H - 8, W, 8);
+  });
+}
+const TEX = {
+  cobble: drawn(256, 256, (g, W, H) => {
+    g.fillStyle = '#848a80'; g.fillRect(0, 0, W, H);
+    for (let r = 0; r < 8; r++) for (let c = 0; c < 6; c++) {
+      const x = c * 43 + (r % 2) * 21 + rnd() * 4, y = r * 32 + rnd() * 3, w = 36 + rnd() * 5, h = 26;
+      g.fillStyle = ['#8f958a', '#7a8177', '#969b8c', '#848a80'][Math.floor(rnd() * 4)];
+      g.beginPath(); g.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, 7); g.fill();
+      g.strokeStyle = 'rgba(20,20,20,.38)'; g.lineWidth = 2; g.beginPath(); g.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, .4 + rnd(), 3.4 + rnd() * 2); g.stroke();
+    }
+  }),
+  sand: drawn(256, 256, (g, W, H) => {
+    g.fillStyle = '#c2ad7c'; g.fillRect(0, 0, W, H); g.strokeStyle = 'rgba(70,50,20,.5)'; g.lineWidth = 2;
+    for (let i = 0; i < 26; i++) { const x = rnd() * W, y = rnd() * H, l = 20 + rnd() * 40; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + l / 2, y - 6, x + l, y); g.stroke(); }
+    g.fillStyle = 'rgba(20,20,20,.5)'; for (let i = 0; i < 40; i++) g.fillRect(rnd() * W, rnd() * H, 2, 2);
+  }),
+  plank: drawn(256, 256, (g, W, H) => {
+    g.fillStyle = '#a67c4a'; g.fillRect(0, 0, W, H);
+    for (let x = 0; x < W; x += 32) {
+      g.fillStyle = rnd() < .5 ? '#b0854f' : '#996f40'; g.fillRect(x, 0, 32, H);
+      g.strokeStyle = '#141414'; g.lineWidth = 3; g.beginPath(); g.moveTo(x, 0); g.lineTo(x, H); g.stroke();
+      g.strokeStyle = 'rgba(20,20,20,.35)'; g.lineWidth = 1.3;
+      for (let k = 0; k < 4; k++) { const y = rnd() * H; g.beginPath(); g.moveTo(x + 6 + rnd() * 18, y); g.lineTo(x + 6 + rnd() * 18, y + 30 + rnd() * 40); g.stroke(); }
+      g.fillStyle = '#141414'; g.fillRect(x + 14, 10, 4, 4); g.fillRect(x + 14, H - 14, 4, 4);
+    }
+  }),
+  water: drawn(256, 256, (g, W, H) => {
+    g.fillStyle = '#2f9db0'; g.fillRect(0, 0, W, H);
+    for (let i = 0; i < 30; i++) {
+      const x = rnd() * W, y = rnd() * H, l = 26 + rnd() * 46;
+      g.strokeStyle = i % 3 ? 'rgba(235,250,245,.85)' : 'rgba(15,60,80,.7)'; g.lineWidth = i % 3 ? 3 : 2.5;
+      g.beginPath(); g.moveTo(x, y); g.bezierCurveTo(x + l * .3, y - 7, x + l * .6, y + 7, x + l, y); g.stroke();
+    }
+  }),
+};
+const FACADES = [0x55676e, 0x7a5a48, 0x4d6a66, 0x8a6e52].map(facade);
+
+// Comic look, part 3: an ink pass over the finished picture — outlines from depth, Ben-Day dots in the shadows, paper grain
+const target = new THREE.WebGLRenderTarget(4, 4, {minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter});
+target.depthTexture = new THREE.DepthTexture(4, 4); target.depthTexture.type = THREE.UnsignedIntType;
+const inkPass = new THREE.ShaderMaterial({
+  uniforms: {tC: {value: target.texture}, tD: {value: target.depthTexture}, px: {value: new THREE.Vector2()}, scale: {value: 1}},
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
+  fragmentShader: `
+    varying vec2 vUv; uniform sampler2D tC, tD; uniform vec2 px; uniform float scale;
+    float lin(vec2 uv){ float z = texture2D(tD, uv).x * 2. - 1.; return 2. * .3 * 400. / (400.3 - z * 399.7); }
+    float dots(vec2 p, float size, float r){ p = mat2(.707, -.707, .707, .707) * p / size; return 1. - smoothstep(r - .09, r + .09, length(fract(p) - .5)); }
+    void main(){
+      vec3 c = texture2D(tC, vUv).rgb;
+      float raw = texture2D(tD, vUv).x, d = lin(vUv);
+      vec2 o = px * 1.25 * scale;
+      float lap = abs(lin(vUv + vec2(o.x, 0.)) + lin(vUv - vec2(o.x, 0.)) + lin(vUv + vec2(0., o.y)) + lin(vUv - vec2(0., o.y)) - 4. * d) / d;
+      float edge = smoothstep(.012, .03, lap);
+      vec3 cx = texture2D(tC, vUv + vec2(o.x, 0.)).rgb - texture2D(tC, vUv - vec2(o.x, 0.)).rgb;
+      vec3 cy = texture2D(tC, vUv + vec2(0., o.y)).rgb - texture2D(tC, vUv - vec2(0., o.y)).rgb;
+      edge = max(edge, smoothstep(.45, .8, length(cx) + length(cy)) * .85);
+      if (raw > .99999) {                                   // sky: paper at the horizon, teal dots swelling overhead
+        float h = clamp((vUv.y - .35) * 1.6, 0., 1.);
+        c = mix(vec3(.914, .851, .69), vec3(.36, .64, .66), dots(gl_FragCoord.xy, 9. * scale, h * .62));
+      } else {
+        float lum = dot(c, vec3(.299, .587, .114));
+        float shade = smoothstep(.62, .22, lum);
+        c = mix(c, c * .58, dots(gl_FragCoord.xy, 5.5 * scale, .2 + shade * .34) * shade);
+      }
+      c = mix(c, vec3(.07, .065, .085), edge);
+      float n = fract(sin(dot(floor(gl_FragCoord.xy / scale), vec2(12.9898, 78.233))) * 43758.5453);
+      c *= .95 + .07 * n;
+      c *= 1. - .4 * pow(length(vUv - .5) * 1.3, 3.);
+      gl_FragColor = vec4(c, 1.);
+    }`,
+  depthTest: false, depthWrite: false,
+});
+const postScene = new THREE.Scene(), postCam = new THREE.Camera();
+const postQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), inkPass); postQuad.frustumCulled = false; postScene.add(postQuad);
 function resize() {
   renderer.setSize(innerWidth, innerHeight, false);
   camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
   fx.width = innerWidth; fx.height = innerHeight;
+  const s = renderer.getDrawingBufferSize(new THREE.Vector2());
+  target.setSize(s.x, s.y); inkPass.uniforms.px.value.set(1 / s.x, 1 / s.y); inkPass.uniforms.scale.value = Math.max(1, s.y / 720);
 }
 addEventListener('resize', resize); resize();
 
-const mat = (c, o) => new THREE.MeshLambertMaterial(Object.assign({color: c}, o || {}));
-const glow = c => new THREE.MeshBasicMaterial({color: c});
 const solids = [];   // meshes the camera ray / tether can hit
 const boxes = [];    // walkable, blocking AABBs
 
 function addBox(x0, x1, y0, y1, z0, z1, color, opts) {
-  const m = new THREE.Mesh(new THREE.BoxGeometry(x1 - x0, y1 - y0, z1 - z0), mat(color));
-  m.position.set((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2);
-  scene.add(m); solids.push(m);
-  if (!opts || !opts.visualOnly) boxes.push({x0, x1, y0, y1, z0, z1});
-  return m;
+  opts = opts || {};
+  let m = mat(color, opts.tex ? {map: opts.tex, color: 0xffffff} : null);
+  if (opts.face) { const plain = m; m = [plain, plain, plain, plain, plain, plain]; m[opts.face[0]] = mat(0xffffff, {map: opts.face[1]}); }
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(x1 - x0, y1 - y0, z1 - z0), m);
+  mesh.position.set((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2);
+  scene.add(mesh); solids.push(mesh);
+  boxes.push({x0, x1, y0, y1, z0, z1});
+  return mesh;
 }
-function quad(a, b, c, d, color) {
-  const g = new THREE.BufferGeometry();
-  g.setAttribute('position', new THREE.Float32BufferAttribute([].concat(a, b, c, a, c, d), 3));
+function quad(a, b, c, d, tex, rep) {
+  const g = new THREE.BufferGeometry(), v = [a, b, c, a, c, d];
+  g.setAttribute('position', new THREE.Float32BufferAttribute([].concat(...v), 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute([].concat(...v.map(p => [p[0] / rep, p[2] / rep])), 2));
   g.computeVertexNormals();
-  const m = new THREE.Mesh(g, mat(color, {side: THREE.DoubleSide})); scene.add(m); solids.push(m); return m;
+  const m = new THREE.Mesh(g, mat(0xffffff, {side: THREE.DoubleSide, map: tex})); scene.add(m); solids.push(m); return m;
+}
+// Blender models (assets/models.glb): material names say how to paint each part
+const matCache = {};
+function namedMat(n, ov) {
+  const unlit = n.startsWith('glow_'), c = ov && n in ov ? ov[n] : parseInt(n.split('_')[1], 16) || 0x888888, k = (unlit ? 'g' : 't') + c;
+  return matCache[k] || (matCache[k] = unlit ? glow(c) : mat(c));
+}
+function model(name, ov) {
+  const o = MODELS[name].clone(true);
+  o.traverse(m => { if (m.isMesh) m.material = namedMat(m.material.name, ov); });
+  scene.add(o); return o;
 }
 
 /* ---------- map: one lane running along Z, Teal ship at -Z, Rust ship at +Z ---------- */
@@ -154,34 +297,31 @@ function heightfield(x) {            // street at 0; seabed trench on the east s
   if (x < 13) return -(x - 9);
   return -4;
 }
-quad([-15, 0, -L], [9, 0, -L], [9, 0, L], [-15, 0, L], 0x6d756f);           // cobbled street
-quad([9, 0, -L], [13, -4, -L], [13, -4, L], [9, 0, L], 0x74674f);            // bank
-quad([13, -4, -L], [23, -4, -L], [23, -4, L], [13, -4, L], 0x94855f);        // seabed
+quad([-15, 0, -L], [9, 0, -L], [9, 0, L], [-15, 0, L], TEX.cobble, 6);           // cobbled street
+quad([9, 0, -L], [13, -4, -L], [13, -4, L], [9, 0, L], TEX.sand, 7);            // bank
+quad([13, -4, -L], [23, -4, -L], [23, -4, L], [13, -4, L], TEX.sand, 9);        // seabed
 for (let z = -L; z < L; z += 25) {                                           // buildings both sides
   const hW = 8 + ((z * 7 + 300) % 5), hE = 7 + ((z * 3 + 300) % 6);
-  addBox(-27, -15, 0, hW, z, z + 25, [0x4e5d63, 0x5d5148, 0x47585a, 0x66584a][((z + 100) / 25) % 4]);
-  addBox(23, 31, -4, hE, z, z + 25, [0x5a4d47, 0x4a5a5e, 0x62574c, 0x465457][((z + 100) / 25) % 4]);
+  addBox(-27, -15, 0, hW, z, z + 25, [0x4e5d63, 0x6b4f40, 0x47605c, 0x7a6048][((z + 100) / 25) % 4], {face: [0, FACADES[((z + 100) / 25) % 4]]});
+  addBox(23, 31, -4, hE, z, z + 25, [0x6b4f40, 0x4e5d63, 0x7a6048, 0x47605c][((z + 100) / 25) % 4], {face: [1, FACADES[((z + 125) / 25) % 4]]});
 }
-for (const [a, b] of [[-70, -40], [-30, -5], [5, 30], [40, 70]]) addBox(-15, -9.5, 2.0, 2.4, a, b, 0x8b6b45); // west boardwalk
-for (const z of [-62, -22, 12, 48]) addBox(-9.3, -7.7, 0, 1.2, z, z + 1.8, 0x9a7a4a);                            // step-up crates
+for (const [a, b] of [[-70, -40], [-30, -5], [5, 30], [40, 70]]) addBox(-15, -9.5, 2.0, 2.4, a, b, 0x8b6b45, {tex: tiled(TEX.plank, 6, 1)}); // west boardwalk
+for (const z of [-62, -22, 12, 48]) addBox(-9.3, -7.7, 0, 1.2, z, z + 1.8, 0x9a7a4a, {tex: TEX.plank});                            // step-up crates
 for (const [x, z, h] of [[6, -64, 1.2], [-6, -48, 2.4], [6.5, -20, 2.4], [-6.5, -8, 1.2], [6.5, 8, 1.2], [-6.5, 20, 2.4], [6, 48, 2.4], [-6, 64, 1.2]])
-  addBox(x - 1.1, x + 1.1, 0, h, z - 1.1, z + 1.1, 0xa0814f);                                                    // cover crates
+  addBox(x - 1.1, x + 1.1, 0, h, z - 1.1, z + 1.1, 0xa0814f, {tex: TEX.plank});                                                    // cover crates
 for (const z of [-60, -30, 0, 30, 60]) {                                                                         // masts: tether points
   addBox(21.9, 22.5, -4, 9, z - .3, z + .3, 0x3b2f27);                                                          // kept to the far wall so the current stays clear
-  addBox(18.5, 23, 6.6, 7, z - 1.2, z + 1.2, 0x7b5d3b);                                                        // crow's nest platform
+  addBox(18.5, 23, 6.6, 7, z - 1.2, z + 1.2, 0x7b5d3b, {tex: TEX.plank});                                                        // crow's nest platform
 }
-addBox(-27, 31, -6, 14, -L - 2, -L, 0x2b3a40); addBox(-27, 31, -6, 14, L, L + 2, 0x2b3a40);                      // end walls
+addBox(-27, 31, -6, 2.5, -L - 2, -L, 0x565f61); addBox(-27, 31, -6, 2.5, L, L + 2, 0x565f61);                      // end walls
 
-const water = new THREE.Mesh(new THREE.PlaneGeometry(64, 2 * L), new THREE.MeshLambertMaterial({color: 0x2d8fa8, transparent: true, opacity: 0.72}));
+const water = new THREE.Mesh(new THREE.PlaneGeometry(64, 2 * L), new THREE.MeshBasicMaterial({map: tiled(TEX.water, 7, 22), transparent: true, opacity: 0.8}));
 water.rotation.x = -Math.PI / 2; water.position.set(2, TIDE_LOW, 0); scene.add(water);
 
 // ships: the bases. The hull lists when its anchor chain is cut.
 const ships = [0, 1].map(t => {
-  const g = new THREE.Group(), d = dirOf(t);
-  const hull = new THREE.Mesh(new THREE.BoxGeometry(44, 16, 16), mat(t ? 0x5b2f22 : 0x1f4b4b)); hull.position.y = 6; g.add(hull);
-  const stripe = new THREE.Mesh(new THREE.BoxGeometry(44.2, 1.6, 16.2), mat(TEAM_COL[t])); stripe.position.y = 11; g.add(stripe);
-  const stack = new THREE.Mesh(new THREE.CylinderGeometry(2, 2.4, 9, 10), mat(0x2a2a2a)); stack.position.set(6, 18, 0); g.add(stack);
-  g.position.set(2, 0, -d * (L + 11)); scene.add(g); return g;
+  const g = model('ship', {team: TEAM_COL[t], hull: t ? 0x5b2f22 : 0x1f4b4b});
+  g.position.set(2, 0, -dirOf(t) * (L + 11)); return g;
 });
 
 /* ---------- entities ---------- */
@@ -193,14 +333,6 @@ const state = {
   lantern: null,     // {pos, life, mesh, carrier}
 };
 
-function figure(color, scale, hat) {
-  const g = new THREE.Group();
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(.42, .5, 1.1, 10), mat(color)); body.position.y = .75; g.add(body);
-  const head = new THREE.Mesh(new THREE.SphereGeometry(.34, 10, 8), mat(0xe8cfae)); head.position.y = 1.55; g.add(head);
-  if (hat) { const h = new THREE.Mesh(new THREE.CylinderGeometry(.2, .46, .3, 10), mat(hat)); h.position.y = 1.86; g.add(h); }
-  const gun = new THREE.Mesh(new THREE.BoxGeometry(.14, .14, .9), mat(0x222222)); gun.position.set(.36, 1.05, .45); g.add(gun);
-  g.scale.setScalar(scale); scene.add(g); return g;
-}
 function spawn(e) {
   Object.assign(e, {vel: new V3(), alive: true, onGround: true, knock: 0, slow: 0, face: 0, atkT: Math.random()});
   e.maxHp = e.hp; ents.push(e); return e;
@@ -209,7 +341,7 @@ function makeHero(team, i, isPlayer) {
   const d = dirOf(team), laneX = [-4, 0, 4][i];
   const h = spawn({kind: 'hero', team, hp: 220, r: .6, h: 1.9, pos: new V3(laneX, 0, -d * SPAWN_Z),
     spheres: [[.7, .7], [1.5, .6]], laneX, seed: Math.random() * 9, isPlayer,
-    mesh: figure(isPlayer ? 0xf4f0d8 : TEAM_COL[team], 1, TEAM_COL[team])});
+    mesh: model('hero', isPlayer ? {team: 0xf4f0d8, team2: TEAM_COL[team]} : {team: TEAM_COL[team], team2: 0xf4f0d8})});
   Object.assign(h, {spark: 0, pearl: 0, rig: [false, false, false], ammo: 24, reload: 0, wake: 0, fireT: 0,
     tetherCd: 0, tether: null, shoveCd: 0, braceCd: 0, brace: 0, windup: 0, stun: 0, respawn: 0, carry: false, lastHit: -9,
     name: isPlayer ? 'You' : TEAM_NAME[team] + ' ' + ['Gaffer', 'Netter', 'Diver'][i]});
@@ -217,19 +349,15 @@ function makeHero(team, i, isPlayer) {
 }
 function makeWickie(team, i, bearer) {
   const d = dirOf(team);
-  const g = figure(TEAM_COL[team], bearer ? 1.25 : .8, 0x2c2c2c);
-  if (bearer) { const l = new THREE.Mesh(new THREE.SphereGeometry(.45, 10, 8), glow(0xffe27a)); l.position.y = 2.5; g.add(l); }
-  return spawn({kind: 'wickie', team, bearer, hp: bearer ? 120 : 55, r: .45, h: bearer ? 2.2 : 1.5, mesh: g,
-    spheres: bearer ? [[.9, .8], [1.9, .7]] : [[.7, .6]], laneX: (i % 3 - 1) * 2.6,
+  const g = model(bearer ? 'bearer' : 'wickie', {team: TEAM_COL[team]});
+  return spawn({kind: 'wickie', team, bearer, hp: bearer ? 120 : 55, r: .45, h: bearer ? 2.9 : 1.6, mesh: g,
+    spheres: bearer ? [[.9, .7], [1.8, .6], [2.8, .5]] : [[.6, .55], [1.35, .45]], laneX: (i % 3 - 1) * 2.6,
     pos: new V3((i % 3 - 1) * 2.6, 0, -d * (SPAWN_Z - 4) - d * Math.floor(i / 3) * 2)});
 }
 function makeTower(team) {
-  const d = dirOf(team), g = new THREE.Group();
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 2.1, 6, 12), mat(0x7d8587)); base.position.y = 3; g.add(base);
-  const band = new THREE.Mesh(new THREE.CylinderGeometry(1.75, 1.75, .8, 12), mat(TEAM_COL[team])); band.position.y = 5; g.add(band);
-  const horn = new THREE.Mesh(new THREE.ConeGeometry(1.7, 2.6, 12, 1, true), mat(0xc9a13a, {side: THREE.DoubleSide}));
-  horn.rotation.x = d * Math.PI / 2; horn.position.set(0, 7.2, d * .8); g.add(horn);
-  g.position.set(0, 0, -d * TOWER_Z); scene.add(g); solids.push(base);
+  const d = dirOf(team), g = model('foghorn', {team: TEAM_COL[team]});
+  g.position.set(0, 0, -d * TOWER_Z); g.rotation.y = d > 0 ? 0 : Math.PI;            // the horn faces down the lane
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 2.1, 9, 8)); base.position.set(0, 4.5, -d * TOWER_Z); base.updateMatrixWorld(); solids.push(base);
   return spawn({kind: 'tower', team, hp: 900, r: 2.1, h: 8, mesh: g, structure: true, pos: g.position.clone(),
     spheres: [[1.5, 2], [4, 2], [6.8, 2]], solid: base});
 }
@@ -245,18 +373,12 @@ function makeChain(team) {
     spheres: [[1, 1.8], [3.2, 1.3], [5.4, 1.3]]});
 }
 function makeCrab(z) {
-  const g = new THREE.Group();
-  const b = new THREE.Mesh(new THREE.SphereGeometry(1, 12, 8), mat(0xd9583a)); b.scale.set(1.3, .6, 1); b.position.y = .7; g.add(b);
-  for (const s of [-1, 1]) { const c = new THREE.Mesh(new THREE.SphereGeometry(.4, 8, 6), mat(0xf07a50)); c.position.set(s * 1.3, .8, .8); g.add(c); }
-  scene.add(g);
+  const g = model('crab');
   return spawn({kind: 'crab', team: 2, hp: 160, r: 1.1, h: 1.4, mesh: g, home: new V3(18, -4, z), pos: new V3(18, -4, z), spheres: [[.7, 1.2]]});
 }
 function makeBuoy(team, x, z, bonus) {
-  const g = new THREE.Group();
-  const b = new THREE.Mesh(new THREE.CylinderGeometry(.9, 1.1, 1.2, 10), mat(TEAM_COL[team])); b.position.y = .6; g.add(b);
-  const c = new THREE.Mesh(new THREE.ConeGeometry(.7, 1.6, 10), mat(0xf4f0d8)); c.position.y = 2; g.add(c);
-  const l = new THREE.Mesh(new THREE.SphereGeometry(.28, 8, 6), glow(bonus > 1 ? 0xffe27a : 0xffffff)); l.position.y = 3; g.add(l);
-  g.position.set(x, 0, z); scene.add(g);
+  const g = model('buoy', {team: TEAM_COL[team], glow_ffffff: bonus > 1 ? 0xffd23f : 0xffffff});
+  g.position.set(x, 0, z);
   return {team, x, z, bonus, mesh: g};
 }
 
@@ -265,7 +387,7 @@ for (let i = 0; i < 3; i++) makeHero(1, i);
 const towers = [makeTower(0), makeTower(1)], chains = [makeChain(0), makeChain(1)];
 const crabs = [makeCrab(-32), makeCrab(32)];
 const buoys = [makeBuoy(0, 6, -56, 1), makeBuoy(0, 18, -14, 1.5), makeBuoy(1, -6, 56, 1), makeBuoy(1, 18, 14, 1.5)];
-const lanternMesh = new THREE.Mesh(new THREE.SphereGeometry(.5, 12, 8), glow(0xffe27a)); lanternMesh.visible = false; scene.add(lanternMesh);
+const lanternMesh = new THREE.Mesh(new THREE.OctahedronGeometry(.6), glow(0xffd23f)); lanternMesh.visible = false; scene.add(lanternMesh);
 
 /* ---------- small effects ---------- */
 const tracers = [];
@@ -292,6 +414,13 @@ function beep(freq, dur, type, vol) {
     o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime + dur);
   } catch (e) {}
 }
+const pops = [];        // comic sound effects, lettered over the action
+function pop(text, pos, color, size) {
+  if (pops.length > 14) pops.shift();
+  pops.push({text, pos: pos.clone(), color: color || '#fff', size: size || 28, life: .9, rot: (Math.random() - .5) * .5});
+}
+let bannerT = 0;
+function banner(text) { $('banner').textContent = text; $('banner').style.display = 'block'; bannerT = 3.2; }
 const feed = [];
 function say(html) { feed.unshift({html, t: 7}); if (feed.length > 6) feed.pop(); }
 
@@ -379,17 +508,19 @@ function damage(t, amt, src) {
   const foe = src && src.team < 2 ? src.team : 1 - t.team;
   if (t.kind === 'wickie') {
     giveSpark(foe, t.bearer ? 60 : 30, t.pos, 30);
+    if (t.bearer) pop('CRASH!', t.pos.clone().setY(3), '#ffd23f', 34);
     if (t.bearer) dropLantern(t.pos, TEAM_NAME[t.team] + " Lantern-Bearer is down — the lantern is loose!");
   } else if (t.kind === 'hero') {
-    t.respawn = 8; t.tether = null;
+    t.respawn = 8; t.tether = null; pop('SPLASH!', t.pos.clone().setY(t.pos.y + 2), '#ff5a3c', 38);
     if (t.carry) { t.carry = false; state.lantern = null; dropLantern(t.pos, 'The lantern carrier fell — the lantern is loose!'); }
     giveSpark(foe, 150, null); say(`<b class="${foe ? 'rust' : 'teal'}">${src && src.name || TEAM_NAME[foe]}</b> downed ${t.name}`);
   } else if (t.kind === 'tower') {
-    giveSpark(foe, 600, null); say(`The ${TEAM_NAME[t.team]} Foghorn is silenced. Their Anchor Chain is exposed!`); beep(110, .8, 'sawtooth', .08);
+    pop('KA-BOOM!', t.pos.clone().setY(6), '#ff5a3c', 64); giveSpark(foe, 600, null); say(`The ${TEAM_NAME[t.team]} Foghorn is silenced. Their Anchor Chain is exposed!`); beep(110, .8, 'sawtooth', .08);
   } else if (t.kind === 'crab') {
+    pop('CRACK!', t.pos.clone().setY(t.pos.y + 2), '#ffd23f', 30);
     if (src && src.kind === 'hero') { src.pearl++; src.spark += 40; if (src.isPlayer) say('Reef Crab cracked: +1 Pearl'); }
   } else if (t.kind === 'chain') {
-    state.over = {winner: foe, t: 0};
+    state.over = {winner: foe, t: 0}; pop('SNAP!', t.pos.clone().setY(5), '#fff', 76);
     say(`The ${TEAM_NAME[t.team]} Anchor Chain is cut!`); beep(80, 1.4, 'sawtooth', .1);
   }
 }
@@ -403,11 +534,11 @@ function knockback(t, fromX, fromZ, power, up) {
   t.vel.x = dx / d * power; t.vel.z = dz / d * power; t.vel.y = up; t.onGround = false; t.knock = .5;
 }
 function shove(h) {
-  h.shoveCd = 4; ring(h.pos.clone().setY(h.pos.y + 1), 0xffffff, 3.4);
+  h.shoveCd = 4; ring(h.pos.clone().setY(h.pos.y + 1), 0xffffff, 3.4); pop('WHUMP!', h.pos.clone().setY(h.pos.y + 2.4), '#fff', 26);
   for (const t of ents) {
     if (!t.alive || t.team === h.team || t.structure || t.pos.distanceTo(h.pos) > 3.6) continue;
     if (t.kind === 'hero' && t.brace > 0) {                         // Brace throws it back
-      knockback(h, t.pos.x, t.pos.z, 20, 7); h.stun = 1.2; damage(h, 25, t); t.brace = 0;
+      knockback(h, t.pos.x, t.pos.z, 20, 7); h.stun = 1.2; pop('CLANG!', t.pos.clone().setY(t.pos.y + 2.6), '#7fd4ff', 36); damage(h, 25, t); t.brace = 0;
       say(`${t.name} Braced — ${h.name} is thrown back!`); return;
     }
     damage(t, 22, h); if (t.alive) knockback(t, h.pos.x, h.pos.z, 18, 6.5);
@@ -458,7 +589,7 @@ function fireTether() {
   if (!state.started || !player.alive || player.tetherCd > 0 || player.carry || player.stun > 0) return;
   const a = playerAim(45);
   if (!a.solid) { say('Tether: nothing in reach'); return; }
-  player.tetherCd = 3.5; beep(300, .12, 'sawtooth', .05);
+  player.tetherCd = 3.5; beep(300, .12, 'sawtooth', .05); pop('THWIP!', a.point, '#fff', 24);
   if (a.ent && a.ent.kind === 'hero') {       // trip an enemy hero: yank them in and slow them
     knockback(a.ent, a.ent.pos.x * 2 - player.pos.x, a.ent.pos.z * 2 - player.pos.z, 13, 5); a.ent.slow = 2;
     tracer(player.pos.clone().setY(player.pos.y + 1.2), a.point, 0xf4f0d8); return;
@@ -496,7 +627,7 @@ function updatePlayer(dt) {
       p.fireT = .13 / (p.rig[0] && high ? 1.25 : 1);
       const a = playerAim(90);
       let dmg = 16 * (p.rig[0] && !high ? 1.25 : 1);
-      if (wakeShot) { dmg *= 3; p.wake = 0; p.ammo = 24; ring(a.point, 0x7fd4ff, 2.5); beep(1300, .12, 'triangle', .07); } else p.ammo--;
+      if (wakeShot) { dmg *= 3; p.wake = 0; p.ammo = 24; ring(a.point, 0x7fd4ff, 2.5); pop('KRAK!', a.point, '#7fd4ff', 42); beep(1300, .12, 'triangle', .07); } else p.ammo--;
       if (a.ent) damage(a.ent, a.ent.structure ? dmg * .8 : dmg, p);
       tracer(tmp2.copy(p.pos).setY(p.pos.y + 1.2).clone(), a.point, wakeShot ? 0x7fd4ff : 0xfff2b0);
       beep(wakeShot ? 240 : 180, .05, 'square', .03);
@@ -576,7 +707,7 @@ function updateTower(tw, dt) {
   tw.atkT -= dt; if (tw.atkT > 0) return;
   const t = nearest(tw, 22, o => o.kind === 'wickie') || nearest(tw, 22, o => o.kind === 'hero');
   if (!t) return;
-  tw.atkT = 1.5; ring(tw.pos.clone().setY(7), TEAM_COL[tw.team], 6);
+  tw.atkT = 1.5; ring(tw.pos.clone().setY(7), TEAM_COL[tw.team], 6); pop('BWAAAM!', tw.pos.clone().setY(10), '#ffd23f', 34);
   tracer(tw.pos.clone().setY(7.2), t.pos.clone().setY(t.pos.y + 1), 0xffffff);
   damage(t, t.kind === 'hero' ? 26 : 32, tw);
   if (t.kind === 'hero' && t.alive) { knockback(t, tw.pos.x, tw.pos.z, 15, 6); t.tether = null; }   // the sound-cannon throws you back
@@ -613,6 +744,7 @@ function updateTide(dt) {
     T.t = TIDE_LEN; T.high = !T.high;
     if (T.high) { T.flow = -T.flow; say(`🌊 <b>HIGH TIDE</b> — the street floods. Trench current runs toward the <b class="${T.flow > 0 ? 'rust' : 'teal'}">${TEAM_NAME[T.flow > 0 ? 1 : 0]}</b> ship.`); }
     else say('🏖️ <b>LOW TIDE</b> — the seabed trench is open. Reef Crabs are out.');
+    banner(T.high ? 'Meanwhile… the tide comes in!' : 'And then… the tide goes out!');
     beep(98, 1.1, 'sawtooth', .08); buildRig();
   }
   const target = T.high ? TIDE_HIGH : TIDE_LOW, step = (TIDE_HIGH - TIDE_LOW) / 6 * dt;
@@ -630,7 +762,7 @@ function updateLantern(dt) {
       const pay = Math.round(300 * b.bonus);
       giveSpark(c.team, pay, null); state.surge[c.team] += 3; c.carry = false; state.lantern = null;
       say(`🏮 <b class="${c.team ? 'rust' : 'teal'}">${c.name}</b> banked the lantern: +${Math.round(pay / 3)} Spark each${b.bonus > 1 ? ' (forward buoy bonus)' : ''}`);
-      beep(880, .3, 'triangle', .07); ring(new V3(b.x, b.mesh.position.y + 2, b.z), 0xffe27a, 5); return;
+      beep(880, .3, 'triangle', .07); ring(new V3(b.x, b.mesh.position.y + 2, b.z), 0xffe27a, 5); pop('KA-CHING!', new V3(b.x, b.mesh.position.y + 4, b.z), '#ffd23f', 36); return;
     }
     return;
   }
@@ -670,35 +802,60 @@ function step(dt) {
 function buildRig() {
   $('rig').innerHTML = RIG.map((it, i) => `<div class="slot ${player.rig[i] ? 'own' : ''}"><h4><span>${i + 1} · ${it.name}</span></h4>
     <div class="face ${!state.tide.high ? 'on' : ''}">Low: ${it.low}</div><div class="face ${state.tide.high ? 'on' : ''}">High: ${it.high}</div>
-    <div style="margin-top:2px;color:#ffd66b">${player.rig[i] ? 'Rigged' : it.cost + ' Spark' + (it.pearl ? ' + ' + it.pearl + ' Pearl' : '')}</div></div>`).join('');
+    <div style="margin-top:2px;color:#a8641a">${player.rig[i] ? 'Rigged' : it.cost + ' Spark' + (it.pearl ? ' + ' + it.pearl + ' Pearl' : '')}</div></div>`).join('');
 }
 buildRig();
 const pv = new V3();
-function drawFx() {
-  const W = fx.width, H = fx.height; fxc.clearRect(0, 0, W, H);
+function inked(text, x, y, size, fill, rot) {
+  fxc.save(); fxc.translate(x, y); fxc.rotate(rot || 0);
+  fxc.font = `900 ${size}px Impact, Haettenschweiler, "Arial Narrow Bold", "Arial Black", sans-serif`; fxc.textAlign = 'center'; fxc.textBaseline = 'middle';
+  fxc.lineJoin = 'round'; fxc.lineWidth = Math.max(4, size * .22); fxc.strokeStyle = '#141414'; fxc.strokeText(text, 2, 3); fxc.strokeText(text, 0, 0);
+  fxc.fillStyle = fill; fxc.fillText(text, 0, 0); fxc.restore();
+}
+function drawFx(dt) {
+  const W = fx.width, H = fx.height, cx = W / 2, cy = H / 2, p = player; fxc.clearRect(0, 0, W, H);
+  if (p.alive && (p.tether || p.speedNow > 13)) {     // speed lines
+    fxc.fillStyle = 'rgba(20,20,20,.55)';
+    for (let i = 0; i < 46; i++) {
+      const a = Math.random() * 6.283, r0 = Math.hypot(W, H) * (.36 + Math.random() * .12), r1 = Math.hypot(W, H) * .62, w = .004 + Math.random() * .008;
+      fxc.beginPath(); fxc.moveTo(cx + Math.cos(a) * r0, cy + Math.sin(a) * r0);
+      fxc.lineTo(cx + Math.cos(a - w) * r1, cy + Math.sin(a - w) * r1); fxc.lineTo(cx + Math.cos(a + w) * r1, cy + Math.sin(a + w) * r1); fxc.fill();
+    }
+  }
   for (const e of ents) {            // world health bars
     if (!e.alive || e === player && !AUTO || e.kind === 'crab' && !e.active) continue;
     if (e.kind === 'wickie' && e.hp === e.maxHp && !e.bearer) continue;
     pv.set(e.pos.x, e.pos.y + e.h + .5, e.pos.z).project(camera);
     if (pv.z > 1 || Math.abs(pv.x) > 1.1) continue;
     const x = (pv.x + 1) / 2 * W, y = (1 - pv.y) / 2 * H, w = e.structure ? 90 : e.kind === 'hero' ? 54 : 30;
-    fxc.fillStyle = '#000a'; fxc.fillRect(x - w / 2 - 1, y - 1, w + 2, 7);
-    fxc.fillStyle = e.team === 0 ? '#5fe0c8' : e.team === 1 ? '#ff9a5c' : '#e8d36a'; fxc.fillRect(x - w / 2, y, w * e.hp / e.maxHp, 5);
-    if (e.kind === 'hero' && e.carry) { fxc.fillStyle = '#ffe27a'; fxc.font = 'bold 13px system-ui'; fxc.textAlign = 'center'; fxc.fillText('LANTERN', x, y - 5); }
-    if (e.kind === 'hero' && e.windup > 0) { fxc.fillStyle = '#fff'; fxc.font = 'bold 14px system-ui'; fxc.textAlign = 'center'; fxc.fillText('SHOVE! [Q]', x, y - 5); }
+    fxc.fillStyle = '#141414'; fxc.fillRect(x - w / 2 - 3, y - 3, w + 6, 12);
+    fxc.fillStyle = '#fff'; fxc.fillRect(x - w / 2, y, w, 6);
+    fxc.fillStyle = e.team === 0 ? '#2bb5a0' : e.team === 1 ? '#e2632a' : '#e8b93a'; fxc.fillRect(x - w / 2, y, w * e.hp / e.maxHp, 6);
+    if (e.kind === 'hero' && e.windup > 0) inked('SHOVE! [Q]', x, y - 16, 20, '#fff');
+    else if (e.kind === 'hero' && e.carry) inked('LANTERN', x, y - 14, 17, '#ffd23f');
+  }
+  for (let i = pops.length - 1; i >= 0; i--) {       // sound effects
+    const s = pops[i]; s.life -= dt; if (s.life <= 0) { pops.splice(i, 1); continue; }
+    pv.copy(s.pos).project(camera); if (pv.z > 1) continue;
+    const k = 1 - s.life / .9, grow = Math.min(1, k * 7), dist = Math.max(8, camera.position.distanceTo(s.pos));
+    fxc.globalAlpha = Math.min(1, s.life * 4);
+    inked(s.text, (pv.x + 1) / 2 * W, (1 - pv.y) / 2 * H - k * 26, s.size * (.55 + grow * .45) * clamp(26 / dist, .55, 1.5) * H / 720, s.color, s.rot);
+    fxc.globalAlpha = 1;
   }
   // reticle: ammo arc (left), Wake arc (right), tether dot
-  const cx = W / 2, cy = H / 2, p = player;
-  fxc.lineWidth = 2; fxc.strokeStyle = '#fff'; fxc.beginPath(); fxc.arc(cx, cy, 3, 0, 7); fxc.stroke();
   const arc = (r, a0, a1, f, col, lw) => {
-    fxc.lineWidth = lw; fxc.strokeStyle = '#0007'; fxc.beginPath(); fxc.arc(cx, cy, r, a0, a1); fxc.stroke();
+    fxc.lineCap = 'butt'; fxc.lineWidth = lw + 5; fxc.strokeStyle = '#141414'; fxc.beginPath(); fxc.arc(cx, cy, r, a0 - .03, a1 + .03); fxc.stroke();
+    fxc.lineWidth = lw; fxc.strokeStyle = '#f6ecd2'; fxc.beginPath(); fxc.arc(cx, cy, r, a0, a1); fxc.stroke();
     if (f > 0) { fxc.strokeStyle = col; fxc.beginPath(); fxc.arc(cx, cy, r, a1 - (a1 - a0) * f, a1); fxc.stroke(); }
   };
-  arc(34, Math.PI * .7, Math.PI * 1.3, p.reload > 0 ? 1 - p.reload / 1.5 : p.ammo / 24, p.reload > 0 ? '#aaa' : '#fff2b0', 4);
-  arc(34, -Math.PI * .3, Math.PI * .3, p.wake / 100, p.wake >= 100 ? '#fff' : '#7fd4ff', p.wake >= 100 ? 6 : 4);
-  fxc.fillStyle = p.tetherCd > 0 ? '#0008' : '#f4f0d8'; fxc.beginPath(); fxc.arc(cx, cy + 46, 4, 0, 7); fxc.fill();
-  if (p.wake >= 100) { fxc.fillStyle = '#fff'; fxc.font = 'bold 12px system-ui'; fxc.textAlign = 'left'; fxc.fillText('WAKE SHOT', cx + 44, cy + 4); }
-  if (p.carry) { fxc.fillStyle = '#ffe27a'; fxc.font = 'bold 15px system-ui'; fxc.textAlign = 'center'; fxc.fillText('Carrying the lantern — weapons and tether stowed. Reach a Teal buoy.', cx, cy + 90); }
+  fxc.lineWidth = 5; fxc.strokeStyle = '#141414'; fxc.beginPath(); fxc.arc(cx, cy, 4, 0, 7); fxc.stroke();
+  fxc.lineWidth = 2; fxc.strokeStyle = '#fff'; fxc.beginPath(); fxc.arc(cx, cy, 4, 0, 7); fxc.stroke();
+  arc(36, Math.PI * .7, Math.PI * 1.3, p.reload > 0 ? 1 - p.reload / 1.5 : p.ammo / 24, p.reload > 0 ? '#999' : '#e2432a', 5);
+  arc(36, -Math.PI * .3, Math.PI * .3, p.wake / 100, p.wake >= 100 ? '#ffd23f' : '#2f9db0', p.wake >= 100 ? 7 : 5);
+  fxc.fillStyle = '#141414'; fxc.beginPath(); fxc.arc(cx, cy + 50, 7, 0, 7); fxc.fill();
+  fxc.fillStyle = p.tetherCd > 0 ? '#666' : '#f6ecd2'; fxc.beginPath(); fxc.arc(cx, cy + 50, 4, 0, 7); fxc.fill();
+  if (p.wake >= 100) inked('WAKE SHOT!', cx + 96, cy, 20, '#ffd23f', -.08);
+  if (p.carry) inked('YOU HAVE THE LANTERN — RUN IT TO A TEAL BUOY!', cx, cy + 110, 24, '#ffd23f');
 }
 const mapc = $('map').getContext('2d');
 function drawMap() {
@@ -725,7 +882,7 @@ let hudT = 0;
 function drawHud(dt) {
   hudT -= dt; if (hudT > 0) return; hudT = .1;
   const T = state.tide, p = player;
-  $('tideName').textContent = T.high ? 'HIGH TIDE' : 'LOW TIDE'; $('tideName').style.color = T.high ? '#7fd4ff' : '#f0d9a0';
+  $('tideName').textContent = T.high ? 'HIGH TIDE' : 'LOW TIDE'; $('tideName').style.color = T.high ? '#0d6f8f' : '#a8641a';
   $('tideSub').textContent = (T.high ? 'Ebbs in ' : 'Floods in ') + fmt(T.t) + (T.high ? ` · current → ${TEAM_NAME[T.flow > 0 ? 1 : 0]} ship` : ` · next current → ${TEAM_NAME[T.flow > 0 ? 0 : 1]} ship`);
   $('tideFill').style.width = (1 - T.t / TIDE_LEN) * 100 + '%';
   for (const t of [0, 1]) {
@@ -756,9 +913,11 @@ function render(dt) {
   if (player.tether) { tetherLine.geometry.setFromPoints([player.pos.clone().setY(player.pos.y + 1.2), player.tether.p]); }
   for (const f of feed) f.t -= dt; while (feed.length && feed[feed.length - 1].t <= 0) feed.pop();
   updateCamera();
-  water.material.opacity = .68 + Math.sin(state.time * .8) * .04;
-  renderer.render(scene, camera);
-  drawFx(); drawHud(dt);
+  const wm = water.material.map; wm.offset.y -= dt * .012 * state.tide.flow; wm.offset.x = Math.sin(state.time * .3) * .02;
+  if (bannerT > 0 && (bannerT -= dt) <= 0) $('banner').style.display = 'none';
+  renderer.setRenderTarget(target); renderer.render(scene, camera);
+  renderer.setRenderTarget(null); renderer.render(postScene, postCam);
+  drawFx(dt); drawHud(dt);
 }
 function updateCamera() {   // third-person camera over the right shoulder
   if (AUTO) { yaw = player.face - Math.PI; pitch = -.25; }
@@ -791,6 +950,13 @@ say('Kill the Rust Foghorn, then cut their Anchor Chain. Watch the tide clock.')
 window.__bh = {state, ents, heroes, player, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
   setAim: (y, p) => { yaw = y; pitch = p; updateCamera(); }};
 requestAnimationFrame(frame);
+}
+(function () {     // unpack the Blender models, then start
+  const b = atob(window.__GLB.models), u = new Uint8Array(b.length);
+  for (let i = 0; i < b.length; i++) u[i] = b.charCodeAt(i);
+  new THREE.GLTFLoader().parse(u.buffer, '', g => { g.scene.children.slice().forEach(o => MODELS[o.name] = o); main(); },
+    e => { document.body.textContent = 'Could not load the models: ' + e; });
+})();
 </script>
 </body>
 </html>
