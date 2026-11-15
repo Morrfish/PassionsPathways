@@ -347,8 +347,9 @@ const INK_HATCH = drawn(512, 512, (g, W, H) => {         // loose diagonal hatch
     }
   }
 });
-function inkMat(c) {
-  const m = mat(c);
+function inkMat(c, skin) {      // skin takes only faint marks, so faces stay readable
+  const m = mat(c), gLo = skin ? '.82' : '.3', hLo = skin ? '.72' : '.22';
+  m.customProgramCacheKey = () => 'ink' + gLo;
   m.onBeforeCompile = sh => {
     sh.uniforms.tGrit = {value: INK_GRIT}; sh.uniforms.tHatch = {value: INK_HATCH};
     sh.vertexShader = sh.vertexShader.replace('#include <common>', 'varying vec3 vInkP; varying vec3 vInkN;\n#include <common>')
@@ -357,10 +358,10 @@ function inkMat(c) {
       .replace('#include <color_fragment>', `#include <color_fragment>
         vec3 inkN = abs(vInkN); vec2 inkUv = inkN.x > inkN.y && inkN.x > inkN.z ? vInkP.yz : inkN.y > inkN.z ? vInkP.xz : vInkP.xy;
         vec3 inkBase = diffuseColor.rgb;
-        diffuseColor.rgb *= mix(.3, 1., texture2D(tGrit, inkUv * .9).r);`)
+        diffuseColor.rgb *= mix(${gLo}, 1., texture2D(tGrit, inkUv * .9).r);`)
       .replace('#include <tonemapping_fragment>', `float inkLit = dot(outgoingLight, vec3(.3, .59, .11)) / max(dot(inkBase, vec3(.3, .59, .11)), .04);
         float inkShade = 1. - smoothstep(.5, .78, inkLit);
-        gl_FragColor.rgb *= mix(1., mix(.22, 1., texture2D(tHatch, inkUv * 1.5).r), inkShade);
+        gl_FragColor.rgb *= mix(1., mix(${hLo}, 1., texture2D(tHatch, inkUv * 1.5).r), inkShade);
         #include <tonemapping_fragment>`);
   };
   return m;
@@ -370,14 +371,14 @@ hullMat.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#in
 const NO_HULL = /^(ship|lighthouse|piling|rock|link|coil|cleat|lamp|barrel)/;
 const matCache = {};
 function namedMat(n, ov) {
-  const unlit = n.startsWith('glow_'), c = ov && n in ov ? ov[n] : parseInt(n.split('_')[1], 16) || 0x888888, k = (unlit ? 'g' : 't') + c;
-  return matCache[k] || (matCache[k] = unlit ? glow(c) : inkMat(c));
+  const unlit = n.startsWith('glow_'), skin = /^(skin|face)_/.test(n), c = ov && n in ov ? ov[n] : parseInt(n.split('_')[1], 16) || 0x888888, k = (unlit ? 'g' : skin ? 's' : 't') + c;
+  return matCache[k] || (matCache[k] = unlit ? glow(c) : inkMat(c, skin));
 }
 function model(name, ov) {
   const o = MODELS[name].clone(true);
   const parts = [];
-  o.traverse(m => { if (m.isMesh) { parts.push(m); m.material = namedMat(m.material.name, ov); m.castShadow = !m.material.name.startsWith('glow') && m.material.type !== 'MeshBasicMaterial'; m.receiveShadow = true; } });
-  if (!NO_HULL.test(name)) for (const m of parts) if (m.material.type !== 'MeshBasicMaterial') m.add(new THREE.Mesh(m.geometry, hullMat));
+  o.traverse(m => { if (m.isMesh) { parts.push(m); const n = m.material.name; m.material = namedMat(n, ov); m.castShadow = m.material.type !== 'MeshBasicMaterial'; m.receiveShadow = !/^(skin|face)_/.test(n); m.userData.noHull = n.startsWith('face_'); } });   // faces are never lost in hat shadow
+  if (!NO_HULL.test(name)) for (const m of parts) if (m.material.type !== 'MeshBasicMaterial' && !m.userData.noHull) m.add(new THREE.Mesh(m.geometry, hullMat));
   scene.add(o); return o;
 }
 
@@ -463,8 +464,8 @@ function heroLook(h, who) {      // dress a hero as one of the roster
 }
 function makeHero(team, i, isPlayer, who) {
   const d = dirOf(team), laneX = [-4, 0, 4][i];
-  const h = spawn({kind: 'hero', team, hp: 220, r: .6, h: 1.9, pos: new V3(laneX, 0, -d * SPAWN_Z),
-    spheres: [[.7, .7], [1.5, .6]], laneX, seed: Math.random() * 9, isPlayer, mesh: null});
+  const h = spawn({kind: 'hero', team, hp: 220, r: .6, h: 2.55, pos: new V3(laneX, 0, -d * SPAWN_Z),
+    spheres: [[.7, .7], [1.5, .6], [2.15, .5]], laneX, seed: Math.random() * 9, isPlayer, mesh: null});
   Object.assign(h, {spark: 0, pearl: 0, rig: [false, false, false], ammo: 24, reload: 0, wake: 0, fireT: 0,
     tetherCd: 0, tether: null, shoveCd: 0, braceCd: 0, brace: 0, windup: 0, stun: 0, respawn: 0, carry: false, lastHit: -9,
     name: 'You'});
@@ -473,8 +474,8 @@ function makeHero(team, i, isPlayer, who) {
 function makeWickie(team, i, bearer) {
   const d = dirOf(team);
   const g = model(bearer ? BEARER[team] : 'wickie', {team: TEAM_COL[team], team2: TEAM_TRIM[team]});
-  return spawn({kind: 'wickie', team, bearer, hp: bearer ? 120 : 55, r: .45, h: bearer ? 2.3 : 1.5, mesh: g,
-    spheres: bearer ? [[.8, .7], [1.6, .6]] : [[.5, .5], [1.05, .45]], laneX: (i % 3 - 1) * 2.6,
+  return spawn({kind: 'wickie', team, bearer, hp: bearer ? 120 : 55, r: .45, h: bearer ? 2.8 : 1.95, mesh: g,
+    spheres: bearer ? [[.8, .7], [1.6, .6], [2.3, .5]] : [[.5, .5], [1.05, .45], [1.6, .45]], laneX: (i % 3 - 1) * 2.6,
     pos: new V3((i % 3 - 1) * 2.6, 0, -d * (SPAWN_Z - 4) - d * Math.floor(i / 3) * 2)});
 }
 function makeTower(team) {
@@ -728,7 +729,7 @@ function fireTether() {
   player.tetherCd = 3.5; beep(300, .12, 'sawtooth', .05); pop('THWIP!', a.point, '#fff', 24);
   if (a.ent && a.ent.kind === 'hero') {       // trip an enemy hero: yank them in and slow them
     knockback(a.ent, a.ent.pos.x * 2 - player.pos.x, a.ent.pos.z * 2 - player.pos.z, 13, 5); a.ent.slow = 2;
-    tracer(player.pos.clone().setY(player.pos.y + 1.2), a.point, 0xf4f0d8); return;
+    tracer(player.pos.clone().setY(player.pos.y + 1.75), a.point, 0xf4f0d8); return;
   }
   player.tether = {p: a.point, t: 1.5}; player.onGround = false;
 }
@@ -765,7 +766,7 @@ function updatePlayer(dt) {
       let dmg = 16 * (p.rig[0] && !high ? 1.25 : 1);
       if (wakeShot) { dmg *= 3; p.wake = 0; p.ammo = 24; ring(a.point, 0x7fd4ff, 2.5); pop('KRAK!', a.point, '#7fd4ff', 42); beep(1300, .12, 'triangle', .07); } else p.ammo--;
       if (a.ent) damage(a.ent, a.ent.structure ? dmg * .8 : dmg, p);
-      tracer(tmp2.copy(p.pos).setY(p.pos.y + 1.2).clone(), a.point, wakeShot ? 0x7fd4ff : 0xfff2b0);
+      tracer(tmp2.copy(p.pos).setY(p.pos.y + 1.75).clone(), a.point, wakeShot ? 0x7fd4ff : 0xfff2b0);
       beep(wakeShot ? 240 : 180, .05, 'square', .03);
     }
   }
@@ -893,7 +894,7 @@ function updateLantern(dt) {
   if (!lan) return;
   if (lan.carrier) {
     const c = lan.carrier; lan.pos.copy(c.pos);
-    lanternMesh.position.set(c.pos.x, c.pos.y + 2.5, c.pos.z); lanternMesh.rotation.y += .05;
+    lanternMesh.position.set(c.pos.x, c.pos.y + 3.2, c.pos.z); lanternMesh.rotation.y += .05;
     for (const b of buoys) if (b.team === c.team && Math.hypot(b.x - c.pos.x, b.z - c.pos.z) < 3.6) {
       const pay = Math.round(300 * b.bonus);
       giveSpark(c.team, pay, null); state.surge[c.team] += 3; c.carry = false; state.lantern = null;
@@ -1054,7 +1055,7 @@ function render(dt) {
   for (let i = tracers.length - 1; i >= 0; i--) { const t = tracers[i]; t.life -= dt; t.l.material.opacity = t.life / .07; if (t.life <= 0) { scene.remove(t.l); t.l.geometry.dispose(); tracers.splice(i, 1); } }
   for (let i = rings.length - 1; i >= 0; i--) { const r = rings[i]; r.life -= dt; const k = 1 - r.life / .45; r.m.scale.setScalar(1 + k * r.size); r.m.material.opacity = 1 - k; if (r.life <= 0) { scene.remove(r.m); rings.splice(i, 1); } }
   tetherLine.visible = !!player.tether;
-  if (player.tether) { tetherLine.geometry.setFromPoints([player.pos.clone().setY(player.pos.y + 1.2), player.tether.p]); }
+  if (player.tether) { tetherLine.geometry.setFromPoints([player.pos.clone().setY(player.pos.y + 1.75), player.tether.p]); }
   for (const f of feed) f.t -= dt; while (feed.length && feed[feed.length - 1].t <= 0) feed.pop();
   updateCamera();
   const wm = water.material.map; wm.offset.y -= dt * .012 * state.tide.flow; wm.offset.x = Math.sin(state.time * .3) * .02;
@@ -1067,7 +1068,7 @@ function render(dt) {
 }
 function updateCamera() {   // third-person camera over the right shoulder
   if (AUTO) { yaw = player.face - Math.PI; pitch = -.25; }
-  const d = aimDir(), head = tmp2.copy(player.pos).setY(player.pos.y + 2.1);
+  const d = aimDir(), head = tmp2.copy(player.pos).setY(player.pos.y + 2.7);
   const back = Math.min(6, worldHit(head, d.clone().negate(), 6.3) - .3);
   camPos.copy(head).addScaledVector(d, -Math.max(1.2, back)).add(tmp.set(Math.cos(yaw), 0, -Math.sin(yaw)).multiplyScalar(.9));
   camPos.y = Math.max(camPos.y, heightfield(camPos.x) + .4);

@@ -28,8 +28,18 @@ def M(name):
 
 from mathutils import Vector
 P = []
+# Character proportions: long legs, and a head a third bigger than the body would suggest.
+# While a character is being built, anything placed in the head zone is scaled up about the neck,
+# and everything above the hips is lifted to make room for the longer legs.
+RIG = {'on': False, 'lift': 0.0, 'head': 1.3}
+LIFT = .42
 def fin(m, smooth=True):
     o = bpy.context.object; o.data.materials.append(M(m))
+    if RIG['on']:
+        x, y, z = o.location
+        if 1.565 < z < 2.3 and x * x + y * y < .25:
+            k = RIG['head']; o.location = (x * k, y * k, 1.5 + (z - 1.5) * k); o.scale = [c * k for c in o.scale]
+        o.location.z += RIG['lift']
     for p in o.data.polygons: p.use_smooth = smooth
     P.append(o); return o
 def box(size, loc, m, rot=(0, 0, 0), r=None):
@@ -66,34 +76,35 @@ def done(name, k=1.0):
     bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
     o.data.use_auto_smooth = True; o.data.auto_smooth_angle = math.radians(48)   # curved surfaces shade smooth, real corners stay crisp
     bpy.context.scene.cursor.location = (0, 0, 0); bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
-    P.clear()
+    P.clear(); RIG['on'] = False; RIG['lift'] = 0.0
 
-INK, WOOD, DARKWOOD, STEEL, SKIN = 'c_1c1c22', 'c_6b4a34', 'c_2c2630', 'c_8c8f90', 'c_e2b48a'
+INK, WOOD, DARKWOOD, STEEL, SKIN = 'c_1c1c22', 'c_6b4a34', 'c_2c2630', 'c_8c8f90', 'skin_e2b48a'
 STRAW, STRAW2, ROPE, LEATHER, BRASS, STONE = 'c_d9b877', 'c_9c7a45', 'c_c9a36a', 'c_5a4030', 'c_d9a520', 'c_74747c'
 LAMP = 'glow_ffb648'
 IRON, IRON2, RUST, WEED = 'c_33363f', 'c_4a5568', 'c_7a4a36', 'c_6f7a34'
 R = math.radians
 
 def hat(r, z):          # the woven conical hat every crew wears
+    r = r / 1.12                # the head zone is scaled up, so keep the brim from swallowing the face
     cyl(r, .03, r * .55, (0, 0, z + r * .275), STRAW, v=28)
     cyl(r, r * .96, .04, (0, 0, z), STRAW2, v=28)
     tor(r * .98, .022, (0, 0, z + .01), STRAW2)
     tor(r * .52, .02, (0, 0, z + r * .265), STRAW2)
-CUR = {'skin': 'c_e2b48a'}
+CUR = {'skin': 'skin_e2b48a'}
 def tone(hexname, k):       # a lighter or darker shade of a c_RRGGBB colour, for cheeks and noses
     h = hexname.split('_')[1]; c = [min(255, int(int(h[i:i + 2], 16) * k)) for i in (0, 2, 4)]
-    return 'c_%02x%02x%02x' % tuple(c)
+    return hexname.split('_')[0] + '_%02x%02x%02x' % tuple(c)
 def face(z, y, w, brow='c_2c2420', style='open', nose=1.0):
-    skin = CUR['skin']
+    skin = CUR['skin'].replace('skin_', 'face_')      # face_ parts take no outline, so features do not ring themselves in black
     sph(.17, (0, -.1, z - .1), skin, scale=(1.05, 1, .95))                               # full jaw
     for s in (-1, 1):
         sph(.095, (s * .125, y + .075, z - .075), skin, scale=(1, .8, .95))             # rounded cheek
-        sph(.05, (s * .15, y + .028, z - .085), 'c_e08f78', scale=(1.1, .35, .8))       # blush
+        sph(.05, (s * .15, y + .028, z - .085), 'face_e08f78', scale=(1.1, .35, .8))       # blush
         if style == 'happy':                                                              # eyes creased shut in a smile
             box((.1, .03, .028), (s * w, y + .02, z + .005), INK, rot=(0, s * R(14), 0))
             sph(.07, (s * w, y + .03, z + .09), brow, scale=(1.5, .6, .6))
         else:
-            sph(.05, (s * w, y + .04, z), 'c_f4f0e6', scale=(1.05, .5, 1.1))
+            sph(.05, (s * w, y + .04, z), 'face_f4f0e6', scale=(1.05, .5, 1.1))
             sph(.036, (s * w, y + .016, z - .004), 'c_3a2618', scale=(1, .6, 1.15))
             sph(.012, (s * w - .012, y - .004, z + .012), 'glow_ffffff')
             box((.125, .035, .03), (s * w, y + .012, z + .048), INK, rot=(0, s * R(-6), 0), r=.012)
@@ -137,17 +148,21 @@ def skirt(r_bot, r_top, h, zc, m, folds=7, amp=.075, amp_top=0.0, v=42, y=0):
     return o
 
 def person(w=1.0, hem=.6, waist=.36, chest=.42, coat=.42, legs='c_2a2a30', legw=.3, aw=.2, cuff=True, bare=False,
-           glove=None, wraps=False, raise_arm=False, collar=.16, gun=True, hair='c_2c2420', skin='c_e2b48a', long_hair=False, folds=7):
+           glove=None, wraps=False, raise_arm=False, collar=.16, gun=True, hair='c_2c2420', skin='skin_e2b48a', long_hair=False, folds=7):
     """A rounded body in a coat. Returns the shoulder x so gear can be placed against it."""
     CUR['skin'] = skin
+    RIG['on'] = True; RIG['lift'] = 0.0
     lr = legw * .5 * w
     for s in (-1, 1):
         x = s * .2 * w
         box((.27 * w, .44, .2), (x, -.07, .1), LEATHER, r=.09)                       # boot: rounded foot and shaft
         limb((x, 0, .1), (x, 0, .42), .15 * w, .16 * w, LEATHER)
         tor(.16 * w, .03, (x, 0, .42), 'c_7a5a40')
-        limb((x, 0, .38), (x, 0, .86), lr * .92, lr * 1.08, legs)
+        limb((x, 0, .38), (x, 0, .7), lr * .86, lr * .98, legs)                       # shin, knee, thigh
+        sph(lr * 1.0, (x, -.02, .7), legs)
+        limb((x, 0, .7), (x, 0, .9 + LIFT), lr * .98, lr * 1.12, legs)
         if wraps: limb((x, 0, .3), (x, 0, .52), lr * 1.02, lr * 1.06, CREAM)
+    RIG['lift'] = LIFT
     h = 1.05 - coat                                                                   # coat skirt with hanging folds and a turned hem
     skirt(hem * w, waist * w, h, (1.05 + coat) / 2, 'team', folds=folds)
     band = min(.1, h * .3); rb_ = hem * w - (hem - waist) * w * band / h
@@ -170,7 +185,7 @@ def person(w=1.0, hem=.6, waist=.36, chest=.42, coat=.42, legs='c_2a2a30', legw=
     sx = chest * w + aw / 2
     ra, rb = aw * .64, aw * .52
     hand = glove or skin
-    hr = .15 if glove else .115
+    hr = .2 if glove else .16
     def arm(sh, el, ha):
         sph(ra * 1.12, sh, 'team')
         limb(sh, el, ra, rb * 1.05, 'team')
@@ -224,9 +239,9 @@ def goggles(y, z):
     box((.42, .03, .05), (0, y + .06, z), LEATHER)
 
 # ---- Wickie: the crew unit — the same rig at two-thirds size, round, bearded, a rope coil for a backpack and a lamp staff
-sx = person(w=1.25, hem=.5, waist=.42, chest=.46, coat=.6, legw=.3, aw=.26, gun=False, hair='c_e8e4da', skin='c_e8ae8c')
+sx = person(w=1.25, hem=.5, waist=.42, chest=.46, coat=.6, legw=.3, aw=.26, gun=False, hair='c_e8e4da', skin='skin_e8ae8c')
 face(1.74, -.28, .11, 'c_f0ece0', 'happy', 1.5)
-for s in (-1, 1): sph(.12, (s * .15, -.19, 1.67), 'c_ee9f86', scale=(1, .75, .9))      # the open, rosy cheeks above the beard
+for s in (-1, 1): sph(.12, (s * .15, -.19, 1.67), 'face_ee9f86', scale=(1, .75, .9))      # the open, rosy cheeks above the beard
 sph(.3, (0, -.16, 1.5), 'c_f0ece0', scale=(1.1, .7, .62)); sph(.24, (0, -.2, 1.3), 'c_f0ece0', scale=(1, .65, .8)); cyl(.16, .03, .22, (0, -.21, 1.08), 'c_f0ece0', rot=(R(180), 0, 0))
 moustache('c_f0ece0', .2); hat(.68, 1.93)      # hat sits high so the cheeks and beard stay open
 coil((0, .52, 1.25), .4, (R(90), 0, 0), n=3, step=(0, .12, 0))
@@ -235,14 +250,14 @@ done('wickie', .68)
 
 # ---------------- TEAL ----------------
 # Breakwater: the biggest body on the roster — heavy coat, long white beard, a huge rope coil standing on one shoulder
-sx = person(w=1.3, hem=.62, waist=.46, chest=.52, coat=.4, legw=.3, aw=.3, hair='c_e8e4da', skin='c_dba07c')
+sx = person(w=1.3, hem=.62, waist=.46, chest=.52, coat=.4, legw=.3, aw=.3, hair='c_e8e4da', skin='skin_dba07c')
 face(1.74, -.28, .1, 'c_f0ece0', 'stern', 1.25); beard('c_f0ece0', .62, .32, .2); hat(.7, 1.86); strap(.68)
 coil((-.62, .0, 1.72), .52, (0, R(72), 0), n=4, step=(.09, 0, .03))
 pouch(-.4, -.62, .95, 1.2); pouch(.42, -.62, .95)
 done('breakwater', 1.06)
 
 # Mainsail: tall and narrow, floor-length coat, high collar, one long braid with a red ribbon streaming, spyglass in hand
-sx = person(w=.86, hem=.66, waist=.32, chest=.38, coat=.2, aw=.17, collar=.26, skin='c_b9794f', long_hair=True, folds=9)
+sx = person(w=.86, hem=.66, waist=.32, chest=.38, coat=.2, aw=.17, collar=.26, skin='skin_b9794f', long_hair=True, folds=9)
 face(1.72, -.28, .09); hat(.56, 1.86); braid_front('c_b8431c'); strap(.33, -1)
 for s in (-1, 1): tor(.035, .012, (s * .245, -.03, 1.63), BRASS, rot=(0, R(90), 0))
 cyl(.07, .05, .5, (-sx - .1, -.3, .86), BRASS, rot=(R(72), 0, 0), v=8)
@@ -251,14 +266,14 @@ pouch(-.3, -.38, .95)
 done('mainsail', 1.1)
 
 # Drift: small and quick — short tunic, baggy trousers, shin wraps, red neck scarf, gloves, a knife in the free hand
-sx = person(w=.9, hem=.5, waist=.36, chest=.4, coat=.74, legs='c_3a3a40', legw=.36, aw=.18, cuff=False, glove='c_3a3038', wraps=True, skin='c_e6b98f')
+sx = person(w=.9, hem=.5, waist=.36, chest=.4, coat=.74, legs='c_3a3a40', legw=.36, aw=.18, cuff=False, glove='c_3a3038', wraps=True, skin='skin_e6b98f')
 face(1.72, -.28, .09, style='stern'); hat(.6, 1.86); scarf('c_b8431c'); braid(0, 3)
 box((.05, .34, .09), (-sx - .09, -.3, .82), STEEL, rot=(R(-12), 0, 0)); box((.07, .12, .1), (-sx - .09, -.08, .84), WOOD)
 pouch(.3, -.4, .95); pouch(-.3, -.4, .95)
 done('drift', .95)
 
 # Rivet: broad shipwright — bare arms, big gloves, leather apron, goggles on the hat, a great wrench across the back
-sx = person(w=1.18, hem=.56, waist=.44, chest=.52, coat=.5, aw=.26, cuff=False, bare=True, glove='c_5a4030', skin='c_c98a62', hair='c_3a2c24')
+sx = person(w=1.18, hem=.56, waist=.44, chest=.52, coat=.5, aw=.26, cuff=False, bare=True, glove='c_5a4030', skin='skin_c98a62', hair='c_3a2c24')
 face(1.72, -.28, .1, 'c_3a2c24', 'stern', 1.15); beard('c_3a2c24', .2, .24); hat(.6, 1.86); goggles(-.5, 1.93)
 box((.62, .05, .8), (0, -.56, .98), 'c_4a3a30'); strap(.62); strap(.62, -1)
 cyl(.06, .06, 1.5, (.1, .58, 1.3), STEEL, rot=(0, R(38), 0))
@@ -267,7 +282,7 @@ pouch(-.52, -.5, .95); pouch(.52, -.5, .95)
 done('rivet', 1.02)
 
 # Bell: the smallest Teal — twin braids out to the sides and a brass bell held high (never a single ribbon braid: that is Mainsail)
-sx = person(w=.82, hem=.52, waist=.3, chest=.36, coat=.3, aw=.16, raise_arm=True, skin='c_efc4a0', long_hair=True)
+sx = person(w=.82, hem=.52, waist=.3, chest=.36, coat=.3, aw=.16, raise_arm=True, skin='skin_efc4a0', long_hair=True)
 face(1.72, -.28, .09); hat(.6, 1.86)
 for s in (-1, 1):
     for i in range(4): sph(.09, (s * (.24 + i * .05), .12, 1.56 - i * .15), INK)
@@ -287,7 +302,7 @@ cyl(.035, .035, .3, (-sx - .09, -.14, .82), WOOD, rot=(R(90), 0, 0)); tor(.16, .
 done('kelp', 1.0)
 
 # Skiff: short and square — bedroll and pack on the back, and an oar taller than the hat
-sx = person(w=1.2, hem=.56, waist=.44, chest=.5, coat=.5, legw=.3, aw=.26, hair='c_1c1c22', skin='c_e0a882')
+sx = person(w=1.2, hem=.56, waist=.44, chest=.5, coat=.5, legw=.3, aw=.26, hair='c_1c1c22', skin='skin_e0a882')
 face(1.72, -.28, .1, nose=1.15); hat(.62, 1.86); strap(.64)
 box((.7, .34, .6), (0, .56, 1.3), 'c_7a5a40'); cyl(.2, .2, .86, (0, .56, 1.78), 'c_b89a6a', rot=(0, R(90), 0), v=9)
 for x in (-.25, .25): cyl(.215, .215, .07, (x, .56, 1.78), LEATHER, rot=(0, R(90), 0), v=9)
@@ -309,7 +324,7 @@ box((.36, .16, .3), (.44, .1, .92), 'c_7a5a40'); box((.12, .03, .04), (.44, .01,
 done('brine', .98)
 
 # Glimmer: Teal's Lantern-Bearer — tall double-breasted coat, a rope sash, the lantern carried low at the side
-sx = person(w=1.12, hem=.6, waist=.42, chest=.5, coat=.24, aw=.24, collar=.26, gun=False, hair='c_1c1c22', skin='c_d9a276')
+sx = person(w=1.12, hem=.6, waist=.42, chest=.5, coat=.24, aw=.24, collar=.26, gun=False, hair='c_1c1c22', skin='skin_d9a276')
 face(1.72, -.28, .1, style='stern'); hat(.62, 1.86)
 for s in (-1, 1):
     for z in (1.2, 1.36, 1.52): sph(.045, (s * .14, -.5, z), BRASS)
@@ -321,7 +336,7 @@ done('glimmer', 1.08)
 
 # ---------------- RUST ----------------
 # Netter: lean, twin ribboned braids, baggy trousers, a net bundle with floats slung at the hip
-sx = person(w=.9, hem=.54, waist=.34, chest=.4, coat=.5, legs='c_4a3a34', legw=.36, aw=.18, long_hair=True, skin='c_e6b48c')
+sx = person(w=.9, hem=.54, waist=.34, chest=.4, coat=.5, legs='c_4a3a34', legw=.36, aw=.18, long_hair=True, skin='skin_e6b48c')
 face(1.72, -.28, .09); hat(.62, 1.86); strap(.36)
 for s in (-1, 1):
     for i in range(5): sph(.09, (s * (.2 + i * .07), .2 + i * .03, 1.58 - i * .15), INK)
@@ -352,7 +367,7 @@ pouch(-.3, -.38, .95)
 done('gaff', 1.1)
 
 # Knuckle: armoured bruiser — iron hat, riveted pauldrons, knee plates, gauntlets, rope and hook over the shoulder
-sx = person(w=1.3, hem=.56, waist=.48, chest=.54, coat=.56, legs='c_4a3a34', legw=.32, aw=.3, cuff=False, glove='c_55555e', skin='c_dba582')
+sx = person(w=1.3, hem=.56, waist=.48, chest=.54, coat=.56, legs='c_4a3a34', legw=.32, aw=.3, cuff=False, glove='c_55555e', skin='skin_dba582')
 face(1.72, -.28, .1, style='stern', nose=1.15)
 cyl(.52, .05, .26, (0, 0, 1.98), IRONHAT, v=10); cyl(.52, .5, .05, (0, 0, 1.85), 'c_4a4e58', v=10); sph(.05, (0, 0, 2.12), BRASS)
 cyl(.34, .3, .14, (0, 0, 1.56), 'team2')
@@ -385,7 +400,7 @@ lantern(-.8, -.3, .3, 1.0); sph(.11, (-.8, -.3, 1.14), SKIN)
 done('ember', 1.0)
 
 # Tiller: bare forearms with wraps, and a tiller oar planted beside her that tops the hat
-sx = person(w=.98, hem=.54, waist=.38, chest=.44, coat=.5, legs='c_4a3a34', legw=.34, aw=.2, cuff=False, bare=True, long_hair=True, skin='c_e0aa80')
+sx = person(w=.98, hem=.54, waist=.38, chest=.44, coat=.5, legs='c_4a3a34', legw=.34, aw=.2, cuff=False, bare=True, long_hair=True, skin='skin_e0aa80')
 face(1.72, -.28, .09); hat(.62, 1.86); braid(0, 5); strap(.4); strap(.4, -1)
 box((.24, .26, .2), (-sx - .07, -.02, 1.02), CREAM); box((.24, .2, .24), (sx - .03, -.56, 1.33), CREAM)
 cyl(.06, .06, 1.7, (-sx - .28, -.2, 1.55), WOOD); box((.36, .08, .95), (-sx - .28, -.2, .48), 'c_8a6a48'); box((.22, .1, .1), (-sx - .28, -.2, 2.42), WOOD)
@@ -395,12 +410,12 @@ done('tiller', 1.0)
 # Barnacle: short, round diver — brass helmet with a grille, white beard out of the collar, tank frame with rope on top, glass floats
 sx = person(w=1.22, hem=.56, waist=.46, chest=.52, coat=.56, legs='c_4a3a34', legw=.32, aw=.27, cuff=True, glove='c_5a4030', hair=None)
 sph(.4, (0, -.02, 1.8), BRASS, scale=(1, 1, .95)); cyl(.44, .44, .1, (0, 0, 1.52), 'c_b8862a', v=10)
-cyl(.2, .2, .1, (0, -.38, 1.82), 'c_22262b', rot=(R(90), 0, 0), v=8)
+tor(.2, .03, (0, -.4, 1.82), 'c_b8862a', rot=(R(90), 0, 0))
 for x in (-.1, 0, .1): box((.025, .05, .36), (x, -.44, 1.82), BRASS)
 for z in (1.72, 1.92): box((.36, .05, .025), (0, -.44, z), BRASS)
 for s in (-1, 1): cyl(.1, .1, .08, (s * .38, -.02, 1.84), 'c_22262b', rot=(0, R(90), 0), v=8)
 cyl(.08, .08, .12, (0, 0, 2.22), 'c_b8862a', v=8)
-CUR['skin'] = 'c_dba07c'; face(1.76, -.3, .09, 'c_f0ece0', 'stern', 1.2)
+CUR['skin'] = 'skin_dba07c'; face(1.76, -.3, .09, 'c_f0ece0', 'stern', 1.2)
 sph(.3, (0, -.3, 1.5), 'c_f0ece0', scale=(1, .6, .6)); cyl(.24, .03, .5, (0, -.36, 1.28), 'c_f0ece0', rot=(R(180), 0, 0), v=12)
 for s in (-1, 1): sph(.11, (s * .1, -.4, 1.6), 'c_f0ece0', scale=(1.5, .6, .6))
 box((.7, .3, .8), (0, .6, 1.25), 'c_6b4a34'); box((.74, .32, .08), (0, .6, 1.25), IRON2)
