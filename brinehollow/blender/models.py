@@ -26,22 +26,36 @@ def M(name):
         except ValueError: pass
     return m
 
+from mathutils import Vector
 P = []
-def fin(m, smooth=False):
+def fin(m, smooth=True):
     o = bpy.context.object; o.data.materials.append(M(m))
     for p in o.data.polygons: p.use_smooth = smooth
     P.append(o); return o
-def box(size, loc, m, rot=(0, 0, 0)):
+def box(size, loc, m, rot=(0, 0, 0), r=None):
+    """A box with rounded edges. r is the rounding radius (default: soft, scaled to the smallest side)."""
     bpy.ops.mesh.primitive_cube_add(size=1, location=loc, rotation=rot)
-    bpy.context.object.scale = size; return fin(m)
-def cyl(r1, r2, h, loc, m, rot=(0, 0, 0), v=8):
+    o = bpy.context.object; o.scale = size
+    bpy.ops.object.transform_apply(scale=True)
+    if r is None: r = min(min(size) * .3, .1)
+    if r > .004:
+        md = o.modifiers.new('round', 'BEVEL'); md.width = r; md.segments = 2
+        bpy.ops.object.modifier_apply(modifier='round')
+    return fin(m)
+def cyl(r1, r2, h, loc, m, rot=(0, 0, 0), v=12):
     bpy.ops.mesh.primitive_cone_add(vertices=v, radius1=r1, radius2=r2, depth=h, location=loc, rotation=rot); return fin(m)
 def sph(r, loc, m, scale=(1, 1, 1)):
-    bpy.ops.mesh.primitive_uv_sphere_add(segments=12, ring_count=7, radius=r, location=loc)
-    bpy.context.object.scale = scale; return fin(m, True)
-def tor(R_, r, loc, m, rot=(0, 0, 0), scale=(1, 1, 1)):
-    bpy.ops.mesh.primitive_torus_add(major_radius=R_, minor_radius=r, major_segments=12, minor_segments=5, location=loc, rotation=rot)
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=14, ring_count=8, radius=r, location=loc)
     bpy.context.object.scale = scale; return fin(m)
+def tor(R_, r, loc, m, rot=(0, 0, 0), scale=(1, 1, 1)):
+    bpy.ops.mesh.primitive_torus_add(major_radius=R_, minor_radius=r, major_segments=14, minor_segments=6, location=loc, rotation=rot)
+    bpy.context.object.scale = scale; return fin(m)
+def limb(p0, p1, r0, r1, m, v=10):
+    """A tapered tube from p0 to p1: arms, legs, anything that should not be a box."""
+    a, b = Vector(p0), Vector(p1); d = b - a
+    bpy.ops.mesh.primitive_cone_add(vertices=v, radius1=r0, radius2=r1, depth=d.length, location=(a + b) / 2,
+                                    rotation=Vector((0, 0, 1)).rotation_difference(d).to_euler())
+    return fin(m)
 def done(name, k=1.0):
     bpy.ops.object.select_all(action='DESELECT')
     for o in P: o.select_set(True)
@@ -50,6 +64,7 @@ def done(name, k=1.0):
     bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)   # bake the first part's own scale before sizing the whole figure
     o.scale = (k, k, k)
     bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+    o.data.use_auto_smooth = True; o.data.auto_smooth_angle = math.radians(48)   # curved surfaces shade smooth, real corners stay crisp
     bpy.context.scene.cursor.location = (0, 0, 0); bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
     P.clear()
 
@@ -60,44 +75,32 @@ IRON, IRON2, RUST, WEED = 'c_33363f', 'c_4a5568', 'c_7a4a36', 'c_6f7a34'
 R = math.radians
 
 def hat(r, z):          # the woven conical hat every crew wears
-    cyl(r, .03, r * .55, (0, 0, z + r * .275), STRAW, v=10)
-    cyl(r, r * .96, .04, (0, 0, z), STRAW2, v=10)
-    cyl(r * .55, r * .5, .03, (0, 0, z + r * .26), STRAW2, v=10)
-def face(z, y, w):
+    cyl(r, .03, r * .55, (0, 0, z + r * .275), STRAW, v=28)
+    cyl(r, r * .96, .04, (0, 0, z), STRAW2, v=28)
+    tor(r * .98, .022, (0, 0, z + .01), STRAW2)
+    tor(r * .52, .02, (0, 0, z + r * .265), STRAW2)
+def face(z, y, w, brow='c_2c2420'):
     for s in (-1, 1):
-        box((.07, .04, .04), (s * w, y, z), INK)
-        box((.11, .04, .03), (s * w, y, z + .07), INK, rot=(0, s * R(-14), 0))
+        sph(.044, (s * w, y + .04, z), 'c_f4f0e6', scale=(1, .5, 1.1))
+        sph(.03, (s * w, y + .012, z - .004), INK, scale=(1, .6, 1.25))
+        box((.13, .04, .04), (s * w, y + .015, z + .088), brow, rot=(0, s * R(-13), 0))
+    sph(.048, (0, y - .005, z - .065), 'c_d39f78', scale=(.9, 1, 1.25))
+    box((.1, .03, .022), (0, y + .02, z - .15), 'c_8a5a48')
 def lantern(x, y, z, k):      # caged storm lantern, base at z
-    cyl(.2 * k, .25 * k, .09 * k, (x, y, z + .045 * k), IRON, v=8)
-    cyl(.17 * k, .17 * k, .36 * k, (x, y, z + .27 * k), 'glow_ffb030', v=8)
+    cyl(.2 * k, .25 * k, .09 * k, (x, y, z + .045 * k), IRON, v=12)
+    cyl(.17 * k, .17 * k, .36 * k, (x, y, z + .27 * k), 'glow_ffb030', v=12)
     for i in range(4):
-        a = i * math.pi / 2 + .78; box((.03 * k, .03 * k, .38 * k), (x + math.cos(a) * .2 * k, y + math.sin(a) * .2 * k, z + .27 * k), IRON)
+        a = i * math.pi / 2 + .78; cyl(.02 * k, .02 * k, .38 * k, (x + math.cos(a) * .2 * k, y + math.sin(a) * .2 * k, z + .27 * k), IRON, v=6)
     tor(.2 * k, .022 * k, (x, y, z + .27 * k), IRON)
-    cyl(.26 * k, .12 * k, .11 * k, (x, y, z + .5 * k), IRON, v=8)
-    cyl(.12 * k, .1 * k, .09 * k, (x, y, z + .6 * k), 'c_4a4a55', v=8)
-    cyl(.15 * k, .02 * k, .07 * k, (x, y, z + .68 * k), IRON, v=8)
+    cyl(.26 * k, .12 * k, .11 * k, (x, y, z + .5 * k), IRON, v=12)
+    cyl(.12 * k, .1 * k, .09 * k, (x, y, z + .6 * k), 'c_4a4a55', v=12)
+    cyl(.15 * k, .02 * k, .07 * k, (x, y, z + .68 * k), IRON, v=12)
     tor(.13 * k, .022 * k, (x, y, z + .8 * k), IRON, rot=(R(90), 0, 0))
 def harpoon_gun(x, y, z):
-    box((.13, .8, .2), (x, y, z), WOOD)
+    box((.13, .8, .2), (x, y, z), WOOD, r=.05)
     cyl(.06, .06, .55, (x, y - .62, z + .04), STEEL, rot=(R(90), 0, 0))
+    tor(.075, .02, (x, y - .42, z + .04), BRASS, rot=(R(90), 0, 0))
     cyl(.11, 0, .26, (x, y - 1.0, z + .04), BRASS, rot=(R(90), 0, 0), v=4)
-
-# ---- Wickie: a stout little lamplighter with a white beard and a rope coil on the back
-for s in (-1, 1): box((.22, .3, .2), (s * .16, -.04, .1), LEATHER)
-cyl(.44, .34, .62, (0, 0, .5), 'team')
-cyl(.4, .4, .08, (0, 0, .5), LEATHER)
-box((.12, .05, .1), (0, -.4, .5), BRASS)
-sph(.22, (0, -.02, .97), SKIN)
-face(.99, -.22, .08)
-cyl(.2, .02, .34, (0, -.17, .8), 'c_f0ece0', rot=(R(180), 0, 0))
-hat(.52, 1.08)
-for i in range(3): tor(.3, .085, (0, .36 + i * .1, .62), ROPE, rot=(R(90), 0, 0))
-for s in (-1, 1):
-    box((.16, .18, .34), (s * .46, -.04, .58), 'team')
-    sph(.09, (s * .47, -.06, .38), SKIN)
-cyl(.03, .03, 1.1, (.5, -.14, .7), DARKWOOD)
-sph(.08, (.5, -.14, 1.28), LAMP)
-done('wickie')
 
 # ================================================================= the starting cast (reference/teal-crew-*.webp, rust-crew-*.webp)
 # One rig, many silhouettes: build, coat length, headgear and one piece of signature gear per character.
@@ -105,37 +108,45 @@ done('wickie')
 CREAM, GLASS, IRONHAT = 'c_e8dcc4', 'c_3f7f86', 'c_6a6e78'
 
 def person(w=1.0, hem=.6, waist=.36, chest=.42, coat=.42, legs='c_2a2a30', legw=.3, aw=.2, cuff=True, bare=False,
-           glove=None, wraps=False, raise_arm=False, collar=.16, gun=True):
-    """Body with a coat. Returns the shoulder x so gear can be placed against it."""
+           glove=None, wraps=False, raise_arm=False, collar=.16, gun=True, hair='c_2c2420'):
+    """A rounded body in a coat. Returns the shoulder x so gear can be placed against it."""
+    lr = legw * .5 * w
     for s in (-1, 1):
-        box((.28 * w, .4, .26), (s * .2 * w, -.05, .13), LEATHER)
-        box((legw * w, legw + .02, .44), (s * .2 * w, 0, .48), legs)
-        if wraps: box((legw * w + .03, legw + .05, .2), (s * .2 * w, 0, .36), CREAM)
-    cyl(hem * w, waist * w, 1.05 - coat, (0, 0, (1.05 + coat) / 2), 'team')
-    cyl(hem * w + .02, hem * w + .01, .08, (0, 0, coat + .03), 'team2')
-    cyl(waist * w, chest * w, .55, (0, 0, 1.33), 'team')
-    cyl(waist * w + .03, waist * w + .03, .1, (0, 0, 1.05), LEATHER)
-    box((.16, .06, .14), (0, -waist * w - .04, 1.05), BRASS)
-    cyl(chest * w * .62, chest * w * .72, collar, (0, 0, 1.6 + collar / 2 - .06), 'team2')
-    sph(.25, (0, -.03, 1.72), SKIN)
+        x = s * .2 * w
+        box((.27 * w, .44, .2), (x, -.07, .1), LEATHER, r=.09)                       # boot: rounded foot and shaft
+        limb((x, 0, .1), (x, 0, .42), .15 * w, .16 * w, LEATHER)
+        tor(.16 * w, .03, (x, 0, .42), 'c_7a5a40')
+        limb((x, 0, .38), (x, 0, .86), lr * .92, lr * 1.08, legs)
+        if wraps: limb((x, 0, .3), (x, 0, .52), lr * 1.02, lr * 1.06, CREAM)
+    cyl(hem * w, waist * w, 1.05 - coat, (0, 0, (1.05 + coat) / 2), 'team', v=24)      # coat skirt, with a rolled hem
+    tor(hem * w, .04, (0, 0, coat + .02), 'team2')
+    cyl(waist * w, chest * w, .5, (0, 0, 1.3), 'team', v=24)                            # torso and rounded shoulders
+    sph(1, (0, 0, 1.52), 'team', scale=(chest * w + aw * .45, chest * w * .86, .2))
+    cyl(waist * w + .03, waist * w + .03, .1, (0, 0, 1.05), LEATHER, v=24)
+    box((.17, .07, .15), (0, -waist * w - .04, 1.05), BRASS, r=.02)
+    cyl(chest * w * .6, chest * w * .76, collar, (0, 0, 1.6 + collar / 2 - .06), 'team2', v=20)
+    cyl(.1, .1, .16, (0, 0, 1.56), SKIN)
+    sph(.25, (0, -.03, 1.72), SKIN, scale=(.95, 1, 1.07))
+    for s in (-1, 1): sph(.06, (s * .235, -.02, 1.71), SKIN, scale=(.5, 1, 1.3))      # ears
+    if hair: sph(.255, (0, .035, 1.76), hair, scale=(.98, 1, 1.02))
     sx = chest * w + aw / 2
-    sleeve = SKIN if bare else 'team'
+    ra, rb = aw * .64, aw * .52
     hand = glove or SKIN
-    # free arm (-X): down at the side, or raised to hold something up
-    if raise_arm:
-        box((aw, aw + .02, .52), (-sx - .08, -.12, 1.62), sleeve, rot=(R(24), R(-22), 0))
-        if cuff: box((aw + .08, aw + .1, .16), (-sx - .17, -.22, 1.84), 'team2', rot=(R(24), R(-22), 0))
-        sph(.12 if not glove else .15, (-sx - .2, -.26, 1.96), hand)
-    else:
-        box((aw, aw + .02, .5), (-sx - .04, -.02, 1.27), sleeve, rot=(0, R(-7), 0))
-        if cuff: box((aw + .08, aw + .1, .18), (-sx - .08, -.02, .98), 'team2')
-        sph(.12 if not glove else .16, (-sx - .09, -.04, .84), hand)
-    if bare: box((aw + .04, aw + .06, .2), (-sx - .02, -.02, 1.46), 'team')
-    # gun arm (+X): forward
-    box((aw, .58, aw), (sx - .02, -.3, 1.33), sleeve, rot=(R(-6), 0, R(6)))
-    if cuff: box((aw + .08, .18, aw + .08), (sx - .04, -.62, 1.33), 'team2')
-    if bare: box((aw + .04, .2, aw + .04), (sx, -.1, 1.36), 'team')
-    sph(.12 if not glove else .16, (sx - .04, -.76, 1.33), hand)
+    hr = .15 if glove else .115
+    def arm(sh, el, ha):
+        sph(ra * 1.12, sh, 'team')
+        limb(sh, el, ra, rb * 1.05, 'team')
+        sph(rb * 1.06, el, SKIN if bare else 'team')
+        limb(el, ha, rb * 1.02, rb * .9, SKIN if bare else 'team')
+        if bare: tor(rb * 1.08, .035, [(a + b) / 2 for a, b in zip(sh, el)], 'team2', rot=Vector((0, 0, 1)).rotation_difference(Vector(el) - Vector(sh)).to_euler())
+        if cuff:                                                                        # deep turned-back cuff
+            q = [a + (b - a) * .62 for a, b in zip(el, ha)]
+            limb(q, ha, rb * 1.3, rb * 1.6, 'team2')
+        sph(hr, ha, hand, scale=(1, 1, 1.12))
+    sh = (-chest * w - aw * .3, 0, 1.5)
+    if raise_arm: arm(sh, (-sx - .14, -.1, 1.66), (-sx - .2, -.26, 1.96))
+    else: arm(sh, (-sx - .07, .03, 1.2), (-sx - .09, -.04, .84))
+    arm((chest * w + aw * .3, 0, 1.5), (sx + .02, -.26, 1.3), (sx - .04, -.76, 1.33))
     if gun: harpoon_gun(sx - .04, -.93, 1.3)
     return sx
 
@@ -146,9 +157,10 @@ def braid(x=0, n=5, ribbon=None, out=0.0):
         box((.3, .05, .09), (x + out * n * .06 + .14, .5, z + .06), ribbon, rot=(0, R(22), R(18)))
         box((.26, .05, .08), (x + out * n * .06 + .1, .5, z - .08), ribbon, rot=(0, R(-12), R(-10)))
 def beard(col, length=.4, wide=.22):
-    cyl(wide, .03, length, (0, -.2, 1.62 - length / 2), col, rot=(R(180), 0, 0), v=7)
-    box((.3, .05, .07), (0, -.27, 1.66), col)
-def pouch(x, y, z, s=1.0): box((.2 * s, .13 * s, .22 * s), (x, y, z), 'c_7a5a40'); box((.2 * s, .14 * s, .06 * s), (x, y - .01, z + .1 * s), LEATHER)
+    cyl(wide, .03, length, (0, -.2, 1.62 - length / 2), col, rot=(R(180), 0, 0), v=14)
+    sph(wide * .95, (0, -.17, 1.62), col, scale=(1, .7, .6))
+    for s in (-1, 1): sph(.1, (s * .09, -.28, 1.655), col, scale=(1.3, .6, .55))
+def pouch(x, y, z, s=1.0): box((.2 * s, .13 * s, .22 * s), (x, y, z), 'c_7a5a40', r=.04 * s); box((.21 * s, .14 * s, .09 * s), (x, y - .01, z + .09 * s), LEATHER, r=.03 * s); sph(.022 * s, (x, y - .08 * s, z + .05 * s), BRASS)
 def strap(chestw, flip=1): box((.09, .04, .95), (0, -chestw - .02, 1.33), LEATHER, rot=(0, R(38 * flip), 0)); box((.09, .04, .95), (0, chestw + .02, 1.33), LEATHER, rot=(0, R(-38 * flip), 0))
 def coil(loc, big, rot, n=3, step=(0, .1, 0)):
     for i in range(n): tor(big, big * .22, (loc[0] + step[0] * i, loc[1] + step[1] * i, loc[2] + step[2] * i), ROPE, rot=rot)
@@ -159,10 +171,17 @@ def goggles(y, z):
     for s in (-1, 1): cyl(.085, .085, .07, (s * .1, y, z), BRASS, rot=(R(90), 0, 0)); cyl(.06, .06, .08, (s * .1, y - .01, z), 'c_22262b', rot=(R(90), 0, 0))
     box((.42, .03, .05), (0, y + .06, z), LEATHER)
 
+# ---- Wickie: the crew unit — the same rig at two-thirds size, round, bearded, a rope coil for a backpack and a lamp staff
+sx = person(w=1.25, hem=.5, waist=.42, chest=.46, coat=.6, legw=.3, aw=.26, gun=False)
+face(1.74, -.28, .1, 'c_f0ece0'); beard('c_f0ece0', .5, .3); hat(.74, 1.86)
+coil((0, .52, 1.25), .4, (R(90), 0, 0), n=3, step=(0, .12, 0))
+cyl(.03, .03, 1.8, (sx - .04, -.76, 1.2), DARKWOOD); sph(.1, (sx - .04, -.76, 2.14), LAMP)
+done('wickie', .68)
+
 # ---------------- TEAL ----------------
 # Breakwater: the biggest body on the roster — heavy coat, long white beard, a huge rope coil standing on one shoulder
 sx = person(w=1.3, hem=.62, waist=.46, chest=.52, coat=.4, legw=.3, aw=.3)
-face(1.74, -.28, .1); beard('c_f0ece0', .62, .3); hat(.7, 1.86); strap(.68)
+face(1.74, -.28, .1, 'c_f0ece0'); beard('c_f0ece0', .62, .3); hat(.7, 1.86); strap(.68)
 coil((-.62, .0, 1.72), .52, (0, R(72), 0), n=4, step=(.09, 0, .03))
 pouch(-.4, -.62, .95, 1.2); pouch(.42, -.62, .95)
 done('breakwater', 1.06)
@@ -221,7 +240,7 @@ pouch(.46, -.5, .95, 1.2)
 done('skiff', .86)
 
 # Brine: the medic — no straw hat: a white headscarf with knot tails and a bun, white apron with a cross, bottle held up
-sx = person(w=.95, hem=.56, waist=.36, chest=.42, coat=.38, aw=.19, raise_arm=True)
+sx = person(w=.95, hem=.56, waist=.36, chest=.42, coat=.38, aw=.19, raise_arm=True, hair=None)
 face(1.72, -.28, .09)
 sph(.275, (0, .0, 1.78), CREAM, scale=(1, 1, .8)); box((.5, .05, .09), (0, -.25, 1.83), CREAM)
 sph(.14, (0, .26, 1.84), INK)
@@ -257,7 +276,7 @@ for a in (0, 1.6, 3.2): sph(.08, (-sx - .1 + math.cos(a) * .4, .2 + math.sin(a) 
 done('netter', .98)
 
 # Cinder: the widest Rust — no straw hat: leather cap and goggles, black beard, cowl, forge apron, huge gloves, shovel on the back
-sx = person(w=1.36, hem=.6, waist=.48, chest=.54, coat=.5, legs='c_4a3a34', legw=.32, aw=.3, cuff=False, glove='c_5a4030')
+sx = person(w=1.36, hem=.6, waist=.48, chest=.54, coat=.5, legs='c_4a3a34', legw=.32, aw=.3, cuff=False, glove='c_5a4030', hair=None)
 face(1.72, -.28, .1); beard('c_22201e', .3, .28)
 sph(.275, (0, .02, 1.79), 'c_4a3a30', scale=(1, 1, .75)); goggles(-.24, 1.9)
 cyl(.52, .34, .26, (0, 0, 1.56), 'team2'); cyl(.34, .5, .1, (0, 0, 1.44), 'team2')
@@ -292,8 +311,8 @@ done('knuckle', 1.04)
 
 # Soot: small and ragged — face mask, torn scarf tails streaming, shin wraps, brass canisters on the belt
 sx = person(w=.88, hem=.5, waist=.36, chest=.4, coat=.66, legs='c_4a3a34', legw=.34, aw=.18, cuff=False, glove='c_3a3038', wraps=True)
-box((.07, .04, .04), (-.09, -.28, 1.78), INK); box((.07, .04, .04), (.09, -.28, 1.78), INK)
-sph(.262, (0, -.04, 1.69), 'c_2a2a30', scale=(1, 1, .62)); hat(.6, 1.86)
+face(1.75, -.28, .09)
+sph(.268, (0, -.045, 1.63), 'c_2a2a30', scale=(1, 1, .5)); hat(.6, 1.86)
 cyl(.32, .27, .18, (0, 0, 1.56), 'team2')
 for i in range(4): box((.5 + (i % 2) * .16, .05, .12), (.38 + i * .04, .28 + i * .05, 1.58 - i * .15), 'team2', rot=(0, R(20 - i * 16), R(30 + i * 8)))
 for x in (-.34, -.14, .14, .34): cyl(.07, .07, .2, (x, -.42, .9), BRASS, v=8); cyl(.04, .04, .06, (x, -.42, 1.02), 'c_b8862a', v=8)
@@ -318,7 +337,7 @@ pouch(.36, -.44, .95); pouch(-.3, -.44, .95)
 done('tiller', 1.0)
 
 # Barnacle: short, round diver — brass helmet with a grille, white beard out of the collar, tank frame with rope on top, glass floats
-sx = person(w=1.22, hem=.56, waist=.46, chest=.52, coat=.56, legs='c_4a3a34', legw=.32, aw=.27, cuff=True, glove='c_5a4030')
+sx = person(w=1.22, hem=.56, waist=.46, chest=.52, coat=.56, legs='c_4a3a34', legw=.32, aw=.27, cuff=True, glove='c_5a4030', hair=None)
 sph(.4, (0, -.02, 1.8), BRASS, scale=(1, 1, .95)); cyl(.44, .44, .1, (0, 0, 1.52), 'c_b8862a', v=10)
 cyl(.2, .2, .1, (0, -.38, 1.82), 'c_22262b', rot=(R(90), 0, 0), v=8)
 for x in (-.1, 0, .1): box((.025, .05, .36), (x, -.44, 1.82), BRASS)
@@ -516,7 +535,7 @@ done('crane')
 import random
 random.seed(4)
 def rock(name, r, sx, sy, sz, weed, anem):
-    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2, radius=r, location=(0, 0, r * sz * .45))
+    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=r, location=(0, 0, r * sz * .45))
     o = bpy.context.object; o.scale = (sx, sy, sz)
     for v in o.data.vertices: v.co *= 1 + random.uniform(-.16, .16)
     fin('c_3e3d4a')
@@ -561,5 +580,5 @@ for x in (-18, 10):
 done('ship')
 
 os.makedirs(out, exist_ok=True)
-bpy.ops.export_scene.gltf(filepath=os.path.join(out, 'models.glb'), export_format='GLB', export_apply=True, export_yup=True)
+bpy.ops.export_scene.gltf(filepath=os.path.join(out, 'models.glb'), export_format='GLB', export_apply=True, export_yup=True, export_texcoords=False)
 print('wrote models.glb')
