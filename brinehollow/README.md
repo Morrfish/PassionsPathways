@@ -15,11 +15,14 @@ A playable prototype of the **tide and lantern loop** from the Brinehollow desig
 - **Foghorns** knock heroes back with a sound-cannon blast, and guard the chain until they fall.
 
 ## Look
-The game is drawn as a graphic novel, following the three art sheets in `reference/` (cast, tides and dock, props):
+The game is drawn as a graphic novel, following the art sheets in `reference/` (first look, tides and dock, props, and the Teal and Rust crew turnarounds):
 - **Dusk harbour:** deep blue sky with cloud banks, timber fronts with lamp-lit windows that glow in shadow, a slab dock, a muddy seabed at low tide and a navy sea at high tide.
 - **Ink and cel shadows:** flat three-band toon shading, hard cast shadows, black ink outlines found from scene depth, halftone dots in the shadows and sky, and paper grain.
-- **Faction silhouettes (Blender):** every crew wears a conical straw hat. Teal heroes are broad, with big cuffs, rope slung across the chest and a gaff on the back. Rust heroes are lean, with a flared coat, a long braid and a paddle on the back.
-- **Wickies:** a stout bearded Wickie with a rope coil, and a caped Lantern-Bearer holding a caged storm lantern.
+- **The starting cast (Blender):** twenty characters built from one rig in `blender/models.py`, each with its own build, coat length, headgear and one piece of signature gear. Every hero carries the harpoon gun; the signature gear is in the free hand or on the back.
+  - **Teal heroes:** Breakwater (the biggest body, long white beard, huge rope coil on one shoulder), Mainsail (tall, floor-length coat, one long ribboned braid, spyglass), Drift (small, short tunic, red scarf, knife), Rivet (bare arms, apron, goggles, great wrench), Bell (the smallest, twin braids, a brass bell held high), Kelp (weed bundle and wicker basket), Skiff (square, bedroll pack, oar taller than the hat), Brine (headscarf instead of a hat, cross apron, bottle).
+  - **Rust heroes:** Netter (twin braids, net bundle at the hip), Cinder (the widest, cap and goggles, black beard, forge apron, shovel), Gaff (tall and plain, square cuffs, gaff hook over the shoulder), Knuckle (iron hat, pauldrons, knee plates), Soot (small, masked, torn scarf tails, canisters), Tiller (bare wrapped forearms, a tiller oar), Barnacle (short, brass diving helmet, tank frame, glass floats), Copper (flat cap, moustache, brass horn rig), Undertow (long coat with a wave on the back, cleaver).
+  - **Crew:** Wickie is the crew unit for both sides (recoloured for Rust). Glimmer carries Teal's lantern and Ember carries Rust's.
+  - Pick your Teal hero on the title screen; your two allies and the three Rust heroes are drawn at random. For now the characters differ in look only: they share one kit and one set of stats.
 - **Objectives:** a brass Foghorn on an iron pedestal bracketed off a braced timber tower, and a stepped riveted anchor block with a great shackle and rust-blotched links running up to the ship.
 - **Buoys:** Teal banks at a round teal buoy with a teardrop lamp cage; Rust banks at a red-and-white buoy with a lattice tower and flag.
 - **Seabed:** at low tide a stream winds between weed-and-barnacle rocks, and spiked Reef Crabs guard it. A cracked crab leaves a Pearl in its shell.
@@ -36,7 +39,7 @@ The game is drawn as a graphic novel, following the three art sheets in `referen
 | 1, 2, 3 | Buy Rigging |
 
 ## Not in yet
-The other two lanes, 5 v 5, the hero roster and Knot upgrades, fog banks and sound ripples, The Catch, Rogue Wave, the Titan stirring, Scrap and Ember, Crew Charms, online play, touch controls.
+The other two lanes, 5 v 5, per-character abilities and stats, Knot upgrades, fog banks and sound ripples, The Catch, Rogue Wave, the Titan stirring, Scrap and Ember, Crew Charms, online play, touch controls.
 
 ## Editing
 Change `game.src.html`, then rebuild:
