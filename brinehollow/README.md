@@ -5,7 +5,7 @@ A playable prototype of the **tide and lantern loop** from the Brinehollow desig
 ## What is in this prototype
 - **One lane, 3 v 3.** You and two Teal bots against three Rust bots. Silence the Rust **Foghorn**, then cut their **Anchor Chain**; their ship lists and drifts off.
 - **The tide** turns every 70 seconds (the design calls for 4 minutes).
-  - Low tide: the seabed trench is a dry flank, and **Reef Crabs** are out. Each crab drops a Pearl.
+  - Low tide: the seabed trench is a dry flank, and **Reef Crabs** are out. Each crab leaves a Pearl to pick up.
   - High tide: the street floods and slows heroes, so the boardwalks, crow's nests and your tether matter. The trench becomes a fast **current**, which reverses direction each high tide.
 - **Lantern-Bearers.** Every wave of Wickies has one. Kill it and the lantern drops for either crew to grab. Run it to one of your buoys for a team Spark payout and three extra Wickies in your next wave. The forward buoy in the trench pays 50% more. The carrier cannot shoot or tether.
 - **Movement:** a harpoon **tether** that pulls you to whatever you hit, or yanks an enemy hero toward you and slows them.
@@ -15,11 +15,15 @@ A playable prototype of the **tide and lantern loop** from the Brinehollow desig
 - **Foghorns** knock heroes back with a sound-cannon blast, and guard the chain until they fall.
 
 ## Look
-The game is drawn as a graphic novel, following the art sheet in `reference/art-sheet.webp`:
+The game is drawn as a graphic novel, following the three art sheets in `reference/` (cast, tides and dock, props):
 - **Dusk harbour:** deep blue sky with cloud banks, timber fronts with lamp-lit windows that glow in shadow, a slab dock, a muddy seabed at low tide and a navy sea at high tide.
 - **Ink and cel shadows:** flat three-band toon shading, hard cast shadows, black ink outlines found from scene depth, halftone dots in the shadows and sky, and paper grain.
 - **Faction silhouettes (Blender):** every crew wears a conical straw hat. Teal heroes are broad, with big cuffs, rope slung across the chest and a gaff on the back. Rust heroes are lean, with a flared coat, a long braid and a paddle on the back.
-- **The rest of the cast:** a stout bearded Wickie with a rope coil, a caped Lantern-Bearer holding the lantern up, a brass Foghorn on a braced timber tower, a stepped anchor block with great rusted links, Reef Crabs, buoys, timber ships, and dock dressing (rope-wrapped pilings, barrels, wall lamps, cross-braced crates).
+- **Wickies:** a stout bearded Wickie with a rope coil, and a caped Lantern-Bearer holding a caged storm lantern.
+- **Objectives:** a brass Foghorn on an iron pedestal bracketed off a braced timber tower, and a stepped riveted anchor block with a great shackle and rust-blotched links running up to the ship.
+- **Buoys:** Teal banks at a round teal buoy with a teardrop lamp cage; Rust banks at a red-and-white buoy with a lattice tower and flag.
+- **Seabed:** at low tide a stream winds between weed-and-barnacle rocks, and spiked Reef Crabs guard it. A cracked crab leaves a Pearl in its shell.
+- **Dock dressing:** rope-wrapped pilings with barnacles and weed, barrels, glass floats in rope nets, rope coils, cleats, cross-braced crates, timber cranes with cargo nets, wall lamps, timber ships, and a lighthouse on each headland.
 - **Lettering:** the HUD is paper panels and caption boxes, with sound effects (BWAAAM!, THWIP!, KRAK!) over the action, speed lines when you move fast, and a "Meanwhile…" banner when the tide turns.
 
 ## Controls
