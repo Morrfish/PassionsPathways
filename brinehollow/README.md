@@ -14,6 +14,31 @@ A playable prototype of the **tide and lantern loop** from the Brinehollow desig
 - **Rigging:** three items, each with a Low-Tide face and a High-Tide face. Bilge Pump also costs Pearls, so it needs a trip to the seabed.
 - **Foghorns** knock heroes back with a sound-cannon blast, and guard the chain until they fall.
 
+## Heroes, roles and abilities
+Pick one of eight Teal heroes on the title screen. Each hero has a role, its own health, speed and damage, and one signature ability on **C** that plays on the tide, the tether or the lantern. Bots use theirs too. The table lives in `KITS` in `game.src.html`.
+
+| Hero | Role | Ability (C) |
+| --- | --- | --- |
+| Breakwater | Tank | **Seawall**: a wall that blocks shots and movement; in the trench it dams the current |
+| Mainsail | Scout | **Spyglass Mark**: the marked enemy takes 30% more damage; tethering them is free |
+| Drift | Skirmisher | **Slipstream**: faster tether recharge; readies the tether and gives a burst of speed |
+| Rivet | Engineer | **Bolt Down**: a mooring post to tether to; crew near it take less damage |
+| Bell | Caller | **Ring the Change**: nearby crew speed up, the lantern carrier most |
+| Kelp | Controller | **Snare Bed**: a weed patch that slows enemies and holds those in water |
+| Skiff | Ferry | **Launch**: skim the flood at speed, even carrying the lantern |
+| Brine | Healer | **Tonic**: heal nearby crew, doubled for anyone in water |
+| Netter | Catcher | **Cast Net**: pin an enemy hero; a netted carrier drops the lantern |
+| Cinder | Bruiser | **Slag**: a burning patch that turns to hiding steam in water |
+| Gaff | Duelist | **Long Gaff**: drag an enemy hero to you |
+| Knuckle | Tank | **Iron Brace**: half damage; ignore knockback and the current |
+| Soot | Saboteur | **Snuff**: smoke that hides crew and cuts enemy tethers |
+| Tiller | Current-rider | **Come About**: reverse the trench current |
+| Barnacle | Diver | **Deep Walk**: walk the seabed, unmoved by the current, hard to hit under water |
+| Copper | Disruptor | **Pocket Foghorn**: a cone blast that throws enemies back and breaks tethers |
+| Undertow | Assassin | **Riptide**: a dash that drags enemies; more damage to those in water |
+
+The player is always on the Teal crew for now; Rust heroes are played by bots.
+
 ## Look
 The game is drawn as a graphic novel, following the art sheets in `reference/` (first look, tides and dock, props, the Teal and Rust crew turnarounds, the face and gear-pose sheets, and the inked style sheets):
 - **Dusk harbour:** deep blue sky with cloud banks, timber fronts with lamp-lit windows that glow in shadow, a slab dock, a muddy seabed at low tide and a navy sea at high tide.
@@ -27,7 +52,7 @@ The game is drawn as a graphic novel, following the art sheets in `reference/` (
   - **Teal heroes:** Breakwater (the biggest body, long white beard, huge rope coil on one shoulder), Mainsail (tall, floor-length coat, one long ribboned braid, spyglass), Drift (small, short tunic, red scarf, knife), Rivet (bare arms, apron, goggles, great wrench), Bell (the smallest, twin braids, a brass bell held high), Kelp (weed bundle and wicker basket), Skiff (square, bedroll pack, oar taller than the hat), Brine (headscarf instead of a hat, cross apron, bottle).
   - **Rust heroes:** Netter (twin braids, net bundle at the hip), Cinder (the widest, cap and goggles, black beard, forge apron, shovel), Gaff (tall and plain, square cuffs, gaff hook over the shoulder), Knuckle (iron hat, pauldrons, knee plates), Soot (small, masked, torn scarf tails, canisters), Tiller (bare wrapped forearms, a tiller oar), Barnacle (short, brass diving helmet, tank frame, glass floats), Copper (flat cap, moustache, brass horn rig), Undertow (long coat with a wave on the back, cleaver).
   - **Crew:** Wickie is the crew unit for both sides (recoloured for Rust). Glimmer carries Teal's lantern and Ember carries Rust's.
-  - Pick your Teal hero on the title screen; your two allies and the three Rust heroes are drawn at random. For now the characters differ in look only: they share one kit and one set of stats.
+  - Pick your Teal hero on the title screen; your two allies and the three Rust heroes are drawn at random. 
 - **Objectives:** a brass Foghorn on an iron pedestal bracketed off a braced timber tower, and a stepped riveted anchor block with a great shackle and rust-blotched links running up to the ship.
 - **Buoys:** Teal banks at a round teal buoy with a teardrop lamp cage; Rust banks at a red-and-white buoy with a lattice tower and flag.
 - **Seabed:** at low tide a stream winds between weed-and-barnacle rocks, and spiked Reef Crabs guard it. A cracked crab leaves a Pearl in its shell.
@@ -41,10 +66,11 @@ The game is drawn as a graphic novel, following the art sheets in `reference/` (
 | Mouse, left click, R | Aim, fire, reload |
 | E or right click | Tether |
 | F, Q | Shove, Brace |
+| C | Your hero's signature ability |
 | 1, 2, 3 | Buy Rigging |
 
 ## Not in yet
-The other two lanes, 5 v 5, per-character abilities and stats, Knot upgrades, fog banks and sound ripples, The Catch, Rogue Wave, the Titan stirring, Scrap and Ember, Crew Charms, online play, touch controls.
+The other two lanes, 5 v 5, playing as Rust, Knot upgrades, fog banks and sound ripples, The Catch, Rogue Wave, the Titan stirring, Scrap and Ember, Crew Charms, online play, touch controls.
 
 ## Editing
 Change `game.src.html`, then rebuild:
