@@ -1,6 +1,6 @@
 /* Bot Assembly Shop — core data: parts, bot math, tiles, courses, storage */
 'use strict';
-const VERSION = '1.8';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
+const VERSION = '1.9';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
 const pl = planck, V = pl.Vec2;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -517,7 +517,7 @@ const FREE_STICKERS = 8;
 /* Sections of the level list. Finishing every level in one pays its bonus, once. */
 const SECTIONS = [
   { id: 'speed', name: 'Speed courses', bonus: 300 }, { id: 'strength', name: 'Strength courses', bonus: 300 }, { id: 'crazy', name: 'Crazy courses', bonus: 300 },
-  { id: 'puzzle', name: 'Puzzle courses', bonus: 400 }, { id: 'gizmo', name: 'Contraption courses', bonus: 400 }, { id: 'maze', name: 'Mazes', bonus: 500 }, { id: 'boss', name: 'The final five', bonus: 800 },
+  { id: 'puzzle', name: 'Puzzle courses', bonus: 400 }, { id: 'gizmo', name: 'Contraption courses', bonus: 400 }, { id: 'water', name: 'Water courses', bonus: 400 }, { id: 'portal', name: 'Portal courses', bonus: 400 }, { id: 'maze', name: 'Mazes', bonus: 500 }, { id: 'boss', name: 'The final five', bonus: 800 },
 ];
 const sectionOf = c => c.group || c.kind;
 const levelPay = (c, medal) => 20 * (c.stars || 2) + ({ gold: 40, silver: 20 }[medal] || 0);

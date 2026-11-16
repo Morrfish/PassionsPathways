@@ -110,6 +110,8 @@ function showHome() {
     ${sect('crazy', 'Crazy courses', 'Expect anything.')}
     ${sect('puzzle', 'Puzzle courses', 'A rule limits your gadgets. Swap them at pit stops.', 'puzzle')}
     ${sect('gizmo', 'Contraption courses', 'Start a chain reaction to get through.', 'gizmo')}
+    ${sect('water', 'Water courses', 'Lakes, ponds and deep pools. Float, dive, hover or bridge your way across.', 'water')}
+    ${sect('portal', 'Portal courses', 'Purple ring in, orange ring out.', 'portal')}
     ${sect('maze', 'Mazes', 'Dark, many floors, and a battery that never stops draining.', 'maze')}
     <div class="sect"><h2><span class="tag boss">legendary</span>The final five<small>Long, mean, and short on checkpoints. ${Wallet.get().sec.boss ? '✔ Bonus earned.' : 'Finish them all for a <b style="color:var(--y)">$800</b> bonus.'}</small></h2><div class="cards">${BUILTIN.filter(c => c.boss).map(c => card(c)).join('')}</div></div>
     <div class="sect"><h2>🛠️ My courses<small>Build your own and dare a friend to beat it.</small></h2><div class="cards">

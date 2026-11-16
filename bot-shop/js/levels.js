@@ -39,6 +39,16 @@ const SEG = {
   climbpit: (b, p = 5) => b.need('suction').flat(5).step(-3).flat(8).z(-4, 4, { climb: 1 }).step(p).flat(8),
   climbmud: (b, p = 5) => b.need('suction').mat(MUD).flat(9).z(-4, 4, { climb: 1 }).step(p).mat(DIRT).flat(8),
   climbsand: (b, p = 5) => b.need('suction').mat(SAND).flat(9).z(-4, 4, { climb: 1 }).step(p).mat(DIRT).flat(8),
+  // water
+  islands: (b, p = 3) => { b.need('floats').flat(2); for (let i = 0; i < p; i++) b.pool(5, 2).flat(3); b.flat(3); },
+  dive: (b, p = 10) => b.need('snorkel').flat(2).pool(p, 4).flat(4),
+  hoverwater: (b) => b.need('hover').flat(8).z(-1.5, 10.5, { hover: 1 }).gap(9, WATER, 2).flat(8),
+  bridgewater: (b) => b.need('bridge').flat(9).z(-2.0, -1.2, { bridge: 1 }).gap(3, WATER, 5, 2).flat(8),
+  // portals
+  teleup: (b, p = 6) => b.flat(12).o('tele', -2, 1, [3, p + 1]).step(p).flat(8),
+  teledown: (b, p = 6) => b.flat(12).o('tele', -2, 1, [3, -p + 1]).step(-p).flat(8),
+  telegap: (b, p = 10) => b.flat(12).o('tele', -2, 1, [p + 3, 1]).gap(p, LAVA, 5, 2).flat(8),
+  telewater: (b, p = 12) => b.flat(12).o('tele', -2, 1, [p + 3, 1]).gap(p, WATER, 5, 3).flat(8),
   propgap: (b, p = 12) => b.need('prop').flat(6).z(-1.5, p + 1, { prop: 1 }).gap(p, LAVA, 8, 2).flat(8),
   propwall: (b, p = 6) => b.need('prop').flat(6).z(-4.5, 1.5, { prop: 1 }).step(p).flat(8),
   board: (b, p = 8) => b.flat(8).o('springboard', -1.5).gap(p).flat(10),
@@ -144,6 +154,18 @@ const LEVELS = [
   ['l62', 'Gecko Run', 'speed', 3, 'candy', 8, 1, 'climb:5 gap:3 climb:6 hills:2'],
   ['l63', 'Sticky Wheels', 'strength', 4, 'snow', 8, 1, 'climbsand:5 sand:10 climbmud:4 rubber:10'],
   ['l64', 'Spider Tower', 'crazy', 4, 'space', 6, 2, 'climbstairs:4 zip:14 climbpit:8 fall:8 climb:9'],
+  ['l66', 'Paddle Pond', 'water', 2, 'speed', 12, 1, 'pool:8 hills:1 pool:10'],
+  ['l67', 'Island Hop', 'water', 3, 'candy', 12, 1, 'islands:3 hills:1 pool:8'],
+  ['l68', 'Deep Dive', 'water', 3, 'night', 14, 1, 'dive:10 hills:1 dive:14'],
+  ['l69', 'Bridge and Paddle', 'water', 3, 'desert', 12, 1, 'bridgewater pool:12 bridgewater'],
+  ['l70', 'Hover Lake', 'water', 4, 'snow', 14, 1, 'hoverwater pool:14 dive:12 islands:2'],
+  ['l71', 'The Great Lake', 'water', 5, 'speed', 14, 2, 'pool:16 islands:3 dive:16 hoverwater bridgewater pool:10'],
+  ['l72', 'First Portal', 'portal', 2, 'space', 8, 1, 'teleup:5 hills:1 telegap:8'],
+  ['l73', 'Short Cut', 'portal', 3, 'night', 14, 1, 'tele telegap:10 teledown:8'],
+  ['l74', 'Up, Down, Across', 'portal', 3, 'candy', 10, 1, 'teleup:7 telegap:12 teledown:7 teleup:5'],
+  ['l75', 'Portal Hopper', 'portal', 4, 'space', 8, 1, 'telegap:8 telegap:10 telegap:12 climb:5'],
+  ['l76', 'Wormhole', 'portal', 4, 'snow', 8, 1, 'teleup:9 fall:8 telewater:12 pool:8 tele'],
+  ['l77', 'Portal Master', 'portal', 5, 'space', 10, 2, 'teleup:8 telegap:14 teledown:8 lasers:2 telewater:14 teleup:6 zip:14'],
   ['l65', 'Up and Over', 'puzzle', 4, 'night', 8, 1, 'climb:6 pit wood:2 pit climbstairs:2 pit propwall:5'],
   // ---- legendary: long, few checkpoints, tight budgets
   ['l36', 'The Long Haul', 'boss', 5, 'desert', 5, 3, 'mud:16 steep:5 sand:14 conveyor:3 blower steep:6 charge rock:2 wood:2 crates:3 steep:4 blower rock:1'],
@@ -155,7 +177,7 @@ const LEVELS = [
 const LEVEL_BLURB = { 1: 'A gentle warm-up.', 2: 'Getting trickier.', 3: 'Plan before you build.', 4: 'For experienced engineers.', 5: 'Legendary. Few checkpoints. Good luck.' };
 
 /* The bot the course checker drives. Budgets are set from what it costs. */
-const REF_GADGETS = ['hook', 'saw', 'drill', 'torch', 'cannon', 'suction', 'prop', 'floats', 'blade', 'bridge', 'drone', 'hover', 'mirror', 'horn'];
+const REF_GADGETS = ['hook', 'saw', 'drill', 'torch', 'cannon', 'suction', 'prop', 'floats', 'snorkel', 'blade', 'bridge', 'drone', 'hover', 'mirror', 'horn'];
 const gadgetsFor = needs => REF_GADGETS.filter(g => needs[g]);
 function refBuild(needs, gad, slots) {
   gad = gad.slice(); const n = slots || gad.length;
@@ -165,9 +187,10 @@ function refBuild(needs, gad, slots) {
   return { name: 'Checker', color: '#ffc21a', chassis, wheels: needs.big ? 'big' : 'std', tires: 'spiked', motor: 'beast', gear, battery: 'large', drive: 'awd', gadgets: gad, upgrades: ['shocks', 'gyro'].filter(u => needs[u]) };
 }
 
+const THEMED = { water: 'A water course. Float over it, drive under it or find another way across.', portal: 'A portal course. Drive into the purple ring and come out of the orange one.' };
 function moreLevels() {
   const made = LEVELS.map(([id, name, kind, stars, sky, h0, cpEvery, segs], idx) => {
-    const boss = kind === 'boss', puzzle = kind === 'puzzle', gizmo = kind === 'gizmo', b = CB(id, name, boss || puzzle || gizmo ? 'crazy' : kind, 1000, puzzle ? 'A puzzle course. Read the rule, then plan your pit stops.' : gizmo ? 'A contraption course. Start the chain reaction, then stay out of its way.' : LEVEL_BLURB[stars], null);
+    const boss = kind === 'boss', puzzle = kind === 'puzzle', gizmo = kind === 'gizmo', themed = THEMED[kind], b = CB(id, name, boss || puzzle || gizmo || themed ? 'crazy' : kind, 1000, themed ? themed : puzzle ? 'A puzzle course. Read the rule, then plan your pit stops.' : gizmo ? 'A contraption course. Start the chain reaction, then stay out of its way.' : LEVEL_BLURB[stars], null);
     const groups = [{}], pits = [], c0 = b.c; c0.needs = groups[0];
     b.setH(h0).flat(4).o('start').flat(8);
     segs.split(' ').forEach((sg, i) => {
@@ -183,7 +206,7 @@ function moreLevels() {
     if (puzzle) { c.rules = { slots: Math.max(1, ...lists.map(l => l.length)) }; c.plan = pits.map((x, i) => ({ x, gadgets: lists[i + 1] })); }
     const ref = refBuild(all, puzzle ? lists[0] : gadgetsFor(all), puzzle ? c.rules.slots : 0);
     const cost = Math.max(...lists.map(l => botSpec(Object.assign({}, ref, { gadgets: puzzle ? l : ref.gadgets })).cost));
-    Object.assign(c, { stars, boss, group: boss ? 'boss' : puzzle ? 'puzzle' : gizmo ? 'gizmo' : '', sky: sky || '', num: idx + 1, ref });
+    Object.assign(c, { stars, boss, group: boss ? 'boss' : puzzle ? 'puzzle' : gizmo ? 'gizmo' : themed ? kind : '', sky: sky || '', num: idx + 1, ref });
     c.budget = Math.ceil(cost * (boss ? 1.03 : 1.12) / 50) * 50;
     if (REF_TIMES[id]) c.medals = [Math.ceil(REF_TIMES[id] * 1.05), Math.ceil(REF_TIMES[id] * 1.7)];
     return c;
@@ -263,4 +286,4 @@ function mazes() {
 }
 
 /* Finish times of the course checker's test bot, used to set medal times */
-const REF_TIMES = {l01: 12.1,  l02: 12.4,  l03: 14.3,  l04: 10.1,  l05: 13.8,  l06: 13.8,  l07: 14.5,  l08: 15.1,  l09: 19.2,  l10: 19.8,  l11: 14.4,  l12: 14.6,  l13: 8.2,  l14: 26.1,  l15: 8.6,  l16: 51.6,  l17: 15,  l18: 17.6,  l19: 13,  l20: 15.1,  l21: 10.2,  l22: 15.3,  l23: 23,  l24: 21.1,  l25: 22,  l26: 8.1,  l27: 10.9,  l28: 13.3,  l29: 13.3,  l30: 13.3,  l31: 12.6,  l32: 14.2,  l33: 9.3,  l34: 11.3,  l35: 14.7,  l41: 27,  l42: 22.7,  l43: 12.9,  l44: 26.3,  l45: 20.2,  l46: 38.2,  l47: 38.1,  l48: 64.2,  l49: 19.4,  l50: 11.8,  l51: 21,  l52: 12.6,  l53: 22.1,  l54: 40.2,  l55: 23.9,  l56: 16.7,  l57: 18.8,  l58: 52.6,  l36: 47.5,  l37: 50.4,  l38: 49.2,  l39: 51.8,  l40: 89.4,  m1: 76,  m2: 30.2,  m3: 41,  m4: 151.9,  m5: 106.9,  l59: 16,  l60: 24,  l61: 20.5,  l62: 24.7,  l63: 22.9,  l64: 37.2,  l65: 44.8};
+const REF_TIMES = {l01: 12.1,  l02: 12.4,  l03: 14.3,  l04: 10.1,  l05: 13.8,  l06: 13.8,  l07: 14.5,  l08: 15.1,  l09: 19.2,  l10: 19.8,  l11: 14.4,  l12: 14.6,  l13: 8.2,  l14: 26.1,  l15: 8.6,  l16: 51.6,  l17: 15,  l18: 17.6,  l19: 13,  l20: 15.1,  l21: 10.2,  l22: 15.3,  l23: 23,  l24: 21.1,  l25: 22,  l26: 8.1,  l27: 10.9,  l28: 13.3,  l29: 13.3,  l30: 13.3,  l31: 12.6,  l32: 14.2,  l33: 9.3,  l34: 11.3,  l35: 14.7,  l41: 27,  l42: 22.7,  l43: 12.9,  l44: 26.3,  l45: 20.2,  l46: 38.2,  l47: 38.1,  l48: 64.2,  l49: 19.4,  l50: 11.8,  l51: 21,  l52: 12.6,  l53: 22.1,  l54: 40.2,  l55: 23.9,  l56: 16.7,  l57: 18.8,  l58: 52.6,  l36: 47.5,  l37: 50.4,  l38: 49.2,  l39: 51.8,  l40: 89.4,  m1: 76,  m2: 30.2,  m3: 41,  m4: 151.9,  m5: 106.9,  l59: 16,  l60: 24,  l61: 20.5,  l62: 24.7,  l63: 22.9,  l64: 37.2,  l65: 44.8,  l66: 12.5,  l67: 16.6,  l68: 15.3,  l69: 12.4,  l70: 21,  l71: 33,  l72: 9.1,  l73: 7.9,  l74: 11.4,  l75: 17.2,  l76: 17.7,  l77: 19.6};
