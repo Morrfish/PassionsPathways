@@ -250,14 +250,14 @@ HEAD_PROFILE = (
     (.05, .149, .124, .15),                                                                                # brow
     (.014, .136, .121, .148),                                                                              # eye line
     (-.03, .14, .123, .136),                                                                               # cheekbone: the widest point
-    (-.07, .141, .112, .11), (-.1, .146, .105, .085),                                                      # nose base, mouth
-    (-.128, .137, .099, .068),                                                                             # jaw angle: held wide, then cut in hard                                                                             # jaw angle
-    (-.15, .139, .064, .052), (-.165, .136, .046, .044), (-.182, .1, .03, .03), (-.194, .03, .014, .012))                            # chin, under the chin
+    (-.07, .141, .111, .11), (-.1, .146, .101, .085),                                                      # nose base, mouth
+    (-.128, .137, .091, .068),                                                                             # jaw angle
+    (-.158, .138, .056, .048), (-.182, .1, .034, .03), (-.194, .03, .014, .012))                            # chin, under the chin
 def head(skin, fem=True, brow=1.0):
     import numpy as np
     hx = skin.split('_')[1]
     K = np.array(HEAD_PROFILE)[::-1]
-    zs = np.linspace(-.194, .186, 110); sm = np.array([1, 2, 1]) / 4
+    zs = np.linspace(-.194, .186, 96); sm = np.array([1, 2, 3, 2, 1]) / 9
     F, S_, B = [np.convolve(np.pad(np.interp(zs, K[:, 0], K[:, c]), 2, mode='edge'), sm, mode='valid') for c in (1, 2, 3)]
     if not fem: S_ = S_ * (1 + .13 * np.clip((-zs - .05) / .07, 0, 1))                # a heavier jaw
     NT = 132; g = lambda a, b, sa, sb: math.exp(-(a / sa) ** 2 - (b / sb) ** 2)
@@ -280,8 +280,8 @@ def head(skin, fem=True, brow=1.0):
                 arc = .0265 - 2.6 * (ax - .061) ** 2                                   # upper lid: a crease that catches the shadow
                 if abs(ax - .061) < .03: y -= .0055 * f * math.exp(-((z - arc) / .0035) ** 2)
                 y -= .007 * brow * f * g(ax - .058, z - .047, .04, .009)               # brow ridge
-                y -= .012 * f * g(ax - .086, z + .028, .024, .015)                     # cheekbone shelf
-                y += .017 * f * g(ax - .07, z + .085, .032, .04)                      # the plane below it falls away to the jaw
+                y -= .009 * f * g(ax - .087, z + .028, .026, .017)                     # cheekbone shelf
+                y += .02 * f * g(ax - .066, z + .088, .026, .03)                      # the plane below it falls away to the jaw
                 y -= .009 * g(x, z + .095, .03, .0075)                                 # upper lip
                 y -= .011 * g(x, z + .114, .026, .009)                                 # lower lip
                 y += .004 * g(x, z + .1045, .036, .005)                               # the line between them
