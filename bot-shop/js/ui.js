@@ -40,11 +40,30 @@ function askText(o, done) {
   $('#askX').onclick = () => { closeModal(); if (o.cancel) o.cancel(); };
 }
 let pendingCode = null;
+/* ---------- Coins ---------- */
+const Wallet = {
+  get(user) { return Object.assign({ coins: 0, own: {}, sec: {}, paid: {}, made: {}, fast: {} }, Store.get('wallet', {}, user)); },
+  save(w, user) { Store.set('wallet', w, user); },
+  owns(id) { return !PRICE[id] || !!SET().unlockAll || !!Wallet.get().own[id]; },
+  add(n, user) { const w = Wallet.get(user); w.coins += n; Wallet.save(w, user); },
+};
+/* Run `then` if the player owns the thing, or buys it now */
+function unlock(id, label, then) {
+  if (Wallet.owns(id)) return then();
+  const w = Wallet.get(), price = PRICE[id];
+  if (w.coins < price) return toast(`🔒 ${label} costs $${price}. You have $${w.coins}. Beat levels to earn more.`);
+  if (!confirm(`Unlock ${label} for $${price}? You have $${w.coins}.`)) return;
+  w.coins -= price; w.own[id] = 1; Wallet.save(w); toast(`Unlocked ${label}!`); sfx('win'); then();
+}
 function signIn(id) {
   Store.user = id; try { sessionStorage.setItem('botshop.user', id); } catch (e) { }
+  // a big update starts everyone fresh: medals, coins, bot and notebook go; name, password and own courses stay
+  let fresh = false;
+  if (Store.get('sv', 0) !== SAVE_VERSION) { fresh = ['bot', 'best', 'log', 'wallet'].some(k => Store.get(k, null) != null); for (const k of ['bot', 'best', 'log', 'wallet']) Store.del(k); Store.set('sv', SAVE_VERSION); }
   App.cfg = tidyBot(Object.assign({}, DEFAULT_BOT, Store.get('bot', {}))); App.lastTips = null; App.free = false;
   if (pendingCode) { const code = pendingCode; pendingCode = null; try { const c = importCourse(code); showGarage(c, 'home'); return toast(`Loaded “${c.name}”`); } catch (e) { toast('That course link did not work.'); } }
   showHome();
+  if (fresh) modal(`<h2>🎉 Big update!</h2><p>The game changed a lot, so everyone starts fresh: medals, bots and the notebook were cleared. Your name, password and the courses you built are still here.</p><p>New this time: <b>coins</b>. Beat levels to earn them, then spend them in the <b>Store</b> on course-builder pieces, paint and special bots.</p><div class="acts"><button class="primary" data-m="x" data-focus>Let's go</button></div>`);
 }
 function signOut() { Store.user = null; try { sessionStorage.removeItem('botshop.user'); } catch (e) { } teacherOpen = false; showLogin(); }
 function showLogin(pick) {
@@ -70,7 +89,7 @@ function showLogin(pick) {
 $('#login').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.who) showLogin(b.dataset.who); else if (b.dataset.l === 'back') showLogin(); });
 
 /* ================= Home ================= */
-const SET = () => Object.assign({ damage: true, coach: true }, Store.get('set', {}));
+const SET = () => Object.assign({ damage: true, coach: true, unlockAll: false }, Store.get('set', {}));
 function showHome() {
   setMode('home'); App.G = null;
   const mine = loadMyCourses();
@@ -82,16 +101,17 @@ function showHome() {
       ${custom ? `<div class="row"><span class="tag ${c.kind}">${c.kind}</span><span style="flex:1"></span><button class="small" data-c="edit">✏️ Edit</button><button class="small" data-c="share">🔗 Share</button><button class="small danger" data-c="del" aria-label="Delete">🗑</button></div>` : ''}</div></div>`;
   };
   const beaten = BUILTIN.filter(c => bestOf(c.id)).length;
-  const sect = (kind, title, sub, group) => { const list = BUILTIN.filter(c => group ? c.group === group : c.kind === kind && !c.group && !c.boss).sort((a, b) => (a.stars || 1) - (b.stars || 1)); return `<div class="sect"><h2><span class="tag ${kind}">${kind}</span>${title}<small>${sub} ${list.filter(c => bestOf(c.id)).length} of ${list.length} beaten.</small></h2><div class="cards">${list.map(c => card(c)).join('')}</div></div>`; };
+  const sect = (kind, title, sub, group) => { const list = BUILTIN.filter(c => group ? c.group === group : c.kind === kind && !c.group && !c.boss).sort((a, b) => (a.stars || 1) - (b.stars || 1)); const sec = SECTIONS.find(x => x.id === (group || kind)), got = Wallet.get().sec[sec.id]; return `<div class="sect"><h2><span class="tag ${kind}">${group === 'gizmo' ? 'contraption' : kind}</span>${title}<small>${sub} ${list.filter(c => bestOf(c.id)).length} of ${list.length} beaten. ${got ? '✔ Bonus earned.' : `Finish them all for a <b style="color:var(--y)">$${sec.bonus}</b> bonus.`}</small></h2><div class="cards">${list.map(c => card(c)).join('')}</div></div>`; };
   $('#home').innerHTML = `<div class="stripe"></div><div class="wrap">
     <div class="hero"><div><h1>Bot <span>Assembly</span> Shop</h1><p>Build a robot from parts. Then drive it through the course. If it gets stuck, go back to the shop and engineer a better one. <b>${beaten} of ${BUILTIN.length}</b> levels beaten.</p></div>
-      <div class="acts"><span class="me">👤 <b>${esc((Players.all()[Store.user] || {}).name || '')}</b></span><button data-h="out">Switch player</button><button data-h="how">❓ How to play</button><button data-h="log">📓 Engineer's notebook</button><button data-h="paint">🎨 My bot</button><button data-h="set">⚙️ Settings</button></div></div>
+      <div class="acts"><span class="me">👤 <b>${esc((Players.all()[Store.user] || {}).name || '')}</b></span><span class="coins" title="Your coins">🪙 $${Wallet.get().coins}</span><button data-h="out">Switch player</button><button data-h="store" class="primary">🛒 Store</button><button data-h="how">❓ How to play</button><button data-h="log">📓 Engineer's notebook</button><button data-h="paint">🎨 My bot</button><button data-h="set">⚙️ Settings</button></div></div>
     ${sect('speed', 'Speed courses', 'Fastest time wins.')}
     ${sect('strength', 'Strength courses', 'Climb, push and break through.')}
     ${sect('crazy', 'Crazy courses', 'Expect anything.')}
     ${sect('puzzle', 'Puzzle courses', 'A rule limits your gadgets. Swap them at pit stops.', 'puzzle')}
+    ${sect('gizmo', 'Contraption courses', 'Start a chain reaction to get through.', 'gizmo')}
     ${sect('maze', 'Mazes', 'Dark, many floors, and a battery that never stops draining.', 'maze')}
-    <div class="sect"><h2><span class="tag boss">legendary</span>The final five<small>Long, mean, and short on checkpoints.</small></h2><div class="cards">${BUILTIN.filter(c => c.boss).map(c => card(c)).join('')}</div></div>
+    <div class="sect"><h2><span class="tag boss">legendary</span>The final five<small>Long, mean, and short on checkpoints. ${Wallet.get().sec.boss ? '✔ Bonus earned.' : 'Finish them all for a <b style="color:var(--y)">$800</b> bonus.'}</small></h2><div class="cards">${BUILTIN.filter(c => c.boss).map(c => card(c)).join('')}</div></div>
     <div class="sect"><h2>🛠️ My courses<small>Build your own and dare a friend to beat it.</small></h2><div class="cards">
       <div class="card new" data-h="new" tabindex="0" role="button"><div style="font-size:34px">＋</div>Build a course</div>
       <div class="card new" data-h="import" tabindex="0" role="button"><div style="font-size:34px">📥</div>Load a course code</div>
@@ -106,7 +126,8 @@ function settings() {
     ? `<p style="margin:4px 0 10px">Reset a forgotten password, change game rules, and read the classroom notes.</p><form id="tF" class="namerow"><input type="password" id="tPw" placeholder="Teacher password" aria-label="Teacher password" autocomplete="off" maxlength="30"><button type="submit">Unlock</button></form>`
     : `<label class="chk"><input type="checkbox" id="sDmg" ${st.damage ? 'checked' : ''}> Damage: hard landings and crashes hurt the bot</label>
        <label class="chk"><input type="checkbox" id="sCoach" ${st.coach ? 'checked' : ''}> Coach explains what went wrong after a run</label>
-       <h4 class="th">Players on this computer</h4><table>${Players.list().map(p => `<tr><td><b>${esc(p.name)}</b></td><td>${Players.beaten(p.id)} of ${BUILTIN.length} levels</td><td style="text-align:right"><button class="small" data-reset="${p.id}">Reset password</button> <button class="small danger" data-del="${p.id}">Delete</button></td></tr>`).join('')}</table>
+       <label class="chk"><input type="checkbox" id="sAll" ${st.unlockAll ? 'checked' : ''}> Everything in the Store is unlocked for everyone on this computer</label>
+       <h4 class="th">Players on this computer</h4><table>${Players.list().map(p => `<tr><td><b>${esc(p.name)}</b></td><td>${Players.beaten(p.id)} of ${BUILTIN.length} levels</td><td>🪙 $${Wallet.get(p.id).coins}</td><td style="text-align:right"><button class="small" data-coins="${p.id}">+$500</button> <button class="small" data-reset="${p.id}">Reset password</button> <button class="small danger" data-del="${p.id}">Delete</button></td></tr>`).join('')}</table>
        <p style="font-size:13px">Resetting a password keeps that player's bots, medals, notebook and courses.</p>
        <div class="acts" style="margin-top:8px"><button id="sTeach">📖 Teacher notes</button><button id="sLock">🔒 Lock teacher area</button></div>`;
   modal(`<h2>⚙️ Settings</h2>
@@ -121,7 +142,9 @@ function settings() {
     askText({ title: 'New password', text: 'At least 3 characters.', type: 'password', cancel: settings }, pw => { toast(Players.setPassword(Store.user, pw) ? 'Password changed.' : 'Too short. Password not changed.'); settings(); });
   });
   if (!teacherOpen) { $('#tF').onsubmit = e => { e.preventDefault(); if (isTeacherPw($('#tPw').value)) { teacherOpen = true; settings(); } else { toast('That is not the teacher password.'); $('#tPw').value = ''; } }; return; }
-  const save = () => Store.set('set', { damage: $('#sDmg').checked, coach: $('#sCoach').checked });
+  const save = () => Store.set('set', { damage: $('#sDmg').checked, coach: $('#sCoach').checked, unlockAll: $('#sAll').checked });
+  $('#sAll').onchange = save;
+  $$('#modal [data-coins]').forEach(b => b.onclick = () => { Wallet.add(500, b.dataset.coins); toast('Gave ' + Players.all()[b.dataset.coins].name + ' $500.'); settings(); });
   $('#sDmg').onchange = save; $('#sCoach').onchange = save;
   $('#sTeach').onclick = teacherNotes; $('#sLock').onclick = () => { teacherOpen = false; settings(); };
   $$('#modal [data-reset]').forEach(b => b.onclick = () => { const p = Players.all()[b.dataset.reset]; askText({ title: `New password for ${p.name}`, text: 'Give them this password. They can change it themselves in Settings.', cancel: settings, max: 30 }, pw => { toast(Players.setPassword(b.dataset.reset, pw) ? `${p.name} can now sign in with the new password.` : 'Too short. Use at least 3 characters.'); settings(); }); });
@@ -134,7 +157,7 @@ $('#home').addEventListener('click', e => {
     const a = h.dataset.h;
     if (a === 'new') openEditor(starterCourse());
     else if (a === 'import') importDialog();
-    else if (a === 'how') howTo(); else if (a === 'log') notebook(); else if (a === 'set') settings(); else if (a === 'paint') paintDialog(); else if (a === 'out') signOut();
+    else if (a === 'how') howTo(); else if (a === 'log') notebook(); else if (a === 'set') settings(); else if (a === 'paint') paintDialog(); else if (a === 'out') signOut(); else if (a === 'store') storeDialog();
     return;
   }
   if (!cardEl) return;
@@ -147,8 +170,27 @@ $('#home').addEventListener('click', e => {
   }
   showGarage(c, 'home');
 });
+/* ---------- The Store ---------- */
+let storeTab = 'bots';
+function storeDialog() {
+  const w = Wallet.get(), price = id => Wallet.owns(id) ? '<em class="own">✔ Yours</em>' : `<em>🔒 $${PRICE[id]}</em>`;
+  const tabs = [['bots', '🤖 Special bots'], ['pieces', '🧩 Sandbox pieces'], ['paint', '🎨 Paint']];
+  let body = '';
+  if (storeTab === 'bots') body = '<p>Every special bot has free parts built in. They switch on in the <b>sandbox</b> (courses you build or load), not on the built-in levels.</p>' + ['ultimate', 'ultra', 'rare'].map(t => `<h4 class="th" style="color:${TIER[t][1]}">${TIER[t][0]}</h4><div class="shelf">${SKINS.filter(k => k.tier === t).map(k => `<button class="item bot" data-buy="skin:${k.id}" style="border-color:${TIER[t][1]}"><canvas width="220" height="130" data-skin="${k.id}"></canvas><b>${k.name}</b><span>${k.desc}</span><span class="perk">⭐ Sandbox perk: ${perkText(k.id)}</span>${Wallet.owns('skin:' + k.id) ? `<em class="own">${App.cfg.skin === k.id ? '✔ Wearing it' : '✔ Yours — click to wear'}</em>` : `<em>🔒 $${k.price}</em>`}</button>`).join('')}</div>`).join('');
+  else if (storeTab === 'pieces') body = `<p>Pieces for the course builder. The basics are free.</p><div class="shelf small">${Object.keys(OBJ_PRICE).sort((a, b) => OBJ_PRICE[a] - OBJ_PRICE[b]).map(k => `<button class="item" data-buy="obj:${k}" title="${esc(OBJ[k].tip)}"><b>${OBJ[k].icon} ${OBJ[k].name}</b>${price('obj:' + k)}</button>`).join('')}</div>`;
+  else body = `<div class="shelf small"><button class="item" data-buy="anycolor"><b>🎨 Colour picker</b><span>Any colour you can imagine.</span>${price('anycolor')}</button><button class="item" data-buy="stickers"><b>⭐ Sticker Pack</b><span>${LOOKS.stickers.slice(FREE_STICKERS).join(' ')}</span>${price('stickers')}</button>
+      ${BOT_COLORS.slice(8).map(c => `<button class="item" data-buy="color:${c}"><b><i class="dot" style="background:${c}"></i> Colour</b>${price('color:' + c)}</button>`).join('')}
+      ${[['pattern', 'Pattern'], ['eyes', 'Eyes'], ['topper', 'Hat']].map(([key, nm]) => LOOKS[key].filter(o => PRICE[key + ':' + o[0]]).map(o => `<button class="item" data-buy="${key}:${o[0]}"><b>${nm}: ${o[1]}</b>${price(key + ':' + o[0])}</button>`).join('')).join('')}</div><p style="font-size:13px">Put them on in the Paint shop.</p>`;
+  modal(`<h2>🛒 Store <span class="coins" style="float:right">🪙 $${w.coins}</span></h2><div class="tabs">${tabs.map(t => `<button class="${storeTab === t[0] ? 'on' : ''}" data-stab="${t[0]}">${t[1]}</button>`).join('')}</div>
+    ${SET().unlockAll ? '<p>Your teacher has unlocked everything on this computer.</p>' : ''}${body}<div class="acts"><button class="primary" data-m="x" data-focus>Done</button></div>`);
+  $$('#modal [data-stab]').forEach(b => b.onclick = () => { storeTab = b.dataset.stab; storeDialog(); });
+  $$('#modal [data-buy]').forEach(b => b.onclick = () => { const id = b.dataset.buy, sk = id.startsWith('skin:') && SKINS.find(k => 'skin:' + k.id === id); unlock(id, sk ? sk.name : b.querySelector('b').textContent.trim(), () => { if (sk) { App.cfg.skin = sk.id; saveCfg(); } storeDialog(); }); });
+  // little pictures of each special bot
+  const demo = Object.assign({}, DEFAULT_BOT, { chassis: 'rover', wheels: 'std', tires: 'allterrain', motor: 'std', battery: 'small', drive: 'rwd' });
+  $$('#modal canvas[data-skin]').forEach(cv => { const cfg = Object.assign({}, demo, { skin: cv.dataset.skin }), sp = botSpec(cfg), g = cv.getContext('2d'), wy = -(sp.ch.ht / 2 - 0.1); g.setTransform(52, 0, 0, -52, 110, 118); drawBot(g, cfg, sp, { x: 0, y: sp.r - wy, a: 0, wheels: [{ x: -sp.wheelDX, y: sp.r, a: 0.4 }, { x: sp.wheelDX, y: sp.r, a: 0.4 }] }, { look: 0.5, t: 1.3 }); });
+}
 function howTo() {
-  modal(`<h2>How to play</h2><p><b>1. Scout the course.</b> The shop shows what is ahead: hills, ice, gaps, crates.<br><b>2. Build your bot.</b> Pick a chassis, wheels, tires, motor, gearing, battery and gadgets. Stay inside the budget.<br><b>3. Send it.</b> Drive to the finish flag. Watch your health: long falls and hard crashes break the bot.<br><b>4. Improve.</b> Go back to the shop, change one thing, and try again.</p>
+  modal(`<h2>How to play</h2><p><b>1. Scout the course.</b> The shop shows what is ahead: hills, ice, gaps, crates.<br><b>2. Build your bot.</b> Pick a chassis, wheels, tires, motor, gearing, battery and gadgets. Stay inside the budget.<br><b>3. Send it.</b> Drive to the finish flag. Watch your health: long falls and hard crashes break the bot.<br><b>4. Improve.</b> Go back to the shop, change one thing, and try again.<br><b>5. Earn coins.</b> Every level you beat pays coins, and finishing a whole section pays a big bonus. Spend them in the Store.</p>
   <div class="keys"><kbd>→ / D</kbd><span>Drive forward</span><kbd>← / A</kbd><span>Reverse</span><kbd>E</kbd><span>Grapple Hook: grab or let go. Hold <b>↑</b> to reel in, <b>↓</b> to let rope out, <b>← →</b> to swing.</span>${PARTS.gadgets.filter(g => g.key && g.id !== 'hook').map(g => `<kbd>${g.key}</kbd><span>${g.name}: ${g.act.toLowerCase()}</span>`).join('')}<kbd>Tab</kbd><span>Turn around, so your tools point the other way</span><kbd>Enter</kbd><span>At a pit stop: swap gadgets</span><kbd>R</kbd><span>Back to the last checkpoint (+${RESET_PENALTY} seconds)</span><kbd>Backspace</kbd><span>Restart the course</span></div>
   <div class="acts"><button class="primary" data-m="x" data-focus>Got it</button></div>`);
 }
@@ -197,7 +239,7 @@ function showGarage(course, from) {
       <div id="gStats"></div><div id="gPaint" class="paint"></div></div>
     <div class="gcol" id="gParts"></div>
     <div class="gcol gright"><h3>What is out there</h3><canvas id="mini" width="560" height="140"></canvas><p style="font-size:13px;color:var(--dim);margin:8px 0 0">${esc(course.desc || '')}</p>
-      ${rulesText(course.rules).length ? `<div class="rules"><b>📜 Course rules</b><ul>${rulesText(course.rules).map(t => `<li>${t}</li>`).join('')}</ul></div>` : ''}<div class="chips">${analyzeCourse(course).map(i => `<span>${i[0]} ${i[1]}</span>`).join('')}</div><div id="gCoach"></div>
+      ${rulesText(course.rules).length ? `<div class="rules"><b>📜 Course rules</b><ul>${rulesText(course.rules).map(t => `<li>${t}</li>`).join('')}</ul></div>` : ''}<div id="gPerk"></div><div class="chips">${analyzeCourse(course).map(i => `<span>${i[0]} ${i[1]}</span>`).join('')}</div><div id="gCoach"></div>
       <label class="chk"><input type="checkbox" id="gFree" ${App.free ? 'checked' : ''}> Free build (no budget, no medals)</label></div></div>`;
   drawMini($('#mini'), course);
   $('#gName').oninput = e => { App.cfg.name = e.target.value; saveCfg(); };
@@ -217,6 +259,7 @@ function rulesText(r) {
 }
 function refreshGarage() {
   const cfg = App.cfg, c = App.course, s = botSpec(cfg, c.rules);
+  { const pk = cfg.skin && perkText(cfg.skin), el = $('#gPerk'); if (el) el.innerHTML = !pk ? '' : c.builtin ? `<div class="rules perk">⭐ Your ${esc(SKINS.find(k => k.id === cfg.skin).name)} perk (${pk}) is switched off on the built-in levels. It works in the sandbox.</div>` : `<div class="rules perk on">⭐ ${esc(SKINS.find(k => k.id === cfg.skin).name)} perk is ON here: free ${pk}. No slots, weight or cost.</div>`; }
   cfg.upgrades = s.upgrades.map(g => g.id);
   cfg.gadgets = s.gadgets.map(g => g.id);
   const sel = (key, p) => cfg[key] === p.id;
@@ -260,12 +303,14 @@ function refreshGarage() {
 const Pad = { open: false, px: new Array(144).fill(''), col: '#ff5a36' };
 const PAD_COLS = ['#ff5a36', '#ffc21a', '#7bd13b', '#2ad4c0', '#4d8dff', '#b46bff', '#ff6fb5', '#ffffff', '#20242b', '#8a5a2b'];
 function paintHTML() {
-  const c = App.cfg, sw = (key, cur) => `<div class="swatches">${BOT_COLORS.map(col => `<button style="background:${col}" class="${cur === col ? 'on' : ''}" data-p="${key}" data-v="${col}" aria-label="${key} ${col}"></button>`).join('')}<input type="color" data-pc="${key}" value="${/^#[0-9a-f]{6}$/i.test(cur || '') ? cur : '#ffc21a'}" aria-label="Pick any ${key} colour" title="Pick any colour"></div>`;
-  const opts = (key, list) => `<div class="opts">${list.map(o => `<button class="${(c[key] || list[0][0]) === o[0] ? 'on' : ''}" data-p="${key}" data-v="${o[0]}">${o[1]}</button>`).join('')}</div>`;
-  return `<h4>Body colour</h4>${sw('color', c.color)}<h4>Trim and pattern colour</h4>${sw('color2', c.color2)}<h4>Wheel colour</h4>${sw('hub', c.hub)}
+  const c = App.cfg, lock = id => Wallet.owns(id) ? '' : `<span class="lk">🔒$${PRICE[id]}</span>`;
+  const sw = (key, cur) => `<div class="swatches">${BOT_COLORS.map(col => `<button style="background:${col}" class="${cur === col ? 'on' : ''}${Wallet.owns('color:' + col) ? '' : ' locked'}" data-p="${key}" data-v="${col}" data-lock="color:${col}" aria-label="${key} ${col}${Wallet.owns('color:' + col) ? '' : ', locked, $' + PRICE['color:' + col]}">${Wallet.owns('color:' + col) ? '' : '🔒'}</button>`).join('')}${Wallet.owns('anycolor') ? `<input type="color" data-pc="${key}" value="${/^#[0-9a-f]{6}$/i.test(cur || '') ? cur : '#ffc21a'}" aria-label="Pick any ${key} colour" title="Pick any colour">` : `<button class="anyc" data-pa="anycolor" title="Unlock the colour picker">🎨🔒$${PRICE.anycolor}</button>`}</div>`;
+  const opts = (key, list) => `<div class="opts">${list.map(o => `<button class="${(c[key] || list[0][0]) === o[0] ? 'on' : ''}" data-p="${key}" data-v="${o[0]}" data-lock="${key}:${o[0]}">${o[1]}${lock(key + ':' + o[0])}</button>`).join('')}</div>`;
+  return `<h4>Body style</h4><div class="opts"><button class="${!c.skin ? 'on' : ''}" data-p="skin" data-v="">Standard</button>${SKINS.map(k => `<button class="${c.skin === k.id ? 'on' : ''}" data-p="skin" data-v="${k.id}" data-lock="skin:${k.id}" style="border-color:${c.skin === k.id ? '' : TIER[k.tier][1] + '66'}" title="${TIER[k.tier][0]}: ${k.desc} Sandbox perk: ${perkText(k.id)}">${k.name}${lock('skin:' + k.id)}</button>`).join('')}</div>
+    <h4>Body colour</h4>${sw('color', c.color)}<h4>Trim and pattern colour</h4>${sw('color2', c.color2)}<h4>Wheel colour</h4>${sw('hub', c.hub)}
     <h4>Pattern</h4>${opts('pattern', LOOKS.pattern)}<h4>Eyes</h4>${opts('eyes', LOOKS.eyes)}<h4>On top</h4>${opts('topper', LOOKS.topper)}
     <h4>Words on the flag</h4><input type="text" id="pWords" maxlength="14" placeholder="Type a slogan" value="${esc(c.words || '')}" aria-label="Words on your bot">
-    <h4>Picture</h4><div class="stick">${LOOKS.stickers.map(e => `<button class="${c.pic === e ? 'on' : ''}" data-p="pic" data-v="${e}" aria-label="Sticker ${e}">${e}</button>`).join('')}</div>
+    <h4>Picture</h4><div class="stick">${LOOKS.stickers.map((e, i) => `<button class="${c.pic === e ? 'on' : ''}${i >= FREE_STICKERS && !Wallet.owns('stickers') ? ' locked' : ''}" data-p="pic" data-v="${e}" ${i >= FREE_STICKERS ? 'data-lock="stickers"' : ''} aria-label="Sticker ${e}">${e}</button>`).join('')}</div>${Wallet.owns('stickers') ? '' : `<p style="font-size:12.5px;color:var(--dim);margin:6px 0 0">The faded stickers come in the Sticker Pack ($${PRICE.stickers}).</p>`}
     <div class="opts" style="margin-top:8px"><button data-pa="upload">📷 Use a photo</button><button data-pa="pad">${Pad.open ? 'Close drawing pad' : '✏️ Draw your own'}</button>${c.pic ? '<button data-pa="nopic">Remove picture</button>' : ''}</div>
     <input type="file" id="pFile" accept="image/*" hidden>
     ${Pad.open ? `<div class="pad"><canvas id="pPad" width="216" height="216" aria-label="Drawing pad"></canvas><div><div class="swatches">${PAD_COLS.map(col => `<button style="background:${col}" class="${Pad.col === col ? 'on' : ''}" data-pad="${col}" aria-label="Draw with ${col}"></button>`).join('')}<button class="${Pad.col === '' ? 'on' : ''}" data-pad="" style="background:#0e1217;font-size:11px" aria-label="Eraser">🧽</button></div><div class="opts" style="margin-top:8px"><button data-pa="usepad" class="primary">Put it on my bot</button><button data-pa="clearpad">Clear</button></div></div></div>` : ''}`;
@@ -291,7 +336,8 @@ function bindPaint(root) {
   };
   root.onclick = e => {
     const b = e.target.closest('button'); if (!b) return;
-    if (b.dataset.p) return set(b.dataset.p, b.dataset.p === 'pic' && cfg.pic === b.dataset.v ? '' : b.dataset.v);
+    if (b.dataset.p) { const go = () => set(b.dataset.p, b.dataset.p === 'pic' && cfg.pic === b.dataset.v ? '' : b.dataset.v), lk = b.dataset.lock; return lk && PRICE[lk] ? unlock(lk, lk === 'stickers' ? 'the Sticker Pack' : lk.startsWith('skin:') ? SKINS.find(k => 'skin:' + k.id === lk).name : 'this ' + lk.split(':')[0], go) : go(); }
+    if (b.dataset.pa === 'anycolor') return unlock('anycolor', 'the colour picker', redraw);
     if (b.dataset.pad != null) { Pad.col = b.dataset.pad; return redraw(); }
     const a = b.dataset.pa;
     if (a === 'upload') $('#pFile', root).click(); else if (a === 'nopic') set('pic', ''); else if (a === 'pad') { Pad.open = !Pad.open; redraw(); }
@@ -428,10 +474,17 @@ function showResult() {
   if (App.free) extra = '<p>Free build run: no medal recorded.</p>';
   else {
     const medal = medalFor(c, d.time), best = Store.get('best', {}), old = best[c.id], rank = { gold: 3, silver: 2, bronze: 1, finish: 0 };
-    if (!old || d.time < old.time) { best[c.id] = { time: d.time, medal: old && rank[old.medal] > rank[medal] ? old.medal : medal }; Store.set('best', best); extra = old ? `<p>New best! Your old time was ${fmtT(old.time)}s.</p>` : ''; }
-    else extra = `<p>Your best is still ${fmtT(old.time)}s.</p>`;
+    if (!old || d.time < old.time) { best[c.id] = { time: d.time, medal: old && rank[old.medal] > rank[medal] ? old.medal : medal }; Store.set('best', best); extra = old ? `<p>New best! Your old time was ${fmtT(old.time)}s.</p>` : '';
+      if (old && c.builtin) { const w = Wallet.get(), got = w.fast[c.id] || 0, pay = Math.min(fastPay(old.time, d.time), FAST_CAP - got); if (pay > 0) { w.fast[c.id] = got + pay; w.coins += pay; Wallet.save(w); extra += `<p class="pay">⏱️ Beat your own time: +$${pay} coins</p>`; } else extra += '<p style="font-size:13px">You have earned every time bonus this level pays.</p>'; } }
+    else extra = `<p>Your best is still ${fmtT(old.time)}s.${c.builtin && (Wallet.get().fast[c.id] || 0) < FAST_CAP ? ' Beat it to earn bonus coins.' : ''}</p>`;
     if (c.medals) extra += `<p>🥇 under ${c.medals[0]}s · 🥈 under ${c.medals[1]}s</p>`;
-    if (!c.builtin) { const mine = loadMyCourses().find(m => m.id === c.id); if (mine && App.from === 'editor' && (!c.par || d.time < c.par)) { c.par = +d.time.toFixed(2); saveMyCourse(c); extra += '<p>✔ Course verified! Your time is now the time to beat.</p>'; } }
+    if (c.builtin) {   // coins: the first clear pays, and so does a better medal later
+      const w = Wallet.get(), pay = levelPay(c, best[c.id].medal) - (w.paid[c.id] || 0), secId = c.boss ? 'boss' : sectionOf(c), sec = SECTIONS.find(x => x.id === secId);
+      if (pay > 0) { w.coins += pay; w.paid[c.id] = levelPay(c, best[c.id].medal); extra += `<p class="pay">🪙 +$${pay} coins</p>`; }
+      if (sec && !w.sec[secId] && BUILTIN.filter(k => (k.boss ? 'boss' : sectionOf(k)) === secId).every(k => best[k.id])) { w.sec[secId] = 1; w.coins += sec.bonus; extra += `<p class="pay">🏆 You finished every level in ${sec.name}! Bonus: +$${sec.bonus}</p>`; }
+      Wallet.save(w); extra += `<p style="font-size:13px">You have $${w.coins}. Spend it in the Store.</p>`;
+    }
+    if (!c.builtin) { const mine = loadMyCourses().find(m => m.id === c.id); if (mine && App.from === 'editor' && (!c.par || d.time < c.par)) { c.par = +d.time.toFixed(2); saveMyCourse(c); extra += '<p>✔ Course verified! Your time is now the time to beat.</p>'; const w = Wallet.get(); if (!w.made[c.id]) { w.made[c.id] = 1; w.coins += 40; Wallet.save(w); extra += '<p class="pay">🪙 +$40 for building a course that can be beaten</p>'; } } }
     extra = `<div class="res"><div class="big">${MEDAL_ICON[medal]}</div><div><div class="tm">${fmtT(d.time)}s</div>${G.penalties ? `<div style="color:var(--o);font-size:13px">includes +${G.penalties}s for ${G.resets} reset${G.resets > 1 ? 's' : ''}</div>` : ''}</div></div>` + extra;
   }
   modal(`<h2>Course complete!</h2>${App.free ? `<div class="res"><div class="tm">${fmtT(d.time)}s</div></div>` : ''}${extra}${tips}${acts}`);
@@ -514,7 +567,7 @@ function drawPalette() {
    <h4>Surface</h4><div class="tg">${[['Dirt', DIRT, '🟫'], ['Ice', ICE, '🧊'], ['Mud', MUD, '🟤'], ['Bouncy rubber', RUBBER, '🩷'], ['Soft sand', SAND, '🏖️']].map(m => `<button class="tool${on(Ed.mat === m[1])}" data-mat="${m[1]}" title="${m[0]}" aria-label="${m[0]} surface">${m[2]}</button>`).join('')}</div>
    <h4>Hazards & tools</h4><div class="tg"><button class="tool wide${on(t.k === 'water')}" data-tool="water">🌊 Water</button><button class="tool wide${on(t.k === 'lava')}" data-tool="lava">🌋 Lava</button>
      <button class="tool wide${on(t.k === 'erase')}" data-tool="erase">🧽 Erase</button><button class="tool wide${on(t.k === 'hand')}" data-tool="hand">✋ Move view</button></div>
-   <h4>Things</h4><div class="ol">${Object.keys(OBJ).map(k => `<button class="tool${on(t.k === 'obj' && t.t === k)}" data-tool="obj" data-t="${k}" title="${OBJ[k].tip}">${OBJ[k].icon} ${OBJ[k].name}</button>`).join('')}</div>`;
+   <h4>Things <span style="color:var(--dim);text-transform:none;letter-spacing:0">🪙 $${Wallet.get().coins}</span></h4><div class="ol">${Object.keys(OBJ).sort((a, b) => (Wallet.owns('obj:' + a) ? 0 : 1) - (Wallet.owns('obj:' + b) ? 0 : 1)).map(k => `<button class="tool${on(t.k === 'obj' && t.t === k)}${Wallet.owns('obj:' + k) ? '' : ' locked'}" data-tool="obj" data-t="${k}" title="${OBJ[k].tip}">${OBJ[k].icon} ${OBJ[k].name}${Wallet.owns('obj:' + k) ? '' : `<span class="lk">🔒$${PRICE['obj:' + k]}</span>`}</button>`).join('')}</div>`;
   edTip();
 }
 function edTip() {
@@ -528,7 +581,7 @@ $('#edPal').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.mat != null) { Ed.mat = +b.dataset.mat; if (Ed.tool.k !== 'tile') Ed.tool = { k: 'tile', shape: 1 }; }
   else if (b.dataset.tool === 'tile') Ed.tool = { k: 'tile', shape: +b.dataset.shape };
-  else if (b.dataset.tool === 'obj') Ed.tool = { k: 'obj', t: b.dataset.t };
+  else if (b.dataset.tool === 'obj') { const k = b.dataset.t; return unlock('obj:' + k, 'the ' + OBJ[k].name, () => { Ed.tool = { k: 'obj', t: k }; Ed.pend = null; drawPalette(); }); }
   else Ed.tool = { k: b.dataset.tool };
   Ed.pend = null; drawPalette();
 });
@@ -625,7 +678,8 @@ function editorFrame(ts) {
         else if (o.t === 'hammer') g.arc(o.x, o.y, 4.4, -Math.PI / 2 - 1.15, -Math.PI / 2 + 1.15); else if (o.t === 'fan') g.rect(o.x - 1.7, o.y, 3.4, 9);
         else if (o.t === 'spinner') g.arc(o.x, o.y + 3.4, 3.1, 0, 7); else if (o.t === 'anchor') g.arc(o.x, o.y, HOOK_RANGE, 0, 7);
         else if (o.t === 'blower') g.rect(o.x - 10.5, o.y, 10, 5); else if (o.t === 'springboard') { g.moveTo(o.x, o.y + 0.5); g.quadraticCurveTo(o.x + 6, o.y + 7, o.x + 12, o.y); } else if (o.t === 'launcher') { g.moveTo(o.x, o.y + 1); g.quadraticCurveTo(o.x + 14, o.y + 20, o.x + 28, o.y); }
-        else if (o.t === 'plate' || o.t === 'switch') { let bg = null, bd = 1e9; for (const q of c.objs) if (q.t === 'gate') { const d = Math.hypot(q.x - o.x, q.y - o.y); if (d < bd) { bd = d; bg = q; } } if (bg) { g.moveTo(o.x, o.y); g.lineTo(bg.x, bg.y + 2); } }
+        else if (o.t === 'plate' || o.t === 'switch' || o.t === 'button' || o.t === 'hamster') { let bg = null, bd = 10; for (const q of c.objs) if (q.t === 'trapdoor' || q.t === 'anvil' || q.t === 'kicker') { const d = Math.hypot(q.x - o.x, q.y - o.y); if (d < bd) { bd = d; bg = q; } } if (!bg) { bd = 1e9; for (const q of c.objs) if (q.t === 'gate') { const d = Math.hypot(q.x - o.x, q.y - o.y); if (d < bd) { bd = d; bg = q; } } } if (bg) { g.moveTo(o.x, o.y); g.lineTo(bg.x, bg.y + (bg.t === 'gate' ? 2 : 0.5)); } }
+        else if (o.t === 'alarm') g.arc(o.x, o.y + 0.75, 14, 0, 7);
         g.stroke();
       }
       g.setLineDash([]);
