@@ -1,6 +1,6 @@
 /* Bot Assembly Shop — core data: parts, bot math, tiles, courses, storage */
 'use strict';
-const VERSION = '1.6';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
+const VERSION = '1.7';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
 const pl = planck, V = pl.Vec2;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -84,8 +84,8 @@ const PARTS = {
     { id: 'jump', cat: 'Movement', name: 'Jump Jack', icon: '🦘', key: 'Space', code: 'Space', act: 'Jump', desc: 'Spring straight up. Light bots jump higher.', mass: 5, cost: 100 },
     { id: 'airjump', cat: 'Movement', name: 'Air Jets', icon: '💨', key: 'Space', code: 'Space', act: 'Mid-air hop', desc: 'One extra hop while already in the air. Refills when you land.', mass: 4, cost: 110 },
     { id: 'vault', cat: 'Movement', name: 'Vault Pole', icon: '🏑', key: 'V', code: 'KeyV', act: 'Pole vault', desc: 'Plant the pole and leap forward. 3 vaults, refilled at checkpoints.', mass: 5, cost: 90 },
-    { id: 'rocket', cat: 'Movement', name: 'Rocket Booster', icon: '🚀', key: 'Shift', code: 'ShiftLeft', hold: true, act: 'Rocket (hold)', desc: '3 seconds of serious thrust.', mass: 7, cost: 160 },
-    { id: 'prop', cat: 'Movement', name: 'Propeller', icon: '🚁', key: 'X', code: 'KeyX', hold: true, act: 'Propeller (hold)', desc: '4 seconds of flight, up to 8 m high. Refills at checkpoints. Heavy bots drain the battery faster.', mass: 8, cost: 170 },
+    { id: 'rocket', cat: 'Movement', name: 'Rocket Booster', icon: '🚀', key: 'Shift', code: 'ShiftLeft', hold: true, act: 'Rocket (hold)', desc: '3 seconds of serious thrust. Cannot be carried with the Propeller.', mass: 7, cost: 160 },
+    { id: 'prop', cat: 'Movement', name: 'Propeller', icon: '🚁', key: 'X', code: 'KeyX', hold: true, act: 'Propeller (hold)', desc: '4 seconds of lift, straight up, to 8 m high. It cannot push you forward. Refills at checkpoints. Cannot be carried with the Rocket Booster.', mass: 8, cost: 170 },
     { id: 'hover', cat: 'Movement', name: 'Hover Skirt', icon: '🛸', key: 'U', code: 'KeyU', hold: true, act: 'Hover (hold)', desc: '3 seconds of floating just above the ground, water or lava. Refills at checkpoints.', mass: 6, cost: 150 },
     { id: 'balloon', cat: 'Movement', name: 'Balloon Pack', icon: '🎈', key: 'N', code: 'KeyN', hold: true, act: 'Balloons (hold)', desc: '6 seconds of helium. Floats light bots up and over. Refills at checkpoints.', mass: 2, cost: 80 },
     { id: 'chute', cat: 'Movement', name: 'Parachute', icon: '🪂', desc: 'Pops open on long falls so you land softly.', mass: 3, cost: 70 },
@@ -139,6 +139,9 @@ const LOOKS = {
 
 /* Everything the physics and the stat panel need to know about a build */
 /* rules = a course's special rules (mazes and puzzle courses limit gadgets and battery) */
+/* Gadgets that cannot be carried together: flying up and blasting forward at once skips whole courses */
+const CLASH = [['prop', 'rocket']];
+const clashWith = (id, ids) => { for (const [a, b] of CLASH) { if (id === a && ids.includes(b)) return b; if (id === b && ids.includes(a)) return a; } return null; };
 function botSpec(cfg, rules, sandbox) {
   rules = rules || {};
   const pick = k => PARTS[k].find(p => p.id === cfg[k]), fb = (k, id) => pick(k) || PARTS[k].find(p => p.id === id);
@@ -149,10 +152,11 @@ function botSpec(cfg, rules, sandbox) {
   const slots = real.chassis ? Math.min(ch.slots, rules.slots || 99) : 0, upSlots = real.chassis ? ch.up : 0;
   const gadgets = (cfg.gadgets || []).map(id => PARTS.gadgets.find(g => g.id === id)).filter(Boolean).slice(0, slots);
   const upgrades = (cfg.upgrades || []).map(id => PARTS.upgrades.find(g => g.id === id)).filter(Boolean).slice(0, upSlots);
+  for (const [a, b] of CLASH) { const i = gadgets.findIndex(g => g.id === a), j = gadgets.findIndex(g => g.id === b); if (i >= 0 && j >= 0) gadgets.splice(Math.max(i, j), 1); }
   const has = {}; gadgets.concat(upgrades).forEach(g => has[g.id] = true);
   const extra = gadgets.concat(upgrades), gMass = extra.reduce((s, g) => s + g.mass, 0), gCost = extra.reduce((s, g) => s + g.cost, 0);
   const perks = [];   // a special bot's free parts: sandbox only, and they take no slots, weight or money
-  if (sandbox && real.chassis) for (const id of skinPerk(cfg.skin)) if (!has[id]) { has[id] = true; perks.push(id); const g = PARTS.gadgets.find(k => k.id === id); if (g) gadgets.push(g); else upgrades.push(PARTS.upgrades.find(k => k.id === id)); }
+  if (sandbox && real.chassis) for (const id of skinPerk(cfg.skin)) if (!has[id] && !clashWith(id, Object.keys(has))) { has[id] = true; perks.push(id); const g = PARTS.gadgets.find(k => k.id === id); if (g) gadgets.push(g); else upgrades.push(PARTS.upgrades.find(k => k.id === id)); }
   const wheelMass = wh.mass + ti.mass;
   const bodyMass = ch.mass * (has.alloy ? 0.75 : 1) + mo.mass + ba.mass + dr.mass + gMass;
   const mass = bodyMass + wheelMass * 2;
