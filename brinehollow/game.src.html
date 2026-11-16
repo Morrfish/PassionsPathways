@@ -400,16 +400,16 @@ hullMat.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#in
 // Drawn faces: each character's eyes, brows, mouth and lines are inked on a canvas and wrapped over the front of the head.
 const WHITE = '#efe9df', DARK = '#2a201c', BLACK = '#17120f';
 const FACES = {
-  breakwater: {k: 1.0, sculpt: 1, beard: 1, eyes: 'narrow', brow: 1.1, browCol: WHITE, browW: 11, old: 1, mouth: 'none'},
+  breakwater: {k: 1.0, sculpt: 1, beard: 1, eyes: 'narrow', brow: 1.1, browCol: WHITE, browW: 11, old: 1, mouth: 'none', plane: .25},
   mainsail:   {k: 1.05, sculpt: 1, lips: 1, eyes: 'narrow', iris: '#5a3c1c', brow: 1, browW: 10, browCol: BLACK, scar: 1, freckles: 1, mouth: 'none'},
-  drift:      {k: .9, sculpt: 1, lips: 1, eyes: 'open', brow: 1, scar: 1, freckles: 1, mouth: 'frown'},
-  rivet:      {k: .98, sculpt: 1, beard: 1, eyes: 'narrow', brow: 1, browW: 10, scar: 1, mouth: 'none'},
-  bell:       {k: .84, sculpt: 1, lips: 1, eyes: 'wide', brow: -.3, lashes: 1, freckles: 1, blush: 1, mouth: 'smile', iris: '#4f6a34'},
-  kelp:       {k: .95, sculpt: 1, lips: 1, eyes: 'open', brow: .2, lashes: 1, freckles: 1, mouth: 'flat', browCol: BLACK},
-  skiff:      {k: .82, sculpt: 1, eyes: 'open', brow: .5, browW: 10, mouth: 'smirk', browCol: BLACK, blush: 1},
-  brine:      {k: .93, sculpt: 1, lips: 1, eyes: 'open', brow: 0, lashes: 1, freckles: 1, mouth: 'smile', browCol: BLACK},
-  glimmer:    {k: 1.03, sculpt: 1, eyes: 'narrow', brow: 1, browW: 9, mouth: 'frown', browCol: BLACK},
-  wickie:     {k: .66, sculpt: 1, beard: 1, eyes: 'happy', brow: -.4, browCol: WHITE, browW: 11, old: 1, blush: 1, mouth: 'none'},
+  drift:      {k: .9, sculpt: 1, lips: 1, eyes: 'narrow', brow: 1, scar: 1, freckles: 1, mouth: 'frown', plane: .3, iris: '#2a1c12'},
+  rivet:      {k: .98, sculpt: 1, beard: 1, eyes: 'narrow', brow: 1, browW: 10, scar: 1, mouth: 'none', plane: .3},
+  bell:       {k: .84, sculpt: 1, lips: 1, eyes: 'wide', brow: -.3, lashes: 1, freckles: 1, blush: 1, mouth: 'smile', iris: '#4f6a34', plane: 0},
+  kelp:       {k: .95, sculpt: 1, lips: 1, eyes: 'open', brow: .2, lashes: 1, freckles: 1, mouth: 'none', browCol: BLACK, plane: .34, iris: '#6a5a2a'},
+  skiff:      {k: .82, sculpt: 1, eyes: 'open', brow: .5, browW: 10, mouth: 'smirk', browCol: BLACK, blush: 1, plane: .2},
+  brine:      {k: .93, sculpt: 1, lips: 1, eyes: 'open', brow: 0, lashes: 1, freckles: 1, mouth: 'none', browCol: BLACK, plane: .12, iris: '#3a4a5a'},
+  glimmer:    {k: 1.03, sculpt: 1, eyes: 'narrow', brow: 1, browW: 9, mouth: 'frown', browCol: BLACK, plane: .4},
+  wickie:     {k: .66, sculpt: 1, beard: 1, eyes: 'happy', brow: -.4, browCol: WHITE, browW: 11, old: 1, blush: 1, mouth: 'none', plane: 0},
   netter:     {k: .98, eyes: 'open', brow: .9, lashes: 1, scar: 1, mouth: 'frown'},
   cinder:     {k: 1.04, eyes: 'narrow', brow: 1.2, browCol: BLACK, browW: 12, scar: 1, mouth: 'none'},
   gaff:       {k: 1.1, eyes: 'narrow', brow: 1, scar: 1, mouth: 'frown'},
@@ -455,7 +455,7 @@ function faceTex(f) {
     if (!f.sculpt) { g.fillStyle = 'rgba(60,30,20,.38)'; g.beginPath(); g.ellipse(128, 179, 17, 5, 0, 0, 7); g.fill(); }
     const my = 205;
     if (f.sculpt) for (const s of [-1, 1]) {                  // hard shadow planes under the cheekbone and along the jaw
-      g.fillStyle = 'rgba(95,42,22,.42)'; g.beginPath(); g.moveTo(128 + s * 74, 152); g.lineTo(128 + s * 46, 178); g.lineTo(128 + s * 50, 216); g.lineTo(128 + s * 72, 196); g.closePath(); g.fill();
+      g.fillStyle = `rgba(95,42,22,${f.plane === undefined ? .42 : f.plane})`; g.beginPath(); g.moveTo(128 + s * 74, 152); g.lineTo(128 + s * 46, 178); g.lineTo(128 + s * 50, 216); g.lineTo(128 + s * 72, 196); g.closePath(); g.fill();
     }
     if (f.sculpt && f.lips) {                                 // lips, painted over the sculpted mouth
       g.fillStyle = 'rgba(128,52,46,.9)'; g.beginPath(); g.moveTo(100, my - 3); g.quadraticCurveTo(116, my - 15, 128, my - 9); g.quadraticCurveTo(140, my - 15, 156, my - 3);
