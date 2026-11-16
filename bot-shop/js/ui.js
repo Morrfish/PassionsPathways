@@ -375,7 +375,9 @@ $('#garage').addEventListener('click', e => {
   if (k === 'gadget' || k === 'upgrade') {
     const up = k === 'upgrade', list = up ? cfg.upgrades : cfg.gadgets, sp = botSpec(cfg, App.course.rules), slots = up ? sp.upSlots : sp.slots, i = list.indexOf(id);
     if (!sp.real.chassis) return toast('Pick a chassis first. Everything bolts onto it.');
+    const clash = !up && i < 0 && clashWith(id, list);
     if (i >= 0) list.splice(i, 1);
+    else if (clash) return toast(`The ${partName(id)} and the ${partName(clash)} cannot go on the same bot. Take the ${partName(clash)} off first.`);
     else if (list.length >= slots) return toast(up ? `No free upgrade slot. This chassis takes ${slots}. Remove one first.` : `No free slot. You can carry ${slots} gadget${slots > 1 ? 's' : ''} here. Remove one first.`);
     else list.push(id);
   } else {
@@ -427,7 +429,7 @@ function pitDialog() {
     modal(`<h2>🛠️ Pit stop</h2><p>Swap gadgets without leaving the course. You can carry <b>${base.slots}</b> here. Cost: <b style="color:${over ? 'var(--o)' : 'var(--ink)'}">$${s.cost}</b>${App.free ? '' : ' of $' + c.budget}${over ? ' — over budget!' : ''}</p>
       ${['Tools', 'Movement', 'Helpers'].map(cat => `<div class="gcat">${cat}</div><div class="opts">${PARTS.gadgets.filter(p => p.cat === cat).map(p => `<button class="${pick.includes(p.id) ? 'on' : ''}" data-pit="${p.id}" title="${esc(p.desc)}">${p.icon} ${p.name} $${p.cost}</button>`).join('')}</div>`).join('')}
       <div class="acts"><button class="primary" id="pitGo" ${over ? 'disabled' : ''} data-focus>Bolt them on ▶</button><button id="pitNo">Cancel</button></div>`);
-    $$('#modal [data-pit]').forEach(b => b.onclick = () => { const id = b.dataset.pit, i = pick.indexOf(id); if (i >= 0) pick.splice(i, 1); else if (pick.length >= base.slots) return toast(`Only ${base.slots} at a time. Take one off first.`); else pick.push(id); draw(); });
+    $$('#modal [data-pit]').forEach(b => b.onclick = () => { const id = b.dataset.pit, i = pick.indexOf(id); if (i >= 0) pick.splice(i, 1); else if (clashWith(id, pick)) return toast(`The ${partName(id)} and the ${partName(clashWith(id, pick))} cannot go on the same bot.`); else if (pick.length >= base.slots) return toast(`Only ${base.slots} at a time. Take one off first.`); else pick.push(id); draw(); });
     $('#pitNo').onclick = () => { closeModal(); App.paused = false; };
     $('#pitGo').onclick = () => { closeModal(); swapGadgets(G, pick); App.cfg.gadgets = G.cfg.gadgets.slice(); saveCfg(); App.paused = false; startHud(); };
   };

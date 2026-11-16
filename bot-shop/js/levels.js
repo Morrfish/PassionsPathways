@@ -35,6 +35,10 @@ const SEG = {
   seesaw: (b) => b.flat(3).o('seesaw', 5).flat(12),
   bridge: (b, p = 10) => b.flat(3).o('bridge', 0, 0, [p, 0]).gap(p).flat(5),
   climb: (b, p = 5) => b.need('suction').flat(8).z(-4, 4, { climb: 1 }).step(p).flat(8),
+  climbstairs: (b, p = 3) => { b.need('suction'); for (let i = 0; i < p; i++) b.flat(7).z(-4, 4, { climb: 1 }).step(4); b.flat(8); },
+  climbpit: (b, p = 5) => b.need('suction').flat(5).step(-3).flat(8).z(-4, 4, { climb: 1 }).step(p).flat(8),
+  climbmud: (b, p = 5) => b.need('suction').mat(MUD).flat(9).z(-4, 4, { climb: 1 }).step(p).mat(DIRT).flat(8),
+  climbsand: (b, p = 5) => b.need('suction').mat(SAND).flat(9).z(-4, 4, { climb: 1 }).step(p).mat(DIRT).flat(8),
   propgap: (b, p = 12) => b.need('prop').flat(6).z(-1.5, p + 1, { prop: 1 }).gap(p, LAVA, 8, 2).flat(8),
   propwall: (b, p = 6) => b.need('prop').flat(6).z(-4.5, 1.5, { prop: 1 }).step(p).flat(8),
   board: (b, p = 8) => b.flat(8).o('springboard', -1.5).gap(p).flat(10),
@@ -134,12 +138,19 @@ const LEVELS = [
   ['l56', 'Tick Tock', 'gizmo', 3, 'night', 10, 1, 'gztimer gzballoon hills:1'],
   ['l57', 'Dog Days', 'gizmo', 4, 'candy', 10, 1, 'gzdog gzdryer gzgong'],
   ['l58', 'The Grand Contraption', 'gizmo', 5, 'crazy', 12, 2, 'gzelephant gztimer gzdog gzballoon gzgong gzcat'],
+  ['l59', 'Wall Crawler', 'crazy', 2, 'speed', 8, 1, 'climb:4 hills:1 climb:6'],
+  ['l60', 'Stairway Up', 'crazy', 3, 'night', 6, 1, 'climbstairs:3 fall:8 climb:5'],
+  ['l61', 'Out of the Hole', 'strength', 3, 'desert', 12, 1, 'climbpit:5 climbmud:4 climbpit:7'],
+  ['l62', 'Gecko Run', 'speed', 3, 'candy', 8, 1, 'climb:5 gap:3 climb:6 hills:2'],
+  ['l63', 'Sticky Wheels', 'strength', 4, 'snow', 8, 1, 'climbsand:5 sand:10 climbmud:4 rubber:10'],
+  ['l64', 'Spider Tower', 'crazy', 4, 'space', 6, 2, 'climbstairs:4 zip:14 climbpit:8 fall:8 climb:9'],
+  ['l65', 'Up and Over', 'puzzle', 4, 'night', 8, 1, 'climb:6 pit wood:2 pit climbstairs:2 pit propwall:5'],
   // ---- legendary: long, few checkpoints, tight budgets
   ['l36', 'The Long Haul', 'boss', 5, 'desert', 5, 3, 'mud:16 steep:5 sand:14 conveyor:3 blower steep:6 charge rock:2 wood:2 crates:3 steep:4 blower rock:1'],
   ['l37', 'Leap of Faith', 'boss', 5, 'space', 30, 3, 'fall:12 board:9 launch:20 fix fall:13 moon:12 launchwall:7 gaplava:3 propgap:14 propwall:6 fall:12 launch:22'],
   ['l38', 'Toolbox Terror', 'boss', 5, 'night', 10, 3, 'wood:3 icew:2 rock:2 gatehigh lasers:3 tnt plate hammers:2 wood:2 rock:1'],
-  ['l39', 'Sky Pirate', 'boss', 5, 'speed', 12, 3, 'zip:20 swing:7 climb:7 propgap:16 pool:14 zip:16 swing:7 propwall:6'],
-  ['l40', 'The Impossible Course', 'boss', 5, 'crazy', 12, 4, 'lasers:3 climb:8 fall:13 zip:20 charge hammers:3 steep:6 fix propgap:16 climb:6 lasers:2 fall:12 plate launch:20'],
+  ['l39', 'Sky Pirate', 'boss', 5, 'speed', 12, 3, 'zip:20 swing:7 climb:7 propgap:11 pool:14 zip:16 swing:7 propwall:6'],
+  ['l40', 'The Impossible Course', 'boss', 5, 'crazy', 12, 4, 'lasers:3 climb:8 fall:13 zip:20 charge hammers:3 steep:6 fix propgap:11 climb:6 lasers:2 fall:12 plate launch:20'],
 ];
 const LEVEL_BLURB = { 1: 'A gentle warm-up.', 2: 'Getting trickier.', 3: 'Plan before you build.', 4: 'For experienced engineers.', 5: 'Legendary. Few checkpoints. Good luck.' };
 
@@ -252,4 +263,4 @@ function mazes() {
 }
 
 /* Finish times of the course checker's test bot, used to set medal times */
-const REF_TIMES = {l01: 12.1,  l02: 12.4,  l03: 14.3,  l04: 10.1,  l05: 13.8,  l06: 13.8,  l07: 14.5,  l08: 15.1,  l09: 19.2,  l10: 19.8,  l11: 14.4,  l12: 14.6,  l13: 8.2,  l14: 26.1,  l15: 8.6,  l16: 51.6,  l17: 15,  l18: 17.6,  l19: 13,  l20: 15.1,  l21: 10.2,  l22: 15.3,  l23: 23,  l24: 21.1,  l25: 22,  l26: 8.1,  l27: 10.9,  l28: 13.3,  l29: 13.3,  l30: 10.6,  l31: 12.6,  l32: 14.2,  l33: 9.3,  l34: 11.3,  l35: 14.7,  l41: 27,  l42: 22.7,  l43: 12.9,  l44: 26.3,  l45: 20.2,  l46: 34.4,  l47: 38.1,  l48: 64.2,  l49: 19.4,  l50: 11.8,  l51: 21,  l52: 12.6,  l53: 22.1,  l54: 40.2,  l55: 23.9,  l56: 16.7,  l57: 18.8,  l58: 52.6,  l36: 47.5,  l37: 46.5,  l38: 49.2,  l39: 48.4,  l40: 84.2,  m1: 76,  m2: 30.2,  m3: 41,  m4: 151.9,  m5: 106.9};
+const REF_TIMES = {l01: 12.1,  l02: 12.4,  l03: 14.3,  l04: 10.1,  l05: 13.8,  l06: 13.8,  l07: 14.5,  l08: 15.1,  l09: 19.2,  l10: 19.8,  l11: 14.4,  l12: 14.6,  l13: 8.2,  l14: 26.1,  l15: 8.6,  l16: 51.6,  l17: 15,  l18: 17.6,  l19: 13,  l20: 15.1,  l21: 10.2,  l22: 15.3,  l23: 23,  l24: 21.1,  l25: 22,  l26: 8.1,  l27: 10.9,  l28: 13.3,  l29: 13.3,  l30: 13.3,  l31: 12.6,  l32: 14.2,  l33: 9.3,  l34: 11.3,  l35: 14.7,  l41: 27,  l42: 22.7,  l43: 12.9,  l44: 26.3,  l45: 20.2,  l46: 38.2,  l47: 38.1,  l48: 64.2,  l49: 19.4,  l50: 11.8,  l51: 21,  l52: 12.6,  l53: 22.1,  l54: 40.2,  l55: 23.9,  l56: 16.7,  l57: 18.8,  l58: 52.6,  l36: 47.5,  l37: 50.4,  l38: 49.2,  l39: 51.8,  l40: 89.4,  m1: 76,  m2: 30.2,  m3: 41,  m4: 151.9,  m5: 106.9,  l59: 16,  l60: 24,  l61: 20.5,  l62: 24.7,  l63: 22.9,  l64: 37.2,  l65: 44.8};
