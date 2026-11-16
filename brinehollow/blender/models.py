@@ -242,42 +242,77 @@ done('wickie', .68)
 # Ink (brows, lips, lines, scars) is painted over the head in the game; see FACES in game.src.html.
 from mathutils import Matrix
 HC = 2.25            # height of the centre of the head
+# The head is a hand-placed surface, not a deformed ball. Each row of HEAD_PROFILE is one height on the head:
+# (height above the head centre, how far the face comes forward on the centreline, half-width at the ears, depth behind).
+# Read down the second column for the side-view profile and down the third for the front-view outline.
+HEAD_PROFILE = (
+    (.186, .012, .012, .012), (.172, .066, .07, .075), (.14, .112, .106, .122), (.09, .134, .121, .145),   # crown, forehead
+    (.05, .149, .124, .15),                                                                                # brow
+    (.014, .136, .121, .148),                                                                              # eye line
+    (-.03, .14, .126, .136),                                                                               # cheekbone: the widest point
+    (-.07, .141, .117, .11), (-.1, .146, .112, .085),                                                      # nose base, mouth
+    (-.128, .137, .104, .068),                                                                             # jaw angle
+    (-.158, .138, .068, .048), (-.182, .1, .04, .03), (-.194, .03, .014, .012))                            # chin, under the chin
 def head(skin, fem=True, brow=1.0):
+    import numpy as np
     hx = skin.split('_')[1]
-    bpy.ops.mesh.primitive_uv_sphere_add(segments=56, ring_count=32, radius=1, location=(0, 0, 0))
-    o = bpy.context.object
-    for v in o.data.vertices:
-        x, y, z = v.co.x * .125, v.co.y * .15, v.co.z * .185
-        t = max(0., -z) / .185
-        x *= 1 - (.4 if fem else .28) * max(0., t - .25) ** 1.2 * 1.5                 # the jaw runs straight, then angles in to the chin
-        if y < 0:
-            f = -y / .15
-            g = lambda cx, cz, sx, sz: math.exp(-((abs(x) - cx) / sx) ** 2 - ((z - cz) / sz) ** 2)
-            y -= .017 * brow * f * math.exp(-((z - .056) / .014) ** 2) * (1 if abs(x) < .1 else .3)   # brow ridge
-            y += .03 * f * g(.065, .0085, .034, .024)                                 # eye sockets
-            y -= .02 * f * g(.088, -.036, .026, .02)                                  # cheekbones: a hard shelf
-            y += .016 * f * g(.07, -.095, .03, .03)                                   # the plane under them falls away
-            y -= .012 * f * math.exp(-(x / .034) ** 2 - ((z + .1) / .008) ** 2)        # upper lip
-            y -= .014 * f * math.exp(-(x / .03) ** 2 - ((z + .118) / .009) ** 2)       # lower lip
-            y -= .016 * f * math.exp(-(x / .05) ** 2 - ((z + .162) / .024) ** 2)      # chin
-        elif z < -.08:
-            k = 1 - .45 * min(1, (-z - .08) / .1); x *= k; y *= k                     # back of the skull into the neck
-        v.co = (x, y, z + HC)
+    K = np.array(HEAD_PROFILE)[::-1]
+    zs = np.linspace(-.194, .186, 96); sm = np.array([1, 2, 3, 2, 1]) / 9
+    F, S_, B = [np.convolve(np.pad(np.interp(zs, K[:, 0], K[:, c]), 2, mode='edge'), sm, mode='valid') for c in (1, 2, 3)]
+    if not fem: S_ = S_ * (1 + .13 * np.clip((-zs - .05) / .07, 0, 1))                # a heavier jaw
+    NT = 132; g = lambda a, b, sa, sb: math.exp(-(a / sa) ** 2 - (b / sb) ** 2)
+    verts, faces = [], []
+    for zi, z in enumerate(zs):
+        for i in range(NT):
+            ph = 2 * math.pi * i / NT; c, sn = math.cos(ph), math.sin(ph)
+            x = S_[zi] * math.copysign(abs(sn) ** .82, sn)                             # squared-off section: a flat front with cheek planes
+            y = -F[zi] * c ** .72 if c > 0 else B[zi] * (-c) ** .8
+            if c > 0:
+                f = c ** .5; ax = abs(x)
+                # nose: a straight narrow bridge to a small tip, cut back sharply underneath, with wings
+                t = (.036 - z) / .094
+                if 0 < t < 1.2:
+                    ridge = (.008 + .03 * t ** 1.3) if t <= 1 else .038 * max(0, 1 - (t - 1) / .16)
+                    y -= ridge * math.exp(-(x / (.0085 + .0075 * min(t, 1))) ** 2)
+                y -= .011 * g(ax - .019, z + .056, .008, .009)
+                y += .024 * f * g(ax - .062, z - .012, .03, .019)                      # eye sockets
+                y -= .013 * f * g(ax - .061, z - .012, .021, .0105)                    # the eyeball under closed lids
+                arc = .0265 - 2.6 * (ax - .061) ** 2                                   # upper lid: a crease that catches the shadow
+                if abs(ax - .061) < .03: y -= .0055 * f * math.exp(-((z - arc) / .0035) ** 2)
+                y -= .007 * brow * f * g(ax - .058, z - .047, .04, .009)               # brow ridge
+                y -= .009 * f * g(ax - .087, z + .028, .026, .017)                     # cheekbone shelf
+                y += .013 * f * g(ax - .068, z + .092, .028, .03)                      # the plane below it falls away to the jaw
+                y -= .009 * g(x, z + .095, .03, .0075)                                 # upper lip
+                y -= .011 * g(x, z + .114, .026, .009)                                 # lower lip
+                y += .006 * g(x, z + .1045, .036, .0045)                               # the line between them
+                y += .005 * g(x, z + .132, .03, .008)                                  # dip above the chin
+                y -= .006 * g(x, z + .158, .032, .014)                                 # chin
+            verts.append((x, y, z + HC))
+    for zi in range(len(zs) - 1):
+        for i in range(NT):
+            a = zi * NT + i; b = zi * NT + (i + 1) % NT; faces.append((a, b, b + NT, a + NT))
+    top, bot = len(verts), len(verts) + 1
+    verts += [(0, 0, HC + .188), (0, -.01, HC - .197)]
+    for i in range(NT):
+        faces.append(((len(zs) - 1) * NT + i, (len(zs) - 1) * NT + (i + 1) % NT, top)); faces.append(((i + 1) % NT, i, bot))
+    me = bpy.data.meshes.new('head'); me.from_pydata(verts, [], faces); me.update()
+    o = bpy.data.objects.new('head', me); bpy.context.collection.objects.link(o)
+    bpy.ops.object.select_all(action='DESELECT'); o.select_set(True); bpy.context.view_layer.objects.active = o
+    bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT'); bpy.ops.mesh.normals_make_consistent(inside=False); bpy.ops.object.mode_set(mode='OBJECT')
     fin('head_' + hx)
-    face_ = 'face_' + hx
-    limb((0, -.14, HC + .03), (0, -.163, HC - .038), .009, .015, tone(face_, .96), v=8)       # nose: bridge, tip, wings
-    sph(.017, (0, -.165, HC - .045), tone(face_, .96), scale=(1, 1, .85))
-    for s in (-1, 1): sph(.011, (s * .016, -.151, HC - .052), tone(face_, .93))
-    for s in (-1, 1):                                                                         # eyes: ball, iris, and lids that close over them
-        ex = s * .065
-        sph(.027, (ex, -.1, HC + .0085), 'face_f3ecdc')
-        sph(.0135, (ex - s * .002, -.1145, HC + .0065), 'face_4a3018')
-        sph(.006, (ex - s * .002, -.1235, HC + .0065), 'face_0c0808')
-        sph(.004, (ex - s * .008, -.1265, HC + .008), 'glow_ffffff')
-        sph(.029, (ex, -.1005, HC + .0285), face_)                                            # a clear upper lid
-        sph(.0285, (ex, -.1, HC - .0105), face_)
-        sph(.03, (s * .123, .012, HC - .005), 'skin_' + hx, scale=(.4, .8, 1.25))             # ear
+    for s in (-1, 1): sph(.03, (s * .122, .015, HC - .008), 'skin_' + hx, scale=(.4, .8, 1.25))   # ears
     limb((0, .012, 1.97), (0, .0, HC - .12), .062, .052, 'skin_' + hx)                        # neck
+
+def lock(start, length, r, amp=.02, ph=0.0, out=(0, 0), m='c_1c1820', n=7):
+    """A wavy lock of hair hanging from start."""
+    prev = None
+    for i in range(n + 1):
+        t = i / n; w = math.sin(t * 5.5 + ph) * amp * t
+        q = (start[0] + out[0] * t + w * (1 if start[0] >= 0 else -1), start[1] + out[1] * t + w * .6, start[2] - length * t)
+        rr = r * (1 - .6 * t ** 2)
+        sph(rr, q, m)
+        if prev: limb(prev[0], q, prev[1], rr, m, v=7)
+        prev = (q, rr)
 
 def hand(wrist, fwd, side, mat, curl=1.0, s=1.0):
     """An articulated hand: palm, four two-jointed fingers and a thumb. fwd points down the fingers; side points to the thumb."""
@@ -306,7 +341,7 @@ def sleeve(sh, el, wr, r, m, cuff='team2', cuff_at=.5):
     limb(q, q2, r * 1.08, r * 1.12, cuff)                                                                     # the rolled cuff
     return q2
 
-def split_skirt(r_bot, r_top, h, zc, m, folds=9, amp=.1, amp_top=0.0, gap=.3, v=44):
+def split_skirt(r_bot, r_top, h, zc, m, folds=9, amp=.1, amp_top=0.0, gap=.3, v=44, flare=.42):
     """A coat skirt open down the front (it parts wider toward the hem), with thickness so the lining shows."""
     import bmesh
     bpy.ops.mesh.primitive_cone_add(vertices=v, radius1=r_bot, radius2=r_top, depth=h, location=(0, 0, zc), end_fill_type='NOTHING')
@@ -315,6 +350,10 @@ def split_skirt(r_bot, r_top, h, zc, m, folds=9, amp=.1, amp_top=0.0, gap=.3, v=
     for vert in bm.verts:
         a = math.atan2(vert.co.y, vert.co.x); low = vert.co.z < 0
         k = 1 + (amp if low else amp_top) * math.sin(folds * a + 1.3); vert.co.x *= k; vert.co.y *= k
+        af = math.atan2(vert.co.x, -vert.co.y)                     # angle away from straight ahead
+        if low and abs(af) < 1.5:                                  # the front edges swing apart toward the hem
+            r_ = math.hypot(vert.co.x, vert.co.y); af += math.copysign(flare * (1 - abs(af) / 1.5), af)
+            vert.co.x, vert.co.y = r_ * math.sin(af), -r_ * math.cos(af)
     bm.to_mesh(o.data); bm.free()
     md = o.modifiers.new('thick', 'SOLIDIFY'); md.thickness = .016; md.offset = 0
     bpy.ops.object.modifier_apply(modifier='thick')
@@ -335,7 +374,8 @@ def adult(skin, sw=.25, hw=.19, fem=True, legs='c_33302e', coat_hem=.5, hem_r=.3
         sph(.11 * bulk, (kx, -.015, .74), legs)
     sph(1, (0, 0, 1.27), legs, scale=(hw + .07, .13 * bulk, .13))
     split_skirt(hem_r, .165 * bulk, 1.5 - coat_hem, (1.5 + coat_hem) / 2, 'team')              # coat skirt, open at the front over the trousers
-    split_skirt(hem_r + .014, hem_r - .02, .1, coat_hem + .05, 'team2', amp_top=.092)          # pale hem band
+    split_skirt(hem_r + .014, hem_r - .02, .1, coat_hem + .05, 'team2', amp_top=.092, flare=.42)   # pale hem band
+    P[-1].rotation_euler = (0, 0, 0)
     o = cyl(.16 * bulk, sw * .82, .36, (0, 0, 1.67), 'team', v=24); o.scale = (1, .7, 1)       # torso
     sph(1, (0, .005, 1.88), 'team', scale=(sw + .035, .128 * bulk, .12))
     if fem:
@@ -363,14 +403,16 @@ SK = 'skin_b9794f'
 sw = adult(SK, sw=.24, hw=.18, fem=True, legs='c_2e2a2c')
 head(SK, fem=True)
 HAIR = 'c_1c1820'
-sph(1, (0, .022, HC + .05), HAIR, scale=(.137, .162, .17))                                    # hair: cap, loose locks, a mass at the back
+sph(1, (0, .005, HC + .11), HAIR, scale=(.136, .16, .1))                                    # hair: cap, loose locks, a mass at the back
 sph(1, (0, .1, HC - .1), HAIR, scale=(.125, .09, .2))
 for s in (-1, 1):
     limb((s * .125, -.02, HC + .1), (s * .143, -.015, HC - .06), .026, .022, HAIR); limb((s * .143, -.015, HC - .06), (s * .125, .0, HC - .2), .022, .01, HAIR)
     tor(.022, .006, (s * .128, .0, HC - .06), BRASS, rot=(0, R(90), 0))                       # earrings
-for s, x, y in ((-1, .1, -.09), (1, .1, -.09), (-1, .135, -.045), (1, .135, -.045), (-1, .14, .03), (1, .14, .03)):      # loose waves framing the face
-    a = (s * x, y, HC + .1); b = (s * (x + .035), y + .01, HC - .05); c = (s * (x + .01), y + .03, HC - .19)
-    limb(a, b, .02, .017, HAIR, v=7); sph(.017, b, HAIR); limb(b, c, .017, .006, HAIR, v=7)
+for sd in (-1, 1):                                                              # loose waves framing the face and falling to the collar
+    lock((sd * .09, -.105, HC + .13), .2, .026, .02, 0.5, (sd * .05, .02))
+    lock((sd * .122, -.06, HC + .1), .3, .03, .022, 1.7, (sd * .03, .02))
+    lock((sd * .132, .0, HC + .08), .34, .032, .02, 3.0, (sd * .02, .02))
+    lock((sd * .11, .08, HC + .06), .36, .034, .02, 4.2, (sd * .01, .03))
 pts = ((0, .13, 2.14), (.0, .17, 2.02), (.01, .185, 1.9), (.015, .185, 1.78), (.02, .18, 1.66), (.02, .17, 1.55))   # the braid, down the back
 for i, q in enumerate(pts):
     sph(.05 - i * .004, q, HAIR)
@@ -380,9 +422,9 @@ for q in (pts[1], pts[4]):
 for i, (dx, dz, ry, ln) in enumerate(((-.16, -.08, 38, .36), (-.2, -.2, 62, .4), (-.1, -.26, 80, .3))):          # red ribbon streamers
     box((ln, .012, .05), (pts[2][0] + dx, .2 + i * .012, pts[2][2] + dz), 'c_a8281c', rot=(0, R(-ry), 0), r=.005)
 sph(.03, (pts[2][0] - .03, .2, pts[2][2]), 'c_a8281c')
-n0 = len(P); hat(.47, HC + .125)
+n0 = len(P); hat(.47, HC + .14)
 for o in P[n0:]:                                                              # brim raised at the front so the eyes show
-    d = o.location - Vector((0, 0, HC + .1)); a_ = R(-13)
+    d = o.location - Vector((0, 0, HC + .1)); a_ = R(-10)
     o.location = Vector((0, 0, HC + .1)) + Vector((d.x, d.y * math.cos(a_) - d.z * math.sin(a_), d.y * math.sin(a_) + d.z * math.cos(a_))); o.rotation_euler = (a_, 0, 0)
 for s in (-1, 1): limb((s * .2, .0, HC + .12), (s * .03, -.11, 1.93), .005, .005, 'c_3a3038', v=5)   # the hat cord
 tor(.215, .022, (0, 0, 1.74), LEATHER, rot=(R(90), R(42), 0), scale=(1, 1.25, 1))               # cross strap, satchel, spyglass tube on the back

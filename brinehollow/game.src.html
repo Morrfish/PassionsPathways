@@ -367,7 +367,8 @@ const WEAR = {
   skin:    {chip: 'inkBase',                                amt: '0.',  at: '.9',  grit: '.86', seam: '.22', hatch: '.72'},   // faces stay clean and readable
 };
 const METALS = new Set(['d9a520', '8c8f90', '33363f', '4a5568', 'b8862a', 'f0c040', 'aeb2ba', '6a6e78', '4a4e58', '55555e', '9a9ea6', '7a4a36', '2c2c34']);
-const LEATHERS = new Set(['5a4030', '7a5a40', '6b4a34', '2c2630', '4a3a30', '8a6a48', '3a3038', '4a3424']);
+const LEATHERS = new Set(['1c1820', '1c1c22', '2c2420', '3a2c24', '22201e',      // hair wears like leather: no pale patches
+  '5a4030', '7a5a40', '6b4a34', '2c2630', '4a3a30', '8a6a48', '3a3038', '4a3424']);
 function inkMat(c, kind) {
   const m = mat(c, {gradientMap: inkBands}), w = WEAR[kind];
   m.customProgramCacheKey = () => 'ink-' + kind;
@@ -400,7 +401,7 @@ hullMat.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#in
 const WHITE = '#efe9df', DARK = '#2a201c', BLACK = '#17120f';
 const FACES = {
   breakwater: {k: 1.06, eyes: 'narrow', brow: 1.1, browCol: WHITE, browW: 11, old: 1, mouth: 'none'},
-  mainsail:   {k: 1.05, sculpt: 1, eyes: 'open', brow: 1, browW: 10, browCol: BLACK, scar: 1, freckles: 1, mouth: 'none'},
+  mainsail:   {k: 1.05, sculpt: 1, eyes: 'narrow', iris: '#5a3c1c', brow: 1, browW: 10, browCol: BLACK, scar: 1, freckles: 1, mouth: 'none'},
   drift:      {k: .95, eyes: 'open', brow: 1, scar: 1, freckles: 1, mouth: 'frown'},
   rivet:      {k: 1.02, eyes: 'narrow', brow: 1, browW: 10, scar: 1, mouth: 'none'},
   bell:       {k: .88, eyes: 'wide', brow: -.3, lashes: 1, freckles: 1, blush: 1, mouth: 'smile', iris: '#4f6a34'},
@@ -430,7 +431,7 @@ function faceTex(f) {
       const ex = 128 + s * 46;
       g.fillStyle = 'rgba(70,35,25,.3)'; g.beginPath(); g.ellipse(ex, ey - 5, 31, 16, 0, 0, 7); g.fill();          // the socket sits in shadow under the brow
       if (f.eyes === 'happy') line(5.5, () => g.arc(ex, ey + 8, 17, Math.PI * 1.15, Math.PI * 1.85));
-      else if (!f.sculpt) {
+      else {
         g.beginPath(); g.moveTo(ex - 27, ey + 1); g.quadraticCurveTo(ex, ey - h * 1.7, ex + 27, ey); g.quadraticCurveTo(ex, ey + h * 1.1, ex - 27, ey + 1); g.closePath();
         g.fillStyle = '#f3ecdc'; g.fill(); g.save(); g.clip();
         g.fillStyle = f.iris || '#3a2416'; g.beginPath(); g.arc(ex - s * 2, ey - 1, 11, 0, 7); g.fill();
@@ -439,10 +440,10 @@ function faceTex(f) {
         line(7, () => { g.moveTo(ex - 29, ey + 3); g.quadraticCurveTo(ex, ey - h * 1.7 - 1, ex + 29, ey); });           // heavy upper lid
         line(2.4, () => { g.moveTo(ex - 20, ey + h * .7); g.quadraticCurveTo(ex, ey + h * 1.15, ex + 21, ey + h * .5); });
         if (f.lashes) line(3.2, () => { g.moveTo(ex + s * 28, ey); g.lineTo(ex + s * 37, ey - 8); });
-        if (t > .6 || f.old) line(1.8, () => g.arc(ex, ey + 4, 19, Math.PI * .2, Math.PI * .8));                        // bags under hard eyes
+        if ((t > .6 && !f.sculpt) || f.old) line(1.8, () => g.arc(ex, ey + 4, 19, Math.PI * .2, Math.PI * .8));                        // bags under hard eyes
       }
       if (f.old) for (let i = 0; i < 3; i++) line(1.8, () => { g.moveTo(ex + s * 25, ey + i * 4 - 2); g.lineTo(ex + s * 35, ey + i * 7 - 6); });
-      const by = ey - 19 - h * .8 - (f.sculpt ? 16 : 0), w = f.browW || 7, ix = ex - s * 29, ox = ex + s * 33, iy = by + t * 9, oy = by - t * 5 + 3;   // brow: a tapered slab
+      const by = ey - 19 - h * .8, w = f.browW || 7, ix = ex - s * 29, ox = ex + s * 33, iy = by + t * 9, oy = by - t * 5 + 3;   // brow: a tapered slab
       g.beginPath(); g.moveTo(ix, iy - w / 2); g.quadraticCurveTo(ex, Math.min(iy, oy) - w * .9, ox, oy); g.quadraticCurveTo(ex, Math.min(iy, oy) + w * .5, ix, iy + w / 2); g.closePath();
       g.fillStyle = browCol; g.fill(); g.lineWidth = 2; g.strokeStyle = BLACK; g.stroke();
       if (!f.sculpt) line(2.6, () => { g.moveTo(128 + s * 9, ey - 4); g.quadraticCurveTo(128 + s * 8, 150, 128 + s * 18, 166); });     // nose: bridge and wing
@@ -451,18 +452,16 @@ function faceTex(f) {
       for (let i = 0; i < 3; i++) line(2, () => { g.moveTo(128 + s * (64 + i * 5), 148 + i * 7); g.lineTo(128 + s * (52 + i * 5), 163 + i * 7); });   // cheekbone hatching
     }
     if (t > .6 && !f.sculpt) for (const s of [-1, 1]) line(2.4, () => { g.moveTo(128 + s * 5, ey - 30); g.lineTo(128 + s * 7, ey - 16); });   // frown lines
-    g.fillStyle = 'rgba(60,30,20,.38)'; g.beginPath(); g.ellipse(128, 179, 17, 5, 0, 0, 7); g.fill();
+    if (!f.sculpt) { g.fillStyle = 'rgba(60,30,20,.38)'; g.beginPath(); g.ellipse(128, 179, 17, 5, 0, 0, 7); g.fill(); }
     const my = 205;
     if (f.sculpt) for (const s of [-1, 1]) {                  // hard shadow planes under the cheekbone and along the jaw
       g.fillStyle = 'rgba(95,42,22,.42)'; g.beginPath(); g.moveTo(128 + s * 78, 150); g.lineTo(128 + s * 44, 176); g.lineTo(128 + s * 52, 214); g.lineTo(128 + s * 84, 190); g.closePath(); g.fill();
-      g.fillStyle = 'rgba(95,42,22,.3)'; g.beginPath(); g.moveTo(128 + s * 10, ey - 8); g.lineTo(128 + s * 22, ey - 12); g.lineTo(128 + s * 20, 160); g.lineTo(128 + s * 9, 150); g.closePath(); g.fill();
-      line(3, () => { g.moveTo(128 + s * 18, ey + 12); g.lineTo(128 + s * 44, ey + 17); });           // the lower lid's shadow
     }
     if (f.sculpt) {                                           // lips, painted over the sculpted mouth
       g.fillStyle = 'rgba(128,52,46,.9)'; g.beginPath(); g.moveTo(100, my - 3); g.quadraticCurveTo(116, my - 15, 128, my - 9); g.quadraticCurveTo(140, my - 15, 156, my - 3);
       g.quadraticCurveTo(128, my + 22, 100, my - 3); g.fill();
       line(3.5, () => { g.moveTo(98, my - 2); g.quadraticCurveTo(128, my - 5, 158, my - 2); });
-      line(2, () => { g.moveTo(112, my + 14); g.quadraticCurveTo(128, my + 18, 144, my + 14); });
+
     }
     if (f.mouth === 'flat') line(4, () => { g.moveTo(103, my); g.quadraticCurveTo(128, my + 2, 153, my); });
     if (f.mouth === 'frown') line(4.5, () => { g.moveTo(101, my + 6); g.quadraticCurveTo(128, my - 6, 155, my + 6); });
