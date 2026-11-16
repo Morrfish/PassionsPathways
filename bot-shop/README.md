@@ -10,7 +10,7 @@ Open `index.html` — no install, no accounts, works offline. Progress saves in 
 - **Turn around:** Tab flips the bot so its tools point the other way.
 - **Damage:** bots have health. Long falls and hard crashes break them.
 - **Paint shop:** colours, patterns, eyes, hats, words on a flag, and a picture (sticker, photo, or draw your own).
-- **Levels:** 82 built in — speed, strength, crazy, puzzle, contraption, mazes, and five legendary ones.
+- **Levels:** 94 built in — speed, strength, crazy, puzzle, contraption, water, portal, mazes, and five legendary ones.
 - **Contraptions:** Rube Goldberg pieces. An alarm clock spooks a frog, rabbit, chicken, tortoise or a hamster in a wheel; add dominoes, a bowling ball, a trapdoor, a kicker boot, an anvil and floor buttons, and the chain reaction opens the gate the bot cannot reach.
 - **Coins and the Store:** beating a level pays coins, and finishing a whole section pays a bonus. Coins unlock course-builder pieces, paint options and collectible special bots (Rare, Ultra Rare, Ultimate). Parts needed to beat levels are never locked.
 - **Special bots (28):** 10 Rare, 10 Ultra Rare and 8 Ultimate. Each has free parts built in (for example the Shark Bot floats and has a snorkel). These perks only switch on in the sandbox, meaning courses players build or load. On the built-in levels a special bot is looks only, so nobody can buy a win.

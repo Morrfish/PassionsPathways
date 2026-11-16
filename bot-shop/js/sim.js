@@ -449,7 +449,7 @@ function stepGame(G, inp) {
   if ((mud || sand) && sp > 0.02) { const F = (mud * 90 / s.r + sand * 1.7 * s.mass) * s.soft * clamp(sp / 0.5, 0, 1); ch.applyForceToCenter(V(-F * v.x / sp, -F * v.y / sp), true); if (Math.random() < 0.3 && sp > 1) puff(G, bot.wheels[0].getPosition(), '#3d2b1c', 1); }
   // gadgets
   bot.jumpCd -= DT; bot.rightCd -= DT; bot.springCd -= DT;
-  if (alive && inp.boost && s.has.rocket && bot.fuel > 0 && !bot.propOn) {
+  if (alive && inp.boost && s.has.rocket && bot.fuel > 0 && (!bot.propOn || G.sandbox)) {
     bot.fuel -= DT; const push = Math.min(1700, s.mass * 13) * clamp((26 - sp) / 6, 0, 1);   // light bots get a lighter shove, and it fades out at high speed
     ch.applyForceToCenter(V(fwd.x * push * G.face, fwd.y * push * G.face), true);
     const back = ch.getWorldPoint(V((-s.ch.len / 2 - 0.3) * G.face, 0.05)); G.parts.push({ x: back.x, y: back.y, vx: v.x - fwd.x * 6 + (Math.random() - .5) * 2, vy: v.y - fwd.y * 6 + (Math.random() - .5) * 2, life: 0.35, max: 0.35, c: Math.random() < 0.5 ? '#ffb020' : '#ff5a20', r: 0.22 });
