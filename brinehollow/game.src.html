@@ -410,15 +410,16 @@ const FACES = {
   brine:      {k: .93, sculpt: 1, lips: 1, eyes: 'open', brow: -.2, lashes: 0, freckles: 0, mouth: 'none', browCol: '#3a2a22', plane: .12, iris: '#3a4a5a', tilt: -5, eyeW: 1, gap: 47, browW: 6.5, arch: 5, lidW: 6, lipCol: 'rgba(150,84,72,.9)'},
   glimmer:    {k: 1.03, sculpt: 1, eyes: 'narrow', brow: 1, browW: 9, mouth: 'frown', browCol: BLACK, plane: .4},
   wickie:     {k: .66, sculpt: 1, beard: 1, eyes: 'happy', brow: -.4, browCol: WHITE, browW: 11, old: 1, blush: 1, mouth: 'none', plane: 0},
-  netter:     {k: .98, eyes: 'open', brow: .9, lashes: 1, scar: 1, mouth: 'frown'},
-  cinder:     {k: 1.04, eyes: 'narrow', brow: 1.2, browCol: BLACK, browW: 12, scar: 1, mouth: 'none'},
-  gaff:       {k: 1.1, eyes: 'narrow', brow: 1, scar: 1, mouth: 'frown'},
-  knuckle:    {k: 1.04, eyes: 'narrow', brow: 1.2, browW: 11, stubble: 1, mouth: 'frown'},
-  soot:       {k: .92, eyes: 'open', brow: 1, mouth: 'none'},
-  ember:      {k: 1.0, eyes: 'open', brow: .1, lashes: 1, scar: 1, freckles: 1, mouth: 'smile'},
-  tiller:     {k: 1.0, eyes: 'open', brow: .1, lashes: 1, freckles: 1, mouth: 'smile'},
-  copper:     {k: 1.02, eyes: 'open', brow: .5, browW: 9, mouth: 'none'},
-  undertow:   {k: 1.02, eyes: 'narrow', brow: .9, scar: 1, freckles: 1, mouth: 'smirk'},
+  netter:     {k: .95, eyes: 'open', brow: .9, lashes: 1, scar: 1, mouth: 'frown', sculpt: 1, lips: 1, plane: .3, tilt: 4, browW: 6, gap: 44, lipCol: 'rgba(120,50,44,.9)'},
+  cinder:     {k: 1.0, eyes: 'narrow', brow: 1.2, browCol: BLACK, browW: 12, scar: 1, mouth: 'none', sculpt: 1, plane: .3},
+  gaff:       {k: 1.1, eyes: 'narrow', brow: 1, scar: 1, mouth: 'frown', sculpt: 1, plane: .45, eyeW: .9, browL: .9, gap: 43},
+  knuckle:    {k: 1.0, eyes: 'narrow', brow: 1.2, browW: 13, stubble: 1, mouth: 'frown', sculpt: 1, plane: .2, tilt: -2},
+  soot:       {k: .88, eyes: 'wide', brow: 1, mouth: 'none', sculpt: 1, plane: .2, tilt: 5, lashes: 1},
+  ember:      {k: .97, eyes: 'open', brow: .1, lashes: 1, scar: 1, freckles: 1, mouth: 'smile', sculpt: 1, lips: 1, plane: .25, arch: 6, browW: 6, eyeW: 1.05, lipCol: 'rgba(170,70,60,.9)'},
+  tiller:     {k: .97, eyes: 'open', brow: .1, lashes: 1, freckles: 1, mouth: 'none', sculpt: 1, lips: 1, plane: .2, tilt: -3, browW: 9, gap: 47},
+  copper:     {k: 1.0, eyes: 'open', brow: .5, browW: 9, mouth: 'none', sculpt: 1, plane: .3, arch: 4},
+  barnacle:   {k: .8, sculpt: 1, eyes: 'narrow', brow: .8, browCol: WHITE, browW: 10, old: 1, mouth: 'none', plane: .2},
+  undertow:   {k: 1.0, eyes: 'narrow', brow: .9, scar: 1, freckles: 1, mouth: 'none', sculpt: 1, lips: 1, plane: .42, tilt: 6, browW: 8, lidW: 8, lipCol: 'rgba(100,40,44,.9)'},
 };
 const facePatch = new THREE.SphereGeometry(1, 20, 14, Math.PI / 2 - .85, 1.7, .75, 1.64);
 function faceTex(f) {
@@ -510,7 +511,7 @@ function model(name, ov) {
   const o = MODELS[name].clone(true);
   const parts = [];
   o.traverse(m => { if (m.isMesh) { parts.push(m); const n = m.material.name; m.material = namedMat(n, ov); m.castShadow = m.material.type !== 'MeshBasicMaterial'; m.receiveShadow = !/^(skin|face|head)_/.test(n); m.userData.noHull = n.startsWith('face_'); m.userData.mn = n; } });   // faces are never lost in hat shadow
-  if (!NO_HULL.test(name)) for (const m of parts) if (m.material.type !== 'MeshBasicMaterial' && !m.userData.noHull) m.add(new THREE.Mesh(m.geometry, m.userData.mn.startsWith('head_') || /^c_(1c1820|e8e4da|3a2c24|7a3a22|3a2a1e)$/.test(m.userData.mn) ? headHull : FACES[name] && FACES[name].sculpt ? thinHull : hullMat));
+  if (!NO_HULL.test(name)) for (const m of parts) if (m.material.type !== 'MeshBasicMaterial' && !m.userData.noHull) m.add(new THREE.Mesh(m.geometry, m.userData.mn.startsWith('head_') || /^c_(1c1820|e8e4da|3a2c24|7a3a22|3a2a1e|22201e)$/.test(m.userData.mn) ? headHull : FACES[name] && FACES[name].sculpt ? thinHull : hullMat));
   if (FACES[name]) addFace(o, name);
   scene.add(o); return o;
 }

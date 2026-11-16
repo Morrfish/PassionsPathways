@@ -609,118 +609,142 @@ cyl(.014, .014, 1.2, (grip[0], grip[1] - .1, 1.75), DARKWOOD); sph(.05, (grip[0]
 done('wickie', .66)
 
 # ---------------- RUST ----------------
-# Netter: lean, twin ribboned braids, baggy trousers, a net bundle with floats slung at the hip
-sx = person(w=.9, hem=.54, waist=.34, chest=.4, coat=.5, legs='c_4a3a34', legw=.36, aw=.18, long_hair=True, skin='skin_e6b48c')
-face(1.72, -.28, .09); hat(.62, 1.86); strap(.36)
+RL, BLK = 'c_4a3a34', 'c_1c1820'
+# Netter: lean, twin ribboned braids, a net bundle with floats slung at the hip
+SK = 'skin_c69068'
+sw = adult(SK, sw=.225, hw=.175, fem=True, coat_hem=.85, hem_r=.3, legs=RL)
+head(SK, fem=True, wide=.97, chin=1.06, nose=.95, cheek=1.3); hair_cap(BLK); locks(BLK, False); tilted_hat(.48)
 for s in (-1, 1):
-    for i in range(5): sph(.09, (s * (.2 + i * .07), .2 + i * .03, 1.58 - i * .15), INK)
-    box((.22, .05, .08), (s * .58, .34, .84), 'team2', rot=(0, s * R(30), 0))
-sph(.4, (-sx - .1, .2, .62), 'c_4f7a70', scale=(1, 1.1, .8))
-for rot in ((0, 0, 0), (R(90), 0, 0), (0, R(90), 0), (R(90), 0, R(45))): tor(.41, .04, (-sx - .1, .2, .62), ROPE, rot=rot, scale=(1, 1.1, .8) if rot == (0, 0, 0) else (1, 1, 1))
-for a in (0, 1.6, 3.2): sph(.08, (-sx - .1 + math.cos(a) * .4, .2 + math.sin(a) * .4, .32), 'c_e8703f')
-done('netter', .98)
+    for i in range(8): sph(.042 - i * .002, (s * (.13 + i * .014), .05 - i * .012, HC - .08 - i * .075), BLK)
+    tor(.034, .01, (s * .235, -.04, HC - .62), BRASS); box((.16, .012, .045), (s * .3, -.04, HC - .68), 'team2', rot=(0, s * R(50), 0), r=.005)
+cross_strap(sw)
+sph(.17, (-sw - .1, .08, 1.22), 'c_4f7a70', scale=(1, 1.1, .85))
+for rot in ((0, 0, 0), (R(90), 0, 0), (0, R(90), 0)): tor(.172, .016, (-sw - .1, .08, 1.22), ROPE, rot=rot)
+for a in (0, 1.6, 3.2, 4.6): sph(.04, (-sw - .1 + math.cos(a) * .17, .08 + math.sin(a) * .17, 1.1), 'c_e8703f')
+arms(sw, SK)
+done('netter', .95)
 
 # Cinder: the widest Rust — no straw hat: leather cap and goggles, black beard, cowl, forge apron, huge gloves, shovel on the back
-sx = person(w=1.36, hem=.6, waist=.48, chest=.54, coat=.5, legs='c_4a3a34', legw=.32, aw=.3, cuff=False, glove='c_5a4030', hair=None)
-face(1.72, -.28, .1, 'c_22201e', 'stern', 1.2); beard('c_22201e', .34, .3, .2)
-sph(.275, (0, .02, 1.79), 'c_4a3a30', scale=(1, 1, .75)); goggles(-.24, 1.9)
-cyl(.52, .34, .26, (0, 0, 1.56), 'team2'); cyl(.34, .5, .1, (0, 0, 1.44), 'team2')
-box((.7, .06, .86), (0, -.66, .98), 'c_3a3a42'); box((.5, .06, .3), (0, -.7, 1.4), 'c_3a3a42')
-for s in (-1, 1): box((.36, .38, .32), (s * (sx + .06) - (0 if s < 0 else .02), -.02 if s < 0 else -.72, .92 if s < 0 else 1.33), 'c_5a4030')
-cyl(.05, .05, 1.5, (.15, .72, 1.4), WOOD, rot=(0, R(-24), 0)); box((.4, .06, .5), (.56, .72, .6), 'c_55555e', rot=(0, R(-24), 0)); box((.26, .07, .08), (-.16, .72, 2.1), WOOD, rot=(0, R(-24), 0))
-done('cinder', 1.04)
+SK = 'skin_b07a56'
+sw = adult(SK, sw=.35, hw=.24, fem=False, coat_hem=.85, hem_r=.46, bulk=1.45, legs=RL)
+head(SK, fem=False, brow=1.6, wide=1.1, jaw=1.15, nose=1.3)
+sph(1, (0, .012, HC + .1), 'c_4a3a30', scale=(.14, .165, .115)); tor(.135, .014, (0, .0, HC + .09), 'c_2c2630', rot=(R(-8), 0, 0))
+for s in (-1, 1): cyl(.045, .045, .04, (s * .058, -.135, HC + .135), BRASS, rot=(R(70), 0, 0)); cyl(.032, .032, .045, (s * .058, -.14, HC + .135), 'c_22262b', rot=(R(70), 0, 0))
+beard2('c_22201e', .2, .135, mo=.8)
+tor(.2, .07, (0, .02, 2.0), 'team2', scale=(1.25, 1, 1))
+apron('c_3a3a42', 1.45)
+cyl(.024, .024, 1.05, (.06, .25, 1.86), WOOD, rot=(0, R(-24), 0)); box((.2, .03, .26), (.31, .25, 1.3), 'c_55555e', rot=(0, R(-24), 0), r=.01); box((.12, .03, .035), (-.16, .25, 2.35), WOOD, rot=(0, R(-24), 0), r=.01)
+arms(sw, SK, glove='c_5a4030', r=.082)
+done('cinder', 1.0)
 
 # Gaff: tall, straight and plain — long coat, big square cuffs, upturned collar, a gaff hook standing high over the shoulder
-sx = person(w=.88, hem=.6, waist=.32, chest=.4, coat=.22, aw=.18, collar=.28, folds=9)
-for s in (-1, 1): box((.34, .36, .24), (s * (sx + .07) - (0 if s < 0 else .11), -.02 if s < 0 else -.62, .98 if s < 0 else 1.33), 'team2')
-face(1.72, -.28, .09); hat(.5, 1.86); strap(.36, -1)
-cyl(.045, .045, 2.3, (.2, .46, 1.5), DARKWOOD, rot=(0, R(-10), 0))
-tor(.2, .05, (-.2, .46, 2.66), STEEL, rot=(R(90), 0, 0)); cyl(.06, 0, .22, (-.4, .46, 2.52), STEEL, rot=(R(180), 0, 0), v=4)
-for z in (.9, 1.1): tor(.06, .03, (.31 - z * .17, .46, z), ROPE)
-pouch(-.3, -.38, .95)
+SK = 'skin_c08860'
+sw = adult(SK, sw=.26, hw=.18, fem=False, coat_hem=.42, hem_r=.36, bulk=1.05, legs=RL)
+head(SK, fem=False, brow=1.3, wide=.95, chin=1.16, nose=1.2, cheek=1.6); hair_cap(BLK, False); locks(BLK, False); tilted_hat(.4)
+cyl(.1, .16, .2, (0, .04, 2.06), 'team2', rot=(R(-16), 0, 0))
+cyl(.02, .02, 1.75, (.1, .22, 1.95), DARKWOOD, rot=(0, R(-10), 0)); tor(.09, .022, (-.14, .22, 2.8), STEEL, rot=(R(90), 0, 0)); cyl(.03, 0, .1, (-.23, .22, 2.74), STEEL, rot=(R(180), 0, 0), v=4)
+cross_strap(sw); satchel(-.24, -.1, 1.36)
+wr, grip = arms(sw, SK)
+box((.17, .17, .13), (wr[0], wr[1], wr[2] + .13), 'team2', r=.02); box((.17, .15, .17), (grip[0], grip[1] + .13, grip[2]), 'team2', r=.02)
 done('gaff', 1.1)
 
-# Knuckle: armoured bruiser — iron hat, riveted pauldrons, knee plates, gauntlets, rope and hook over the shoulder
-sx = person(w=1.3, hem=.56, waist=.48, chest=.54, coat=.56, legs='c_4a3a34', legw=.32, aw=.3, cuff=False, glove='c_55555e', skin='skin_dba582')
-face(1.72, -.28, .1, style='stern', nose=1.15)
-cyl(.52, .05, .26, (0, 0, 1.98), IRONHAT, v=10); cyl(.52, .5, .05, (0, 0, 1.85), 'c_4a4e58', v=10); sph(.05, (0, 0, 2.12), BRASS)
-cyl(.34, .3, .14, (0, 0, 1.56), 'team2')
+# Knuckle: armoured bruiser — iron hat, riveted pauldrons, knee plates, gauntlets, rope over the shoulder
+SK = 'skin_c4906a'
+sw = adult(SK, sw=.34, hw=.23, fem=False, coat_hem=.9, hem_r=.44, bulk=1.4, legs=RL)
+head(SK, fem=False, brow=1.6, wide=1.1, jaw=1.18, nose=1.25, cheek=.8); hair_cap(BLK, False)
+cyl(.4, .04, .2, (0, 0, HC + .25), IRONHAT, v=18); cyl(.4, .39, .03, (0, 0, HC + .15), 'c_4a4e58', v=18); sph(.03, (0, 0, HC + .36), BRASS)
 for s in (-1, 1):
-    sph(.36, (s * (sx + .02), 0, 1.58), IRONHAT, scale=(1.1, 1.15, .7)); box((.5, .56, .1), (s * (sx + .04), 0, 1.42), 'c_4a4e58')
-    for y in (-.22, .22): sph(.05, (s * (sx + .2), y, 1.5), BRASS)
-    sph(.2, (s * .26, -.2, .5), IRONHAT, scale=(1, .6, 1.1))
-tor(.6, .1, (0, 0, 1.36), ROPE, rot=(R(90), R(-42), 0), scale=(1, 1.15, 1))
-tor(.2, .06, (-.5, .5, .9), STEEL, rot=(R(90), 0, 0))
-pouch(.5, -.56, .95, 1.2); pouch(-.5, -.56, .95, 1.2)
-done('knuckle', 1.04)
+    sph(.17, (s * (sw + .04), 0, 1.98), IRONHAT, scale=(1.1, 1.15, .7)); tor(.17, .02, (s * (sw + .04), 0, 1.92), 'c_4a4e58', scale=(1.1, 1.15, 1))
+    for y in (-.1, .1): sph(.022, (s * (sw + .14), y, 1.97), BRASS)
+    sph(.11, (s * .27, -.1, .74), IRONHAT, scale=(1, .5, 1.15))
+tor(sw * .92, .04, (0, 0, 1.74), ROPE, rot=(R(90), R(-42), 0), scale=(1, 1.25, 1))
+satchel(.3, -.2, 1.36, 1.2); satchel(-.3, -.2, 1.36, 1.2)
+arms(sw, SK, glove='c_55555e', r=.08)
+done('knuckle', 1.0)
 
 # Soot: small and ragged — face mask, torn scarf tails streaming, shin wraps, brass canisters on the belt
-sx = person(w=.88, hem=.5, waist=.36, chest=.4, coat=.66, legs='c_4a3a34', legw=.34, aw=.18, cuff=False, glove='c_3a3038', wraps=True)
-face(1.75, -.28, .09)
-sph(.268, (0, -.045, 1.63), 'c_2a2a30', scale=(1, 1, .5)); hat(.6, 1.86)
-cyl(.32, .27, .18, (0, 0, 1.56), 'team2')
-for i in range(4): box((.5 + (i % 2) * .16, .05, .12), (.38 + i * .04, .28 + i * .05, 1.58 - i * .15), 'team2', rot=(0, R(20 - i * 16), R(30 + i * 8)))
-for x in (-.34, -.14, .14, .34): cyl(.07, .07, .2, (x, -.42, .9), BRASS, v=8); cyl(.04, .04, .06, (x, -.42, 1.02), 'c_b8862a', v=8)
-for s in (-1, 1): sph(.11, (s * .46, .1, .88), 'c_3a3038')
-done('soot', .92)
+SK = 'skin_c99870'
+sw = adult(SK, sw=.215, hw=.17, fem=True, coat_hem=.95, hem_r=.28, legs=RL)
+for s in (-1, 1):
+    for z in (.5, .56, .62): tor(.088, .022, (s * .24, 0, z), CREAM)
+head(SK, fem=True, wide=.95, chin=.95, cheek=1.2); hair_cap(BLK); fringe(BLK); locks(BLK, False); tilted_hat(.46)
+sph(1, (0, -.005, HC - .105), 'c_2a2a30', scale=(.12, .16, .095))
+tor(.11, .05, (0, .01, 2.01), 'team2', rot=(R(-10), 0, 0))
+for i in range(4): box((.3 + (i % 2) * .1, .014, .06), (.2 + i * .03, .14 + i * .02, 1.97 - i * .08), 'team2', rot=(0, R(22 - i * 15), R(32 + i * 6)), r=.006)
+for x in (-.12, -.04, .04, .12): cyl(.028, .028, .09, (x, -.145, 1.42), BRASS); sph(.02, (x, -.145, 1.48), 'c_b8862a')
+arms(sw, SK, glove='c_3a3038')
+done('soot', .88)
 
 # Ember: Rust's Lantern-Bearer — a wide cape with the crew mark on the back, braid, the lantern carried low
-sx = person(w=.95, hem=.5, waist=.36, chest=.42, coat=.5, legs='c_4a3a34', legw=.34, aw=.19, gun=False, long_hair=True)
-face(1.72, -.28, .09); hat(.64, 1.86); braid(0, 5, 'team2')
-skirt(.86, .34, 1.05, 1.08, 'team', folds=8, amp=.08, y=.04); skirt(.875, .82, .09, .6, 'team2', folds=8, amp=.08, amp_top=.07, y=.04)
-cyl(.36, .3, .16, (0, 0, 1.6), 'team2'); sph(.06, (.12, -.33, 1.56), BRASS)
-tor(.2, .045, (0, .76, 1.05), CREAM, rot=(R(78), 0, 0)); box((.05, .04, .3), (0, .78, 1.05), CREAM); box((.26, .04, .05), (0, .79, .98), CREAM)
-lantern(-.8, -.3, .3, 1.0); sph(.11, (-.8, -.3, 1.14), SKIN)
-done('ember', 1.0)
+SK = 'skin_b98558'
+sw = adult(SK, sw=.235, hw=.18, fem=True, coat_hem=.8, hem_r=.3, legs=RL)
+head(SK, fem=True, jaw=.95, nose=.9); hair_cap('c_3a2a1e'); locks('c_3a2a1e'); back_braid('c_3a2a1e', ribbon='team2'); tilted_hat(.5)
+split_skirt(.52, .2, .95, 1.5, 'team', folds=8, amp=.08, gap=2.5, flare=0)            # the cape hangs from the shoulders, open at the front
+split_skirt(.535, .5, .1, 1.075, 'team2', folds=8, amp=.08, amp_top=.074, gap=2.5, flare=0)
+tor(.19, .04, (0, .03, 1.97), 'team2', scale=(1.2, 1, 1)); sph(.025, (.08, -.14, 1.96), BRASS)
+tor(.1, .02, (0, .43, 1.42), CREAM, rot=(R(72), 0, 0)); box((.02, .02, .16), (0, .435, 1.42), CREAM, rot=(R(-18), 0, 0), r=.006)
+wr, grip = arms(sw, SK, gun=False, pose='hold')
+lantern(wr[0], wr[1] - .05, wr[2] - .4, .34)
+done('ember', .97)
 
 # Tiller: bare forearms with wraps, and a tiller oar planted beside her that tops the hat
-sx = person(w=.98, hem=.54, waist=.38, chest=.44, coat=.5, legs='c_4a3a34', legw=.34, aw=.2, cuff=False, bare=True, long_hair=True, skin='skin_e0aa80')
-face(1.72, -.28, .09); hat(.62, 1.86); braid(0, 5); strap(.4); strap(.4, -1)
-box((.24, .26, .2), (-sx - .07, -.02, 1.02), CREAM); box((.24, .2, .24), (sx - .03, -.56, 1.33), CREAM)
-RIG['lift'] = 0.0      # the oar stands on the ground
-cyl(.06, .06, 1.9, (-sx - .28, -.2, 1.75), WOOD); box((.36, .08, .95), (-sx - .28, -.2, .48), 'c_8a6a48'); box((.22, .1, .1), (-sx - .28, -.2, 2.72), WOOD)
-RIG['lift'] = LIFT
-pouch(.36, -.44, .95); pouch(-.3, -.44, .95)
-done('tiller', 1.0)
+SK = 'skin_c08860'
+sw = adult(SK, sw=.24, hw=.18, fem=True, coat_hem=.85, hem_r=.31, legs=RL)
+head(SK, fem=True, wide=1.04, jaw=1.08, nose=1.05, cheek=.8); hair_cap(BLK); locks(BLK, False); back_braid(BLK, n=5); tilted_hat(.48)
+cross_strap(sw); tor(sw * .9, .022, (0, 0, 1.74), LEATHER, rot=(R(90), R(-42), 0), scale=(1, 1.25, 1))
+satchel(.2, -.1, 1.36)
+wr, grip = arms(sw, SK, glove=None, bare=True, pose='hold')
+for q in (wr, grip):
+    for i in range(3): tor(.047, .014, (q[0], q[1] + (i * .03 if q is grip else 0), q[2] + (0 if q is grip else .05 + i * .03)), CREAM, rot=(R(90) if q is grip else 0, 0, 0))
+ox, oy = wr[0] - .005, wr[1] - .075
+cyl(.024, .024, 2.5, (ox, oy, 1.4), WOOD); box((.17, .03, .5), (ox, oy, .3), 'c_8a6a48', r=.012); box((.12, .04, .05), (ox, oy, 2.66), WOOD, r=.012)
+done('tiller', .97)
 
 # Barnacle: short, round diver — brass helmet with a grille, white beard out of the collar, tank frame with rope on top, glass floats
-sx = person(w=1.22, hem=.56, waist=.46, chest=.52, coat=.56, legs='c_4a3a34', legw=.32, aw=.27, cuff=True, glove='c_5a4030', hair=None)
-sph(.4, (0, -.02, 1.8), BRASS, scale=(1, 1, .95)); cyl(.44, .44, .1, (0, 0, 1.52), 'c_b8862a', v=10)
-tor(.2, .03, (0, -.4, 1.82), 'c_b8862a', rot=(R(90), 0, 0))
-for x in (-.1, 0, .1): box((.025, .05, .36), (x, -.44, 1.82), BRASS)
-for z in (1.72, 1.92): box((.36, .05, .025), (0, -.44, z), BRASS)
-for s in (-1, 1): cyl(.1, .1, .08, (s * .38, -.02, 1.84), 'c_22262b', rot=(0, R(90), 0), v=8)
-cyl(.08, .08, .12, (0, 0, 2.22), 'c_b8862a', v=8)
-CUR['skin'] = 'skin_dba07c'; face(1.76, -.3, .09, 'c_f0ece0', 'stern', 1.2)
-sph(.3, (0, -.3, 1.5), 'c_f0ece0', scale=(1, .6, .6)); cyl(.24, .03, .5, (0, -.36, 1.28), 'c_f0ece0', rot=(R(180), 0, 0), v=12)
-for s in (-1, 1): sph(.11, (s * .1, -.4, 1.6), 'c_f0ece0', scale=(1.5, .6, .6))
-box((.7, .3, .8), (0, .6, 1.25), 'c_6b4a34'); box((.74, .32, .08), (0, .6, 1.25), IRON2)
-coil((0, .6, 1.72), .34, (0, 0, 0), n=3, step=(0, 0, .12))
+SK = 'skin_c88e6a'
+sw = adult(SK, sw=.32, hw=.23, fem=False, coat_hem=.9, hem_r=.45, bulk=1.45, legs=RL)
+head(SK, fem=False, brow=1.3, wide=1.08, nose=1.3); beard2(W_HAIR, .26, .13)
+sph(1, (0, .115, HC + .03), BRASS, scale=(.185, .185, .225))                            # helmet, set back so the face shows through the port
+tor(.145, .024, (0, -.07, HC - .01), 'c_b8862a', rot=(R(90), 0, 0), scale=(1, 1.3, 1))
+for x in (-.1, .1): cyl(.008, .008, .3, (x, -.14, HC - .01), BRASS)
+cyl(.008, .008, .26, (0, -.15, HC + .135), BRASS, rot=(0, R(90), 0))
+for s in (-1, 1): cyl(.05, .05, .04, (s * .185, .115, HC + .03), 'c_22262b', rot=(0, R(90), 0))
+cyl(.04, .04, .06, (0, .115, HC + .27), 'c_b8862a'); cyl(.21, .21, .06, (0, .03, 2.03), 'c_b8862a', v=18)
+box((.34, .16, .4), (0, .27, 1.72), 'c_6b4a34', r=.03); tor(.2, .02, (0, .27, 1.72), IRON2, rot=(R(90), 0, 0), scale=(1, 1.1, 1))
+for i in range(3): tor(.15, .04, (0, .27, 1.97 + i * .06), ROPE)
 for s in (-1, 1):
-    sph(.2, (s * .72, .34, .7), GLASS)
-    for rot in ((0, 0, 0), (R(90), 0, 0), (0, R(90), 0)): tor(.205, .025, (s * .72, .34, .7), ROPE, rot=rot)
-done('barnacle', .84)
+    sph(.1, (s * (sw + .12), .16, 1.36), GLASS)
+    for rot in ((0, 0, 0), (R(90), 0, 0), (0, R(90), 0)): tor(.102, .012, (s * (sw + .12), .16, 1.36), ROPE, rot=rot)
+arms(sw, SK, glove='c_5a4030', r=.08)
+done('barnacle', .8)
 
 # Copper: flat cap, goggles and a moustache, with a brass horn rig rising off the back over one shoulder
-sx = person(w=.92, hem=.52, waist=.34, chest=.4, coat=.34, legs='c_4a3a34', aw=.18, cuff=False, bare=True, glove='c_5a4030')
-face(1.72, -.28, .09, 'c_3a2c24'); moustache('c_3a2c24', .15, curl=True)
-cyl(.3, .26, .1, (0, -.02, 1.93), 'team2', v=9); box((.3, .2, .04), (0, -.3, 1.9), 'team2'); goggles(-.27, 1.97)
-for x in (-.16, .16): cyl(.13, .13, .6, (x, .46, 1.25), BRASS, v=8); sph(.13, (x, .46, 1.56), BRASS)
-cyl(.07, .07, .8, (.3, .46, 1.9), BRASS, v=8)
-cyl(.09, .09, .5, (.3, .26, 2.3), BRASS, rot=(R(90), 0, 0), v=8)
-cyl(.5, .1, .7, (.3, -.2, 2.36), BRASS, rot=(R(-84), 0, 0), v=12); cyl(.42, .08, .6, (.3, -.29, 2.36), 'c_3a2a12', rot=(R(-84), 0, 0), v=12)
-cyl(.04, .04, .5, (-sx - .09, -.2, .78), STEEL, rot=(R(70), 0, 0)); tor(.09, .035, (-sx - .09, -.46, .87), STEEL, rot=(0, R(90), 0))
-strap(.36); strap(.36, -1)
-done('copper', 1.02)
+SK = 'skin_c4906a'
+sw = adult(SK, sw=.25, hw=.18, fem=False, coat_hem=.7, hem_r=.33, legs=RL)
+head(SK, fem=False, brow=1.2, nose=1.1, cheek=1.2); hair_cap('c_3a2c24', False); locks('c_3a2c24', False)
+sph(1, (0, -.01, HC + .135), 'team2', scale=(.15, .18, .065)); box((.2, .12, .02), (0, -.2, HC + .115), 'team2', r=.008)
+for s in (-1, 1):
+    cyl(.042, .042, .04, (s * .055, -.16, HC + .17), BRASS, rot=(R(70), 0, 0)); cyl(.03, .03, .045, (s * .055, -.165, HC + .17), 'c_22262b', rot=(R(70), 0, 0))
+    sph(.04, (s * .04, -.168, HC - .088), 'c_3a2c24', scale=(1.6, .6, .6)); sph(.026, (s * .09, -.15, HC - .08), 'c_3a2c24', scale=(1.3, .6, .8)); tor(.02, .008, (s * .115, -.14, HC - .06), 'c_3a2c24', rot=(R(90), 0, 0))
+cross_strap(sw); tor(sw * .9, .022, (0, 0, 1.74), LEATHER, rot=(R(90), R(-42), 0), scale=(1, 1.25, 1))
+for x in (-.08, .08): cyl(.06, .06, .3, (x, .2, 1.72), BRASS); sph(.06, (x, .2, 1.87), BRASS)
+cyl(.03, .03, .55, (.14, .2, 2.15), BRASS); cyl(.035, .035, .26, (.14, .08, 2.43), BRASS, rot=(R(90), 0, 0))
+cyl(.13, .035, .26, (.2, -.1, 2.5), BRASS, rot=(R(-60), 0, R(-20)), v=16); cyl(.105, .025, .22, (.207, -.12, 2.512), 'c_3a2a12', rot=(R(-60), 0, R(-20)), v=16)
+wr, grip = arms(sw, SK, glove='c_5a4030', bare=True, pose='hold')
+cyl(.016, .016, .26, (wr[0], wr[1] - .1, wr[2] - .08), STEEL, rot=(R(80), 0, 0)); tor(.04, .014, (wr[0], wr[1] - .25, wr[2] - .05), STEEL, rot=(0, R(90), 0))
+done('copper', 1.0)
 
-# Undertow: long coat with a pale wave on the back, ribboned braid, a heavy cleaver hanging from the free hand
-sx = person(w=1.0, hem=.62, waist=.38, chest=.44, coat=.22, legs='c_4a3a34', aw=.2, long_hair=True, folds=9)
-face(1.72, -.28, .09); hat(.62, 1.86); braid(0, 5, 'team2'); strap(.4)
-cyl(.32, .27, .16, (0, 0, 1.56), 'team2')
-for x, z, r in ((-.2, 1.2, .085), (-.03, 1.25, .11), (.16, 1.19, .08)): tor(r, .028, (x, -.415 + abs(x) * .1, z), CREAM, rot=(R(88), 0, 0))    # the wave, on the chest
-box((.46, .04, .045), (0, -.4, 1.1), CREAM, r=.015)
-box((.07, .2, .1), (-sx - .09, -.06, .78), WOOD); box((.05, .2, .62), (-sx - .09, -.1, .4), 'c_9a9ea6'); box((.06, .22, .12), (-sx - .09, -.1, .12), 'c_6a6e78')
-done('undertow', 1.02)
+# Undertow: long coat with a pale wave on the chest, ribboned braid, a heavy cleaver hanging from the free hand
+SK = 'skin_c08a60'
+sw = adult(SK, sw=.25, hw=.185, fem=True, coat_hem=.42, hem_r=.37, legs=RL)
+head(SK, fem=True, brow=1.2, jaw=1.1, chin=1.08, nose=1.1, cheek=1.6); hair_cap(BLK); fringe(BLK, 'swept'); locks(BLK); back_braid(BLK, ribbon='team2'); tilted_hat(.49)
+tor(.11, .045, (0, .01, 2.01), 'team2', rot=(R(-10), 0, 0))
+for x, z, r in ((-.09, 1.8, .035), (-.015, 1.82, .045), (.065, 1.795, .033)): tor(r, .011, (x - .05, -.142 + abs(x) * .1, z), CREAM, rot=(R(90), 0, 0))    # the wave, on the chest
+box((.2, .014, .018), (-.06, -.14, 1.75), CREAM, r=.005)
+cross_strap(sw)
+wr, grip = arms(sw, SK, pose='hold')
+box((.03, .09, .04), (wr[0], wr[1] - .03, wr[2] - .1), WOOD, r=.01); box((.018, .1, .3), (wr[0], wr[1] - .06, wr[2] - .28), 'c_9a9ea6', r=.006); box((.022, .11, .05), (wr[0], wr[1] - .06, wr[2] - .42), 'c_6a6e78', r=.006)
+done('undertow', 1.0)
 
 # ---- Foghorn: a riveted brass horn on an iron pedestal, bracketed off a braced timber tower (reference/props.webp)
 box((4.4, 4.4, 1.1), (0, 0, .55), STONE)
