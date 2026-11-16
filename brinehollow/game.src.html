@@ -455,12 +455,12 @@ function faceTex(f) {
     if (!f.sculpt) { g.fillStyle = 'rgba(60,30,20,.38)'; g.beginPath(); g.ellipse(128, 179, 17, 5, 0, 0, 7); g.fill(); }
     const my = 205;
     if (f.sculpt) for (const s of [-1, 1]) {                  // hard shadow planes under the cheekbone and along the jaw
-      g.fillStyle = 'rgba(95,42,22,.42)'; g.beginPath(); g.moveTo(128 + s * 78, 150); g.lineTo(128 + s * 44, 176); g.lineTo(128 + s * 52, 214); g.lineTo(128 + s * 84, 190); g.closePath(); g.fill();
+      g.fillStyle = 'rgba(95,42,22,.42)'; g.beginPath(); g.moveTo(128 + s * 74, 152); g.lineTo(128 + s * 46, 178); g.lineTo(128 + s * 50, 216); g.lineTo(128 + s * 72, 196); g.closePath(); g.fill();
     }
     if (f.sculpt) {                                           // lips, painted over the sculpted mouth
       g.fillStyle = 'rgba(128,52,46,.9)'; g.beginPath(); g.moveTo(100, my - 3); g.quadraticCurveTo(116, my - 15, 128, my - 9); g.quadraticCurveTo(140, my - 15, 156, my - 3);
       g.quadraticCurveTo(128, my + 22, 100, my - 3); g.fill();
-      line(3.5, () => { g.moveTo(98, my - 2); g.quadraticCurveTo(128, my - 5, 158, my - 2); });
+      line(2.2, () => { g.moveTo(101, my - 2); g.quadraticCurveTo(128, my - 4, 155, my - 2); });
 
     }
     if (f.mouth === 'flat') line(4, () => { g.moveTo(103, my); g.quadraticCurveTo(128, my + 2, 153, my); });
@@ -496,6 +496,8 @@ function addFace(o, name) {
 const thinHull = new THREE.MeshBasicMaterial({color: 0x0b0b10, side: THREE.BackSide});   // finer line for the finer anatomical models
 thinHull.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
   transformed += normalize(normal) * (.009 + .009 * abs(sin(position.x * 14. + position.y * 9.) * sin(position.z * 12. - position.y * 7.)));`); };
+const headHull = new THREE.MeshBasicMaterial({color: 0x0b0b10, side: THREE.BackSide});   // a hairline on sculpted heads, so no ink pools in the nose and lips
+headHull.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ntransformed += normalize(normal) * .004;'); };
 const NO_HULL = /^(ship|lighthouse|piling|rock|link|coil|cleat|lamp|barrel)/;
 const matCache = {};
 function namedMat(n, ov) {
@@ -507,7 +509,7 @@ function model(name, ov) {
   const o = MODELS[name].clone(true);
   const parts = [];
   o.traverse(m => { if (m.isMesh) { parts.push(m); const n = m.material.name; m.material = namedMat(n, ov); m.castShadow = m.material.type !== 'MeshBasicMaterial'; m.receiveShadow = !/^(skin|face|head)_/.test(n); m.userData.noHull = n.startsWith('face_'); m.userData.mn = n; } });   // faces are never lost in hat shadow
-  if (!NO_HULL.test(name)) for (const m of parts) if (m.material.type !== 'MeshBasicMaterial' && !m.userData.noHull) m.add(new THREE.Mesh(m.geometry, FACES[name] && FACES[name].sculpt ? thinHull : hullMat));
+  if (!NO_HULL.test(name)) for (const m of parts) if (m.material.type !== 'MeshBasicMaterial' && !m.userData.noHull) m.add(new THREE.Mesh(m.geometry, m.userData.mn.startsWith('head_') ? headHull : FACES[name] && FACES[name].sculpt ? thinHull : hullMat));
   if (FACES[name]) addFace(o, name);
   scene.add(o); return o;
 }

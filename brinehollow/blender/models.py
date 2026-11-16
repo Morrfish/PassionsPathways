@@ -249,10 +249,10 @@ HEAD_PROFILE = (
     (.186, .012, .012, .012), (.172, .066, .07, .075), (.14, .112, .106, .122), (.09, .134, .121, .145),   # crown, forehead
     (.05, .149, .124, .15),                                                                                # brow
     (.014, .136, .121, .148),                                                                              # eye line
-    (-.03, .14, .126, .136),                                                                               # cheekbone: the widest point
-    (-.07, .141, .117, .11), (-.1, .146, .112, .085),                                                      # nose base, mouth
-    (-.128, .137, .104, .068),                                                                             # jaw angle
-    (-.158, .138, .068, .048), (-.182, .1, .04, .03), (-.194, .03, .014, .012))                            # chin, under the chin
+    (-.03, .14, .123, .136),                                                                               # cheekbone: the widest point
+    (-.07, .141, .111, .11), (-.1, .146, .101, .085),                                                      # nose base, mouth
+    (-.128, .137, .091, .068),                                                                             # jaw angle
+    (-.158, .138, .056, .048), (-.182, .1, .034, .03), (-.194, .03, .014, .012))                            # chin, under the chin
 def head(skin, fem=True, brow=1.0):
     import numpy as np
     hx = skin.split('_')[1]
@@ -272,19 +272,19 @@ def head(skin, fem=True, brow=1.0):
                 # nose: a straight narrow bridge to a small tip, cut back sharply underneath, with wings
                 t = (.036 - z) / .094
                 if 0 < t < 1.2:
-                    ridge = (.008 + .03 * t ** 1.3) if t <= 1 else .038 * max(0, 1 - (t - 1) / .16)
+                    ridge = (.007 + .026 * t ** 1.3) if t <= 1 else .033 * max(0, 1 - (t - 1) / .2) ** .7   # a soft underside, so no ink pools there
                     y -= ridge * math.exp(-(x / (.0085 + .0075 * min(t, 1))) ** 2)
-                y -= .011 * g(ax - .019, z + .056, .008, .009)
+                y -= .007 * g(ax - .017, z + .054, .008, .009)
                 y += .024 * f * g(ax - .062, z - .012, .03, .019)                      # eye sockets
                 y -= .013 * f * g(ax - .061, z - .012, .021, .0105)                    # the eyeball under closed lids
                 arc = .0265 - 2.6 * (ax - .061) ** 2                                   # upper lid: a crease that catches the shadow
                 if abs(ax - .061) < .03: y -= .0055 * f * math.exp(-((z - arc) / .0035) ** 2)
                 y -= .007 * brow * f * g(ax - .058, z - .047, .04, .009)               # brow ridge
                 y -= .009 * f * g(ax - .087, z + .028, .026, .017)                     # cheekbone shelf
-                y += .013 * f * g(ax - .068, z + .092, .028, .03)                      # the plane below it falls away to the jaw
+                y += .02 * f * g(ax - .066, z + .088, .026, .03)                      # the plane below it falls away to the jaw
                 y -= .009 * g(x, z + .095, .03, .0075)                                 # upper lip
                 y -= .011 * g(x, z + .114, .026, .009)                                 # lower lip
-                y += .006 * g(x, z + .1045, .036, .0045)                               # the line between them
+                y += .004 * g(x, z + .1045, .036, .005)                               # the line between them
                 y += .005 * g(x, z + .132, .03, .008)                                  # dip above the chin
                 y -= .006 * g(x, z + .158, .032, .014)                                 # chin
             verts.append((x, y, z + HC))
@@ -341,7 +341,7 @@ def sleeve(sh, el, wr, r, m, cuff='team2', cuff_at=.5):
     limb(q, q2, r * 1.08, r * 1.12, cuff)                                                                     # the rolled cuff
     return q2
 
-def split_skirt(r_bot, r_top, h, zc, m, folds=9, amp=.1, amp_top=0.0, gap=.3, v=44, flare=.42):
+def split_skirt(r_bot, r_top, h, zc, m, folds=9, amp=.1, amp_top=0.0, gap=.3, v=44, flare=.42, flare_top=0.0):
     """A coat skirt open down the front (it parts wider toward the hem), with thickness so the lining shows."""
     import bmesh
     bpy.ops.mesh.primitive_cone_add(vertices=v, radius1=r_bot, radius2=r_top, depth=h, location=(0, 0, zc), end_fill_type='NOTHING')
@@ -351,8 +351,9 @@ def split_skirt(r_bot, r_top, h, zc, m, folds=9, amp=.1, amp_top=0.0, gap=.3, v=
         a = math.atan2(vert.co.y, vert.co.x); low = vert.co.z < 0
         k = 1 + (amp if low else amp_top) * math.sin(folds * a + 1.3); vert.co.x *= k; vert.co.y *= k
         af = math.atan2(vert.co.x, -vert.co.y)                     # angle away from straight ahead
-        if low and abs(af) < 1.5:                                  # the front edges swing apart toward the hem
-            r_ = math.hypot(vert.co.x, vert.co.y); af += math.copysign(flare * (1 - abs(af) / 1.5), af)
+        fl = flare if low else flare_top
+        if fl and abs(af) < 1.5:                                   # the front edges swing apart toward the hem
+            r_ = math.hypot(vert.co.x, vert.co.y); af += math.copysign(fl * (1 - abs(af) / 1.5), af)
             vert.co.x, vert.co.y = r_ * math.sin(af), -r_ * math.cos(af)
     bm.to_mesh(o.data); bm.free()
     md = o.modifiers.new('thick', 'SOLIDIFY'); md.thickness = .016; md.offset = 0
@@ -374,7 +375,7 @@ def adult(skin, sw=.25, hw=.19, fem=True, legs='c_33302e', coat_hem=.5, hem_r=.3
         sph(.11 * bulk, (kx, -.015, .74), legs)
     sph(1, (0, 0, 1.27), legs, scale=(hw + .07, .13 * bulk, .13))
     split_skirt(hem_r, .165 * bulk, 1.5 - coat_hem, (1.5 + coat_hem) / 2, 'team')              # coat skirt, open at the front over the trousers
-    split_skirt(hem_r + .014, hem_r - .02, .1, coat_hem + .05, 'team2', amp_top=.092, flare=.42)   # pale hem band
+    split_skirt(hem_r + .014, hem_r - .02, .1, coat_hem + .05, 'team2', amp_top=.092, flare=.42, flare_top=.42 * (1 - .1 / (1.5 - coat_hem)))   # pale hem band, following the skirt
     P[-1].rotation_euler = (0, 0, 0)
     o = cyl(.16 * bulk, sw * .82, .36, (0, 0, 1.67), 'team', v=24); o.scale = (1, .7, 1)       # torso
     sph(1, (0, .005, 1.88), 'team', scale=(sw + .035, .128 * bulk, .12))
@@ -409,10 +410,9 @@ for s in (-1, 1):
     limb((s * .125, -.02, HC + .1), (s * .143, -.015, HC - .06), .026, .022, HAIR); limb((s * .143, -.015, HC - .06), (s * .125, .0, HC - .2), .022, .01, HAIR)
     tor(.022, .006, (s * .128, .0, HC - .06), BRASS, rot=(0, R(90), 0))                       # earrings
 for sd in (-1, 1):                                                              # loose waves framing the face and falling to the collar
-    lock((sd * .09, -.105, HC + .13), .2, .026, .02, 0.5, (sd * .05, .02))
-    lock((sd * .122, -.06, HC + .1), .3, .03, .022, 1.7, (sd * .03, .02))
-    lock((sd * .132, .0, HC + .08), .34, .032, .02, 3.0, (sd * .02, .02))
-    lock((sd * .11, .08, HC + .06), .36, .034, .02, 4.2, (sd * .01, .03))
+    lock((sd * .118, -.07, HC + .12), .24, .024, .014, 0.5, (sd * .035, .03), n=10)
+    lock((sd * .133, -.02, HC + .09), .32, .03, .016, 1.7, (sd * .02, .03), n=10)
+    lock((sd * .125, .06, HC + .07), .36, .034, .016, 3.0, (sd * .01, .03), n=10)
 pts = ((0, .13, 2.14), (.0, .17, 2.02), (.01, .185, 1.9), (.015, .185, 1.78), (.02, .18, 1.66), (.02, .17, 1.55))   # the braid, down the back
 for i, q in enumerate(pts):
     sph(.05 - i * .004, q, HAIR)
