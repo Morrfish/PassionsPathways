@@ -38,7 +38,7 @@ function makeGame(course, cfg) {
   world.on('pre-solve', c => preSolve(G, c));
   G.rules = course.rules || {}; G.face = 1; G.bombs = []; G.slowT = 0; G.beacon = null; G.drone = null;
   G.sandbox = !course.builtin;   // special-bot perks only work here
-  G.ceil = ceilingOf(course);
+  G.ceil = course.builtin ? ceilingOf(course) : null;   // no ceiling in the sandbox
   if (cfg) { G.spec = botSpec(cfg, G.rules, G.sandbox); buildBot(G, G.start.x, G.start.y); G.respawn.energy = G.bot.energy; }
   return G;
 }
@@ -524,8 +524,8 @@ function stepGame(G, inp) {
   } else bot.wet = 0;
   for (const b of botBodies(bot)) { const q = b.getPosition(); if (tget(G.course, Math.floor(q.x), Math.floor(q.y - (b === ch ? 0 : s.r * 0.6))) === LAVA) { if (s.has.heatshield && (bot.lavaT += DT) < 1.5) { if (Math.random() < 0.5) puff(G, q, '#ff8a2a', 1); break; } respawnBot(G, 'burned'); return; } }
   if (p.y < -3 || p.x < -5 || p.x > G.course.w + 5) { respawnBot(G, 'fell'); return; }
-  if (typeof window !== 'undefined' && window.MAXA) window.MAXA[G.course.id] = Math.max(window.MAXA[G.course.id] || 0, +(p.y - ceilAt(G, p.x) + (G.course.ceil || CEIL_GAP)).toFixed(1));
-  if (p.y > ceilAt(G, p.x)) { respawnBot(G, 'ceiling'); return; }
+  if (G.ceil && typeof window !== 'undefined' && window.MAXA) window.MAXA[G.course.id] = Math.max(window.MAXA[G.course.id] || 0, +(p.y - ceilAt(G, p.x) + (G.course.ceil || CEIL_GAP)).toFixed(1));
+  if (G.ceil && p.y > ceilAt(G, p.x)) { respawnBot(G, 'ceiling'); return; }
   if (tShape(tile) === 1 && tShape(tget(G.course, Math.floor(p.x), Math.floor(p.y) + 1)) === 1) { if ((bot.buried = (bot.buried || 0) + DT) > 0.4) { respawnBot(G, 'stuck'); return; } } else bot.buried = 0;   // squeezed into solid ground
 
   useGadgets(G, inp, alive, thr, grounded, fwd, up, v);
