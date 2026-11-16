@@ -1,6 +1,6 @@
 /* Bot Assembly Shop — core data: parts, bot math, tiles, courses, storage */
 'use strict';
-const VERSION = '2.0';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
+const VERSION = '2.1';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
 const pl = planck, V = pl.Vec2;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -150,7 +150,8 @@ function botSpec(cfg, rules, sandbox) {
   const missing = REQUIRED.filter(r => !real[r[0]]).map(r => r[1]);
   const ch = fb('chassis', 'rover'), wh = fb('wheels', 'std'), ti = fb('tires', 'slick'), mo = fb('motor', 'std'), ba = fb('battery', 'small'), dr = fb('drive', 'rwd');
   const ge = PARTS.gear[clamp(cfg.gear | 0, 0, PARTS.gear.length - 1)];
-  const slots = real.chassis ? Math.min(ch.slots, rules.slots || 99) : 0, upSlots = real.chassis ? ch.up : 0;
+  const open = sandbox || botSpec.open;   // sandbox: the chassis does not limit how much you bolt on (a course rule still can)
+  const slots = real.chassis ? Math.min(open ? 99 : ch.slots, rules.slots || 99) : 0, upSlots = real.chassis ? (open ? 99 : ch.up) : 0;
   const gadgets = (cfg.gadgets || []).map(id => PARTS.gadgets.find(g => g.id === id)).filter(Boolean).slice(0, slots);
   const upgrades = (cfg.upgrades || []).map(id => PARTS.upgrades.find(g => g.id === id)).filter(Boolean).slice(0, upSlots);
   if (!sandbox && !botSpec.open) for (const [a, b] of CLASH) { const i = gadgets.findIndex(g => g.id === a), j = gadgets.findIndex(g => g.id === b); if (i >= 0 && j >= 0) gadgets.splice(Math.max(i, j), 1); }
