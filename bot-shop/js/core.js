@@ -1,6 +1,6 @@
 /* Bot Assembly Shop — core data: parts, bot math, tiles, courses, storage */
 'use strict';
-const VERSION = '1.4';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
+const VERSION = '1.5';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
 const pl = planck, V = pl.Vec2;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -545,6 +545,9 @@ function scramble(str) {
   return (b >>> 0).toString(16).padStart(8, '0') + (a >>> 0).toString(16).padStart(8, '0');
 }
 const TEACHER_HASH = '2bce514a6dffff96';
+/* Coin codes: the teacher hands one out, each player can use each code once. Only the scrambled form is kept here. */
+const COIN_CODES = {'23cdfca4500e2680': 1000, 'ff2a956c359a487a': 1000, 'd012d57f928b9ed5': 1000, 'b2edd26e23c19725': 1000, '67a9f698f82919e2': 1000};
+const coinCodeKey = txt => { const k = scramble('coin|' + String(txt).toUpperCase().replace(/[^A-Z0-9]/g, '')); return COIN_CODES[k] ? k : null; };
 const isTeacherPw = pw => scramble('teacher|' + String(pw).trim()) === TEACHER_HASH;
 const Players = {
   all() { return Store.get('players', {}); },

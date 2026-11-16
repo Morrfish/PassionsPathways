@@ -42,7 +42,7 @@ function askText(o, done) {
 let pendingCode = null;
 /* ---------- Coins ---------- */
 const Wallet = {
-  get(user) { return Object.assign({ coins: 0, own: {}, sec: {}, paid: {}, made: {}, fast: {} }, Store.get('wallet', {}, user)); },
+  get(user) { return Object.assign({ coins: 0, own: {}, sec: {}, paid: {}, made: {}, fast: {}, codes: {} }, Store.get('wallet', {}, user)); },
   save(w, user) { Store.set('wallet', w, user); },
   owns(id) { return !PRICE[id] || !!SET().unlockAll || !!Wallet.get().own[id]; },
   add(n, user) { const w = Wallet.get(user); w.coins += n; Wallet.save(w, user); },
@@ -182,12 +182,23 @@ function storeDialog() {
       ${BOT_COLORS.slice(8).map(c => `<button class="item" data-buy="color:${c}"><b><i class="dot" style="background:${c}"></i> Colour</b>${price('color:' + c)}</button>`).join('')}
       ${[['pattern', 'Pattern'], ['eyes', 'Eyes'], ['topper', 'Hat']].map(([key, nm]) => LOOKS[key].filter(o => PRICE[key + ':' + o[0]]).map(o => `<button class="item" data-buy="${key}:${o[0]}"><b>${nm}: ${o[1]}</b>${price(key + ':' + o[0])}</button>`).join('')).join('')}</div><p style="font-size:13px">Put them on in the Paint shop.</p>`;
   modal(`<h2>🛒 Store <span class="coins" style="float:right">🪙 $${w.coins}</span></h2><div class="tabs">${tabs.map(t => `<button class="${storeTab === t[0] ? 'on' : ''}" data-stab="${t[0]}">${t[1]}</button>`).join('')}</div>
-    ${SET().unlockAll ? '<p>Your teacher has unlocked everything on this computer.</p>' : ''}${body}<div class="acts"><button class="primary" data-m="x" data-focus>Done</button></div>`);
+    ${SET().unlockAll ? '<p>Your teacher has unlocked everything on this computer.</p>' : ''}${body}<div class="acts"><button class="primary" data-m="x" data-focus>Done</button><button id="stCode">🎟️ Enter a coin code</button></div>`);
+  $('#stCode').onclick = coinCodeDialog;
   $$('#modal [data-stab]').forEach(b => b.onclick = () => { storeTab = b.dataset.stab; storeDialog(); });
   $$('#modal [data-buy]').forEach(b => b.onclick = () => { const id = b.dataset.buy, sk = id.startsWith('skin:') && SKINS.find(k => 'skin:' + k.id === id); unlock(id, sk ? sk.name : b.querySelector('b').textContent.trim(), () => { if (sk) { App.cfg.skin = sk.id; saveCfg(); } storeDialog(); }); });
   // little pictures of each special bot
   const demo = Object.assign({}, DEFAULT_BOT, { chassis: 'rover', wheels: 'std', tires: 'allterrain', motor: 'std', battery: 'small', drive: 'rwd' });
   $$('#modal canvas[data-skin]').forEach(cv => { const cfg = Object.assign({}, demo, { skin: cv.dataset.skin }), sp = botSpec(cfg), g = cv.getContext('2d'), wy = -(sp.ch.ht / 2 - 0.1); g.setTransform(52, 0, 0, -52, 110, 118); drawBot(g, cfg, sp, { x: 0, y: sp.r - wy, a: 0, wheels: [{ x: -sp.wheelDX, y: sp.r, a: 0.4 }, { x: sp.wheelDX, y: sp.r, a: 0.4 }] }, { look: 0.5, t: 1.3 }); });
+}
+/* A coin code from the teacher: worth coins once per player */
+function coinCodeDialog() {
+  askText({ title: '🎟️ Coin code', text: 'Type the code your teacher gave you.', label: 'Coin code', max: 30, ok: 'Redeem' }, v => {
+    const k = coinCodeKey(v), w = Wallet.get();
+    if (!v.trim()) return storeDialog();
+    if (!k) { storeDialog(); return toast('That code did not work. Check the spelling.'); }
+    if (w.codes[k]) { storeDialog(); return toast('You have already used that code.'); }
+    w.codes[k] = 1; w.coins += COIN_CODES[k]; Wallet.save(w); sfx('cp'); storeDialog(); toast(`🪙 +$${COIN_CODES[k]} coins! You now have $${w.coins}.`);
+  });
 }
 function howTo() {
   modal(`<h2>How to play</h2><p><b>1. Scout the course.</b> The shop shows what is ahead: hills, ice, gaps, crates.<br><b>2. Build your bot.</b> Pick a chassis, wheels, tires, motor, gearing, battery and gadgets. Stay inside the budget.<br><b>3. Send it.</b> Drive to the finish flag. Watch your health: long falls and hard crashes break the bot.<br><b>4. Improve.</b> Go back to the shop, change one thing, and try again.<br><b>5. Earn coins.</b> Every level you beat pays coins, and finishing a whole section pays a big bonus. Spend them in the Store.</p>
