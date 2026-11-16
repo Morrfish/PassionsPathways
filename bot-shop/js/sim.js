@@ -4,6 +4,17 @@ const DT = 1 / 60, HOOK_RANGE = 10, RESET_PENALTY = 3;
 const normAng = a => { a = (a + Math.PI) % (2 * Math.PI); if (a < 0) a += 2 * Math.PI; return a - Math.PI; };
 
 /* ---------------- World ---------------- */
+/* Every course has a ceiling that follows the ground: fly into it and you are sent back to the last checkpoint.
+   It sits CEIL_GAP above the highest ground within CEIL_REACH on either side, so it steps up ahead of cliffs. */
+const CEIL_GAP = 13, CEIL_REACH = 12;
+function ceilingOf(c) {
+  const top = []; for (let x = 0; x < c.w; x++) { let y = c.h - 1; while (y >= 0 && !tShape(tget(c, x, y))) y--; top.push(y + 1); }
+  for (const o of c.objs) if (o.t === 'zip' || o.t === 'anchor' || o.t === 'tele' || o.t === 'pipe') for (const [ox, oy] of [[o.x, o.y], [o.x2, o.y2]]) if (ox != null) { const i = Math.floor(ox); if (i >= 0 && i < c.w) top[i] = Math.max(top[i], Math.ceil(oy)); }
+  const gap = c.ceil || CEIL_GAP, out = [];
+  for (let x = 0; x < c.w; x++) { let m = 0; for (let k = Math.max(0, x - CEIL_REACH); k <= Math.min(c.w - 1, x + CEIL_REACH); k++) m = Math.max(m, top[k]); out.push(m + gap); }
+  return out;
+}
+const ceilAt = (G, x) => G.ceil[clamp(Math.floor(x), 0, G.ceil.length - 1)];
 function makeGame(course, cfg) {
   const world = new pl.World({ gravity: V(0, -10) });
   const G = {
@@ -27,6 +38,7 @@ function makeGame(course, cfg) {
   world.on('pre-solve', c => preSolve(G, c));
   G.rules = course.rules || {}; G.face = 1; G.bombs = []; G.slowT = 0; G.beacon = null; G.drone = null;
   G.sandbox = !course.builtin;   // special-bot perks only work here
+  G.ceil = ceilingOf(course);
   if (cfg) { G.spec = botSpec(cfg, G.rules, G.sandbox); buildBot(G, G.start.x, G.start.y); G.respawn.energy = G.bot.energy; }
   return G;
 }
@@ -345,7 +357,7 @@ function respawnBot(G, why) {
   buildBot(G, G.respawn.x, G.respawn.y);
   if (e != null) G.bot.energy = e;
   G.live = {};
-  G.flash = { text: ({ stuck: 'Stuck in the ground!', smashed: 'Smashed to bits!', fell: 'Fell off the course!', sank: 'Sank! No floats.', burned: 'Too hot! Melted in lava.', flip: 'Back on your wheels.' }[why] || 'Reset') + `  +${RESET_PENALTY}s`, t: 2.2 };
+  G.flash = { text: ({ stuck: 'Stuck in the ground!', smashed: 'Smashed to bits!', fell: 'Fell off the course!', ceiling: 'Hit the ceiling! Stay lower.', sank: 'Sank! No floats.', burned: 'Too hot! Melted in lava.', flip: 'Back on your wheels.' }[why] || 'Reset') + `  +${RESET_PENALTY}s`, t: 2.2 };
   sfx('bad');
 }
 const botBodies = b => [b.chassis, b.wheels[0], b.wheels[1]];
@@ -512,6 +524,8 @@ function stepGame(G, inp) {
   } else bot.wet = 0;
   for (const b of botBodies(bot)) { const q = b.getPosition(); if (tget(G.course, Math.floor(q.x), Math.floor(q.y - (b === ch ? 0 : s.r * 0.6))) === LAVA) { if (s.has.heatshield && (bot.lavaT += DT) < 1.5) { if (Math.random() < 0.5) puff(G, q, '#ff8a2a', 1); break; } respawnBot(G, 'burned'); return; } }
   if (p.y < -3 || p.x < -5 || p.x > G.course.w + 5) { respawnBot(G, 'fell'); return; }
+  if (typeof window !== 'undefined' && window.MAXA) window.MAXA[G.course.id] = Math.max(window.MAXA[G.course.id] || 0, +(p.y - ceilAt(G, p.x) + (G.course.ceil || CEIL_GAP)).toFixed(1));
+  if (p.y > ceilAt(G, p.x)) { respawnBot(G, 'ceiling'); return; }
   if (tShape(tile) === 1 && tShape(tget(G.course, Math.floor(p.x), Math.floor(p.y) + 1)) === 1) { if ((bot.buried = (bot.buried || 0) + DT) > 0.4) { respawnBot(G, 'stuck'); return; } } else bot.buried = 0;   // squeezed into solid ground
 
   useGadgets(G, inp, alive, thr, grounded, fwd, up, v);
@@ -1063,6 +1077,10 @@ function renderGame(ctx, G, cam, W, H, dpr, opt) {
   drawLiquid(ctx, G.course, x0, x1, y0, y1, G.t, LAVA);
   for (const e of G.ents) if (e.t === 'fan' || e.t === 'zip') drawEnt(ctx, G, e);
   drawTiles(ctx, G.course, x0, x1, y0, y1);
+  if (G.ceil) {   // the ceiling: a striped warning band
+    const a = Math.max(0, Math.floor(x0)), b = Math.min(G.ceil.length - 1, Math.ceil(x1));
+    for (let x = a; x <= b; x++) { const y = G.ceil[x]; if (y > y1 + 1) continue; ctx.fillStyle = 'rgba(255,90,54,.16)'; ctx.fillRect(x, y, 1.02, Math.max(1, y1 - y + 1)); ctx.fillStyle = x % 2 ? '#ffc21a' : '#20242b'; ctx.fillRect(x, y, 1.02, 0.28); }
+  }
   ctx.lineWidth = 0.24;
   for (const tp of G.tops) { if (tp.b[0] > x1 + 2 && tp.a[0] > x1 + 2 || tp.a[0] < x0 - 2 && tp.b[0] < x0 - 2) continue; ctx.strokeStyle = TOP_COL[Math.max(0, tp.mat)]; ctx.beginPath(); ctx.moveTo(tp.a[0], tp.a[1] - 0.08); ctx.lineTo(tp.b[0], tp.b[1] - 0.08); ctx.stroke(); }
   for (const cp of G.cps) drawFlag(ctx, cp.x, cp.y, 'cp', cp.hit);
