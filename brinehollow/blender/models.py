@@ -55,10 +55,12 @@ def box(size, loc, m, rot=(0, 0, 0), r=None):
 def cyl(r1, r2, h, loc, m, rot=(0, 0, 0), v=12):
     bpy.ops.mesh.primitive_cone_add(vertices=v, radius1=r1, radius2=r2, depth=h, location=loc, rotation=rot); return fin(m)
 def sph(r, loc, m, scale=(1, 1, 1)):
-    bpy.ops.mesh.primitive_uv_sphere_add(segments=14, ring_count=8, radius=r, location=loc)
+    small = r * max(scale) < .05                       # beads, knuckles and studs do not need a full sphere
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=8 if small else 14, ring_count=5 if small else 8, radius=r, location=loc)
     bpy.context.object.scale = scale; return fin(m)
 def tor(R_, r, loc, m, rot=(0, 0, 0), scale=(1, 1, 1)):
-    bpy.ops.mesh.primitive_torus_add(major_radius=R_, minor_radius=r, major_segments=14, minor_segments=6, location=loc, rotation=rot)
+    small = R_ * max(scale) < .12
+    bpy.ops.mesh.primitive_torus_add(major_radius=R_, minor_radius=r, major_segments=10 if small else 14, minor_segments=4 if small else 6, location=loc, rotation=rot)
     bpy.context.object.scale = scale; return fin(m)
 def limb(p0, p1, r0, r1, m, v=10):
     """A tapered tube from p0 to p1: arms, legs, anything that should not be a box."""
@@ -303,7 +305,7 @@ def lock(start, length, r, amp=.02, ph=0.0, out=(0, 0), m='c_1c1820', n=7):
         q = (start[0] + out[0] * t + w * (1 if start[0] >= 0 else -1), start[1] + out[1] * t + w * .6, start[2] - length * t)
         rr = r * (1 - .6 * t ** 2)
         sph(rr, q, m)
-        if prev: limb(prev[0], q, prev[1], rr, m, v=7)
+        if prev: limb(prev[0], q, prev[1], rr, m, v=6)
         prev = (q, rr)
 
 def hand(wrist, fwd, side, mat, curl=1.0, s=1.0, gaunt=True):
@@ -318,7 +320,7 @@ def hand(wrist, fwd, side, mat, curl=1.0, s=1.0, gaunt=True):
     for i in range(4):
         b = w + f * .088 * s + sd * ((1.5 - i) * .0195 * s); L = (1, 1.1, 1.04, .86)[i]
         m1 = b + (f * .04 - n * .01 * curl) * s * L; m2 = m1 + (f * (.032 - .012 * curl) - n * .022 * curl) * s * L
-        limb(b, m1, .0115 * s, .0105 * s, mat, v=7); sph(.0108 * s, m1, mat); limb(m1, m2, .0102 * s, .0085 * s, mat, v=7); sph(.0085 * s, m2, mat)
+        limb(b, m1, .0115 * s, .0105 * s, mat, v=5); sph(.0108 * s, m1, mat); limb(m1, m2, .0102 * s, .0085 * s, mat, v=5); sph(.0085 * s, m2, mat)
     b = w + f * .022 * s + sd * .04 * s
     m1 = b + (sd * .03 + f * .03 - n * .006 * curl) * s; m2 = m1 + (f * .032 - n * .012 * curl - sd * .008 * curl) * s
     limb(b, m1, .013 * s, .011 * s, mat, v=7); sph(.0112 * s, m1, mat); limb(m1, m2, .0105 * s, .009 * s, mat, v=7); sph(.009 * s, m2, mat)
@@ -389,6 +391,12 @@ GL, W_HAIR = 'c_2a2c34', 'c_e8e4da'
 def hair_cap(col, back=True):
     sph(1, (0, .005, HC + .11), col, scale=(.136, .16, .1))
     if back: sph(1, (0, .1, HC - .1), col, scale=(.125, .09, .2))
+def fringe(col, kind='full'):
+    """What the hair does across the forehead: a full fringe, or one swept to the side."""
+    xs = [i * .03 - .09 for i in range(7)]
+    for i, x in enumerate(xs):
+        drop = 0 if kind == 'full' else i * .011
+        sph(.05, (x, -.118 + abs(x) * .22, HC + .128 - drop * .3), col, scale=(.62, .55, 1.0 + drop * 9))
 def locks(col, long=True):
     for sd in (-1, 1):
         lock((sd * .118, -.07, HC + .12), .24 if long else .14, .024, .014, 0.5, (sd * .035, .03), m=col, n=10)
@@ -511,7 +519,7 @@ SK = 'skin_c4906a'
 sw = adult(SK, sw=.22, hw=.17, fem=True, coat_hem=1.02, hem_r=.27, legs='c_3a3a40')
 for s in (-1, 1):
     for z in (.5, .56, .62): tor(.088, .022, (s * .24, 0, z), CREAM)
-head(SK, fem=True, jaw=.93, chin=.95, nose=.85, cheek=1.3); hair_cap('c_1c1820'); locks('c_1c1820', False); back_braid('c_1c1820', n=4); tilted_hat(.46)
+head(SK, fem=True, wide=.93, jaw=.84, chin=1.05, nose=.9, cheek=1.7); hair_cap('c_1c1820'); fringe('c_1c1820', 'swept'); locks('c_1c1820', False); back_braid('c_1c1820', n=4); tilted_hat(.46)
 tor(.11, .045, (0, .01, 2.01), 'c_b8431c', rot=(R(-10), 0, 0))
 for i in range(2): box((.3, .014, .07), (.2 + i * .04, .14, 1.95 - i * .1), 'c_b8431c', rot=(0, R(20 - i * 24), R(34)), r=.006)
 cross_strap(sw); satchel(.2, -.1, 1.36, .9); satchel(-.2, -.1, 1.36, .9)
@@ -533,9 +541,9 @@ done('rivet', .98)
 # Bell: the smallest Teal — twin braids out to the sides and a brass bell held high (never a single ribbon braid: that is Mainsail)
 SK = 'skin_d6a27a'
 sw = adult(SK, sw=.215, hw=.17, fem=True, coat_hem=.5, hem_r=.33)
-head(SK, fem=True, brow=.6, wide=1.04, chin=.84, nose=.72, cheek=.5); hair_cap('c_1c1820'); locks('c_1c1820', False); tilted_hat(.46)
+head(SK, fem=True, brow=.5, wide=1.1, jaw=1.06, chin=.76, nose=.66, cheek=.3); hair_cap('c_7a3a22'); fringe('c_7a3a22'); locks('c_7a3a22', False); tilted_hat(.46)
 for s in (-1, 1):
-    for i in range(6): sph(.042 - i * .003, (s * (.14 + i * .016), .03 - i * .012, HC - .08 - i * .07), 'c_1c1820')
+    for i in range(6): sph(.042 - i * .003, (s * (.14 + i * .016), .03 - i * .012, HC - .08 - i * .07), 'c_7a3a22')
     tor(.034, .01, (s * .215, -.025, HC - .44), BRASS)
 cross_strap(sw); satchel(.22, -.08)
 wr, grip = arms(sw, SK, glove=None, pose='raise')
@@ -546,7 +554,7 @@ done('bell', .84)
 # Kelp: a walking kelp bundle — weed draped off both shoulders, a wicker basket on the back, sickle in the free hand
 SK = 'skin_c08a60'
 sw = adult(SK, sw=.23, hw=.18, fem=True, coat_hem=.6, hem_r=.34)
-head(SK, fem=True, wide=.96, jaw=.9, chin=1.12, nose=1.12); hair_cap('c_1c1820'); locks('c_1c1820'); back_braid('c_1c1820', n=5); tilted_hat(.47)
+head(SK, fem=True, brow=1.2, wide=.92, jaw=.88, chin=1.22, nose=1.3, cheek=1.2); hair_cap('c_3a2a1e'); locks('c_3a2a1e'); back_braid('c_3a2a1e', n=5); tilted_hat(.47)
 for i in range(13):
     a = R(-210 + i * 20); cyl(.045, .004, .42 + (i % 3) * .08, (math.cos(a) * (sw + .04), -math.sin(a) * .15 + .02, 1.72 - (i % 3) * .03), WEED, rot=(R(180), 0, 0), v=5)
 cyl(.15, .11, .26, (0, .25, 1.75), 'c_b08a50'); tor(.15, .018, (0, .25, 1.88), 'c_8a6a3a'); tor(.13, .014, (0, .25, 1.72), 'c_8a6a3a')
@@ -557,7 +565,7 @@ done('kelp', .95)
 # Skiff: short and square — bedroll and pack on the back, and an oar taller than the hat
 SK = 'skin_c48c64'
 sw = adult(SK, sw=.3, hw=.22, fem=False, coat_hem=.8, hem_r=.42, bulk=1.25)
-head(SK, fem=False, brow=1.2, wide=1.07, jaw=1.1, chin=.94, nose=1.15, cheek=.8); hair_cap('c_1c1820', False); locks('c_1c1820', False); tilted_hat(.48)
+head(SK, fem=False, brow=1.5, wide=1.1, jaw=1.14, chin=.94, nose=1.35, cheek=.8); hair_cap('c_1c1820', False); locks('c_1c1820', False); tilted_hat(.48)
 cross_strap(sw)
 box((.36, .17, .34), (0, .25, 1.74), 'c_7a5a40', r=.04); cyl(.1, .1, .46, (0, .25, 2.0), 'c_b89a6a', rot=(0, R(90), 0))
 for x in (-.13, .13): tor(.102, .014, (x, .25, 2.0), LEATHER, rot=(0, R(90), 0))
@@ -569,7 +577,7 @@ done('skiff', .82)
 # Brine: the medic — no straw hat: a white headscarf with knot tails and a bun, white apron with a cross, bottle held up
 SK = 'skin_c99870'
 sw = adult(SK, sw=.23, hw=.18, fem=True, coat_hem=.62, hem_r=.34)
-head(SK, fem=True, brow=.8, wide=1.03, jaw=1.06, chin=.94, cheek=.75); locks('c_1c1820', False)
+head(SK, fem=True, brow=.8, wide=1.08, jaw=1.16, chin=.9, nose=.8, cheek=.5); locks('c_1c1820', False)
 sph(1, (0, .012, HC + .085), CREAM, scale=(.138, .163, .125)); sph(.07, (0, .16, HC + .1), 'c_1c1820')
 for s in (-1, 1): box((.17, .014, .055), (s * .1, .17, HC - .02), CREAM, rot=(0, s * R(40), 0), r=.006)
 apron(CREAM, 1.0, cross='team')
@@ -922,4 +930,28 @@ done('ship')
 
 os.makedirs(out, exist_ok=True)
 bpy.ops.export_scene.gltf(filepath=os.path.join(out, 'models.glb'), export_format='GLB', export_apply=True, export_yup=True, export_texcoords=False)
-print('wrote models.glb')
+
+# Slim the file: drop the stored normals (the game recomputes them; vertices stay split at hard edges, so creases survive)
+import json, struct
+path = os.path.join(out, 'models.glb'); raw = open(path, 'rb').read()
+jl = struct.unpack('<I', raw[12:16])[0]; gl = json.loads(raw[20:20 + jl]); binb = raw[20 + jl + 8:]
+used = []
+for m in gl['meshes']:
+    for pr in m['primitives']:
+        pr['attributes'].pop('NORMAL', None)
+        used += list(pr['attributes'].values()) + [pr['indices']]
+amap = {a: i for i, a in enumerate(sorted(set(used)))}
+newacc, newbv, buf = [], [], bytearray()
+for a in sorted(amap):
+    acc = dict(gl['accessors'][a]); bv = dict(gl['bufferViews'][acc['bufferView']])
+    chunk = binb[bv.get('byteOffset', 0):bv.get('byteOffset', 0) + bv['byteLength']]
+    while len(buf) % 4: buf.append(0)
+    bv['byteOffset'] = len(buf); buf += chunk; acc['bufferView'] = len(newbv); newbv.append(bv); newacc.append(acc)
+for m in gl['meshes']:
+    for pr in m['primitives']:
+        pr['attributes'] = {k: amap[v] for k, v in pr['attributes'].items()}; pr['indices'] = amap[pr['indices']]
+while len(buf) % 4: buf.append(0)
+gl['accessors'], gl['bufferViews'], gl['buffers'] = newacc, newbv, [{'byteLength': len(buf)}]
+js = json.dumps(gl, separators=(',', ':')).encode(); js += b' ' * (-len(js) % 4)
+open(path, 'wb').write(b'glTF' + struct.pack('<II', 2, 12 + 8 + len(js) + 8 + len(buf)) + struct.pack('<I', len(js)) + b'JSON' + js + struct.pack('<I', len(buf)) + b'BIN\0' + bytes(buf))
+print('wrote models.glb', os.path.getsize(path) // 1024, 'KB')
