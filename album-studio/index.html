@@ -130,7 +130,7 @@ var MAX_SONGS = 12;
 var MIN_WORDS = 3;    // a line needs this many words to count
 var MAX_COVERS = 5;   // AI cover pictures each student can make per album
 // Web address of your relay (see relay/README.md). Leave '' to turn the AI helper off.
-var RELAY_URL = '';
+var RELAY_URL = 'https://album-studio-relay.macknmorris.workers.dev';
 // -----------------------------------------------------------------------
 
 var KEY = 'albumStudio.v1';
@@ -286,7 +286,7 @@ function ask(o){
 // mode 'relay': talks to the teacher's relay (RELAY_URL), which holds the keys.
 // mode 'claude': the page is open inside Claude and asks Claude directly.
 var IN_CLAUDE = !!(window.claude && window.claude.use);
-var AI = {mode: RELAY_URL ? 'relay' : null, sample: null};
+var AI = {mode: (RELAY_URL && !IN_CLAUDE) ? 'relay' : null, sample: null};
 var CODE_KEY = 'albumStudio.code';
 var RULES = 'Everything must be right for a school project by 11 and 12 year olds: no swearing, violence, drugs or alcohol, and nothing romantic beyond a mild crush. Do not use the names of real singers, bands or brands.';
 
