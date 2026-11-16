@@ -410,16 +410,16 @@ const FACES = {
   brine:      {k: .93, sculpt: 1, lips: 1, eyes: 'open', brow: -.2, lashes: 0, freckles: 0, mouth: 'none', browCol: '#3a2a22', plane: .12, iris: '#3a4a5a', tilt: -5, eyeW: 1, gap: 47, browW: 6.5, arch: 5, lidW: 6, lipCol: 'rgba(150,84,72,.9)'},
   glimmer:    {k: 1.03, sculpt: 1, eyes: 'narrow', brow: 1, browW: 9, mouth: 'frown', browCol: BLACK, plane: .4},
   wickie:     {k: .66, sculpt: 1, beard: 1, eyes: 'happy', brow: -.4, browCol: WHITE, browW: 11, old: 1, blush: 1, mouth: 'none', plane: 0},
-  netter:     {k: .95, eyes: 'open', brow: .9, lashes: 1, scar: 1, mouth: 'frown', sculpt: 1, lips: 1, plane: .3, tilt: 4, browW: 6, gap: 44, lipCol: 'rgba(120,50,44,.9)'},
-  cinder:     {k: 1.0, eyes: 'narrow', brow: 1.2, browCol: BLACK, browW: 12, scar: 1, mouth: 'none', sculpt: 1, plane: .3},
-  gaff:       {k: 1.1, eyes: 'narrow', brow: 1, scar: 1, mouth: 'frown', sculpt: 1, plane: .45, eyeW: .9, browL: .9, gap: 43},
-  knuckle:    {k: 1.0, eyes: 'narrow', brow: 1.2, browW: 13, stubble: 1, mouth: 'frown', sculpt: 1, plane: .2, tilt: -2},
+  netter:     {k: .95, eyes: 'open', brow: .7, lashes: 1, scar: 0, mouth: 'frown', sculpt: 1, lips: 1, plane: .3, tilt: 5, browW: 6, gap: 44, lipCol: 'rgba(120,50,44,.9)', eyeW: .95, browCol: '#3a2416', freckles: 1, iris: '#4a5a3a'},
+  cinder:     {k: 1.0, eyes: 'narrow', brow: 1.2, browCol: BLACK, browW: 12, scar: 1, mouth: 'none', sculpt: 1, plane: .3, old: 1},
+  gaff:       {k: 1.1, eyes: 'narrow', brow: 1.2, scar: 1, mouth: 'frown', sculpt: 1, plane: .5, eyeW: .9, browL: .9, gap: 43, stubble: 1, old: 1, browW: 9},
+  knuckle:    {k: 1.0, eyes: 'narrow', brow: 1.4, browW: 14, stubble: 1, mouth: 'frown', sculpt: 1, plane: .4, tilt: -2, scar: 1, old: 1},
   soot:       {k: .88, eyes: 'wide', brow: 1, mouth: 'none', sculpt: 1, plane: .2, tilt: 5, lashes: 1},
-  ember:      {k: .97, eyes: 'open', brow: .1, lashes: 1, scar: 1, freckles: 1, mouth: 'smile', sculpt: 1, lips: 1, plane: .25, arch: 6, browW: 6, eyeW: 1.05, lipCol: 'rgba(170,70,60,.9)'},
-  tiller:     {k: .97, eyes: 'open', brow: .1, lashes: 1, freckles: 1, mouth: 'none', sculpt: 1, lips: 1, plane: .2, tilt: -3, browW: 9, gap: 47},
+  ember:      {k: .97, eyes: 'wide', brow: -.3, lashes: 1, scar: 0, freckles: 1, mouth: 'smile', sculpt: 1, lips: 1, plane: .25, arch: 8, browW: 5, eyeW: 1.08, lipCol: 'rgba(170,70,60,.9)', tilt: -1, gap: 48, browCol: '#5a2c1a', blush: 1},
+  tiller:     {k: .97, eyes: 'narrow', brow: .6, lashes: 0, freckles: 0, mouth: 'none', sculpt: 1, lips: 1, plane: .2, tilt: -3, browW: 11, gap: 47, eyeW: 1.12, browCol: BLACK, old: 1, iris: '#241812', lipCol: 'rgba(120,64,50,.9)'},
   copper:     {k: 1.0, eyes: 'open', brow: .5, browW: 9, mouth: 'none', sculpt: 1, plane: .3, arch: 4},
   barnacle:   {k: .8, sculpt: 1, eyes: 'narrow', brow: .8, browCol: WHITE, browW: 10, old: 1, mouth: 'none', plane: .2},
-  undertow:   {k: 1.0, eyes: 'narrow', brow: .9, scar: 1, freckles: 1, mouth: 'none', sculpt: 1, lips: 1, plane: .42, tilt: 6, browW: 8, lidW: 8, lipCol: 'rgba(100,40,44,.9)'},
+  undertow:   {k: 1.0, eyes: 'narrow', brow: 1.2, scar: 1, freckles: 0, mouth: 'none', sculpt: 1, lips: 1, plane: .42, tilt: 8, browW: 7, lidW: 8, lipCol: 'rgba(100,40,44,.9)', eyeW: .94, gap: 43, browL: .95, lashes: 1, iris: '#3a3a44'},
 };
 const facePatch = new THREE.SphereGeometry(1, 20, 14, Math.PI / 2 - .85, 1.7, .75, 1.64);
 function faceTex(f) {
@@ -472,7 +472,7 @@ function faceTex(f) {
     if (f.mouth !== 'none') line(2, () => { g.moveTo(116, my + 13); g.lineTo(140, my + 13); });
     if (f.scar) { line(3, () => { g.moveTo(66, 134); g.lineTo(84, 168); }); for (let i = 0; i < 3; i++) line(2, () => { g.moveTo(66 + i * 6, 146 + i * 8); g.lineTo(78 + i * 6, 140 + i * 8); }); }
     if (f.freckles) { g.fillStyle = 'rgba(110,55,30,.75)'; for (let i = 0; i < 22; i++) { g.beginPath(); g.arc(70 + rnd() * 116, 140 + rnd() * 20, 1.5, 0, 7); g.fill(); } }
-    if (f.stubble) { g.fillStyle = 'rgba(25,18,14,.55)'; for (let i = 0; i < 150; i++) g.fillRect(74 + rnd() * 108, 184 + rnd() * 56, 1.6, 1.6); }
+    if (f.stubble) { g.fillStyle = 'rgba(25,18,14,.7)'; for (let i = 0; i < 420; i++) { const x = 66 + rnd() * 124, y = 172 + rnd() * 70; if (!(y < 200 && Math.abs(x - 128) > 34 && y < 186)) g.fillRect(x, y, 2.4, 2.4); } }
   });
 }
 function addFace(o, name) {

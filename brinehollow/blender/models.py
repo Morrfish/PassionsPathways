@@ -613,9 +613,9 @@ RL, BLK = 'c_4a3a34', 'c_1c1820'
 # Netter: lean, twin ribboned braids, a net bundle with floats slung at the hip
 SK = 'skin_c69068'
 sw = adult(SK, sw=.225, hw=.175, fem=True, coat_hem=.85, hem_r=.3, legs=RL)
-head(SK, fem=True, wide=.97, chin=1.06, nose=.95, cheek=1.3); hair_cap(BLK); locks(BLK, False); tilted_hat(.48)
+head(SK, fem=True, wide=.97, chin=1.06, nose=.95, cheek=1.3); hair_cap('c_3a2c24'); fringe('c_3a2c24'); locks('c_3a2c24', False); tilted_hat(.48)
 for s in (-1, 1):
-    for i in range(8): sph(.042 - i * .002, (s * (.13 + i * .014), .05 - i * .012, HC - .08 - i * .075), BLK)
+    for i in range(8): sph(.042 - i * .002, (s * (.13 + i * .014), .05 - i * .012, HC - .08 - i * .075), 'c_3a2c24')
     tor(.034, .01, (s * .235, -.04, HC - .62), BRASS); box((.16, .012, .045), (s * .3, -.04, HC - .68), 'team2', rot=(0, s * R(50), 0), r=.005)
 cross_strap(sw)
 sph(.17, (-sw - .1, .08, 1.22), 'c_4f7a70', scale=(1, 1.1, .85))
@@ -631,7 +631,7 @@ head(SK, fem=False, brow=1.6, wide=1.1, jaw=1.15, nose=1.3)
 sph(1, (0, .012, HC + .1), 'c_4a3a30', scale=(.14, .165, .115)); tor(.135, .014, (0, .0, HC + .09), 'c_2c2630', rot=(R(-8), 0, 0))
 for s in (-1, 1): cyl(.045, .045, .04, (s * .058, -.135, HC + .135), BRASS, rot=(R(70), 0, 0)); cyl(.032, .032, .045, (s * .058, -.14, HC + .135), 'c_22262b', rot=(R(70), 0, 0))
 beard2('c_22201e', .2, .135, mo=.8)
-tor(.2, .07, (0, .02, 2.0), 'team2', scale=(1.25, 1, 1))
+tor(.17, .04, (0, .03, 1.99), 'team2', scale=(1.2, 1, 1.2))
 apron('c_3a3a42', 1.45)
 cyl(.024, .024, 1.05, (.06, .25, 1.86), WOOD, rot=(0, R(-24), 0)); box((.2, .03, .26), (.31, .25, 1.3), 'c_55555e', rot=(0, R(-24), 0), r=.01); box((.12, .03, .035), (-.16, .25, 2.35), WOOD, rot=(0, R(-24), 0), r=.01)
 arms(sw, SK, glove='c_5a4030', r=.082)
@@ -640,7 +640,7 @@ done('cinder', 1.0)
 # Gaff: tall, straight and plain — long coat, big square cuffs, upturned collar, a gaff hook standing high over the shoulder
 SK = 'skin_c08860'
 sw = adult(SK, sw=.26, hw=.18, fem=False, coat_hem=.42, hem_r=.36, bulk=1.05, legs=RL)
-head(SK, fem=False, brow=1.3, wide=.95, chin=1.16, nose=1.2, cheek=1.6); hair_cap(BLK, False); locks(BLK, False); tilted_hat(.4)
+head(SK, fem=False, brow=1.6, wide=.93, jaw=.95, chin=1.22, nose=1.4, cheek=2.0); hair_cap(BLK, False); locks(BLK, False); tilted_hat(.4)
 cyl(.1, .16, .2, (0, .04, 2.06), 'team2', rot=(R(-16), 0, 0))
 cyl(.02, .02, 1.75, (.1, .22, 1.95), DARKWOOD, rot=(0, R(-10), 0)); tor(.09, .022, (-.14, .22, 2.8), STEEL, rot=(R(90), 0, 0)); cyl(.03, 0, .1, (-.23, .22, 2.74), STEEL, rot=(R(180), 0, 0), v=4)
 cross_strap(sw); satchel(-.24, -.1, 1.36)
@@ -651,7 +651,7 @@ done('gaff', 1.1)
 # Knuckle: armoured bruiser — iron hat, riveted pauldrons, knee plates, gauntlets, rope over the shoulder
 SK = 'skin_c4906a'
 sw = adult(SK, sw=.34, hw=.23, fem=False, coat_hem=.9, hem_r=.44, bulk=1.4, legs=RL)
-head(SK, fem=False, brow=1.6, wide=1.1, jaw=1.18, nose=1.25, cheek=.8); hair_cap(BLK, False)
+head(SK, fem=False, brow=1.9, wide=1.12, jaw=1.26, chin=.9, nose=1.5, cheek=1.2); hair_cap(BLK, False)
 cyl(.4, .04, .2, (0, 0, HC + .25), IRONHAT, v=18); cyl(.4, .39, .03, (0, 0, HC + .15), 'c_4a4e58', v=18); sph(.03, (0, 0, HC + .36), BRASS)
 for s in (-1, 1):
     sph(.17, (s * (sw + .04), 0, 1.98), IRONHAT, scale=(1.1, 1.15, .7)); tor(.17, .02, (s * (sw + .04), 0, 1.92), 'c_4a4e58', scale=(1.1, 1.15, 1))
@@ -678,7 +678,7 @@ done('soot', .88)
 # Ember: Rust's Lantern-Bearer — a wide cape with the crew mark on the back, braid, the lantern carried low
 SK = 'skin_b98558'
 sw = adult(SK, sw=.235, hw=.18, fem=True, coat_hem=.8, hem_r=.3, legs=RL)
-head(SK, fem=True, jaw=.95, nose=.9); hair_cap('c_3a2a1e'); locks('c_3a2a1e'); back_braid('c_3a2a1e', ribbon='team2'); tilted_hat(.5)
+head(SK, fem=True, brow=.6, wide=1.06, jaw=1.0, chin=.86, nose=.8, cheek=.5); hair_cap('c_7a3a22'); locks('c_7a3a22'); back_braid('c_7a3a22', ribbon='team2'); tilted_hat(.5)
 split_skirt(.52, .2, .95, 1.5, 'team', folds=8, amp=.08, gap=2.5, flare=0)            # the cape hangs from the shoulders, open at the front
 split_skirt(.535, .5, .1, 1.075, 'team2', folds=8, amp=.08, amp_top=.074, gap=2.5, flare=0)
 tor(.19, .04, (0, .03, 1.97), 'team2', scale=(1.2, 1, 1)); sph(.025, (.08, -.14, 1.96), BRASS)
@@ -688,9 +688,10 @@ lantern(wr[0], wr[1] - .05, wr[2] - .4, .34)
 done('ember', .97)
 
 # Tiller: bare forearms with wraps, and a tiller oar planted beside her that tops the hat
-SK = 'skin_c08860'
+SK = 'skin_a8744c'
 sw = adult(SK, sw=.24, hw=.18, fem=True, coat_hem=.85, hem_r=.31, legs=RL)
-head(SK, fem=True, wide=1.04, jaw=1.08, nose=1.05, cheek=.8); hair_cap(BLK); locks(BLK, False); back_braid(BLK, n=5); tilted_hat(.48)
+head(SK, fem=True, brow=1.2, wide=1.06, jaw=1.14, chin=.95, nose=1.15, cheek=.7); hair_cap(BLK); locks(BLK, False); back_braid(BLK, n=5); tilted_hat(.48)
+tor(.132, .022, (0, .01, HC + .085), 'c_a8281c', rot=(R(-6), 0, 0), scale=(1, 1.18, 1.6)); box((.12, .012, .04), (.13, .12, HC + .02), 'c_a8281c', rot=(0, R(60), R(30)), r=.005)
 cross_strap(sw); tor(sw * .9, .022, (0, 0, 1.74), LEATHER, rot=(R(90), R(-42), 0), scale=(1, 1.25, 1))
 satchel(.2, -.1, 1.36)
 wr, grip = arms(sw, SK, glove=None, bare=True, pose='hold')
@@ -728,8 +729,8 @@ for s in (-1, 1):
     sph(.04, (s * .04, -.168, HC - .088), 'c_3a2c24', scale=(1.6, .6, .6)); sph(.026, (s * .09, -.15, HC - .08), 'c_3a2c24', scale=(1.3, .6, .8)); tor(.02, .008, (s * .115, -.14, HC - .06), 'c_3a2c24', rot=(R(90), 0, 0))
 cross_strap(sw); tor(sw * .9, .022, (0, 0, 1.74), LEATHER, rot=(R(90), R(-42), 0), scale=(1, 1.25, 1))
 for x in (-.08, .08): cyl(.06, .06, .3, (x, .2, 1.72), BRASS); sph(.06, (x, .2, 1.87), BRASS)
-cyl(.03, .03, .55, (.14, .2, 2.15), BRASS); cyl(.035, .035, .26, (.14, .08, 2.43), BRASS, rot=(R(90), 0, 0))
-cyl(.13, .035, .26, (.2, -.1, 2.5), BRASS, rot=(R(-60), 0, R(-20)), v=16); cyl(.105, .025, .22, (.207, -.12, 2.512), 'c_3a2a12', rot=(R(-60), 0, R(-20)), v=16)
+cyl(.03, .03, .2, (.11, .2, 1.95), BRASS); cyl(.03, .03, .62, (.22, .2, 2.28), BRASS, rot=(0, R(22), 0)); cyl(.035, .035, .2, (.34, .12, 2.58), BRASS, rot=(R(90), 0, 0))
+cyl(.15, .035, .26, (.34, -.1, 2.6), BRASS, rot=(R(-84), 0, 0), v=16); cyl(.125, .025, .22, (.34, -.125, 2.6), 'c_3a2a12', rot=(R(-84), 0, 0), v=16)
 wr, grip = arms(sw, SK, glove='c_5a4030', bare=True, pose='hold')
 cyl(.016, .016, .26, (wr[0], wr[1] - .1, wr[2] - .08), STEEL, rot=(R(80), 0, 0)); tor(.04, .014, (wr[0], wr[1] - .25, wr[2] - .05), STEEL, rot=(0, R(90), 0))
 done('copper', 1.0)
@@ -737,10 +738,13 @@ done('copper', 1.0)
 # Undertow: long coat with a pale wave on the chest, ribboned braid, a heavy cleaver hanging from the free hand
 SK = 'skin_c08a60'
 sw = adult(SK, sw=.25, hw=.185, fem=True, coat_hem=.42, hem_r=.37, legs=RL)
-head(SK, fem=True, brow=1.2, jaw=1.1, chin=1.08, nose=1.1, cheek=1.6); hair_cap(BLK); fringe(BLK, 'swept'); locks(BLK); back_braid(BLK, ribbon='team2'); tilted_hat(.49)
+head(SK, fem=True, brow=1.3, wide=.94, jaw=.9, chin=1.2, nose=1.2, cheek=1.8); hair_cap(BLK); fringe(BLK, 'swept'); locks(BLK); back_braid(BLK, ribbon='team2'); tilted_hat(.49)
 tor(.11, .045, (0, .01, 2.01), 'team2', rot=(R(-10), 0, 0))
-for x, z, r in ((-.09, 1.8, .035), (-.015, 1.82, .045), (.065, 1.795, .033)): tor(r, .011, (x - .05, -.142 + abs(x) * .1, z), CREAM, rot=(R(90), 0, 0))    # the wave, on the chest
-box((.2, .014, .018), (-.06, -.14, 1.75), CREAM, r=.005)
+wy = lambda x: -.146 + abs(x) * .12
+crest = ((-.15, 1.74), (-.12, 1.765), (-.085, 1.8), (-.05, 1.83), (-.015, 1.84), (.015, 1.825), (.02, 1.8), (.0, 1.79), (-.015, 1.805))      # a cresting wave, curling over
+swell = ((.03, 1.755), (.06, 1.785), (.09, 1.79), (.115, 1.765), (.13, 1.74))
+for line_ in (crest, swell, ((-.15, 1.725), (.13, 1.725))):
+    for a, b in zip(line_, line_[1:]): limb((a[0], wy(a[0]), a[1]), (b[0], wy(b[0]), b[1]), .0085, .0085, CREAM, v=5); sph(.0085, (b[0], wy(b[0]), b[1]), CREAM)
 cross_strap(sw)
 wr, grip = arms(sw, SK, pose='hold')
 box((.03, .09, .04), (wr[0], wr[1] - .03, wr[2] - .1), WOOD, r=.01); box((.018, .1, .3), (wr[0], wr[1] - .06, wr[2] - .28), 'c_9a9ea6', r=.006); box((.022, .11, .05), (wr[0], wr[1] - .06, wr[2] - .42), 'c_6a6e78', r=.006)
