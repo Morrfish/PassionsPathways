@@ -1,6 +1,6 @@
 /* Bot Assembly Shop — core data: parts, bot math, tiles, courses, storage */
 'use strict';
-const VERSION = '1.2';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
+const VERSION = '1.3';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
 const pl = planck, V = pl.Vec2;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -102,7 +102,7 @@ const PARTS = {
     { id: 'mirror', cat: 'Helpers', name: 'Mirror Plating', icon: '🪞', desc: 'Lasers bounce off. They cannot hurt you.', mass: 4, cost: 100 },
     { id: 'shield', cat: 'Helpers', name: 'Bubble Shield', icon: '🫧', key: 'J', code: 'KeyJ', act: 'Shield', desc: '3 uses. Nothing can hurt you for 2.5 seconds.', mass: 4, cost: 130 },
     { id: 'righter', cat: 'Helpers', name: 'Roll Cage', icon: '🔄', key: 'F', code: 'KeyF', act: 'Flip upright', desc: 'Flip yourself back over when you crash.', mass: 5, cost: 60 },
-    { id: 'horn', cat: 'Helpers', name: 'Horn', icon: '📯', key: 'H', code: 'KeyH', act: 'Honk', desc: 'Beep beep! Does nothing useful. Totally worth it.', mass: 0, cost: 5 },
+    { id: 'horn', cat: 'Helpers', name: 'Horn', icon: '📯', key: 'H', code: 'KeyH', act: 'Honk', desc: 'Beep beep! Startles every animal within 12 m.', mass: 0, cost: 5 },
   ],
   // Upgrades make the bot itself better. They have their own slots and never need a key.
   upgrades: [
@@ -128,7 +128,7 @@ const PARTS = {
 const byId = (list, id) => list.find(p => p.id === id) || list[0];
 const BOT_COLORS = ['#ffc21a', '#ff5a36', '#2ad4c0', '#4d8dff', '#b46bff', '#7bd13b', '#ff6fb5', '#e8edf2', '#20242b', '#c0392b', '#1f4fa8', '#8a5a2b'];
 // A new builder starts with an empty build bay: every part is the student's choice
-const DEFAULT_BOT = { name: '', color: '#ffc21a', color2: '#20242b', hub: '#aab3bf', pattern: 'none', eyes: 'normal', topper: 'antenna', words: '', pic: '', chassis: null, wheels: null, tires: null, motor: null, gear: 2, battery: null, drive: null, gadgets: [], upgrades: [] };
+const DEFAULT_BOT = { name: '', color: '#ffc21a', color2: '#20242b', hub: '#aab3bf', pattern: 'none', eyes: 'normal', topper: 'antenna', skin: '', words: '', pic: '', chassis: null, wheels: null, tires: null, motor: null, gear: 2, battery: null, drive: null, gadgets: [], upgrades: [] };
 const REQUIRED = [['chassis', 'a chassis'], ['wheels', 'wheels'], ['tires', 'tires'], ['motor', 'a motor'], ['battery', 'a battery'], ['drive', 'a drive type']];
 const LOOKS = {
   pattern: [['none', 'Plain'], ['stripes', 'Stripes'], ['racing', 'Racing'], ['flames', 'Flames'], ['dots', 'Dots'], ['camo', 'Camo'], ['checker', 'Checkers'], ['zigzag', 'Zigzag']],
@@ -315,6 +315,18 @@ const OBJ = {
   ballpit: { name: 'Ball Pit', icon: '🎱', tip: 'A pile of bouncy balls.' },
   repair: { name: 'Repair Station', icon: '🔧', tip: 'Fixes damage while the bot is parked on it.' },
   charger: { name: 'Charger', icon: '🔌', tip: 'Recharges the battery while the bot is parked on it.' },
+  alarm: { name: 'Alarm Clock', icon: '⏰', tip: 'Rings when touched. Every animal within 14 m bolts away from it.' },
+  frog: { name: 'Frog', icon: '🐸', tip: 'When spooked, takes three big hops. Fits under gates.' },
+  rabbit: { name: 'Rabbit', icon: '🐇', tip: 'When spooked, sprints away for a few seconds. Fits under gates.' },
+  chicken: { name: 'Chicken', icon: '🐔', tip: 'When spooked, flaps up and forward. Can reach high switches.' },
+  tortoise: { name: 'Tortoise', icon: '🐢', tip: 'When spooked, plods away slowly. Heavy enough to press a weight plate.' },
+  hamster: { name: 'Hamster Wheel', icon: '🐹', tip: 'When spooked, the hamster runs and sets off the nearest contraption or gate.' },
+  button: { name: 'Floor Button', icon: '🔘', tip: 'Anything that lands on it sets off the nearest contraption within 10 m, or else the nearest gate.' },
+  dominoes: { name: 'Dominoes', icon: '🁢', tip: 'A row of six. Knock the first one over.' },
+  bowling: { name: 'Bowling Ball', icon: '🎳', tip: 'Heavy and it rolls. Fits under gates.' },
+  trapdoor: { name: 'Trapdoor', icon: '🚪', air: true, tip: 'A shelf that drops open when a trigger sets it off.' },
+  kicker: { name: 'Kicker Boot', icon: '🥾', tip: 'Boots whatever is in front of it when a trigger sets it off.' },
+  anvil: { name: 'Anvil', icon: '⚒️', air: true, tip: 'Hangs in the air until a trigger drops it. 200 kg.' },
   pit: { name: 'Pit Stop', icon: '🛠️', tip: 'Park here and press Enter to swap gadgets in the middle of a course.' },
   sign: { name: 'Sign', icon: '🪧', text: true, tip: 'A sign with your own words on it.' },
 };
@@ -423,16 +435,55 @@ function analyzeCourse(c) {
   const out = [], add = (ok, icon, label) => { if (ok) out.push([icon, label]); };
   add(f.steep, '⛰️', 'Steep 45° climbs'); add(wall, '🧗', `Walls up to ${wall} m`); add(drop, '🪂', `Drops up to ${drop} m`); add(f.slab, '🪜', 'Half-meter ledges'); add(gap, '🕳️', `Gaps up to ${gap} m`);
   add(f.ice, '🧊', 'Ice'); add(f.mud, '🟤', 'Mud'); add(f.sand, '🏖️', 'Soft sand'); add(f.rubber, '🩷', 'Bouncy rubber'); add(f.water, '🌊', 'Water'); add(f.lava, '🌋', 'Lava');
-  const names = { zip: 'Zip lines', anchor: 'Grapple points', steel: 'Steel crates', boulder: 'Boulders', crate: 'Wood crates', woodwall: 'Wood walls', iceblock: 'Ice walls', stone: 'Rocks', gate: 'Gates and switches', hammer: 'Swinging hammers', spinner: 'Spinners', bridge: 'Rope bridges', seesaw: 'Seesaws', lift: 'Elevators', ferry: 'Moving platforms', spring: 'Spring pads', fan: 'Fans', boost: 'Boost pads', springboard: 'Springboards', launcher: 'Bot cannons', tele: 'Teleporters', convL: 'Conveyor belts', convR: 'Conveyor belts', blower: 'Giant propellers', moon: 'Low gravity', laser: 'Lasers', dropper: 'Falling boulders', tnt: 'TNT', glass: 'Glass walls', plate: 'Weight plates', ballpit: 'Ball pits', repair: 'Repair stations', charger: 'Chargers', pit: 'Pit stops' };
+  const names = { zip: 'Zip lines', anchor: 'Grapple points', steel: 'Steel crates', boulder: 'Boulders', crate: 'Wood crates', woodwall: 'Wood walls', iceblock: 'Ice walls', stone: 'Rocks', gate: 'Gates and switches', hammer: 'Swinging hammers', spinner: 'Spinners', bridge: 'Rope bridges', seesaw: 'Seesaws', lift: 'Elevators', ferry: 'Moving platforms', spring: 'Spring pads', fan: 'Fans', boost: 'Boost pads', springboard: 'Springboards', launcher: 'Bot cannons', tele: 'Teleporters', convL: 'Conveyor belts', convR: 'Conveyor belts', blower: 'Giant propellers', moon: 'Low gravity', laser: 'Lasers', dropper: 'Falling boulders', tnt: 'TNT', glass: 'Glass walls', plate: 'Weight plates', ballpit: 'Ball pits', repair: 'Repair stations', charger: 'Chargers', pit: 'Pit stops', alarm: 'Alarm clocks', frog: 'Frogs', rabbit: 'Rabbits', chicken: 'Chickens', tortoise: 'Tortoises', hamster: 'Hamster wheels', button: 'Floor buttons', dominoes: 'Dominoes', bowling: 'Bowling balls', trapdoor: 'Trapdoors', kicker: 'Kicker boots', anvil: 'Anvils' };
   const seen = {};
   for (const k in names) if (n[k] && !seen[names[k]]) { seen[names[k]] = 1; out.push([OBJ[k].icon, names[k]]); }
   if (!out.length) out.push(['🛣️', 'Open road']);
   return out;
 }
 
+/* ---------------- Coins and the store ----------------
+   Beating levels pays coins. Coins never buy the parts needed to win a level: those stay free, inside
+   each course's budget. Coins unlock course-builder pieces, paint options and collectible special bots. */
+const FREE_OBJ = ['start', 'finish', 'checkpoint', 'crate', 'steel', 'sign', 'boost', 'spring', 'seesaw', 'bridge', 'pit', 'charger', 'repair'];
+const OBJ_PRICE = { boulder: 60, woodwall: 60, iceblock: 60, stone: 60, glass: 60, ballpit: 60, convL: 60, convR: 60, fan: 60, anchor: 60, gate: 60, switch: 60, plate: 60, button: 60, bowling: 60,
+  zip: 80, lift: 80, ferry: 80, alarm: 80, dominoes: 80, hammer: 100, spinner: 100, springboard: 100, blower: 100, laser: 100, dropper: 100, tnt: 100, trapdoor: 100, kicker: 100, anvil: 100,
+  moon: 120, frog: 120, rabbit: 120, chicken: 140, tortoise: 140, launcher: 150, tele: 150, hamster: 160 };
+const SKINS = [
+  { id: 'shark', tier: 'rare', name: 'Shark Bot', price: 300, desc: 'Fin, teeth and a mean grin.' },
+  { id: 'ladybug', tier: 'rare', name: 'Ladybug Bot', price: 300, desc: 'Red shell, black spots, two feelers.' },
+  { id: 'bus', tier: 'rare', name: 'School Bus Bot', price: 300, desc: 'Windows, stripe and all.' },
+  { id: 'tiger', tier: 'rare', name: 'Tiger Bot', price: 300, desc: 'Stripes, ears and a tail.' },
+  { id: 'ufo', tier: 'ultra', name: 'UFO Bot', price: 800, desc: 'Glass dome and blinking lights.' },
+  { id: 'dragon', tier: 'ultra', name: 'Dragon Bot', price: 800, desc: 'Spikes, wings and fiery breath.' },
+  { id: 'dino', tier: 'ultra', name: 'Dino Bot', price: 800, desc: 'Back plates and a big tail.' },
+  { id: 'pirate', tier: 'ultra', name: 'Pirate Ship Bot', price: 800, desc: 'Mast, sail and a skull flag.' },
+  { id: 'gold', tier: 'ultimate', name: 'Solid Gold Bot', price: 2000, desc: 'Pure gold. Leaves a trail of sparkles.' },
+  { id: 'unicorn', tier: 'ultimate', name: 'Rainbow Unicorn Bot', price: 2000, desc: 'Golden horn, rainbow mane, rainbow trail.' },
+  { id: 'galaxy', tier: 'ultimate', name: 'Galaxy Bot', price: 2000, desc: 'A whole night sky. Leaves stardust behind.' },
+];
+const TIER = { rare: ['Rare', '#4d8dff'], ultra: ['Ultra Rare', '#b46bff'], ultimate: ['Ultimate Super Special Amazing', '#ffc21a'] };
+const PRICE = { anycolor: 200, stickers: 120 };
+for (const k in OBJ_PRICE) PRICE['obj:' + k] = OBJ_PRICE[k];
+for (const sk of SKINS) PRICE['skin:' + sk.id] = sk.price;
+BOT_COLORS.slice(8).forEach(c => { PRICE['color:' + c] = 40; });
+LOOKS.pattern.slice(2).forEach(o => { PRICE['pattern:' + o[0]] = 80; });
+LOOKS.eyes.slice(2).forEach(o => { PRICE['eyes:' + o[0]] = 50; });
+LOOKS.topper.slice(1, -1).forEach(o => { PRICE['topper:' + o[0]] = 70; });
+const FREE_STICKERS = 8;
+/* Sections of the level list. Finishing every level in one pays its bonus, once. */
+const SECTIONS = [
+  { id: 'speed', name: 'Speed courses', bonus: 300 }, { id: 'strength', name: 'Strength courses', bonus: 300 }, { id: 'crazy', name: 'Crazy courses', bonus: 300 },
+  { id: 'puzzle', name: 'Puzzle courses', bonus: 400 }, { id: 'gizmo', name: 'Contraption courses', bonus: 400 }, { id: 'maze', name: 'Mazes', bonus: 500 }, { id: 'boss', name: 'The final five', bonus: 800 },
+];
+const sectionOf = c => c.group || c.kind;
+const levelPay = (c, medal) => 20 * (c.stars || 2) + ({ gold: 40, silver: 20 }[medal] || 0);
+
 /* ---------------- Storage ---------------- */
 /* Each player's bot, medals, notebook and courses are saved under their own name */
-const USER_KEYS = ['bot', 'best', 'log', 'courses'];
+const USER_KEYS = ['bot', 'best', 'log', 'courses', 'wallet', 'sv'];
+/* Raise this when an update changes the game enough that old progress should not carry over */
+const SAVE_VERSION = 2;
 const Store = {
   user: null,
   key(k, user = Store.user) { return 'botshop.' + (user && USER_KEYS.includes(k) ? 'u.' + user + '.' : '') + k; },

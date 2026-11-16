@@ -54,6 +54,15 @@ const SEG = {
   droneswitch: (b) => b.need('drone').flat(8).z(-2, 3, { drone: 1 }).o('switch', 6, 9).o('gate', 6).flat(14),
   hoverlava: (b) => b.need('hover').flat(8).z(-1.5, 10.5, { hover: 1 }).gap(9, LAVA, 2).flat(8),
   mlasers: (b, p = 4) => { b.need('mirror').flat(6); for (let i = 0; i < p; i++) b.o('laser', 3 + i * 3); b.flat(p * 3 + 6); },
+  // --- contraption sections: the bot starts a chain reaction that reaches where it cannot
+  gzrabbit: (b) => b.flat(6).o('alarm', 0).o('rabbit', 2.5).flat(12).o('gate', 0).o('button', 2).flat(8),
+  gzfrog: (b) => b.flat(6).o('alarm', 0).o('frog', 2).flat(7).o('gate', 0).o('button', 2.3).flat(8),
+  gztortoise: (b) => b.flat(6).o('alarm', 0).o('tortoise', 3).flat(8).o('gate', 0).o('plate', 2.5).flat(8),
+  gzchicken: (b) => b.flat(6).o('alarm', 0).o('chicken', 3).o('switch', 7.6, 6.6).flat(11).o('gate', 0).flat(8),
+  gzanvil: (b) => b.flat(4).o('switch', 2, 1.2).flat(6).o('gate', 0).o('anvil', 3, 5).o('plate', 3).flat(10),
+  gzdomino: (b) => b.flat(4).o('switch', 2, 1.2).flat(6).o('gate', 0).o('kicker', 1.6).o('dominoes', 3.0).o('button', 8.2).flat(14),
+  gzball: (b) => b.flat(4).o('alarm', 0).o('hamster', 2.5).z(1.5, 4.5, { wait: 6 }).flat(6).o('trapdoor', 1, 4.5).o('bowling', 1, 4.6).gdown(2).flat(4).o('gate', 0).o('button', 2).flat(8),
+  gzhonk: (b) => b.need('horn').flat(6).z(-1.5, 1, { horn: 1 }).o('rabbit', 2.5).flat(12).o('gate', 0).o('button', 2).flat(8),
   charge: (b) => b.flat(2).o('charger', 1).flat(4),
   fix: (b) => b.flat(2).o('repair', 1).flat(4),
 };
@@ -107,6 +116,13 @@ const LEVELS = [
   ['l46', 'Swap Meet', 'puzzle', 4, 'snow', 8, 1, 'zip:14 pit climb:5 pit propgap:10 pit rock:2'],
   ['l47', 'Toolbelt', 'puzzle', 4, 'candy', 10, 1, 'wood:1 icew:1 pit rock:1 tnt pit pool:10 droneswitch'],
   ['l48', 'The Long Con', 'puzzle', 5, 'crazy', 8, 2, 'bridgegap wood:2 pit hoverlava mlasers:3 pit climb:6 zip:16 pit rock:2 gatehigh'],
+  // ---- contraptions: Rube Goldberg chain reactions
+  ['l49', 'Wake-Up Call', 'gizmo', 2, 'speed', 10, 1, 'gzrabbit hills:1 gztortoise'],
+  ['l50', 'Leap Frog', 'gizmo', 3, 'candy', 10, 1, 'gzfrog gzrabbit'],
+  ['l51', 'Hamster Power', 'gizmo', 3, 'strength', 14, 1, 'gzball hills:1 gzanvil'],
+  ['l52', 'Domino Day', 'gizmo', 4, 'night', 10, 1, 'gzdomino gzfrog'],
+  ['l53', 'Fowl Play', 'gizmo', 4, 'desert', 14, 1, 'gzchicken gzhonk gzball'],
+  ['l54', 'The Machine', 'gizmo', 5, 'crazy', 16, 2, 'gzrabbit gzdomino gzball gzchicken gztortoise gzanvil'],
   // ---- legendary: long, few checkpoints, tight budgets
   ['l36', 'The Long Haul', 'boss', 5, 'desert', 5, 3, 'mud:16 steep:5 sand:14 conveyor:3 blower steep:6 charge rock:2 wood:2 crates:3 steep:4 blower rock:1'],
   ['l37', 'Leap of Faith', 'boss', 5, 'space', 30, 3, 'fall:12 board:9 launch:20 fix fall:13 moon:12 launchwall:7 gaplava:3 propgap:14 propwall:6 fall:12 launch:22'],
@@ -117,7 +133,7 @@ const LEVELS = [
 const LEVEL_BLURB = { 1: 'A gentle warm-up.', 2: 'Getting trickier.', 3: 'Plan before you build.', 4: 'For experienced engineers.', 5: 'Legendary. Few checkpoints. Good luck.' };
 
 /* The bot the course checker drives. Budgets are set from what it costs. */
-const REF_GADGETS = ['hook', 'saw', 'drill', 'torch', 'cannon', 'suction', 'prop', 'floats', 'blade', 'bridge', 'drone', 'hover', 'mirror'];
+const REF_GADGETS = ['hook', 'saw', 'drill', 'torch', 'cannon', 'suction', 'prop', 'floats', 'blade', 'bridge', 'drone', 'hover', 'mirror', 'horn'];
 const gadgetsFor = needs => REF_GADGETS.filter(g => needs[g]);
 function refBuild(needs, gad, slots) {
   gad = gad.slice(); const n = slots || gad.length;
@@ -129,7 +145,7 @@ function refBuild(needs, gad, slots) {
 
 function moreLevels() {
   const made = LEVELS.map(([id, name, kind, stars, sky, h0, cpEvery, segs], idx) => {
-    const boss = kind === 'boss', puzzle = kind === 'puzzle', b = CB(id, name, boss || puzzle ? 'crazy' : kind, 1000, puzzle ? 'A puzzle course. Read the rule, then plan your pit stops.' : LEVEL_BLURB[stars], null);
+    const boss = kind === 'boss', puzzle = kind === 'puzzle', gizmo = kind === 'gizmo', b = CB(id, name, boss || puzzle || gizmo ? 'crazy' : kind, 1000, puzzle ? 'A puzzle course. Read the rule, then plan your pit stops.' : gizmo ? 'A contraption course. Start the chain reaction, then stay out of its way.' : LEVEL_BLURB[stars], null);
     const groups = [{}], pits = [], c0 = b.c; c0.needs = groups[0];
     b.setH(h0).flat(4).o('start').flat(8);
     segs.split(' ').forEach((sg, i) => {
@@ -145,7 +161,7 @@ function moreLevels() {
     if (puzzle) { c.rules = { slots: Math.max(1, ...lists.map(l => l.length)) }; c.plan = pits.map((x, i) => ({ x, gadgets: lists[i + 1] })); }
     const ref = refBuild(all, puzzle ? lists[0] : gadgetsFor(all), puzzle ? c.rules.slots : 0);
     const cost = Math.max(...lists.map(l => botSpec(Object.assign({}, ref, { gadgets: puzzle ? l : ref.gadgets })).cost));
-    Object.assign(c, { stars, boss, group: boss ? 'boss' : puzzle ? 'puzzle' : '', sky: sky || '', num: idx + 1, ref });
+    Object.assign(c, { stars, boss, group: boss ? 'boss' : puzzle ? 'puzzle' : gizmo ? 'gizmo' : '', sky: sky || '', num: idx + 1, ref });
     c.budget = Math.ceil(cost * (boss ? 1.03 : 1.12) / 50) * 50;
     if (REF_TIMES[id]) c.medals = [Math.ceil(REF_TIMES[id] * 1.05), Math.ceil(REF_TIMES[id] * 1.7)];
     return c;
@@ -225,4 +241,4 @@ function mazes() {
 }
 
 /* Finish times of the course checker's test bot, used to set medal times */
-const REF_TIMES = {l01: 12.1,  l02: 12.4,  l03: 14.3,  l04: 10.1,  l05: 13.8,  l06: 13.8,  l07: 14.5,  l08: 15.1,  l09: 19.2,  l10: 19.8,  l11: 14.4,  l12: 14.6,  l13: 8.2,  l14: 26.1,  l15: 8.6,  l16: 51.6,  l17: 15,  l18: 17.6,  l19: 13,  l20: 15.1,  l21: 10.2,  l22: 15.3,  l23: 23,  l24: 21.1,  l25: 22,  l26: 8.1,  l27: 10.9,  l28: 13.3,  l29: 13.3,  l30: 10.6,  l31: 12.6,  l32: 14.2,  l33: 9.3,  l34: 11.3,  l35: 14.7,  l41: 27,  l42: 22.7,  l43: 12.9,  l44: 26.3,  l45: 20.2,  l46: 34.4,  l47: 38.1,  l48: 64.2,  l36: 47.5,  l37: 46.5,  l38: 49.2,  l39: 48.4,  l40: 84.2,  m1: 75.9,  m2: 30.2,  m3: 41,  m4: 151.9,  m5: 106.9};
+const REF_TIMES = {l01: 12.1,  l02: 12.4,  l03: 14.3,  l04: 10.1,  l05: 13.8,  l06: 13.8,  l07: 14.5,  l08: 15.1,  l09: 19.2,  l10: 19.8,  l11: 14.4,  l12: 14.6,  l13: 8.2,  l14: 26.1,  l15: 8.6,  l16: 51.6,  l17: 15,  l18: 17.6,  l19: 13,  l20: 15.1,  l21: 10.2,  l22: 15.3,  l23: 23,  l24: 21.1,  l25: 22,  l26: 8.1,  l27: 10.9,  l28: 13.3,  l29: 13.3,  l30: 10.6,  l31: 12.6,  l32: 14.2,  l33: 9.3,  l34: 11.3,  l35: 14.7,  l41: 27,  l42: 22.7,  l43: 12.9,  l44: 26.3,  l45: 20.2,  l46: 34.4,  l47: 38.1,  l48: 64.2,  l49: 19.4,  l50: 11.8,  l51: 21,  l52: 12.6,  l53: 22.1,  l54: 40.2,  l36: 47.5,  l37: 46.5,  l38: 49.2,  l39: 48.4,  l40: 84.2,  m1: 76,  m2: 30.2,  m3: 41,  m4: 151.9,  m5: 106.9};

@@ -10,12 +10,14 @@ Open `index.html` — no install, no accounts, works offline. Progress saves in 
 - **Turn around:** Tab flips the bot so its tools point the other way.
 - **Damage:** bots have health. Long falls and hard crashes break them.
 - **Paint shop:** colours, patterns, eyes, hats, words on a flag, and a picture (sticker, photo, or draw your own).
-- **Levels:** 65 built in — speed, strength, crazy, puzzle, mazes, and five legendary ones.
+- **Levels:** 71 built in — speed, strength, crazy, puzzle, contraption, mazes, and five legendary ones.
+- **Contraptions:** Rube Goldberg pieces. An alarm clock spooks a frog, rabbit, chicken, tortoise or a hamster in a wheel; add dominoes, a bowling ball, a trapdoor, a kicker boot, an anvil and floor buttons, and the chain reaction opens the gate the bot cannot reach.
+- **Coins and the Store:** beating a level pays coins, and finishing a whole section pays a bonus. Coins unlock course-builder pieces, paint options and collectible special bots (Rare, Ultra Rare, Ultimate). Parts needed to beat levels are never locked.
 - **Puzzle courses and mazes:** a course rule limits how many gadgets fit, so students swap them at pit stops (Enter). Mazes are dark, have several floors, and drain the battery the whole time, so the route has to pass chargers.
 - **Course editor:** paint terrain (dirt, ice, mud, rubber, sand, water, lava), drop in 39 kinds of things, set course rules (gadget limit, battery cap, drain, darkness), pick the scenery, test it, then share it as a link or code.
 - **Coach + notebook:** after each run the game explains why the bot stalled, slipped, flipped, broke or ran out of battery, and logs the attempt.
 - **Players:** each student signs in with a name and password, and their bot, medals, notebook and courses are saved separately on the same computer.
-- **Settings:** sound, plus a password-locked teacher area for resetting student passwords, deleting players, turning damage and the coach on or off, and the teacher notes.
+- **Settings:** sound, plus a password-locked teacher area for resetting student passwords, deleting players, turning damage and the coach on or off, giving a player coins, unlocking the whole Store for the computer, and the teacher notes.
 
 Files: `js/core.js` (parts, courses, sharing), `js/levels.js` (the extra levels, built from reusable sections, plus the hand-built mazes), `js/sim.js` (physics and drawing), `js/ui.js` (screens and editor).
 Physics by [planck.js](https://github.com/piqnt/planck.js) (MIT, see `js/planck.LICENSE.txt`).
