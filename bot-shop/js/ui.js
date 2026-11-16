@@ -42,7 +42,7 @@ function askText(o, done) {
 let pendingCode = null;
 /* ---------- Coins ---------- */
 const Wallet = {
-  get(user) { return Object.assign({ coins: 0, own: {}, sec: {}, paid: {}, made: {} }, Store.get('wallet', {}, user)); },
+  get(user) { return Object.assign({ coins: 0, own: {}, sec: {}, paid: {}, made: {}, fast: {} }, Store.get('wallet', {}, user)); },
   save(w, user) { Store.set('wallet', w, user); },
   owns(id) { return !PRICE[id] || !!SET().unlockAll || !!Wallet.get().own[id]; },
   add(n, user) { const w = Wallet.get(user); w.coins += n; Wallet.save(w, user); },
@@ -176,7 +176,7 @@ function storeDialog() {
   const w = Wallet.get(), price = id => Wallet.owns(id) ? '<em class="own">✔ Yours</em>' : `<em>🔒 $${PRICE[id]}</em>`;
   const tabs = [['bots', '🤖 Special bots'], ['pieces', '🧩 Sandbox pieces'], ['paint', '🎨 Paint']];
   let body = '';
-  if (storeTab === 'bots') body = ['ultimate', 'ultra', 'rare'].map(t => `<h4 class="th" style="color:${TIER[t][1]}">${TIER[t][0]}</h4><div class="shelf">${SKINS.filter(k => k.tier === t).map(k => `<button class="item bot" data-buy="skin:${k.id}" style="border-color:${TIER[t][1]}"><canvas width="220" height="130" data-skin="${k.id}"></canvas><b>${k.name}</b><span>${k.desc}</span>${Wallet.owns('skin:' + k.id) ? `<em class="own">${App.cfg.skin === k.id ? '✔ Wearing it' : '✔ Yours — click to wear'}</em>` : `<em>🔒 $${k.price}</em>`}</button>`).join('')}</div>`).join('');
+  if (storeTab === 'bots') body = '<p>Every special bot has free parts built in. They switch on in the <b>sandbox</b> (courses you build or load), not on the built-in levels.</p>' + ['ultimate', 'ultra', 'rare'].map(t => `<h4 class="th" style="color:${TIER[t][1]}">${TIER[t][0]}</h4><div class="shelf">${SKINS.filter(k => k.tier === t).map(k => `<button class="item bot" data-buy="skin:${k.id}" style="border-color:${TIER[t][1]}"><canvas width="220" height="130" data-skin="${k.id}"></canvas><b>${k.name}</b><span>${k.desc}</span><span class="perk">⭐ Sandbox perk: ${perkText(k.id)}</span>${Wallet.owns('skin:' + k.id) ? `<em class="own">${App.cfg.skin === k.id ? '✔ Wearing it' : '✔ Yours — click to wear'}</em>` : `<em>🔒 $${k.price}</em>`}</button>`).join('')}</div>`).join('');
   else if (storeTab === 'pieces') body = `<p>Pieces for the course builder. The basics are free.</p><div class="shelf small">${Object.keys(OBJ_PRICE).sort((a, b) => OBJ_PRICE[a] - OBJ_PRICE[b]).map(k => `<button class="item" data-buy="obj:${k}" title="${esc(OBJ[k].tip)}"><b>${OBJ[k].icon} ${OBJ[k].name}</b>${price('obj:' + k)}</button>`).join('')}</div>`;
   else body = `<div class="shelf small"><button class="item" data-buy="anycolor"><b>🎨 Colour picker</b><span>Any colour you can imagine.</span>${price('anycolor')}</button><button class="item" data-buy="stickers"><b>⭐ Sticker Pack</b><span>${LOOKS.stickers.slice(FREE_STICKERS).join(' ')}</span>${price('stickers')}</button>
       ${BOT_COLORS.slice(8).map(c => `<button class="item" data-buy="color:${c}"><b><i class="dot" style="background:${c}"></i> Colour</b>${price('color:' + c)}</button>`).join('')}
@@ -239,7 +239,7 @@ function showGarage(course, from) {
       <div id="gStats"></div><div id="gPaint" class="paint"></div></div>
     <div class="gcol" id="gParts"></div>
     <div class="gcol gright"><h3>What is out there</h3><canvas id="mini" width="560" height="140"></canvas><p style="font-size:13px;color:var(--dim);margin:8px 0 0">${esc(course.desc || '')}</p>
-      ${rulesText(course.rules).length ? `<div class="rules"><b>📜 Course rules</b><ul>${rulesText(course.rules).map(t => `<li>${t}</li>`).join('')}</ul></div>` : ''}<div class="chips">${analyzeCourse(course).map(i => `<span>${i[0]} ${i[1]}</span>`).join('')}</div><div id="gCoach"></div>
+      ${rulesText(course.rules).length ? `<div class="rules"><b>📜 Course rules</b><ul>${rulesText(course.rules).map(t => `<li>${t}</li>`).join('')}</ul></div>` : ''}<div id="gPerk"></div><div class="chips">${analyzeCourse(course).map(i => `<span>${i[0]} ${i[1]}</span>`).join('')}</div><div id="gCoach"></div>
       <label class="chk"><input type="checkbox" id="gFree" ${App.free ? 'checked' : ''}> Free build (no budget, no medals)</label></div></div>`;
   drawMini($('#mini'), course);
   $('#gName').oninput = e => { App.cfg.name = e.target.value; saveCfg(); };
@@ -259,6 +259,7 @@ function rulesText(r) {
 }
 function refreshGarage() {
   const cfg = App.cfg, c = App.course, s = botSpec(cfg, c.rules);
+  { const pk = cfg.skin && perkText(cfg.skin), el = $('#gPerk'); if (el) el.innerHTML = !pk ? '' : c.builtin ? `<div class="rules perk">⭐ Your ${esc(SKINS.find(k => k.id === cfg.skin).name)} perk (${pk}) is switched off on the built-in levels. It works in the sandbox.</div>` : `<div class="rules perk on">⭐ ${esc(SKINS.find(k => k.id === cfg.skin).name)} perk is ON here: free ${pk}. No slots, weight or cost.</div>`; }
   cfg.upgrades = s.upgrades.map(g => g.id);
   cfg.gadgets = s.gadgets.map(g => g.id);
   const sel = (key, p) => cfg[key] === p.id;
@@ -305,7 +306,7 @@ function paintHTML() {
   const c = App.cfg, lock = id => Wallet.owns(id) ? '' : `<span class="lk">🔒$${PRICE[id]}</span>`;
   const sw = (key, cur) => `<div class="swatches">${BOT_COLORS.map(col => `<button style="background:${col}" class="${cur === col ? 'on' : ''}${Wallet.owns('color:' + col) ? '' : ' locked'}" data-p="${key}" data-v="${col}" data-lock="color:${col}" aria-label="${key} ${col}${Wallet.owns('color:' + col) ? '' : ', locked, $' + PRICE['color:' + col]}">${Wallet.owns('color:' + col) ? '' : '🔒'}</button>`).join('')}${Wallet.owns('anycolor') ? `<input type="color" data-pc="${key}" value="${/^#[0-9a-f]{6}$/i.test(cur || '') ? cur : '#ffc21a'}" aria-label="Pick any ${key} colour" title="Pick any colour">` : `<button class="anyc" data-pa="anycolor" title="Unlock the colour picker">🎨🔒$${PRICE.anycolor}</button>`}</div>`;
   const opts = (key, list) => `<div class="opts">${list.map(o => `<button class="${(c[key] || list[0][0]) === o[0] ? 'on' : ''}" data-p="${key}" data-v="${o[0]}" data-lock="${key}:${o[0]}">${o[1]}${lock(key + ':' + o[0])}</button>`).join('')}</div>`;
-  return `<h4>Body style</h4><div class="opts"><button class="${!c.skin ? 'on' : ''}" data-p="skin" data-v="">Standard</button>${SKINS.map(k => `<button class="${c.skin === k.id ? 'on' : ''}" data-p="skin" data-v="${k.id}" data-lock="skin:${k.id}" style="border-color:${c.skin === k.id ? '' : TIER[k.tier][1] + '66'}" title="${TIER[k.tier][0]}: ${k.desc}">${k.name}${lock('skin:' + k.id)}</button>`).join('')}</div>
+  return `<h4>Body style</h4><div class="opts"><button class="${!c.skin ? 'on' : ''}" data-p="skin" data-v="">Standard</button>${SKINS.map(k => `<button class="${c.skin === k.id ? 'on' : ''}" data-p="skin" data-v="${k.id}" data-lock="skin:${k.id}" style="border-color:${c.skin === k.id ? '' : TIER[k.tier][1] + '66'}" title="${TIER[k.tier][0]}: ${k.desc} Sandbox perk: ${perkText(k.id)}">${k.name}${lock('skin:' + k.id)}</button>`).join('')}</div>
     <h4>Body colour</h4>${sw('color', c.color)}<h4>Trim and pattern colour</h4>${sw('color2', c.color2)}<h4>Wheel colour</h4>${sw('hub', c.hub)}
     <h4>Pattern</h4>${opts('pattern', LOOKS.pattern)}<h4>Eyes</h4>${opts('eyes', LOOKS.eyes)}<h4>On top</h4>${opts('topper', LOOKS.topper)}
     <h4>Words on the flag</h4><input type="text" id="pWords" maxlength="14" placeholder="Type a slogan" value="${esc(c.words || '')}" aria-label="Words on your bot">
@@ -473,8 +474,9 @@ function showResult() {
   if (App.free) extra = '<p>Free build run: no medal recorded.</p>';
   else {
     const medal = medalFor(c, d.time), best = Store.get('best', {}), old = best[c.id], rank = { gold: 3, silver: 2, bronze: 1, finish: 0 };
-    if (!old || d.time < old.time) { best[c.id] = { time: d.time, medal: old && rank[old.medal] > rank[medal] ? old.medal : medal }; Store.set('best', best); extra = old ? `<p>New best! Your old time was ${fmtT(old.time)}s.</p>` : ''; }
-    else extra = `<p>Your best is still ${fmtT(old.time)}s.</p>`;
+    if (!old || d.time < old.time) { best[c.id] = { time: d.time, medal: old && rank[old.medal] > rank[medal] ? old.medal : medal }; Store.set('best', best); extra = old ? `<p>New best! Your old time was ${fmtT(old.time)}s.</p>` : '';
+      if (old && c.builtin) { const w = Wallet.get(), got = w.fast[c.id] || 0, pay = Math.min(fastPay(old.time, d.time), FAST_CAP - got); if (pay > 0) { w.fast[c.id] = got + pay; w.coins += pay; Wallet.save(w); extra += `<p class="pay">⏱️ Beat your own time: +$${pay} coins</p>`; } else extra += '<p style="font-size:13px">You have earned every time bonus this level pays.</p>'; } }
+    else extra = `<p>Your best is still ${fmtT(old.time)}s.${c.builtin && (Wallet.get().fast[c.id] || 0) < FAST_CAP ? ' Beat it to earn bonus coins.' : ''}</p>`;
     if (c.medals) extra += `<p>🥇 under ${c.medals[0]}s · 🥈 under ${c.medals[1]}s</p>`;
     if (c.builtin) {   // coins: the first clear pays, and so does a better medal later
       const w = Wallet.get(), pay = levelPay(c, best[c.id].medal) - (w.paid[c.id] || 0), secId = c.boss ? 'boss' : sectionOf(c), sec = SECTIONS.find(x => x.id === secId);

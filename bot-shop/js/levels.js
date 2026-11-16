@@ -62,6 +62,13 @@ const SEG = {
   gzanvil: (b) => b.flat(4).o('switch', 2, 1.2).flat(6).o('gate', 0).o('anvil', 3, 5).o('plate', 3).flat(10),
   gzdomino: (b) => b.flat(4).o('switch', 2, 1.2).flat(6).o('gate', 0).o('kicker', 1.6).o('dominoes', 3.0).o('button', 8.2).flat(14),
   gzball: (b) => b.flat(4).o('alarm', 0).o('hamster', 2.5).z(1.5, 4.5, { wait: 6 }).flat(6).o('trapdoor', 1, 4.5).o('bowling', 1, 4.6).gdown(2).flat(4).o('gate', 0).o('button', 2).flat(8),
+  gzcat: (b) => b.flat(6).o('alarm', 0).o('cat', 2).flat(7).o('gate', 0).o('button', 9.9).flat(16),
+  gzelephant: (b) => b.flat(6).o('alarm', 0).o('mouse', 2).flat(6).o('gate', 0).o('cheese', 3).o('elephant', 4.5).o('plate', 7).flat(10).gup(2).gap(3).flat(10),
+  gzdog: (b) => b.flat(6).o('alarm', 0).o('dog', 3).flat(9).o('gate', 0).o('rabbit', 5).o('carrot', 9).o('button', 9).flat(14),
+  gztimer: (b) => b.flat(4).o('switch', 2, 1.2).o('timer', 3.5).flat(7).o('gate', 0).o('popper', 1).o('switch', 6, 0.9).flat(12),
+  gzballoon: (b) => b.flat(4).o('switch', 2, 1.2).flat(6).o('gate', 0).o('balloonm', 2.5).o('switch', 2.5, 6).flat(10),
+  gzdryer: (b) => b.flat(4).o('switch', 2, 1.2).o('dryer', 3).o('bowling', 5).flat(9).o('gate', 0).o('button', 3).flat(12),
+  gzgong: (b) => b.flat(4).o('switch', 2, 1.2).flat(6).o('gate', 0).o('popper', 1.5).o('gong', 7).o('frog', 9).o('button', 16.3).flat(22),
   gzhonk: (b) => b.need('horn').flat(6).z(-1.5, 1, { horn: 1 }).o('rabbit', 2.5).flat(12).o('gate', 0).o('button', 2).flat(8),
   charge: (b) => b.flat(2).o('charger', 1).flat(4),
   fix: (b) => b.flat(2).o('repair', 1).flat(4),
@@ -123,6 +130,10 @@ const LEVELS = [
   ['l52', 'Domino Day', 'gizmo', 4, 'night', 10, 1, 'gzdomino gzfrog'],
   ['l53', 'Fowl Play', 'gizmo', 4, 'desert', 14, 1, 'gzchicken gzhonk gzball'],
   ['l54', 'The Machine', 'gizmo', 5, 'crazy', 16, 2, 'gzrabbit gzdomino gzball gzchicken gztortoise gzanvil'],
+  ['l55', 'Elephant in the Room', 'gizmo', 3, 'desert', 10, 1, 'gzelephant gzcat'],
+  ['l56', 'Tick Tock', 'gizmo', 3, 'night', 10, 1, 'gztimer gzballoon hills:1'],
+  ['l57', 'Dog Days', 'gizmo', 4, 'candy', 10, 1, 'gzdog gzdryer gzgong'],
+  ['l58', 'The Grand Contraption', 'gizmo', 5, 'crazy', 12, 2, 'gzelephant gztimer gzdog gzballoon gzgong gzcat'],
   // ---- legendary: long, few checkpoints, tight budgets
   ['l36', 'The Long Haul', 'boss', 5, 'desert', 5, 3, 'mud:16 steep:5 sand:14 conveyor:3 blower steep:6 charge rock:2 wood:2 crates:3 steep:4 blower rock:1'],
   ['l37', 'Leap of Faith', 'boss', 5, 'space', 30, 3, 'fall:12 board:9 launch:20 fix fall:13 moon:12 launchwall:7 gaplava:3 propgap:14 propwall:6 fall:12 launch:22'],
@@ -241,4 +252,4 @@ function mazes() {
 }
 
 /* Finish times of the course checker's test bot, used to set medal times */
-const REF_TIMES = {l01: 12.1,  l02: 12.4,  l03: 14.3,  l04: 10.1,  l05: 13.8,  l06: 13.8,  l07: 14.5,  l08: 15.1,  l09: 19.2,  l10: 19.8,  l11: 14.4,  l12: 14.6,  l13: 8.2,  l14: 26.1,  l15: 8.6,  l16: 51.6,  l17: 15,  l18: 17.6,  l19: 13,  l20: 15.1,  l21: 10.2,  l22: 15.3,  l23: 23,  l24: 21.1,  l25: 22,  l26: 8.1,  l27: 10.9,  l28: 13.3,  l29: 13.3,  l30: 10.6,  l31: 12.6,  l32: 14.2,  l33: 9.3,  l34: 11.3,  l35: 14.7,  l41: 27,  l42: 22.7,  l43: 12.9,  l44: 26.3,  l45: 20.2,  l46: 34.4,  l47: 38.1,  l48: 64.2,  l49: 19.4,  l50: 11.8,  l51: 21,  l52: 12.6,  l53: 22.1,  l54: 40.2,  l36: 47.5,  l37: 46.5,  l38: 49.2,  l39: 48.4,  l40: 84.2,  m1: 76,  m2: 30.2,  m3: 41,  m4: 151.9,  m5: 106.9};
+const REF_TIMES = {l01: 12.1,  l02: 12.4,  l03: 14.3,  l04: 10.1,  l05: 13.8,  l06: 13.8,  l07: 14.5,  l08: 15.1,  l09: 19.2,  l10: 19.8,  l11: 14.4,  l12: 14.6,  l13: 8.2,  l14: 26.1,  l15: 8.6,  l16: 51.6,  l17: 15,  l18: 17.6,  l19: 13,  l20: 15.1,  l21: 10.2,  l22: 15.3,  l23: 23,  l24: 21.1,  l25: 22,  l26: 8.1,  l27: 10.9,  l28: 13.3,  l29: 13.3,  l30: 10.6,  l31: 12.6,  l32: 14.2,  l33: 9.3,  l34: 11.3,  l35: 14.7,  l41: 27,  l42: 22.7,  l43: 12.9,  l44: 26.3,  l45: 20.2,  l46: 34.4,  l47: 38.1,  l48: 64.2,  l49: 19.4,  l50: 11.8,  l51: 21,  l52: 12.6,  l53: 22.1,  l54: 40.2,  l55: 23.9,  l56: 16.7,  l57: 18.8,  l58: 52.6,  l36: 47.5,  l37: 46.5,  l38: 49.2,  l39: 48.4,  l40: 84.2,  m1: 76,  m2: 30.2,  m3: 41,  m4: 151.9,  m5: 106.9};

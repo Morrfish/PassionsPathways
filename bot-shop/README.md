@@ -10,9 +10,12 @@ Open `index.html` — no install, no accounts, works offline. Progress saves in 
 - **Turn around:** Tab flips the bot so its tools point the other way.
 - **Damage:** bots have health. Long falls and hard crashes break them.
 - **Paint shop:** colours, patterns, eyes, hats, words on a flag, and a picture (sticker, photo, or draw your own).
-- **Levels:** 71 built in — speed, strength, crazy, puzzle, contraption, mazes, and five legendary ones.
+- **Levels:** 75 built in — speed, strength, crazy, puzzle, contraption, mazes, and five legendary ones.
 - **Contraptions:** Rube Goldberg pieces. An alarm clock spooks a frog, rabbit, chicken, tortoise or a hamster in a wheel; add dominoes, a bowling ball, a trapdoor, a kicker boot, an anvil and floor buttons, and the chain reaction opens the gate the bot cannot reach.
 - **Coins and the Store:** beating a level pays coins, and finishing a whole section pays a bonus. Coins unlock course-builder pieces, paint options and collectible special bots (Rare, Ultra Rare, Ultimate). Parts needed to beat levels are never locked.
+- **Special bots (28):** 10 Rare, 10 Ultra Rare and 8 Ultimate. Each has free parts built in (for example the Shark Bot floats and has a snorkel). These perks only switch on in the sandbox, meaning courses players build or load. On the built-in levels a special bot is looks only, so nobody can buy a win.
+- **Time bonus:** beating your own best time on a built-in level pays $5 to $50 depending on how much faster you were, up to $150 per level in total.
+- **Contraption pieces:** alarm clock, gong, frog, rabbit, chicken, tortoise, cat, mouse, dog, elephant, hamster wheel, cheese, carrot, egg timer, ball popper, toaster, hair dryer, balloon, pinball bumper, pipe, trapdoor, boot, anvil, dominoes and bowling ball. Triggers set off the nearest unused machine within 10 m, otherwise they open the nearest gate.
 - **Puzzle courses and mazes:** a course rule limits how many gadgets fit, so students swap them at pit stops (Enter). Mazes are dark, have several floors, and drain the battery the whole time, so the route has to pass chargers.
 - **Course editor:** paint terrain (dirt, ice, mud, rubber, sand, water, lava), drop in 39 kinds of things, set course rules (gadget limit, battery cap, drain, darkness), pick the scenery, test it, then share it as a link or code.
 - **Coach + notebook:** after each run the game explains why the bot stalled, slipped, flipped, broke or ran out of battery, and logs the attempt.
