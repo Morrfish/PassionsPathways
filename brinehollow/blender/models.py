@@ -395,8 +395,8 @@ def fringe(col, kind='full'):
     """What the hair does across the forehead: a full fringe, or one swept to the side."""
     xs = [i * .03 - .09 for i in range(7)]
     for i, x in enumerate(xs):
-        drop = 0 if kind == 'full' else i * .011
-        sph(.05, (x, -.118 + abs(x) * .22, HC + .128 - drop * .3), col, scale=(.62, .55, 1.0 + drop * 9))
+        drop = 0 if kind == 'full' else i * .013
+        sph(.055 if kind == 'swept' else .05, (x, -.12 + abs(x) * .22, HC + .13 - drop * .45), col, scale=(.7, .55, 1.0 + drop * 10))
 def locks(col, long=True):
     for sd in (-1, 1):
         lock((sd * .118, -.07, HC + .12), .24 if long else .14, .024, .014, 0.5, (sd * .035, .03), m=col, n=10)
@@ -412,7 +412,7 @@ def back_braid(col, ribbon=None, n=6):
         for i, (dx, dz, ry, ln) in enumerate(((-.16, -.08, 38, .36), (-.2, -.2, 62, .4), (-.1, -.26, 80, .3))):
             box((ln, .012, .05), (pts[2][0] + dx, .2 + i * .012, pts[2][2] + dz), ribbon, rot=(0, R(-ry), 0), r=.005)
         sph(.03, (pts[2][0] - .03, .2, pts[2][2]), ribbon)
-def tilted_hat(r=.47, z=HC + .14, tilt=-10):
+def tilted_hat(r=.47, z=HC + .155, tilt=-16):
     n0 = len(P); hat(r, z)
     for o in P[n0:]:                                                              # brim raised at the front so the eyes show
         d = o.location - Vector((0, 0, HC + .1)); a_ = R(tilt)
@@ -741,10 +741,11 @@ sw = adult(SK, sw=.25, hw=.185, fem=True, coat_hem=.42, hem_r=.37, legs=RL)
 head(SK, fem=True, brow=1.3, wide=.94, jaw=.9, chin=1.2, nose=1.2, cheek=1.8); hair_cap(BLK); fringe(BLK, 'swept'); locks(BLK); back_braid(BLK, ribbon='team2'); tilted_hat(.49)
 tor(.11, .045, (0, .01, 2.01), 'team2', rot=(R(-10), 0, 0))
 wy = lambda x: -.146 + abs(x) * .12
-crest = ((-.15, 1.74), (-.12, 1.765), (-.085, 1.8), (-.05, 1.83), (-.015, 1.84), (.015, 1.825), (.02, 1.8), (.0, 1.79), (-.015, 1.805))      # a cresting wave, curling over
+crest = ((-.15, 1.74), (-.12, 1.765), (-.085, 1.8), (-.05, 1.83), (-.015, 1.84), (.02, 1.825), (.035, 1.795), (.015, 1.775), (-.01, 1.785))      # a cresting wave, curling over
 swell = ((.03, 1.755), (.06, 1.785), (.09, 1.79), (.115, 1.765), (.13, 1.74))
 for line_ in (crest, swell, ((-.15, 1.725), (.13, 1.725))):
-    for a, b in zip(line_, line_[1:]): limb((a[0], wy(a[0]), a[1]), (b[0], wy(b[0]), b[1]), .0085, .0085, CREAM, v=5); sph(.0085, (b[0], wy(b[0]), b[1]), CREAM)
+    line_ = [(-.01 + (x + .01) * 1.25, 1.77 + (z - 1.77) * 1.5) for x, z in line_]
+    for a, b in zip(line_, line_[1:]): limb((a[0], wy(a[0]), a[1]), (b[0], wy(b[0]), b[1]), .016, .016, CREAM, v=6); sph(.016, (b[0], wy(b[0]), b[1]), CREAM)
 cross_strap(sw)
 wr, grip = arms(sw, SK, pose='hold')
 box((.03, .09, .04), (wr[0], wr[1] - .03, wr[2] - .1), WOOD, r=.01); box((.018, .1, .3), (wr[0], wr[1] - .06, wr[2] - .28), 'c_9a9ea6', r=.006); box((.022, .11, .05), (wr[0], wr[1] - .06, wr[2] - .42), 'c_6a6e78', r=.006)

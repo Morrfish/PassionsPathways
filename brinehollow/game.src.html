@@ -361,6 +361,7 @@ const inkBands = new THREE.DataTexture(new Uint8Array([64, 64, 64, 255, 168, 168
 inkBands.minFilter = inkBands.magFilter = THREE.NearestFilter; inkBands.needsUpdate = true;
 // Wear is localized: it gathers on seams and edges, and each kind of surface wears its own way.
 const WEAR = {
+  clean:   {chip: 'inkBase', amt: '0.', at: '.9', grit: '.8', seam: '.4', hatch: '.3'},                                   // pale linen and white hair stay clean
   cloth:   {chip: 'mix(inkBase, vec3(.82, .76, .6), .62)', amt: '.85', at: '.7',  grit: '.45', seam: '.5',  hatch: '.2'},    // pale threadbare patches
   leather: {chip: 'inkBase * .45',                          amt: '.9',  at: '.52', grit: '.25', seam: '.6',  hatch: '.2'},    // dark scuffs and cracks
   metal:   {chip: 'vec3(.38, .2, .11)',                     amt: '.85', at: '.55', grit: '.3',  seam: '.6',  hatch: '.25'},   // rust and pitting
@@ -412,7 +413,7 @@ const FACES = {
   wickie:     {k: .66, sculpt: 1, beard: 1, eyes: 'happy', brow: -.4, browCol: WHITE, browW: 11, old: 1, blush: 1, mouth: 'none', plane: 0},
   netter:     {k: .95, eyes: 'open', brow: .7, lashes: 1, scar: 0, mouth: 'frown', sculpt: 1, lips: 1, plane: .3, tilt: 5, browW: 6, gap: 44, lipCol: 'rgba(120,50,44,.9)', eyeW: .95, browCol: '#3a2416', freckles: 1, iris: '#4a5a3a'},
   cinder:     {k: 1.0, eyes: 'narrow', brow: 1.2, browCol: BLACK, browW: 12, scar: 1, mouth: 'none', sculpt: 1, plane: .3, old: 1},
-  gaff:       {k: 1.1, eyes: 'narrow', brow: 1.2, scar: 1, mouth: 'frown', sculpt: 1, plane: .5, eyeW: .9, browL: .9, gap: 43, stubble: 1, old: 1, browW: 9},
+  gaff:       {k: 1.1, eyes: 'narrow', brow: 1.2, scar: 1, mouth: 'frown', sculpt: 1, plane: .35, eyeW: .9, browL: .9, gap: 43, stubble: 1, old: 0, browW: 9},
   knuckle:    {k: 1.0, eyes: 'narrow', brow: 1.4, browW: 14, stubble: 1, mouth: 'frown', sculpt: 1, plane: .4, tilt: -2, scar: 1, old: 1},
   soot:       {k: .88, eyes: 'wide', brow: 1, mouth: 'none', sculpt: 1, plane: .2, tilt: 5, lashes: 1},
   ember:      {k: .97, eyes: 'wide', brow: -.3, lashes: 1, scar: 0, freckles: 1, mouth: 'smile', sculpt: 1, lips: 1, plane: .25, arch: 8, browW: 5, eyeW: 1.08, lipCol: 'rgba(170,70,60,.9)', tilt: -1, gap: 48, browCol: '#5a2c1a', blush: 1},
@@ -472,7 +473,7 @@ function faceTex(f) {
     if (f.mouth !== 'none') line(2, () => { g.moveTo(116, my + 13); g.lineTo(140, my + 13); });
     if (f.scar) { line(3, () => { g.moveTo(66, 134); g.lineTo(84, 168); }); for (let i = 0; i < 3; i++) line(2, () => { g.moveTo(66 + i * 6, 146 + i * 8); g.lineTo(78 + i * 6, 140 + i * 8); }); }
     if (f.freckles) { g.fillStyle = 'rgba(110,55,30,.75)'; for (let i = 0; i < 22; i++) { g.beginPath(); g.arc(70 + rnd() * 116, 140 + rnd() * 20, 1.5, 0, 7); g.fill(); } }
-    if (f.stubble) { g.fillStyle = 'rgba(25,18,14,.7)'; for (let i = 0; i < 420; i++) { const x = 66 + rnd() * 124, y = 172 + rnd() * 70; if (!(y < 200 && Math.abs(x - 128) > 34 && y < 186)) g.fillRect(x, y, 2.4, 2.4); } }
+    if (f.stubble) { g.fillStyle = 'rgba(40,28,22,.3)'; for (let i = 0; i < 700; i++) { const x = 70 + rnd() * 116, y = 176 + rnd() * 64; g.fillRect(x, y, 1.2, 2.2); } }      // fine short strokes
   });
 }
 function addFace(o, name) {
@@ -504,7 +505,7 @@ const NO_HULL = /^(ship|lighthouse|piling|rock|link|coil|cleat|lamp|barrel)/;
 const matCache = {};
 function namedMat(n, ov) {
   const unlit = n.startsWith('glow_'), hx = n.split('_')[1], c = ov && n in ov ? ov[n] : parseInt(hx, 16) || 0x888888;
-  const kind = /^(skin|face|head)_/.test(n) ? 'skin' : METALS.has(hx) ? 'metal' : LEATHERS.has(hx) ? 'leather' : 'cloth', k = (unlit ? 'glow' : kind) + c;
+  const kind = /^(skin|face|head)_/.test(n) ? 'skin' : METALS.has(hx) ? 'metal' : LEATHERS.has(hx) ? 'leather' : /^(e8dcc4|f0ece0|e8e4da|f4f0d8)$/.test(hx) ? 'clean' : 'cloth', k = (unlit ? 'glow' : kind) + c;
   return matCache[k] || (matCache[k] = unlit ? glow(c) : inkMat(c, kind));
 }
 function model(name, ov) {
