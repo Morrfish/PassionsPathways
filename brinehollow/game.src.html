@@ -401,7 +401,7 @@ hullMat.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#in
 const WHITE = '#efe9df', DARK = '#2a201c', BLACK = '#17120f';
 const FACES = {
   breakwater: {k: 1.06, eyes: 'narrow', brow: 1.1, browCol: WHITE, browW: 11, old: 1, mouth: 'none'},
-  mainsail:   {k: 1.05, sculpt: 1, eyes: 'narrow', iris: '#5a3c1c', brow: 1, browW: 10, browCol: BLACK, scar: 1, freckles: 1, mouth: 'none'},
+  mainsail:   {k: 1.05, sculpt: 1, glare: 1, eyes: 'narrow', iris: '#5a3c1c', brow: 1, browW: 10, browCol: BLACK, scar: 1, freckles: 1, mouth: 'none'},
   drift:      {k: .95, eyes: 'open', brow: 1, scar: 1, freckles: 1, mouth: 'frown'},
   rivet:      {k: 1.02, eyes: 'narrow', brow: 1, browW: 10, scar: 1, mouth: 'none'},
   bell:       {k: .88, eyes: 'wide', brow: -.3, lashes: 1, freckles: 1, blush: 1, mouth: 'smile', iris: '#4f6a34'},
@@ -432,18 +432,19 @@ function faceTex(f) {
       g.fillStyle = 'rgba(70,35,25,.3)'; g.beginPath(); g.ellipse(ex, ey - 5, 31, 16, 0, 0, 7); g.fill();          // the socket sits in shadow under the brow
       if (f.eyes === 'happy') line(5.5, () => g.arc(ex, ey + 8, 17, Math.PI * 1.15, Math.PI * 1.85));
       else {
-        g.beginPath(); g.moveTo(ex - 27, ey + 1); g.quadraticCurveTo(ex, ey - h * 1.7, ex + 27, ey); g.quadraticCurveTo(ex, ey + h * 1.1, ex - 27, ey + 1); g.closePath();
+        const inn = ex - s * 27, out = ex + s * 27, iy = ey + (f.glare ? 5 : 1), oy = ey - (f.glare ? 4 : 0), uc = f.glare ? h * 1.25 : h * 1.7;   // a glare drops the inner corner and flattens the lid
+        g.beginPath(); g.moveTo(inn, iy); g.quadraticCurveTo(ex + (f.glare ? s * 6 : 0), ey - uc, out, oy); g.quadraticCurveTo(ex, ey + h * 1.1, inn, iy); g.closePath();
         g.fillStyle = '#f3ecdc'; g.fill(); g.save(); g.clip();
         g.fillStyle = f.iris || '#3a2416'; g.beginPath(); g.arc(ex - s * 2, ey - 1, 11, 0, 7); g.fill();
         g.fillStyle = '#000'; g.beginPath(); g.arc(ex - s * 2, ey - 1, 5, 0, 7); g.fill();
         g.fillStyle = '#fff'; g.beginPath(); g.arc(ex - s * 2 - 4, ey - 5, 2.6, 0, 7); g.fill(); g.restore();
-        line(7, () => { g.moveTo(ex - 29, ey + 3); g.quadraticCurveTo(ex, ey - h * 1.7 - 1, ex + 29, ey); });           // heavy upper lid
+        line(f.glare ? 8 : 7, () => { g.moveTo(inn - s * 2, iy + 1); g.quadraticCurveTo(ex + (f.glare ? s * 6 : 0), ey - uc - 1, out + s * 3, oy - 1); });           // heavy upper lid
         line(2.4, () => { g.moveTo(ex - 20, ey + h * .7); g.quadraticCurveTo(ex, ey + h * 1.15, ex + 21, ey + h * .5); });
         if (f.lashes) line(3.2, () => { g.moveTo(ex + s * 28, ey); g.lineTo(ex + s * 37, ey - 8); });
         if ((t > .6 && !f.sculpt) || f.old) line(1.8, () => g.arc(ex, ey + 4, 19, Math.PI * .2, Math.PI * .8));                        // bags under hard eyes
       }
       if (f.old) for (let i = 0; i < 3; i++) line(1.8, () => { g.moveTo(ex + s * 25, ey + i * 4 - 2); g.lineTo(ex + s * 35, ey + i * 7 - 6); });
-      const by = ey - 19 - h * .8, w = f.browW || 7, ix = ex - s * 29, ox = ex + s * 33, iy = by + t * 9, oy = by - t * 5 + 3;   // brow: a tapered slab
+      const by = ey - 19 - h * .8 + (f.glare ? 6 : 0), w = f.browW || 7, ix = ex - s * 29, ox = ex + s * 33, iy = by + t * 9, oy = by - t * 5 + 3;   // brow: a tapered slab
       g.beginPath(); g.moveTo(ix, iy - w / 2); g.quadraticCurveTo(ex, Math.min(iy, oy) - w * .9, ox, oy); g.quadraticCurveTo(ex, Math.min(iy, oy) + w * .5, ix, iy + w / 2); g.closePath();
       g.fillStyle = browCol; g.fill(); g.lineWidth = 2; g.strokeStyle = BLACK; g.stroke();
       if (!f.sculpt) line(2.6, () => { g.moveTo(128 + s * 9, ey - 4); g.quadraticCurveTo(128 + s * 8, 150, 128 + s * 18, 166); });     // nose: bridge and wing
@@ -451,11 +452,10 @@ function faceTex(f) {
       if (!f.sculpt || f.old) line(f.old ? 3 : 2, () => { g.moveTo(128 + s * 23, 168); g.quadraticCurveTo(128 + s * 35, 186, 128 + s * 30, 206); });   // fold from nose to mouth
       for (let i = 0; i < 3; i++) line(2, () => { g.moveTo(128 + s * (64 + i * 5), 148 + i * 7); g.lineTo(128 + s * (52 + i * 5), 163 + i * 7); });   // cheekbone hatching
     }
-    if (t > .6 && !f.sculpt) for (const s of [-1, 1]) line(2.4, () => { g.moveTo(128 + s * 5, ey - 30); g.lineTo(128 + s * 7, ey - 16); });   // frown lines
+    if (t > .6 && (!f.sculpt || f.glare)) for (const s of [-1, 1]) line(2.4, () => { g.moveTo(128 + s * 5, ey - (f.glare ? 24 : 30)); g.lineTo(128 + s * 7, ey - (f.glare ? 12 : 16)); });   // frown lines
     if (!f.sculpt) { g.fillStyle = 'rgba(60,30,20,.38)'; g.beginPath(); g.ellipse(128, 179, 17, 5, 0, 0, 7); g.fill(); }
     const my = 205;
     if (f.sculpt) for (const s of [-1, 1]) {                  // hard shadow planes under the cheekbone and along the jaw
-      g.fillStyle = 'rgba(95,42,22,.42)'; g.beginPath(); g.moveTo(128 + s * 74, 152); g.lineTo(128 + s * 46, 178); g.lineTo(128 + s * 50, 216); g.lineTo(128 + s * 72, 196); g.closePath(); g.fill();
     }
     if (f.sculpt) {                                           // lips, painted over the sculpted mouth
       g.fillStyle = 'rgba(128,52,46,.9)'; g.beginPath(); g.moveTo(100, my - 3); g.quadraticCurveTo(116, my - 15, 128, my - 9); g.quadraticCurveTo(140, my - 15, 156, my - 3);
@@ -481,9 +481,9 @@ function addFace(o, name) {
       f.mat.customProgramCacheKey = () => 'face-' + name;
       f.mat.onBeforeCompile = sh => {
         sh.vertexShader = sh.vertexShader.replace('#include <common>', 'varying float vFront;\n#include <common>')
-          .replace('#include <uv_vertex>', `vUv = vec2(position.x / ${(f.k * .36).toFixed(4)} + .5, (position.y / ${f.k.toFixed(4)} - 2.25) / .36 + .5); vFront = normal.z;`);
+          .replace('#include <uv_vertex>', `vUv = vec2(atan(position.x, max(position.z, .001)) * ${(f.k * .128).toFixed(4)} / ${(f.k * .36).toFixed(4)} + .5, (position.y / ${f.k.toFixed(4)} - 2.25) / .36 + .5); vFront = normal.z;`);
         sh.fragmentShader = sh.fragmentShader.replace('#include <common>', 'varying float vFront;\n#include <common>')
-          .replace('#include <map_fragment>', '#include <map_fragment>\ndiffuseColor.a *= smoothstep(.1, .4, vFront);');
+          .replace('#include <map_fragment>', '#include <map_fragment>\ndiffuseColor.a *= smoothstep(-.05, .2, vFront);');
       };
     }
     o.traverse(m => { if (m.isMesh && m.userData.mn && m.userData.mn.startsWith('head_')) m.add(new THREE.Mesh(m.geometry, f.mat)); });
@@ -509,7 +509,7 @@ function model(name, ov) {
   const o = MODELS[name].clone(true);
   const parts = [];
   o.traverse(m => { if (m.isMesh) { parts.push(m); const n = m.material.name; m.material = namedMat(n, ov); m.castShadow = m.material.type !== 'MeshBasicMaterial'; m.receiveShadow = !/^(skin|face|head)_/.test(n); m.userData.noHull = n.startsWith('face_'); m.userData.mn = n; } });   // faces are never lost in hat shadow
-  if (!NO_HULL.test(name)) for (const m of parts) if (m.material.type !== 'MeshBasicMaterial' && !m.userData.noHull) m.add(new THREE.Mesh(m.geometry, m.userData.mn.startsWith('head_') ? headHull : FACES[name] && FACES[name].sculpt ? thinHull : hullMat));
+  if (!NO_HULL.test(name)) for (const m of parts) if (m.material.type !== 'MeshBasicMaterial' && !m.userData.noHull) m.add(new THREE.Mesh(m.geometry, m.userData.mn.startsWith('head_') || m.userData.mn === 'c_1c1820' ? headHull : FACES[name] && FACES[name].sculpt ? thinHull : hullMat));
   if (FACES[name]) addFace(o, name);
   scene.add(o); return o;
 }
