@@ -27,12 +27,12 @@
   #feed{top:104px;left:14px;font-size:12px;line-height:1.35;max-width:330px;text-transform:uppercase}
   #feed div{background:#ffe27a;border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);padding:3px 9px;margin-bottom:7px;width:fit-content}
   #feed div:nth-child(odd){transform:rotate(-.7deg)}#feed div:nth-child(even){transform:rotate(.5deg);background:#fff}
-  #bl{left:16px;bottom:16px;padding:8px 12px;min-width:220px;font-size:12px;text-transform:uppercase;transform:rotate(-1deg)}
+  #bl{left:16px;bottom:16px;padding:8px 12px;min-width:190px;font-size:12px;text-transform:uppercase;transform:rotate(-1deg)}
   #hpbar{height:16px}
   #hpbar i{background:#e2432a}
   #res span{margin-right:14px}
-  #bc{left:57%;bottom:16px;transform:translateX(-50%);display:flex;gap:10px;align-items:flex-end}
-  .slot{padding:5px 8px;width:140px;font-size:10px;text-transform:uppercase}
+  #bc{left:50.5%;bottom:16px;transform:translateX(-50%);display:flex;gap:10px;align-items:flex-end}
+  .slot{padding:5px 7px;width:120px;font-size:9.5px;text-transform:uppercase}
   .slot.own{background:#ffe27a}
   .slot h4{margin:0 0 3px;font-family:var(--head);font-weight:900;font-size:14px;letter-spacing:.04em}
   .face{opacity:.4;padding:1px 4px}
@@ -51,9 +51,12 @@
   #card td:first-child{font-family:var(--head);font-weight:900;font-size:15px;letter-spacing:.04em;color:#0c8a78;white-space:nowrap}
   #go{margin-top:12px;padding:8px 28px;font-family:var(--head);font-weight:900;font-size:24px;letter-spacing:.06em;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);border-radius:3px;background:#ffd23f;color:var(--ink);cursor:pointer}
   #kit{margin-top:8px;padding:6px 10px;background:#f6ecd2;border:2px solid var(--ink);font-size:12px;line-height:1.4;min-height:50px}
-  #pickrow{margin-top:6px;font-size:12px;text-transform:uppercase}
+  #pickrow,#pickrow2{margin-top:6px;font-size:12px;text-transform:uppercase}
   #pick button{font-family:var(--head);font-weight:900;font-size:15px;letter-spacing:.04em;margin:3px 3px 0 0;padding:3px 10px;border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);background:#fff;color:var(--ink);cursor:pointer;border-radius:2px}
   #pick button.on{background:#238a7c;color:#fff}
+  body.side-rust #pick button.on{background:#c0522d}
+  #side button{font-family:var(--head);font-weight:900;font-size:15px;letter-spacing:.04em;margin:3px 3px 0 0;padding:3px 14px;border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);background:#fff;cursor:pointer;border-radius:2px}
+  #side button.on.teal{background:#238a7c;color:#fff}#side button.on.rust{background:#c0522d;color:#fff}
   #dead{top:22%;left:50%;transform:translateX(-50%) rotate(-1.5deg);font-family:var(--head);font-weight:900;font-size:30px;letter-spacing:.04em;display:none;text-align:center;background:#fff;border:4px solid var(--ink);box-shadow:7px 7px 0 var(--ink);padding:8px 22px}
   #dead small{font-family:"Comic Sans MS","Chalkboard SE",sans-serif;font-size:13px;font-weight:700}
   #banner{top:132px;left:50%;transform:translateX(-50%) rotate(-2deg);font-family:var(--head);font-weight:900;font-size:34px;letter-spacing:.06em;background:#ffe27a;border:4px solid var(--ink);box-shadow:7px 7px 0 var(--ink);padding:4px 24px;display:none;white-space:nowrap}
@@ -104,7 +107,8 @@
     <tr><td>1 · 2 · 3</td><td>Buy Rigging. Every item has a Low-Tide face and a High-Tide face</td></tr>
     <tr><td>Wake</td><td>Move fast (tether, current) to fill the blue ring. Full Wake: next shot hits ×3 and refills your magazine</td></tr>
   </table>
-  <div id="pickrow"><b>Your hand:</b> <span id="pick"></span></div>
+  <div id="pickrow"><b>Your crew:</b> <span id="side"></span></div>
+  <div id="pickrow2"><b>Your hand:</b> <span id="pick"></span></div>
   <div id="kit"></div>
   <button id="go">Cast off</button>
 </div></div>
@@ -3758,6 +3762,7 @@ const V3 = THREE.Vector3, $ = id => document.getElementById(id);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v)), lerp = (a, b, t) => a + (b - a) * t;
 const TEAM_COL = [0x238a7c, 0xc0522d], TEAM_TRIM = [0x55b3a2, 0x8a3520], TEAM_NAME = ['Teal', 'Rust'];
 const dirOf = t => t === 0 ? 1 : -1;
+const PT = Q.get('side') === 'rust' ? 1 : 0, MINE = TEAM_NAME[PT], THEIRS = TEAM_NAME[1 - PT], cls = t => t ? 'rust' : 'teal';      // the crew you play for
 // The starting cast. Heroes are playable looks; Wickie is the crew unit and Glimmer / Ember carry the lanterns.
 const ROSTER = [
   ['Breakwater', 'Mainsail', 'Drift', 'Rivet', 'Bell', 'Kelp', 'Skiff', 'Brine'],
@@ -4306,20 +4311,27 @@ function makeBuoy(team, x, z, bonus) {
   return {team, x, z, bonus, mesh: g};
 }
 
-const picks = [shuffled(ROSTER[0].slice(1)), shuffled(ROSTER[1])];
-const player = makeHero(0, 1, true, ROSTER[0][0]); makeHero(0, 0, false, picks[0][0]); makeHero(0, 2, false, picks[0][1]);
-for (let i = 0; i < 3; i++) makeHero(1, i, false, picks[1][i]);
+const mates = shuffled(ROSTER[PT].slice(1)), rivals = shuffled(ROSTER[1 - PT]);
+const player = makeHero(PT, 1, true, ROSTER[PT][0]); makeHero(PT, 0, false, mates[0]); makeHero(PT, 2, false, mates[1]);
+for (let i = 0; i < 3; i++) makeHero(1 - PT, i, false, rivals[i]);
 function pickHero(who) {            // the title-screen picker: an ally already wearing that look takes your old one
-  const twin = heroes.find(h => h.team === 0 && !h.isPlayer && h.who === who);
+  const twin = heroes.find(h => h.team === PT && !h.isPlayer && h.who === who);
   if (twin) heroLook(twin, player.who);
   heroLook(player, who);
   for (const b of document.querySelectorAll('#pick button')) b.classList.toggle('on', b.textContent === who);
   const k = KITS[who];
   $('kit').innerHTML = `<b>${who}</b> · ${k.role} · ${k.hp} HP<br><b>C — ${k.ab}:</b> ${k.text}`; $('abName').textContent = k.ab;
 }
-$('pick').innerHTML = ROSTER[0].map(n => `<button>${n}</button>`).join('');
+$('pick').innerHTML = ROSTER[PT].map(n => `<button>${n}</button>`).join('');
 for (const b of document.querySelectorAll('#pick button')) b.onclick = () => pickHero(b.textContent);
-pickHero(ROSTER[0][0]);
+pickHero(ROSTER[PT][0]);
+document.body.classList.toggle('side-rust', PT === 1);
+$('side').innerHTML = TEAM_NAME.map((n, i) => `<button class="${cls(i)}${i === PT ? ' on' : ''}">${n}</button>`).join('');
+for (const b of document.querySelectorAll('#side button')) b.onclick = () => {       // heroes are built at load, so changing crew reloads the page
+  const q = new URLSearchParams(location.search); if (b.textContent === 'Rust') q.set('side', 'rust'); else q.delete('side');
+  location.search = q.toString();
+};
+$('blurb').innerHTML = $('blurb').innerHTML.replace("Kill the Rust crew's", `You sail with the <b class="${cls(PT)}">${MINE}</b> crew. Kill the ${THEIRS} crew's`).replace('on your left', PT ? 'on your right' : 'on your left');
 const towers = [makeTower(0), makeTower(1)], chains = [makeChain(0), makeChain(1)];
 const crabs = [makeCrab(-32), makeCrab(32)];
 const buoys = [makeBuoy(0, 6, -56, 1), makeBuoy(0, 18, -14, 1.5), makeBuoy(1, -6, 56, 1), makeBuoy(1, 18, 14, 1.5)];
@@ -4609,7 +4621,7 @@ function updateFields(dt) {
 
 /* ---------- player ---------- */
 const keys = {}, mouse = {down: false};
-let yaw = Math.PI, pitch = -.08;
+let yaw = PT ? 0 : Math.PI, pitch = -.08;      // face down the lane toward the enemy ship
 const locked = () => TEST || document.pointerLockElement === renderer.domElement;
 addEventListener('keydown', e => { keys[e.code] = true; if (e.code === 'Space') e.preventDefault(); onKey(e.code); });
 addEventListener('keyup', e => keys[e.code] = false);
@@ -4644,7 +4656,7 @@ function aimDir() {
 function playerAim(max) {   // what the crosshair is on: an enemy, the world, or thin air
   const d = aimDir(), back = camPos.distanceTo(player.pos);
   const w = worldHit(camPos, d, max + back);
-  const hit = rayEnts(camPos, d, Math.min(w, max + back), e => e.team !== 0 && !(e.kind === 'crab' && !e.active));
+  const hit = rayEnts(camPos, d, Math.min(w, max + back), e => e.team !== PT && !(e.kind === 'crab' && !e.active));
   const t = hit ? hit.t : Math.min(w, max + back);
   return {ent: hit && hit.e, point: tmp.copy(camPos).addScaledVector(d, t).clone(), solid: !!hit || w < max + back};
 }
@@ -4837,7 +4849,7 @@ function updateLantern(dt) {
   if (lan.life <= 0) { state.lantern = null; say('The lantern guttered out.'); return; }
   for (const h of heroes) if (h.alive && !(h.stun > 0) && Math.hypot(h.pos.x - lan.pos.x, h.pos.z - lan.pos.z) < 1.8 && Math.abs(h.pos.y - lan.pos.y) < 3) {
     lan.carrier = h; h.carry = true; h.tether = null;
-    say(`🏮 <b class="${h.team ? 'rust' : 'teal'}">${h.name}</b> ${h.isPlayer ? 'have' : 'has'} the lantern${h.isPlayer ? ' — run it to a Teal buoy!' : ''}`); break;
+    say(`🏮 <b class="${h.team ? 'rust' : 'teal'}">${h.name}</b> ${h.isPlayer ? 'have' : 'has'} the lantern${h.isPlayer ? ` — run it to a ${MINE} buoy!` : ''}`); break;
   }
 }
 function step(dt) {
@@ -4929,11 +4941,11 @@ function drawFx(dt) {
   fxc.fillStyle = '#141414'; fxc.beginPath(); fxc.arc(cx, cy + 50, 7, 0, 7); fxc.fill();
   fxc.fillStyle = p.tetherCd > 0 ? '#666' : '#f6ecd2'; fxc.beginPath(); fxc.arc(cx, cy + 50, 4, 0, 7); fxc.fill();
   if (p.wake >= 100) inked('WAKE SHOT!', cx + 96, cy, 20, '#ffd23f', -.08);
-  if (p.carry) inked('YOU HAVE THE LANTERN — RUN IT TO A TEAL BUOY!', cx, cy + 110, 24, '#ffd23f');
+  if (p.carry) inked('YOU HAVE THE LANTERN — RUN IT TO A ' + MINE.toUpperCase() + ' BUOY!', cx, cy + 110, 24, '#ffd23f');
 }
 const mapc = $('map').getContext('2d');
 function drawMap() {
-  const c = mapc, W = 130, H = 290, X = x => (31 - x) / 58 * W, Z = z => H - (z + L) / (2 * L) * H;
+  const c = mapc, W = 130, H = 290, X = x => (PT ? x + 27 : 31 - x) / 58 * W, Z = z => PT ? (z + L) / (2 * L) * H : H - (z + L) / (2 * L) * H;      // your ship at the bottom, the enemy's at the top
   c.clearRect(0, 0, W, H);
   c.fillStyle = '#2d3a3d'; c.fillRect(0, 0, W, H);
   const hi = state.tide.level > -.2;
@@ -4968,7 +4980,7 @@ function drawHud(dt) {
   $('cdE').style.height = clamp(p.tetherCd / 3.5, 0, 1) * 100 + '%'; $('cdF').style.height = clamp(p.shoveCd / 4, 0, 1) * 100 + '%'; $('cdQ').style.height = clamp(p.braceCd / 5, 0, 1) * 100 + '%'; $('cdC').style.height = clamp(p.abCd / p.kit.cd, 0, 1) * 100 + '%';
   $('feed').innerHTML = feed.map(f => `<div style="opacity:${clamp(f.t, 0, 1)}">${f.html}</div>`).join('');
   const dead = $('dead');
-  if (state.over) { dead.style.display = 'block'; dead.innerHTML = (state.over.winner === 0 ? 'CHAIN CUT — the Rust ship drifts for the Maelstrom. <span class="teal">Teal wins!</span>' : 'Your Anchor Chain is cut. <span class="rust">Rust wins.</span>') + '<br><small>Press Enter to play again</small>'; }
+  if (state.over) { dead.style.display = 'block'; dead.innerHTML = (state.over.winner === PT ? `CHAIN CUT — the ${THEIRS} ship drifts for the Maelstrom. <span class="${cls(PT)}">${MINE} wins!</span>` : `Your Anchor Chain is cut. <span class="${cls(1 - PT)}">${THEIRS} wins.</span>`) + '<br><small>Press Enter to play again</small>'; }
   else if (!p.alive) { dead.style.display = 'block'; dead.textContent = 'Overboard — back on deck in ' + Math.ceil(p.respawn); }
   else dead.style.display = 'none';
   drawMap();
@@ -5022,8 +5034,8 @@ document.addEventListener('pointerlockchange', () => {
   if (state.started && !locked() && !state.over) { $('overlay').style.display = 'flex'; $('go').textContent = 'Resume'; mouse.down = false; }
 });
 if (TEST) start();
-say('Kill the Rust Foghorn, then cut their Anchor Chain. Watch the tide clock.');
-window.__bh = {KITS, useAbility, zones, walls, posts, state, ents, heroes, player, ROSTER, heroLook, pickHero, model, scene, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
+say(`Kill the ${THEIRS} Foghorn, then cut their Anchor Chain. Watch the tide clock.`);
+window.__bh = {PT, KITS, useAbility, zones, walls, posts, state, ents, heroes, player, ROSTER, heroLook, pickHero, model, scene, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
   setAim: (y, p) => { yaw = y; pitch = p; updateCamera(); }};
 requestAnimationFrame(frame);
 }

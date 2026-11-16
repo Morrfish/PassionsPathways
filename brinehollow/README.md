@@ -15,7 +15,7 @@ A playable prototype of the **tide and lantern loop** from the Brinehollow desig
 - **Foghorns** knock heroes back with a sound-cannon blast, and guard the chain until they fall.
 
 ## Heroes, roles and abilities
-Pick one of eight Teal heroes on the title screen. Each hero has a role, its own health, speed and damage, and one signature ability on **C** that plays on the tide, the tether or the lantern. Bots use theirs too. The table lives in `KITS` in `game.src.html`.
+Pick your crew and hero on the title screen. Each hero has a role, its own health, speed and damage, and one signature ability on **C** that plays on the tide, the tether or the lantern. Bots use theirs too. The table lives in `KITS` in `game.src.html`.
 
 | Hero | Role | Ability (C) |
 | --- | --- | --- |
@@ -37,7 +37,7 @@ Pick one of eight Teal heroes on the title screen. Each hero has a role, its own
 | Copper | Disruptor | **Pocket Foghorn**: a cone blast that throws enemies back and breaks tethers |
 | Undertow | Assassin | **Riptide**: a dash that drags enemies; more damage to those in water |
 
-The player is always on the Teal crew for now; Rust heroes are played by bots.
+Choose your crew on the title screen: Teal (eight heroes) or Rust (nine). Changing crew reloads the page; `?side=rust` in the address does the same.
 
 ## Look
 The game is drawn as a graphic novel, following the art sheets in `reference/` (first look, tides and dock, props, the Teal and Rust crew turnarounds, the face and gear-pose sheets, and the inked style sheets):
@@ -70,7 +70,7 @@ The game is drawn as a graphic novel, following the art sheets in `reference/` (
 | 1, 2, 3 | Buy Rigging |
 
 ## Not in yet
-The other two lanes, 5 v 5, playing as Rust, Knot upgrades, fog banks and sound ripples, The Catch, Rogue Wave, the Titan stirring, Scrap and Ember, Crew Charms, online play, touch controls.
+The other two lanes, 5 v 5, Knot upgrades, fog banks and sound ripples, The Catch, Rogue Wave, the Titan stirring, Scrap and Ember, Crew Charms, online play, touch controls.
 
 ## Editing
 Change `game.src.html`, then rebuild:
