@@ -480,7 +480,7 @@ function stepSongs(){
     var bL = h('button', {class:'primary', text:'Copy lyrics', onclick:function(){ copy((s.full.trim() || s.lyrics.trim()), 'Lyrics'); }});
 
     // AI helper: writes the rest of the song around the student's own lines.
-    var aiBox = h('div', {class:'ai'}), aiMsg = h('p', {class:'msg', role:'status'}), aiBusy = false;
+    var aiBox = h('div', {class:'ai'}), aiMsg = h('p', {class:'msg', role:'status'}), aiNeed = h('p', {class:'msg err'}), aiBusy = false;
     var fullBox = h('div');
     var bAI = h('button', {class:'primary', onclick:function(){
       if (aiBusy) return;
@@ -499,7 +499,7 @@ function stepSongs(){
     if (AI.mode) {
       aiBox.append(h('h3', {text:'Finish my song'}),
         h('p', {class:'hint', text:'When you have written '+MIN_LINES+' lines of your own, the AI helper keeps your lines and writes the rest of the song around them.'}),
-        h('div', {class:'row', style:'margin-top:10px'}, [bAI]), aiMsg, fullBox);
+        h('div', {class:'row', style:'margin-top:10px'}, [bAI]), aiNeed, aiMsg, fullBox);
       drawFull();
     }
 
@@ -561,6 +561,11 @@ function stepSongs(){
       if (AI.mode && !s.full.trim()) need.push('the AI helper to finish your song');
       bAI.textContent = s.full ? 'Write it again' : 'Finish my song';
       bAI.disabled = aiBusy || !ok || !s.title.trim();
+      var first = [];
+      if (!s.title.trim()) first.push('a song title');
+      if (!ok) first.push((MIN_LINES-n)+' more line'+(MIN_LINES-n===1?'':'s')+' of your own');
+      aiNeed.textContent = first.length ? 'The button turns on when you add: '+first.join(', ')+'.' : '';
+      aiNeed.hidden = !first.length;
       lockMsg.textContent = ready ? 'This song is ready! Copy each part into Suno.' : 'Locked. You still need: '+need.join(', ')+'.';
       suno.className = 'suno'+(ready?' ready':'');
       bT.disabled = bS.disabled = bL.disabled = !ready;
@@ -597,7 +602,7 @@ function stepCover(){
     };
     r.readAsDataURL(f); file.value = '';
   }});
-  var genMsg = h('p', {class:'msg', role:'status'}), genBusy = false;
+  var genMsg = h('p', {class:'msg', role:'status'}), genNeed = h('p', {class:'msg err'}), genBusy = false;
   var bGen = h('button', {class:'primary', onclick:function(){
     if (genBusy) return;
     genBusy = true; genMsg.className = 'msg busy'; genMsg.textContent = 'Making your cover. This can take a minute...'; genState();
@@ -609,8 +614,13 @@ function stepCover(){
     var left = MAX_COVERS - S.coverGens, filled = c.scene.trim() && S.title.trim() && S.artist.trim();
     bGen.textContent = c.image ? 'Make a new cover ('+Math.max(left,0)+' left)' : 'Make my cover';
     bGen.disabled = genBusy || !filled || left <= 0;
-    if (!genBusy && !genMsg.textContent && !filled) genMsg.textContent = 'Fill in your album title, artist name and what is in the picture first.';
-    else if (!genBusy && filled && genMsg.textContent.indexOf('Fill in') === 0) genMsg.textContent = '';
+    var need = [];
+    if (!S.title.trim()) need.push('an album title (Step 1)');
+    if (!S.artist.trim()) need.push('an artist name (Step 1)');
+    if (!c.scene.trim()) need.push('what is in the picture');
+    genNeed.textContent = left <= 0 ? 'You have used all '+MAX_COVERS+' covers for this album. You can still use your own picture.'
+      : need.length ? 'The button turns on when you add: '+need.join(', ')+'.' : '';
+    genNeed.hidden = !genNeed.textContent;
   }
   refreshers = [function(){ prompt.textContent = coverPrompt(); }, genState];
   var root = h('div', {}, [
@@ -622,7 +632,7 @@ function stepCover(){
           field('What is in the picture?', '(people, places, objects, action)', c.scene, function(v){ c.scene=v; }, {area:true, ph:'A kid on a skateboard jumping over a glowing city at night'}),
           field('Main colors', '', c.colors, function(v){ c.colors=v; }, {ph:'purple, electric blue, gold'}),
           tagField('Art style', '', 'cartoon', [['', ART_STYLES]], function(){return c.art;}, function(v){c.art=v;}),
-          AI.mode ? h('div', {class:'ai'}, [h('h3', {text:'Make my cover'}), h('p', {class:'hint', text:'You can make up to '+MAX_COVERS+' covers, so plan your picture before you press the button.'}), h('div', {class:'row', style:'margin-top:10px'}, [bGen]), genMsg]) : null,
+          AI.mode ? h('div', {class:'ai'}, [h('h3', {text:'Make my cover'}), h('p', {class:'hint', text:'You can make up to '+MAX_COVERS+' covers, so plan your picture before you press the button.'}), h('div', {class:'row', style:'margin-top:10px'}, [bGen]), genNeed, genMsg]) : null,
           h('label', {class:'f', text:'Your cover prompt'}), prompt,
           h('button', {class:AI.mode?'':'primary', text:'Copy cover prompt', onclick:function(){ copy(coverPrompt(), 'Cover prompt'); }})
         ]),
