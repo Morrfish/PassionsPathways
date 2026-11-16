@@ -400,16 +400,16 @@ hullMat.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#in
 // Drawn faces: each character's eyes, brows, mouth and lines are inked on a canvas and wrapped over the front of the head.
 const WHITE = '#efe9df', DARK = '#2a201c', BLACK = '#17120f';
 const FACES = {
-  breakwater: {k: 1.06, eyes: 'narrow', brow: 1.1, browCol: WHITE, browW: 11, old: 1, mouth: 'none'},
-  mainsail:   {k: 1.05, sculpt: 1, eyes: 'narrow', iris: '#5a3c1c', brow: 1, browW: 10, browCol: BLACK, scar: 1, freckles: 1, mouth: 'none'},
-  drift:      {k: .95, eyes: 'open', brow: 1, scar: 1, freckles: 1, mouth: 'frown'},
-  rivet:      {k: 1.02, eyes: 'narrow', brow: 1, browW: 10, scar: 1, mouth: 'none'},
-  bell:       {k: .88, eyes: 'wide', brow: -.3, lashes: 1, freckles: 1, blush: 1, mouth: 'smile', iris: '#4f6a34'},
-  kelp:       {k: 1.0, eyes: 'open', brow: .2, lashes: 1, freckles: 1, mouth: 'flat', browCol: BLACK},
-  skiff:      {k: .86, eyes: 'open', brow: .5, browW: 10, mouth: 'smirk', browCol: BLACK, blush: 1},
-  brine:      {k: .98, eyes: 'open', brow: 0, lashes: 1, freckles: 1, mouth: 'smile', browCol: BLACK},
-  glimmer:    {k: 1.08, eyes: 'narrow', brow: 1, browW: 9, mouth: 'frown', browCol: BLACK},
-  wickie:     {k: .68, eyes: 'happy', brow: -.4, browCol: WHITE, browW: 11, old: 1, blush: 1, mouth: 'none'},
+  breakwater: {k: 1.0, sculpt: 1, beard: 1, eyes: 'narrow', brow: 1.1, browCol: WHITE, browW: 11, old: 1, mouth: 'none'},
+  mainsail:   {k: 1.05, sculpt: 1, lips: 1, eyes: 'narrow', iris: '#5a3c1c', brow: 1, browW: 10, browCol: BLACK, scar: 1, freckles: 1, mouth: 'none'},
+  drift:      {k: .9, sculpt: 1, lips: 1, eyes: 'open', brow: 1, scar: 1, freckles: 1, mouth: 'frown'},
+  rivet:      {k: .98, sculpt: 1, beard: 1, eyes: 'narrow', brow: 1, browW: 10, scar: 1, mouth: 'none'},
+  bell:       {k: .84, sculpt: 1, lips: 1, eyes: 'wide', brow: -.3, lashes: 1, freckles: 1, blush: 1, mouth: 'smile', iris: '#4f6a34'},
+  kelp:       {k: .95, sculpt: 1, lips: 1, eyes: 'open', brow: .2, lashes: 1, freckles: 1, mouth: 'flat', browCol: BLACK},
+  skiff:      {k: .82, sculpt: 1, eyes: 'open', brow: .5, browW: 10, mouth: 'smirk', browCol: BLACK, blush: 1},
+  brine:      {k: .93, sculpt: 1, lips: 1, eyes: 'open', brow: 0, lashes: 1, freckles: 1, mouth: 'smile', browCol: BLACK},
+  glimmer:    {k: 1.03, sculpt: 1, eyes: 'narrow', brow: 1, browW: 9, mouth: 'frown', browCol: BLACK},
+  wickie:     {k: .66, sculpt: 1, beard: 1, eyes: 'happy', brow: -.4, browCol: WHITE, browW: 11, old: 1, blush: 1, mouth: 'none'},
   netter:     {k: .98, eyes: 'open', brow: .9, lashes: 1, scar: 1, mouth: 'frown'},
   cinder:     {k: 1.04, eyes: 'narrow', brow: 1.2, browCol: BLACK, browW: 12, scar: 1, mouth: 'none'},
   gaff:       {k: 1.1, eyes: 'narrow', brow: 1, scar: 1, mouth: 'frown'},
@@ -457,7 +457,7 @@ function faceTex(f) {
     if (f.sculpt) for (const s of [-1, 1]) {                  // hard shadow planes under the cheekbone and along the jaw
       g.fillStyle = 'rgba(95,42,22,.42)'; g.beginPath(); g.moveTo(128 + s * 74, 152); g.lineTo(128 + s * 46, 178); g.lineTo(128 + s * 50, 216); g.lineTo(128 + s * 72, 196); g.closePath(); g.fill();
     }
-    if (f.sculpt) {                                           // lips, painted over the sculpted mouth
+    if (f.sculpt && f.lips) {                                 // lips, painted over the sculpted mouth
       g.fillStyle = 'rgba(128,52,46,.9)'; g.beginPath(); g.moveTo(100, my - 3); g.quadraticCurveTo(116, my - 15, 128, my - 9); g.quadraticCurveTo(140, my - 15, 156, my - 3);
       g.quadraticCurveTo(128, my + 22, 100, my - 3); g.fill();
       line(2.2, () => { g.moveTo(101, my - 2); g.quadraticCurveTo(128, my - 4, 155, my - 2); });
@@ -509,7 +509,7 @@ function model(name, ov) {
   const o = MODELS[name].clone(true);
   const parts = [];
   o.traverse(m => { if (m.isMesh) { parts.push(m); const n = m.material.name; m.material = namedMat(n, ov); m.castShadow = m.material.type !== 'MeshBasicMaterial'; m.receiveShadow = !/^(skin|face|head)_/.test(n); m.userData.noHull = n.startsWith('face_'); m.userData.mn = n; } });   // faces are never lost in hat shadow
-  if (!NO_HULL.test(name)) for (const m of parts) if (m.material.type !== 'MeshBasicMaterial' && !m.userData.noHull) m.add(new THREE.Mesh(m.geometry, m.userData.mn.startsWith('head_') ? headHull : FACES[name] && FACES[name].sculpt ? thinHull : hullMat));
+  if (!NO_HULL.test(name)) for (const m of parts) if (m.material.type !== 'MeshBasicMaterial' && !m.userData.noHull) m.add(new THREE.Mesh(m.geometry, m.userData.mn.startsWith('head_') || /^c_(1c1820|e8e4da|3a2c24)$/.test(m.userData.mn) ? headHull : FACES[name] && FACES[name].sculpt ? thinHull : hullMat));
   if (FACES[name]) addFace(o, name);
   scene.add(o); return o;
 }
@@ -606,7 +606,7 @@ function makeHero(team, i, isPlayer, who) {
 function makeWickie(team, i, bearer) {
   const d = dirOf(team);
   const g = model(bearer ? BEARER[team] : 'wickie', {team: TEAM_COL[team], team2: TEAM_TRIM[team]});
-  return spawn({kind: 'wickie', team, bearer, hp: bearer ? 120 : 55, r: .45, h: bearer ? 2.8 : 1.95, mesh: g,
+  return spawn({kind: 'wickie', team, bearer, hp: bearer ? 120 : 55, r: .45, h: bearer ? 2.8 : 1.85, mesh: g,
     spheres: bearer ? [[.8, .7], [1.6, .6], [2.3, .5]] : [[.5, .5], [1.05, .45], [1.6, .45]], laneX: (i % 3 - 1) * 2.6,
     pos: new V3((i % 3 - 1) * 2.6, 0, -d * (SPAWN_Z - 4) - d * Math.floor(i / 3) * 2)});
 }
