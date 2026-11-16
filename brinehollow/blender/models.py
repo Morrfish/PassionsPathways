@@ -451,7 +451,7 @@ def apron(col, bulk=1.0, cross=None):
 
 # ---------------- TEAL ----------------
 # Breakwater: the biggest body on the roster — heavy coat, long white beard, a huge rope coil standing on one shoulder
-SK = 'skin_dba07c'
+SK = 'skin_c88e6a'
 sw = adult(SK, sw=.33, hw=.23, fem=False, coat_hem=.6, hem_r=.47, bulk=1.4)
 head(SK, fem=False, brow=1.5, wide=1.06, nose=1.3); hair_cap(W_HAIR); locks(W_HAIR, False); beard2(W_HAIR, .38, .15); tilted_hat(.52, HC + .17, -17)
 for i in range(4): tor(.25, .055, (-sw + .03 + i * .055, .03, 2.1 + i * .012), ROPE, rot=(0, R(76), 0))
@@ -507,7 +507,7 @@ for o in P[n0:]:                                  # the gun, at adult scale, shr
 done('mainsail', 1.05)
 
 # Drift: small and quick — short jacket, baggy trousers, shin wraps, red neck scarf, a knife in the free hand
-SK = 'skin_d9a57c'
+SK = 'skin_c4906a'
 sw = adult(SK, sw=.22, hw=.17, fem=True, coat_hem=1.02, hem_r=.27, legs='c_3a3a40')
 for s in (-1, 1):
     for z in (.5, .56, .62): tor(.088, .022, (s * .24, 0, z), CREAM)
@@ -531,7 +531,7 @@ arms(sw, SK, glove='c_5a4030', r=.076, bare=True)
 done('rivet', .98)
 
 # Bell: the smallest Teal — twin braids out to the sides and a brass bell held high (never a single ribbon braid: that is Mainsail)
-SK = 'skin_e8b891'
+SK = 'skin_d6a27a'
 sw = adult(SK, sw=.215, hw=.17, fem=True, coat_hem=.5, hem_r=.33)
 head(SK, fem=True, brow=.6, wide=1.04, chin=.84, nose=.72, cheek=.5); hair_cap('c_1c1820'); locks('c_1c1820', False); tilted_hat(.46)
 for s in (-1, 1):
@@ -555,7 +555,7 @@ cyl(.014, .014, .14, (wr[0], wr[1] - .07, wr[2] - .09), WOOD, rot=(R(90), 0, 0))
 done('kelp', .95)
 
 # Skiff: short and square — bedroll and pack on the back, and an oar taller than the hat
-SK = 'skin_e0a882'
+SK = 'skin_c48c64'
 sw = adult(SK, sw=.3, hw=.22, fem=False, coat_hem=.8, hem_r=.42, bulk=1.25)
 head(SK, fem=False, brow=1.2, wide=1.07, jaw=1.1, chin=.94, nose=1.15, cheek=.8); hair_cap('c_1c1820', False); locks('c_1c1820', False); tilted_hat(.48)
 cross_strap(sw)
@@ -567,7 +567,7 @@ arms(sw, SK, r=.07)
 done('skiff', .82)
 
 # Brine: the medic — no straw hat: a white headscarf with knot tails and a bun, white apron with a cross, bottle held up
-SK = 'skin_dcae86'
+SK = 'skin_c99870'
 sw = adult(SK, sw=.23, hw=.18, fem=True, coat_hem=.62, hem_r=.34)
 head(SK, fem=True, brow=.8, wide=1.03, jaw=1.06, chin=.94, cheek=.75); locks('c_1c1820', False)
 sph(1, (0, .012, HC + .085), CREAM, scale=(.138, .163, .125)); sph(.07, (0, .16, HC + .1), 'c_1c1820')
@@ -580,7 +580,7 @@ cyl(.035, .035, .08, (wr[0], wr[1] - .06, wr[2] + .13), 'c_9fd6de'); cyl(.016, .
 done('brine', .93)
 
 # Glimmer: Teal's Lantern-Bearer — tall double-breasted coat, a rope sash, the lantern carried low at the side
-SK = 'skin_d9a276'
+SK = 'skin_b98558'
 sw = adult(SK, sw=.29, hw=.2, fem=False, coat_hem=.45, hem_r=.4, bulk=1.15)
 head(SK, fem=False, brow=1.3, wide=.97, chin=1.1, cheek=1.3); hair_cap('c_1c1820', False); locks('c_1c1820', False); tilted_hat(.48)
 for i in range(3): sph(.014, (-.04, -(.136 + i * .014), 1.6 + i * .09), BRASS)
@@ -591,7 +591,7 @@ lantern(wr[0], wr[1] - .05, wr[2] - .4, .34)
 done('glimmer', 1.03)
 
 # ---- Wickie: the crew unit — small, round and white-bearded, a rope coil for a backpack and a lamp staff
-SK = 'skin_e8ae8c'
+SK = 'skin_d09876'
 sw = adult(SK, sw=.31, hw=.23, fem=False, coat_hem=.86, hem_r=.46, bulk=1.45)
 head(SK, fem=False, brow=1.1, wide=1.08, chin=.9, nose=1.4, cheek=.7); hair_cap(W_HAIR); locks(W_HAIR, False); beard2(W_HAIR, .3, .155); tilted_hat(.55)
 for i in range(3): tor(.19, .05, (0, .24 + i * .07, 1.74), ROPE, rot=(R(90), 0, 0))
