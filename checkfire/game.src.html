@@ -281,7 +281,7 @@ kbd{border:2px solid var(--line);border-bottom-width:3px;border-radius:6px;paddi
 <div id="rules" class="overlay hidden">
   <div class="card rules">
     <div class="hdr">How to play</div>
-    <p><b>It's real chess</b> — every normal rule (castling, en passant, promotion, check and checkmate) applies. The twist: <b>a capture is never automatic.</b> When a piece attacks, both toy fighters drop into a room and settle it with foam-dart blasters.</p>
+    <p><b>It's real chess</b> — every normal rule (castling, en passant, promotion and check) applies, with one change: <b>checkmate is not the end.</b> A checkmated King is attacked by the piece giving check and fights a duel for his life. If he wins, that attacker is destroyed and the game goes on. The twist: <b>a capture is never automatic.</b> When a piece attacks, both toy fighters drop into a room and settle it with foam-dart blasters.</p>
     <ul>
       <li><b>Attacker wins:</b> the capture happens and the attacker moves in, keeping whatever health it had left.</li>
       <li><b>Defender wins:</b> the attacker is knocked out, the defender holds its square, and the turn passes.</li>
@@ -3177,7 +3177,19 @@ function checkEnd(){
   for(const c of ['w','b'])if(kingSq(G.st.b,c)<0){endGame(other(c),`The ${c==='w'?'White':'Black'} King fell in battle.`);return true;}
   const ms=legalMoves(G.st);
   if(!ms.length){
-    if(inCheck(G.st,G.st.turn))endGame(other(G.st.turn),'Checkmate.');else endGame(null,'Stalemate — no legal moves.');
+    if(inCheck(G.st,G.st.turn)){
+      // Checkmate is not the end: the piece giving check attacks the King, and he fights for his life.
+      // If he wins the duel that attacker is destroyed and the game goes on; if he loses, the game is over.
+      const me=G.st.turn,by=other(me),k=kingSq(G.st.b,me);
+      const m=pseudoMoves({b:G.st.b,turn:by,castle:G.st.castle,ep:-1},true).find(x=>x.cap===k);
+      if(!m){endGame(by,'Checkmate.');return true;}
+      const who=me===G.human?'Your King':(G.net?"The other player's King":'The enemy King');
+      logLine(`<b>Checkmate!</b> ${who} is trapped and must fight for his life.`,'duel');caption(`<b>Checkmate!</b> ${who} must fight to stay alive.`);
+      G.busy=true;G.st=Object.assign({},G.st,{turn:by});   // the checking side makes the attack
+      setTimeout(()=>performMove(m,true),1100);
+      return true;
+    }
+    endGame(null,'Stalemate — no legal moves.');
     return true;
   }
   const left=G.st.b.filter(Boolean);
@@ -3218,9 +3230,9 @@ function endGame(winner,why){
     document.getElementById('endText').textContent+=msg;}
   setTimeout(()=>show('end',true),900);
 }
-async function performMove(m){
+async function performMove(m,forced){
   G.busy=true;G.sel=-1;G.selMoves=[];show('tip',false);
-  if(G.net&&NET.on&&G.st.turn===G.human)netSend({t:'mv',f:m.from,to:m.to,p:m.promo||null});   // tell the other player my move
+  if(!forced&&G.net&&NET.on&&G.st.turn===G.human)netSend({t:'mv',f:m.from,to:m.to,p:m.promo||null});   // tell the other player my move
   const st=G.st,atk=st.b[m.from],def=m.cap>=0?st.b[m.cap]:null;
   const san=`${GLYPH[atk.c][atk.t]} ${sqName(m.from)}${def?'×':'→'}${sqName(m.to)}`;
   if(def){
