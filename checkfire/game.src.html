@@ -101,6 +101,13 @@ kbd{border:2px solid var(--line);border-bottom-width:3px;border-radius:6px;paddi
 .tile .ico{font-size:22px;line-height:52px;height:52px;color:var(--navy)}
 .tile .ico svg{width:30px;height:30px;vertical-align:middle}
 .swatches{display:flex;gap:8px;flex-wrap:wrap}
+.skinchip{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 6px;border-radius:999px;border:3px solid var(--line);background:#fff8ea;font-weight:800;font-size:13px;cursor:pointer;color:var(--navy)}
+.skinchip.on{border-color:var(--teal,#1f8a86);box-shadow:0 0 0 3px rgba(31,138,134,.25)}
+.skindot{width:26px;height:26px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px rgba(29,42,68,.25)}
+.storycard{display:flex;align-items:center;gap:14px;padding:10px 12px;border:3px solid var(--line);border-radius:16px;background:#fff8ea;margin-bottom:8px}
+.storycard.locked{opacity:.55}
+.storycard .skindot{width:46px;height:46px;flex:none;display:flex;align-items:center;justify-content:center;font-size:24px}
+.storycard .who{flex:1;min-width:0}.storycard .who b{font-size:17px}.storycard .who small{display:block;color:var(--dim);font-weight:700}
 .swatch{width:54px;height:54px;border-radius:12px;border:3px solid var(--line);position:relative;padding:0;box-shadow:0 3px 0 rgba(29,42,68,.08)}
 .swatch.on{border-color:var(--w);box-shadow:0 0 0 3px rgba(31,138,134,.25)}
 .swatch.on:after{content:"✓";position:absolute;right:-6px;top:-8px;background:var(--w);color:#fff;border-radius:7px;width:20px;height:20px;display:grid;place-items:center;font-size:12px}
@@ -249,13 +256,23 @@ kbd{border:2px solid var(--line);border-bottom-width:3px;border-radius:6px;paddi
     <div class="seg" data-opt="diff"><button data-v="0">Recruit</button><button data-v="1" class="on">Veteran</button><button data-v="2">Warlord</button></div>
     <label class="opt">Captures are settled by</label>
     <div class="seg" data-opt="duel"><button data-v="fps" class="on">FPS duel (mouse + keyboard)</button><button data-v="auto">Auto-battle</button></div>
+    <label class="opt">Game rules</label>
+    <div class="row" style="gap:8px;flex-wrap:wrap">
+      <div class="seg" data-opt="fly"><button data-v="on" class="on">Flying allowed</button><button data-v="off">No flying</button></div>
+      <div class="seg" data-opt="guns"><button data-v="any" class="on">Any blaster</button><button data-v="starter">Starter blasters only</button></div>
+    </div>
+    <label class="opt">Board pieces</label>
+    <div class="seg" data-opt="pieces"><button data-v="toy" class="on">Toy fighters</button><button data-v="classic">Classic chess shapes</button></div>
     <label class="opt">Graphics</label>
     <div class="seg" data-opt="gfx"><button data-v="hi" class="on">Glow on</button><button data-v="lo">Fast</button></div>
     <div class="row" style="margin-top:24px">
       <button class="btn big" id="bStart">Start battle</button>
       <button class="btn big pink hidden" id="bCont">Continue</button>
+      <button class="btn big" id="bStory" style="background:var(--navy)">Story mode</button>
+      <button class="btn big" id="bNet" style="background:var(--navy)">Play a friend</button>
       <button class="btn ghost" id="bRules1">How to play</button>
       <button class="btn ghost" id="bArmory1">Armory · <span class="credval"></span> ◈</button>
+      <button class="btn ghost" id="bSettings">Settings</button>
     </div>
   </div>
 </div>
@@ -264,7 +281,7 @@ kbd{border:2px solid var(--line);border-bottom-width:3px;border-radius:6px;paddi
 <div id="rules" class="overlay hidden">
   <div class="card rules">
     <div class="hdr">How to play</div>
-    <p><b>It's real chess</b> — every normal rule (castling, en passant, promotion, check and checkmate) applies. The twist: <b>a capture is never automatic.</b> When a piece attacks, both toy fighters drop into a room and settle it with foam-dart blasters.</p>
+    <p><b>It's real chess</b> — every normal rule (castling, en passant, promotion and check) applies, with one change: <b>checkmate is not the end.</b> A checkmated King is attacked by the piece giving check and fights a duel for his life. If he wins, that attacker is destroyed and the game goes on. The twist: <b>a capture is never automatic.</b> When a piece attacks, both toy fighters drop into a room and settle it with foam-dart blasters.</p>
     <ul>
       <li><b>Attacker wins:</b> the capture happens and the attacker moves in, keeping whatever health it had left.</li>
       <li><b>Defender wins:</b> the attacker is knocked out, the defender holds its square, and the turn passes.</li>
@@ -279,7 +296,7 @@ kbd{border:2px solid var(--line);border-bottom-width:3px;border-radius:6px;paddi
     <p><b>Loadout &amp; Armory:</b> every duel pays credits (more for winning, more still for winning with health left; winning the game pays a big bonus). Spend them on blasters for each piece type — including the <b>Crossbow</b>, which Pawns, Knights, Bishops and Kings can all carry — and on attachments: <b>Scope</b> (zoom), <b>Stock</b> (steadier), <b>Big Clip</b> (more darts), <b>Power I–III</b>, and <b>Chrome / Gold / Diamond</b> finishes (each adds damage). Before each duel you pick that piece's blaster, attachments, finish, gadget and room.</p>
     <p><b>Gadgets (F):</b> <b>Grappling Hook</b> zips you to any wall or toy it hits. <b>Jetpack</b> blasts you upward. <b>Propeller Hat</b> — the best — lifts you, slows your fall and lets you steer anywhere in the air.</p>
     <p><b>Rooms:</b> Kid's Bedroom, Chess Park, Library Table, Diner Counter, School Gym, Toy Store, Greenhouse, Arcade, Attic, Beach Boardwalk, plus four neon arenas.</p>
-    <p class="keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move · <kbd>Mouse</kbd> aim · <kbd>Click</kbd> fire · <kbd>Right-click</kbd> aim / scope · <kbd>Space</kbd> jump · <kbd>Shift</kbd> sprint · <kbd>R</kbd> reload · <kbd>Q</kbd> ability · <kbd>F</kbd> gadget · <kbd>Esc</kbd> pause.<br>On the board: click a piece, then a highlighted square. Drag to orbit, scroll to zoom. Hover an enemy target to see your odds.</p>
+    <p class="keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move · <kbd>Mouse</kbd> aim · <kbd>Click</kbd> fire · <kbd>Right-click</kbd> aim / scope · <kbd>Space</kbd> jump · <kbd>Shift</kbd> sprint · <kbd>R</kbd> reload · <kbd>Q</kbd> ability · <kbd>V</kbd> King's melee · <kbd>F</kbd> gadget · <kbd>Esc</kbd> pause.<br>On the board: click a piece, then a highlighted square. Drag to orbit, scroll to zoom. Hover an enemy target to see your odds.</p>
     <button class="btn" id="bRulesClose">Got it</button>
   </div>
 </div>
@@ -334,7 +351,7 @@ kbd{border:2px solid var(--line);border-bottom-width:3px;border-radius:6px;paddi
         <div class="lo-sec hidden" data-lp="progression"><h4>Fighter</h4><div id="progBox"></div></div>
         <div class="lo-sec hidden" data-lp="settings"><h4>Settings</h4>
           <label class="opt" style="margin-top:4px">Mouse sensitivity</label><input type="range" id="sens2" min="0.4" max="3" step="0.1" value="1" style="width:100%">
-          <div class="keys"><kbd>WASD</kbd> move · <kbd>Mouse</kbd> aim · <kbd>Click</kbd> fire · <kbd>Right-click</kbd> zoom · <kbd>Space</kbd> jump · <kbd>Shift</kbd> sprint · <kbd>R</kbd> reload · <kbd>Q</kbd> ability · <kbd>F</kbd> gadget · <kbd>Esc</kbd> pause</div></div>
+          <div class="keys"><kbd>WASD</kbd> move · <kbd>Mouse</kbd> aim · <kbd>Click</kbd> fire · <kbd>Right-click</kbd> zoom · <kbd>Space</kbd> jump · <kbd>Shift</kbd> sprint · <kbd>R</kbd> reload · <kbd>Q</kbd> ability · <kbd>V</kbd> King's melee · <kbd>F</kbd> gadget · <kbd>Esc</kbd> pause</div></div>
         <div id="introB"></div>
         <div id="pickRoom"></div>
       </div>
@@ -417,10 +434,55 @@ kbd{border:2px solid var(--line);border-bottom-width:3px;border-radius:6px;paddi
     <div style="color:var(--dim);font-size:13px;margin-top:8px;font-weight:700">Earn credits by winning duels and games. Buy blasters for each piece type, then fit scopes, stocks and big clips, power them up, and pick a finish — every finish tier adds firepower.</div>
     <div class="chips" id="armTabs" style="margin-top:12px"></div>
     <div class="armgrid"><div><canvas id="armPrev" width="340" height="190"></canvas><div id="armMsg"></div></div><div id="armBody"></div></div>
-    <div class="row" style="justify-content:space-between;margin-top:12px"><button class="btn" id="bArmClose">Done</button><button class="btn small pink" id="bArmUnlock">Practice: unlock everything</button></div>
+    <div class="row" style="justify-content:space-between;margin-top:12px"><button class="btn" id="bArmClose">Done</button></div>
   </div>
 </div>
 
+<!-- STORY MODE -->
+<div id="story" class="overlay hidden">
+  <div class="card" style="max-width:980px">
+    <div class="row" style="justify-content:space-between;align-items:center"><h2 class="title" style="margin:0;font-size:34px">Story mode</h2><button class="btn ghost" id="bStoryClose">Back</button></div>
+    <p style="color:var(--dim);font-weight:700;margin:6px 0 12px">Beat eight chess champions (well, toy versions of them) one after another. You play White. Every champion you beat unlocks their colours for your own pieces.</p>
+    <h4 style="margin:0 0 6px">Your colours</h4><div class="swatches" id="skinPick" style="margin-bottom:14px"></div>
+    <div id="storyList"></div>
+  </div>
+</div>
+<!-- SAME-NETWORK MULTIPLAYER -->
+<div id="net" class="overlay hidden">
+  <div class="card" style="max-width:640px">
+    <div class="row" style="justify-content:space-between;align-items:center"><h2 class="title" style="margin:0;font-size:34px">Play a friend</h2><button class="btn ghost" id="bNetClose">Back</button></div>
+    <p style="color:var(--dim);font-weight:700;margin:6px 0 12px">Two players on the same Wi-Fi or school network. One makes a game and reads out the 4-letter code; the other types it in. The player who makes the game is White.</p>
+    <div id="netHost"></div>
+    <div id="netPlay" class="hidden">
+      <div class="row" style="gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="btn big" id="bNetCreate">Make a game</button>
+        <span style="font-weight:900;color:var(--dim)">or</span>
+        <input id="netCode" type="text" maxlength="4" autocomplete="off" spellcheck="false" placeholder="CODE" style="width:120px;padding:12px;border-radius:12px;border:3px solid var(--line);font:inherit;font-weight:900;font-size:22px;text-align:center;text-transform:uppercase;letter-spacing:4px">
+        <button class="btn big" id="bNetJoin">Join</button>
+      </div>
+      <div id="netRoom" style="margin-top:14px"></div>
+    </div>
+    <div id="netMsg" style="min-height:22px;font-weight:800;color:var(--dim);margin-top:10px"></div>
+  </div>
+</div>
+<!-- SETTINGS -->
+<div id="settings" class="overlay hidden">
+  <div class="card" style="max-width:520px">
+    <div class="row" style="justify-content:space-between;align-items:center"><h2 class="title" style="margin:0;font-size:34px">Settings</h2><button class="btn ghost" id="bSettingsClose">Back</button></div>
+    <label class="opt" style="margin-top:12px">Mouse sensitivity</label><input type="range" id="sens3" min="0.4" max="3" step="0.1" value="1" style="width:100%">
+    <label class="opt" style="margin-top:14px">Teacher code</label>
+    <div class="row" style="gap:8px"><input id="codeIn" type="text" autocomplete="off" spellcheck="false" placeholder="Enter code" style="flex:1;padding:10px 12px;border-radius:12px;border:3px solid var(--line);font:inherit;font-weight:800;text-transform:uppercase"><button class="btn" id="bCode">Unlock</button></div>
+    <div id="codeMsg" style="min-height:20px;font-weight:800;color:var(--dim);margin-top:6px"></div>
+    <div id="teacher" class="hidden" style="margin-top:8px">
+      <h4 style="margin:0 0 8px">Teacher tools</h4>
+      <div class="row" style="flex-wrap:wrap;gap:8px">
+        <button class="btn small pink" id="bPractice">Practice: unlock every blaster, attachment, finish and gadget</button>
+        <button class="btn small" id="bAllSkins">Unlock all story colours and opponents</button>
+        <button class="btn small" id="bCredits">Add 1000 credits</button>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- END -->
 <div id="end" class="overlay hidden">
   <div class="card" style="max-width:520px;text-align:center">
@@ -447,9 +509,9 @@ const CL={
   p:{cls:'Vanguard',hp:100,speed:7.2,jump:7.5,ab:'Barrier',abd:'Cuts incoming damage by 75% for 2.5s',cd:9,power:1.0},
   n:{cls:'Lancer',hp:125,speed:8.6,jump:9.5,ab:'Pounce',abd:'Huge leap in the direction you look',cd:6,power:1.08},
   b:{cls:'Oracle',hp:95,speed:7.6,jump:8,ab:'Blink',abd:'Teleport up to 9m forward',cd:6.5,power:1.05},
-  r:{cls:'Bastion',hp:210,speed:5.6,jump:6.5,ab:'Rampart',abd:'Raise a wall of cover for 8s',cd:9,power:1.0},
-  q:{cls:'Sovereign',hp:165,speed:8.4,jump:8.5,ab:'Overdrive',abd:'Double fire rate, +30% speed for 4s',cd:11,power:1.22},
-  k:{cls:'Monarch',hp:185,speed:6.6,jump:7.5,ab:'Royal Mend',abd:'Instantly restore 55 HP',cd:12,power:1.1},
+  r:{cls:'Bastion',hp:195,speed:5.6,jump:6.5,ab:'Rampart',abd:'Raise a wall of cover for 8s',cd:9,power:1.0},
+  q:{cls:'Sovereign',hp:150,speed:8.2,jump:8.5,ab:'Overdrive',abd:'+50% fire rate, +30% speed for 4s',cd:11,power:1.22},
+  k:{cls:'Monarch',hp:175,speed:6.6,jump:7.5,ab:'Royal Mend',abd:'Instantly restore 45 HP',cd:12,power:1.1},
 };
 const VAL={p:100,n:320,b:335,r:500,q:900,k:20000};
 const DIFF=[
@@ -701,7 +763,9 @@ function renderScene(scene,cam){
 
 // ---------------------------------------------------------------- piece models (procedural, shared by board + arena)
 const TEAM={w:{body:0xefe4cc,emis:0x2ec4b6,glow:0x2ec4b6},b:{body:0x2c2c31,emis:0xff8c32,glow:0xff8c32}};
+const FIG_COL={w:{TeamMain:0xefe2c6,TeamAccent:0x1f8a86,TeamEmblem:0x26324f},b:{TeamMain:0x3b3b42,TeamAccent:0xf07a22,TeamEmblem:0xf6e7c8}},FIGMAT={};
 const matCache={};
+let GEARCOL={w:{AccOrange:0xefe2c6,AccOrangeDark:0xd8c9a8},b:{AccTeal:0xf07a22,AccTealDark:0xd0631a,AccOrange:0x3b3b42,AccOrangeDark:0x2c2c31}};const GEARMAT={};
 function pieceMats(c){
   if(matCache[c])return matCache[c];
   const T=TEAM[c];
@@ -740,6 +804,63 @@ function buildPiece(t,c){
     if(c==='b')g.rotation.y=Math.PI;}
   return g;
 }
+
+// ---------------------------------------------------------------- team colours + story mode
+// A colour set = armour colour, accent colour (tabard, plume, glow) and emblem colour.
+const SKINS={
+  ivory:{name:'Ivory & Teal',main:0xefe2c6,acc:0x1f8a86,emb:0x26324f,body:0xefe4cc,glow:0x2ec4b6},
+  charcoal:{name:'Charcoal & Orange',main:0x3b3b42,acc:0xf07a22,emb:0xf6e7c8,body:0x2c2c31,glow:0xff8c32},
+};
+// Story opponents: playful parodies of famous chess champions. Beat one to unlock their colours.
+const STORY=[
+  {id:'morefun',name:'Paul Morefun',title:'the Riverboat Rocket',diff:0,room:'attic',skin:{name:'Riverboat Maroon & Gold',main:0x7a2e3a,acc:0xf2c14e,emb:0xf6ead6},
+    blurb:'Plays faster than you can blink and would rather be at the opera. Sends every piece out to play at once.',hello:'Shall we be quick? I have a show to catch.',win:'Bravo! That was more fun than the opera.',lose:'Encore? I do love a short game.'},
+  {id:'capablanket',name:'José Capablanket',title:'the Cozy Machine',diff:0,room:'beach',skin:{name:'Seaside Blue & White',main:0x6fb1e3,acc:0xffffff,emb:0x1d2a44},
+    blurb:'Never seems to try, never seems to lose, and is always wrapped up warm. Loves a calm, tidy board.',hello:'Simple moves, warm blanket. Let us begin.',win:'You untucked my whole position! Well played.',lose:'Smooth as a fresh-made bed.'},
+  {id:'tall',name:'Mikhail Tall',title:'the Wizard of Risky Moves',diff:1,room:'arcade',skin:{name:'Wizard Purple & Gold',main:0x5b3a8c,acc:0xffd23f,emb:0xf6ead6},
+    blurb:'Gives away pieces just to see what happens. Stares so hard that blasters get nervous.',hello:'I will give you a rook. Then things get interesting.',win:'You walked out of the forest! Magnificent.',lose:'Two plus two was five today.'},
+  {id:'fidget',name:'Bobby Fidget',title:'the Kid Who Cannot Sit Still',diff:1,room:'library',skin:{name:'Brooklyn Green & Cream',main:0x2f6b3a,acc:0xf6ead6,emb:0xf2c14e},
+    blurb:'Practised alone for years, taps the table, moves the lamp, then plays the perfect move.',hello:'Is that light too bright? Never mind. Your move.',win:'Okay. Okay! That was a real game.',lose:'I knew that move when I was eleven.'},
+  {id:'carpool',name:'Anatoly Carpool',title:'the Slow Squeeze',diff:1,room:'diner',skin:{name:'Champion Red & Silver',main:0xb3312b,acc:0xe8ecef,emb:0x1d2a44},
+    blurb:'Takes one small square at a time, picks up everybody on the way, and is never, ever late.',hello:'No hurry. We will get there together.',win:'You found the fast lane. Congratulations.',lose:'Little by little. That is the whole trick.'},
+  {id:'polkadot',name:'Judit Polka-Dot',title:'the Fearless Attacker',diff:2,room:'toystore',skin:{name:'Polka Pink & Midnight',main:0xe0558f,acc:0x2b2b3a,emb:0xffffff},
+    blurb:'Has beaten champion after champion since she was a kid. Attacks first and asks questions later.',hello:'I hope you like fireworks.',win:'Finally, somebody who attacks back!',lose:'Always go for the king.'},
+  {id:'casserole',name:'Garry Casserole',title:'the Boiling Pot',diff:2,room:'gym',skin:{name:'Midnight Navy & Crimson',main:0x1d2a44,acc:0xe63946,emb:0xf6ead6},
+    blurb:'Cooks up twenty moves of preparation, paces behind his chair, and brings everything to the boil at once.',hello:'I prepared this at breakfast. All of it.',win:'Impossible! ...Fine. It was delicious.',lose:'Served hot.'},
+  {id:'carlsbad',name:'Magnet Carlsbad',title:'the Endgame Magnet',diff:2,room:'park',skin:{name:'Fjord Ice & Deep Sea',main:0xbfe9f5,acc:0x136f8a,emb:0x1d2a44},
+    blurb:'Every piece ends up exactly where he wants it, as if pulled there. Wins the games everybody else calls a draw.',hello:'It looks equal. It is not equal.',win:'Huh. I did not see that coming. Good game.',lose:'I just kept making okay moves.'},
+];
+for(const c of STORY)SKINS[c.id]=c.skin;
+const storyChar=()=>G.story?STORY.find(c=>c.id===G.story)||null:null;
+const shadeHex=(h,k)=>((h>>16&255)*k|0)<<16|((h>>8&255)*k|0)<<8|((h&255)*k|0);
+/** Give each side its colours: the player's chosen set, and the story opponent's own set (or the classic ones). */
+function applySkins(){
+  const base={w:'ivory',b:'charcoal'},me=G.human||'w',them=other(me),ch=storyChar();
+  const use={[me]:base[me],[them]:ch?ch.id:base[them]};
+  if(PROF.skin&&PROF.skin!=='default'&&SKINS[PROF.skin]&&(PROF.skins[PROF.skin]||PROF.skin==='ivory'||PROF.skin==='charcoal')&&PROF.skin!==use[them])use[me]=PROF.skin;
+  if(use[me]===use[them])use[me]=base[me]===use[them]?base[them]:base[me];
+  for(const c of ['w','b']){const k=SKINS[use[c]];
+    Object.assign(FIG_COL[c],{TeamMain:k.main,TeamAccent:k.acc,TeamEmblem:k.emb});
+    Object.assign(TEAM[c],{body:k.body||k.main,emis:k.glow||k.acc,glow:k.glow||k.acc});
+    GEARCOL[c]={AccTeal:k.acc,AccTealDark:shadeHex(k.acc,.8),AccOrange:k.main,AccOrangeDark:shadeHex(k.main,.85)};}
+  for(const cache of [FIGMAT,matCache,GEARMAT])for(const k in cache)delete cache[k];
+  LV.key='';
+  try{const T=thumbRenderer();for(const k in T.cache)if(k.indexOf('port')===0)delete T.cache[k];}catch(e){}
+  document.documentElement.style.setProperty('--skin-me','#'+SKINS[use[me]].acc.toString(16).padStart(6,'0'));
+  G.skinUse=use;
+}
+
+/** Board piece: the toy fighter on a team-coloured base (classic chess shape if the models aren't loaded or 'Classic' is chosen). */
+function boardPiece(t,c){
+  const f=opts.pieces!=='classic'&&buildFigure(t,c);
+  if(!f){const g=buildPiece(t,c);g.userData.look='classic';return g;}
+  const g=new THREE.Group(),M=pieceMats(c);
+  const base=new THREE.Mesh(new THREE.CylinderGeometry(.37,.4,.07,32),M.body);base.position.y=.035;base.castShadow=base.receiveShadow=true;g.add(base);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(.37,.022,8,40),M.glow);ring.rotation.x=Math.PI/2;ring.position.y=.07;g.add(ring);
+  f.scale.setScalar(t==='r'?.45:.5);f.position.y=.07;if(c==='b')f.rotation.y=Math.PI;g.add(f);
+  g.userData.look='toy';return g;
+}
+const boardLook=()=>opts.pieces!=='classic'&&ASSET.ready?'toy':'classic';
 
 // ---------------------------------------------------------------- board view
 const BOARD={tiles:[],marks:[],dots:[],rings:[],meshes:new Map(),hpSprites:new Map(),group:new THREE.Group()};
@@ -811,9 +932,9 @@ function syncBoard(anim){
   for(let s=0;s<64;s++){
     const p=G.st.b[s];if(!p)continue;seen.add(p.id);
     let m=BOARD.meshes.get(p.id);
-    if(m&&m.userData.t!==p.t){BOARD.group.remove(m);m=null;}
-    if(!m){m=buildPiece(p.t,p.c);m.userData.t=p.t;m.userData.id=p.id;BOARD.group.add(m);BOARD.meshes.set(p.id,m);const q=sqPos(s);m.position.set(q.x,.1,q.z);
-      const hs=hpSprite();m.add(hs);hs.position.y=1.25;BOARD.hpSprites.set(p.id,hs);}
+    if(m&&(m.userData.t!==p.t||m.userData.look!==boardLook())){BOARD.group.remove(m);m=null;}
+    if(!m){m=boardPiece(p.t,p.c);m.userData.t=p.t;m.userData.id=p.id;BOARD.group.add(m);BOARD.meshes.set(p.id,m);const q=sqPos(s);m.position.set(q.x,.1,q.z);
+      const hs=hpSprite();m.add(hs);hs.position.y=1.3;BOARD.hpSprites.set(p.id,hs);}
     m.traverse(o=>o.userData.sq=s);
     const target=sqPos(s);
     const moving=anim&&anim.ids&&anim.ids.includes(p.id);
@@ -854,9 +975,11 @@ function updateBoardCam(dt){
 const G={st:null,human:'w',diff:1,duelMode:'fps',sel:-1,selMoves:[],last:null,busy:false,over:false,log:[],fallen:{w:[],b:[]},mode:'menu'};
 const SAVE_KEY='checkfire-save-v1';
 function save(){
+  if(G.net)return;   // network games are not saved
   if(G.over){try{localStorage.removeItem(SAVE_KEY);}catch(e){}return;}
   try{localStorage.setItem(SAVE_KEY,JSON.stringify({st:{b:G.st.b.map(p=>p&&[p.t,p.c,p.hp,p.w||null]),turn:G.st.turn,castle:G.st.castle,ep:G.st.ep},
-    human:G.human,diff:G.diff,duelMode:G.duelMode,log:G.log.slice(-80),fallen:G.fallen,last:G.last}));}catch(e){}
+    human:G.human,diff:G.diff,duelMode:G.duelMode,log:G.log.slice(-80),fallen:G.fallen,last:G.last,
+    hist:G.hist,half:G.half,sig:G.sig,story:G.story,rules:G.rules}));}catch(e){}
 }
 function loadSave(){try{const s=JSON.parse(localStorage.getItem(SAVE_KEY));if(!s||!s.st)return null;return s;}catch(e){return null;}}
 
@@ -870,20 +993,20 @@ function duelOdds(atk,def){
 // ---------------------------------------------------------------- WEAPONS, MODS, GADGETS, PROFILE
 // Every class has its own starting weapon. Others are bought in the Armory; the Crossbow fits several classes.
 const WEAPONS={
-  carbine:{name:'Carbine',cls:'p',cost:0,kind:'hit',dmg:12,pellets:1,spread:.014,rate:.105,mag:30,reload:1.5,auto:true,head:1.6,snd:'rifle',look:{len:.55,w:.08}},
-  nailer:{name:'Nail Driver',cls:'p',cost:350,kind:'hit',dmg:21,pellets:1,spread:.009,rate:.19,mag:16,reload:1.3,auto:true,head:1.7,snd:'pistol',look:{len:.46,w:.11,drum:true}},
+  carbine:{name:'Carbine',cls:'p',cost:0,kind:'hit',dmg:12,pellets:1,spread:.014,rate:.105,mag:30,reload:1.5,auto:true,head:1.6,fall:[16,34,.6],snd:'rifle',look:{len:.55,w:.08}},
+  nailer:{name:'Nail Driver',cls:'p',cost:350,kind:'hit',dmg:21,pellets:1,spread:.009,rate:.19,mag:16,reload:1.3,auto:true,head:1.7,fall:[12,26,.5],snd:'pistol',look:{len:.46,w:.11,drum:true}},
   crossbow:{name:'Crossbow',cls:'pnbk',cost:450,kind:'bolt',dmg:88,pellets:1,spread:.002,rate:.2,mag:1,reload:.95,auto:false,head:2.0,speed:70,grav:7,snd:'bow',look:{len:.62,w:.07,bow:true}},
   scatter:{name:'Scattergun',cls:'n',cost:0,kind:'hit',dmg:10,pellets:9,spread:.075,rate:.8,mag:6,reload:1.9,auto:false,head:1.4,snd:'shotgun',look:{len:.5,w:.12}},
-  coach:{name:'Thunder Coach',cls:'n',cost:400,kind:'hit',dmg:9,pellets:14,spread:.1,rate:.24,mag:2,reload:1.7,auto:false,head:1.3,snd:'shotgun',look:{len:.48,w:.13,twin:true}},
+  coach:{name:'Thunder Coach',cls:'n',cost:400,kind:'hit',dmg:8,pellets:14,spread:.1,rate:.24,mag:2,reload:1.7,auto:false,head:1.3,snd:'shotgun',look:{len:.48,w:.13,twin:true}},
   raylance:{name:'Ray Lance',cls:'b',cost:0,kind:'hit',dmg:72,pellets:1,spread:.004,rate:1.05,mag:5,reload:2.1,auto:false,head:2.0,scope:true,snd:'laser',look:{len:.8,w:.08,scope:true}},
-  arc:{name:'Arc Pistol',cls:'b',cost:300,kind:'hit',dmg:22,pellets:1,spread:.006,rate:.2,mag:10,reload:1.2,auto:false,head:2.0,snd:'laser',look:{len:.32,w:.09}},
+  arc:{name:'Arc Pistol',cls:'b',cost:300,kind:'hit',dmg:22,pellets:1,spread:.006,rate:.2,mag:10,reload:1.2,auto:false,head:2.0,fall:[12,26,.55],snd:'laser',look:{len:.32,w:.09}},
   mortar:{name:'Siege Mortar',cls:'r',cost:0,kind:'rocket',dmg:70,pellets:1,spread:0,rate:.95,mag:4,reload:2.3,auto:false,head:1,speed:26,grav:3,snd:'mortar',look:{len:.6,w:.16,tube:true}},
-  minigun:{name:'Rampart Minigun',cls:'r',cost:550,kind:'hit',dmg:8,pellets:1,spread:.03,rate:.045,mag:90,reload:2.8,auto:true,head:1.4,snd:'rifle',look:{len:.62,w:.15,barrels:true}},
-  storm:{name:'Storm Rifle',cls:'q',cost:0,kind:'hit',dmg:15,pellets:1,spread:.016,rate:.085,mag:40,reload:1.7,auto:true,head:1.6,snd:'smg',look:{len:.65,w:.09}},
-  twin:{name:'Twin Blasters',cls:'q',cost:400,kind:'hit',dmg:11,pellets:2,spread:.025,rate:.09,mag:50,reload:1.6,auto:true,head:1.5,snd:'laser',look:{len:.4,w:.09,twin:true}},
-  rail:{name:'Railgun',cls:'q',cost:650,kind:'hit',dmg:95,pellets:1,spread:.002,rate:1.4,mag:3,reload:2.2,auto:false,head:1.8,scope:true,snd:'rail',look:{len:.86,w:.1,scope:true}},
-  crown:{name:'Crown Repeater',cls:'k',cost:0,kind:'hit',dmg:30,pellets:1,spread:.006,rate:.27,mag:12,reload:1.4,auto:false,head:1.7,snd:'pistol',look:{len:.38,w:.09}},
-  handcannon:{name:'Hand Cannon',cls:'k',cost:450,kind:'hit',dmg:56,pellets:1,spread:.008,rate:.55,mag:6,reload:1.6,auto:false,head:1.8,snd:'cannon',look:{len:.42,w:.13,drum:true}},
+  minigun:{name:'Rampart Minigun',cls:'r',cost:550,kind:'hit',dmg:7,pellets:1,spread:.03,rate:.045,mag:90,reload:2.8,auto:true,head:1.4,fall:[12,28,.5],snd:'rifle',look:{len:.62,w:.15,barrels:true}},
+  storm:{name:'Storm Rifle',cls:'q',cost:0,kind:'hit',dmg:13,pellets:1,spread:.016,rate:.085,mag:40,reload:1.7,auto:true,head:1.6,fall:[16,32,.6],snd:'smg',look:{len:.65,w:.09}},
+  twin:{name:'Twin Blasters',cls:'q',cost:400,kind:'hit',dmg:10,pellets:2,spread:.025,rate:.09,mag:50,reload:1.6,auto:true,head:1.5,fall:[10,22,.45],snd:'laser',look:{len:.4,w:.09,twin:true}},
+  rail:{name:'Railgun',cls:'q',cost:650,kind:'hit',dmg:88,pellets:1,spread:.002,rate:1.4,mag:3,reload:2.2,auto:false,head:1.8,scope:true,snd:'rail',look:{len:.86,w:.1,scope:true}},
+  crown:{name:'Crown Repeater',cls:'k',cost:0,kind:'hit',dmg:30,pellets:1,spread:.006,rate:.27,mag:12,reload:1.4,auto:false,head:1.7,fall:[14,30,.6],snd:'pistol',look:{len:.38,w:.09}},
+  handcannon:{name:'Hand Cannon',cls:'k',cost:450,kind:'hit',dmg:56,pellets:1,spread:.008,rate:.55,mag:6,reload:1.6,auto:false,head:1.8,fall:[12,26,.5],snd:'cannon',look:{len:.42,w:.13,drum:true}},
 };
 // toy-plastic colours for each weapon (bling replaces these)
 const WCOL={carbine:0x3a86ff,nailer:0xffbe0b,crossbow:0x9b5de5,scatter:0xfb5607,coach:0xe63946,raylance:0x00bbf9,arc:0xf15bb5,mortar:0x2a9d8f,minigun:0x6a994e,storm:0xff006e,twin:0x00c2a8,rail:0x8338ec,crown:0xffd166,handcannon:0x3d5a80};
@@ -895,6 +1018,121 @@ const MODS={
 };
 const POWER_COST=[200,350,500];
 const BLING=[{name:'Plain'},{name:'Chrome',cost:250,col:0xe3ebf3,em:0x22303c},{name:'Gold',cost:500,col:0xffc23d,em:0x5a3a00},{name:'Diamond',cost:900,col:0xb8f7ff,em:0x1f8fb0}];
+// ---- the King's melee weapon (press V). Three tiers, bought in order in the Armory.
+const MELEE=[
+  {name:'Broadsword',cost:0,dmg:45,range:3.0,cd:.7,desc:'A chunky toy sword. Swing it at anyone who gets close.'},
+  {name:'Glow Blade',cost:400,dmg:60,range:3.3,cd:.6,desc:'A humming blade of light: hits harder, reaches further, swings faster.'},
+  {name:'Lightning Hammer',cost:700,dmg:70,range:3.0,cd:.95,bolt:35,boltRange:22,desc:'A heavy hammer. Every swing also throws a lightning bolt across the room.'},
+];
+const LAST_STAND={time:4,dmg:25,hp:30};   // seconds to take the shot, its damage, health the King gets back
+/** Which melee tier a fighter has (Kings only). The computer's depends on its level; a network opponent's is sent by them. */
+function meleeTier(e){
+  if(RULES().starter)return 0;
+  if(e.isPlayer)return Math.min(2,PROF.melee||0);
+  return G.net&&NET.on?Math.min(2,NET.theirMelee||0):[0,1,2][G.diff]||0;
+}
+/** Is the target in front of e, within reach along where e is looking? (used for the swing and the lightning bolt) */
+function inFront(e,tgt,reach,width){
+  const eye=eyePos(e,new V3()),fwd=forwardOf(e,new V3()),c=new V3(tgt.pos.x,tgt.pos.y+1,tgt.pos.z),to=c.clone().sub(eye),t=to.dot(fwd);
+  if(t<=0||t>reach+tgt.rad)return false;
+  return to.addScaledVector(fwd,-t).length()<tgt.rad+width&&hasLOS(eye,c);
+}
+const MELEE_ASSET=['M_sword','M_glowblade','M_hammer'],MGLOW={};
+/** The King's melee weapon model: grip at the centre, pointing up. The Glow Blade shines in the King's team colour. */
+function meleeModel(tier,c){
+  const src=ASSET.objs[MELEE_ASSET[tier]];
+  if(src){const g=new THREE.Group(),o=asset(MELEE_ASSET[tier],g),col=TEAM[c].glow;
+    // glowing parts are drawn at full brightness whatever the room lighting: the blade (team colour), its halo, and the hammer's sparks
+    const tint=m=>{if(m.name!=='MeleeGlow'&&m.name!=='MeleeHalo'&&m.name!=='MeleeSpark')return m;const k=m.name+col;
+      if(!MGLOW[k]){MGLOW[k]=m.name==='MeleeSpark'?new THREE.MeshBasicMaterial({color:0xffe95a}):m.name==='MeleeGlow'?new THREE.MeshBasicMaterial({color:col})
+        :new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:.3,depthWrite:false});MGLOW[k].name=m.name;MGLOW[k]._shared=true;}return MGLOW[k];};
+    o.traverse(x=>{if(x.isMesh){x.material=Array.isArray(x.material)?x.material.map(tint):tint(x.material);x.castShadow=false;}});
+    return g;}
+  return meleeModelSimple(tier,c);
+}
+function meleeThumb(tier){
+  const key='melee'+tier,T=thumbRenderer();if(T.cache[key])return T.cache[key];
+  const h=new THREE.Group(),m=meleeModel(tier,'w');m.position.y=-.52;h.add(m);h.rotation.z=-.9;h.rotation.y=.35;
+  return T.cache[key]=snap(h,c=>{c.position.set(0,.05,1.75);c.lookAt(0,0,0);},224,132);
+}
+function meleeModelSimple(tier,c){
+  const g=new THREE.Group(),add=(geo,mat,x,y,z)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);g.add(m);return m;};
+  const gold=stdMat(0xf2b134,{metalness:.45,roughness:.3}),dark=stdMat(0x26324f,{roughness:.5});
+  if(tier===2){add(new THREE.CylinderGeometry(.035,.04,.95,10),dark,0,.4,0);add(new THREE.BoxGeometry(.4,.26,.26),stdMat(0x8a94a6,{metalness:.5,roughness:.35}),0,.92,0);
+    for(const x of [-.17,.17])add(new THREE.BoxGeometry(.05,.29,.29),gold,x,.92,0);
+    add(new THREE.SphereGeometry(.07,10,8),new THREE.MeshBasicMaterial({color:0xfff07a}),0,1.1,0);add(new THREE.SphereGeometry(.05,8,6),gold,0,-.1,0);}
+  else{add(new THREE.CylinderGeometry(.035,.035,.24,10),dark,0,0,0);add(new THREE.BoxGeometry(.3,.06,.08),gold,0,.14,0);add(new THREE.SphereGeometry(.05,8,6),gold,0,-.14,0);
+    if(tier===1)add(new THREE.CylinderGeometry(.035,.04,1.0,10),new THREE.MeshBasicMaterial({color:TEAM[c].glow}),0,.68,0);
+    else{add(new THREE.BoxGeometry(.09,.9,.03),stdMat(0xe6ebf0,{metalness:.55,roughness:.25}),0,.62,0);add(new THREE.ConeGeometry(.045,.12,4),stdMat(0xe6ebf0,{metalness:.55,roughness:.25}),0,1.12,0);}}
+  return g;
+}
+function lightningFx(a,b){
+  const pts=[a.clone()],n=9;for(let i=1;i<n;i++){const p=a.clone().lerp(b,i/n);p.x+=(Math.random()-.5)*.7;p.y+=(Math.random()-.5)*.7;p.z+=(Math.random()-.5)*.7;pts.push(p);}pts.push(b.clone());
+  for(const col of [0xfff07a,0xffffff]){const l=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:col,transparent:true}));duelScene.add(l);FX.tracers.push({l,life:.22,max:.22});}
+  sparks(b,0xfff07a,10,7);Sound.tone(1600,120,.25,'sawtooth',.14);
+}
+/** The King swings. Returns true if a swing happened. */
+function meleeSwing(e){
+  if(e.t!=='k'||e.meleeCd>0||!D.fighting||D.over||e.lastStand>0)return false;
+  const tier=meleeTier(e),m=MELEE[tier],tgt=e.isPlayer?D.bot:D.player,fwd=forwardOf(e,new V3());
+  e.meleeCd=m.cd;showSwing(e,tier);Sound.tone(520,140,.16,'triangle',.14);
+  let hit=false,end=null;
+  if(inFront(e,tgt,m.range,.9)){hit=true;if(e.isPlayer)hitMarker(false);sparks(new V3(tgt.pos.x,tgt.pos.y+1.1,tgt.pos.z),TEAM[tgt.c].glow,10,6);
+    tgt.vel.x+=fwd.x*7;tgt.vel.z+=fwd.z*7;hurt(tgt,m.dmg,e,false);}
+  if(m.bolt){const eye=eyePos(e,new V3()),zap=!hit&&inFront(e,tgt,m.boltRange,.35);
+    if(zap)end=new V3(tgt.pos.x,tgt.pos.y+1,tgt.pos.z);
+    else{RAY.set(eye,fwd);RAY.far=m.boltRange;const w=RAY.intersectObjects(D.solids,false)[0];end=w?w.point.clone():eye.clone().addScaledVector(fwd,m.boltRange);}
+    lightningFx(eye.clone().addScaledVector(fwd,.8).add(new V3(0,-.25,0)),end);
+    if(zap){if(e.isPlayer)hitMarker(false);hurt(tgt,m.bolt,e,false);}}
+  if(e.isPlayer&&G.net&&NET.on)netSend({t:'ml',k:tier,e:end?[r2(end.x),r2(end.y),r2(end.z)]:null});
+  return true;
+}
+/** Show the swing: in first person the blaster drops away for a moment; on other fighters the weapon sweeps in front of them. */
+function showSwing(e,tier){
+  if(e.swing)e.swing.parent&&e.swing.parent.remove(e.swing);
+  const m=meleeModel(tier,e.c);e.swing=m;e.swingT=.3;
+  if(e.isPlayer){m.scale.setScalar(.75);duelCam.add(m);}else{m.scale.setScalar(1.5);e.model.add(m);}
+  poseSwing(e);
+}
+function poseSwing(e){
+  const k=1-Math.max(0,e.swingT)/.3,m=e.swing;if(!m)return;
+  if(e.isPlayer){m.position.set(.5-k*.75,-.5+Math.sin(k*Math.PI)*.12,-.75);m.rotation.set(-.5,0,-1.2+k*2.2);if(D.vgun)D.vgun.visible=false;}
+  else{m.position.set(.7-k*1.2,1.0,-.75);m.rotation.set(-1.0,0,-1.1+k*2.2);}
+  if(e.swingT<=0){m.parent&&m.parent.remove(m);e.swing=null;}
+}
+// ---- the King's Last Stand: knocked down once per duel, he gets one pistol shot. Hit, and he gets back up.
+function startLastStand(e){
+  e.lsUsed=true;e.hp=1;e.lastStand=LAST_STAND.time;e.vel.set(0,0,0);e.reloading=0;
+  if(e.isPlayer){
+    e.lsPrev=e.w;e.w=Object.assign(wstats('crown',{}),{name:'Last Stand Pistol',dmg:LAST_STAND.dmg,mag:1,auto:false,spread:.004,hasScope:false,fall:null});e.ammo=1;e.fireCd=.35;e.eye0=e.eye;e.eye=.75;
+    adsDown=false;D.hook=null;refreshViewGun();banner('Last stand!','One shot. Hit them and the King gets back up.','#ffc23d');Sound.tone(660,220,.5,'sawtooth',.16);
+  }else{e.lsShot=.9+DIFF[G.diff].react;e.lsFired=false;feed('The enemy King is down — he gets one last shot!');}
+}
+function reviveKing(e){
+  e.lastStand=0;e.hp=LAST_STAND.hp;e.barrier=Math.max(e.barrier,1);
+  if(e.isPlayer){e.w=e.lsPrev;e.ammo=e.w.mag;e.eye=e.eye0;e.fireCd=.4;refreshViewGun();banner('The King stands!',`Back up with ${LAST_STAND.hp} health`,'#5dff9e');setTimeout(()=>{if(D.fighting)banner('');},1100);Sound.win();}
+  else feed('The enemy King got back up!');
+}
+function failLastStand(e){
+  if(!(e.lastStand>0)&&e.hp<=0)return;
+  e.lastStand=0;e.hp=0;if(e.isPlayer&&e.eye0)e.eye=e.eye0;
+  if(e.isPlayer&&G.net&&NET.on)netSend({t:'dead'});
+  finishDuel();
+}
+// Sights (the aiming mark in the middle of the screen). Looks only: they do not change where shots go.
+const SIGHTS={
+  cross:{name:'Classic',cost:0,desc:'The plain four-line sight.'},
+  dot:{name:'Dot',cost:100,desc:'A single small dot.',svg:'<circle cx="17" cy="17" r="3.2"/>'},
+  ring:{name:'Ring',cost:150,desc:'A ring with a dot in the middle.',svg:'<circle cx="17" cy="17" r="10" fill="none" stroke="#fff" stroke-width="2.4"/><circle cx="17" cy="17" r="1.8"/>'},
+  star:{name:'Star',cost:200,desc:'A little star.',svg:'<path d="M17 4l3.4 8.6 9.2.6-7.1 5.9 2.3 8.9L17 23l-7.8 5 2.3-8.9-7.1-5.9 9.2-.6z"/>'},
+  heart:{name:'Heart',cost:250,desc:'Aim with love.',svg:'<path d="M17 29C5 20 4 13 7.5 9.2c2.9-3.1 7.3-2.3 9.5 1.2 2.2-3.5 6.6-4.3 9.5-1.2C30 13 29 20 17 29z"/>'},
+  laser:{name:'Laser Sight',cost:400,desc:'A red dot, plus a red beam from your blaster.',svg:'<circle cx="17" cy="17" r="3" fill="#ff3b3b" stroke="#fff" stroke-width="1.2"/>',col:'#ff3b3b'},
+};
+function applySight(){
+  const id=SIGHTS[PROF.sight]&&PROF.sights[PROF.sight]?PROF.sight:'cross',k=SIGHTS[id],el=document.getElementById('cross');
+  el.innerHTML=k.svg?`<svg viewBox="0 0 34 34" width="34" height="34" fill="#fff" stroke="#1d2a44" stroke-width="1.6" stroke-linejoin="round">${k.svg}</svg>`:'<i></i><i></i><i></i><i></i>';
+  return id;
+}
 const GADGETS={
   grapple:{name:'Grappling Hook',cost:300,desc:'Press F to fire a hook and zip to whatever it hits.'},
   jetpack:{name:'Jetpack',cost:600,desc:'Hold F (or hold Space in the air) to blast upward. Fuel refills on the ground.'},
@@ -909,18 +1147,25 @@ function wstats(id,mods){
   s.bling=m.bling||0;s.mods=m;
   return s;
 }
+/** How much of a blaster's damage is left at a distance (1 = all of it). Scatter blasters fade fast; scoped ones and darts/rockets never fade. */
+function falloff(w,dist){
+  if(w.pellets>2)return Math.max(.3,Math.min(1,1-(dist-6)/18));
+  const f=w.fall;if(!f||dist<=f[0])return 1;
+  return dist>=f[1]?f[2]:1-(1-f[2])*(dist-f[0])/(f[1]-f[0]);
+}
 function gunBlurb(w){
   if(w.kind==='rocket')return `explosive shells, ${Math.round(w.dmg)} splash`;
   if(w.kind==='bolt')return `heavy bolts that drop with distance, ${Math.round(w.dmg)} per hit`;
   if(w.pellets>2)return `${w.pellets} pellets × ${Math.round(w.dmg)}, brutal up close`;
   if(w.scope)return `${Math.round(w.dmg)} per shot, right-click to scope`;
-  return `${Math.round(w.dmg)}${w.pellets>1?' ×'+w.pellets:''} per shot, ${w.auto?'full-auto':'semi-auto'}`;
+  return `${Math.round(w.dmg)}${w.pellets>1?' ×'+w.pellets:''} per shot, ${w.auto?'full-auto':'semi-auto'}${w.fall?', weaker past '+w.fall[0]+'m':''}`;
 }
 const PROF_KEY='checkfire-profile-v1';
 let PROF=loadProfile();
 function loadProfile(){
   let p=null;try{p=JSON.parse(localStorage.getItem(PROF_KEY));}catch(e){}
-  p=Object.assign({credits:500,weapons:{},mods:{},gadgets:{},gadget:'none',loadout:{},room:'auto'},p||{});
+  p=Object.assign({credits:150,weapons:{},mods:{},gadgets:{},gadget:'none',loadout:{},room:'auto',skins:{},skin:'default',story:0,sights:{},sight:'cross',melee:0},p||{});
+  p.sights.cross=true;
   p.loadout=Object.assign({},DEFAULT_W,p.loadout);
   for(const t in DEFAULT_W)p.weapons[DEFAULT_W[t]]=true;
   return p;
@@ -931,7 +1176,14 @@ function updateCreditsUI(){document.querySelectorAll('.credval').forEach(el=>el.
 const weaponsFor=t=>Object.keys(WEAPONS).filter(id=>WEAPONS[id].cls.includes(t));
 function modsOf(id){return PROF.mods[id]||(PROF.mods[id]={});}
 /** The weapon a piece carries: the human's pieces use what they own; enemy pieces are armed by difficulty. */
+// ---- game rules (set on the menu; in a network game the player who made the game decides)
+const RULES=()=>G.rules||{fly:true,starter:false};
+const rulesText=()=>[RULES().fly?'':'no flying',RULES().starter?'starter blasters only':''].filter(Boolean).join(', ');
+const gadgetAllowed=id=>RULES().fly||(id!=='jetpack'&&id!=='hat');
+/** The gadget the player actually gets: the one they picked, if they own it and this game's rules allow it. */
+const activeGadget=()=>PROF.gadget&&PROF.gadgets[PROF.gadget]&&gadgetAllowed(PROF.gadget)?PROF.gadget:'none';
 function pieceWeapon(p){
+  if(RULES().starter)return DEFAULT_W[p.t];
   if(p.c===G.human){
     const ok=id=>id&&WEAPONS[id]&&WEAPONS[id].cls.includes(p.t)&&PROF.weapons[id];
     return ok(p.w)?p.w:ok(PROF.loadout[p.t])?PROF.loadout[p.t]:DEFAULT_W[p.t];
@@ -941,7 +1193,8 @@ function pieceWeapon(p){
   }
   return p.w;
 }
-function pieceMods(p){return p.c===G.human?modsOf(pieceWeapon(p)):[{},{stock:true},{stock:true,mag:true,lvl:2,bling:2}][G.diff];}
+function pieceMods(p){if(RULES().starter)return {};   // starter blasters only: plain, no attachments or finishes
+  return p.c===G.human?modsOf(pieceWeapon(p)):[{},{stock:true},{stock:true,mag:true,lvl:2,bling:2}][G.diff];}
 function gunBonus(p){const m=pieceMods(p);return 1+(m.lvl||0)*.05+(m.bling||0)*.03+((m.stock?1:0)+(m.scope?1:0)+(m.mag?1:0))*.02;}
 
 // ---------------------------------------------------------------- DUEL
@@ -1028,6 +1281,7 @@ function loadAssets(){
           (Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{if(m._shared)return;m._shared=true;if(m.color)m.color.convertLinearToSRGB();if(m.emissive)m.emissive.convertLinearToSRGB();});});   // materials are shared between models: convert once
         for(const c of g.scene.children)ASSET.objs[c.name]=c;
         ASSET.ready=++ASSET.loaded===keys.length;
+        if(ASSET.ready&&G.st&&G.mode==='board')syncBoard();   // swap in the toy fighters once the models are in
       },e=>console.warn('model load failed',key,e));
     }catch(e){console.warn('model decode failed',key,e);}
   }
@@ -1106,8 +1360,8 @@ function buildArena(room,seed,pieceTypes){
     for(let i=-HALF;i<=HALF;i+=6){const r=K.box(i,wallH+6,0,.25,.25,HALF*2,fm,false);}
     for(const s of [-1,1]){const r=K.box(s*HALF/2,wallH+3,0,HALF*1.15,.25,HALF*2,fm,false);r.rotation.z=s*.48;}
   }
-  if(cfg.edge!=null){   // tabletop rooms: the arena is the top of a big table
-    const K=kit(A);K.box(0,-1.3,0,HALF*2+2,2.6,HALF*2+2,stdMat(cfg.edge,{roughness:.6,metalness:room==='diner'?.6:.05}),false);
+  if(cfg.edge!=null&&!cfg.neon){   // tabletop rooms: the arena is the top of a big table (its top sits just under the floor so the two never flicker)
+    const K=kit(A);K.box(0,-1.34,0,HALF*2+2,2.6,HALF*2+2,stdMat(cfg.edge,{roughness:.6,metalness:room==='diner'?.6:.05}),false);
   }
   ROOM_BUILD[room](A,R,addBox,cfg,pieceTypes);
   if(cfg.neon){
@@ -1371,202 +1625,147 @@ const ROOM_BUILD={
     const cane=new THREE.Mesh(new THREE.CylinderGeometry(.012*S,.012*S,.9*S,8),stdMat(0x5a3a22));cane.position.set(.35*S,.45*S,.75*S);cane.rotation.z=.25;tg.add(cane);
     D.anim.push(t=>{reach.rotation.x=-1.0-Math.max(0,Math.sin(t*.35))*.35;p2.rotation.z=Math.sin(t*.25)*.02;});
   },
+  // ================================================================ Blender-modelled rooms (blender/rooms_assets.py -> rooms.glb)
+  // Each prop is a model with an invisible collision box of the same size; if a model is missing the box shows as a plain block.
   // ---------------------------------------------------------------- Library Table
   library(A,R,addBox){
-    const K=kit(A),G0=-36;
-    const bookCols=[0x8e2c2c,0x2c4a8e,0x2e6b3e,0xc28f2c,0x5b2c6f,0x1f6f6a,0xb5541c];
-    const stack=(x,z,n,big)=>{let y=0;for(let i=0;i<n;i++){const w=(big?5:3.6)-((i*37)%10)/10,d=(big?3.6:2.6)-((i*53)%8)/10,h=.6+((i*29)%5)/10;
-      const b=K.box(x+((i*17)%5-2)*.08,y+h/2,z+((i*23)%5-2)*.08,w,h,d,stdMat(bookCols[(i+n)%bookCols.length],{roughness:.8}));b.rotation.y=((i*41)%9-4)*.03;
-      K.box(x,y+h/2,z+d/2-.02,w*.9,h*.6,.06,stdMat(0xf3ead2),false);y+=h;}
-      addBox(x,z,big?5:3.6,big?3.6:2.6,y,{invisible:true});};
-    for(const s of [1,-1]){stack(-12*s,6*s,5);stack(14*s,11*s,4,true);stack(-3*s,14*s,3,true);}
-    // book stairs
-    for(const s of [1,-1])for(let k=0;k<4;k++)addBox(18*s,(-4+k*2.2)*s,4.2,2.2,.85*(k+1),{mat:stdMat(bookCols[k],{roughness:.8})});
-    // open book in the middle
-    addBox(0,0,9,6,.5,{mat:stdMat(0x2c4a8e)});
-    for(const sx of [-2.2,2.2]){const pg=K.box(sx,.62,0,4.3,.25,5.6,stdMat(0xfaf3e0,{roughness:.95}));pg.rotation.z=sx>0?-.05:.05;}
-    for(let i=0;i<8;i++)K.box(-2.2,.76,-2.2+i*.6,3.6,.01,.08,stdMat(0x9a9a9a),false);
-    // pencil cup with pencils, ruler, erasers
-    for(const s of [1,-1]){K.cyl(10*s,1.75,-7*s,1.3,1.2,3.5,stdMat(0x2a9d8f,{roughness:.4}),20);addBox(10*s,-7*s,2.4,2.4,3.5,{invisible:true});
-      for(let k=0;k<4;k++){const pc=K.cyl(10*s+(k%2-.5)*.6,4.2,-7*s+(k>1?.4:-.4),.15,.15,4,stdMat([0xfee440,0xe63946,0x3a86ff,0x8ac926][k]),6);pc.rotation.z=(k-1.5)*.12;}
-      const ru=K.box(-6*s,.08,-15*s,14,.16,1.2,stdMat(0xd9c27a,{roughness:.6}));ru.rotation.y=.3*s;
-      addBox(5*s,-4*s,2.2,1.3,.9,{mat:stdMat(0xf4a6b8)});}
-    // desk lamp
-    K.cyl(-19,.3,-17,2,2.2,.6,stdMat(0x1d1d1d,{metalness:.6}));addBox(-19,-17,3.6,3.6,.6,{invisible:true});
-    const arm=K.cyl(-18,4.5,-17,.18,.18,8,stdMat(0x1d1d1d,{metalness:.6}),10);arm.rotation.z=-.35;
-    const head=K.cone(-15.5,8.5,-17,1.6,2.4,stdMat(0x2a9d8f,{metalness:.4,side:THREE.DoubleSide}),20);head.rotation.z=-2.6;
-    const lamp=new THREE.PointLight(0xffe2a8,1.6,40);lamp.position.set(-14,7,-16);A.add(lamp);
+    const K=kit(A),G0=-36,{prop,deco}=roomKit(A,addBox);
+    for(const s of [1,-1]){const ry=s>0?0:Math.PI;
+      prop('L_stack5',-12*s,6*s,ry,3.6,2.6,4.0,0x8e2c2c);prop('L_stackBig4',14*s,11*s,ry,5,3.6,3.3,0x2c4a8e);prop('L_stackBig3',-3*s,14*s,ry,5,3.6,2.5,0x2e6b3e);
+      // book stairs
+      const st=deco('L_stairs',18*s,0,ry);for(let k=0;k<4;k++)addBox(18*s,(-4+k*2.2)*s,4.2,2.2,.85*(k+1),st?{invisible:true}:{mat:stdMat(0xc28f2c)});
+      prop('L_pencilcup',10*s,-7*s,ry,2.4,2.4,3.5,0x1f8a86);
+      deco('L_ruler',-6*s,-15*s,.3*s);
+      prop('L_eraser',5*s,-4*s,ry+.2,2.2,1.3,.9,0xf4a6b8);}
+    prop('L_openbook',0,0,0,9,6,.5,0x2c4a8e);
+    prop('L_lamp',-19,-17,-.73,3.6,3.6,.6,0x1d1d1d);
+    const lamp=new THREE.PointLight(0xffe2a8,1.6,40);lamp.position.set(-14.5,6.5,-13);A.add(lamp);
     // the library around the table
     K.plane(0,G0,0,700,700,stdMat(0x7a2a2a,{roughness:1}));
-    for(const leg of [[-26,-26],[26,-26],[-26,26],[26,26]])K.box(leg[0],G0/2-1.3,leg[1],3,-G0-2.6,3,stdMat(0x4a2e1a),false);
-    const shelfM=stdMat(0x5a3820,{roughness:.8});
-    const spines=canvasTex(256,256,x=>{for(let r=0;r<4;r++){x.fillStyle='#3a2414';x.fillRect(0,r*64,256,64);let c=0;while(c<256){const w=6+Math.random()*12;x.fillStyle=['#8e2c2c','#2c4a8e','#2e6b3e','#c28f2c','#5b2c6f','#1f6f6a','#d9c9a3'][(Math.random()*7)|0];x.fillRect(c,r*64+8+Math.random()*10,w-1,56);c+=w;}}},[3,3]);
-    const bookM=stdMat(0xffffff,{map:spines,roughness:.85});
-    for(let i=0;i<10;i++){const a=i/10*Math.PI*2+.3,r=170;const sh=K.box(Math.cos(a)*r,G0+110,Math.sin(a)*r,90,220,30,[shelfM,shelfM,shelfM,shelfM,bookM,bookM],false);sh.lookAt(0,G0+110,0);}
-    for(const [x,z] of [[-90,-100],[95,90]]){K.box(x,G0+28,z,90,4,50,stdMat(0x6b4428),false);for(const sx of [-38,38])for(const sz of [-20,20])K.box(x+sx,G0+13,z+sz,4,26,4,stdMat(0x4a2e1a),false);}
-    const lights=[[0,120,0],[100,110,-60]];for(const [x,y,z] of lights){const l=new THREE.PointLight(0xffe6b8,.9,300);l.position.set(x,y,z);A.add(l);}
+    const rug=K.mesh(new THREE.CircleGeometry(120,40),stdMat(0x1f6f6a,{roughness:1}),0,G0+.3,0,false);rug.rotation.x=-Math.PI/2;
+    K.mesh(new THREE.RingGeometry(96,104,40),stdMat(0xf6ead6,{roughness:1}),0,G0+.4,0,false).rotation.x=-Math.PI/2;
+    for(const leg of [[-22,-22],[22,-22],[-22,22],[22,22]])K.box(leg[0],G0/2-1.3,leg[1],3.4,-G0-2.6,3.4,stdMat(0x4a2e1a),false);
+    for(let i=0;i<10;i++){const a=i/10*Math.PI*2+.3,r=170,x=Math.cos(a)*r,z=Math.sin(a)*r;
+      if(!deco('L_shelf',x,z,Math.atan2(-x,-z),10,G0)){const sh=K.box(x,G0+110,z,90,220,30,stdMat(0x5a3820,{roughness:.8}),false);sh.lookAt(0,G0+110,0);}}
+    for(const [x,z] of [[-90,-100],[95,90]]){K.box(x,G0+28,z,90,4,50,stdMat(0x6b4428),false);for(const sx of [-38,38])for(const sz of [-20,20])K.box(x+sx,G0+13,z+sz,4,26,4,stdMat(0x4a2e1a),false);
+      deco('L_stackBig4',x-20,z,.5,6,G0+30);deco('L_lamp',x+22,z+8,2.2,5,G0+30);}
+    for(const [x,y,z] of [[0,120,0],[100,110,-60]]){const l=new THREE.PointLight(0xffe6b8,.9,300);l.position.set(x,y,z);A.add(l);}
   },
   // ---------------------------------------------------------------- Diner Counter
   diner(A,R,addBox){
-    const K=kit(A),G0=-30,chrome=stdMat(0xd9e0e6,{metalness:.85,roughness:.18});
+    const K=kit(A),G0=-30,chrome=stdMat(0xd9e0e6,{metalness:.85,roughness:.18}),{prop,deco,col}=roomKit(A,addBox);
     K.box(0,-.15,HALF+.6,HALF*2+2,.5,.5,chrome,false);K.box(0,-.15,-HALF-.6,HALF*2+2,.5,.5,chrome,false);
-    // napkin dispenser at the centre
-    addBox(0,0,4,2.4,3.2,{mat:chrome});K.box(0,3.3,0,3.4,.35,1.8,stdMat(0xffffff),false);
-    for(const s of [1,-1]){
-      // ketchup + mustard
-      K.cyl(-6*s,2.2,7*s,1,1.05,4.4,stdMat(0xd62828,{roughness:.35}),20);K.cyl(-6*s,4.8,7*s,.4,.7,.9,stdMat(0xd62828),16);K.cone(-6*s,5.6,7*s,.25,.7,stdMat(0xffffff));
-      K.cyl(-3.4*s,2.2,8.5*s,1,1.05,4.4,stdMat(0xfcbf49,{roughness:.35}),20);K.cone(-3.4*s,5.1,8.5*s,.4,1.0,stdMat(0xfcbf49));
-      addBox(-4.7*s,7.7*s,5,3.2,4.6,{invisible:true});
-      // salt & pepper
-      for(const [dx,c] of [[0,0xf5f5f5],[1.8,0x3a3a3a]]){K.cyl(13*s+dx*s,1.2,3*s,.75,.85,2.4,new THREE.MeshStandardMaterial({color:0xe8f4f8,transparent:true,opacity:.55,roughness:.05}),18);K.cyl(13*s+dx*s,.8,3*s,.65,.75,1.5,stdMat(c),18);K.cyl(13*s+dx*s,2.6,3*s,.55,.75,.5,chrome,18);}
-      addBox(13.9*s,3*s,3.6,1.8,2.9,{invisible:true});
-      // pie under a glass dome
-      K.cyl(-12*s,.15,-11*s,3,3.2,.3,stdMat(0xffffff),28);K.cyl(-12*s,.65,-11*s,2.4,2.5,.7,stdMat(0xd99a4e),24);
-      K.mesh(new THREE.SphereGeometry(2.8,24,12,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0xe8f4f8,transparent:true,opacity:.28,roughness:.05,depthWrite:false}),-12*s,.3,-11*s,false);
-      addBox(-12*s,-11*s,5,5,3,{invisible:true});
-      // coffee mugs
-      for(const [mx,mz,c] of [[4,13,0xffffff],[16,-9,0xe76f51]]){K.cyl(mx*s,1.1,mz*s,1.3,1.2,2.2,stdMat(c,{roughness:.3}),20);K.cyl(mx*s,2.15,mz*s,1.1,1.1,.05,stdMat(0x3b2416),20);
-        const h=K.mesh(new THREE.TorusGeometry(.6,.15,8,16),stdMat(c),mx*s+1.4,1.2,mz*s);h.rotation.y=Math.PI/2;addBox(mx*s,mz*s,2.6,2.6,2.2,{invisible:true});}
-      // stacked plates (jump on them)
-      for(let k=0;k<4;k++)K.cyl(17*s,.12+k*.24,8*s,2.6,2.3,.2,stdMat(0xfdfdfd,{roughness:.3}),28);addBox(17*s,8*s,4.4,4.4,1.0,{invisible:true});
-      // menu stand
-      K.box(-17*s,1.6,-3*s,3,3.2,.2,stdMat(0x1d3557),false);addBox(-17*s,-3*s,3,1,3.2,{invisible:true});
+    prop('D_napkin',0,0,0,4,2.4,3.2,0xd9e0e6);
+    for(const s of [1,-1]){const ry=s>0?0:Math.PI;
+      deco('D_ketchup',-6*s,7*s,ry);deco('D_mustard',-3.4*s,8.5*s,ry);col(-4.7*s,7.7*s,5,3.2,4.6);
+      deco('D_salt',13*s,3*s);deco('D_pepper',14.8*s,3*s);col(13.9*s,3*s,3.6,1.8,2.9);
+      prop('D_pie',-12*s,-11*s,0,5,5,3,0xd99a4e);
+      prop('D_mugA',4*s,13*s,ry+.5,2.6,2.6,2.2,0xffffff);prop('D_mugB',16*s,-9*s,ry-.6,2.6,2.6,2.2,0xe76f51);
+      prop('D_plates',17*s,8*s,0,4.4,4.4,1.0,0xfdfdfd);
+      prop('D_menu',-17*s,-3*s,ry,3,1,3.2,0x1d3557);
       // hot coffee spill
       K.mesh(new THREE.CircleGeometry(2.4,24),stdMat(0x4a2c1a,{roughness:.1,metalness:.2}),9*s,.015,-17*s,false).rotation.x=-Math.PI/2;
       D.hazards.push({minX:9*s-2,maxX:9*s+2,minZ:-17*s-2,maxZ:-17*s+2,dps:15,name:'hot coffee'});
       if(ASSET.objs.I_coffee)asset('I_coffee',A,9*s+2.4*s,0,-17*s,s>0?Math.PI:0,1.5);
-      D.hazards.forEach(h=>{if(h.minX>h.maxX)[h.minX,h.maxX]=[h.maxX,h.minX];if(h.minZ>h.maxZ)[h.minZ,h.maxZ]=[h.maxZ,h.minZ];});
     }
     // diner below and around
-    K.plane(0,G0,0,700,700,stdMat(0xffffff,{map:checkerTex('#f2f2f2','#1d1d1d',[40,40]),roughness:.4}));
-    K.box(0,G0/2-1.3,0,HALF*2-4,-G0-2.6,HALF*2-4,stdMat(0xc0392b,{roughness:.5}),false);
-    for(let i=-3;i<=3;i++){const x=i*24;K.cyl(x,G0+12,HALF+22,2,2,24,chrome,12,false);K.cyl(x,G0+26,HALF+22,11,11,5,stdMat(0xd62828,{roughness:.4}),28,false);K.cyl(x,G0+1,HALF+22,8,10,2,chrome,20,false);}
-    K.box(-140,G0+60,-60,60,120,40,stdMat(0xf15bb5,{emissive:0xf15bb5,emissiveIntensity:.25}),false);K.cyl(-140,G0+120,-60,30,30,40,stdMat(0x2ec4b6,{emissive:0x2ec4b6,emissiveIntensity:.4}),24,false).rotation.z=Math.PI/2;
-    const sign=K.mesh(new THREE.PlaneGeometry(120,30),new THREE.MeshBasicMaterial({map:signTex('DINER','#2a0f1c','#ff8c32'),transparent:true}),40,G0+130,-200,false);
+    K.plane(0,G0,0,700,700,stdMat(0xffffff,{map:checkerTex('#f6ead6','#1d2a44',[40,40]),roughness:.4}));
+    K.box(0,G0/2-1.3,0,HALF*2-4,-G0-2.6,HALF*2-4,stdMat(0x1f8a86,{roughness:.5}),false);
+    for(let i=-3;i<=3;i++){const x=i*24;
+      if(!deco('D_stool',x,HALF+22,0,9.4,G0)){K.cyl(x,G0+12,HALF+22,2,2,24,chrome,12,false);K.cyl(x,G0+26,HALF+22,11,11,5,stdMat(0xd62828,{roughness:.4}),28,false);}}
+    deco('D_jukebox',-140,-60,Math.atan2(140,60),10,G0);
+    K.mesh(new THREE.PlaneGeometry(120,30),new THREE.MeshBasicMaterial({map:signTex('DINER','#2a0f1c','#ff8c32'),transparent:true}),40,G0+130,-200,false);
     K.box(0,G0+100,-215,520,260,4,stdMat(0xf7b2c4,{roughness:.9}),false);
+    K.box(0,G0+30,-212,520,60,5,stdMat(0x1f8a86,{roughness:.8}),false);
     const glowL=new THREE.PointLight(0xff9ec4,1,300);glowL.position.set(0,90,-120);A.add(glowL);
   },
   // ---------------------------------------------------------------- School Gym
   gym(A,R,addBox){
-    const K=kit(A);
+    const K=kit(A),{prop,deco,col}=roomKit(A,addBox);
     // bleachers on both sides (climb them)
-    for(const s of [1,-1])for(let i=0;i<4;i++){const x=s*(18+1.4*i+.7);addBox(x,0,1.4,22,.9*(i+1),{mat:stdMat(i%2?0xc9a46b:0xb58d55,{roughness:.7})});}
-    // gym mats, cones, trampolines
-    for(const s of [1,-1]){
-      addBox(-7*s,9*s,4,3,1.0,{mat:stdMat(0x1d4ed8,{roughness:.8})});
-      addBox(10*s,-6*s,3,4,2.0,{mat:stdMat(0x1d4ed8,{roughness:.8})});
-      for(const [cx,cz] of [[3,6],[-12,-3],[13,13]]){K.cone(cx*s,.6,cz*s,.55,1.2,stdMat(0xff7f11),16);K.box(cx*s,.06,cz*s,1.2,.12,1.2,stdMat(0xff7f11));addBox(cx*s,cz*s,.8,.8,1.1,{invisible:true});}
+    for(const s of [1,-1]){const m=deco('G_bleacher',18*s,0,s>0?0:Math.PI);
+      for(let i=0;i<4;i++)addBox(s*(18+1.4*i+.7),0,1.4,22,.9*(i+1),m?{invisible:true}:{mat:stdMat(i%2?0xc9a46b:0xb58d55,{roughness:.7})});}
+    for(const s of [1,-1]){const ry=s>0?0:Math.PI;
+      prop('G_mat',-7*s,9*s,ry,4,3,1.0,0x1d4ed8);prop('G_matTall',10*s,-6*s,ry,3,4,2.0,0x1d4ed8);
+      for(const [cx,cz] of [[3,6],[-12,-3],[13,13]])prop('G_cone',cx*s,cz*s,0,.8,.8,1.1,0xff7f11);
       addPad(A,5*s,11*s,0,'tramp');addPad(A,-12*s,12*s,0,'tramp');
-      // ball cart
-      K.box(3*s,1,-13*s,3,.15,2,stdMat(0x888888,{metalness:.5}),false);addBox(3*s,-13*s,3,2,2.2,{invisible:true});
-      for(let k=0;k<6;k++)K.sph(3*s+(k%3-1)*.9,1.6+(k>2?.7:0),-13*s+(k%2-.5)*.6,.45,stdMat([0xd35400,0xc0392b,0x2980b9][k%3],{roughness:.6}));
+      prop('G_ballcart',3*s,-13*s,ry,3,2,2.2,0x888888);
+      if(!deco('G_hoop',0,s*23.4,s>0?0:Math.PI,1,11)){K.box(0,11,s*23.4,6,4,.3,stdMat(0xffffff),false);K.mesh(new THREE.TorusGeometry(1.1,.08,8,24),stdMat(0xff7f11),0,9.5,s*22.1,false).rotation.x=Math.PI/2;}
     }
-    // vaulting box in the middle
-    for(let k=0;k<3;k++)K.box(0,.35+k*.7,0,3.4-k*.2,.7,2.2-k*.1,stdMat(k===2?0xe8d8b8:0x9c6b43));addBox(0,0,3.4,2.2,2.1,{invisible:true});
-    // hoops on the end walls
-    for(const s of [1,-1]){K.box(0,11,s*23.4,6,4,.3,stdMat(0xffffff),false);K.box(0,10,s*23.2,2,1.5,.32,stdMat(0xffffff),false);
-      K.mesh(new THREE.TorusGeometry(1.1,.08,8,24),stdMat(0xff7f11),0,9.5,s*22.1,false).rotation.x=Math.PI/2;}
+    prop('G_vault',0,0,0,3.4,2.2,2.1,0x9c6b43);
+    deco('G_scoreboard',23.7,0,-Math.PI/2,1.7,10.5);
     K.box(0,15.9,0,HALF*2,.2,HALF*2,stdMat(0x3a4a5a),false);
     for(let i=-2;i<=2;i++)for(const z of [-10,10]){K.box(i*9,15.6,z,4,.3,1.2,new THREE.MeshBasicMaterial({color:0xffffff}),false);const l=new THREE.PointLight(0xffffff,.12,40);l.position.set(i*9,14,z);A.add(l);}
-    K.mesh(new THREE.PlaneGeometry(30,6),new THREE.MeshBasicMaterial({map:signTex('GO TEAM!','#1d4ed8','#fee440')}),-23.9,9,0,false).rotation.y=Math.PI/2;
+    K.mesh(new THREE.PlaneGeometry(30,6),new THREE.MeshBasicMaterial({map:signTex('GO TEAM!','#1f8a86','#f6ead6')}),-23.9,9,0,false).rotation.y=Math.PI/2;
   },
   // ---------------------------------------------------------------- Toy Store
   toystore(A,R,addBox){
-    const K=kit(A),toyCols=[0xe63946,0xfee440,0x2ec4b6,0x9b5de5,0xff8c32,0x00bbf9,0x8ac926];
-    // shelf aisles stocked with boxed toys
-    for(const s of [1,-1]){addBox(12.5*s,0,1.6,12,3.4,{mat:stdMat(0xfdfdfd)});
-      for(let r=0;r<3;r++)for(let k=0;k<6;k++){const c=toyCols[(r*3+k)%7];K.box(12.5*s-s*.85,.5+r*1.1,-5+k*2,.15,.9,1.7,stdMat(c,{roughness:.5}),false);K.box(12.5*s+s*.85,.5+r*1.1,-5+k*2,.15,.9,1.7,stdMat(toyCols[(r+k)%7],{roughness:.5}),false);}}
-    // giant rubber duck
-    const yel=stdMat(0xffd60a,{roughness:.35});K.sph(0,1.4,0,1.7,yel);K.sph(0,3.3,-.8,1.1,yel);const beak=K.box(0,3.1,-1.9,.9,.35,.8,stdMat(0xff7f11));
-    for(const sx of [-.45,.45])K.sph(sx,3.6,-1.75,.16,stdMat(0x111111));addBox(0,0,3.4,3.4,3.2,{invisible:true});
-    // stud bricks, teddy bears, spring boxes, spinning tops
-    for(const s of [1,-1]){
-      const bc=s>0?0xe63946:0x1d4ed8;addBox(-6*s,6*s,3.2,1.6,1.2,{mat:stdMat(bc,{roughness:.3})});for(let k=0;k<4;k++)K.cyl(-6*s+(k%2-.5)*1.6+(k>1?.8:0)-.4,1.35,6*s+(k%2-.5)*.6,.3,.3,.3,stdMat(bc),12);
-      addBox(-6*s,6*s+1.6*s,1.6,1.6,2.4,{mat:stdMat(0xfee440,{roughness:.3})});
-      const br=stdMat(0x9c6644,{roughness:1});const tx=-21.9*s;K.sph(tx,1.6,-7*s,1.6,br);K.sph(tx,3.7,-7*s,1.1,br);for(const ex of [-.75,.75])K.sph(tx,4.6,-7*s+ex,.4,br);K.sph(tx+s*1.0,3.5,-7*s,.4,stdMat(0xd9b38c));
-      addBox(tx,-7*s,3,3,4,{invisible:true});
+    const K=kit(A),toyCols=[0xe63946,0xfee440,0x2ec4b6,0x9b5de5,0xff8c32,0x00bbf9,0x8ac926],{prop,deco,col}=roomKit(A,addBox);
+    prop('T_duck',0,0,-Math.PI/2,3.4,3.4,3.2,0xffd60a);
+    for(const s of [1,-1]){const ry=s>0?0:Math.PI;
+      prop('T_shelf',12.5*s,0,ry,1.6,12,3.4,0xfdfdfd);
+      prop(s>0?'T_brickRed':'T_brickBlue',-6*s,6*s,0,3.2,1.6,1.2,s>0?0xe63946:0x1d4ed8);prop('T_brickTall',-6*s,6*s+1.6*s,0,1.6,1.6,2.4,0xfee440);
+      prop('T_teddy',-21.9*s,-7*s,s*Math.PI/2,3,3,4,0x9c6644);
       addPad(A,5*s,-11*s,toyCols[s>0?0:3],'spring');addPad(A,-5*s,-11*s,toyCols[s>0?4:5],'spring');
-      const top=K.cone(15*s,1.0,-20.6*s,1.2,1.8,stdMat(toyCols[s>0?2:6]),12);top.rotation.x=Math.PI;D.anim.push(t=>{top.rotation.y=t*8;});addBox(15*s,-20.6*s,1.8,1.8,1.8,{invisible:true});
+      const top=prop('T_top',15*s,-20.6*s,0,1.8,1.8,1.8,toyCols[s>0?2:6]);
+      if(top){top.rotation.z=.12;D.anim.push(t=>{top.rotation.y=t*8;});}
     }
-    // checkout counter on the back wall with a sign
-    K.mesh(new THREE.PlaneGeometry(26,5),new THREE.MeshBasicMaterial({map:signTex('TOYS!','#9b5de5','#fee440')}),0,10,-23.9,false);
-    buildTrain(A,addBox,{body:0x2ec4b6,cab:0xff8c32,trim:0xfee440,cars:[0x9b5de5,0x8ac926,0xff8c32],open:false});
+    K.mesh(new THREE.PlaneGeometry(26,5),new THREE.MeshBasicMaterial({map:signTex('TOYS!','#1f8a86','#f6ead6')}),0,10,-23.9,false);
+    buildTrain(A,addBox,{body:0x2ec4b6,cab:0xff8c32,trim:0xfee440,cars:[0x9b5de5,0x8ac926,0xff8c32],open:false,model:!!(ASSET.objs.TrainEngine&&ASSET.objs.T_car),car:'T_car'});
   },
   // ---------------------------------------------------------------- Greenhouse
   greenhouse(A,R,addBox){
-    const K=kit(A),soil=stdMat(0x4a2f1b,{roughness:1}),leaf=[0x2f7d32,0x3f9a48,0x5cb85c],bloom=[0xf15bb5,0xfee440,0xff8c32,0xffffff,0xe63946];
-    for(const s of [1,-1]){
-      // raised planters
-      addBox(-4*s,8*s,10,2,1.0,{mat:stdMat(0x8d6e4f,{roughness:.9})});K.box(-4*s,1.02,8*s,9.6,.05,1.7,soil,false);
-      for(let k=0;k<9;k++){K.cone(-8*s+k*s,1.6,8*s+(k%2-.5)*.6,.35,1.2,stdMat(leaf[k%3]),8);if(k%2)K.sph(-8*s+k*s,2.25,8*s,.22,stdMat(bloom[k%5]));}
-      // big pots with bushy plants
-      for(const [px,pz] of [[15,4],[3,13],[-16,-14]]){K.cyl(px*s,1.2,pz*s,1.6,1.1,2.4,stdMat(0xc0623a,{roughness:.8}),20);K.sph(px*s,3.4,pz*s,1.9,stdMat(leaf[(px+pz)&1?0:1],{roughness:.9}));K.sph(px*s+.8,4.2,pz*s,.9,stdMat(leaf[2]));
-        addBox(px*s,pz*s,3,3,4.5,{invisible:true});}
+    const K=kit(A),{prop,deco,col}=roomKit(A,addBox);
+    for(const s of [1,-1]){const ry=s>0?0:Math.PI;
+      prop('H_planter',-4*s,8*s,ry,10,2,1.0,0x8d6e4f);
+      [[15,4,'H_potBush'],[3,13,'H_potLeafy'],[-16,-14,'H_potBush']].forEach(([px,pz,n],i)=>prop(n,px*s,pz*s,ry+i,3,3,4.5,0xc0623a));
       // cactus patch (hurts)
       const cx=16*s,cz=-13*s;K.plane(cx,.02,cz,4.5,4.5,stdMat(0xd9c38c,{roughness:1}));
       if(ASSET.objs.I_cactus)asset('I_cactus',A,cx,0,cz,s>0?0:Math.PI);
-      else for(let k=0;k<5;k++){const x=cx+((k*37)%9-4)*.4,z=cz+((k*53)%9-4)*.4,c=K.cyl(x,.9,z,.32,.38,1.8,stdMat(0x3a7d44),10);if(k%2){const a=K.cyl(x+.45,1.2,z,.18,.18,.7,stdMat(0x3a7d44),8);}}
-      D.hazards.push({minX:cx-2.2,maxX:cx+2.2,minZ:Math.min(cz-2.2,cz+2.2),maxZ:Math.max(cz-2.2,cz+2.2),dps:20,name:'cactus'});
-      // potting bench
-      addBox(21.5*s,4*s,2.5,8,1.6,{mat:stdMat(0x9c6b43)});K.cyl(21.5*s,2.1,6*s,.5,.4,1,stdMat(0xc0623a),12);K.sph(21.5*s,2.8,6*s,.5,stdMat(leaf[1]));
+      D.hazards.push({minX:cx-2.2,maxX:cx+2.2,minZ:cz-2.2,maxZ:cz+2.2,dps:20,name:'cactus'});
+      prop('H_bench',21.5*s,4*s,ry,2.5,8,1.6,0x9c6b43);
     }
-    // watering can + hanging baskets + central fountain bed
-    K.cyl(0,.6,0,2.2,2.4,1.2,stdMat(0x9aa3ad,{metalness:.3}),24);K.cyl(0,1.25,0,1.9,1.9,.1,new THREE.MeshStandardMaterial({color:0x5ab6e6,transparent:true,opacity:.8}),24);addBox(0,0,4,4,1.2,{invisible:true});
-    for(const [x,z] of [[-10,-4],[10,4],[0,-16],[0,16]]){K.cyl(x,9,z,.03,.03,6,stdMat(0x333333),4,false);K.sph(x,6,z,.9,stdMat(leaf[0]),false);K.sph(x,5.6,z,.3,stdMat(bloom[(x+z+40)%5]),false);}
+    prop('H_fountain',0,0,0,4,4,1.2,0x9aa3ad);
+    [[-10,-4],[10,4],[0,-16],[0,16]].forEach(([x,z],i)=>{const b=deco('H_basket',x,z,i*1.3,1,6);if(b)D.anim.push(t=>{b.rotation.z=Math.sin(t*.7+i)*.03;});});
     const mist=new THREE.Points(new THREE.BufferGeometry().setAttribute('position',new THREE.BufferAttribute(new Float32Array(Array.from({length:600},(_,i)=>i%3===1?Math.random()*10:(Math.random()-.5)*46)),3)),new THREE.PointsMaterial({color:0xffffff,size:.12,transparent:true,opacity:.5}));A.add(mist);
     D.anim.push(t=>{mist.position.y=Math.sin(t*.4)*.4;});
   },
   // ---------------------------------------------------------------- Arcade
   arcade(A,R,addBox){
-    const K=kit(A),neon=[0xff8c32,0x2ec4b6,0xf15bb5,0xfee440,0x00bbf9];
-    const cabinet=(x,z,face,i)=>{const c=neon[i%5];addBox(x,z,2.4,2.2,4.2,{mat:stdMat(0x1b1030,{roughness:.5})});
-      const scr=K.mesh(new THREE.PlaneGeometry(1.8,1.4),new THREE.MeshBasicMaterial({map:pixelTex(i*91+7)}),x,2.9,z+face*1.12,false);if(face<0)scr.rotation.y=Math.PI;
-      K.box(x,4.0,z+face*1.0,2.4,.5,.3,new THREE.MeshBasicMaterial({color:c}),false);K.box(x,1.9,z+face*1.2,2.0,.15,.4,stdMat(0x333333),false);
-      K.sph(x-.4,2.05,z+face*1.25,.12,new THREE.MeshBasicMaterial({color:neon[(i+2)%5]}),false);};
-    for(const s of [1,-1]){
+    const K=kit(A),neon=[0xff8c32,0x2ec4b6,0xf15bb5,0xfee440,0x00bbf9],{prop,deco,col}=roomKit(A,addBox);
+    const cabinet=(x,z,face,i)=>{const c=neon[i%5],m=prop('C_cabinet',x,z,face>0?0:Math.PI,2.4,2.2,4.2,0x1b1030);
+      const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=face>0?0:Math.PI;A.add(g);
+      const scr=new THREE.Mesh(new THREE.PlaneGeometry(1.7,1.3),new THREE.MeshBasicMaterial({map:pixelTex(i*91+7)}));scr.position.set(0,2.75,m?.985:1.12);if(m)scr.rotation.x=-.175;g.add(scr);
+      const mq=new THREE.Mesh(new THREE.BoxGeometry(1.9,.5,.06),new THREE.MeshBasicMaterial({color:c}));mq.position.set(0,3.8,1.08);g.add(mq);};
+    for(const s of [1,-1]){const ry=s>0?0:Math.PI;
       for(let k=0;k<4;k++)cabinet(-16*s+k*2.5*s,-21.5*s,s,k+(s>0?0:4));
       cabinet(-21*s,6*s,s,9+(s>0?0:1));cabinet(21*s,-4*s,-s,11+(s>0?0:1));
-      // air hockey table
-      addBox(-6*s,-10*s,6,3.4,1.0,{mat:stdMat(0x1d4ed8,{roughness:.3})});K.plane(-6*s,1.01,-10*s,5.6,3,new THREE.MeshBasicMaterial({color:0xe9f7ff}));K.box(-6*s,1.01,-10*s,.08,.02,3,new THREE.MeshBasicMaterial({color:0xe63946}),false);
-      // claw machine
-      addBox(13*s,10*s,3,3,4.5,{mat:new THREE.MeshStandardMaterial({color:0xbde0fe,transparent:true,opacity:.35,roughness:.05})});K.box(13*s,4.6,10*s,3.1,.4,3.1,new THREE.MeshBasicMaterial({color:neon[s>0?2:3]}),false);
-      for(let k=0;k<6;k++)K.sph(13*s+(k%3-1)*.7,.5,10*s+(k>2?.6:-.6),.4,stdMat(neon[k%5]));
-      // pinball bumpers launch you
+      prop('C_hockey',-6*s,-10*s,ry,6,3.4,1.0,0x1d4ed8);
+      prop('C_claw',13*s,10*s,ry,3,3,4.5,0xbde0fe);
       addPad(A,5*s,9*s,neon[s>0?2:1],'bumper');addPad(A,-13*s,2*s,neon[s>0?4:0],'bumper');
-      // ticket counter
-      addBox(0,15*s,8,1.6,1.4,{mat:stdMat(0x9b5de5,{roughness:.4})});
+      prop('C_counter',0,15*s,ry,8,1.6,1.4,0x9b5de5);
     }
-    addBox(0,0,3,3,2.4,{mat:stdMat(0x111111)});K.mesh(new THREE.TorusGeometry(1.6,.12,8,32),new THREE.MeshBasicMaterial({color:0xfee440}),0,2.5,0).rotation.x=Math.PI/2;
+    prop('C_podium',0,0,0,3,3,2.4,0x111111);
     for(let i=0;i<5;i++){const l=new THREE.PointLight(neon[i],1.3,22);l.position.set(-16+i*8,6,(i%2?-8:8));A.add(l);}
     for(const [z,i] of [[-23.9,0],[23.9,1]]){const st=K.mesh(new THREE.PlaneGeometry(HALF*2,.3),new THREE.MeshBasicMaterial({color:neon[i]}),0,6,z,false);if(z>0)st.rotation.y=Math.PI;}
     K.mesh(new THREE.PlaneGeometry(24,5),new THREE.MeshBasicMaterial({map:signTex('ARCADE','#0b0616','#2ec4b6'),transparent:true}),0,9.5,-23.85,false);
   },
   // ---------------------------------------------------------------- Attic
   attic(A,R,addBox){
-    const K=kit(A),card=stdMat(0xb88a56,{roughness:.95}),tape=stdMat(0xd9c49a,{roughness:.6});
-    const cbox=(x,z,w,d,h)=>{addBox(x,z,w,d,h,{mat:card});K.box(x,h+.005,z,w*.2,.01,d,tape,false);};
-    for(const s of [1,-1]){
-      cbox(-7*s,7*s,3,2.4,2.2);cbox(-7*s,9.8*s,2.6,2.2,1.2);cbox(15*s,3*s,3,3,3.4);cbox(4*s,-15*s,2.4,2.4,1.1);
-      // old trunk
-      addBox(-15*s,-10*s,4,2.4,2.0,{mat:stdMat(0x5b3a1e,{roughness:.7})});for(const dx of [-1.4,1.4])K.box(-15*s+dx,1.0,-10*s,.2,2.05,2.45,stdMat(0x9c8a5a,{metalness:.6}),false);
-      // rolled-up rug (jump over it)
-      const rug=K.cyl(10*s,.5,13*s,.5,.5,8,stdMat(0x8e2c2c,{roughness:1}),14);rug.rotation.z=Math.PI/2;addBox(10*s,13*s,8,1,1.0,{invisible:true});
+    const K=kit(A),{prop,deco,col}=roomKit(A,addBox);
+    for(const s of [1,-1]){const ry=s>0?0:Math.PI;
+      prop('A_box1',-7*s,7*s,ry,3,2.4,2.2,0xb88a56);prop('A_box2',-7*s,9.8*s,ry,2.6,2.2,1.2,0xb88a56);prop('A_box3',15*s,3*s,ry,3,3,3.4,0xb88a56);prop('A_box4',4*s,-15*s,ry,2.4,2.4,1.1,0xb88a56);
+      prop('A_trunk',-15*s,-10*s,ry,4,2.4,2.0,0x5b3a1e);
+      prop('A_rug',10*s,13*s,0,8,1,1.0,0x8e2c2c);   // rolled-up rug (jump over it)
     }
-    // brick chimney in the middle
-    addBox(0,0,3,3,10,{mat:stdMat(0xffffff,{map:brickTex('#8e3b2a','#5a4a3a',[2,6])})});
-    // rocking horse
-    const rh=new THREE.Group();rh.position.set(-19,0,16);A.add(rh);const wood=stdMat(0xd9a066),red=stdMat(0xc0392b);
-    const ad=(geo,m,x,y,z)=>{const mm=new THREE.Mesh(geo,m);mm.position.set(x,y,z);mm.castShadow=true;rh.add(mm);return mm;};
-    for(const sz of [-.5,.5]){const r=ad(new THREE.TorusGeometry(2.4,.12,8,24,Math.PI*.6),wood,0,2.5,sz);r.rotation.z=Math.PI*1.2;}
-    ad(new THREE.BoxGeometry(2.8,1.0,1),red,0,1.9,0);ad(new THREE.BoxGeometry(.8,1.6,.7),red,1.3,2.8,0).rotation.z=-.4;ad(new THREE.BoxGeometry(1,.6,.6),red,1.9,3.4,0);
-    D.anim.push(t=>{rh.rotation.z=Math.sin(t*1.2)*.08;});addBox(-19,16,4,2,2.6,{invisible:true});
-    // dress form + old lamp
-    K.cyl(19,1.2,-16,.1,.1,2.4,stdMat(0x333333),8);K.sph(19,3.1,-16,.9,stdMat(0xe8dcc8));K.cyl(19,3.8,-16,.25,.3,.6,stdMat(0xe8dcc8),12);addBox(19,-16,1.6,1.6,4,{invisible:true});
+    prop('A_chimney',0,0,0,3,3,10,0x8e3b2a);
+    const rh=prop('A_horse',-19,16,0,4,2,2.6,0xc0392b);if(rh)D.anim.push(t=>{rh.rotation.z=Math.sin(t*1.2)*.08;});
+    prop('A_dressform',19,-16,.5,1.6,1.6,4,0xe8dcc8);
     // roof beams + round window with a dusty light shaft
     const beam=stdMat(0x3d2b1a,{roughness:.9});
     for(let z=-HALF;z<=HALF;z+=6)for(const s of [-1,1]){const b=K.box(s*12,15,z,.6,.6,28,beam,false);b.rotation.y=Math.PI/2;b.rotation.x=s*.62;}
     K.box(0,23,0,.8,.8,HALF*2,beam,false);
-    K.mesh(new THREE.CircleGeometry(2.4,24),new THREE.MeshBasicMaterial({color:0xffe9b0}),0,8,-23.9,false);
+    if(!deco('A_window',0,-23.7,0,1,8))K.mesh(new THREE.CircleGeometry(2.4,24),new THREE.MeshBasicMaterial({color:0xffe9b0}),0,8,-23.9,false);
     const shaft=K.mesh(new THREE.CylinderGeometry(2.2,6,30,20,1,true),new THREE.MeshBasicMaterial({color:0xffe9b0,transparent:true,opacity:.07,depthWrite:false,side:THREE.DoubleSide}),0,4,-10,false);shaft.rotation.x=Math.PI/2.3;
     const winL=new THREE.SpotLight(0xffe2a8,2.2,80,.5,.6);winL.position.set(0,8,-23);winL.target.position.set(0,0,-4);A.add(winL);A.add(winL.target);
     const bulb=K.sph(8,9,6,.4,new THREE.MeshBasicMaterial({color:0xfff2c8}),false);const bl=new THREE.PointLight(0xffd8a0,1.2,30);bl.position.set(8,8.6,6);A.add(bl);K.cyl(8,12,6,.02,.02,5.6,stdMat(0x111111),4,false);
@@ -1576,7 +1775,7 @@ const ROOM_BUILD={
   },
   // ---------------------------------------------------------------- Beach Boardwalk
   beach(A,R,addBox){
-    const K=kit(A);
+    const K=kit(A),{prop,deco,col}=roomKit(A,addBox);
     const walk=K.plane(0,0,-HALF/2,HALF*2,HALF,stdMat(0xffffff,{map:woodTex('#b08a5a',[1,6]),roughness:.85}));walk.material.map.rotation=Math.PI/2;
     const sand=K.plane(0,0,HALF/2,HALF*2,HALF,stdMat(0xffffff,{map:speckleTex('#e9d3a0',['#d8bf86','#f5e3b8','#cdb27a'],[6,3],1800),roughness:1}));
     D.solids.push(walk,sand);
@@ -1587,36 +1786,39 @@ const ROOM_BUILD={
     // boardwalk railing on the back edge
     for(let x=-HALF;x<=HALF;x+=3)K.box(x,1.1,-HALF+.2,.2,2.2,.2,stdMat(0xffffff),false);K.box(0,2.2,-HALF+.2,HALF*2,.2,.25,stdMat(0xffffff),false);
     for(const s of [1,-1]){
-      // boardwalk: benches, trash cans, lamp posts
-      addBox(-12*s,-9,5,1.6,1.0,{mat:stdMat(0x2e6f6a)});K.box(-12*s,1.8,-9.7,5,1.4,.2,stdMat(0x2e6f6a),false);
-      K.cyl(17*s,1.1,-14,.8,.7,2.2,stdMat(0x2a9d8f,{metalness:.3}),14);addBox(17*s,-14,1.5,1.5,2.2,{invisible:true});
-      K.cyl(6*s,3,-19,.12,.15,6,stdMat(0x222222,{metalness:.5}),8);K.sph(6*s,6.1,-19,.35,new THREE.MeshBasicMaterial({color:0xfff2c8}));addBox(6*s,-19,.5,.5,6,{invisible:true});
-      // sand: umbrellas, sandcastles, towels, cooler
-      const ux=10*s,uz=8+(s>0?0:6);K.cyl(ux,2.3,uz,.08,.08,4.6,stdMat(0xffffff),8);addBox(ux,uz,.5,.5,4.6,{invisible:true});
-      const can=K.cone(ux,4.6,uz,3.2,1.2,stdMat(0xffffff,{map:stripeTex(s>0?['#e63946','#ffffff']:['#2ec4b6','#ffffff'],[8,1],true),side:THREE.DoubleSide}),16);
-      K.plane(ux+2,.02,uz+1,2.4,4,stdMat(s>0?0xff8c32:0x9b5de5));
-      const cx=-9*s,cz=12+(s>0?3:0);addBox(cx,cz,3,3,1.2,{mat:stdMat(0xe2c487,{roughness:1})});
-      for(const [dx,dz] of [[-1.2,-1.2],[1.2,-1.2],[-1.2,1.2],[1.2,1.2]]){K.cyl(cx+dx,1.6,cz+dz,.45,.55,.8,stdMat(0xe2c487,{roughness:1}),10);K.cone(cx+dx,2.25,cz+dz,.5,.5,stdMat(0xe2c487),10);}
-      addBox(16*s,15,2,1.4,1.2,{mat:stdMat(s>0?0x1d4ed8:0xe63946,{roughness:.4})});
+      prop('B_bench',-12*s,-9,0,5,1.6,1.0,0x2e6f6a);
+      prop('B_trash',17*s,-14,0,1.5,1.5,2.2,0x2a9d8f);
+      prop('B_lamp',6*s,-19,0,.5,.5,6,0x222222);
+      const ux=10*s,uz=8+(s>0?0:6);
+      prop(s>0?'B_umbrellaRed':'B_umbrellaTeal',ux,uz,.3,.5,.5,4.6,0xffffff);
+      deco(s>0?'B_towelOrange':'B_towelTeal',ux+2,uz+1,.15*s,1,.01);
+      prop('B_castle',-9*s,12+(s>0?3:0),s>0?0:.6,3,3,1.2,0xe2c487);
+      prop(s>0?'B_coolerBlue':'B_coolerRed',16*s,15,0,2,1.4,1.2,s>0?0x1d4ed8:0xe63946);
     }
     // lemonade stand on the boardwalk + lifeguard chair on the sand
-    addBox(0,-12,5,2,2.2,{mat:stdMat(0xfee440)});K.box(0,4.0,-12,5.6,.25,2.6,stdMat(0xffffff,{map:stripeTex(['#e63946','#ffffff'],[6,1],true)}));
-    for(const sx of [-2.4,2.4])K.box(sx,3.1,-12.6,.15,2,.15,stdMat(0xffffff),false);
-    K.mesh(new THREE.PlaneGeometry(4,1),new THREE.MeshBasicMaterial({map:signTex('LEMONADE','#fee440','#e63946',512,128)}),0,2.6,-10.95,false);
-    for(const sx of [-1,1])for(const sz of [-1,1])K.cyl(sx*1.1,2.5,14+sz*1.1,.12,.12,5,stdMat(0xffffff),8);
-    K.box(0,5,14,2.6,.3,2.6,stdMat(0xe63946));K.box(0,6.2,15.2,2.6,2.2,.2,stdMat(0xe63946));addBox(0,14,2.6,2.6,5.2,{invisible:true});
-    const ball=K.sph(-4,.8,4,.8,stdMat(0xffffff,{map:stripeTex(['#e63946','#ffffff','#1d4ed8','#fee440'],[1,1],true)}));D.anim.push(t=>{ball.rotation.y=t;ball.position.y=.8+Math.abs(Math.sin(t*2))*.4;});
+    prop('B_stand',0,-12,0,5,2,2.2,0xfee440);
+    K.mesh(new THREE.PlaneGeometry(4,1),new THREE.MeshBasicMaterial({map:signTex('LEMONADE','#f6ead6','#cf3b2e',512,128)}),0,1.2,-10.93,false);
+    prop('B_guard',0,14,Math.PI,2.6,2.6,5.2,0xe63946);
+    const ball=deco('B_ball',-4,4,0,1,.8)||K.sph(-4,.8,4,.8,stdMat(0xffffff));D.anim.push(t=>{ball.rotation.y=t;ball.position.y=.8+Math.abs(Math.sin(t*2))*.4;});
     // ferris wheel and sailboat in the distance
     const fw=new THREE.Group();fw.position.set(-150,60,-150);A.add(fw);
     fw.add(new THREE.Mesh(new THREE.TorusGeometry(55,1.4,8,48),stdMat(0xffffff)));
     for(let i=0;i<12;i++){const sp=new THREE.Mesh(new THREE.BoxGeometry(110,.8,.8),stdMat(0xffffff));sp.rotation.z=i*Math.PI/12;fw.add(sp);
-      const cab=new THREE.Mesh(new THREE.BoxGeometry(6,6,6),stdMat([0xe63946,0xfee440,0x2ec4b6,0x9b5de5][i%4]));const a=i/12*Math.PI*2;cab.position.set(Math.cos(a)*55,Math.sin(a)*55,0);fw.add(cab);}
+      const cab=new THREE.Mesh(new THREE.BoxGeometry(6,6,6),stdMat([0xcf3b2e,0xf6c445,0x1f8a86,0xf07a22][i%4]));const a=i/12*Math.PI*2;cab.position.set(Math.cos(a)*55,Math.sin(a)*55,0);fw.add(cab);}
     D.anim.push(t=>{fw.rotation.z=t*.05;fw.children.forEach(c=>{if(c.geometry&&c.geometry.type==='BoxGeometry'&&c.geometry.parameters.width===6)c.rotation.z=-t*.05;});});
     K.box(-150,30,-150,4,60,4,stdMat(0xdddddd),false);
-    const sail=K.cone(120,10,190,8,22,stdMat(0xffffff),3,false);K.box(120,0,190,16,3,5,stdMat(0x8e2c2c),false);
+    K.cone(120,10,190,8,22,stdMat(0xffffff),3,false);K.box(120,0,190,16,3,5,stdMat(0x8e2c2c),false);
     K.sph(80,140,260,22,new THREE.MeshBasicMaterial({color:0xfff3c4}),false);
   },
 };
+/** Placement helpers for the Blender-modelled rooms. */
+function roomKit(A,addBox){
+  const deco=(name,x,z,ry,s,y)=>asset(name,A,x,y||0,z,ry,s);
+  const col=(x,z,w,d,h)=>addBox(x,z,w,d,h,{invisible:true});
+  /** model + collision box of the given size (a plain coloured block if the model is missing) */
+  const prop=(name,x,z,ry,w,d,h,color)=>{const m=deco(name,x,z,ry);addBox(x,z,w,d,h,m?{invisible:true}:{mat:stdMat(color)});return m;};
+  return {prop,deco,col};
+}
 // ---- moving obstacles
 function moverBox(addBox,x,z,w,d,h){const b=addBox(x,z,w,d,h,{invisible:true});b.dx=0;b.dz=0;D.moving.push(b);return b;}
 function setBox(b,x,z){const ox=(b.minX+b.maxX)/2,oz=(b.minZ+b.maxZ)/2;b.dx+=x-ox;b.dz+=z-oz;b.minX=x-b.hw;b.maxX=x+b.hw;b.minZ=z-b.hd;b.maxZ=z+b.hd;b.mesh.position.x=x;b.mesh.position.z=z;}
@@ -1687,7 +1889,7 @@ function buildTrain(A,addBox,o){
   const loadCols=[0xe63946,0xf1c40f,0x2a9d8f];
   o.cars.forEach((col,c)=>{
     const g=new THREE.Group();
-    if(o.model){asset('TrainCar',g);cars.push({g,box:moverBox(addBox,0,0,1.8,1.8,.55),off:-(c+1)*2.35});return;}
+    if(o.model){asset(o.car||'TrainCar',g);cars.push({g,box:moverBox(addBox,0,0,1.8,1.8,o.car?1.0:.55),off:-(c+1)*2.35});return;}
     if(o.open){   // open car: low floor, side walls — hop in and ride
       add(g,new THREE.BoxGeometry(1.5,.3,1.9),stdMat(col),0,.4,0);
       for(const sx of [-.72,.72])add(g,new THREE.BoxGeometry(.08,.6,1.9),stdMat(col),sx,.85,0);
@@ -1782,7 +1984,10 @@ function setWeapon(e,wid){e.w=wstats(wid,pieceMods(e.piece));e.ammo=e.w.mag;e.re
 function buildBotModel(e){
   const g=new THREE.Group();
   const fig=armedFigure(e.t,e.c,e.w);let p;
-  if(fig){p=fig;e.fig=fig;e.baseScale=e.t==='r'?1.08:1;fig.scale.setScalar(e.baseScale);g.add(fig);e.gun=fig.userData.gun;}
+  if(fig){p=fig;e.fig=fig;e.baseScale=e.t==='r'?1.08:1;fig.scale.setScalar(e.baseScale);g.add(fig);e.gun=fig.userData.gun;
+    // enemies wear a Propeller Hat or a Jetpack in their team colours: looks only, it changes nothing about how they move or fight
+    if(!e.isPlayer&&RULES().fly&&ASSET.objs.G_hat&&ASSET.objs.G_jetpack){e.gear=G.net&&NET.on?(NET.theirGad==='hat'||NET.theirGad==='jetpack'?NET.theirGad:null):['hat','jetpack'][e.piece.id%2];   // a real opponent wears what they actually picked
+      e.gearSpin=e.gear?wearGear(fig,e.t,e.c,e.gear,true).userData.spin||null:null;}}
   else{p=buildPiece(e.t,e.c);e.baseScale=2.05;p.scale.setScalar(2.05);g.add(p);const gun=gunModel(e.w,e.c);gun.scale.setScalar(1.6);gun.position.set(.55,1.25,-.35);g.add(gun);e.gun=gun;}
   const body=new THREE.Mesh(new THREE.BoxGeometry(e.rad*2,1.45,e.rad*2),INV);body.position.y=.72;body.userData.hit='body';g.add(body);
   const head=new THREE.Mesh(new THREE.SphereGeometry(.36,12,10),INV);head.position.y=1.72;head.userData.hit='head';g.add(head);
@@ -1935,8 +2140,7 @@ function dmgNumber(pos,amt,head){
 function clearFX(){clearToyFX();FX.parts.forEach(p=>duelScene.remove(p.m));FX.tracers.forEach(t=>duelScene.remove(t.l));FX.nums.forEach(n=>n.el.remove());FX.parts=[];FX.tracers=[];FX.nums=[];
   (D.projs||[]).forEach(r=>duelScene.remove(r.m));D.projs=[];if(D.rope){duelScene.remove(D.rope);D.rope=null;}}
 // ---- toy fighters (Blender figures, recoloured per team)
-const FIG_COL={w:{TeamMain:0xefe2c6,TeamAccent:0x1f8a86,TeamEmblem:0x26324f},b:{TeamMain:0x3b3b42,TeamAccent:0xf07a22,TeamEmblem:0xf6e7c8}};
-const FIGMAT={};
+
 function figMat(m,c){const col=FIG_COL[c][m.name];if(col==null)return m;const k=c+m.name;
   if(!FIGMAT[k]){const n=m.clone();n.color.setHex(col);n._shared=true;FIGMAT[k]=n;}return FIGMAT[k];}
 /** A posable toy fighter for piece type t and team c (null if the models aren't loaded). Faces -Z. */
@@ -1950,12 +2154,106 @@ function buildFigure(t,c){
   g.userData.legs=legs;g.userData.arms=arms;g.userData.w=w;
   return g;
 }
-/** Figure holding its blaster out in front (used in duels and the loadout turntable). */
+/** Figure holding its blaster in both hands (used in duels and the loadout turntable). */
 function armedFigure(t,c,w){
   const g=buildFigure(t,c);if(!g)return null;
-  g.userData.arms[1].rotation.x=1.4;
-  const gun=gunModel(w,c);gun.scale.setScalar(1.4);gun.position.set(.44*g.userData.w,1.24,-.62);g.add(gun);g.userData.gun=gun;
+  const U=g.userData,W=U.w,gun=gunModel(w,c),mode=holdMode(w.id);
+  gun.updateMatrixWorld(true);const mzLocal=gun.userData.muzzle.getWorldPosition(new V3());
+  gun.scale.setScalar(1.4);g.add(gun);U.gun=gun;
+  // where bot shots have always started from (kept so the new pose doesn't change gameplay)
+  const ghost=new THREE.Object3D();ghost.position.set(.44*W,1.24,-.62);ghost.scale.setScalar(1.4);g.add(ghost);
+  const sm=new THREE.Object3D();sm.position.copy(mzLocal);ghost.add(sm);U.ghost=ghost;U.shotMuzzle=sm;
+  if(!ASSET.objs.Fig_fist||!ASSET.objs.Fig_upper){U.arms[1].rotation.x=1.4;gun.position.copy(ghost.position);return g;}
+  // long blasters sit beside the chest with the stock under the right shoulder; pistols are held out in front
+  gun.position.set((mode==='twin'?0:mode==='cup'?.1:.3)*W,1.2,mode==='rifle'?-.5:-.62);
+  U.arms.forEach(a=>a.visible=false);
+  const shR=new V3(.44*W,1.3,0),shL=new V3(-.44*W,1.3,0);
+  const toGun=p=>p.clone().sub(gun.position).divideScalar(1.4);
+  const H=holdHands(gun,w.id,c,{fist:'Fig_fist',shoulder:toGun(shL),reach:1.02/1.4});
+  U.ik=[[shR,H.r,H.wr,new V3(.75,-1,.3)],[shL,H.l,H.wl,new V3(-.75,-1,.3)]].map(([sh,hand,wl,pole])=>{
+    const tint=o=>{o.traverse(m=>{if(m.isMesh)m.material=figMat(m.material,c);});return o;};
+    return {sh,hand,wl,pole,up:tint(asset('Fig_upper',g)),fo:tint(asset('Fig_fore',g))};});
+  poseArms(g);
   return g;
+}
+// ---- gear worn by fighters (Propeller Hat, Jetpack)
+const FIGX={};
+/** Measured from the fighter model: top of the head gear, and how far the back (or cape) sticks out. */
+function figExtent(t){
+  if(FIGX[t])return FIGX[t];
+  const o=ASSET.objs['Fig_body_'+t].clone(true),v=new V3();o.position.set(0,0,0);o.updateMatrixWorld(true);
+  let top=0,helm=0,back=0;
+  o.traverse(m=>{if(!m.isMesh)return;const p=m.geometry.attributes.position;for(let i=0;i<p.count;i++){v.fromBufferAttribute(p,i).applyMatrix4(m.matrixWorld);
+    top=Math.max(top,v.y);if(Math.hypot(v.x,v.z)>.24)helm=Math.max(helm,v.y);if(v.y>.9&&v.y<1.45&&Math.abs(v.x)<.3)back=Math.max(back,v.z);}});
+  return FIGX[t]={top,helm,back};
+}
+
+const gearMat=(m,c)=>{const col=GEARCOL[c][m.name];if(col==null)return m;const k=c+m.name;if(!GEARMAT[k]){GEARMAT[k]=m.clone();GEARMAT[k].color.setHex(col);GEARMAT[k]._shared=true;}return GEARMAT[k];};
+/** Put a Propeller Hat or Jetpack on a fighter, clear of crowns, plumes and capes. team=true recolours it for the fighter's team. */
+function wearGear(fig,t,c,type,team){
+  const gm=gadgetModel(type),X=figExtent(t),W=fig.userData.w||1;
+  if(team)gm.traverse(m=>{if(m.isMesh)m.material=Array.isArray(m.material)?m.material.map(x=>gearMat(x,c)):gearMat(m.material,c);});
+  if(type==='hat'){const tall=X.top-X.helm>.12;   // crowns, plumes and mitres: a smaller cap perched on the very top
+    gm.scale.setScalar(tall?1.15:1.7);gm.position.set(0,tall?X.top+.015:X.top-.07,0);}
+  else if(type==='jetpack'){gm.scale.setScalar(1.5);gm.rotation.y=Math.PI;gm.position.set(0,1.16,X.back+.2);}
+  else{gm.scale.setScalar(1.5);gm.rotation.y=Math.PI/2;gm.position.set(-.46*W,.95,.12);}
+  fig.add(gm);return gm;
+}
+const DOWN=new THREE.Vector3(0,-1,0),ikA=new THREE.Vector3(),ikB=new THREE.Vector3(),ikC=new THREE.Vector3();
+/** Stretch each arm from shoulder to elbow to wrist so the hands stay on the blaster as it tilts. */
+function poseArms(fig){
+  const U=fig.userData;if(!U.ik)return;U.gun.updateMatrix();
+  for(const k of U.ik){
+    const wr=ikA.copy(k.wl).applyMatrix4(k.hand.matrix).applyMatrix4(U.gun.matrix),d=wr.distanceTo(k.sh);
+    const L=Math.max(.3,d*.53),u=ikB.copy(wr).sub(k.sh).normalize();
+    const pole=ikC.copy(k.pole).addScaledVector(u,-k.pole.dot(u)).normalize();
+    const el=pole.multiplyScalar(Math.sqrt(Math.max(0,L*L-d*d/4))).addScaledVector(u,d/2).add(k.sh);
+    const seg=(o,from,to)=>{const len=from.distanceTo(to);o.position.copy(from);o.quaternion.setFromUnitVectors(DOWN,ikB.copy(to).sub(from).normalize());o.scale.set(1,len/.4,1);};
+    seg(k.up,k.sh,el);seg(k.fo,el,wr);
+  }
+}
+// ---- how each blaster is held. A number = where the open support hand goes under the blaster (distance in front of the grip);
+// 'cup' = both hands round the grip (pistols); 'twin' = one blaster in each hand.
+const HOLD={carbine:.24,nailer:.15,crossbow:.2,scatter:.2,coach:.2,raylance:.28,arc:'cup',mortar:.22,minigun:.2,storm:.26,twin:'twin',rail:.28,crown:'cup',handcannon:'cup'};
+const holdMode=id=>typeof HOLD[id]==='number'?'rifle':HOLD[id]||'cup';
+const GPROF={};
+/** Underside height and half-width of a blaster at a point along its length (measured from the model). */
+function gunUnder(id,z){
+  let P=GPROF[id];
+  if(!P){P=GPROF[id]=[];const o=ASSET.objs['W_'+id].clone(true),v=new V3();o.position.set(0,0,0);o.updateMatrixWorld(true);
+    o.traverse(m=>{if(!m.isMesh)return;const p=m.geometry.attributes.position;for(let i=0;i<p.count;i++){v.fromBufferAttribute(p,i).applyMatrix4(m.matrixWorld);P.push(v.x,v.y,v.z);}});}
+  let y=1e9,w=0;
+  for(let i=0;i<P.length;i+=3)if(Math.abs(P[i+2]-z)<.045&&Math.abs(P[i])<.07)y=Math.min(y,P[i+1]);
+  for(let i=0;i<P.length;i+=3)if(Math.abs(P[i+2]-z)<.045&&P[i+1]<y+.05&&Math.abs(P[i])<.16)w=Math.max(w,Math.abs(P[i]));
+  return y>1e8?null:{y,w};
+}
+/** Gloved hands on a blaster, as children of the blaster model. Returns the hands and where their wrists are.
+ *  o.fist = model for a gripping hand; o.shoulder = where the support arm comes from; o.reach = how far that arm can stretch. */
+function holdHands(gun,id,c,o){
+  const S=.5,mode=holdMode(id);
+  const tint=m=>{m.traverse(x=>{if(x.isMesh){x.material=Array.isArray(x.material)?x.material.map(y=>figMat(y,c)):figMat(x.material,c);x.castShadow=!o.noShadow;}});return m;};
+  const H={mode,wr:new V3(.11,-.03,.19),wl:new V3(.11,-.03,.19)};
+  const tx=mode==='twin'?.045:0;
+  H.r=tint(asset(o.fist,gun));H.r.scale.setScalar(S);H.r.position.set(tx,-.08,.012);
+  if(mode==='rifle'){
+    // slide the support hand back toward the grip until the arm can reach it
+    let z=-HOLD[id],u=gunUnder(id,z);
+    const sh=o.shoulder;
+    while(z<-.06&&(!u||Math.hypot(sh.x+.1,sh.y-u.y,sh.z-z)>o.reach)){z+=.02;u=gunUnder(id,z)||u;}
+    u=u||{y:-.04,w:.04};
+    const l=H.l=tint(asset('Fig_palm',gun)),sx=Math.min(1.9,Math.max(1,u.w/.04));
+    l.scale.set(S*sx,S,S);l.position.set(0,u.y-.004,z);
+    // wrist points toward the shoulder (kept between straight across and 55 degrees back)
+    const a=Math.min(.96,Math.max(0,Math.atan2(sh.z-z,-(sh.x))));
+    l.rotation.set(0,a,0);
+    H.wl.set(-.23,-.045,0);H.palmZ=z;
+  }else{
+    const l=H.l=tint(asset(o.fist,gun));
+    if(mode==='twin'){l.scale.set(-S,S,S);l.position.set(-tx,-.08,.012);}
+    else{l.scale.set(-S*1.08,S*1.08,S*1.08);l.position.set(-.028,-.096,-.03);l.rotation.set(0,.3,0);}   // wraps over the other hand's fingers
+  }
+  H.r.updateMatrix();H.l.updateMatrix();gun.userData.hold=H;
+  return H;
 }
 
 // ---- foam darts, star bursts, puffs (purely visual: hits are still resolved instantly)
@@ -2047,13 +2345,21 @@ function setRope(a,b){
   U.claw.position.copy(b);U.claw.lookAt(a);D.rope.visible=true;
 }
 // --- damage
-function hurt(e,amt,src,head){
+function hurt(e,amt,src,head,fromNet){
   if(!D.active||D.over||amt<=0)return;
+  if(D.safe>0)return;   // start-of-duel shield: nobody can be hurt for the first 3 seconds
+  if(e.lastStand>0)return;   // a King making his last stand cannot be hurt
+  if(G.net&&NET.on&&!fromNet){   // network duel: my machine decides the hits I land; the other player's machine owns their health
+    if(!e.isPlayer){if(src&&src.isPlayer){netSend({t:'hit',a:+amt.toFixed(2),h:!!head});D.recentHitBot=1;dmgNumber(tmpV.copy(e.pos).setY(e.pos.y+2.2+Math.random()*.3),amt,head);}return;}
+    if(src&&!src.isPlayer)return;
+  }
   if(e.barrier>0)amt*=.25;
   e.hp-=amt;e.flash=.12;
   if(e.isPlayer){D.vig=Math.min(1,D.vig+amt/50);if(amt>3)Sound.hurt();}
   else{D.recentHitBot=1;if(src)dmgNumber(tmpV.copy(e.pos).setY(e.pos.y+2.2+Math.random()*.3),amt,head);}
-  if(e.hp<=0){e.hp=0;finishDuel();}
+  if(e.hp<=0){
+    if(e.t==='k'&&!e.lsUsed&&D.fighting){startLastStand(e);return;}   // the King gets one last shot
+    e.hp=0;if(G.net&&NET.on)netSend({t:'dead'});finishDuel();}
 }
 function hitMarker(head){const h=document.getElementById('hitm');h.className=head?'head':'';h.style.opacity=1;clearTimeout(h._t);h._t=setTimeout(()=>h.style.opacity=0,110);Sound.hit(head);}
 // --- weapons
@@ -2069,39 +2375,42 @@ function muzzleWorld(e,out){(e.isPlayer?D.vgun:e.gun).userData.muzzle.getWorldPo
 function flashGun(gun){const f=gun.userData.flash;f.visible=true;clearTimeout(f._t);f._t=setTimeout(()=>f.visible=false,50);}
 function playerFire(){
   const e=D.player,w=e.w;if(!canFire(e))return false;
-  e.ammo--;e.fireCd=w.rate*(e.over>0?.5:1);
+  e.ammo--;e.fireCd=w.rate*(e.over>0?.67:1);
   const origin=eyePos(e,new V3()),fwd=forwardOf(e,new V3());
   const mz=muzzleWorld(e,new V3());
   Sound.shot(w.snd);flashGun(D.vgun);
   const heavy=w.pellets>2||w.kind!=='hit'||w.scope;
   D.recoil=Math.min(.25,D.recoil+(heavy?.12:.035)*w.recoilMul);
   e.pitch+=(heavy?.016:.004)*w.recoilMul;
-  if(w.kind==='rocket'){spawnProj(e,mz,fwd);return true;}
-  if(w.kind==='bolt'){spawnProj(e,origin.clone().addScaledVector(fwd,.6).add(new V3(0,-.08,0)),fwd);return true;}
+  if(w.kind==='rocket'){spawnProj(e,mz,fwd);netProj(mz,fwd);return true;}
+  if(w.kind==='bolt'){const from=origin.clone().addScaledVector(fwd,.6).add(new V3(0,-.08,0));spawnProj(e,from,fwd);netProj(from,fwd);return true;}
   const moving=Math.hypot(e.vel.x,e.vel.z)>1.5,air=!e.onGround;
   let spread=w.spread*(adsDown?w.adsSpread:1)*(moving?1.6:1)*(air?2:1);
   if(w.scope&&!adsDown)spread=.05;
-  let total=0,anyHead=false;
+  let total=0,anyHead=false;const ends=[];
   for(let i=0;i<w.pellets;i++){
     const dir=fwd.clone().add(new V3((Math.random()-.5)*2*spread,(Math.random()-.5)*2*spread,(Math.random()-.5)*2*spread)).normalize();
     RAY.set(origin,dir);RAY.far=200;
     const h=RAY.intersectObjects(D.solids.concat(D.bot.hitboxes),false)[0];
     const end=h?h.point:origin.clone().addScaledVector(dir,120);
     dartFx(mz,end,w.bling?BLING[w.bling].col:(WCOL[w.id]||0xf07a22),!!(h&&h.object.userData.hit));
+    ends.push([+end.x.toFixed(2),+end.y.toFixed(2),+end.z.toFixed(2),h&&h.object.userData.hit?1:0]);
     if(h&&h.object.userData.hit){
       const head=h.object.userData.hit==='head';
-      let dmg=w.dmg*(head?w.head:1);
-      if(w.pellets>2)dmg*=Math.max(.3,Math.min(1,1-(h.distance-6)/18));
+      const dmg=w.dmg*(head?w.head:1)*falloff(w,h.distance);
       total+=dmg;anyHead=anyHead||head;
     }
   }
+  if(G.net&&NET.on)netSend({t:'f',e:ends});
   if(total>0){hitMarker(anyHead);hurt(D.bot,total,e,anyHead);}
+  else if(w.hasScope&&adsDown){adsDown=false;feed('Missed — scope down. Right-click to raise it again.');}
+  if(e.lastStand>0){if(total>0)reviveKing(e);else failLastStand(e);}   // a scoped miss costs you the scope
   return true;
 }
 function botFire(e,target){
   const w=e.w,Df=DIFF[G.diff];if(!canFire(e))return;
-  e.ammo--;e.fireCd=w.rate*Df.fire*(e.over>0?.5:1)*(1+Math.random()*.25);
-  const mz=muzzleWorld(e,new V3());flashGun(e.gun);
+  e.ammo--;e.fireCd=w.rate*Df.fire*(e.over>0?.67:1)*(1+Math.random()*.25);
+  const sm=e.fig&&e.fig.userData.shotMuzzle,mz=sm?sm.getWorldPosition(new V3()):muzzleWorld(e,new V3());flashGun(e.gun);   // shots start where they always have
   const dist=e.pos.distanceTo(target.pos);
   Sound.shot(w.snd,Math.max(.25,1-dist/50));
   const origin=eyePos(e,new V3());
@@ -2126,9 +2435,10 @@ function botFire(e,target){
     if(wh&&wh.distance<td){hit=false;end=wh.point;}
     if(!end)end=origin.clone().addScaledVector(dir,80);
     dartFx(mz,end,TEAM[e.c].glow,hit);
-    if(hit){let dmg=w.dmg*(head?w.head:1);if(w.pellets>2)dmg*=Math.max(.3,Math.min(1,1-(dist-6)/18));total+=dmg;anyHead=anyHead||head;}
+    if(hit){total+=w.dmg*(head?w.head:1)*falloff(w,dist);anyHead=anyHead||head;}
   }
   if(total>0)hurt(target,total,e,anyHead);
+  else if(w.scope)e.fireCd+=.6;   // a scoped miss costs the computer time to find you again, too
 }
 function spawnProj(e,from,dir){
   const w=e.w;let m;
@@ -2196,7 +2506,7 @@ function useAbility(e){
       if(toy){const v=asset('X_rampart',b.mesh);v.position.y=-1.15;if(!alongX)v.rotation.y=Math.PI/2;}
       for(let i=0;i<8;i++)puff(new V3(cx+(Math.random()-.5)*3,.3,cz+(Math.random()-.5)*.8),1.1);}else e.abCd=1;}
   else if(e.t==='q'){e.over=4;}
-  else if(e.t==='k'){e.hp=Math.min(e.max,e.hp+55);
+  else if(e.t==='k'){e.hp=Math.min(e.max,e.hp+45);
     for(let i=0;i<7;i++){const a=i/7*Math.PI*2;fxSprite(new V3(e.pos.x+Math.cos(a)*.9,e.pos.y+.4+i*.15,e.pos.z+Math.sin(a)*.9),'mend',.7,1.1,new V3(0,1.6,0));}
     for(let i=0;i<10;i++){const a=i/10*Math.PI*2;puff(new V3(e.pos.x+Math.cos(a)*1.1,e.pos.y+.2,e.pos.z+Math.sin(a)*1.1),.6,new V3(-Math.sin(a)*1.5,1.8,Math.cos(a)*1.5),0x6dff86);}}
 }
@@ -2212,7 +2522,7 @@ function fireHook(){
 }
 function updateGadget(P,dt,live){
   const g=D.gad;g.cd=Math.max(0,g.cd-dt);P.gravScale=1;let airAcc=2.2;
-  const hold=live&&(keys.KeyF||(keys.Space&&!P.onGround&&P.airT>.18));
+  const hold=live&&!(P.lastStand>0)&&(keys.KeyF||(keys.Space&&!P.onGround&&P.airT>.18));
   if(g.type==='jetpack'){
     if(hold&&g.fuel>0){P.vy=Math.min(9,P.vy+46*dt);g.fuel=Math.max(0,g.fuel-dt/2.6);airAcc=6;g.thrust=true;
       if(Math.random()<dt*16)puff(new V3(P.pos.x+(Math.random()-.5)*.4,P.pos.y+.1,P.pos.z+(Math.random()-.5)*.4),.9,new V3((Math.random()-.5)*.8,-1.6,(Math.random()-.5)*.8));if(Math.random()<dt*8)Sound.jet();}
@@ -2325,34 +2635,53 @@ function startDuel(atk,def,m){
     const humanAtk=atk.c===G.human;
     const me=humanAtk?atk:def,them=humanAtk?def:atk;
     D.cfg={atk,def,m,humanAtk,me,them,seed:(m.to*7919+G.log.length*104729)|0};
+    D.netRoom=null;NET.rdy={me:null,them:null};NET.target=null;NET.theirGad=null;document.getElementById('bFight').textContent='Enter the room ▶';
     if(D.bot&&D.bot.model)duelScene.remove(D.bot.model);
     D.player=makeFighter(me,true);D.bot=makeFighter(them,false);
     buildBotModel(D.bot);
     setupWorld();
-    Object.assign(D,{active:true,over:false,fighting:false,paused:false,time:DUEL_TIME,vig:0,recoil:0,shake:0,count:0,slow:1,endT:0,recentHitBot:0,hook:null});
+    Object.assign(D,{active:true,over:false,fighting:false,paused:false,safe:0,time:DUEL_TIME,vig:0,recoil:0,shake:0,count:0,slow:1,endT:0,recentHitBot:0,hook:null});
     document.getElementById('introTitle').innerHTML=humanAtk?'<span class="glow-w">You attack</span>':'<span class="glow-b">You must defend</span>';
     document.getElementById('feed').innerHTML='';
     G.mode='duel';show('bhud',false);show('tip',false);show('intro',true);
     refreshIntro();
+    if(rulesText())toast('Rules this game: '+rulesText()+'.');
     placeDuelCam(0);
   });
 }
 /** (Re)builds the room and puts both fighters at their spawns. Used on start and when the player picks a room. */
 function setupWorld(){
-  const room=resolveRoom(PROF.room,D.cfg.m.to);
+  const room=D.netRoom||(PROF.room==='auto'&&storyChar()?storyChar().room:resolveRoom(PROF.room,D.cfg.m.to));   // story opponents fight on home turf unless you pick a room
   buildArena(room,D.cfg.seed,[D.cfg.atk.t,D.cfg.def.t]);
   clearFX();
   const P=D.player,B=D.bot;
   P.pos.set(0,0,19);P.vel.set(0,0,0);P.vy=0;P.yaw=0;P.pitch=0;B.pos.set(0,0,-19);B.vel.set(0,0,0);B.yaw=Math.PI;
   Object.assign(B,{los:false,losT:0,seen:0,lostFor:0,last:P.pos.clone(),aim:new V3(0,1,19),wish:new V3(),strafe:1,strafeT:0,charge:0});
   if(B.laser){duelScene.remove(B.laser);B.laser=null;}
+  if(G.net&&NET.on&&!D.cfg.humanAtk){P.pos.set(0,0,-19);P.yaw=Math.PI;B.pos.set(0,0,19);B.yaw=0;}   // network duel: both players share one room, attacker at one end, defender at the other
   B.model.position.copy(B.pos);B.model.rotation.y=B.yaw;
-  D.gad={type:PROF.gadget&&PROF.gadgets[PROF.gadget]?PROF.gadget:'none',fuel:1,cd:0};
+  D.gad={type:activeGadget(),fuel:1,cd:0};
   refreshViewGun();
 }
 function refreshViewGun(){
   if(D.vgun)duelCam.remove(D.vgun);
   D.vgun=gunModel(D.player.w,D.player.c);D.vgun.scale.setScalar(ASSET.objs['W_'+D.player.w.id]?.78:1);D.vgun.position.set(.28,-.26,-.45);duelCam.add(D.vgun);
+  viewHands(D.vgun,D.player.w.id,D.player.c);
+  if(applySight()==='laser'){   // laser sight: a thin red beam from the muzzle
+    const beam=new THREE.Mesh(new THREE.CylinderGeometry(.004,.004,40,5),new THREE.MeshBasicMaterial({color:0xff3b3b,transparent:true,opacity:.55,depthWrite:false}));
+    beam.rotation.x=Math.PI/2;beam.position.z=-20;D.vgun.userData.muzzle.add(beam);}
+}
+/** First-person arms: the same gloved hands as the fighters, in the player's team colours (they follow recoil, aiming and reloads). */
+function viewHands(gun,wid,c){
+  if(!ASSET.objs.Fig_hand||!ASSET.objs.Fig_palm)return;
+  const H=holdHands(gun,wid,c,{fist:'Fig_hand',shoulder:new V3(-.5,-.55,.7),reach:9,noShadow:true});
+  H.r.rotation.set(0,-.08,0);
+  if(H.mode==='twin')H.l.rotation.set(0,.08,0);
+  if(H.mode==='rifle'){   // forearm from the open hand's wrist back toward the player's left elbow
+    const sl=asset('Fig_sleeve',gun),wr=H.wl.clone().applyMatrix4(H.l.matrix),el=new V3(-.52,-.62,.72);
+    sl.traverse(x=>{if(x.isMesh){x.material=figMat(x.material,c);x.castShadow=false;}});
+    sl.scale.setScalar(.5);sl.position.copy(wr);sl.quaternion.setFromUnitVectors(DOWN,el.sub(wr).normalize());
+  }
 }
 function beginFight(){
   show('intro',false);show('roompick',false);show('dhud',true);hudInit();
@@ -2372,7 +2701,7 @@ function finishDuel(){
   const atkWon=D.cfg.humanAtk?playerWon:!playerWon;
   D.result={attackerWon:atkWon,atkHp:Math.max(0,D.cfg.humanAtk?P.hp:B.hp),defHp:Math.max(0,D.cfg.humanAtk?B.hp:P.hp)};
   if(!atkWon&&D.result.defHp<=0)D.result.defHp=1;
-  const reward=playerWon?(D.cfg.humanAtk?120:100)+Math.round(P.hp/P.max*40):35;
+  const reward=playerWon?(D.cfg.humanAtk?30:25)+Math.round(P.hp/P.max*10):8;   // upgrades are meant to take a while to earn
   addCredits(reward);
   if(!playerWon){B.model.visible=true;}
   else{B.model.visible=false;sparks(new V3(B.pos.x,B.pos.y+1,B.pos.z),TEAM[B.c].glow,60,12);sparks(new V3(B.pos.x,B.pos.y+1,B.pos.z),0xffffff,20,8);}
@@ -2406,13 +2735,16 @@ function updateDuel(rdt){
   if(!D.over&&!D.fighting&&D.count>0){
     const before=Math.ceil(D.count);D.count-=rdt;const after=Math.ceil(D.count);
     if(after!==before&&after>0){banner(String(after),'Get ready');Sound.click();}
-    if(D.count<=0){D.fighting=true;banner('Fight!','',D.cfg.humanAtk?'#2ec4b6':'#ff8c32');Sound.tone(220,880,.3,'sawtooth',.15);setTimeout(()=>{if(D.fighting)banner('');},700);}
+    if(D.count<=0){D.fighting=true;D.safe=3;feed('Shields up for 3 seconds — get to cover!');if(P.t==='k')feed(`King: press V to swing your ${MELEE[meleeTier(P)].name}.`);banner('Fight!','',D.cfg.humanAtk?'#2ec4b6':'#ff8c32');Sound.tone(220,880,.3,'sawtooth',.15);setTimeout(()=>{if(D.fighting)banner('');},700);}
   }
   const live=D.fighting&&!D.over;
+  if(D.safe>0&&live){D.safe-=rdt;if(D.safe<=0){D.safe=0;feed('Shields down!');}}
   for(const e of [P,B]){
     e.fireCd=Math.max(0,e.fireCd-dt);e.abCd=Math.max(0,e.abCd-dt);e.barrier=Math.max(0,e.barrier-dt);e.over=Math.max(0,e.over-dt);e.flash=Math.max(0,e.flash-dt);
     if(e.reloading>0){e.reloading-=dt;if(e.reloading<=0){e.reloading=0;e.ammo=e.w.mag;}}
     e.airT=e.onGround?0:e.airT+dt;
+    e.meleeCd=Math.max(0,(e.meleeCd||0)-dt);if(e.swingT>0){e.swingT-=dt;poseSwing(e);}
+    if(e.lastStand>0&&live&&!(G.net&&NET.on&&!e.isPlayer)){e.lastStand-=dt;e.vel.x=0;e.vel.z=0;if(e.lastStand<=0)failLastStand(e);}
     if(e.pounceT>0){e.pounceT-=dt;if(Math.random()<dt*35)puff(new V3(e.pos.x,e.pos.y+.8,e.pos.z),.55,new V3(0,0,0),0xffd23f);}
     if(e.over>0&&Math.random()<dt*18){const a=Math.random()*Math.PI*2;puff(new V3(e.pos.x+Math.cos(a)*.8,e.pos.y+.1,e.pos.z+Math.sin(a)*.8),.4,new V3(0,2.4,0),0xffc23d);}
     if(live){const hz=inHazard(e.pos.x,e.pos.z,e.pos.y);if(hz&&e.onGround){if(e.isPlayer&&!(D.hzT>0)){feed(`Ouch — ${hz.name||'hazard'}!`);D.hzT=2;}hurt(e,hz.dps*dt,null,false);if(Math.random()<dt*10)sparks(new V3(e.pos.x,.2,e.pos.z),0xff7a20,1,4);}}
@@ -2427,7 +2759,7 @@ function updateDuel(rdt){
     const f=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),s=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);
     const sprint=(keys.ShiftLeft||keys.ShiftRight)&&f>0&&!adsDown;
     const flying=D.gad.type==='hat'&&!P.onGround;
-    const spd=live?c.speed*(sprint?1.35:1)*(P.over>0?1.3:1)*(adsDown?.55:1)*(flying?1.15:1):0;
+    const spd=live&&!(P.lastStand>0)?c.speed*(sprint?1.35:1)*(P.over>0?1.3:1)*(adsDown?.55:1)*(flying?1.15:1):0;
     const fx=-Math.sin(P.yaw),fz=-Math.cos(P.yaw),rx=Math.cos(P.yaw),rz=-Math.sin(P.yaw);
     let wx=fx*f+rx*s,wz=fz*f+rz*s;const l=Math.hypot(wx,wz)||1;wx=wx/l*spd;wz=wz/l*spd;
     if(gad!=='hooked'&&!(P.bounceT>0)){
@@ -2435,13 +2767,20 @@ function updateDuel(rdt){
       P.vel.x+=(wx-P.vel.x)*Math.min(1,acc*dt);P.vel.z+=(wz-P.vel.z)*Math.min(1,acc*dt);
     }
     if(P.bounceT>0)P.bounceT-=dt;
-    if(live&&keys.Space&&P.onGround){P.vy=c.jump;P.onGround=false;}
+    if(live&&keys.Space&&P.onGround&&!(P.lastStand>0)){P.vy=c.jump;P.onGround=false;}
     if(live&&mouseDown&&(P.w.auto||P.triggerReleased)){if(playerFire())P.triggerReleased=false;}
     D.bobT=(D.bobT||0)+dt*Math.hypot(P.vel.x,P.vel.z)*(P.onGround?1.6:0);
   }
   P.blocked=false;moveEntity(P,dt);
-  if(live)updateBot(B,P,dt);else{B.vel.x*=.9;B.vel.z*=.9;}
-  B.blocked=false;moveEntity(B,dt);
+  if(G.net&&NET.on){netTick(rdt);netRemote(B,dt);}
+  else{if(live&&B.lastStand>0){   // the computer's King takes his last shot
+      B.vel.set(0,0,0);B.lsShot-=dt;
+      if(B.lsShot<=0&&!B.lsFired){B.lsFired=true;const eye=eyePos(B,new V3()),c=new V3(P.pos.x,P.pos.y+1,P.pos.z),ok=hasLOS(eye,c)&&Math.random()<[.3,.5,.7][G.diff];
+        flashGun(B.gun);Sound.shot('pistol',.8);dartFx(muzzleWorld(B,new V3()),ok?c:c.clone().add(new V3((Math.random()-.5)*4,1+Math.random()*2,(Math.random()-.5)*4)),TEAM[B.c].glow,ok);
+        if(ok){B.lastStand=0;hurt(P,LAST_STAND.dmg,B,false);if(!D.over)reviveKing(B);}else failLastStand(B);}}
+    else if(live){updateBot(B,P,dt);if(B.t==='k'&&B.los&&B.pos.distanceTo(P.pos)<3.4)meleeSwing(B);}
+    else{B.vel.x*=.9;B.vel.z*=.9;}
+    B.blocked=false;moveEntity(B,dt);}
   updateProjs(dt);
   for(const pk of D.pickups){
     pk.mesh.rotation.y+=dt*2;pk.mesh.position.y=1+Math.sin(performance.now()/300)*.15;
@@ -2451,9 +2790,9 @@ function updateDuel(rdt){
       feed(`${e.isPlayer?'You':'Enemy'} grabbed a repair core (+40)`);}}
   }
   if(B.model){
-    B.model.position.copy(B.pos);B.model.rotation.y=B.yaw;B.gun.rotation.x=B.pitch;B.bubble.visible=B.barrier>0;
+    B.model.position.copy(B.pos);B.model.rotation.y=B.yaw;B.gun.rotation.x=B.pitch;if(B.fig&&B.fig.userData.ghost){B.fig.userData.ghost.rotation.x=B.pitch;poseArms(B.fig);}if(B.gearSpin)B.gearSpin.rotation.y+=dt*(6+Math.hypot(B.vel.x,B.vel.z)*2);B.bubble.visible=B.barrier>0||D.safe>0;
     B.model.position.y+=Math.sin(performance.now()/240)*.03;
-    B.pieceModel.scale.setScalar(B.baseScale*(B.flash>0?1.06:1));
+    B.pieceModel.scale.setScalar(B.baseScale*(B.flash>0?1.06:1));B.pieceModel.rotation.x=B.lastStand>0?1.25:0;B.pieceModel.position.y=B.lastStand>0?.45:0;B.pieceModel.position.z=B.lastStand>0?.9:0;
     if(B.fig){const sp=Math.hypot(B.vel.x,B.vel.z),U=B.fig.userData;B.walk=(B.walk||0)+dt*sp*1.7;const a=Math.sin(B.walk)*Math.min(.7,sp/7);
       if(B.onGround){U.legs[0].rotation.x=a;U.legs[1].rotation.x=-a;U.arms[0].rotation.x=-a*.9;}else{U.legs[0].rotation.x=-.6;U.legs[1].rotation.x=.35;U.arms[0].rotation.x=-1.1;}}
   }
@@ -2461,7 +2800,7 @@ function updateDuel(rdt){
   const bob=Math.sin(D.bobT||0)*.012,w=P.w;
   D.vgun.position.set(.3+(adsDown?-.3:0),-.28+bob+(adsDown?.12:0),-.5+D.recoil*.6);
   D.vgun.rotation.x=D.recoil*1.2;
-  D.vgun.visible=!(adsDown&&w.hasScope);
+  D.vgun.visible=!(adsDown&&w.hasScope)&&!(P.swingT>0);
   if(P.reloading>0)D.vgun.rotation.x=-.6*Math.sin(Math.PI*(1-P.reloading/w.reload));
   const fov=adsDown?w.adsFov:78;
   if(Math.abs(duelCam.fov-fov)>.1){duelCam.fov+=(fov-duelCam.fov)*Math.min(1,rdt*14);duelCam.updateProjectionMatrix();}
@@ -2471,7 +2810,7 @@ function updateDuel(rdt){
   D.vig=Math.max(0,D.vig-rdt*1.2);
   const hz=inHazard(P.pos.x,P.pos.z,P.pos.y);
   document.getElementById('vig').style.opacity=D.vig+(P.hp<P.max*.25?.25+Math.sin(performance.now()/180)*.1:0)+(hz?.3:0);
-  const sfx=document.getElementById('shieldfx');sfx.style.opacity=P.barrier>0||P.over>0?1:0;sfx.style.background=P.over>0&&!(P.barrier>0)?'radial-gradient(ellipse at center,rgba(255,195,61,0) 50%,rgba(255,195,61,.4))':'';
+  const sfx=document.getElementById('shieldfx');sfx.style.opacity=P.barrier>0||P.over>0||D.safe>0?1:0;sfx.style.background=P.over>0&&!(P.barrier>0)?'radial-gradient(ellipse at center,rgba(255,195,61,0) 50%,rgba(255,195,61,.4))':'';
   const scoped=adsDown&&w.hasScope;
   document.getElementById('scope').style.opacity=scoped?1:0;
   document.getElementById('cross').style.opacity=scoped?0:1;
@@ -2485,23 +2824,35 @@ const ARM={tab:'p',sel:null,fromIntro:false};
 let PV=null;
 function openArmory(fromIntro){ARM.fromIntro=!!fromIntro;if(fromIntro&&D.cfg)ARM.tab=D.cfg.me.t;ARM.sel=null;show('armory',true);renderArmory();}
 function closeArmory(){show('armory',false);
-  if(ARM.fromIntro&&D.active){const P=D.player;setWeapon(P,pieceWeapon(P.piece));D.gad={type:PROF.gadget&&PROF.gadgets[PROF.gadget]?PROF.gadget:'none',fuel:1,cd:0};refreshViewGun();refreshIntro();}
+  if(ARM.fromIntro&&D.active){const P=D.player;setWeapon(P,pieceWeapon(P.piece));D.gad={type:activeGadget(),fuel:1,cd:0};refreshViewGun();refreshIntro();}
   updateCreditsUI();}
 function spend(cost){if(PROF.credits<cost){armMsg(`Not enough credits — you need ◈${cost}. Win duels to earn more.`);Sound.dry();return false;}PROF.credits-=cost;saveProfile();Sound.win();return true;}
 function armMsg(t){if(document.getElementById('armory').classList.contains('hidden'))toast(t);const el=document.getElementById('armMsg');el.textContent=t;clearTimeout(el._t);el._t=setTimeout(()=>el.textContent='',3500);}
 function statBar(label,v,max){return `<div class="stat"><span>${label}</span><b><i style="width:${Math.min(100,v/max*100)}%"></i></b></div>`;}
 function renderArmory(){
   updateCreditsUI();
-  const tabs=[...'pnbrqk'].map(t=>`<button class="chip${ARM.tab===t?' on':''}" data-tab="${t}">${GLYPH.w[t]} ${NAME[t]}</button>`).join('')+`<button class="chip${ARM.tab==='gadgets'?' on':''}" data-tab="gadgets">Gadgets</button>`;
+  const tabs=[...'pnbrqk'].map(t=>`<button class="chip${ARM.tab===t?' on':''}" data-tab="${t}">${GLYPH.w[t]} ${NAME[t]}</button>`).join('')+`<button class="chip${ARM.tab==='gadgets'?' on':''}" data-tab="gadgets">Gadgets</button><button class="chip${ARM.tab==='sights'?' on':''}" data-tab="sights">Sights</button>`;
   document.getElementById('armTabs').innerHTML=tabs;
   let html='';
-  if(ARM.tab==='gadgets'){
+  if(ARM.tab==='sights'){
+    ARM.sel=DEFAULT_W.p;
+    for(const id in SIGHTS){const k=SIGHTS[id],own=PROF.sights[id],eq=(PROF.sight||'cross')===id;
+      html+=`<div class="wcard${eq?' sel':''}"><div class="row" style="justify-content:space-between"><b>${k.name}</b><span class="tag">${own?(eq?'In use':'Owned'):'◈ '+k.cost}</span></div>
+      <div class="row" style="gap:12px;align-items:center"><span style="display:inline-flex;width:54px;height:54px;border-radius:12px;background:#1d2a44;align-items:center;justify-content:center;flex:none">${k.svg?`<svg viewBox="0 0 34 34" width="38" height="38" fill="#fff" stroke="#0b1220" stroke-width="1.2" stroke-linejoin="round">${k.svg}</svg>`:'<svg viewBox="0 0 34 34" width="38" height="38" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M17 3v9M17 22v9M3 17h9M22 17h9"/></svg>'}</span>
+      <div class="wdesc" style="flex:1">${k.desc}</div>${own?(eq?'':`<button class="btn small" data-suse="${id}">Use</button>`):`<button class="btn small" data-sbuy="${id}">Buy ◈${k.cost}</button>`}</div></div>`;}
+  }else if(ARM.tab==='gadgets'){
     if(!ARM.sel||!GADGETS[ARM.sel])ARM.sel=Object.keys(GADGETS)[2];
     for(const id in GADGETS){const g=GADGETS[id],own=PROF.gadgets[id],eq=PROF.gadget===id;
       html+=`<div class="wcard${ARM.sel===id?' sel':''}" data-sel="${id}"><div class="row" style="justify-content:space-between"><b>${g.name}</b><span class="tag">${own?(eq?'Equipped':'Owned'):'◈ '+g.cost}</span></div>
       <div class="wdesc">${g.desc}</div><div class="row">${own?(eq?`<button class="btn small" data-gequip="none">Unequip</button>`:`<button class="btn small" data-gequip="${id}">Equip</button>`):`<button class="btn small" data-gbuy="${id}">Buy ◈${g.cost}</button>`}</div></div>`;}
   }else{
     const t=ARM.tab,ids=weaponsFor(t);
+    if(t==='k'){const tier=Math.min(2,PROF.melee||0),m=MELEE[tier],nx=MELEE[tier+1];
+      html+=`<div class="wcard" style="border-style:dashed"><div class="row" style="justify-content:space-between"><b>Melee: ${m.name}</b><span class="tag">Press V in a duel</span></div>
+        <div class="row" style="gap:10px;align-items:center"><img src="${meleeThumb(tier)}" alt="" style="width:112px;height:66px;flex:none;background:#fff8ea;border-radius:10px;border:2px solid var(--line)">
+        <div class="wdesc" style="flex:1">${m.desc} ${m.dmg} per swing${m.bolt?', lightning bolt '+m.bolt:''}.</div></div>
+        <div class="row" style="margin-top:6px">${nx?`<button class="btn small pink" data-melee="${tier+1}" title="${nx.desc}">Upgrade to ${nx.name} ◈${nx.cost}</button>`:'<span class="tag ok">✓ Fully upgraded</span>'}</div>
+        <div class="wdesc" style="margin-top:6px"><b>Last Stand:</b> once per duel, a King who is knocked down gets ${LAST_STAND.time} seconds and one pistol shot. A hit puts him back on his feet with ${LAST_STAND.hp} health.</div></div>`;}
     if(!ARM.sel||!ids.includes(ARM.sel))ARM.sel=PROF.loadout[t];
     for(const id of ids){
       const b=WEAPONS[id],own=PROF.weapons[id],m=modsOf(id),w=wstats(id,m),isDef=PROF.loadout[t]===id;
@@ -2559,9 +2910,12 @@ document.getElementById('armory').addEventListener('click',e=>{
   else if(d.bling){const m=modsOf(d.bling),lv=m.bling||0;if(lv<3&&spend(BLING[lv+1].cost)){m.bling=lv+1;saveProfile();armMsg(`${BLING[m.bling].name} bling! +${m.bling*5}% damage.`);}}
   else if(d.gbuy){if(spend(GADGETS[d.gbuy].cost)){PROF.gadgets[d.gbuy]=true;PROF.gadget=d.gbuy;saveProfile();armMsg(`${GADGETS[d.gbuy].name} unlocked and equipped!`);}}
   else if(d.gequip){PROF.gadget=d.gequip;saveProfile();Sound.click();}
+  else if(d.melee){const k=+d.melee;if(k===(PROF.melee||0)+1&&MELEE[k]&&spend(MELEE[k].cost)){PROF.melee=k;saveProfile();armMsg(`${MELEE[k].name} forged for the King!`);}}
+  else if(d.sbuy){if(spend(SIGHTS[d.sbuy].cost)){PROF.sights[d.sbuy]=true;PROF.sight=d.sbuy;saveProfile();applySight();armMsg(`${SIGHTS[d.sbuy].name} sight unlocked and in use!`);}}
+  else if(d.suse){PROF.sight=d.suse;saveProfile();applySight();Sound.click();}
   else if(d.sel){ARM.sel=d.sel;}
   if(d.sel&&!d.buy&&!d.def&&!d.mod&&!d.power&&!d.bling&&!d.gbuy&&!d.gequip&&!d.tab)ARM.sel=d.sel;
-  else{const card=b.closest('[data-sel]');if(card)ARM.sel=card.dataset.sel;}
+  else if(ARM.tab!=='sights'){const card=b.closest('[data-sel]');if(card)ARM.sel=card.dataset.sel;}
   renderArmory();
 });
 
@@ -2616,11 +2970,7 @@ function loadoutPreview(){
   if(LV.key!==key){LV.key=key;if(LV.fig){LV.holder.remove(LV.fig);}
     LV.fig=armedFigure(P.t,P.c,P.w)||(()=>{const p=buildPiece(P.t,P.c);p.scale.setScalar(2);return p;})();
     LV.spin=null;const gt=D.gad.type;
-    if(gt!=='none'&&ASSET.objs['G_'+gt]&&LV.fig.userData.legs){const gm=gadgetModel(gt);
-      if(gt==='hat'){gm.scale.setScalar(1.7);gm.position.set(0,2.02,0);}
-      else if(gt==='jetpack'){gm.scale.setScalar(1.5);gm.rotation.y=Math.PI;gm.position.set(0,1.15,.4);}
-      else{gm.scale.setScalar(1.5);gm.rotation.y=Math.PI/2;gm.position.set(-.44*LV.fig.userData.w,.95,.12);}
-      LV.fig.add(gm);LV.spin=gm.userData.spin||null;}
+    if(gt!=='none'&&ASSET.objs['G_'+gt]&&LV.fig.userData.legs)LV.spin=wearGear(LV.fig,P.t,P.c,gt,false).userData.spin||null;
     LV.fig.traverse(o=>{if(o.isMesh)o.castShadow=true;});LV.holder.add(LV.fig);}
 }
 function loadoutFrame(dt){
@@ -2650,7 +3000,7 @@ function refreshIntro(){
   // gadgets
   const gIcon={grapple:'i-hook',jetpack:'i-jet',hat:'i-hat'};
   document.getElementById('pickGadget').innerHTML=`<button class="tile${D.gad.type==='none'?' on':''}" data-g="none"><span class="ico">—</span>None</button>`
-    +Object.keys(GADGETS).map(id=>{const own=PROF.gadgets[id];return `<button class="tile${D.gad.type===id?' on':''}${own?'':' locked'}" data-${own?'g':'gbuy'}="${id}"><span class="ico" style="background:#1d2a44;border-radius:10px;width:44px;margin-top:4px;line-height:44px;height:44px"><svg><use href="#${gIcon[id]}"/></svg></span>${GADGETS[id].name}${own?'':`<span class="cost">◈ ${GADGETS[id].cost}</span>`}</button>`;}).join('');
+    +Object.keys(GADGETS).map(id=>{const own=PROF.gadgets[id];return `<button class="tile${D.gad.type===id?' on':''}${own?'':' locked'}" data-${own?'g':'gbuy'}="${id}"${gadgetAllowed(id)?'':' style="opacity:.4" title="Not allowed in this game"'}><span class="ico" style="background:#1d2a44;border-radius:10px;width:44px;margin-top:4px;line-height:44px;height:44px"><svg><use href="#${gIcon[id]}"/></svg></span>${GADGETS[id].name}${own?'':`<span class="cost">◈ ${GADGETS[id].cost}</span>`}</button>`;}).join('');
   // finishes
   const fin=[['Plain',WCOL[w.id]||0x3a86ff],['Chrome',BLING[1].col],['Gold',BLING[2].col],['Diamond',BLING[3].col]];
   document.getElementById('pickFinish').innerHTML=fin.map(([n,c],i)=>{const owned=(m.bling||0)>=i;
@@ -2680,14 +3030,16 @@ function introClick(e){
   const b=e.target.closest('[data-w],[data-wbuy],[data-att],[data-g],[data-gbuy],[data-fin],[data-roompick],[data-lt],[data-armory]');if(!b||!D.active)return;
   const d=b.dataset,P=D.player;Sound.click();
   if(d.lt){LO.tab=d.lt;}
+  else if(RULES().starter&&(d.w||d.wbuy||d.att||d.fin!=null)){toast('This game is starter blasters only: plain, no attachments or finishes.');}
   else if(d.w){D.cfg.me.w=d.w;setWeapon(P,d.w);refreshViewGun();}
   else if(d.wbuy){if(spend(WEAPONS[d.wbuy].cost)){PROF.weapons[d.wbuy]=true;saveProfile();D.cfg.me.w=d.wbuy;setWeapon(P,d.wbuy);refreshViewGun();toast(`${WEAPONS[d.wbuy].name} unlocked!`);}}
   else if(d.att){const m=modsOf(P.w.id);
     if(d.att==='power'){const lv=m.lvl||0;if(lv<3&&spend(POWER_COST[lv])){m.lvl=lv+1;toast(`Power ${'I'.repeat(m.lvl)} fitted`);}}
     else if(!m[d.att]&&spend(MODS[d.att].cost)){m[d.att]=true;toast(`${MODS[d.att].name} fitted`);}
     saveProfile();setWeapon(P,P.w.id);refreshViewGun();}
+  else if(d.g&&!gadgetAllowed(d.g)){toast('Flying gadgets are switched off for this game.');}
   else if(d.g){PROF.gadget=d.g;saveProfile();D.gad={type:d.g,fuel:1,cd:0};}
-  else if(d.gbuy){if(spend(GADGETS[d.gbuy].cost)){PROF.gadgets[d.gbuy]=true;PROF.gadget=d.gbuy;saveProfile();D.gad={type:d.gbuy,fuel:1,cd:0};toast(`${GADGETS[d.gbuy].name} unlocked!`);}}
+  else if(d.gbuy){if(spend(GADGETS[d.gbuy].cost)){PROF.gadgets[d.gbuy]=true;PROF.gadget=d.gbuy;saveProfile();D.gad={type:activeGadget(),fuel:1,cd:0};toast(`${GADGETS[d.gbuy].name} unlocked!`+(gadgetAllowed(d.gbuy)?'':' (Not allowed in this game.)'));}}
   else if(d.fin!=null){const m=modsOf(P.w.id),want=+d.fin,cur=m.bling||0;
     if(want<=cur){m.bling=want;}else{let cost=0;for(let i=cur+1;i<=want;i++)cost+=BLING[i].cost;if(spend(cost)){m.bling=want;toast(`${BLING[want].name} finish! +${want*5}% damage`);}}
     saveProfile();setWeapon(P,P.w.id);refreshViewGun();}
@@ -2767,7 +3119,7 @@ function autoBattle(atk,def){
         const humanWon=(atkWon&&atk.c===G.human)||(!atkWon&&def.c===G.human);
         out.innerHTML=atkWon?'<span style="color:var(--gold)">Captured!</span>':'<span style="color:var(--gold)">Defended!</span>';
         humanWon?Sound.win():Sound.lose();
-        if(atk.c===G.human||def.c===G.human){const cr=humanWon?50:15;addCredits(cr);out.innerHTML+=` <span style="font-size:14px;color:var(--dim)">+${cr} credits</span>`;}
+        if(atk.c===G.human||def.c===G.human){const cr=humanWon?15:5;addCredits(cr);out.innerHTML+=` <span style="font-size:14px;color:var(--dim)">+${cr} credits</span>`;}
         setTimeout(()=>{show('auto',false);res({attackerWon:atkWon,atkHp:aEnd,defHp:dEnd});},1300);}},70);
   });
 }
@@ -2784,17 +3136,24 @@ function updateTurnLabel(){
 }
 function newGame(opts){
   PID=0;G.st=initialState();G.sel=-1;G.selMoves=[];G.last=null;G.busy=false;G.over=false;G.log=[];G.fallen={w:[],b:[]};
-  Object.assign(G,opts);
+  G.hist=[];G.half=0;G.sig='';G.skipHist=false;G.story=null;G.net=false;G.rules=menuRules();
+  Object.assign(G,opts);applySkins();
   for(const m of BOARD.meshes.values())BOARD.group.remove(m);BOARD.meshes.clear();BOARD.hpSprites.clear();
   syncBoard();renderLog();renderFallen();resetView();updateTurnLabel();
-  logLine(`New battle · You command <b class="${G.human==='w'?'glow-w':'glow-b'}">${G.human==='w'?'White':'Black'}</b> · ${DIFF[G.diff].name}`);
+  const ch=storyChar();
+  if(ch)logLine(`Story battle ${STORY.indexOf(ch)+1} of ${STORY.length} · You face <b>${ch.name}</b>, ${ch.title} · ${DIFF[G.diff].name}`);
+  else logLine(`New battle · You command <b class="${G.human==='w'?'glow-w':'glow-b'}">${G.human==='w'?'White':'Black'}</b> · ${DIFF[G.diff].name}`);
+  if(ch)logLine(`${ch.name}: “${ch.hello}”`);
+  if(G.net)logLine('Network game: you are playing another person. Every capture is a live duel.');
+  if(rulesText())logLine('Rules for this game: '+rulesText()+'.');
   enterBoard();
   save();
   nextTurn();
 }
 function resumeGame(s){
   PID=0;G.st={b:s.st.b.map(a=>a?newPiece(a[0],a[1],a[2],a[3]):null),turn:s.st.turn,castle:s.st.castle,ep:s.st.ep};
-  Object.assign(G,{human:s.human,diff:s.diff,duelMode:s.duelMode,log:s.log||[],fallen:s.fallen||{w:[],b:[]},last:s.last||null,sel:-1,selMoves:[],busy:false,over:false});
+  Object.assign(G,{human:s.human,diff:s.diff,duelMode:s.duelMode,log:s.log||[],fallen:s.fallen||{w:[],b:[]},last:s.last||null,sel:-1,selMoves:[],busy:false,over:false,
+    hist:s.hist||[],half:s.half||0,sig:s.sig||'',skipHist:!!(s.hist&&s.hist.length),story:s.story||null,rules:s.rules||{fly:true,starter:false}});applySkins();
   for(const m of BOARD.meshes.values())BOARD.group.remove(m);BOARD.meshes.clear();BOARD.hpSprites.clear();
   syncBoard();renderLog();renderFallen();resetView();updateTurnLabel();enterBoard();nextTurn();
 }
@@ -2805,8 +3164,11 @@ function nextTurn(){
   if(G.st.turn===G.human){
     const chk=inCheck(G.st,G.human);
     caption(chk?'<span style="color:#ff5a5a">Your king is in check!</span> Defend it.':'Your move — click a piece.');
+  }else if(G.net&&NET.on){
+    caption(`<span class="${G.st.turn==='w'?'glow-w':'glow-b'}">The other player</span> is thinking…`);
+    G.busy=true;NET.waiting=true;netPump();
   }else{
-    caption(`<span class="${G.st.turn==='w'?'glow-w':'glow-b'}">Enemy commander</span> is thinking…`);
+    caption(`<span class="${G.st.turn==='w'?'glow-w':'glow-b'}">${storyChar()?storyChar().name:'Enemy commander'}</span> is thinking…`);
     G.busy=true;
     setTimeout(()=>{const m=chooseMove(G.st,G.diff);if(m)performMove(m);},350+DIFF[G.diff].think*500);
   }
@@ -2815,13 +3177,41 @@ function checkEnd(){
   for(const c of ['w','b'])if(kingSq(G.st.b,c)<0){endGame(other(c),`The ${c==='w'?'White':'Black'} King fell in battle.`);return true;}
   const ms=legalMoves(G.st);
   if(!ms.length){
-    if(inCheck(G.st,G.st.turn))endGame(other(G.st.turn),'Checkmate.');else endGame(null,'Stalemate — no legal moves.');
+    if(inCheck(G.st,G.st.turn)){
+      // Checkmate is not the end: the piece giving check attacks the King, and he fights for his life.
+      // If he wins the duel that attacker is destroyed and the game goes on; if he loses, the game is over.
+      const me=G.st.turn,by=other(me),k=kingSq(G.st.b,me);
+      const m=pseudoMoves({b:G.st.b,turn:by,castle:G.st.castle,ep:-1},true).find(x=>x.cap===k);
+      if(!m){endGame(by,'Checkmate.');return true;}
+      const who=me===G.human?'Your King':(G.net?"The other player's King":'The enemy King');
+      logLine(`<b>Checkmate!</b> ${who} is trapped and must fight for his life.`,'duel');caption(`<b>Checkmate!</b> ${who} must fight to stay alive.`);
+      G.busy=true;G.st=Object.assign({},G.st,{turn:by});   // the checking side makes the attack
+      setTimeout(()=>performMove(m,true),1100);
+      return true;
+    }
+    endGame(null,'Stalemate — no legal moves.');
     return true;
   }
   const left=G.st.b.filter(Boolean);
   if(left.length===2){endGame(null,'Only the kings remain.');return true;}
+  // draw rules: the same position three times, or fifty moves each with no capture and no pawn move
+  if(G.skipHist)G.skipHist=false;
+  else{
+    const sig=drawSig(G.st);
+    if(sig!==G.sig){G.sig=sig;G.half=0;G.hist=[];}else G.half++;   // a capture, lost attack or pawn move: earlier positions can never come back
+    G.hist.push(posKey(G.st));
+  }
+  const key=G.hist[G.hist.length-1],seen=G.hist.filter(k=>k===key).length;
+  if(seen>=3){endGame(null,'Draw by repetition — the same position came up three times.');return true;}
+  if(G.half>=100){endGame(null,'Draw — fifty moves each without a capture or a pawn move.');return true;}
+  if(seen===2&&G.st.turn===G.human)logLine('This position has come up twice. A third time is a draw.');
   return false;
 }
+/** Position as text (pieces, side to move, castling rights, en passant square): two equal keys are the same chess position. */
+function posKey(st){let k=st.turn+(st.castle.wK?1:0)+(st.castle.wQ?1:0)+(st.castle.bK?1:0)+(st.castle.bQ?1:0)+'/'+st.ep+'/';
+  for(let i=0;i<64;i++){const p=st.b[i];k+=p?(p.c==='w'?p.t.toUpperCase():p.t):'.';}return k;}
+/** Changes whenever a piece leaves the board or a pawn moves (what resets the fifty-move count). */
+function drawSig(st){let n=0,s='';for(let i=0;i<64;i++){const p=st.b[i];if(!p)continue;n++;if(p.t==='p')s+=i+p.c;}return n+s;}
 function endGame(winner,why){
   G.over=true;G.busy=true;save();updateTurnLabel();
   const won=winner===G.human;
@@ -2830,12 +3220,19 @@ function endGame(winner,why){
   document.getElementById('endText').textContent=why+(winner?` ${winner==='w'?'White':'Black'} wins.`:'');
   logLine(`<b>${why}</b>`,'duel');caption(why);
   won?Sound.win():Sound.lose();
-  const cr=winner?(won?[300,500,800][G.diff]:60):150;addCredits(cr);
+  const cr=winner?(won?[100,160,240][G.diff]:20):40;addCredits(cr);
   document.getElementById('endText').textContent+=` You earned ${cr} credits for the Armory.`;
+  const ch=storyChar();
+  if(ch){const i=STORY.indexOf(ch);let msg=` ${ch.name}: “${winner?(won?ch.win:ch.lose):'A draw. Again?'}”`;
+    if(won){const first=!PROF.skins[ch.id];PROF.skins[ch.id]=true;PROF.story=Math.max(PROF.story||0,i+1);saveProfile();
+      msg+=first?` You unlocked the ${ch.skin.name} colours — pick them under “Your colours” in Story Mode.`:'';
+      msg+=i+1<STORY.length?` Next up: ${STORY[i+1].name}.`:' You have beaten every champion!';}
+    document.getElementById('endText').textContent+=msg;}
   setTimeout(()=>show('end',true),900);
 }
-async function performMove(m){
+async function performMove(m,forced){
   G.busy=true;G.sel=-1;G.selMoves=[];show('tip',false);
+  if(!forced&&G.net&&NET.on&&G.st.turn===G.human)netSend({t:'mv',f:m.from,to:m.to,p:m.promo||null});   // tell the other player my move
   const st=G.st,atk=st.b[m.from],def=m.cap>=0?st.b[m.cap]:null;
   const san=`${GLYPH[atk.c][atk.t]} ${sqName(m.from)}${def?'×':'→'}${sqName(m.to)}`;
   if(def){
@@ -2845,7 +3242,7 @@ async function performMove(m){
     refreshMarks();BOARD.rings[m.cap].visible=true;
     await wait(700);
     let r;
-    if(G.duelMode==='fps'&&humanInvolved)r=await duelOrAuto(atk,def,m);
+    if((G.duelMode==='fps'||G.net)&&humanInvolved)r=await duelOrAuto(atk,def,m);
     else r=await autoBattle(atk,def);
     if(r.attackerWon){
       atk.hp=Math.max(1,r.atkHp);
@@ -2959,8 +3356,9 @@ addEventListener('keydown',e=>{
   keys[e.code]=true;
   if(G.mode==='duel'&&D.active){
     if(e.code==='Space')e.preventDefault();
-    if(e.code==='KeyR'&&D.fighting)startReload(D.player);
-    if((e.code==='KeyQ'||e.code==='KeyE')&&D.fighting)useAbility(D.player);
+    if(e.code==='KeyR'&&D.fighting&&!(D.player.lastStand>0))startReload(D.player);
+    if(e.code==='KeyV'&&D.fighting)meleeSwing(D.player);
+    if((e.code==='KeyQ'||e.code==='KeyE')&&D.fighting&&!(D.player.lastStand>0)){const P=D.player,was=P.abCd;useAbility(P);if(G.net&&NET.on&&was<=0&&P.abCd>0)netSend({t:'ab'});}
     if(e.code==='KeyF'&&!e.repeat&&D.fighting&&D.gad&&D.gad.type==='grapple')fireHook();
     if(e.code==='Escape'&&fallbackLook&&D.fighting)pauseDuel();
   }
@@ -2986,12 +3384,15 @@ document.addEventListener('pointerlockchange',()=>{
   if(!locked&&G.mode==='duel'&&D.active&&!D.over&&!fallbackLook&&(D.fighting||D.count>0))pauseDuel();
 });
 document.addEventListener('pointerlockerror',()=>{fallbackLook=true;});
-function pauseDuel(){D.paused=true;mouseDown=false;adsDown=false;show('pause',true);}
+function pauseDuel(){mouseDown=false;adsDown=false;show('pause',true);if(G.net&&NET.on)return;   // a network duel keeps running while your menu is open
+  D.paused=true;}
 function resumeDuel(){show('pause',false);D.paused=false;if(!fallbackLook)requestLock();}
 
 // ---------------------------------------------------------------- UI wiring
 function show(id,on){document.getElementById(id).classList.toggle('hidden',!on);}
-const opts={side:'w',diff:'1',duel:'fps',gfx:'hi'};
+const opts={side:'w',diff:'1',duel:'fps',gfx:'hi',pieces:'toy',fly:'on',guns:'any'};
+/** The rules chosen on the menu, as a game stores them. */
+const menuRules=()=>({fly:opts.fly!=='off',starter:opts.guns==='starter'});
 if('ontouchstart' in window&&!matchMedia('(pointer:fine)').matches)opts.duel='auto';
 document.querySelectorAll('.seg').forEach(seg=>{
   const k=seg.dataset.opt;
@@ -3002,7 +3403,7 @@ document.getElementById('classRows').innerHTML=Object.keys(CL).map(t=>{const c=C
 function applyGfx(){useBloom=opts.gfx==='hi';renderer.setPixelRatio(useBloom?Math.min(devicePixelRatio||1,2):1);renderer.shadowMap.enabled=useBloom;resize();}
 document.getElementById('bStart').onclick=()=>{Sound.init();applyGfx();
   const side=opts.side==='r'?(Math.random()<.5?'w':'b'):opts.side;
-  newGame({human:side,diff:+opts.diff,duelMode:opts.duel});};
+  newGame({human:side,diff:+opts.diff,duelMode:opts.duel,story:null});};
 document.getElementById('bCont').onclick=()=>{Sound.init();applyGfx();const s=loadSave();if(s)resumeGame(s);};
 document.getElementById('bRules1').onclick=()=>show('rules',true);
 document.getElementById('bRules2').onclick=()=>show('rules',true);
@@ -3010,7 +3411,7 @@ document.getElementById('bRulesClose').onclick=()=>show('rules',false);
 document.getElementById('bMenu').onclick=()=>{if(G.busy&&!G.over)return;G.mode='menu';show('bhud',false);show('tip',false);refreshMenu();show('menu',true);};
 document.getElementById('bView').onclick=()=>resetView();
 document.getElementById('bSound').onclick=e=>{Sound.on=!Sound.on;e.target.textContent='Sound: '+(Sound.on?'on':'off');};
-document.getElementById('bFight').onclick=()=>{Sound.init();beginFight();};
+document.getElementById('bFight').onclick=()=>{Sound.init();if(G.net&&NET.on)netReady();else beginFight();};
 document.getElementById('bAutoOnce').onclick=async()=>{
   show('intro',false);D.active=false;G.mode='board';show('bhud',true);
   if(D.bot&&D.bot.model)duelScene.remove(D.bot.model);
@@ -3019,14 +3420,193 @@ document.getElementById('bAutoOnce').onclick=async()=>{
 document.getElementById('bResume').onclick=resumeDuel;
 ['bArmory1','bArmory2','bArmory3'].forEach(id=>document.getElementById(id).onclick=()=>{Sound.init();if(id==='bArmory2'&&G.busy&&!G.over)return;openArmory(id==='bArmory3');});
 document.getElementById('bArmClose').onclick=closeArmory;
-document.getElementById('bArmUnlock').onclick=()=>{if(!confirm('Practice mode: unlock every weapon, mod, bling and gadget for free?'))return;
-  for(const id in WEAPONS){PROF.weapons[id]=true;Object.assign(modsOf(id),{stock:true,scope:!WEAPONS[id].scope,mag:true,lvl:3,bling:3});}for(const g in GADGETS)PROF.gadgets[g]=true;PROF.gadget='hat';saveProfile();renderArmory();armMsg('Everything unlocked.');};
+// ---------------------------------------------------------------- same-network multiplayer
+// Checkfire.exe on one computer passes messages between two players who share a room code (see launcher/net.go).
+// Chess moves are sent as they are made. In a duel each machine sends where its fighter is ~20 times a second,
+// decides the hits it lands, and owns its own fighter's health.
+const NET={on:false,ws:null,info:null,q:[],waiting:false,rdy:{me:null,them:null},target:null,theirGad:null,tSend:0};
+function netSend(o){if(NET.ws&&NET.ws.readyState===1)NET.ws.send(JSON.stringify(o));}
+const netMsgEl=t=>{document.getElementById('netMsg').textContent=t||'';};
+const r2=v=>+v.toFixed(2);
+function netProj(from,dir){if(G.net&&NET.on)netSend({t:'pj',o:[r2(from.x),r2(from.y),r2(from.z)],d:[+dir.x.toFixed(3),+dir.y.toFixed(3),+dir.z.toFixed(3)]});}
+/** The next waiting move from the other player, once the board is ready for it. */
+function netPump(){
+  if(!NET.waiting||!NET.q.length||G.over)return;
+  const o=NET.q.shift(),m=legalMoves(G.st).find(x=>x.from===o.f&&x.to===o.to&&(x.promo||null)===(o.p||null));
+  if(!m){toast('The two boards no longer match. Please start a new network game.');return;}
+  NET.waiting=false;performMove(m);
+}
+/** I pressed "Enter the room": tell the other player my blaster and gadget (and, if I am attacking, the room). */
+function netReady(){
+  if(NET.rdy.me)return;const P=D.player;
+  NET.rdy.me={ml:meleeTier(P),w:P.w.id,mods:P.w.mods||{},gad:D.gad.type,room:D.cfg.humanAtk?D.room:null,seed:D.cfg.seed};
+  netSend(Object.assign({t:'rdy'},NET.rdy.me));
+  document.getElementById('bFight').textContent='Waiting for the other player…';
+  netMaybeBegin();
+}
+function netMaybeBegin(){
+  const me=NET.rdy.me,th=NET.rdy.them;if(!me||!th||!D.active)return;
+  const B=D.bot;
+  if(!D.cfg.humanAtk){D.netRoom=th.room;D.cfg.seed=th.seed;}   // the attacker picks the room
+  if(WEAPONS[th.w]){B.w=wstats(th.w,th.mods||{});B.ammo=B.w.mag;}
+  NET.theirGad=th.gad;NET.theirMelee=th.ml||0;
+  if(B.model)duelScene.remove(B.model);buildBotModel(B);
+  setupWorld();
+  document.getElementById('bFight').textContent='Enter the room ▶';
+  beginFight();
+}
+/** Send where my fighter is. */
+function netTick(rdt){
+  NET.tSend+=rdt;if(NET.tSend<.05)return;NET.tSend=0;const P=D.player;
+  netSend({t:'s',p:[r2(P.pos.x),r2(P.pos.y),r2(P.pos.z)],yw:+P.yaw.toFixed(3),pt:+P.pitch.toFixed(3),hp:r2(P.hp),ls:P.lastStand>0?1:0,og:P.onGround?1:0,br:P.barrier>0?1:0,ov:P.over>0?1:0});
+}
+/** Move the other player's fighter smoothly toward where their machine says it is. */
+function netRemote(B,dt){
+  const t=NET.target;if(!t||dt<=0)return;
+  const px=B.pos.x,pz=B.pos.z,k=Math.min(1,dt*16);
+  if(B.pos.distanceTo(t.p)>8)B.pos.copy(t.p);else B.pos.lerp(t.p,k);   // a blink or a pounce: jump straight there
+  B.vel.set((B.pos.x-px)/dt,0,(B.pos.z-pz)/dt);
+  B.yaw+=angDiff(B.yaw,t.yw)*k;B.pitch+=(t.pt-B.pitch)*k;B.onGround=!!t.og;
+  if(!D.over)B.hp=t.hp;
+  B.barrier=t.br?Math.max(B.barrier,.15):0;B.over=t.ov?Math.max(B.over,.15):0;B.lastStand=t.ls?1:0;
+}
+function netOnMessage(o){
+  if(o.t==='mv'){NET.q.push(o);netPump();return;}
+  if(o.t==='rules'){G.rules={fly:!!o.r.fly,starter:!!o.r.starter};logLine('Rules set by the other player: '+(rulesText()||'flying allowed, any blaster')+'.');return;}
+  if(!D.active)return;
+  const P=D.player,B=D.bot;
+  if(o.t==='rdy'){NET.rdy.them=o;if(!NET.rdy.me)toast('The other player is ready.');netMaybeBegin();}
+  else if(o.t==='s'){NET.target={p:new V3(o.p[0],o.p[1],o.p[2]),yw:o.yw,pt:o.pt,hp:o.hp,og:o.og,br:o.br,ov:o.ov,ls:o.ls};}
+  else if(o.t==='hit'){hurt(P,o.a,B,o.h,true);}
+  else if(o.t==='f'||o.t==='pj'){
+    flashGun(B.gun);Sound.shot(B.w.snd,Math.max(.25,1-B.pos.distanceTo(P.pos)/50));
+    if(o.t==='pj')spawnProj(B,new V3(o.o[0],o.o[1],o.o[2]),new V3(o.d[0],o.d[1],o.d[2]));
+    else{const mz=muzzleWorld(B,new V3()),col=B.w.bling?BLING[B.w.bling].col:(WCOL[B.w.id]||0xf07a22);for(const e of o.e)dartFx(mz,new V3(e[0],e[1],e[2]),col,!!e[3]);}
+  }
+  else if(o.t==='ab'){B.abCd=0;useAbility(B);}
+  else if(o.t==='ml'){showSwing(B,o.k|0);Sound.tone(520,140,.16,'triangle',.1);if(o.e){const f=forwardOf(B,new V3());lightningFx(eyePos(B,new V3()).addScaledVector(f,.8),new V3(o.e[0],o.e[1],o.e[2]));}}
+  else if(o.t==='dead'){
+    if(D.over){   // we both fell at the same moment: the defender keeps the square
+      if(D.result&&!D.cfg.humanAtk){D.result.attackerWon=false;D.result.defHp=1;banner('Defended','You both fell — the defender keeps the square','#5dff9e');}
+      return;}
+    B.hp=0;if(P.hp<=0)P.hp=1;finishDuel();netSend({t:'fin',hp:r2(P.hp)});
+  }
+  else if(o.t==='fin'){   // the winner's exact health, so both boards agree
+    B.hp=o.hp;if(D.result){if(D.cfg.humanAtk)D.result.defHp=Math.max(1,o.hp);else D.result.atkHp=o.hp;}
+  }
+}
+/** The other player closed the game or lost their connection: the computer takes over their side. */
+function netPeerLeft(){
+  const playing=G.net&&NET.on;NET.on=false;NET.q=[];
+  if(!playing){document.getElementById('netRoom').innerHTML='';netMsgEl('The other player left.');return;}
+  G.net=false;toast('The other player left. The computer takes over their side.');
+  if(G.mode==='board'&&!G.over&&NET.waiting){NET.waiting=false;nextTurn();}
+  if(D.active&&!D.fighting&&!D.over&&NET.rdy.me){document.getElementById('bFight').textContent='Enter the room ▶';beginFight();}
+}
+function netLeave(){
+  if(NET.ws){try{NET.ws.onclose=null;NET.ws.send('!leave');NET.ws.close();}catch(e){}NET.ws=null;}
+  NET.on=false;G.net=false;NET.q=[];NET.waiting=false;
+}
+function netConnect(){
+  return new Promise((ok,fail)=>{
+    if(NET.ws&&NET.ws.readyState===1)return ok();
+    const url=NET.info.mode==='lan'?`ws://${location.host}/ws`:`ws://127.0.0.1:${NET.info.port}/ws`;
+    let ws;try{ws=new WebSocket(url);}catch(e){return fail(e);}
+    NET.ws=ws;ws.onopen=()=>ok();ws.onerror=()=>fail(new Error('no connection'));
+    ws.onclose=()=>{if(NET.ws===ws){NET.ws=null;netPeerLeft();}};
+    ws.onmessage=ev=>{const d=String(ev.data);
+      if(d[0]==='!'){const sp=d.indexOf(' '),cmd=sp<0?d:d.slice(0,sp),arg=sp<0?'':d.slice(sp+1);
+        if(cmd==='!room'){document.getElementById('netRoom').innerHTML=`<div style="font-weight:800;color:var(--dim)">Your code</div><div id="netCodeBig" style="font-size:56px;font-weight:900;letter-spacing:10px;color:var(--navy)">${arg}</div><div style="font-weight:800;color:var(--dim)">Waiting for a player to type it in…</div>`;netMsgEl('');}
+        else if(cmd==='!start')netStartGame(arg==='b'?'b':'w');
+        else if(cmd==='!left')netPeerLeft();
+        else if(cmd==='!err')netMsgEl(arg+(NET.info&&NET.info.mode==='host'&&arg.indexOf('No game')===0?' If the code was made on another computer, that computer is the host: go Back and join it instead of hosting here.':''));
+        return;}
+      let o;try{o=JSON.parse(d);}catch(e){return;}
+      try{netOnMessage(o);}catch(e){console.error(e);}};
+  });
+}
+function netStartGame(side){
+  NET.on=true;NET.q=[];NET.waiting=false;show('net',false);applyGfx();
+  newGame({human:side,diff:1,duelMode:'fps',story:null,net:true});
+  if(side==='w')netSend({t:'rules',r:G.rules});   // the player who made the game sets the rules
+  toast(side==='w'?'A player joined. You are White: your move.':'You joined. You are Black: White moves first.');
+}
+function netRenderHost(){
+  const i=NET.info,H=document.getElementById('netHost');
+  if(!i){H.innerHTML='<p style="font-weight:800">Playing a friend needs <b>Checkfire.exe</b> running on one computer. That computer chooses “Host on this network”, and the other players open the address it shows in their browser.</p>';show('netPlay',false);return;}
+  if(i.mode==='host'&&!i.hosting){H.innerHTML='<p style="font-weight:800;margin:0 0 6px"><b>Only one computer hosts.</b> Everyone else joins that computer, even if they also have Checkfire.exe.</p>'
+      +'<div style="border:3px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:10px"><div style="font-weight:900;margin-bottom:6px">Joining someone else\'s game?</div>'
+      +'<div class="row" style="gap:8px;flex-wrap:wrap;align-items:center"><button class="btn" id="bNetFind">Look for the host</button><span style="font-weight:900;color:var(--dim)">or type its address</span>'
+      +'<input id="netAddr" type="text" autocomplete="off" spellcheck="false" placeholder="192.168.1.23" style="width:190px;padding:9px 10px;border-radius:12px;border:3px solid var(--line);font:inherit;font-weight:800"><button class="btn" id="bNetGo">Go</button></div><div id="netFound" style="margin-top:8px"></div></div>'
+      +'<div style="border:3px solid var(--line);border-radius:14px;padding:10px 12px"><div style="font-weight:900;margin-bottom:6px">Hosting for everyone?</div><div style="font-weight:700;color:var(--dim);margin-bottom:8px">Windows may ask once to allow Checkfire on the network: choose Allow.</div><button class="btn big" id="bNetHost">Host on this network</button></div>';show('netPlay',false);
+    const goHost=a=>{a=String(a||'').trim().replace(/^https?:\/\//i,'').replace(/\/.*$/,'');if(!a){netMsgEl('Type the address shown on the host computer.');return;}if(!/:\d+$/.test(a))a+=':'+i.port;netMsgEl('Opening '+a+' …');location.href='http://'+a+'/#friend';};
+    document.getElementById('bNetGo').onclick=()=>goHost(document.getElementById('netAddr').value);
+    document.getElementById('netAddr').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')goHost(e.target.value);});
+    document.getElementById('bNetFind').onclick=async()=>{const F=document.getElementById('netFound');F.innerHTML='<span style="font-weight:800;color:var(--dim)">Looking…</span>';
+      try{const r=await (await fetch('/__find')).json();
+        F.innerHTML=r.hosts&&r.hosts.length?r.hosts.map(u=>`<button class="btn" data-hosturl="${u}" style="margin:0 6px 6px 0">Join ${u.replace('http://','')}</button>`).join(''):'<span style="font-weight:800;color:var(--dim)">No host found. Check the other computer has clicked “Host on this network” and allowed it in Windows, and that you are on the same Wi-Fi. Some school networks stop computers seeing each other.</span>';
+        F.querySelectorAll('[data-hosturl]').forEach(b=>b.onclick=()=>goHost(b.dataset.hosturl));}
+      catch(e){F.innerHTML='<span style="font-weight:800;color:var(--dim)">Could not search the network.</span>';}};
+    document.getElementById('bNetHost').onclick=async()=>{try{NET.info=await (await fetch('/__host',{method:'POST'})).json();if(!NET.info.hosting)netMsgEl('Could not start hosting: '+(NET.info.error||'unknown problem'));}catch(e){netMsgEl('Could not start hosting.');}netRenderHost();};return;}
+  if(i.mode==='host'){const urls=i.urls&&i.urls.length?i.urls:['(no network found — check this computer is on Wi-Fi)'];
+    H.innerHTML='<div style="font-weight:800;color:var(--dim)">Hosting. Other players open this address in their browser:</div>'+urls.map(u=>`<div class="netaddr" style="font-size:26px;font-weight:900;color:var(--navy);user-select:all">${u}</div>`).join('')+'<div style="font-weight:700;color:var(--dim);margin:4px 0 12px">They should not host as well: a code only works for players who opened <b>this</b> address. You can play too: make or join a game below.</div>';}
+  else H.innerHTML=`<div style="font-weight:800;color:var(--dim);margin-bottom:10px">Connected to the host computer at ${location.host}. Codes work between everyone who opened this address.</div>`;
+  show('netPlay',true);
+}
+document.getElementById('bNet').onclick=async()=>{Sound.init();netMsgEl('');document.getElementById('netRoom').innerHTML='';show('net',true);
+  NET.info=null;try{if(location.protocol.indexOf('http')===0){const r=await fetch('/__net');if(r.ok)NET.info=await r.json();}}catch(e){}
+  netRenderHost();};
+document.getElementById('bNetClose').onclick=()=>{netLeave();show('net',false);};
+document.getElementById('bNetCreate').onclick=async()=>{try{await netConnect();NET.ws.send('!create');}catch(e){netMsgEl('Could not reach the host computer.');}};
+const netJoin=async()=>{const code=document.getElementById('netCode').value.trim().toUpperCase();if(code.length!==4){netMsgEl('Type the 4-letter code first.');return;}
+  try{await netConnect();NET.ws.send('!join '+code);}catch(e){netMsgEl('Could not reach the host computer.');}};
+document.getElementById('bNetJoin').onclick=netJoin;
+document.getElementById('netCode').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')netJoin();});
+// ---- settings: the practice unlock and other teacher tools sit behind a code
+const CODE_HASH=3131396511;   // hash of the teacher code, so the code itself is not sitting in the page
+const codeHash=t=>{let h=5381;for(const ch of t.trim().toUpperCase())h=(h*33^ch.charCodeAt(0))>>>0;return h;};
+const setMsg=t=>{document.getElementById('codeMsg').textContent=t;};
+document.getElementById('bSettings').onclick=()=>{Sound.init();setMsg('');document.getElementById('sens3').value=sens;show('settings',true);};
+document.getElementById('bSettingsClose').onclick=()=>{show('settings',false);refreshMenu();};
+const tryCode=()=>{const el=document.getElementById('codeIn');
+  if(codeHash(el.value)===CODE_HASH){show('teacher',true);setMsg('Teacher tools unlocked until this page is closed.');el.value='';Sound.win();}
+  else{setMsg('That code is not right.');Sound.dry();}};
+document.getElementById('bCode').onclick=tryCode;
+document.getElementById('codeIn').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')tryCode();});
+document.getElementById('bPractice').onclick=()=>{if(!confirm('Practice mode: unlock every blaster, attachment, finish and gadget for free?'))return;
+  for(const id in WEAPONS){PROF.weapons[id]=true;Object.assign(modsOf(id),{stock:true,scope:!WEAPONS[id].scope,mag:true,lvl:3,bling:3});}for(const g in GADGETS)PROF.gadgets[g]=true;for(const k in SIGHTS)PROF.sights[k]=true;PROF.melee=2;PROF.gadget='hat';saveProfile();setMsg('Everything in the Armory is unlocked.');};
+document.getElementById('bAllSkins').onclick=()=>{for(const c of STORY)PROF.skins[c.id]=true;PROF.story=STORY.length;saveProfile();setMsg('All story colours and opponents are unlocked.');};
+document.getElementById('bCredits').onclick=()=>{addCredits(1000);setMsg('Added 1000 credits.');};
+// ---- story mode
+const hex6s=h=>'#'+h.toString(16).padStart(6,'0');
+const skinDot=(k,extra)=>`<span class="skindot" style="background:linear-gradient(135deg,${hex6s(k.main)} 0 52%,${hex6s(k.acc)} 52% 100%)">${extra||''}</span>`;
+function renderStory(){
+  const owned=['default'].concat(STORY.filter(c=>PROF.skins[c.id]).map(c=>c.id));
+  document.getElementById('skinPick').innerHTML=owned.map(id=>{const k=id==='default'?SKINS.ivory:SKINS[id];
+    return `<button class="skinchip${(PROF.skin||'default')===id?' on':''}" data-skin="${id}">${skinDot(k)}${id==='default'?'Classic (Ivory & Teal)':k.name}</button>`;}).join('')
+    +(owned.length===1?'<span style="align-self:center;color:var(--dim);font-weight:700">Beat a champion to unlock more.</span>':'');
+  document.getElementById('storyList').innerHTML=STORY.map((c,i)=>{const beaten=!!PROF.skins[c.id],open=i<=(PROF.story||0);
+    return `<div class="storycard${open?'':' locked'}">${skinDot(c.skin,'<span style="color:'+hex6s(c.skin.emb)+'">♚</span>')}
+      <div class="who"><b>${i+1}. ${c.name}</b> <span style="color:var(--dim);font-weight:800">${c.title} · ${DIFF[c.diff].name}</span>
+      <small>${open?c.blurb:'Beat '+STORY[i-1].name+' to meet this champion.'}</small>
+      <small style="color:var(--navy)">${beaten?'Beaten ✓ — '+c.skin.name+' unlocked':'Prize: '+c.skin.name+' colours'}</small></div>
+      ${open?`<button class="btn${beaten?' ghost':''}" data-story="${c.id}">${beaten?'Rematch':'Challenge'}</button>`:'<span style="font-weight:900;color:var(--dim)">Locked</span>'}</div>`;}).join('');
+}
+document.getElementById('bStory').onclick=()=>{Sound.init();renderStory();show('story',true);};
+document.getElementById('bStoryClose').onclick=()=>show('story',false);
+document.getElementById('story').addEventListener('click',e=>{const b=e.target.closest('[data-skin],[data-story]');if(!b)return;Sound.click();
+  if(b.dataset.skin){PROF.skin=b.dataset.skin;saveProfile();renderStory();return;}
+  const ch=STORY.find(c=>c.id===b.dataset.story);if(!ch)return;
+  if(loadSave()&&!confirm('Start this story battle? Your saved battle will be replaced.'))return;
+  applyGfx();show('story',false);newGame({human:'w',diff:ch.diff,duelMode:opts.duel,story:ch.id});});
 document.getElementById('intro').addEventListener('click',introClick);
-document.getElementById('bForfeit').onclick=()=>{show('pause',false);D.paused=false;D.player.hp=0;D.over=false;D.fighting=true;finishDuel();};
+document.getElementById('bForfeit').onclick=()=>{show('pause',false);D.paused=false;D.player.hp=0;D.over=false;D.fighting=true;if(G.net&&NET.on)netSend({t:'dead'});finishDuel();};
 document.getElementById('sens').oninput=e=>{sens=+e.target.value;document.getElementById('sens2').value=sens;};
 document.getElementById('sens2').oninput=e=>{sens=+e.target.value;document.getElementById('sens').value=sens;};
-document.getElementById('bAgain').onclick=()=>{show('end',false);refreshMenu();G.mode='menu';show('bhud',false);show('menu',true);};
+document.getElementById('sens3').oninput=e=>{sens=+e.target.value;document.getElementById('sens').value=sens;document.getElementById('sens2').value=sens;};
+document.getElementById('bAgain').onclick=()=>{netLeave();show('end',false);refreshMenu();G.mode='menu';show('bhud',false);show('menu',true);};
 document.getElementById('bLook').onclick=()=>show('end',false);
+if(location.hash==='#friend')setTimeout(()=>document.getElementById('bNet').click(),600);
 function refreshMenu(){show('bCont',!!loadSave());updateCreditsUI();}
 
 // ---------------------------------------------------------------- main loop

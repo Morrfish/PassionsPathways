@@ -24,7 +24,10 @@ the player picks (a kid's bedroom floor, a park chess table, a diner counter, �
 - Interactables: Jump Pad, Spring Box, Trampoline, Pinball Bumper, Lava, Hot Coffee, Cactus Patch.
 - Game UI (menus, loadout, room picker, in-match HUD).
 
-## STILL NEEDED — the eight remaining rooms (highest priority)
+## FIRST PASS DONE, SHEETS WELCOME — the eight remaining rooms
+These eight rooms now have Blender toy models made from the written descriptions below (see
+`blender/previews/rooms_<room>.png` for a line-up of each room's props). A reference sheet for any of them will be used
+to restyle those props to match — so sheets are still the best way to steer the look.
 Each room is a square play area about 48 × 48 (the toy fighters are ~2 tall, so the room is "giant" around them).
 For each room, please make one sheet with: **an eye-level overview, a top-down layout, and one panel per key prop**
 (front + side, or 3/4). Note anything that moves or can be climbed. The props listed are what's in the game now — feel free
@@ -45,10 +48,11 @@ Optional: the four **neon arenas** (Neon Ruins, Glass Citadel, Ember Forge, Verd
 dark sci-fi look. Courtnee can decide whether to keep, restyle or remove them.
 
 ## Optional smaller sheets
-- **First-person toy hands** (gloved/toy hands holding a blaster from the player's view).
-- **Repair Core detail** — the green diamond with clear white crosses.
-- **Gadgets worn by fighters** — how the Propeller Hat and Jetpack look on a toy fighter (front/side/back).
-- **Board pieces** — if the chessboard should use toy figures instead of classic chess shapes.
+- **First-person toy hands** — a first version is in (gloved hands in team colours); a sheet would help refine them.
+- **Repair Core detail** — done: the green diamond now has a large white cross on every face.
+- **Gadgets worn by fighters** — a first version is in (see `tools/tests/shots/gear_*.jpg`); a sheet would refine how the
+  Propeller Hat sits on crowns, plumes and mitres.
+- **Board pieces** — the board now uses the toy fighters (classic shapes are still a menu option).
 
 ## Exact names (for reference)
 **Blasters → who can use them**

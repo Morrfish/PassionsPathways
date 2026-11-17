@@ -12,6 +12,9 @@ const path=require('path');
   const views={};
   for(const r of ['bedroom','library','diner','gym','toystore','greenhouse','arcade','attic','beach','ruins','citadel','forge','maze'])views[r]=[[0,0,19],0,-.12];
   views.park=[[0,0,19],-.75,.06];
+  // the Blender-modelled rooms read better from a little above, off to one side
+  Object.assign(views,{library:[[9,5,21],.35,-.25],diner:[[7,5,21],.28,-.26],gym:[[6,6,22],.22,-.24],toystore:[[-7,6,22],-.26,-.26],
+    greenhouse:[[-8,5,21],-.3,-.22],arcade:[[-8,6,22],-.3,-.3],attic:[[8,5,21],.3,-.22],beach:[[-9,5,22],-.35,-.22]});
   await p.evaluate(()=>{const me={t:'n',c:'w',id:900,hp:125},them={t:'p',c:'b',id:901,hp:100};startDuel(me,them,{from:12,to:28,cap:28});
     window.requestLock=()=>{fallbackLook=true;};document.getElementById('intro').classList.add('hidden');D.count=0;D.fighting=false;});
   const fs=require('fs');fs.mkdirSync(path.resolve(__dirname,'../assets/thumbs'),{recursive:true});
