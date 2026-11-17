@@ -92,7 +92,8 @@ def done(name, k=1.0):
     shins = {sd: [o for o in LEGS.get((sd, 'shin'), []) if o in P] for sd in (-1, 1)}
     arm = [o for o in ARMS.get('free', []) if o in P] + (P[ARMS['mark']:] if ARMS.get('tail') else []) if ARMS.get('swing') else []
     skirts = {q: [o for o in SKIRT.get(q, []) if o in P] for q in 'fb'}
-    taken = set(legs[-1]) | set(legs[1]) | set(arm) | set(skirts['f']) | set(skirts['b'])
+    gunp = [o for o in ARMS.get('gun', []) if o in P]
+    taken = set(legs[-1]) | set(legs[1]) | set(arm) | set(gunp) | set(skirts['f']) | set(skirts['b'])
     body = join([o for o in P if o not in taken], name)
     hinge(body, (0, 0, 0))
     if MUZZLE.get('at'): mx, my, mz = MUZZLE.pop('at'); body['muzzle'] = [mx * k, mz * k, -my * k]      # in the game's axes (Y up, facing +Z)
@@ -105,6 +106,8 @@ def done(name, k=1.0):
             shin = join(shins[sd], name + '_shin' + tag); hinge(shin, (sd * LEGS.get('knee', .22), -.01, .72)); child(shin, thigh)
     if arm:
         a = join(arm, name + ('_armh' if ARMS.get('tail') else '_arm')); hinge(a, ARMS['sh']); child(a, body)
+    if gunp:
+        a = join(gunp, name + '_gun'); hinge(a, ARMS['gsh']); child(a, body)
     for q in 'fb':
         if skirts[q]: sk = join(skirts[q], name + '_sk' + q.upper()); hinge(sk, (0, 0, 1.5)); child(sk, body)
     bpy.context.scene.cursor.location = (0, 0, 0); ARMS.clear(); SKIRT.clear()
@@ -574,9 +577,10 @@ def arms(sw, skin, glove=GL, r=.058, gun=None, pose='down', bare=False, bracers=
     if pose == 'raise': wr = (-sw - .15, -.2, 2.24); one(sh, (-sw - .13, -.08, 1.98), wr, (0, -.25, 1), (1, 0, 0), 2.2)
     else: wr = (-sw - .1, -.03, 1.3); one(sh, (-sw - .085, .025, 1.6), wr, (0, -.12, -1), (0, -1, 0), 1.2 if pose == 'down' else 2.4)
     ARMS.update(free=P[n0:], sh=sh, swing=pose != 'raise' and (pose == 'down' or tail))      # a raised arm stays up; a hand holding something swings less
-    grip = (sw + .02, -.24, 1.53)
+    grip = (sw + .02, -.24, 1.53); n1 = len(P)
     one((sw + .03, 0, 1.94), (sw + .075, .05, 1.6), grip, (0, -1, -.25), (-1, 0, .3), 2.6)
     if gun: weapon(gun, sw)
+    ARMS.update(gun=P[n1:], gsh=(sw + .03, 0, 1.94))      # the gun arm and weapon hinge at the shoulder, for recoil
     ARMS.update(mark=len(P), tail=pose == 'hold' and tail)      # whatever is built next is in that hand
     return wr, grip
 def cross_strap(sw): tor(sw * .9, .022, (0, 0, 1.74), LEATHER, rot=(R(90), R(42), 0), scale=(1, 1.25, 1))
@@ -639,10 +643,12 @@ limb((-sw - .1, -.03, 1.32), (-sw - .1, -.032, 1.27), .043, .04, GL)
 hand((-sw - .1, -.034, 1.27), (0, -.12, -1), (0, -1, 0), GL, curl=1.2, s=1.12)
 ARMS.update(free=P[n0:], sh=(-sw - .03, 0, 1.94), swing=True, tail=False)
 # gun arm: forearm level at the hip, hand wrapped round the grip
+n1 = len(P)
 q = sleeve((sw + .03, 0, 1.94), (sw + .075, .05, 1.6), (sw + .02, -.24, 1.53), .058, 'team')
 limb(q, (sw + .02, -.24, 1.53), .045, .04, GL)
 hand((sw + .02, -.24, 1.53), (0, -1, -.25), (-1, 0, .3), GL, curl=2.6, s=1.12)
 weapon('long_tom', sw)
+ARMS.update(gun=P[n1:], gsh=(sw + .03, 0, 1.94))
 done('mainsail', 1.05)
 
 # Drift: small and quick — short jacket, baggy trousers, shin wraps, red neck scarf, a knife in the free hand
@@ -776,7 +782,7 @@ cyl(.1, .16, .2, (0, .04, 2.06), 'team2', rot=(R(-16), 0, 0))
 cyl(.02, .02, 1.75, (.1, .22, 1.95), DARKWOOD, rot=(0, R(-10), 0)); tor(.09, .022, (-.14, .22, 2.8), STEEL, rot=(R(90), 0, 0)); cyl(.03, 0, .1, (-.23, .22, 2.74), STEEL, rot=(R(180), 0, 0), v=4)
 cross_strap(sw); satchel(-.24, -.1, 1.36)
 wr, grip = arms(sw, SK, gun='whaling')
-box((.17, .17, .13), (wr[0], wr[1], wr[2] + .13), 'team2', r=.02); ARMS['free'].append(P[-1]); box((.17, .15, .17), (grip[0], grip[1] + .13, grip[2]), 'team2', r=.02)
+box((.17, .17, .13), (wr[0], wr[1], wr[2] + .13), 'team2', r=.02); ARMS['free'].append(P[-1]); box((.17, .15, .17), (grip[0], grip[1] + .13, grip[2]), 'team2', r=.02); ARMS['gun'].append(P[-1])
 done('gaff', 1.1)
 
 # Knuckle: armoured bruiser — iron hat, riveted pauldrons, knee plates, gauntlets, rope over the shoulder

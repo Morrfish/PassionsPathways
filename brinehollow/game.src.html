@@ -648,6 +648,7 @@ function model(name, ov) {
   o.userData.legs = o.children.filter(c => /_leg[LR]$/.test(c.name));
   o.userData.shins = o.userData.legs.map(l => l.children.find(c => /_shin[LR]$/.test(c.name)));
   o.userData.arm = o.children.find(c => /_armh?$/.test(c.name));
+  o.userData.gun = o.children.find(c => c.name.endsWith('_gun')); if (o.userData.gun) o.userData.gunZ = o.userData.gun.position.z;
   o.userData.skirt = ['_skF', '_skB'].map(q => o.children.find(c => c.name.endsWith(q)));      // hinged at the hip, swung by the walk cycle
   scene.add(o); return o;
 }
@@ -826,6 +827,20 @@ function tracer(a, b, color, width) {
     l.position.copy(a).addScaledVector(d, .5); l.quaternion.setFromUnitVectors(new V3(0, 1, 0), d.multiplyScalar(1 / len));
   } else l = new THREE.Line(new THREE.BufferGeometry().setFromPoints([a, b]), new THREE.LineBasicMaterial({color, transparent: true, opacity: .9}));
   scene.add(l); tracers.push({l, life: width ? .1 : .07});
+}
+const FLASH = drawn(128, 128, g => {                       // a comic starburst
+  g.translate(64, 64); g.fillStyle = '#fff'; g.strokeStyle = '#141414'; g.lineWidth = 5; g.lineJoin = 'miter'; g.beginPath();
+  for (let i = 0; i < 18; i++) { const a = i / 18 * 6.283, r = i % 2 ? 22 + rnd() * 8 : 44 + rnd() * 16; g.lineTo(Math.cos(a) * r, Math.sin(a) * r); }
+  g.closePath(); g.stroke(); g.fill();
+});
+const flashes = [], flashGeo = new THREE.PlaneGeometry(1, 1);
+const recoilOf = w => w.beam ? .05 : w.kind === 'scatter' ? 1 : w.kind === 'lob' ? .8 : w.kind === 'proj' ? .45 : clamp(w.dmg / 60, .14, 1);
+function flash(h, w, col) {                                 // muzzle flash, and the kick that goes with it
+  const k = recoilOf(w), s = new THREE.Mesh(flashGeo, new THREE.MeshBasicMaterial({map: FLASH, color: col || w.color, transparent: true, depthWrite: false, side: THREE.DoubleSide}));
+  s.userData.spin = Math.random() * 6.283;
+  s.position.copy(muzzleOf(h)); s.scale.setScalar(.35 + k * 1.1); scene.add(s); flashes.push({s, life: .07, size: .35 + k * 1.1});
+  h.recoil = Math.min(1, (h.recoil || 0) + k);
+  if (h === player && !AUTO) recoilKick = Math.min(.12, recoilKick + k * .034);
 }
 const rings = [];
 function ring(pos, color, size) {
@@ -1214,6 +1229,7 @@ function playerShot(p) {
   } else launch(p, w, muzzle, aimRay(off(), w.range, w).point, mult);
   if (wake) { p.wake = 0; p.ammo = w.mag; const pt = aimRay(base, w.range, w).point; ring(pt, 0x7fd4ff, 2.5); pop('KRAK!', pt, '#7fd4ff', 42); beep(1300, .12, 'triangle', .07); } else p.ammo--;
   p.bloom = Math.min(w.maxBloom || .06, p.bloom + (w.bloom === undefined ? .006 : w.bloom));
+  flash(p, w, col);
   const s = SND[w.kind]; beep(s[0] * (w.beam ? 4 : 1) * (.95 + Math.random() * .1), s[1], s[2], w.beam ? .012 : .035);
 }
 
@@ -1266,9 +1282,10 @@ function buy(i) {
   say(`Rigged: <b>${it.name}</b>`); beep(520, .15, 'triangle', .06); buildRig();
 }
 const camDir = new V3(), camPos = new V3(), tmp = new V3(), tmp2 = new V3();
+let recoilKick = 0;      // the view climbs with each shot and settles back
 function aimDir() {
-  const cp = Math.cos(pitch);
-  return camDir.set(-Math.sin(yaw) * cp, Math.sin(pitch), -Math.cos(yaw) * cp);
+  const pk = clamp(pitch + recoilKick, -1.25, 1.25), cp = Math.cos(pk);
+  return camDir.set(-Math.sin(yaw) * cp, Math.sin(pk), -Math.cos(yaw) * cp);
 }
 function playerAim(max) {   // what the crosshair is on: an enemy, the world, or thin air
   const d = aimDir(), back = camPos.distanceTo(player.pos);
@@ -1351,6 +1368,7 @@ function shootAt(e, t, mult, chance, w) {      // a bot's shot: a hit roll, then
   if (!hit) b.add(tmp.set(Math.random() - .5, Math.random() - .3, Math.random() - .5).multiplyScalar(2.4));
   if (typeof w === 'number') { tracer(a, b, w); if (hit) damage(t, mult, e); return; }
   tracer(muzzleOf(e), b, w.color, w.w || (w.kind === 'hit' ? 0 : .04)); if (w.splash && hit) ring(b, w.color, w.splash);
+  flash(e, w);
   if (hit) applyHit(e, w, t, mult, false, 0);
 }
 function updateBot(h, dt) {
@@ -1671,15 +1689,19 @@ function render(dt) {
         legs[i].rotation.x = -Math.sin(ph) * g + Math.max(0, Math.cos(ph)) * g * .35;
         if (ud.shins[i]) ud.shins[i].rotation.x = (Math.max(0, Math.cos(ph)) * 1.9 + .12) * g;
       }
+      if (ud.gun) { const rc = Math.min(1, e.recoil || 0); e.recoil = Math.max(0, rc - Math.min(dt, .034) * 7); ud.gun.rotation.x = -rc * .42; ud.gun.position.z = ud.gunZ - rc * .13; }      // the weapon bucks up and back
       const kick = g * (.1 + .5 * Math.abs(Math.sin(e.walk)));                       // the coat's front and back kick out ahead of the legs
       if (ud.skirt[0]) ud.skirt[0].rotation.x = -kick; if (ud.skirt[1]) ud.skirt[1].rotation.x = kick;
       if (ud.arm) ud.arm.rotation.x = Math.sin(e.walk) * g * (ud.arm.name.endsWith('armh') ? .4 : 1.15);      // the free arm swings against its leg
       e.mesh.position.y += Math.abs(Math.cos(e.walk)) * e.gait * .07 - (e.onGround ? 0 : 0);
-      e.mesh.rotation.x = e.gait * .12 + (e.onGround || e.swim ? 0 : -.18);
+      e.mesh.rotation.x = e.gait * .12 + (e.onGround || e.swim ? 0 : -.18) - Math.min(1, e.recoil || 0) * .07;
     }
   }
   for (const b of buoys) b.mesh.position.y = Math.max(heightfield(b.x), state.tide.level - .3) + Math.sin(state.time * 1.5 + b.z) * .06;
   for (let i = tracers.length - 1; i >= 0; i--) { const t = tracers[i]; t.life -= dt; t.l.material.opacity = t.life / .07; if (t.life <= 0) { scene.remove(t.l); t.l.geometry.dispose(); tracers.splice(i, 1); } }
+  // a flash is always drawn for at least one frame before it starts to fade
+  recoilKick *= Math.exp(-Math.min(dt, .034) * 9);
+  for (let i = flashes.length - 1; i >= 0; i--) { const f = flashes[i]; if (f.seen) f.life -= dt; f.seen = true; f.s.quaternion.copy(camera.quaternion); f.s.rotateZ(f.s.userData.spin); f.s.scale.setScalar(f.size * (1.25 - f.life / .07 * .25)); f.s.material.opacity = clamp(f.life / .04, 0, 1); if (f.life <= 0) { scene.remove(f.s); f.s.material.dispose(); flashes.splice(i, 1); } }
   for (let i = rings.length - 1; i >= 0; i--) { const r = rings[i]; r.life -= dt; const k = 1 - r.life / .45; r.m.scale.setScalar(1 + k * r.size); r.m.material.opacity = 1 - k; if (r.life <= 0) { scene.remove(r.m); rings.splice(i, 1); } }
   tetherLine.visible = !!player.tether;
   if (player.tether) { tetherLine.geometry.setFromPoints([player.pos.clone().setY(player.pos.y + 1.75), player.tether.p]); }
@@ -1785,7 +1807,7 @@ document.addEventListener('pointerlockchange', () => {
 });
 if (TEST) start();
 say(MODE === 'chain' ? `Kill the ${THEIRS} Foghorn, then cut their Anchor Chain. Watch the tide clock.` : `<b>${MODES[MODE].name}.</b> ${MODES[MODE].text}`);
-window.__bh = {muzzleOf, MAP_ID, MODE, MODES, MAPS, win, point, camPos, PT, WEAPONS, MOVES, useMove, shots, playerShot, RIG, toggleShop, rigOn, pad, isPad: () => padMode, KITS, useAbility, zones, walls, posts, state, ents, heroes, player, ROSTER, heroLook, pickHero, model, scene, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
+window.__bh = {flash, flashes, muzzleOf, MAP_ID, MODE, MODES, MAPS, win, point, camPos, PT, WEAPONS, MOVES, useMove, shots, playerShot, RIG, toggleShop, rigOn, pad, isPad: () => padMode, KITS, useAbility, zones, walls, posts, state, ents, heroes, player, ROSTER, heroLook, pickHero, model, scene, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
   setAim: (y, p) => { yaw = y; pitch = p; updateCamera(); }};
 requestAnimationFrame(frame);
 }
