@@ -32,9 +32,16 @@ const marker = "checkfire-launcher"
 const heartbeat = `<script>setInterval(function(){fetch('/__alive').catch(function(){})},4000)</script>`
 
 func main() {
+	// CHECKFIRE_PORT (testing only) runs a second copy on another port without a window.
+	if tp := os.Getenv("CHECKFIRE_PORT"); tp != "" {
+		var p int
+		fmt.Sscan(tp, &p)
+		ports = []int{p}
+		noWindow = true
+	}
 	// Already running? Then just open another window on it.
 	for _, p := range ports {
-		if isOurs(p) {
+		if !noWindow && isOurs(p) {
 			openWindow(fmt.Sprintf("http://127.0.0.1:%d/", p), false)
 			return
 		}
@@ -95,6 +102,8 @@ func main() {
 	}
 }
 
+var noWindow bool
+
 func isOurs(port int) bool {
 	c := http.Client{Timeout: 400 * time.Millisecond}
 	r, err := c.Get(fmt.Sprintf("http://127.0.0.1:%d/__alive", port))
@@ -110,6 +119,9 @@ func isOurs(port int) bool {
 // openWindow opens the game. The returned channel closes when a window we own has been closed
 // (nil if we could not own one, e.g. the default browser was used).
 func openWindow(url string, wait bool) <-chan struct{} {
+	if noWindow {
+		return nil
+	}
 	if runtime.GOOS == "windows" {
 		profile := filepath.Join(os.Getenv("LOCALAPPDATA"), "Checkfire", "window")
 		for _, exe := range browsers() {

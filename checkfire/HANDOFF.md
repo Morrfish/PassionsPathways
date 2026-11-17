@@ -70,7 +70,7 @@ Windows from this environment (only the same code as a Linux build was tested).
 ## Same-network multiplayer ("Play a friend")
 - **Host side:** `launcher/net.go`. Only after "Host on this network" is clicked in the exe's own window does the launcher
   listen on the network (port 47620): it serves the same page plus `/ws`, a tiny WebSocket relay (standard library only).
-  Players pair by a 4-letter room code; the relay just passes messages between the two. No names, no accounts.
+  Players pair by a 6-letter room code (it carries the last two numbers of the host's address, so a joiner's own exe finds the host via /__locate); the relay just passes messages between the two. No names, no accounts.
 - **Game side:** the `NET` block in `game.src.html`. The player who makes the game is White. Moves are sent as made
   (`mv`). A capture sends both players to the loadout; when both press "Enter the room" they exchange blaster, gadget and
   (from the attacker) room and seed (`rdy`), then fight in one shared room, attacker at one end, defender at the other.

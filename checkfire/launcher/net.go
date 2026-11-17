@@ -102,7 +102,7 @@ func startLAN(gameMux http.Handler) error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/ws", serveWS)
 	mux.HandleFunc("/__net", func(w http.ResponseWriter, r *http.Request) {
-		writeJSON(w, map[string]any{"mode": "lan", "hosting": true, "port": lanPort})
+		writeJSON(w, map[string]any{"mode": "lan", "hosting": true, "port": lanPort, "has": hasRoom(r.URL.Query().Get("code"))})
 	})
 	mux.Handle("/", gameMux)
 	go http.Serve(ln, mux)
@@ -125,6 +125,15 @@ func netHandlers(mux *http.ServeMux, gameMux http.Handler) {
 		}
 		writeJSON(w, map[string]any{"hosts": findHosts(r.URL.Query().Get("self") == "1")})
 	})
+	mux.HandleFunc("/__tunnel", tunnel)
+	mux.HandleFunc("/__locate", func(w http.ResponseWriter, r *http.Request) {
+		if !isLoopback(r) {
+			http.Error(w, "only this computer can do this", http.StatusForbidden)
+			return
+		}
+		addr, why := locate(r.URL.Query().Get("code"))
+		writeJSON(w, map[string]any{"addr": addr, "why": why})
+	})
 	mux.HandleFunc("/__host", func(w http.ResponseWriter, r *http.Request) {
 		if !isLoopback(r) || r.Method != http.MethodPost {
 			http.Error(w, "only the host computer can do this", http.StatusForbidden)
@@ -144,7 +153,7 @@ func findHosts(includeSelf bool) []string {
 	found := []string{}
 	var mu sync.Mutex
 	var wg sync.WaitGroup
-	client := http.Client{Timeout: 700 * time.Millisecond}
+	client := lanClient(700 * time.Millisecond)
 	seen := map[string]bool{}
 	ifs, _ := net.Interfaces()
 	for _, in := range ifs {
@@ -243,14 +252,226 @@ func (p *peer) other() *peer {
 	return p.room.a
 }
 
-func newCode() string {
-	const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ" // no I or O: easy to read out loud
-	b := make([]byte, 4)
-	rand.Read(b)
-	for i := range b {
-		b[i] = letters[int(b[i])%len(letters)]
+// A game code is 6 letters. It carries the last two numbers of the host computer's network address plus a
+// random part, so a player who types it into their own Checkfire.exe can be sent straight to the right
+// computer: nobody has to read out an address, and nobody has to pick which computer "hosts".
+const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ" // no I or O: easy to read out loud
+const codeLen = 6
+
+func encodeCode(ip net.IP) string {
+	var r [2]byte
+	rand.Read(r[:])
+	var c, d uint32
+	if ip4 := ip.To4(); ip4 != nil {
+		c, d = uint32(ip4[2]), uint32(ip4[3])
+	}
+	v := c<<19 | d<<11 | (uint32(r[0])<<8|uint32(r[1]))&0x7ff
+	b := make([]byte, codeLen)
+	for i := codeLen - 1; i >= 0; i-- {
+		b[i] = letters[v%24]
+		v /= 24
 	}
 	return string(b)
+}
+
+// decodeCode returns the last two address numbers hidden in a code (ok is false for a mistyped code).
+func decodeCode(code string) (c, d byte, ok bool) {
+	code = normCode(code)
+	if len(code) != codeLen {
+		return 0, 0, false
+	}
+	var v uint32
+	for _, ch := range code {
+		i := strings.IndexRune(letters, ch)
+		if i < 0 {
+			return 0, 0, false
+		}
+		v = v*24 + uint32(i)
+	}
+	if v>>27 != 0 {
+		return 0, 0, false
+	}
+	return byte(v >> 19), byte(v >> 11), true
+}
+
+// normCode upper-cases a typed code and drops spaces and dashes.
+func normCode(s string) string {
+	var b strings.Builder
+	for _, ch := range strings.ToUpper(s) {
+		if ch >= 'A' && ch <= 'Z' {
+			b.WriteRune(ch)
+		}
+	}
+	return b.String()
+}
+
+// primaryIP is the address this computer uses on its network (the one other computers can reach it on).
+func primaryIP() net.IP {
+	if c, err := net.Dial("udp4", "10.254.254.254:9"); err == nil { // nothing is sent: this only asks which address would be used
+		ip := c.LocalAddr().(*net.UDPAddr).IP
+		c.Close()
+		if ip.To4() != nil && !ip.IsLoopback() {
+			return ip
+		}
+	}
+	for _, u := range lanAddresses() {
+		h := strings.TrimSuffix(strings.TrimPrefix(u, "http://"), fmt.Sprintf(":%d", lanPort))
+		if ip := net.ParseIP(h); ip != nil {
+			return ip
+		}
+	}
+	return nil
+}
+
+func hasRoom(code string) bool {
+	roomsMu.Lock()
+	defer roomsMu.Unlock()
+	r := rooms[normCode(code)]
+	return r != nil && r.a != nil && r.b == nil
+}
+
+// locate finds the computer holding a game code: first the address hidden in the code (tried with the first two
+// numbers of each of this computer's own addresses), then this computer itself, then every computer nearby.
+func locate(code string) (string, string) {
+	code = normCode(code)
+	c, d, ok := decodeCode(code)
+	if !ok {
+		return "", "bad"
+	}
+	if hasRoom(code) {
+		return fmt.Sprintf("127.0.0.1:%d", lanPort), ""
+	}
+	client := lanClient(1500 * time.Millisecond)
+	check := func(ip string) bool {
+		r, err := client.Get(fmt.Sprintf("http://%s:%d/__net?code=%s", ip, lanPort, code))
+		if err != nil {
+			return false
+		}
+		defer r.Body.Close()
+		var v struct {
+			Mode string `json:"mode"`
+			Has  bool   `json:"has"`
+		}
+		return json.NewDecoder(r.Body).Decode(&v) == nil && v.Mode == "lan" && v.Has
+	}
+	var cands []string
+	seen := map[string]bool{}
+	for _, me := range localIPv4s() {
+		ip := net.IPv4(me[0], me[1], c, d).String()
+		if !seen[ip] {
+			seen[ip] = true
+			cands = append(cands, ip)
+		}
+	}
+	answer := make(chan string, len(cands))
+	for _, ip := range cands {
+		go func(ip string) {
+			if check(ip) {
+				answer <- ip
+			} else {
+				answer <- ""
+			}
+		}(ip)
+	}
+	reached := false
+	for range cands {
+		if ip := <-answer; ip != "" {
+			return fmt.Sprintf("%s:%d", ip, lanPort), ""
+		}
+	}
+	// the code's computer did not answer: maybe its address changed. Ask every computer nearby.
+	for _, u := range findHosts(true) {
+		h := strings.TrimPrefix(u, "http://")
+		reached = true
+		if check(strings.TrimSuffix(h, fmt.Sprintf(":%d", lanPort))) {
+			return h, ""
+		}
+	}
+	if reached {
+		return "", "nocode"
+	}
+	return "", "nohost"
+}
+
+// tunnel carries a joining player's game connection from their own page (always on this computer, so no
+// browser proxy or network rule can get in the way) to the Checkfire computer that holds the game.
+func tunnel(w http.ResponseWriter, r *http.Request) {
+	host, port, err := net.SplitHostPort(r.URL.Query().Get("to"))
+	ip := net.ParseIP(host)
+	if err != nil || !isLoopback(r) || ip == nil || ip.To4() == nil || port != fmt.Sprint(lanPort) || !(ip.IsPrivate() || ip.IsLoopback() || isLocalIP(ip)) {
+		http.Error(w, "not allowed", http.StatusForbidden)
+		return
+	}
+	remote, err := net.DialTimeout("tcp", net.JoinHostPort(host, port), 4*time.Second)
+	if err != nil {
+		http.Error(w, "could not reach the host", http.StatusBadGateway)
+		return
+	}
+	hj, ok := w.(http.Hijacker)
+	if !ok {
+		remote.Close()
+		http.Error(w, "cannot upgrade", http.StatusInternalServerError)
+		return
+	}
+	conn, rw, err := hj.Hijack()
+	if err != nil {
+		remote.Close()
+		return
+	}
+	// replay the browser's upgrade request to the host, then just pass bytes both ways
+	fmt.Fprintf(remote, "GET /ws HTTP/1.1\r\nHost: %s\r\n", net.JoinHostPort(host, port))
+	for k, vs := range r.Header {
+		if strings.EqualFold(k, "Host") || strings.EqualFold(k, "Origin") {
+			continue
+		}
+		for _, v := range vs {
+			fmt.Fprintf(remote, "%s: %s\r\n", k, v)
+		}
+	}
+	fmt.Fprint(remote, "\r\n")
+	go func() {
+		if n := rw.Reader.Buffered(); n > 0 {
+			b, _ := rw.Reader.Peek(n)
+			remote.Write(b)
+		}
+		io.Copy(remote, conn)
+		remote.Close()
+	}()
+	io.Copy(conn, remote)
+	conn.Close()
+}
+
+func isLocalIP(ip net.IP) bool {
+	for _, me := range localIPv4s() {
+		if me.Equal(ip) {
+			return true
+		}
+	}
+	return false
+}
+
+// lanClient talks to other computers on this network directly, never through a web proxy.
+func lanClient(t time.Duration) *http.Client {
+	return &http.Client{Timeout: t, Transport: &http.Transport{Proxy: nil, MaxIdleConnsPerHost: 1}}
+}
+
+func localIPv4s() []net.IP {
+	var out []net.IP
+	ifs, _ := net.Interfaces()
+	for _, in := range ifs {
+		if in.Flags&net.FlagUp == 0 || in.Flags&net.FlagLoopback != 0 {
+			continue
+		}
+		addrs, _ := in.Addrs()
+		for _, a := range addrs {
+			if ipn, ok := a.(*net.IPNet); ok {
+				if ip := ipn.IP.To4(); ip != nil && !ip.IsLinkLocalUnicast() {
+					out = append(out, ip)
+				}
+			}
+		}
+	}
+	return out
 }
 
 func (p *peer) control(msg string) {
@@ -259,9 +480,10 @@ func (p *peer) control(msg string) {
 	case "!create":
 		p.leave()
 		roomsMu.Lock()
-		code := newCode()
+		ip := primaryIP()
+		code := encodeCode(ip)
 		for rooms[code] != nil {
-			code = newCode()
+			code = encodeCode(ip)
 		}
 		r := &room{code: code, a: p}
 		rooms[code] = r
@@ -270,12 +492,12 @@ func (p *peer) control(msg string) {
 		p.send("!room " + code)
 	case "!join":
 		if len(f) < 2 {
-			p.send("!err Type the 4-letter code first.")
+			p.send("!err Type the 6-letter code first.")
 			return
 		}
 		p.leave()
 		roomsMu.Lock()
-		r := rooms[strings.ToUpper(f[1])]
+		r := rooms[normCode(f[1])]
 		if r == nil || r.a == nil {
 			roomsMu.Unlock()
 			p.send("!err No game with that code. Check the letters and try again.")

@@ -6,7 +6,7 @@
 const {chromium}=require('playwright'),{spawn}=require('child_process');
 (async()=>{
   const bin=process.argv[2];if(!bin){console.log('usage: node network.js <launcher binary>');process.exit(1);}
-  const srv=spawn(bin,[],{stdio:'ignore'});await new Promise(r=>setTimeout(r,1200));
+  const srv=spawn(bin,[],{stdio:'ignore',env:{...process.env,CHECKFIRE_PORT:'47616'}});await new Promise(r=>setTimeout(r,1200));
   // two separate browsers, like two computers (pages in one headless browser do not both animate)
   const launch=()=>chromium.launch({args:['--use-gl=swiftshader','--enable-webgl','--ignore-gpu-blocklist']});
   const b1=await launch(),b2=await launch();
@@ -16,17 +16,16 @@ const {chromium}=require('playwright'),{spawn}=require('child_process');
     await p.goto(url);await p.waitForFunction(()=>ASSET.ready,null,{timeout:120000});await p.click('[data-opt=gfx] [data-v=lo]');return p;};   // 'Fast' graphics: two software-rendered browsers share this machine
   try{
     const A=await mk(b1,'http://127.0.0.1:47616/','host');
-    await A.click('#bNet');await A.waitForSelector('#bNetHost');
+    await A.click('#bNet');await A.waitForSelector('#bNetCreate',{state:'visible'});
     out.clientPortClosedBeforeHosting=await fetch('http://127.0.0.1:47620/__net').then(()=>false,()=>true);
-    await A.click('#bNetHost');await A.waitForSelector('#bNetCreate',{state:'visible'});
-    out.addressesShown=await A.evaluate(()=>[...document.querySelectorAll('.netaddr')].map(e=>e.textContent));
+    await A.click('#bNetCreate');await A.waitForSelector('#netCodeBig');
+    out.addressShown=await A.evaluate(()=>document.getElementById('netRoom').textContent.match(/http:\/\/[\d.]+:\d+/)?.[0]);
     await A.screenshot({path:'net-host.png'});
     const B=await mk(b2,'http://127.0.0.1:47620/','guest');            // the second computer comes in through the network port
     await B.click('#bNet');await B.waitForSelector('#bNetCreate',{state:'visible'});
-    await B.fill('#netCode','ZZZZ');await B.click('#bNetJoin');await B.waitForTimeout(500);
+    await B.fill('#netCode','ZZZZZZ');await B.click('#bNetJoin');await B.waitForTimeout(500);
     out.wrongCodeMessage=await B.evaluate(()=>document.getElementById('netMsg').textContent);
-    await A.click('#bNetCreate');await A.waitForSelector('#netCodeBig');
-    const code=await A.evaluate(()=>document.getElementById('netCodeBig').textContent);out.codeLooksRight=/^[A-Z]{4}$/.test(code);
+    const code=await A.evaluate(()=>document.getElementById('netCodeBig').textContent);out.codeLooksRight=/^[A-Z]{3} [A-Z]{3}$/.test(code);
     await A.screenshot({path:'net-code.png'});
     await B.fill('#netCode',code.toLowerCase());await B.click('#bNetJoin');
     await A.waitForFunction(()=>G.net&&G.mode==='board',null,{timeout:120000});await B.waitForFunction(()=>G.net&&G.mode==='board',null,{timeout:120000});
