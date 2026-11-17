@@ -18,6 +18,7 @@ Open `index.html` — no install, no accounts, works offline. Progress saves in 
 - **Controller:** standard gamepads work for driving, gadgets and menus. Gadgets are assigned to A, X, B, RB, LB, R3, L3 in fitting order; a bot with more than seven keyed gadgets needs the keyboard for the rest.
 - **Sandbox freedom:** in courses players build or load there is no ceiling, no gadget or upgrade slot limit and no ban on gadget pairs. A course rule set by its builder (for example "1 gadget") still applies, and so does its budget.
 - **Ceiling:** every built-in course has a striped ceiling 13 m above the highest nearby ground. Flying into it sends the bot back to the last checkpoint with the usual reset penalty.
+- **Gold bonus:** every 20 gold medals on built-in levels pays $2000 (at 20, 40, 60 and 80 golds).
 - **Time bonus:** beating your own best time on a built-in level pays $5 to $50 depending on how much faster you were, up to $150 per level in total.
 - **Contraption pieces:** alarm clock, gong, frog, rabbit, chicken, tortoise, cat, mouse, dog, elephant, hamster wheel, cheese, carrot, egg timer, ball popper, toaster, hair dryer, balloon, pinball bumper, pipe, trapdoor, boot, anvil, dominoes and bowling ball. Triggers set off the nearest unused machine within 10 m, otherwise they open the nearest gate.
 - **Puzzle courses and mazes:** a course rule limits how many gadgets fit, so students swap them at pit stops (Enter). Mazes are dark, have several floors, and drain the battery the whole time, so the route has to pass chargers.

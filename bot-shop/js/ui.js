@@ -5,6 +5,7 @@ const App = {
   keys: {}, edge: {}, free: false, gtab: 'stats', from: 'home', paused: false, lastTips: null, shown: false, acc: 0,
 };
 const BUILTIN = builtinCourses();
+const builtinIds = () => BUILTIN.map(c => c.id);
 const cv = $('#stage'), ctx = cv.getContext('2d');
 let VW = 0, VH = 0, DPR = 1;
 function resize() { DPR = Math.min(2, window.devicePixelRatio || 1); VW = innerWidth; VH = innerHeight; cv.width = VW * DPR; cv.height = VH * DPR; }
@@ -42,7 +43,7 @@ function askText(o, done) {
 let pendingCode = null;
 /* ---------- Coins ---------- */
 const Wallet = {
-  get(user) { return Object.assign({ coins: 0, own: {}, sec: {}, paid: {}, made: {}, fast: {}, codes: {} }, Store.get('wallet', {}, user)); },
+  get(user) { return Object.assign({ coins: 0, own: {}, sec: {}, paid: {}, made: {}, fast: {}, codes: {}, gold: 0 }, Store.get('wallet', {}, user)); },
   save(w, user) { Store.set('wallet', w, user); },
   owns(id) { return !PRICE[id] || !!SET().unlockAll || !!Wallet.get().own[id]; },
   add(n, user) { const w = Wallet.get(user); w.coins += n; Wallet.save(w, user); },
@@ -103,7 +104,7 @@ function showHome() {
   const beaten = BUILTIN.filter(c => bestOf(c.id)).length;
   const sect = (kind, title, sub, group) => { const list = BUILTIN.filter(c => group ? c.group === group : c.kind === kind && !c.group && !c.boss).sort((a, b) => (a.stars || 1) - (b.stars || 1)); const sec = SECTIONS.find(x => x.id === (group || kind)), got = Wallet.get().sec[sec.id]; return `<div class="sect"><h2><span class="tag ${kind}">${group === 'gizmo' ? 'contraption' : kind}</span>${title}<small>${sub} ${list.filter(c => bestOf(c.id)).length} of ${list.length} beaten. ${got ? '✔ Bonus earned.' : `Finish them all for a <b style="color:var(--y)">$${sec.bonus}</b> bonus.`}</small></h2><div class="cards">${list.map(c => card(c)).join('')}</div></div>`; };
   $('#home').innerHTML = `<div class="stripe"></div><div class="wrap">
-    <div class="hero"><div><h1>Bot <span>Assembly</span> Shop</h1><p>Build a robot from parts. Then drive it through the course. If it gets stuck, go back to the shop and engineer a better one. <b>${beaten} of ${BUILTIN.length}</b> levels beaten.</p></div>
+    <div class="hero"><div><h1>Bot <span>Assembly</span> Shop</h1><p>Build a robot from parts. Then drive it through the course. If it gets stuck, go back to the shop and engineer a better one. <b>${beaten} of ${BUILTIN.length}</b> levels beaten. 🥇 <b>${goldCount(Store.get('best', {}))}</b> gold medals: every ${GOLD_SET} golds pays <b style="color:var(--y)">$${GOLD_BONUS}</b>.</p></div>
       <div class="acts"><span class="me">👤 <b>${esc((Players.all()[Store.user] || {}).name || '')}</b></span><span class="coins" title="Your coins">🪙 $${Wallet.get().coins}</span><button data-h="out">Switch player</button><button data-h="store" class="primary">🛒 Store</button><button data-h="how">❓ How to play</button><button data-h="log">📓 Engineer's notebook</button><button data-h="paint">🎨 My bot</button><button data-h="set">⚙️ Settings</button></div></div>
     ${sect('speed', 'Speed courses', 'Fastest time wins.')}
     ${sect('strength', 'Strength courses', 'Climb, push and break through.')}
@@ -499,6 +500,7 @@ function showResult() {
       const w = Wallet.get(), pay = levelPay(c, best[c.id].medal) - (w.paid[c.id] || 0), secId = c.boss ? 'boss' : sectionOf(c), sec = SECTIONS.find(x => x.id === secId);
       if (pay > 0) { w.coins += pay; w.paid[c.id] = levelPay(c, best[c.id].medal); extra += `<p class="pay">🪙 +$${pay} coins</p>`; }
       if (sec && !w.sec[secId] && BUILTIN.filter(k => (k.boss ? 'boss' : sectionOf(k)) === secId).every(k => best[k.id])) { w.sec[secId] = 1; w.coins += sec.bonus; extra += `<p class="pay">🏆 You finished every level in ${sec.name}! Bonus: +$${sec.bonus}</p>`; }
+      { const golds = goldCount(best), sets = Math.floor(golds / GOLD_SET); if (sets > w.gold) { const n = sets - w.gold; w.gold = sets; w.coins += n * GOLD_BONUS; extra += `<p class="pay">🥇 ${sets * GOLD_SET} gold medals! Bonus: +$${n * GOLD_BONUS}</p>`; } else if (medal === 'gold') extra += `<p style="font-size:13px">🥇 ${golds} gold medal${golds === 1 ? '' : 's'}. ${GOLD_SET - golds % GOLD_SET} more for a $${GOLD_BONUS} bonus.</p>`; }
       Wallet.save(w); extra += `<p style="font-size:13px">You have $${w.coins}. Spend it in the Store.</p>`;
     }
     if (!c.builtin) { const mine = loadMyCourses().find(m => m.id === c.id); if (mine && App.from === 'editor' && (!c.par || d.time < c.par)) { c.par = +d.time.toFixed(2); saveMyCourse(c); extra += '<p>✔ Course verified! Your time is now the time to beat.</p>'; const w = Wallet.get(); if (!w.made[c.id]) { w.made[c.id] = 1; w.coins += 40; Wallet.save(w); extra += '<p class="pay">🪙 +$40 for building a course that can be beaten</p>'; } } }
