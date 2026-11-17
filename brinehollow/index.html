@@ -105,12 +105,14 @@
     <tr><td>F · Q</td><td>Shove (knockback) · Brace (throws a Shove back at the attacker)</td></tr>
     <tr><td>C</td><td>Your hero's signature ability (shown under the picker)</td></tr>
     <tr><td>1 · 2 · 3</td><td>Buy Rigging. Every item has a Low-Tide face and a High-Tide face</td></tr>
+    <tr><td>Controller</td><td>Left stick move · right stick aim · RT fire · LT tether · A jump · B shove · RB brace · Y ability · X reload · D-pad ← ↑ → buy Rigging · Start pause</td></tr>
     <tr><td>Wake</td><td>Move fast (tether, current) to fill the blue ring. Full Wake: next shot hits ×3 and refills your magazine</td></tr>
   </table>
   <div id="pickrow"><b>Your crew:</b> <span id="side"></span></div>
   <div id="pickrow2"><b>Your hand:</b> <span id="pick"></span></div>
   <div id="kit"></div>
   <button id="go">Cast off</button>
+  <span id="padhint" style="display:none;margin-left:14px;font-size:12px;text-transform:uppercase">Controller found: D-pad ← → picks a hero · Y swaps crew · A casts off</span>
 </div></div>
 
 <script>
@@ -4622,7 +4624,9 @@ function updateFields(dt) {
 /* ---------- player ---------- */
 const keys = {}, mouse = {down: false};
 let yaw = PT ? 0 : Math.PI, pitch = -.08;      // face down the lane toward the enemy ship
-const locked = () => TEST || document.pointerLockElement === renderer.domElement;
+let padMode = false;      // playing on a controller: the game runs without the mouse being captured
+const pad = {f: 0, s: 0, fire: false, jump: false, prev: []};
+const locked = () => TEST || padMode || document.pointerLockElement === renderer.domElement;
 addEventListener('keydown', e => { keys[e.code] = true; if (e.code === 'Space') e.preventDefault(); onKey(e.code); });
 addEventListener('keyup', e => keys[e.code] = false);
 addEventListener('mousemove', e => {
@@ -4678,15 +4682,15 @@ function updatePlayer(dt) {
   const speedMul = p.rig[1] && !high ? 1.15 : 1;
   let fx_ = 0, fz_ = 0;
   if (p.stun <= 0) {
-    const f = (keys.KeyW ? 1 : 0) - (keys.KeyS ? 1 : 0), s = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0);
+    const f = (keys.KeyW ? 1 : 0) - (keys.KeyS ? 1 : 0) + pad.f, s = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0) + pad.s;
     fx_ = -Math.sin(yaw) * f + Math.cos(yaw) * s; fz_ = -Math.cos(yaw) * f - Math.sin(yaw) * s;
     const l = Math.hypot(fx_, fz_); if (l > 1) { fx_ /= l; fz_ /= l; }
-    if (keys.Space && (p.onGround || p.swim) && !p.tether) { p.vel.y = p.swim ? 7.5 : 8.6; p.onGround = false; }
+    if ((keys.Space || pad.jump) && (p.onGround || p.swim) && !p.tether) { p.vel.y = p.swim ? 7.5 : 8.6; p.onGround = false; }
   }
   if (p.tether) {
     const t = p.tether; t.t -= dt;
     tmp2.copy(t.p).sub(p.pos).setY(t.p.y - p.pos.y - 1); const d = tmp2.length();
-    if (d < 2.4 || t.t <= 0 || keys.Space && t.t < 1.3) { p.tether = null; if (p.vel.y < 6) p.vel.y += 5; }
+    if (d < 2.4 || t.t <= 0 || (keys.Space || pad.jump) && t.t < 1.3) { p.tether = null; if (p.vel.y < 6) p.vel.y += 5; }
     else { p.vel.addScaledVector(tmp2.normalize(), 70 * dt); if (p.vel.length() > 28) p.vel.setLength(28); }
   }
   moveEnt(p, dt, fx_, fz_, 9 * p.kit.speed * speedMul * (p.carry ? .9 : 1));
@@ -4696,7 +4700,7 @@ function updatePlayer(dt) {
   // weapon
   p.fireT -= dt;
   if (p.reload > 0) { p.reload -= dt; if (p.reload <= 0) p.ammo = 24; }
-  if (mouse.down && p.fireT <= 0 && p.reload <= 0 && p.stun <= 0 && !p.carry) {
+  if ((mouse.down || pad.fire) && p.fireT <= 0 && p.reload <= 0 && p.stun <= 0 && !p.carry) {
     if (p.ammo <= 0) p.reload = 1.5;
     else {
       const wakeShot = p.wake >= 100;
@@ -5020,14 +5024,48 @@ let last = performance.now(), acc = 0;
 function frame(now) {
   const real = Math.min(.1, (now - last) / 1000); last = now;
   if (state.started && locked()) { acc += real * SPEED; let n = 0; while (acc >= 1 / 60 && n++ < 40) { step(1 / 60); acc -= 1 / 60; } }
+  pollPad(real);
   render(real);
   requestAnimationFrame(frame);
 }
-function start() {
+function start(viaPad) {
   $('overlay').style.display = 'none'; state.started = true;
   try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
-  if (!TEST) renderer.domElement.requestPointerLock();
+  if (viaPad === true) setPadMode(true); else if (!TEST) renderer.domElement.requestPointerLock();
 }
+/* ---------- controller (standard gamepad layout) ---------- */
+const PAD_LABELS = [['E', 'F', 'Q', 'C'], ['LT', 'B', 'RB', 'Y']];
+function setPadMode(on) {
+  if (padMode === on) return; padMode = on;
+  document.querySelectorAll('#bc .ab kbd').forEach((k, i) => k.textContent = PAD_LABELS[on ? 1 : 0][i]);
+}
+function pause() { setPadMode(false); if (document.pointerLockElement) document.exitPointerLock(); $('overlay').style.display = 'flex'; $('go').textContent = 'Resume'; pad.fire = pad.jump = false; pad.f = pad.s = 0; }
+function pollPad(dt) {
+  const gp = navigator.getGamepads ? [...navigator.getGamepads()].find(q => q && q.connected) : null;
+  if (!gp) { pad.f = pad.s = 0; pad.fire = pad.jump = false; return; }
+  const down = i => !!gp.buttons[i] && (gp.buttons[i].pressed || gp.buttons[i].value > .4), now = gp.buttons.map((b, i) => down(i));
+  const edge = i => now[i] && !pad.prev[i], ax = i => { const v = gp.axes[i] || 0; return Math.abs(v) < .18 ? 0 : (v - Math.sign(v) * .18) / .82; };
+  const inMenu = $('overlay').style.display !== 'none';
+  if (state.over) { if (edge(0) || edge(9)) location.reload(); }
+  else if (inMenu) {                                    // title or pause: d-pad picks a hero, Y swaps crew, A or Start casts off
+    const names = ROSTER[PT], i = names.indexOf(player.who), step_ = (edge(15) ? 1 : 0) - (edge(14) ? 1 : 0);
+    if (step_ && !state.started) pickHero(names[(i + step_ + names.length) % names.length]);
+    if (edge(3) && !state.started) document.querySelector('#side button:not(.on)').click();
+    if (edge(0) || edge(9)) start(true);
+  } else {
+    const any = now.some(Boolean) || [0, 1, 2, 3].some(i => ax(i));
+    if (any && !padMode) setPadMode(true);
+    if (edge(9)) { pause(); pad.prev = now; return; }
+    pad.s = ax(0); pad.f = -ax(1);
+    const lx = ax(2), ly = ax(3);                        // right stick looks; a curve keeps small movements precise
+    yaw -= lx * Math.abs(lx) ** .6 * 3.1 * dt; pitch = clamp(pitch - ly * Math.abs(ly) ** .6 * 2.1 * dt, -1.2, 1.2);
+    pad.fire = now[7]; pad.jump = now[0];
+    if (edge(6)) fireTether();
+    for (const [b, c] of [[1, 'KeyF'], [2, 'KeyR'], [3, 'KeyC'], [4, 'KeyC'], [5, 'KeyQ'], [14, 'Digit1'], [12, 'Digit2'], [15, 'Digit3']]) if (edge(b)) onKey(c);
+  }
+  pad.prev = now;
+}
+addEventListener('gamepadconnected', () => { $('padhint').style.display = 'block'; if (state.started) say('Controller connected'); });
 $('go').onclick = start;
 renderer.domElement.addEventListener('click', () => { if (state.started && !locked()) renderer.domElement.requestPointerLock(); });
 document.addEventListener('pointerlockchange', () => {
@@ -5035,7 +5073,7 @@ document.addEventListener('pointerlockchange', () => {
 });
 if (TEST) start();
 say(`Kill the ${THEIRS} Foghorn, then cut their Anchor Chain. Watch the tide clock.`);
-window.__bh = {PT, KITS, useAbility, zones, walls, posts, state, ents, heroes, player, ROSTER, heroLook, pickHero, model, scene, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
+window.__bh = {PT, pad, isPad: () => padMode, KITS, useAbility, zones, walls, posts, state, ents, heroes, player, ROSTER, heroLook, pickHero, model, scene, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
   setAim: (y, p) => { yaw = y; pitch = p; updateCamera(); }};
 requestAnimationFrame(frame);
 }

@@ -67,6 +67,18 @@ The game is drawn as a graphic novel, following the art sheets in `reference/` (
 | E or right click | Tether |
 | F, Q | Shove, Brace |
 | C | Your hero's signature ability |
+
+A controller works too (any pad the browser reports with the standard layout, such as Xbox or PlayStation pads). Press a button once so the browser sees it.
+
+| Controller | Action |
+| --- | --- |
+| Left stick, right stick | Move, aim |
+| RT, LT | Fire, tether |
+| A, B, RB | Jump, Shove, Brace |
+| Y (or LB), X | Signature ability, reload |
+| D-pad left, up, right | Buy Rigging 1, 2, 3 |
+| Start | Pause and resume |
+| On the title screen | D-pad left and right pick a hero, Y swaps crew, A or Start casts off |
 | 1, 2, 3 | Buy Rigging |
 
 ## Not in yet
