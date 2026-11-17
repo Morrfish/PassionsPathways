@@ -6,6 +6,7 @@ const normAng = a => { a = (a + Math.PI) % (2 * Math.PI); if (a < 0) a += 2 * Ma
 /* ---------------- World ---------------- */
 /* Every course has a ceiling that follows the ground: fly into it and you are sent back to the last checkpoint.
    It sits CEIL_GAP above the highest ground within CEIL_REACH on either side, so it steps up ahead of cliffs. */
+const CP_REACH = 2.8;   // how far above its base a checkpoint flag can be touched
 const CEIL_GAP = 13, CEIL_REACH = 12;
 function ceilingOf(c) {
   const top = []; for (let x = 0; x < c.w; x++) { let y = c.h - 1; while (y >= 0 && !tShape(tget(c, x, y))) y--; top.push(y + 1); }
@@ -561,7 +562,9 @@ function stepGame(G, inp) {
   if (Math.abs(normAng(ang)) > 1.9 && sp < 1.5 && !bot.rope) { bot.flipT += DT; if (bot.flipT > 1) { live.flipped = true; if (!bot.flipCounted) { bot.flipCounted = true; st.flips++; } } }
   else { bot.flipT = 0; bot.flipCounted = false; }
   // checkpoints and finish
-  for (const cp of G.cps) if (!cp.hit && Math.abs(p.x - cp.x) < 1.6 && p.y > cp.y - 1 && p.y < cp.y + 8) { cp.hit = true; bot.q = charges(); G.respawn = { x: cp.x, y: cp.y, energy: bot.energy }; G.flash = { text: 'Checkpoint!', t: 1.2, good: true }; sfx('cp'); }
+  // a checkpoint only counts if the bot goes through the flag: flying over it does not
+  for (const cp of G.cps) if (!cp.hit && !cp.miss && Math.abs(p.x - cp.x) < 1.6 && p.y >= cp.y + CP_REACH) { cp.miss = true; G.flash = { text: 'Too high! That checkpoint did not count.', t: 1.6 }; }
+  for (const cp of G.cps) if (!cp.hit && Math.abs(p.x - cp.x) < 1.6 && p.y > cp.y - 1 && p.y < cp.y + CP_REACH) { cp.hit = true; bot.q = charges(); G.respawn = { x: cp.x, y: cp.y, energy: bot.energy }; G.flash = { text: 'Checkpoint!', t: 1.2, good: true }; sfx('cp'); }
   if (G.finish && !G.done && Math.abs(p.x - G.finish.x) < 1.8 && p.y > G.finish.y - 1 && p.y < G.finish.y + 8) { G.done = { win: true, time: G.clock + G.penalties }; sfx('win'); }
   live.target = s.has.hook && !bot.rope ? findHookTarget(G) : null;
   live.pit = G.pitNow;
