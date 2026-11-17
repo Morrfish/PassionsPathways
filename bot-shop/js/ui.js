@@ -204,6 +204,7 @@ function coinCodeDialog() {
 }
 function howTo() {
   modal(`<h2>How to play</h2><p><b>1. Scout the course.</b> The shop shows what is ahead: hills, ice, gaps, crates.<br><b>2. Build your bot.</b> Pick a chassis, wheels, tires, motor, gearing, battery and gadgets. Stay inside the budget.<br><b>3. Send it.</b> Drive to the finish flag. Watch your health: long falls and hard crashes break the bot.<br><b>4. Improve.</b> Go back to the shop, change one thing, and try again.<br><b>5. Earn coins.</b> Every level you beat pays coins, and finishing a whole section pays a big bonus. Spend them in the Store.</p>
+  <p>🎮 <b>Controller:</b> plug one in and press any button. Stick, D-pad or triggers drive. <b>Y</b> turns around, <b>Back</b> is checkpoint, <b>Start</b> pauses. Your gadgets go on A, X, B, RB, LB in the order you fitted them; the corner of the screen shows which is which. In menus, the stick moves, <b>A</b> picks, <b>B</b> goes back and LB / RB switch tabs.</p>
   <div class="keys"><kbd>→ / D</kbd><span>Drive forward</span><kbd>← / A</kbd><span>Reverse</span><kbd>E</kbd><span>Grapple Hook: grab or let go. Hold <b>↑</b> to reel in, <b>↓</b> to let rope out, <b>← →</b> to swing.</span>${PARTS.gadgets.filter(g => g.key && g.id !== 'hook').map(g => `<kbd>${g.key}</kbd><span>${g.name}: ${g.act.toLowerCase()}</span>`).join('')}<kbd>Tab</kbd><span>Turn around, so your tools point the other way</span><kbd>Enter</kbd><span>At a pit stop: swap gadgets</span><kbd>R</kbd><span>Back to the last checkpoint (+${RESET_PENALTY} seconds)</span><kbd>Backspace</kbd><span>Restart the course</span></div>
   <div class="acts"><button class="primary" data-m="x" data-focus>Got it</button></div>`);
 }
@@ -413,11 +414,12 @@ function startRun() {
   startHud();
 }
 function startHud() {
-  const s = App.G.spec, keys = [['→ ←', 'Drive / reverse']], tb = (code, label, aria) => `<button data-key="${code}" aria-label="${aria}">${label}</button>`;
+  Gp.assign(App.G.spec.gadgets); const pad = Gp.on, pk = code => { const l = Gp.label(code); return pad && l ? ` <kbd class="pb">${l}</kbd>` : ''; };
+  const s = App.G.spec, keys = [[pad ? '→ ← <kbd class="pb">Stick</kbd> <kbd class="pb">RT</kbd>' : '→ ←', 'Drive / reverse']], tb = (code, label, aria) => `<button data-key="${code}" aria-label="${aria}">${label}</button>`;
   let tR = '';
-  for (const g of s.gadgets) if (g.key) { keys.push([g.key, g.act]); tR += tb(g.code, g.icon, g.act); if (g.id === 'hook') { keys.push(['↑ ↓', 'Reel rope in / out'], ['→ ←', 'Swing while hanging']); tR += tb('ArrowUp', '⬆', 'Reel in'); } }
-  keys.push(['Tab', 'Turn around'], ['R', `Checkpoint (+${RESET_PENALTY}s)`]); tR += tb('Tab', '↔', 'Turn around');
-  if (App.course.objs.some(o => o.t === 'pit')) keys.push(['Enter', 'Swap gadgets at a pit stop']);
+  for (const g of s.gadgets) if (g.key) { keys.push([g.key + pk(g.code), g.act]); tR += tb(g.code, g.icon, g.act); if (g.id === 'hook') { keys.push(['↑ ↓', 'Reel rope in / out'], ['→ ←', 'Swing while hanging']); tR += tb('ArrowUp', '⬆', 'Reel in'); } }
+  keys.push(['Tab' + (pad ? ' <kbd class="pb">Y</kbd>' : ''), 'Turn around'], ['R' + (pad ? ' <kbd class="pb">Back</kbd>' : ''), `Checkpoint (+${RESET_PENALTY}s)`]); if (pad) keys.push(['<kbd class="pb">Start</kbd>', 'Pause']); tR += tb('Tab', '↔', 'Turn around');
+  if (App.course.objs.some(o => o.t === 'pit')) keys.push(['Enter' + (pad ? ' <kbd class="pb">Y</kbd>' : ''), 'Swap gadgets at a pit stop']);
   $('#hBR').innerHTML = keys.map(k => `<div><kbd>${k[0]}</kbd>${k[1]}</div>`).join('');
   $('#hFuelBox').style.display = s.has.rocket ? '' : 'none'; $('#hAmmoBox').style.display = s.has.cannon ? '' : 'none'; $('#hHpBox').style.display = App.G.dmgOn ? '' : 'none';
   $('#tL').innerHTML = tb('ArrowLeft', '◀', 'Reverse') + tb('ArrowRight', '▶', 'Drive');
@@ -457,7 +459,7 @@ addEventListener('keyup', e => { App.keys[e.code] = false; });
 addEventListener('blur', () => { App.keys = {}; });
 function readInput() {
   const k = App.keys, e = App.edge;
-  return { x: ((k.ArrowRight || k.KeyD) ? 1 : 0) - ((k.ArrowLeft || k.KeyA) ? 1 : 0), up: !!(k.ArrowUp || k.KeyW), down: !!(k.ArrowDown || k.KeyS), boost: !!(k.ShiftLeft || k.ShiftRight), hook: !!e.KeyE, jump: !!e.Space, right: !!e.KeyF, reset: !!e.KeyR, fire: !!e.KeyC, vault: !!e.KeyV, sledge: !!e.KeyB, shield: !!e.KeyJ, balloon: !!k.KeyN, grab: !!e.KeyG, horn: !!e.KeyH, magnet: !!k.KeyM, prop: !!k.KeyX, climb: !!k.KeyZ, turn: !!e.Tab, hover: !!k.KeyU, anchor: !!k.KeyY, drone: !!e.KeyQ, bridge: !!e.KeyL, bomb: !!e.KeyK, slowmo: !!e.KeyO, beacon: !!e.KeyI };
+  return { x: clamp(((k.ArrowRight || k.KeyD) ? 1 : 0) - ((k.ArrowLeft || k.KeyA) ? 1 : 0) + Gp.x, -1, 1), up: !!(k.ArrowUp || k.KeyW), down: !!(k.ArrowDown || k.KeyS), boost: !!(k.ShiftLeft || k.ShiftRight), hook: !!e.KeyE, jump: !!e.Space, right: !!e.KeyF, reset: !!e.KeyR, fire: !!e.KeyC, vault: !!e.KeyV, sledge: !!e.KeyB, shield: !!e.KeyJ, balloon: !!k.KeyN, grab: !!e.KeyG, horn: !!e.KeyH, magnet: !!k.KeyM, prop: !!k.KeyX, climb: !!k.KeyZ, turn: !!e.Tab, hover: !!k.KeyU, anchor: !!k.KeyY, drone: !!e.KeyQ, bridge: !!e.KeyL, bomb: !!e.KeyK, slowmo: !!e.KeyO, beacon: !!e.KeyI };
 }
 function coachTips(G) {
   const st = G.stats, s = G.spec, t = [], n = (v, w) => `${v} time${v > 1 ? 's' : ''}`;
@@ -709,9 +711,66 @@ function editorFrame(ts) {
 }
 
 /* ================= Main loop ================= */
+
+/* ---------------- Game controller ----------------
+   Standard-layout gamepads (Xbox, PlayStation, Switch Pro and most USB pads).
+   On a course: stick, D-pad or triggers drive. Y turns around, Back is checkpoint, Start pauses.
+   The gadgets on the bot are handed out to A, X, B, RB, LB, R3, L3 in the order they were fitted.
+   Everywhere else: stick or D-pad moves the highlight, A presses it, B goes back. */
+const PAD_BTN = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back', 'Start', 'L3', 'R3'];
+const PAD_FREE = [0, 2, 1, 5, 4, 11, 10];   // buttons gadgets can take, in order
+const Gp = {
+  on: false, prev: [], map: {}, navT: 0, x: 0,
+  get() { const l = navigator.getGamepads ? navigator.getGamepads() : []; for (const g of l) if (g && g.connected && g.buttons.length >= 10) return g; return null; },
+  /* which button fires which gadget on this bot: { buttonIndex: keyCode } */
+  assign(gadgets) { Gp.map = {}; let i = 0; for (const g of gadgets) if (g.key && i < PAD_FREE.length) Gp.map[PAD_FREE[i++]] = g.code; },
+  label(code) { for (const b in Gp.map) if (Gp.map[b] === code) return PAD_BTN[b]; return ''; },
+  poll(ts) {
+    const g = Gp.get(); if (!g) { if (Gp.on) { Gp.on = false; Gp.x = 0; document.body.classList.remove('gp'); if (App.mode === 'run' && App.G) startHud(); } return; }
+    if (!Gp.on) { Gp.on = true; document.body.classList.add('gp'); toast('🎮 Controller connected'); if (App.mode === 'run' && App.G) startHud(); }
+    const b = g.buttons.map(k => k.pressed || k.value > 0.5), hit = i => b[i] && !Gp.prev[i], ax = g.axes[0] || 0, ay = g.axes[1] || 0, dz = v => Math.abs(v) < 0.25 ? 0 : v;
+    const dx = (b[15] ? 1 : 0) - (b[14] ? 1 : 0) || Math.sign(dz(ax)) * (Math.abs(ax) > 0.6 ? 1 : 0), dy = (b[13] ? 1 : 0) - (b[12] ? 1 : 0) || Math.sign(dz(ay)) * (Math.abs(ay) > 0.6 ? 1 : 0);
+    const inModal = $('#modal').classList.contains('on');
+    if (App.mode === 'run' && App.G && !inModal) {
+      // driving: analog stick or triggers, D-pad as full throttle
+      const trig = (g.buttons[7] ? g.buttons[7].value : 0) - (g.buttons[6] ? g.buttons[6].value : 0);
+      Gp.x = clamp((b[15] ? 1 : 0) - (b[14] ? 1 : 0) + dz(ax) + (Math.abs(trig) > 0.1 ? trig : 0), -1, 1);
+      const set = (code, down, was) => { if (down && !was) App.edge[code] = true; if (down !== was) App.keys[code] = down; };
+      set('ArrowUp', b[12] || ay < -0.5, Gp.prev.up); set('ArrowDown', b[13] || ay > 0.5, Gp.prev.dn); Gp.prev.up = b[12] || ay < -0.5; Gp.prev.dn = b[13] || ay > 0.5;
+      for (const i in Gp.map) set(Gp.map[i], !!b[i], !!Gp.prev[i]);
+      if (hit(3)) { if (App.G.live.pit && !App.G.done) pitDialog(); else App.edge.Tab = true; }
+      if (hit(8)) App.edge.KeyR = true;
+      if (hit(9)) togglePause();
+    } else {
+      Gp.x = 0;
+      if (App.mode === 'run' && inModal && App.paused && (hit(9) || hit(1)) && $('#unp')) { closeModal(); App.paused = false; }
+      else if (hit(1)) Gp.back();
+      if (hit(0)) { const el = document.activeElement; if (el && el !== document.body && Gp.scope().contains(el)) el.click(); else Gp.move(1, 0); }
+      if (dx || dy) { if (ts > Gp.navT) { Gp.move(dx, dy); Gp.navT = ts + (Gp.held ? 130 : 320); Gp.held = true; } } else { Gp.navT = 0; Gp.held = false; }
+      if (hit(4) || hit(5)) { const tabs = [...Gp.scope().querySelectorAll('.tabs button, [data-tab]')].filter(e => e.offsetParent); if (tabs.length) { const i = tabs.findIndex(e => e.classList.contains('on')); tabs[(i + (hit(5) ? 1 : tabs.length - 1) + tabs.length) % tabs.length].click(); } }
+    }
+    Gp.prev = Object.assign(b, { up: Gp.prev.up, dn: Gp.prev.dn });
+  },
+  scope() { return $('#modal').classList.contains('on') ? $('#modal .mbox') : (document.querySelector('#login.on, #home.on, #garage.on, #edUI.on') || document.body); },
+  items() { return [...Gp.scope().querySelectorAll('button, [tabindex="0"], input, select, a[href]')].filter(e => e.offsetParent && !e.disabled); },
+  /* move the highlight to the nearest control in that direction */
+  move(dx, dy) {
+    const list = Gp.items(); if (!list.length) return; const cur = document.activeElement;
+    if (!cur || !list.includes(cur)) { (Gp.scope().querySelector('[data-focus]') || list[0]).focus(); return; }
+    const r = cur.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2; let best = null, bs = 1e9;
+    for (const e of list) { if (e === cur) continue; const q = e.getBoundingClientRect(), ex = q.left + q.width / 2, ey = q.top + q.height / 2, along = (ex - cx) * dx + (ey - cy) * dy, across = Math.abs((ex - cx) * dy) + Math.abs((ey - cy) * dx); if (along < 4) continue; const sc = along + across * 2.5; if (sc < bs) { bs = sc; best = e; } }
+    if (best) { best.focus(); best.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }
+  },
+  back() {
+    if ($('#modal').classList.contains('on')) { const x = $('#modal #askX, #modal #pitNo, #modal [data-m="x"]'); if (x) x.click(); else closeModal(); return; }
+    const bk = document.querySelector('#garage.on [data-g="back"], #edUI.on [data-e="back"]'); if (bk) bk.click();
+  },
+};
+addEventListener('gamepadconnected', () => Gp.poll(performance.now()));
 let lastTs = 0;
 function frame(ts) {
   const dt = Math.min(0.05, (ts - lastTs) / 1000 || 0); lastTs = ts;
+  try { Gp.poll(ts); } catch (err) { console.error(err); }
   try {
     if (App.mode === 'run' && App.G) runFrame(dt);
     else if (App.mode === 'editor') editorFrame(ts);
