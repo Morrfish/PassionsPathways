@@ -11,7 +11,7 @@ A playable prototype of the **tide and lantern loop** from the Brinehollow desig
 - **Movement:** a harpoon **tether** that pulls you to whatever you hit, or yanks an enemy hero toward you and slows them.
 - **Wake:** moving fast (tether, current) fills the blue ring. A full Wake makes your next shot hit ×3 and refills the magazine.
 - **Shove and Brace:** Shove knocks enemies back; a timed Brace throws a Shove back at the attacker. Bots show a "SHOVE!" tell first.
-- **Rigging:** three items, each with a Low-Tide face and a High-Tide face. Bilge Pump also costs Pearls, so it needs a trip to the seabed.
+- **Rigging:** nine items, each with a Low-Tide face and a High-Tide face. Three cost Pearls, so they need trips to the seabed.
 - **Foghorns** knock heroes back with a sound-cannon blast, and guard the chain until they fall.
 
 ## Rigging
@@ -73,7 +73,7 @@ The game is drawn as a graphic novel, following the art sheets in `reference/` (
 - **Anatomical rig (Teal crew):** `adult()`, `head()`, `hand()`, `sleeve()`, `arms()` and friends in `blender/models.py` build adult proportions, a hand-placed head surface driven by the `HEAD_PROFILE` table, articulated hands and folded cloth, following `reference/target-*.webp`. Ink is projected onto the sculpted head in the game. All twenty characters use it.
 - **Drawn faces:** each character's eyes, brows, mouth, scars, freckles and face lines are inked on a canvas and wrapped over the front of the head, above a sculpted nose and jaw. The `FACES` table in `game.src.html` sets each expression.
 - **Proportions and faces:** characters have long legs, heads a third larger than the body suggests, and big hands. Skin takes only faint ink marks and never falls into hat shadow, so faces stay readable.
-- **Walking:** each character's legs are separate parts hinged at the hip (`done()` in `blender/models.py`); the game swings them with ground speed and adds a body bob and lean.
+- **Walking:** each character's thighs, shins and free arm are separate parts hinged at the hip, knee and shoulder (`done()` in `blender/models.py`). The game swings the legs with ground speed, bends the knee on the forward swing, swings the free arm against its leg, and adds a body bob and lean.
 - **Rounded forms:** models are smooth-shaded with rounded edges, tapered limbs and soft shoulders. Faces have rounded cheeks and noses, lidded eyes, brows and framing hair; coats have open tilted collars, buttons, turned cuffs and pleated skirts, so the cel shading reads as folds. Mainsail's ribbon comes over the shoulder, Undertow's wave is on the chest, and Wickie has open cheeks over a parted beard.
 - **The starting cast (Blender):** twenty characters built from one rig in `blender/models.py`, each with its own build, coat length, headgear and one piece of signature gear. Every hero carries the harpoon gun; the signature gear is in the free hand or on the back.
   - **Teal heroes:** Breakwater (the biggest body, long white beard, huge rope coil on one shoulder), Mainsail (tall, floor-length coat, one long ribboned braid, spyglass), Drift (small, short tunic, red scarf, knife), Rivet (bare arms, apron, goggles, great wrench), Bell (the smallest, twin braids, a brass bell held high), Kelp (weed bundle and wicker basket), Skiff (square, bedroll pack, oar taller than the hat), Brine (headscarf instead of a hat, cross apron, bottle).

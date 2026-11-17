@@ -562,7 +562,9 @@ function model(name, ov) {
   o.traverse(m => { if (m.isMesh) { parts.push(m); const n = m.material.name; m.material = namedMat(n, ov); m.castShadow = m.material.type !== 'MeshBasicMaterial'; m.receiveShadow = !/^(skin|face|head)_/.test(n); m.userData.noHull = n.startsWith('face_'); m.userData.mn = n; } });   // faces are never lost in hat shadow
   if (!NO_HULL.test(name)) for (const m of parts) if (m.material.type !== 'MeshBasicMaterial' && !m.userData.noHull) m.add(new THREE.Mesh(m.geometry, m.userData.mn.startsWith('head_') || /^c_(1c1820|e8e4da|3a2c24|7a3a22|3a2a1e|22201e)$/.test(m.userData.mn) ? headHull : FACES[name] && FACES[name].sculpt ? thinHull : hullMat));
   if (FACES[name]) addFace(o, name);
-  o.userData.legs = o.children.filter(c => /_leg[LR]$/.test(c.name));      // hinged at the hip, swung by the walk cycle
+  o.userData.legs = o.children.filter(c => /_leg[LR]$/.test(c.name));
+  o.userData.shins = o.userData.legs.map(l => l.children.find(c => /_shin[LR]$/.test(c.name)));
+  o.userData.arm = o.children.find(c => /_armh?$/.test(c.name));      // hinged at the hip, swung by the walk cycle
   scene.add(o); return o;
 }
 
@@ -1410,8 +1412,13 @@ function render(dt) {
       const live = state.started && locked() && !state.over, sp = live && (e.onGround || e.swim) && !(e.stun > 0) ? Math.min(e.speedNow || 0, 14) : 0;
       e.walk = (e.walk || 0) + sp * dt * 1.25 * SPEED / (e.mesh.userData.stride || 1);
       e.gait = (e.gait || 0) + (Math.min(.46, sp * .06) - (e.gait || 0)) * Math.min(1, dt * 10);
-      const sw = Math.sin(e.walk) * e.gait;
-      legs[0].rotation.x = sw; legs[1].rotation.x = -sw;
+      const g = e.gait, ud = e.mesh.userData;
+      for (let i = 0; i < 2; i++) {                    // a leg swings forward with its knee bent, then straightens to plant
+        const ph = e.walk + i * Math.PI;
+        legs[i].rotation.x = -Math.sin(ph) * g + Math.max(0, Math.cos(ph)) * g * .35;
+        if (ud.shins[i]) ud.shins[i].rotation.x = (Math.max(0, Math.cos(ph)) * 1.9 + .12) * g;
+      }
+      if (ud.arm) ud.arm.rotation.x = Math.sin(e.walk) * g * (ud.arm.name.endsWith('armh') ? .4 : 1.15);      // the free arm swings against its leg
       e.mesh.position.y += Math.abs(Math.cos(e.walk)) * e.gait * .07 - (e.onGround ? 0 : 0);
       e.mesh.rotation.x = e.gait * .12 + (e.onGround || e.swim ? 0 : -.18);
     }

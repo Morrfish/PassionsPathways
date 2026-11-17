@@ -68,6 +68,7 @@ def limb(p0, p1, r0, r1, m, v=10):
     bpy.ops.mesh.primitive_cone_add(vertices=v, radius1=r0, radius2=r1, depth=d.length, location=(a + b) / 2,
                                     rotation=Vector((0, 0, 1)).rotation_difference(d).to_euler())
     return fin(m)
+ARMS = {}       # the free arm, hinged at the shoulder
 LEGS = {}       # parts of each leg (keys -1 and 1), kept as separate objects hinged at the hip so the game can swing them
 def done(name, k=1.0):
     def join(parts, nm):
@@ -80,16 +81,27 @@ def done(name, k=1.0):
         bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
         o.data.use_auto_smooth = True; o.data.auto_smooth_angle = math.radians(48)   # curved surfaces shade smooth, real corners stay crisp
         return o
+    def hinge(o, at):           # put the object's origin at its joint
+        bpy.ops.object.select_all(action='DESELECT'); o.select_set(True); bpy.context.view_layer.objects.active = o
+        bpy.context.scene.cursor.location = [c * k for c in at]; bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+    def child(o, parent):
+        bpy.context.view_layer.update(); o.parent = parent; o.matrix_parent_inverse = parent.matrix_world.inverted()
     legs = {sd: [o for o in LEGS.get(sd, []) if o in P] for sd in (-1, 1)}
-    taken = set(legs[-1]) | set(legs[1])
+    shins = {sd: [o for o in LEGS.get((sd, 'shin'), []) if o in P] for sd in (-1, 1)}
+    arm = [o for o in ARMS.get('free', []) if o in P] + (P[ARMS['mark']:] if ARMS.get('tail') else []) if ARMS.get('swing') else []
+    taken = set(legs[-1]) | set(legs[1]) | set(arm)
     body = join([o for o in P if o not in taken], name)
-    bpy.context.scene.cursor.location = (0, 0, 0); bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+    hinge(body, (0, 0, 0))
     for sd in (-1, 1):
         if not legs[sd]: continue
-        leg = join(legs[sd], name + ('_legL' if sd < 0 else '_legR'))
-        bpy.context.scene.cursor.location = (sd * LEGS.get('hip', .16) * k, 0, 1.2 * k); bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
-        leg.parent = body
-    bpy.context.scene.cursor.location = (0, 0, 0)
+        tag = 'L' if sd < 0 else 'R'
+        thigh = join([o for o in legs[sd] if o not in shins[sd]], name + '_leg' + tag)
+        hinge(thigh, (sd * LEGS.get('hip', .16), 0, 1.2)); child(thigh, body)
+        if shins[sd]:
+            shin = join(shins[sd], name + '_shin' + tag); hinge(shin, (sd * LEGS.get('knee', .22), -.01, .72)); child(shin, thigh)
+    if arm:
+        a = join(arm, name + ('_armh' if ARMS.get('tail') else '_arm')); hinge(a, ARMS['sh']); child(a, body)
+    bpy.context.scene.cursor.location = (0, 0, 0); ARMS.clear()
     P.clear(); LEGS.clear(); RIG['on'] = False; RIG['lift'] = 0.0
 
 INK, WOOD, DARKWOOD, STEEL, SKIN = 'c_1c1c22', 'c_6b4a34', 'c_2c2630', 'c_8c8f90', 'skin_e2b48a'
@@ -370,7 +382,7 @@ def split_skirt(r_bot, r_top, h, zc, m, folds=9, amp=.1, amp_top=0.0, gap=.3, v=
 def adult(skin, sw=.25, hw=.19, fem=True, legs='c_33302e', coat_hem=.5, hem_r=.36, glove='c_2a2c34', brow=1.0, bulk=1.0):
     """The body: boots, trousers, a belted long coat, arms and hands. The gun is held at the hip in the +X hand."""
     RIG['on'] = False
-    LEGS.clear(); LEGS['hip'] = hw * .55 + .06
+    LEGS.clear(); LEGS['hip'] = hw * .55 + .06; LEGS['knee'] = hw + .04
     for s in (-1, 1):
         n0 = len(P)
         fx, kx, hx = s * (hw + .07), s * (hw + .04), s * hw * .55
@@ -380,9 +392,10 @@ def adult(skin, sw=.25, hw=.19, fem=True, legs='c_33302e', coat_hem=.5, hem_r=.3
         for z in (.2, .34): tor(.07 * bulk, .011, (fx, 0, z), 'c_3a2c22'); box((.03, .012, .03), (fx + s * .02, -.07 * bulk, z), BRASS, r=.004)
         sph(.1 * bulk, (fx, 0, .56), legs, scale=(1, 1, .8))                                   # trousers bloused into the boot
         limb((fx, 0, .52), (kx, -.01, .72), .09 * bulk, .086 * bulk, legs)
+        n1 = len(P)                                                                           # everything so far hangs below the knee
         limb((kx, -.01, .72), (hx + s * .06, 0, 1.26), .105 * bulk, .135 * bulk, legs)        # baggy trousers
         sph(.11 * bulk, (kx, -.015, .74), legs)
-        LEGS[s] = P[n0:]
+        LEGS[s] = P[n0:]; LEGS[(s, 'shin')] = P[n0:n1]
     sph(1, (0, 0, 1.27), legs, scale=(hw + .07, .13 * bulk, .13))
     split_skirt(hem_r, .165 * bulk, 1.5 - coat_hem, (1.5 + coat_hem) / 2, 'team')              # coat skirt, open at the front over the trousers
     split_skirt(hem_r + .014, hem_r - .02, .1, coat_hem + .05, 'team2', amp_top=.092, flare=.42, flare_top=.42 * (1 - .1 / (1.5 - coat_hem)))   # pale hem band, following the skirt
@@ -444,7 +457,7 @@ def gun_at(sw):
     n0 = len(P); harpoon_gun(sw + .01, -.38, 1.62)
     for o in P[n0:]:                                  # the gun, at adult scale, shrunk about the grip
         o.location = Vector((sw + .02, -.3, 1.56)) + (o.location - Vector((sw + .02, -.3, 1.56))) * .56; o.scale = [c * .56 for c in o.scale]
-def arms(sw, skin, glove=GL, r=.058, gun=True, pose='down', bare=False, bracers=False):
+def arms(sw, skin, glove=GL, r=.058, gun=True, pose='down', bare=False, bracers=False, tail=True):
     """Both arms and hands. Returns the free hand's wrist and the grip position."""
     k = r / .058; hs = 1.12 * k ** .5
     def one(sh, el, wr, fwd, side, curl):
@@ -456,12 +469,14 @@ def arms(sw, skin, glove=GL, r=.058, gun=True, pose='down', bare=False, bracers=
         if bracers:
             for t in (.72, .8, .88): tor(r * .8, .011, [a + (b - a) * t for a, b in zip(el, wr)], BRASS, rot=Vector((0, 0, 1)).rotation_difference(Vector(wr) - Vector(el)).to_euler())
         hand(wr, fwd, side, glove or skin, curl=curl, s=hs, gaunt=bool(glove))
-    sh = (-sw - .03, 0, 1.94)
+    sh = (-sw - .03, 0, 1.94); n0 = len(P)
     if pose == 'raise': wr = (-sw - .15, -.2, 2.24); one(sh, (-sw - .13, -.08, 1.98), wr, (0, -.25, 1), (1, 0, 0), 2.2)
     else: wr = (-sw - .1, -.03, 1.3); one(sh, (-sw - .085, .025, 1.6), wr, (0, -.12, -1), (0, -1, 0), 1.2 if pose == 'down' else 2.4)
+    ARMS.update(free=P[n0:], sh=sh, swing=pose != 'raise' and (pose == 'down' or tail))      # a raised arm stays up; a hand holding something swings less
     grip = (sw + .02, -.24, 1.53)
     one((sw + .03, 0, 1.94), (sw + .075, .05, 1.6), grip, (0, -1, -.25), (-1, 0, .3), 2.6)
     if gun: gun_at(sw)
+    ARMS.update(mark=len(P), tail=pose == 'hold' and tail)      # whatever is built next is in that hand
     return wr, grip
 def cross_strap(sw): tor(sw * .9, .022, (0, 0, 1.74), LEATHER, rot=(R(90), R(42), 0), scale=(1, 1.25, 1))
 def satchel(x, y, z=1.3, s=1.0):
@@ -515,11 +530,13 @@ box((.17, .075, .17), (-.25, -.06, 1.3), 'c_7a5a40', r=.03); box((.18, .08, .08)
 cyl(.035, .03, .34, (.12, .16, 2.0), 'c_5a4030', rot=(0, R(38), 0)); tor(.036, .008, (.2, .16, 2.11), BRASS, rot=(0, R(38), 0))
 GL = 'c_2a2c34'
 # free arm: relaxed at the side, gold bracers under a rolled cuff
+n0 = len(P)
 q = sleeve((-sw - .03, 0, 1.94), (-sw - .085, .025, 1.6), (-sw - .1, -.03, 1.3), .058, 'team')
 limb(q, (-sw - .1, -.03, 1.3), .045, .04, 'skin_b9794f')
 for z in (1.4, 1.37, 1.34): tor(.046, .011, (-sw - .098, -.022, z), BRASS)
 limb((-sw - .1, -.03, 1.32), (-sw - .1, -.032, 1.27), .043, .04, GL)
 hand((-sw - .1, -.034, 1.27), (0, -.12, -1), (0, -1, 0), GL, curl=1.2, s=1.12)
+ARMS.update(free=P[n0:], sh=(-sw - .03, 0, 1.94), swing=True, tail=False)
 # gun arm: forearm level at the hip, hand wrapped round the grip
 q = sleeve((sw + .03, 0, 1.94), (sw + .075, .05, 1.6), (sw + .02, -.24, 1.53), .058, 'team')
 limb(q, (sw + .02, -.24, 1.53), .045, .04, GL)
@@ -533,7 +550,7 @@ done('mainsail', 1.05)
 SK = 'skin_c4906a'
 sw = adult(SK, sw=.22, hw=.17, fem=True, coat_hem=1.02, hem_r=.27, legs='c_3a3a40')
 for s in (-1, 1):
-    for z in (.5, .56, .62): tor(.088, .022, (s * .24, 0, z), CREAM); LEGS[s].append(P[-1])
+    for z in (.5, .56, .62): tor(.088, .022, (s * .24, 0, z), CREAM); LEGS[s].append(P[-1]); LEGS[(s, 'shin')].append(P[-1])
 head(SK, fem=True, wide=.93, jaw=.84, chin=1.05, nose=.9, cheek=1.7); hair_cap('c_1c1820'); fringe('c_1c1820', 'swept'); locks('c_1c1820', False); back_braid('c_1c1820', n=4); tilted_hat(.46)
 tor(.11, .045, (0, .01, 2.01), 'c_b8431c', rot=(R(-10), 0, 0))
 for i in range(2): box((.3, .014, .07), (.2 + i * .04, .14, 1.95 - i * .1), 'c_b8431c', rot=(0, R(20 - i * 24), R(34)), r=.006)
@@ -660,7 +677,7 @@ cyl(.1, .16, .2, (0, .04, 2.06), 'team2', rot=(R(-16), 0, 0))
 cyl(.02, .02, 1.75, (.1, .22, 1.95), DARKWOOD, rot=(0, R(-10), 0)); tor(.09, .022, (-.14, .22, 2.8), STEEL, rot=(R(90), 0, 0)); cyl(.03, 0, .1, (-.23, .22, 2.74), STEEL, rot=(R(180), 0, 0), v=4)
 cross_strap(sw); satchel(-.24, -.1, 1.36)
 wr, grip = arms(sw, SK)
-box((.17, .17, .13), (wr[0], wr[1], wr[2] + .13), 'team2', r=.02); box((.17, .15, .17), (grip[0], grip[1] + .13, grip[2]), 'team2', r=.02)
+box((.17, .17, .13), (wr[0], wr[1], wr[2] + .13), 'team2', r=.02); ARMS['free'].append(P[-1]); box((.17, .15, .17), (grip[0], grip[1] + .13, grip[2]), 'team2', r=.02)
 done('gaff', 1.1)
 
 # Knuckle: armoured bruiser — iron hat, riveted pauldrons, knee plates, gauntlets, rope over the shoulder
@@ -681,7 +698,7 @@ done('knuckle', 1.0)
 SK = 'skin_c99870'
 sw = adult(SK, sw=.215, hw=.17, fem=True, coat_hem=.95, hem_r=.28, legs=RL)
 for s in (-1, 1):
-    for z in (.5, .56, .62): tor(.088, .022, (s * .24, 0, z), CREAM); LEGS[s].append(P[-1])
+    for z in (.5, .56, .62): tor(.088, .022, (s * .24, 0, z), CREAM); LEGS[s].append(P[-1]); LEGS[(s, 'shin')].append(P[-1])
 head(SK, fem=True, wide=.95, chin=.95, cheek=1.2); hair_cap(BLK); fringe(BLK); locks(BLK, False); tilted_hat(.46)
 sph(1, (0, -.005, HC - .105), 'c_2a2a30', scale=(.12, .16, .095))
 tor(.11, .05, (0, .01, 2.01), 'team2', rot=(R(-10), 0, 0))
@@ -709,7 +726,7 @@ head(SK, fem=True, brow=1.2, wide=1.06, jaw=1.14, chin=.95, nose=1.15, cheek=.7)
 tor(.132, .022, (0, .01, HC + .085), 'c_a8281c', rot=(R(-6), 0, 0), scale=(1, 1.18, 1.6)); box((.12, .012, .04), (.13, .12, HC + .02), 'c_a8281c', rot=(0, R(60), R(30)), r=.005)
 cross_strap(sw); tor(sw * .9, .022, (0, 0, 1.74), LEATHER, rot=(R(90), R(-42), 0), scale=(1, 1.25, 1))
 satchel(.2, -.1, 1.36)
-wr, grip = arms(sw, SK, glove=None, bare=True, pose='hold')
+wr, grip = arms(sw, SK, glove=None, bare=True, pose='hold', tail=False)
 for q in (wr, grip):
     for i in range(3): tor(.047, .014, (q[0], q[1] + (i * .03 if q is grip else 0), q[2] + (0 if q is grip else .05 + i * .03)), CREAM, rot=(R(90) if q is grip else 0, 0, 0))
 ox, oy = wr[0] - .005, wr[1] - .075
