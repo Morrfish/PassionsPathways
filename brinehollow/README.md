@@ -14,6 +14,15 @@ A playable prototype of the **tide and lantern loop** from the Brinehollow desig
 - **Rigging:** three items, each with a Low-Tide face and a High-Tide face. Bilge Pump also costs Pearls, so it needs a trip to the seabed.
 - **Foghorns** knock heroes back with a sound-cannon blast, and guard the chain until they fall.
 
+## How a match ends
+- **Foghorn, then chain:** the Foghorn guards the Anchor Chain. Once a Foghorn falls, one extra enemy Wickie comes through it every wave.
+- **Sappers:** one Wickie in three goes for the Foghorn or chain before anything else.
+- **Overboard longer:** respawn starts at 8 seconds and grows through the match, up to 25.
+- **Healing:** you only heal fast behind your own chain, so defenders standing at the chain can be worn down.
+- **The Titan stirs (8 minutes):** Foghorns and chains take more damage every minute and rust away on their own. The crew with more Spark rusts half as fast, so a stalemate goes to the crew that is ahead.
+
+In eight bot-only test matches every match ended, in 3.5 to 12 minutes.
+
 ## Heroes, roles and abilities
 Pick your crew and hero on the title screen. Each hero has a role, its own health, speed and damage, and one signature ability on **C** that plays on the tide, the tether or the lantern. Bots use theirs too. The table lives in `KITS` in `game.src.html`.
 

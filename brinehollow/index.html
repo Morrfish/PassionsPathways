@@ -4280,7 +4280,7 @@ function makeHero(team, i, isPlayer, who) {
 function makeWickie(team, i, bearer) {
   const d = dirOf(team);
   const g = model(bearer ? BEARER[team] : 'wickie', {team: TEAM_COL[team], team2: TEAM_TRIM[team]});
-  return spawn({kind: 'wickie', team, bearer, hp: bearer ? 120 : 55, r: .45, h: bearer ? 2.8 : 1.85, mesh: g,
+  return spawn({kind: 'wickie', team, bearer, sapper: !bearer && i % 3 === 1, hp: bearer ? 120 : 55, r: .45, h: bearer ? 2.8 : 1.85, mesh: g,
     spheres: bearer ? [[.8, .7], [1.6, .6], [2.3, .5]] : [[.5, .5], [1.05, .45], [1.6, .45]], laneX: (i % 3 - 1) * 2.6,
     pos: new V3((i % 3 - 1) * 2.6, 0, -d * (SPAWN_Z - 4) - d * Math.floor(i / 3) * 2)});
 }
@@ -4288,7 +4288,7 @@ function makeTower(team) {
   const d = dirOf(team), g = model('foghorn', {team: TEAM_COL[team]});
   g.position.set(0, 0, -d * TOWER_Z); g.rotation.y = d > 0 ? 0 : Math.PI;            // the horn faces down the lane
   const base = new THREE.Mesh(new THREE.BoxGeometry(3.4, 8, 3.4)); base.position.set(0, 4, -d * TOWER_Z); base.updateMatrixWorld(); solids.push(base);
-  return spawn({kind: 'tower', team, hp: 900, r: 2.1, h: 8, mesh: g, structure: true, pos: g.position.clone(),
+  return spawn({kind: 'tower', team, hp: 1200, r: 2.1, h: 8, mesh: g, structure: true, pos: g.position.clone(),
     spheres: [[1.5, 2], [4, 2], [6.8, 2]], solid: base});
 }
 function makeChain(team) {
@@ -4300,7 +4300,7 @@ function makeChain(team) {
     g.add(link);
   }
   g.position.set(0, 0, -d * CHAIN_Z); scene.add(g);
-  return spawn({kind: 'chain', team, hp: 1100, r: 1.8, h: 6, mesh: g, structure: true, pos: g.position.clone(),
+  return spawn({kind: 'chain', team, hp: 2200, r: 1.8, h: 6, mesh: g, structure: true, pos: g.position.clone(),
     spheres: [[1, 1.8], [3.2, 1.3], [5.4, 1.3]]});
 }
 function makeCrab(z) {
@@ -4457,6 +4457,7 @@ function damage(t, amt, src) {
     if (posts.some(q => q.team === t.team && Math.hypot(q.x - t.pos.x, q.z - t.pos.z) < 7)) amt *= .75;
   }
   if (t.kind === 'chain' && towers[t.team].alive) return;          // the Foghorn guards the chain
+  if (t.structure) amt *= overtime();
   if (t.kind === 'crab' && !t.active) return;
   t.hp -= amt; t.lastHit = state.time;
   if (src && src.isPlayer && player.rig[2] && state.tide.high) player.hp = Math.min(player.maxHp, player.hp + amt * .15);
@@ -4470,7 +4471,7 @@ function damage(t, amt, src) {
     if (t.bearer) pop('CRASH!', t.pos.clone().setY(3), '#ffd23f', 34);
     if (t.bearer) dropLantern(t.pos, (t.team ? 'Ember' : 'Glimmer') + " is down — the lantern is loose!");
   } else if (t.kind === 'hero') {
-    t.respawn = 8; t.tether = null; pop('SPLASH!', t.pos.clone().setY(t.pos.y + 2), '#ff5a3c', 38);
+    t.respawn = 8 + Math.min(17, state.time / 50); t.tether = null;      // the longer the match, the longer you are overboard pop('SPLASH!', t.pos.clone().setY(t.pos.y + 2), '#ff5a3c', 38);
     if (t.carry) { t.carry = false; state.lantern = null; dropLantern(t.pos, 'The lantern carrier fell — the lantern is loose!'); }
     giveSpark(foe, 150, null); say(`<b class="${foe ? 'rust' : 'teal'}">${src && src.name || TEAM_NAME[foe]}</b> downed ${t.name}`);
   } else if (t.kind === 'tower') {
@@ -4775,7 +4776,7 @@ function updateBot(h, dt) {
 }
 function updateWickie(w, dt) {
   const d = dirOf(w.team);
-  const t = nearest(w, 12, o => attackable(o));
+  const t = (w.sapper && nearest(w, 13, o => o.structure && attackable(o))) || nearest(w, 12, o => attackable(o));   // sappers go for the Foghorn or chain first
   let wx = 0, wz = 0;
   if (!t) { wx = clamp((w.laneX - w.pos.x) * .3, -1, 1); wz = d; const l = Math.hypot(wx, wz); wx /= l; wz /= l; w.face = Math.atan2(wx, wz); }
   else {
@@ -4812,14 +4813,21 @@ function updateCrab(c, dt) {
 function spawnWave() {
   state.waveN++;
   for (const team of [0, 1]) {
-    const n = 4 + Math.min(4, Math.floor(state.waveN / 6)) + state.surge[team];   // waves grow so matches end
+    const n = 4 + Math.min(4, Math.floor(state.waveN / 6)) + state.surge[team] + (towers[1 - team].alive ? 0 : state.stirred ? 2 : 1);   // waves grow, and more Wickies pour through a fallen Foghorn
     for (let i = 0; i < n; i++) makeWickie(team, i, false);
     makeWickie(team, n, true);
     if (state.surge[team]) say(`<b class="${team ? 'rust' : 'teal'}">${TEAM_NAME[team]}</b> lantern surge: +${state.surge[team]} Wickies this wave`);
     state.surge[team] = 0;
   }
 }
+const OVERTIME = 480;      // after 8 minutes the Titan stirs: Foghorns and chains weaken, more every minute
+const overtime = () => 1 + Math.max(0, state.time - OVERTIME) / 120;
 function updateTide(dt) {
+  if (state.stirred && !state.over) for (const team of [0, 1]) {      // sudden death: every structure rusts, the leader's half as fast
+    const s = towers[team].alive ? towers[team] : chains[team], lead = state.teamSpark[team] > state.teamSpark[1 - team];
+    damage(s, 6 * (lead ? .5 : 1) * dt, null);
+  }
+  if (state.time >= OVERTIME && !state.stirred) { state.stirred = true; banner('The Titan stirs — the chains are weakening!'); say('⚓ <b>The Titan stirs.</b> Foghorns and chains weaken every minute, and rust away on their own. The crew with more Spark rusts half as fast.'); beep(70, 1.6, 'sawtooth', .09); }
   const T = state.tide; T.t -= dt;
   if (T.t <= 0) {
     T.t = TIDE_LEN; T.high = !T.high;
@@ -4870,8 +4878,8 @@ function step(dt) {
     for (const k of ['knock', 'slow', 'stun', 'brace', 'tetherCd', 'shoveCd', 'braceCd', 'abCd', 'marked', 'iron', 'haste', 'root', 'deep', 'skiff', 'hidden']) if (e[k] > 0) e[k] -= dt;
     if (e.kind === 'hero') {
       if (e.isPlayer && !AUTO) updatePlayer(dt); else updateBot(e, dt);
-      const home = e.pos.z * dirOf(e.team) < -78;
-      e.hp = Math.min(e.maxHp, e.hp + (home ? 45 : state.time - e.lastHit > 6 ? 5 : 0) * dt);
+      const home = e.pos.z * dirOf(e.team) < -86;      // only behind your own chain, so defenders at the chain can be worn down
+      e.hp = Math.min(e.maxHp, e.hp + (home ? 30 : state.time - e.lastHit > 6 ? 5 : 0) * dt);
     } else if (e.kind === 'wickie') updateWickie(e, dt);
     else if (e.kind === 'tower') updateTower(e, dt);
   }
