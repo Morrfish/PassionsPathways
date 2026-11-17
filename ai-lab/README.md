@@ -132,3 +132,7 @@ IMAGE_LIST.md         every image you might want, with sizes and names
 - Hiring data, fraud data, case-file statements: `js/data.js`.
 - Colors and fonts: top of `css/style.css`.
 - Art: see `IMAGE_LIST.md`.
+
+## Teacher password
+
+`teacher.html` asks for a password before it shows anything. Only a salted SHA-256 hash of the password is stored in the page (`SALT` and `HASH` near the top of `teacher.html`). This is a speed bump, not real security: the site is public with no server, so a tech-savvy student could get past it. The answer key also lives in the lab's own code. To change the password, ask Claude, or compute `sha256(SALT + newPassword)` and paste the hex into `HASH`. Once unlocked, the page stays open until that browser tab is closed.

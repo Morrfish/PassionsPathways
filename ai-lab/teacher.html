@@ -8,9 +8,35 @@
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <link rel="icon" type="image/png" href="ui/favicon.png">
+<style>
+html.locked header.top>*:not(.brand),html.locked #app{display:none}
+#gate{display:none}html.locked #gate{display:block;max-width:420px;margin:12vh auto;padding:24px;background:#fff;border:1px solid #D5DBEE;border-radius:12px;text-align:center}
+#gate input{font:inherit;width:100%;padding:10px;margin:12px 0;border:2px solid #D5DBEE;border-radius:8px}
+#gate .err{color:#C7344E;min-height:1.4em;margin:0}
+</style>
+<script>
+/* Teacher password screen. This is a speed bump, not real security: the site is public and has no server. */
+(function () {
+  var SALT = '5a64d013b32b921f', HASH = 'c712ff1e516f7753ac46127b4f6da5ffcc0959b638a42a796da843fb27ee8f57', KEY = 'ailab_teacher_ok';
+  var ok = false; try { ok = sessionStorage.getItem(KEY) === HASH; } catch (e) {}
+  if (!ok) document.documentElement.classList.add('locked');
+  window.AI_GATE = function (ev) {
+    ev.preventDefault();
+    var pw = document.getElementById('gate_pw').value.trim(), msg = document.getElementById('gate_err');
+    if (!window.crypto || !crypto.subtle) { msg.textContent = 'This browser cannot check the password. Try Chrome on the live site.'; return false; }
+    crypto.subtle.digest('SHA-256', new TextEncoder().encode(SALT + pw)).then(function (buf) {
+      var hex = Array.prototype.map.call(new Uint8Array(buf), function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+      if (hex === HASH) { try { sessionStorage.setItem(KEY, HASH); } catch (e) {} document.documentElement.classList.remove('locked'); }
+      else { msg.textContent = 'That password is not right. Try again.'; document.getElementById('gate_pw').select(); }
+    });
+    return false;
+  };
+})();
+</script>
 </head>
 <body>
 <header class="top"><div class="brand"><img src="ui/logo_ailab.png" alt="Chapter 3 AI Lab" onerror="this.outerHTML='Chapter 3 <b>AI Lab</b>'"> &bull; Teacher</div><div class="who"><a href="index.html" style="color:#9FB0E8">Home</a></div></header>
+<form id="gate" onsubmit="return AI_GATE(event)"><h2>Teacher page</h2><p>Enter the teacher password to score student work.</p><label for="gate_pw" class="sr">Teacher password</label><input id="gate_pw" type="password" autocomplete="current-password" placeholder="Teacher password"><button class="btn go" type="submit">Unlock</button><p class="err" id="gate_err" aria-live="polite"></p><p style="margin-top:14px"><a href="student.html">Student? Go to the lab</a></p></form>
 <main class="main" id="app" style="margin:0 auto"></main>
 <script src="js/core.js"></script>
 <script src="js/viz.js"></script>
