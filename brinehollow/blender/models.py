@@ -68,6 +68,7 @@ def limb(p0, p1, r0, r1, m, v=10):
     bpy.ops.mesh.primitive_cone_add(vertices=v, radius1=r0, radius2=r1, depth=d.length, location=(a + b) / 2,
                                     rotation=Vector((0, 0, 1)).rotation_difference(d).to_euler())
     return fin(m)
+MUZZLE = {}
 SKIRT = {}      # front and back halves of the coat skirt, hinged at the waist so they kick out with the stride
 ARMS = {}       # the free arm, hinged at the shoulder
 LEGS = {}       # parts of each leg (keys -1 and 1), kept as separate objects hinged at the hip so the game can swing them
@@ -94,6 +95,7 @@ def done(name, k=1.0):
     taken = set(legs[-1]) | set(legs[1]) | set(arm) | set(skirts['f']) | set(skirts['b'])
     body = join([o for o in P if o not in taken], name)
     hinge(body, (0, 0, 0))
+    if MUZZLE.get('at'): mx, my, mz = MUZZLE.pop('at'); body['muzzle'] = [mx * k, mz * k, -my * k]      # in the game's axes (Y up, facing +Z)
     for sd in (-1, 1):
         if not legs[sd]: continue
         tag = 'L' if sd < 0 else 'R'
@@ -464,6 +466,9 @@ def beard2(col, length=.3, wide=.14, mo=1.0):
 def weapon(kind, sw):
     """Each hero's own weapon, built in the gun hand. The muzzle points forward (-Y)."""
     ox, oy, oz = sw + .02, -.3, 1.6
+    tip = {'deck_cannon': -.63, 'long_tom': -1.2, 'stingers': -.44, 'rivet_gun': -.42, 'chime': -.46, 'spore': -.67, 'boat_hook': -.64, 'needle': -.62, 'bolas': -.02,
+           'slag': -.64, 'whaling': -1.22, 'blunderbuss': -.7, 'smoke': -.38, 'tide': -.72, 'depth': -.48, 'steam': -.92, 'knives': -.34}[kind]
+    MUZZLE['at'] = (ox, oy + tip, oz + (-.3 if kind == 'bolas' else .01))      # where shots leave the weapon; exported with the model
     B = lambda size, dy, dz, m, dx=0, r=None, rot=(0, 0, 0): box(size, (ox + dx, oy + dy, oz + dz), m, rot=rot, r=r)
     C = lambda r1, r2, ln, dy, dz, m, v=10, dx=0: cyl(r1, r2, ln, (ox + dx, oy + dy, oz + dz), m, rot=(R(90), 0, 0), v=v)       # r1 at the back, r2 at the muzzle
     T = lambda R_, r, dy, dz, m, dx=0: tor(R_, r, (ox + dx, oy + dy, oz + dz), m, rot=(R(90), 0, 0))
@@ -1084,7 +1089,7 @@ for x in (-18, 10):
 done('ship')
 
 os.makedirs(out, exist_ok=True)
-bpy.ops.export_scene.gltf(filepath=os.path.join(out, 'models.glb'), export_format='GLB', export_apply=True, export_yup=True, export_texcoords=False)
+bpy.ops.export_scene.gltf(filepath=os.path.join(out, 'models.glb'), export_format='GLB', export_apply=True, export_yup=True, export_texcoords=False, export_extras=True)
 
 # Slim the file: drop the stored normals (the game recomputes them; vertices stay split at hard edges, so creases survive)
 import json, struct

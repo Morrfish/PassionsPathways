@@ -1185,6 +1185,11 @@ function updateShots(dt) {
     s.pos.addScaledVector(sdir, len); s.far += len; s.mesh.position.copy(s.pos); s.mesh.lookAt(tmp.copy(s.pos).add(sdir));
   }
 }
+const UPY = new V3(0, 1, 0);
+function muzzleOf(h) {          // the tip of this hero's own weapon, in the world
+  const m = h.mesh.userData.muzzle;
+  return m ? new V3(m[0], m[1], m[2]).applyAxisAngle(UPY, h.face).add(h.pos) : h.pos.clone().setY(h.pos.y + 1.75);
+}
 const SND = {hit: [180, .05, 'square'], scatter: [95, .16, 'sawtooth'], proj: [260, .07, 'triangle'], lob: [120, .14, 'triangle']};
 const jit = new V3(), camR = new V3(), camU = new V3();
 function aimRay(d, max, w) {                             // what one shot along d from the camera reaches
@@ -1198,7 +1203,7 @@ function playerShot(p) {
   const w = p.wpn, wake = p.wake >= 100, mult = wake ? 3 : 1, sp = spreadOf(p), base = aimDir().clone();
   camR.set(Math.cos(yaw), 0, -Math.sin(yaw)); camU.crossVectors(camR, base);
   const off = () => { const a = Math.random() * 6.283, r = Math.sqrt(Math.random()) * sp; return jit.copy(base).addScaledVector(camR, Math.cos(a) * r).addScaledVector(camU, Math.sin(a) * r).normalize(); };
-  const muzzle = p.pos.clone().setY(p.pos.y + 1.75).addScaledVector(tmp.set(-Math.sin(yaw), 0, -Math.cos(yaw)), .6);
+  const muzzle = muzzleOf(p);
   const col = wake ? 0x7fd4ff : w.color;
   if (w.kind === 'hit' || w.kind === 'scatter') {
     for (let n = w.pellets || 1; n--;) {
@@ -1345,7 +1350,7 @@ function shootAt(e, t, mult, chance, w) {      // a bot's shot: a hit roll, then
   if (hit && t.isPlayer) { tmp.copy(b).sub(a); const d = tmp.length(); if (worldHit(a, tmp.normalize(), d) < d - .5) hit = false; }  // cover works
   if (!hit) b.add(tmp.set(Math.random() - .5, Math.random() - .3, Math.random() - .5).multiplyScalar(2.4));
   if (typeof w === 'number') { tracer(a, b, w); if (hit) damage(t, mult, e); return; }
-  tracer(a, b, w.color, w.w || (w.kind === 'hit' ? 0 : .04)); if (w.splash && hit) ring(b, w.color, w.splash);
+  tracer(muzzleOf(e), b, w.color, w.w || (w.kind === 'hit' ? 0 : .04)); if (w.splash && hit) ring(b, w.color, w.splash);
   if (hit) applyHit(e, w, t, mult, false, 0);
 }
 function updateBot(h, dt) {
@@ -1780,7 +1785,7 @@ document.addEventListener('pointerlockchange', () => {
 });
 if (TEST) start();
 say(MODE === 'chain' ? `Kill the ${THEIRS} Foghorn, then cut their Anchor Chain. Watch the tide clock.` : `<b>${MODES[MODE].name}.</b> ${MODES[MODE].text}`);
-window.__bh = {MAP_ID, MODE, MODES, MAPS, win, point, camPos, PT, WEAPONS, MOVES, useMove, shots, playerShot, RIG, toggleShop, rigOn, pad, isPad: () => padMode, KITS, useAbility, zones, walls, posts, state, ents, heroes, player, ROSTER, heroLook, pickHero, model, scene, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
+window.__bh = {muzzleOf, MAP_ID, MODE, MODES, MAPS, win, point, camPos, PT, WEAPONS, MOVES, useMove, shots, playerShot, RIG, toggleShop, rigOn, pad, isPad: () => padMode, KITS, useAbility, zones, walls, posts, state, ents, heroes, player, ROSTER, heroLook, pickHero, model, scene, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
   setAim: (y, p) => { yaw = y; pitch = p; updateCamera(); }};
 requestAnimationFrame(frame);
 }
