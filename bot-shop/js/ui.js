@@ -6,6 +6,11 @@ const App = {
 };
 const BUILTIN = builtinCourses();
 const builtinIds = () => BUILTIN.map(c => c.id);
+/* The built-in levels in the order the home screen lists them, for the Next course button */
+const SECTION_ORDER = ['speed', 'strength', 'crazy', 'puzzle', 'gizmo', 'water', 'portal', 'maze', 'boss'];
+const secKey = c => c.boss ? 'boss' : sectionOf(c);
+const levelOrder = () => SECTION_ORDER.flatMap(id => BUILTIN.filter(c => secKey(c) === id).map((c, i) => [c, i]).sort((a, b) => id === 'boss' ? a[1] - b[1] : ((a[0].stars || 1) - (b[0].stars || 1)) || a[1] - b[1]).map(k => k[0]));
+const nextCourse = c => { const l = levelOrder(), i = l.indexOf(c); return i >= 0 && i < l.length - 1 ? l[i + 1] : null; };
 const cv = $('#stage'), ctx = cv.getContext('2d');
 let VW = 0, VH = 0, DPR = 1;
 function resize() { DPR = Math.min(2, window.devicePixelRatio || 1); VW = innerWidth; VH = innerHeight; cv.width = VW * DPR; cv.height = VH * DPR; }
@@ -19,14 +24,15 @@ function setMode(m) {
   $('#touch').classList.toggle('on', m === 'run' && isTouch);
 }
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.style.display = 'block'; clearTimeout(toast.h); toast.h = setTimeout(() => t.style.display = 'none', 2200); }
-function modal(html) { $('#modal .mbox').innerHTML = html; $('#modal').classList.add('on'); const f = $('#modal [data-focus]') || $('#modal button'); if (f) f.focus(); }
-function closeModal() { $('#modal').classList.remove('on'); }
+function modal(html) { if (App.must && !html.includes('newsOk')) return; $('#modal .mbox').innerHTML = html; $('#modal').classList.add('on'); const f = $('#modal [data-focus]') || $('#modal button'); if (f) f.focus(); }
+function closeModal() { if (App.must) return; $('#modal').classList.remove('on'); }
 let modalDown = false;   // only a press that starts on the backdrop closes the box, so a drag that ends outside does not
 $('#modal').addEventListener('pointerdown', e => { modalDown = e.target.id === 'modal'; });
 $('#modal').addEventListener('click', e => {
   const a = e.target.closest('[data-m]'); if (e.target.id === 'modal') { if (modalDown && !(App.mode === 'run' && App.G && App.G.done)) { closeModal(); App.paused = false; } return; } if (!a) return;
   const act = a.dataset.m; closeModal();
-  if (act === 'retry') startRun(); else if (act === 'shop') showGarage(App.course, App.from); else if (act === 'home') leaveRun();
+  if (act === 'next') { const n = nextCourse(App.course); if (n) showGarage(n, 'home'); else leaveRun(); }
+  else if (act === 'retry') startRun(); else if (act === 'shop') showGarage(App.course, App.from); else if (act === 'home') leaveRun();
   else if (act === 'print') { $('#modal').classList.add('on'); print(); }
 });
 const fmtT = t => t.toFixed(2);
@@ -43,7 +49,7 @@ function askText(o, done) {
 let pendingCode = null;
 /* ---------- Coins ---------- */
 const Wallet = {
-  get(user) { return Object.assign({ coins: 0, own: {}, sec: {}, paid: {}, made: {}, fast: {}, codes: {}, gold: 0 }, Store.get('wallet', {}, user)); },
+  get(user) { return Object.assign({ coins: 0, own: {}, sec: {}, paid: {}, made: {}, fast: {}, codes: {}, gold: 0, news: 0 }, Store.get('wallet', {}, user)); },
   save(w, user) { Store.set('wallet', w, user); },
   owns(id) { return !PRICE[id] || !!SET().unlockAll || !!Wallet.get().own[id]; },
   add(n, user) { const w = Wallet.get(user); w.coins += n; Wallet.save(w, user); },
@@ -56,14 +62,28 @@ function unlock(id, label, then) {
   if (!confirm(`Unlock ${label} for $${price}? You have $${w.coins}.`)) return;
   w.coins -= price; w.own[id] = 1; Wallet.save(w); toast(`Unlocked ${label}!`); sfx('win'); then();
 }
+/* While a must-press notice is up, nothing behind it can be used */
+for (const ev of ['click', 'keydown']) addEventListener(ev, e => { if (App.must && !(e.target.closest && e.target.closest('#modal'))) { e.stopPropagation(); e.preventDefault(); const f = $('#newsOk'); if (f) f.focus(); } }, true);
+/* The must-press notice: it cannot be closed any other way, and pressing it pays the gift once per player */
+function newsDialog(fresh) {
+  const w = Wallet.get(); if (w.news >= NEWS) return false;
+  App.must = true;
+  modal(`<h2>📣 New rule + a gift</h2>${fresh ? '<p>The game changed a lot, so everyone starts fresh: medals, bots and the notebook were cleared. Your name, password and the courses you built are still here.</p>' : ''}
+    <p><b>Checkpoints only count if you go through the flag.</b> Flying or jumping high over one no longer saves your spot, and the game will tell you when you were too high.</p>
+    <p>Press the button to start the new rule and collect <b style="color:var(--y)">🪙 $${NEWS_COINS}</b>.</p>
+    <div class="acts"><button class="primary" id="newsOk" data-focus>🎁 Got it — give me my $${NEWS_COINS}</button></div>`);
+  $('#newsOk').onclick = () => { const v = Wallet.get(); if (v.news < NEWS) { v.news = NEWS; v.coins += NEWS_COINS; Wallet.save(v); } App.must = false; closeModal(); sfx('cp'); if (App.mode === 'home') showHome(); toast(`🪙 +$${NEWS_COINS} coins!`); };
+  return true;
+}
 function signIn(id) {
   Store.user = id; try { sessionStorage.setItem('botshop.user', id); } catch (e) { }
   // a big update starts everyone fresh: medals, coins, bot and notebook go; name, password and own courses stay
   let fresh = false;
   if (Store.get('sv', 0) !== SAVE_VERSION) { fresh = ['bot', 'best', 'log', 'wallet'].some(k => Store.get(k, null) != null); for (const k of ['bot', 'best', 'log', 'wallet']) Store.del(k); Store.set('sv', SAVE_VERSION); }
   App.cfg = tidyBot(Object.assign({}, DEFAULT_BOT, Store.get('bot', {}))); App.lastTips = null; App.free = false;
-  if (pendingCode) { const code = pendingCode; pendingCode = null; try { const c = importCourse(code); showGarage(c, 'home'); return toast(`Loaded “${c.name}”`); } catch (e) { toast('That course link did not work.'); } }
+  if (pendingCode) { const code = pendingCode; pendingCode = null; try { const c = importCourse(code); showGarage(c, 'home'); newsDialog(false); return toast(`Loaded “${c.name}”`); } catch (e) { toast('That course link did not work.'); } }
   showHome();
+  if (newsDialog(fresh)) return;
   if (fresh) modal(`<h2>🎉 Big update!</h2><p>The game changed a lot, so everyone starts fresh: medals, bots and the notebook were cleared. Your name, password and the courses you built are still here.</p><p>New this time: <b>coins</b>. Beat levels to earn them, then spend them in the <b>Store</b> on course-builder pieces, paint and special bots.</p><div class="acts"><button class="primary" data-m="x" data-focus>Let's go</button></div>`);
 }
 function signOut() { Store.user = null; try { sessionStorage.removeItem('botshop.user'); } catch (e) { } teacherOpen = false; showLogin(); }
@@ -506,7 +526,8 @@ function showResult() {
     if (!c.builtin) { const mine = loadMyCourses().find(m => m.id === c.id); if (mine && App.from === 'editor' && (!c.par || d.time < c.par)) { c.par = +d.time.toFixed(2); saveMyCourse(c); extra += '<p>✔ Course verified! Your time is now the time to beat.</p>'; const w = Wallet.get(); if (!w.made[c.id]) { w.made[c.id] = 1; w.coins += 40; Wallet.save(w); extra += '<p class="pay">🪙 +$40 for building a course that can be beaten</p>'; } } }
     extra = `<div class="res"><div class="big">${MEDAL_ICON[medal]}</div><div><div class="tm">${fmtT(d.time)}s</div>${G.penalties ? `<div style="color:var(--o);font-size:13px">includes +${G.penalties}s for ${G.resets} reset${G.resets > 1 ? 's' : ''}</div>` : ''}</div></div>` + extra;
   }
-  modal(`<h2>Course complete!</h2>${App.free ? `<div class="res"><div class="tm">${fmtT(d.time)}s</div></div>` : ''}${extra}${tips}${acts}`);
+  const nx = c.builtin && App.from !== 'editor' ? nextCourse(c) : null, acts2 = nx ? acts.replace('<div class="acts"><button class="primary" data-m="shop" data-focus>', `<div class="acts"><button class="primary" data-m="next" data-focus title="${esc(nx.name)}">Next course ▶</button><button data-m="shop">`) : acts;
+  modal(`<h2>Course complete!</h2>${App.free ? `<div class="res"><div class="tm">${fmtT(d.time)}s</div></div>` : ''}${extra}${nx ? `<p style="font-size:13px">Up next: <b>${esc(nx.name)}</b></p>` : ''}${tips}${acts2}`);
 }
 function updateHUD() {
   const G = App.G, b = G.bot, s = G.spec, L = G.live;

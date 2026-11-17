@@ -18,6 +18,9 @@ Open `index.html` — no install, no accounts, works offline. Progress saves in 
 - **Controller:** standard gamepads work for driving, gadgets and menus. Gadgets are assigned to A, X, B, RB, LB, R3, L3 in fitting order; a bot with more than seven keyed gadgets needs the keyboard for the rest.
 - **Sandbox freedom:** in courses players build or load there is no ceiling, no gadget or upgrade slot limit and no ban on gadget pairs. A course rule set by its builder (for example "1 gadget") still applies, and so does its budget.
 - **Ceiling:** every built-in course has a striped ceiling 13 m above the highest nearby ground. Flying into it sends the bot back to the last checkpoint with the usual reset penalty.
+- **Checkpoints:** only count when the bot passes through the flag (within 2.8 m of its base). Flying over shows "Too high!" and does not save.
+- **Must-press notice:** `NEWS` in `js/core.js` shows every player a one-time notice with a single button that pays `NEWS_COINS`. Raise `NEWS` to send another.
+- **Next course:** after a win on a built-in level, a Next course button opens the following level (home-screen order) with the same bot.
 - **Gold bonus:** every 20 gold medals on built-in levels pays $2000 (at 20, 40, 60 and 80 golds).
 - **Time bonus:** beating your own best time on a built-in level pays $5 to $50 depending on how much faster you were, up to $150 per level in total.
 - **Contraption pieces:** alarm clock, gong, frog, rabbit, chicken, tortoise, cat, mouse, dog, elephant, hamster wheel, cheese, carrot, egg timer, ball popper, toaster, hair dryer, balloon, pinball bumper, pipe, trapdoor, boot, anvil, dominoes and bowling ball. Triggers set off the nearest unused machine within 10 m, otherwise they open the nearest gate.

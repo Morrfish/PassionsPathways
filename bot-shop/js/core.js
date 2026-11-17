@@ -1,6 +1,6 @@
 /* Bot Assembly Shop — core data: parts, bot math, tiles, courses, storage */
 'use strict';
-const VERSION = '2.3';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
+const VERSION = '2.5';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
 const pl = planck, V = pl.Vec2;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -525,6 +525,8 @@ const sectionOf = c => c.group || c.kind;
 const levelPay = (c, medal) => 20 * (c.stars || 2) + ({ gold: 40, silver: 20 }[medal] || 0);
 /* Beating your own best time pays too: more for a bigger improvement, up to FAST_CAP per level in all */
 const FAST_CAP = 150;
+/* A one-time notice every player must press. Raise NEWS to send a new one. */
+const NEWS = 1, NEWS_COINS = 3000;
 /* Every GOLD_SET gold medals pays a big bonus, each time */
 const GOLD_SET = 20, GOLD_BONUS = 2000;
 const goldCount = best => builtinIds().filter(id => best[id] && best[id].medal === 'gold').length;
