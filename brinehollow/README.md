@@ -39,6 +39,7 @@ Every hero has their own weapon (`WEAPONS` in `game.src.html`) and a move on Shi
 
 - **Aiming:** the reticle changes shape per weapon and opens with your spread; it turns red on an enemy and green on a crewmate the Needle can heal. Hits show an X (gold on a head shot) and damage numbers. Hold aim to tighten spread. On a controller the stick slows near enemies and leans gently toward them.
 - **Moves:** Charge (Tank, Bruiser), Roll (Scout, Duelist), Leap (Skirmisher, Assassin, Saboteur), Snare Trap (Engineer, Controller, Disruptor), Mending Step (Caller, Healer), Slide (Ferry, Current-rider, Diver, Catcher).
+- **Weapon models:** every hero holds their own weapon, built by `weapon()` in `blender/models.py` (cannon, scoped rifle, sting pistol, rivet tool, sounding-horn, blowpipe, three-barrel carbine, syringe, bolas, furnace tube, harpoon gun, blunderbuss, smoke pistol, drum repeater, drum launcher, steam lance, throwing knives).
 - Bots fire their own weapons with a hit roll and the weapon's effects; they do not fire real projectiles.
 
 ## Rigging

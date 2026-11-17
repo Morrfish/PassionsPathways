@@ -461,11 +461,99 @@ def beard2(col, length=.3, wide=.14, mo=1.0):
     for s in (-1, 1):
         sph(.045 * mo, (s * .04 * mo, -.168, HC - .088), col, scale=(1.5, .6, .6)); sph(.03 * mo, (s * .085 * mo, -.152, HC - .1), col, scale=(1.4, .6, .6))
         if mo >= 1: sph(.06, (s * .105, -.06, HC - .09), col, scale=(.6, 1, 1.4))
+def weapon(kind, sw):
+    """Each hero's own weapon, built in the gun hand. The muzzle points forward (-Y)."""
+    ox, oy, oz = sw + .02, -.3, 1.6
+    B = lambda size, dy, dz, m, dx=0, r=None, rot=(0, 0, 0): box(size, (ox + dx, oy + dy, oz + dz), m, rot=rot, r=r)
+    C = lambda r1, r2, ln, dy, dz, m, v=10, dx=0: cyl(r1, r2, ln, (ox + dx, oy + dy, oz + dz), m, rot=(R(90), 0, 0), v=v)       # r1 at the back, r2 at the muzzle
+    T = lambda R_, r, dy, dz, m, dx=0: tor(R_, r, (ox + dx, oy + dy, oz + dz), m, rot=(R(90), 0, 0))
+    S_ = lambda r, dy, dz, m, dx=0, scale=(1, 1, 1): sph(r, (ox + dx, oy + dy, oz + dz), m, scale=scale)
+    grip = lambda: B((.05, .07, .14), .05, -.09, WOOD, r=.02, rot=(R(-14), 0, 0))
+    stock = lambda ln=.3, m=WOOD: B((.065, ln, .11), .1 + ln / 2, -.03, m, r=.03, rot=(R(-8), 0, 0))
+    DARK = 'c_2c2c34'
+    if kind == 'deck_cannon':            # Breakwater: a stubby brass-bound cannon
+        stock(.26); grip(); B((.12, .26, .14), -.02, 0, 'c_b8862a', r=.03)
+        C(.08, .09, .44, -.34, .01, IRON); C(.09, .12, .07, -.58, .01, 'c_b8862a'); C(.075, .075, .02, -.615, .01, DARK)
+        for d in (-.2, -.36): T(.092, .016, d, .01, BRASS)
+        B((.03, .05, .06), .02, .09, BRASS, r=.01)
+    elif kind == 'long_tom':             # Mainsail: a long rifle with a brass spyglass scope
+        stock(.36); grip(); B((.07, .3, .1), -.08, 0, DARK, r=.025)
+        C(.024, .02, 1.0, -.7, .01, STEEL); T(.026, .01, -1.18, .01, BRASS)
+        C(.034, .034, .34, -.1, .105, BRASS); C(.044, .034, .06, -.3, .105, BRASS); C(.036, .036, .012, -.335, .105, 'glow_bfe9ff')
+        for d in (-.02, -.2): B((.02, .03, .05), d, .065, DARK, r=.005)
+        B((.05, .34, .05), -.4, -.03, WOOD, r=.02)
+    elif kind == 'stingers':             # Drift: a slim quick pistol with a sting for a muzzle
+        grip(); B((.055, .2, .07), -.06, 0, 'c_8c8f90', r=.02); C(.022, .018, .2, -.25, .01, STEEL); C(.03, 0, .09, -.39, .01, BRASS, v=6)
+        C(.04, .04, .06, -.04, -.005, DARK, v=8); B((.02, .03, .03), -.14, .05, BRASS, r=.005)
+    elif kind == 'rivet_gun':            # Rivet: a shipyard tool with a hopper of rivets
+        grip(); B((.14, .3, .17), -.06, 0, 'c_c9742a', r=.035); B((.15, .06, .18), -.18, 0, DARK, r=.02)
+        C(.055, .04, .18, -.3, 0, IRON); C(.03, .03, .03, -.4, 0, 'glow_ff9a3c')
+        B((.09, .12, .13), -.02, .14, IRON2, r=.02)
+        for i in range(3): S_(.022, -.05 + i * .03, .215, BRASS)
+        T(.07, .02, .16, -.02, DARK)
+    elif kind == 'chime':                # Bell: a brass sounding-horn
+        grip(); C(.03, .03, .16, -.02, 0, WOOD); C(.03, .15, .34, -.27, 0, BRASS, v=14); T(.15, .016, -.44, 0, 'c_f0c040'); C(.11, .02, .26, -.3, 0, 'c_3a2a12', v=14)
+        T(.034, .012, -.1, 0, 'c_f0c040')
+    elif kind == 'spore':                # Kelp: a reed blowpipe with a spore pod
+        grip(); C(.03, .026, .72, -.3, 0, 'c_8a9a4a'); S_(.07, -.05, .08, 'c_6f7a34', scale=(1, 1.3, 1)); S_(.03, -.05, .15, 'glow_9fd65a')
+        for d in (-.2, -.4, -.58): T(.032, .01, d, 0, ROPE)
+        cyl(.03, .004, .2, (ox, oy - .5, oz - .1), WEED, rot=(R(180), 0, 0), v=5)
+    elif kind == 'boat_hook':            # Skiff: a three-barrelled carbine with a boat hook under it
+        stock(.28); grip(); B((.09, .26, .11), -.05, 0, IRON2, r=.025)
+        for dx, dz in ((0, .03), (-.026, -.015), (.026, -.015)): C(.02, .02, .46, -.4, dz, STEEL, v=7, dx=dx)
+        T(.052, .012, -.3, 0, BRASS); T(.052, .012, -.56, 0, BRASS)
+        C(.014, .014, .3, -.38, -.08, WOOD, v=6); tor(.05, .014, (ox, oy - .56, oz - .1), STEEL, rot=(0, R(90), 0))
+    elif kind == 'needle':               # Brine: a brass syringe
+        grip(); C(.055, .055, .3, -.14, 0, 'c_cfe6ea'); C(.04, .04, .2, -.12, 0, 'glow_9fe6d8'); C(.06, .06, .03, .02, 0, BRASS); C(.06, .03, .06, -.32, 0, BRASS)
+        C(.009, .004, .28, -.48, 0, STEEL, v=6); C(.012, .012, .14, .1, 0, STEEL, v=6); C(.045, .045, .02, .17, 0, BRASS)
+        for d in (-.06, -.14, -.22): T(.057, .006, d, 0, DARK)
+    elif kind == 'bolas':                # Netter: three weights on cords, ready to throw
+        hub = (ox, oy + .04, oz - .1)
+        for i, (dx, dz) in enumerate(((-.1, -.36), (.03, -.44), (.14, -.34))):
+            end = (ox + dx, oy - .02 + i * .03, oz + dz); limb(hub, end, .009, .009, ROPE, v=5); sph(.065, end, IRON2); tor(.04, .012, end, BRASS)
+        T(.05, .014, .04, -.1, ROPE)
+    elif kind == 'slag':                 # Cinder: a furnace tube with a glowing mouth
+        grip(); C(.1, .11, .74, -.2, .02, DARK, v=12); C(.11, .13, .06, -.6, .02, IRON); C(.095, .095, .02, -.625, .02, 'glow_ff6a2a')
+        for d in (-.05, -.3): T(.112, .018, d, .02, IRON)
+        B((.12, .26, .12), .02, -.14, 'c_7a4a36', r=.03); C(.02, .02, .2, -.2, -.12, BRASS, v=6)
+        S_(.03, -.42, .13, 'glow_ff6a2a')
+    elif kind == 'whaling':              # Gaff: a heavy harpoon gun with a barbed head
+        stock(.34, DARKWOOD); grip(); B((.09, .3, .12), -.06, 0, IRON, r=.03)
+        C(.042, .04, .62, -.5, .01, IRON2); T(.045, .014, -.3, .01, BRASS); T(.045, .014, -.72, .01, BRASS)
+        C(.016, .016, .3, -.9, .01, STEEL, v=6); o = C(.075, 0, .24, -1.1, .01, 'c_aeb2ba', v=4); o.scale = (.35, 1, 1)
+        for sd in (-1, 1): B((.012, .1, .03), -.96, .01, STEEL, dx=sd * .035, rot=(0, 0, R(sd * 28)))
+        C(.026, .026, .2, -.05, .095, BRASS); T(.03, .022, -.2, -.07, ROPE)
+    elif kind == 'blunderbuss':          # Knuckle: a flaring scrap blunderbuss
+        stock(.28, DARKWOOD); grip(); B((.1, .24, .12), -.04, 0, IRON2, r=.03)
+        C(.05, .07, .3, -.3, .01, IRON); C(.07, .17, .24, -.56, .01, IRON, v=12); T(.17, .02, -.68, .01, 'c_8c8f90'); C(.13, .04, .2, -.58, .01, DARK, v=12)
+        for d in (-.2, -.4): T(.062, .014, d, .01, 'c_7a4a36')
+        for sd in (-1, 1): S_(.02, -.04, .03, BRASS, dx=sd * .052)
+    elif kind == 'smoke':                # Soot: a blackened pistol with a smoke canister
+        grip(); B((.06, .22, .08), -.06, 0, DARK, r=.02); C(.035, .04, .2, -.26, .01, 'c_3a3a42'); C(.045, .045, .03, -.36, .01, IRON)
+        C(.04, .04, .14, -.1, -.075, 'c_6a6e78', v=8); S_(.02, -.18, -.075, BRASS)
+    elif kind == 'tide':                 # Tiller: a repeater with a drum painted in the crew's colour
+        stock(.26); grip(); B((.075, .3, .1), -.08, 0, IRON2, r=.025)
+        C(.026, .024, .5, -.46, .01, STEEL); C(.04, .04, .22, -.32, .01, WOOD, v=8)
+        cyl(.1, .1, .07, (ox, oy - .1, oz - .1), 'team', rot=(0, R(90), 0), v=12); cyl(.03, .03, .09, (ox, oy - .1, oz - .1), BRASS, rot=(0, R(90), 0), v=8)
+        B((.014, .03, .04), -.68, .04, DARK, r=.004)
+    elif kind == 'depth':                # Barnacle: a drum launcher with a charge in the breech
+        stock(.24); grip(); C(.12, .12, .22, -.06, 0, IRON2, v=12)
+        for i in range(6): a = i * math.pi / 3; C(.03, .03, .01, -.175, math.sin(a) * .075, DARK, v=6, dx=math.cos(a) * .075)
+        C(.07, .08, .3, -.32, 0, IRON); T(.082, .016, -.46, 0, BRASS); S_(.06, .06, .0, 'c_3f7f86'); S_(.02, .06, .07, BRASS)
+    elif kind == 'steam':                # Copper: a brass lance fed by a boiler ball
+        grip(); S_(.1, .1, .0, BRASS); T(.1, .014, .1, 0, 'c_b8862a'); C(.03, .022, .9, -.42, 0, BRASS); C(.035, .05, .06, -.88, 0, 'c_b8862a'); C(.03, .03, .012, -.915, 0, 'glow_ffe8c8')
+        for d in (-.1, -.4, -.7): T(.034, .01, d, 0, IRON)
+        tor(.08, .016, (ox + .08, oy + .2, oz - .05), DARK, rot=(0, R(90), 0)); C(.012, .012, .1, .02, .1, IRON, v=6)
+    elif kind == 'knives':               # Undertow: a fan of hooked throwing knives
+        for i, a in enumerate((-22, 0, 22)):
+            dx = math.sin(R(a)) * .16; dy = -.06 - math.cos(R(a)) * .2
+            B((.012, .26, .05), dy, .02, 'c_aeb2ba', dx=dx, r=.005, rot=(0, 0, R(-a))); B((.02, .08, .03), .0, .0, DARKWOOD, dx=dx * .25, r=.008, rot=(0, 0, R(-a)))
+            tor(.022, .008, (ox + dx * 1.7, oy + dy - .12, oz + .02), 'c_aeb2ba', rot=(0, R(90), 0))
 def gun_at(sw):
     n0 = len(P); harpoon_gun(sw + .01, -.38, 1.62)
     for o in P[n0:]:                                  # the gun, at adult scale, shrunk about the grip
         o.location = Vector((sw + .02, -.3, 1.56)) + (o.location - Vector((sw + .02, -.3, 1.56))) * .56; o.scale = [c * .56 for c in o.scale]
-def arms(sw, skin, glove=GL, r=.058, gun=True, pose='down', bare=False, bracers=False, tail=True):
+def arms(sw, skin, glove=GL, r=.058, gun=None, pose='down', bare=False, bracers=False, tail=True):
     """Both arms and hands. Returns the free hand's wrist and the grip position."""
     k = r / .058; hs = 1.12 * k ** .5
     def one(sh, el, wr, fwd, side, curl):
@@ -483,7 +571,7 @@ def arms(sw, skin, glove=GL, r=.058, gun=True, pose='down', bare=False, bracers=
     ARMS.update(free=P[n0:], sh=sh, swing=pose != 'raise' and (pose == 'down' or tail))      # a raised arm stays up; a hand holding something swings less
     grip = (sw + .02, -.24, 1.53)
     one((sw + .03, 0, 1.94), (sw + .075, .05, 1.6), grip, (0, -1, -.25), (-1, 0, .3), 2.6)
-    if gun: gun_at(sw)
+    if gun: weapon(gun, sw)
     ARMS.update(mark=len(P), tail=pose == 'hold' and tail)      # whatever is built next is in that hand
     return wr, grip
 def cross_strap(sw): tor(sw * .9, .022, (0, 0, 1.74), LEATHER, rot=(R(90), R(42), 0), scale=(1, 1.25, 1))
@@ -502,7 +590,7 @@ sw = adult(SK, sw=.33, hw=.23, fem=False, coat_hem=.6, hem_r=.47, bulk=1.4)
 head(SK, fem=False, brow=1.5, wide=1.06, nose=1.3); hair_cap(W_HAIR); locks(W_HAIR, False); beard2(W_HAIR, .38, .15); tilted_hat(.52, HC + .17, -17)
 for i in range(4): tor(.25, .055, (-sw + .03 + i * .055, .03, 2.1 + i * .012), ROPE, rot=(0, R(76), 0))
 cross_strap(sw); satchel(-.3, -.2, 1.36, 1.2); satchel(.3, -.2, 1.36)
-arms(sw, SK, r=.076)
+arms(sw, SK, gun='deck_cannon', r=.076)
 done('breakwater', 1.0)
 
 # Mainsail (pilot for the anatomical rig): tall and athletic, a long coat, a wide hat on a cord, braid over the shoulder
@@ -549,9 +637,7 @@ ARMS.update(free=P[n0:], sh=(-sw - .03, 0, 1.94), swing=True, tail=False)
 q = sleeve((sw + .03, 0, 1.94), (sw + .075, .05, 1.6), (sw + .02, -.24, 1.53), .058, 'team')
 limb(q, (sw + .02, -.24, 1.53), .045, .04, GL)
 hand((sw + .02, -.24, 1.53), (0, -1, -.25), (-1, 0, .3), GL, curl=2.6, s=1.12)
-n0 = len(P); harpoon_gun(sw + .01, -.38, 1.62)
-for o in P[n0:]:                                  # the gun, at adult scale, shrunk about the grip
-    o.location = Vector((sw + .02, -.3, 1.56)) + (o.location - Vector((sw + .02, -.3, 1.56))) * .56; o.scale = [c * .56 for c in o.scale]
+weapon('long_tom', sw)
 done('mainsail', 1.05)
 
 # Drift: small and quick — short jacket, baggy trousers, shin wraps, red neck scarf, a knife in the free hand
@@ -563,7 +649,7 @@ head(SK, fem=True, wide=.93, jaw=.84, chin=1.05, nose=.9, cheek=1.7); hair_cap('
 tor(.11, .045, (0, .01, 2.01), 'c_b8431c', rot=(R(-10), 0, 0))
 for i in range(2): box((.3, .014, .07), (.2 + i * .04, .14, 1.95 - i * .1), 'c_b8431c', rot=(0, R(20 - i * 24), R(34)), r=.006)
 cross_strap(sw); satchel(.2, -.1, 1.36, .9); satchel(-.2, -.1, 1.36, .9)
-wr, grip = arms(sw, SK, pose='hold')
+wr, grip = arms(sw, SK, gun='stingers', pose='hold')
 box((.014, .2, .034), (wr[0], wr[1] - .16, wr[2] - .1), STEEL, r=.004); box((.022, .07, .03), (wr[0], wr[1] - .04, wr[2] - .09), WOOD, r=.008)
 done('drift', .9)
 
@@ -575,7 +661,7 @@ for s in (-1, 1): cyl(.042, .042, .04, (s * .055, -.2, HC + .215), BRASS, rot=(R
 apron('c_4a3a30', 1.3); cross_strap(sw)
 cyl(.026, .026, .9, (.05, .2, 1.85), STEEL, rot=(0, R(38), 0)); tor(.085, .03, (.36, .2, 2.24), STEEL, rot=(R(90), 0, 0)); tor(.06, .026, (-.24, .2, 1.48), STEEL, rot=(R(90), 0, 0))
 satchel(-.32, -.14, 1.36); satchel(.32, -.14, 1.36)
-arms(sw, SK, glove='c_5a4030', r=.076, bare=True)
+arms(sw, SK, gun='rivet_gun', glove='c_5a4030', r=.076, bare=True)
 done('rivet', .98)
 
 # Bell: the smallest Teal — twin braids out to the sides and a brass bell held high (never a single ribbon braid: that is Mainsail)
@@ -586,7 +672,7 @@ for s in (-1, 1):
     for i in range(6): sph(.042 - i * .003, (s * (.14 + i * .016), .03 - i * .012, HC - .08 - i * .07), 'c_7a3a22')
     tor(.034, .01, (s * .215, -.025, HC - .44), BRASS)
 cross_strap(sw); satchel(.22, -.08)
-wr, grip = arms(sw, SK, glove=None, pose='raise')
+wr, grip = arms(sw, SK, gun='chime', glove=None, pose='raise')
 bx, by, bz = wr[0], wr[1] - .04, wr[2] + .2
 cyl(.01, .01, .09, (bx, by, bz - .06), BRASS); cyl(.095, .03, .12, (bx, by, bz - .16), BRASS, rot=(R(180), 0, 0), v=14); tor(.095, .012, (bx, by, bz - .22), 'c_f0c040'); sph(.022, (bx, by, bz - .23), 'c_b8862a')
 done('bell', .84)
@@ -598,7 +684,7 @@ head(SK, fem=True, brow=1.2, wide=.92, jaw=.88, chin=1.22, nose=1.3, cheek=1.2);
 for i in range(13):
     a = R(-210 + i * 20); cyl(.045, .004, .42 + (i % 3) * .08, (math.cos(a) * (sw + .04), -math.sin(a) * .15 + .02, 1.72 - (i % 3) * .03), WEED, rot=(R(180), 0, 0), v=5)
 cyl(.15, .11, .26, (0, .25, 1.75), 'c_b08a50'); tor(.15, .018, (0, .25, 1.88), 'c_8a6a3a'); tor(.13, .014, (0, .25, 1.72), 'c_8a6a3a')
-wr, grip = arms(sw, SK, pose='hold')
+wr, grip = arms(sw, SK, gun='spore', pose='hold')
 cyl(.014, .014, .14, (wr[0], wr[1] - .07, wr[2] - .09), WOOD, rot=(R(90), 0, 0)); tor(.075, .012, (wr[0], wr[1] - .2, wr[2] - .06), STEEL, rot=(0, R(90), 0))
 done('kelp', .95)
 
@@ -611,7 +697,7 @@ box((.36, .17, .34), (0, .25, 1.74), 'c_7a5a40', r=.04); cyl(.1, .1, .46, (0, .2
 for x in (-.13, .13): tor(.102, .014, (x, .25, 2.0), LEATHER, rot=(0, R(90), 0))
 cyl(.024, .024, 1.5, (-.22, .37, 1.75), WOOD); box((.14, .03, .42), (-.22, .37, 2.68), 'c_8a6a48', r=.012)
 satchel(.28, -.14, 1.36, 1.1)
-arms(sw, SK, r=.07)
+arms(sw, SK, gun='boat_hook', r=.07)
 done('skiff', .82)
 
 # Brine: the medic — no straw hat: a white headscarf with knot tails and a bun, white apron with a cross, bottle held up
@@ -623,7 +709,7 @@ for s in (-1, 1): box((.17, .014, .055), (s * .1, .17, HC - .02), CREAM, rot=(0,
 apron(CREAM, 1.0, cross='team')
 for i in range(3): cyl(.018, .018, .07, (-.1 + i * .035, -.14, 1.42), 'c_cfe6ea'); sph(.014, (-.1 + i * .035, -.14, 1.46), 'c_9c7a45')
 satchel(.22, -.08, 1.34)
-wr, grip = arms(sw, SK, glove=None, pose='raise')
+wr, grip = arms(sw, SK, gun='needle', glove=None, pose='raise')
 cyl(.035, .035, .08, (wr[0], wr[1] - .06, wr[2] + .13), 'c_9fd6de'); cyl(.016, .016, .04, (wr[0], wr[1] - .06, wr[2] + .19), 'c_9c7a45')
 done('brine', .93)
 
@@ -634,7 +720,7 @@ head(SK, fem=False, brow=1.3, wide=.97, chin=1.1, cheek=1.3); hair_cap('c_1c1820
 for i in range(3): sph(.014, (-.04, -(.136 + i * .014), 1.6 + i * .09), BRASS)
 for i in range(2): tor(sw * .9, .026, (0, 0, 1.76 - i * .06), ROPE, rot=(R(90), R(-42), 0), scale=(1, 1.25, 1))
 satchel(.24, -.12, 1.36)
-wr, grip = arms(sw, SK, r=.066, gun=False, pose='hold')
+wr, grip = arms(sw, SK, r=.066, pose='hold')
 lantern(wr[0], wr[1] - .05, wr[2] - .4, .34)
 done('glimmer', 1.03)
 
@@ -661,7 +747,7 @@ cross_strap(sw)
 sph(.17, (-sw - .1, .08, 1.22), 'c_4f7a70', scale=(1, 1.1, .85))
 for rot in ((0, 0, 0), (R(90), 0, 0), (0, R(90), 0)): tor(.172, .016, (-sw - .1, .08, 1.22), ROPE, rot=rot)
 for a in (0, 1.6, 3.2, 4.6): sph(.04, (-sw - .1 + math.cos(a) * .17, .08 + math.sin(a) * .17, 1.1), 'c_e8703f')
-arms(sw, SK)
+arms(sw, SK, gun='bolas')
 done('netter', .95)
 
 # Cinder: the widest Rust — no straw hat: leather cap and goggles, black beard, cowl, forge apron, huge gloves, shovel on the back
@@ -674,7 +760,7 @@ beard2('c_22201e', .2, .135, mo=.8)
 tor(.17, .04, (0, .03, 1.99), 'team2', scale=(1.2, 1, 1.2))
 apron('c_3a3a42', 1.45)
 cyl(.024, .024, 1.05, (.06, .25, 1.86), WOOD, rot=(0, R(-24), 0)); box((.2, .03, .26), (.31, .25, 1.3), 'c_55555e', rot=(0, R(-24), 0), r=.01); box((.12, .03, .035), (-.16, .25, 2.35), WOOD, rot=(0, R(-24), 0), r=.01)
-arms(sw, SK, glove='c_5a4030', r=.082)
+arms(sw, SK, gun='slag', glove='c_5a4030', r=.082)
 done('cinder', 1.0)
 
 # Gaff: tall, straight and plain — long coat, big square cuffs, upturned collar, a gaff hook standing high over the shoulder
@@ -684,7 +770,7 @@ head(SK, fem=False, brow=1.6, wide=.93, jaw=.95, chin=1.22, nose=1.4, cheek=2.0)
 cyl(.1, .16, .2, (0, .04, 2.06), 'team2', rot=(R(-16), 0, 0))
 cyl(.02, .02, 1.75, (.1, .22, 1.95), DARKWOOD, rot=(0, R(-10), 0)); tor(.09, .022, (-.14, .22, 2.8), STEEL, rot=(R(90), 0, 0)); cyl(.03, 0, .1, (-.23, .22, 2.74), STEEL, rot=(R(180), 0, 0), v=4)
 cross_strap(sw); satchel(-.24, -.1, 1.36)
-wr, grip = arms(sw, SK)
+wr, grip = arms(sw, SK, gun='whaling')
 box((.17, .17, .13), (wr[0], wr[1], wr[2] + .13), 'team2', r=.02); ARMS['free'].append(P[-1]); box((.17, .15, .17), (grip[0], grip[1] + .13, grip[2]), 'team2', r=.02)
 done('gaff', 1.1)
 
@@ -699,7 +785,7 @@ for s in (-1, 1):
     sph(.11, (s * .27, -.1, .74), IRONHAT, scale=(1, .5, 1.15)); LEGS[s].append(P[-1])
 tor(sw * .92, .04, (0, 0, 1.74), ROPE, rot=(R(90), R(-42), 0), scale=(1, 1.25, 1))
 satchel(.3, -.2, 1.36, 1.2); satchel(-.3, -.2, 1.36, 1.2)
-arms(sw, SK, glove='c_55555e', r=.08)
+arms(sw, SK, gun='blunderbuss', glove='c_55555e', r=.08)
 done('knuckle', 1.0)
 
 # Soot: small and ragged — face mask, torn scarf tails streaming, shin wraps, brass canisters on the belt
@@ -712,7 +798,7 @@ sph(1, (0, -.005, HC - .105), 'c_2a2a30', scale=(.12, .16, .095))
 tor(.11, .05, (0, .01, 2.01), 'team2', rot=(R(-10), 0, 0))
 for i in range(4): box((.3 + (i % 2) * .1, .014, .06), (.2 + i * .03, .14 + i * .02, 1.97 - i * .08), 'team2', rot=(0, R(22 - i * 15), R(32 + i * 6)), r=.006)
 for x in (-.12, -.04, .04, .12): cyl(.028, .028, .09, (x, -.145, 1.42), BRASS); sph(.02, (x, -.145, 1.48), 'c_b8862a')
-arms(sw, SK, glove='c_3a3038')
+arms(sw, SK, gun='smoke', glove='c_3a3038')
 done('soot', .88)
 
 # Ember: Rust's Lantern-Bearer — a wide cape with the crew mark on the back, braid, the lantern carried low
@@ -723,7 +809,7 @@ split_skirt(.52, .2, .95, 1.5, 'team', folds=8, amp=.08, gap=2.5, flare=0)      
 split_skirt(.535, .5, .1, 1.075, 'team2', folds=8, amp=.08, amp_top=.074, gap=2.5, flare=0)
 tor(.19, .04, (0, .03, 1.97), 'team2', scale=(1.2, 1, 1)); sph(.025, (.08, -.14, 1.96), BRASS)
 tor(.1, .02, (0, .43, 1.42), CREAM, rot=(R(72), 0, 0)); box((.02, .02, .16), (0, .435, 1.42), CREAM, rot=(R(-18), 0, 0), r=.006)
-wr, grip = arms(sw, SK, gun=False, pose='hold')
+wr, grip = arms(sw, SK, pose='hold')
 lantern(wr[0], wr[1] - .05, wr[2] - .4, .34)
 done('ember', .97)
 
@@ -734,7 +820,7 @@ head(SK, fem=True, brow=1.2, wide=1.06, jaw=1.14, chin=.95, nose=1.15, cheek=.7)
 tor(.132, .022, (0, .01, HC + .085), 'c_a8281c', rot=(R(-6), 0, 0), scale=(1, 1.18, 1.6)); box((.12, .012, .04), (.13, .12, HC + .02), 'c_a8281c', rot=(0, R(60), R(30)), r=.005)
 cross_strap(sw); tor(sw * .9, .022, (0, 0, 1.74), LEATHER, rot=(R(90), R(-42), 0), scale=(1, 1.25, 1))
 satchel(.2, -.1, 1.36)
-wr, grip = arms(sw, SK, glove=None, bare=True, pose='hold', tail=False)
+wr, grip = arms(sw, SK, gun='tide', glove=None, bare=True, pose='hold', tail=False)
 for q in (wr, grip):
     for i in range(3): tor(.047, .014, (q[0], q[1] + (i * .03 if q is grip else 0), q[2] + (0 if q is grip else .05 + i * .03)), CREAM, rot=(R(90) if q is grip else 0, 0, 0))
 ox, oy = wr[0] - .005, wr[1] - .075
@@ -756,7 +842,7 @@ for i in range(3): tor(.15, .04, (0, .27, 1.97 + i * .06), ROPE)
 for s in (-1, 1):
     sph(.1, (s * (sw + .12), .16, 1.36), GLASS)
     for rot in ((0, 0, 0), (R(90), 0, 0), (0, R(90), 0)): tor(.102, .012, (s * (sw + .12), .16, 1.36), ROPE, rot=rot)
-arms(sw, SK, glove='c_5a4030', r=.08)
+arms(sw, SK, gun='depth', glove='c_5a4030', r=.08)
 done('barnacle', .8)
 
 # Copper: flat cap, goggles and a moustache, with a brass horn rig rising off the back over one shoulder
@@ -771,7 +857,7 @@ cross_strap(sw); tor(sw * .9, .022, (0, 0, 1.74), LEATHER, rot=(R(90), R(-42), 0
 for x in (-.08, .08): cyl(.06, .06, .3, (x, .2, 1.72), BRASS); sph(.06, (x, .2, 1.87), BRASS)
 cyl(.03, .03, .2, (.11, .2, 1.95), BRASS); cyl(.03, .03, .62, (.22, .2, 2.28), BRASS, rot=(0, R(22), 0)); cyl(.035, .035, .2, (.34, .12, 2.58), BRASS, rot=(R(90), 0, 0))
 cyl(.15, .035, .26, (.34, -.1, 2.6), BRASS, rot=(R(-84), 0, 0), v=16); cyl(.125, .025, .22, (.34, -.125, 2.6), 'c_3a2a12', rot=(R(-84), 0, 0), v=16)
-wr, grip = arms(sw, SK, glove='c_5a4030', bare=True, pose='hold')
+wr, grip = arms(sw, SK, gun='steam', glove='c_5a4030', bare=True, pose='hold')
 cyl(.016, .016, .26, (wr[0], wr[1] - .1, wr[2] - .08), STEEL, rot=(R(80), 0, 0)); tor(.04, .014, (wr[0], wr[1] - .25, wr[2] - .05), STEEL, rot=(0, R(90), 0))
 done('copper', 1.0)
 
@@ -787,7 +873,7 @@ for line_ in (crest, swell, ((-.15, 1.725), (.13, 1.725))):
     line_ = [(-.01 + (x + .01) * 1.25, 1.77 + (z - 1.77) * 1.5) for x, z in line_]
     for a, b in zip(line_, line_[1:]): limb((a[0], wy(a[0]), a[1]), (b[0], wy(b[0]), b[1]), .016, .016, CREAM, v=6); sph(.016, (b[0], wy(b[0]), b[1]), CREAM)
 cross_strap(sw)
-wr, grip = arms(sw, SK, pose='hold')
+wr, grip = arms(sw, SK, gun='knives', pose='hold')
 box((.03, .09, .04), (wr[0], wr[1] - .03, wr[2] - .1), WOOD, r=.01); box((.018, .1, .3), (wr[0], wr[1] - .06, wr[2] - .28), 'c_9a9ea6', r=.006); box((.022, .11, .05), (wr[0], wr[1] - .06, wr[2] - .42), 'c_6a6e78', r=.006)
 done('undertow', 1.0)
 
