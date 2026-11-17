@@ -565,7 +565,12 @@ function stepGame(G, inp) {
   // a checkpoint only counts if the bot goes through the flag: flying over it does not
   for (const cp of G.cps) if (!cp.hit && !cp.miss && Math.abs(p.x - cp.x) < 1.6 && p.y >= cp.y + CP_REACH) { cp.miss = true; G.flash = { text: 'Too high! That checkpoint did not count.', t: 1.6 }; }
   for (const cp of G.cps) if (!cp.hit && Math.abs(p.x - cp.x) < 1.6 && p.y > cp.y - 1 && p.y < cp.y + CP_REACH) { cp.hit = true; bot.q = charges(); G.respawn = { x: cp.x, y: cp.y, energy: bot.energy }; G.flash = { text: 'Checkpoint!', t: 1.2, good: true }; sfx('cp'); }
-  if (G.finish && !G.done && Math.abs(p.x - G.finish.x) < 1.8 && p.y > G.finish.y - 1 && p.y < G.finish.y + 8) { G.done = { win: true, time: G.clock + G.penalties }; sfx('win'); }
+  if (G.finish && !G.done && Math.abs(p.x - G.finish.x) < 1.8 && p.y > G.finish.y - 1 && p.y < G.finish.y + 8) {
+    // the finish only counts once every checkpoint has been driven through
+    const left = G.cps.filter(c => !c.hit).length;
+    if (!left) { G.done = { win: true, time: G.clock + G.penalties }; sfx('win'); }
+    else { G.stats.missedCp = left; if (!(G.flash && G.flash.noFin && G.flash.t > 0.2)) { G.flash = { text: `Not finished: you missed ${left} checkpoint${left > 1 ? 's' : ''}. Go back through ${left > 1 ? 'them' : 'it'}, or press R.`, t: 2.5, noFin: true }; sfx('bad'); } }
+  }
   live.target = s.has.hook && !bot.rope ? findHookTarget(G) : null;
   live.pit = G.pitNow;
   // particles

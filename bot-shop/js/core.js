@@ -1,6 +1,6 @@
 /* Bot Assembly Shop — core data: parts, bot math, tiles, courses, storage */
 'use strict';
-const VERSION = '2.5';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
+const VERSION = '2.6';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
 const pl = planck, V = pl.Vec2;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -414,8 +414,8 @@ function builtinCourses() {
     .flat(4).o('start').flat(8).mat(MUD).flat(12).gup(3).flat(6).mat(DIRT).flat(8).o('checkpoint', -5).bump(3).step(1).flat(8).bump(3).step(1).flat(6).o('checkpoint', -3).flat(8).gup(3).flat(4).gdown(1).mat(MUD).flat(10).gup(3).mat(DIRT).flat(3).up(5).flat(10).o('finish', -4).flat(6).done());
 
   L.push(CB('b_zip', 'Zip & Dip', 'crazy', 1000, 'A lava canyon with a zip line across it.', [18, 28])
-    .flat(4).o('start').flat(12).gup(3).flat(6).o('checkpoint', -3).o('zip', -1, 5.5, [21, 1.5]).gap(18, LAVA, 8, 2).step(-3).flat(12).o('checkpoint', -8)
-    .gup(1).flat(4).o('anchor', 3.5, 7).gap(7, LAVA, 6, 2).flat(10).o('checkpoint', -7).o('spring', 3).flat(5).step(3).flat(8).o('checkpoint', -5)
+    .flat(4).o('start').flat(12).gup(3).flat(6).o('checkpoint', -3).o('zip', -1, 5.5, [21, 1.5]).gap(18, LAVA, 8, 2).step(-3).flat(12).o('checkpoint', -4)
+    .gup(1).flat(4).o('anchor', 3.5, 7).gap(7, LAVA, 6, 2).flat(10).o('checkpoint', -7).o('spring', 3).flat(5).step(3).flat(8)
     .o('zip', -2, 5, [18, -3]).gap(14).step(-6).flat(14).o('finish', -6).flat(6).done());
 
   L.push(CB('b_hammer', 'Hammer Time', 'crazy', 1200, 'Swinging hammers, a spinner, a seesaw, an elevator and a wobbly bridge.', [26, 42])
