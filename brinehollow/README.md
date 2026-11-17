@@ -14,6 +14,33 @@ A playable prototype of the **tide and lantern loop** from the Brinehollow desig
 - **Rigging:** nine items, each with a Low-Tide face and a High-Tide face. Three cost Pearls, so they need trips to the seabed.
 - **Foghorns** knock heroes back with a sound-cannon blast, and guard the chain until they fall.
 
+## Weapons, aiming and moves
+Every hero has their own weapon (`WEAPONS` in `game.src.html`) and a move on Shift shared by similar roles (`MOVES`).
+
+| Hero | Weapon | How it fires |
+| --- | --- | --- |
+| Breakwater | Deck Cannon | Eight-pellet blast; weak at range |
+| Mainsail | Long Tom | Slow scoped rifle; head shots hit double |
+| Drift | Twin Stingers | Very fast pistols that spread as you hold fire |
+| Rivet | Rivet Gun | Travelling rivets that burst |
+| Bell | Chime | A slow wave that passes through and slows everyone in its path |
+| Kelp | Spore Darts | Darts that poison |
+| Skiff | Boat-hook Burst | Three-round bursts |
+| Brine | Needle | Hurts enemies, heals crewmates you shoot |
+| Netter | Bolas | Heavy throws that slow |
+| Cinder | Slag Thrower | Arcing shells that burst and burn |
+| Gaff | Whaling Gun | Scoped harpoon that staggers |
+| Knuckle | Scrap Blunderbuss | Wide blast with knockback; four shots |
+| Soot | Smoke Pistols | Fast, loose pistols |
+| Tiller | Tide Repeater | Steady fire, stronger while she stands in water |
+| Barnacle | Depth Charges | Slow arcing charges, bigger blast in water |
+| Copper | Steam Lance | Short constant jet |
+| Undertow | Hooked Knives | Thrown knives, stronger against anyone in water |
+
+- **Aiming:** the reticle changes shape per weapon and opens with your spread; it turns red on an enemy and green on a crewmate the Needle can heal. Hits show an X (gold on a head shot) and damage numbers. Hold aim to tighten spread. On a controller the stick slows near enemies and leans gently toward them.
+- **Moves:** Charge (Tank, Bruiser), Roll (Scout, Duelist), Leap (Skirmisher, Assassin, Saboteur), Snare Trap (Engineer, Controller, Disruptor), Mending Step (Caller, Healer), Slide (Ferry, Current-rider, Diver, Catcher).
+- Bots fire their own weapons with a hit roll and the weapon's effects; they do not fire real projectiles.
+
 ## Rigging
 Nine items to spend Spark on, each with a Low-Tide face and a High-Tide face; only the face matching the tide works. Press **B** for the shop.
 
@@ -90,8 +117,10 @@ The game is drawn as a graphic novel, following the art sheets in `reference/` (
 | Key | Action |
 | --- | --- |
 | WASD, Space | Move, jump |
-| Mouse, left click, R | Aim, fire, reload |
-| E or right click | Tether |
+| Mouse, left click, R | Look, fire, reload |
+| Right click (hold) | Aim: tighter spread, and a scope on the Long Tom and Whaling Gun |
+| E | Tether |
+| Shift | Your hero's move |
 | F, Q | Shove, Brace |
 | C | Your hero's signature ability |
 
@@ -100,9 +129,11 @@ A controller works too (any pad the browser reports with the standard layout, su
 | Controller | Action |
 | --- | --- |
 | Left stick, right stick | Move, aim |
-| RT, LT | Fire, tether |
+| RT, LT | Fire, aim |
+| LB | Tether |
+| Click either stick | Your hero's move |
 | A, B, RB | Jump, Shove, Brace |
-| Y (or LB), X | Signature ability, reload |
+| Y, X | Signature ability, reload |
 | D-pad up | Rigging shop: up and down choose, A buys, B closes |
 | Start | Pause and resume |
 | On the title screen | D-pad left and right pick a hero, Y swaps crew, A or Start casts off |

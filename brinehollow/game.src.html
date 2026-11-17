@@ -97,6 +97,7 @@
   <div class="ab"><kbd>F</kbd>Shove<i id="cdF"></i></div>
   <div class="ab"><kbd>Q</kbd>Brace<i id="cdQ"></i></div>
   <div class="ab" style="width:86px;background:#ffe27a"><kbd>C</kbd><span id="abName"></span><i id="cdC"></i></div>
+  <div class="ab" style="width:74px"><kbd>⇧</kbd><span id="mvName"></span><i id="cdV"></i></div>
   <div id="rig" style="display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap;max-width:430px"></div>
 </div>
 <div id="shop" class="hud"></div>
@@ -111,12 +112,14 @@
   kill it, grab the lantern and run it to one of your buoys for a big Spark payout and a bigger next wave.</div>
   <table>
     <tr><td>WASD · Space</td><td>Move · jump</td></tr>
-    <tr><td>Mouse · Click</td><td>Aim · fire (R reloads)</td></tr>
-    <tr><td>E / Right-click</td><td>Harpoon tether — pulls you to what you hit, or yanks an enemy hero</td></tr>
+    <tr><td>Mouse · Click</td><td>Look · fire your hero's weapon (R reloads). Head shots hit harder</td></tr>
+    <tr><td>Right-click</td><td>Hold to aim: tighter spread, and a scope on long guns</td></tr>
+    <tr><td>E</td><td>Harpoon tether — pulls you to what you hit, or yanks an enemy hero</td></tr>
+    <tr><td>Shift</td><td>Your hero's move (charge, roll, leap, trap, mending step or slide)</td></tr>
     <tr><td>F · Q</td><td>Shove (knockback) · Brace (throws a Shove back at the attacker)</td></tr>
     <tr><td>C</td><td>Your hero's signature ability (shown under the picker)</td></tr>
     <tr><td>B · 1–9</td><td>Open the Rigging shop · buy an item. Every item has a Low-Tide face and a High-Tide face</td></tr>
-    <tr><td>Controller</td><td>Left stick move · right stick aim · RT fire · LT tether · A jump · B shove · RB brace · Y ability · X reload · D-pad ↑ Rigging shop (↑ ↓ choose, A buy, B close) · Start pause</td></tr>
+    <tr><td>Controller</td><td>Left stick move · right stick look · RT fire · LT aim · LB tether · A jump · B shove · RB brace · Y ability · click a stick: move · X reload · D-pad ↑ Rigging shop (↑ ↓ choose, A buy, B close) · Start pause</td></tr>
     <tr><td>Wake</td><td>Move fast (tether, current) to fill the blue ring. Full Wake: next shot hits ×3 and refills your magazine</td></tr>
   </table>
   <div id="pickrow"><b>Your crew:</b> <span id="side"></span></div>
@@ -143,6 +146,36 @@ const ROSTER = [
   ['Netter', 'Cinder', 'Gaff', 'Knuckle', 'Soot', 'Tiller', 'Barnacle', 'Copper', 'Undertow'],
 ];
 const BEARER = ['glimmer', 'ember'];
+// Every hero's own weapon. kind: hit (instant), scatter (pellets), proj (travelling shot), lob (arcing shell).
+const WEAPONS = {
+  Breakwater: {name: 'Deck Cannon', kind: 'scatter', pellets: 8, dmg: 11, rate: .8, mag: 6, reload: 2, spread: .085, range: 40, falloff: [9, 26], color: 0xffd9a0, w: .03, text: 'Eight-pellet blast. Brutal up close, weak at range.'},
+  Mainsail:   {name: 'Long Tom', kind: 'hit', dmg: 70, rate: .85, mag: 5, reload: 1.9, spread: .012, range: 140, crit: 2, zoom: 2.6, bloom: .03, color: 0xfff2b0, w: .05, text: 'Slow, heavy rifle. Aim down the glass; head shots hit double.'},
+  Drift:      {name: 'Twin Stingers', kind: 'hit', dmg: 9, rate: .075, mag: 36, reload: 1.2, spread: .026, range: 60, bloom: .004, maxBloom: .05, color: 0xbfe9ff, text: 'Two fast pistols. A storm of small hits that spreads as you hold fire.'},
+  Rivet:      {name: 'Rivet Gun', kind: 'proj', dmg: 34, rate: .34, mag: 12, reload: 1.6, speed: 75, splash: 2.2, splashDmg: 14, range: 90, color: 0xff9a3c, size: .13, text: 'Hot rivets that fly and burst on impact.'},
+  Bell:       {name: 'Chime', kind: 'proj', dmg: 30, rate: .42, mag: 10, reload: 1.5, speed: 46, pierce: 1, radius: .9, slow: .5, range: 55, color: 0xffe27a, size: .45, ring: 1, text: 'A slow wave of sound that passes through everyone in its path and slows them.'},
+  Kelp:       {name: 'Spore Darts', kind: 'proj', dmg: 15, rate: .2, mag: 18, reload: 1.4, speed: 85, dot: [18, 3], range: 80, color: 0x9fd65a, size: .08, text: 'Quick darts that leave a poison working after they hit.'},
+  Skiff:      {name: 'Boat-hook Burst', kind: 'hit', dmg: 20, rate: .62, burst: 3, mag: 21, reload: 1.5, spread: .012, range: 80, color: 0xfff2b0, text: 'Three-round bursts. Steady and accurate.'},
+  Brine:      {name: 'Needle', kind: 'hit', dmg: 13, rate: .14, mag: 20, reload: 1.3, spread: .008, range: 70, heal: 16, color: 0x9fe6d8, text: 'Hurts enemies; mends any crewmate you shoot.'},
+  Netter:     {name: 'Bolas', kind: 'proj', dmg: 44, rate: .5, mag: 8, reload: 1.6, speed: 65, radius: .5, slow: 1.3, range: 70, color: 0xc9a36a, size: .2, text: 'Weighted throws that hit hard and slow what they hit.'},
+  Cinder:     {name: 'Slag Thrower', kind: 'lob', dmg: 40, rate: .75, mag: 6, reload: 2, speed: 34, splash: 3, splashDmg: 20, dot: [15, 3], range: 60, color: 0xff6a2a, size: .22, text: 'Lobs molten slag in an arc. It bursts and keeps burning.'},
+  Gaff:       {name: 'Whaling Gun', kind: 'hit', dmg: 58, rate: .7, mag: 6, reload: 1.8, spread: .01, range: 120, crit: 1.8, zoom: 2, knock: 6, bloom: .025, color: 0xffffff, w: .06, text: 'A heavy harpoon that staggers its target. Head shots hit harder.'},
+  Knuckle:    {name: 'Scrap Blunderbuss', kind: 'scatter', pellets: 10, dmg: 12, rate: .95, mag: 4, reload: 2.2, spread: .12, range: 30, falloff: [6, 20], knock: 4, color: 0xd0d0d8, w: .03, text: 'A wide wall of scrap that throws enemies back. Four shots, then a long reload.'},
+  Soot:       {name: 'Smoke Pistols', kind: 'hit', dmg: 10, rate: .085, mag: 30, reload: 1.2, spread: .032, range: 55, bloom: .004, maxBloom: .05, color: 0xc8c8d8, text: 'Fast, loose pistol fire for close work.'},
+  Tiller:     {name: 'Tide Repeater', kind: 'hit', dmg: 13, rate: .12, mag: 28, reload: 1.4, spread: .012, range: 80, soak: 1.35, color: 0x7fd4ff, text: 'A steady repeater that hits a third harder while you stand in water.'},
+  Barnacle:   {name: 'Depth Charges', kind: 'lob', dmg: 54, rate: .85, mag: 4, reload: 2.2, speed: 30, splash: 3.4, splashDmg: 30, deep: 1.5, range: 55, color: 0x3f7f86, size: .28, text: 'Slow arcing charges with a big blast, bigger still when they land in water.'},
+  Copper:     {name: 'Steam Lance', kind: 'hit', dmg: 5, rate: .05, mag: 90, reload: 2.2, spread: .004, range: 24, beam: 1, color: 0xffe8c8, w: .09, text: 'A short jet of steam: constant damage, no spread, no reach.'},
+  Undertow:   {name: 'Hooked Knives', kind: 'proj', dmg: 26, rate: .22, mag: 10, reload: 1.3, speed: 95, wet: 1.5, range: 70, color: 0xe0e0ea, size: .1, text: 'Thrown knives that cut half again as deep into anyone standing in water.'},
+};
+// A second action on Shift, shared by heroes of a similar role.
+const MOVES = {
+  charge: {name: 'Charge', cd: 7, text: 'Rush forward, knocking enemies aside.', roles: ['Tank', 'Bruiser']},
+  roll:   {name: 'Roll', cd: 5, text: 'Dodge in the direction you are moving; briefly hard to hit.', roles: ['Scout', 'Duelist']},
+  leap:   {name: 'Leap', cd: 6, text: 'A high jump forward, clear over crates and onto boardwalks.', roles: ['Skirmisher', 'Assassin', 'Saboteur']},
+  trap:   {name: 'Snare Trap', cd: 9, text: 'Drop a trap that roots and hurts the first enemy to step on it.', roles: ['Engineer', 'Controller', 'Disruptor']},
+  mend:   {name: 'Mending Step', cd: 8, text: 'A short dash that patches you up.', roles: ['Caller', 'Healer']},
+  slide:  {name: 'Slide', cd: 6, text: 'A burst of speed along the ground or water that builds Wake.', roles: ['Ferry', 'Current-rider', 'Diver', 'Catcher']},
+};
+const moveOf = role => Object.keys(MOVES).find(k => MOVES[k].roles.includes(role));
 // Each hero's role, stats and signature ability (C). Every ability plays on the tide, the tether or the lantern.
 const KITS = {
   Breakwater: {role: 'Tank', hp: 300, speed: .9, dmg: 1, ab: 'Seawall', cd: 18, text: 'Raise a rope wall that blocks shots and movement for 7 seconds. Built in the trench, it also dams the current.'},
@@ -648,13 +681,13 @@ function heroLook(h, who) {      // dress a hero as one of the roster
   if (h.mesh) scene.remove(h.mesh);
   h.who = who; h.mesh = model(who.toLowerCase(), {team: TEAM_COL[h.team], team2: TEAM_TRIM[h.team]});
   if (!h.isPlayer) h.name = who;
-  h.kit = KITS[who]; h.maxHp = h.hp = h.kit.hp;
+  h.kit = KITS[who]; h.maxHp = h.hp = h.kit.hp; h.wpn = WEAPONS[who]; h.ammo = h.wpn.mag; h.reload = 0; h.burst = 0; h.move = moveOf(h.kit.role);
 }
 function makeHero(team, i, isPlayer, who) {
   const d = dirOf(team), laneX = [-4, 0, 4][i];
   const h = spawn({kind: 'hero', team, hp: 220, r: .6, h: 2.55, pos: new V3(laneX, 0, -d * SPAWN_Z),
     spheres: [[.7, .7], [1.5, .6], [2.15, .5]], laneX, seed: Math.random() * 9, isPlayer, mesh: null});
-  Object.assign(h, {spark: 0, pearl: 0, rig: RIG.map(() => false), ammo: 24, reload: 0, wake: 0, fireT: 0,
+  Object.assign(h, {spark: 0, pearl: 0, rig: RIG.map(() => false), reload: 0, wake: 0, fireT: 0, bloom: 0, burst: 0, moveCd: 0,
     abCd: 0, tetherCd: 0, tether: null, shoveCd: 0, braceCd: 0, brace: 0, windup: 0, stun: 0, respawn: 0, carry: false, lastHit: -9,
     name: 'You'});
   heroLook(h, who); heroes.push(h); return h;
@@ -704,7 +737,8 @@ function pickHero(who) {            // the title-screen picker: an ally already 
   heroLook(player, who);
   for (const b of document.querySelectorAll('#pick button')) b.classList.toggle('on', b.textContent === who);
   const k = KITS[who];
-  $('kit').innerHTML = `<b>${who}</b> · ${k.role} · ${k.hp} HP<br><b>C — ${k.ab}:</b> ${k.text}`; $('abName').textContent = k.ab;
+  const w = WEAPONS[who], mv = MOVES[moveOf(k.role)];
+  $('kit').innerHTML = `<b>${who}</b> · ${k.role} · ${k.hp} HP<br><b>${w.name}:</b> ${w.text}<br><b>C — ${k.ab}:</b> ${k.text}<br><b>Shift — ${mv.name}:</b> ${mv.text}`; $('abName').textContent = k.ab; $('mvName').textContent = mv.name;
 }
 $('pick').innerHTML = ROSTER[PT].map(n => `<button>${n}</button>`).join('');
 for (const b of document.querySelectorAll('#pick button')) b.onclick = () => pickHero(b.textContent);
@@ -723,10 +757,14 @@ const lanternMesh = model('lantern'); lanternMesh.scale.setScalar(1.7); lanternM
 
 /* ---------- small effects ---------- */
 const tracers = [];
-function tracer(a, b, color) {
-  const g = new THREE.BufferGeometry().setFromPoints([a, b]);
-  const l = new THREE.Line(g, new THREE.LineBasicMaterial({color, transparent: true, opacity: .9}));
-  scene.add(l); tracers.push({l, life: .07});
+function tracer(a, b, color, width) {
+  let l;
+  if (width) {            // a visible bolt: a thin cylinder from a to b
+    const d = b.clone().sub(a), len = d.length() || .01;
+    l = new THREE.Mesh(new THREE.CylinderGeometry(width, width, len, 5, 1, true), new THREE.MeshBasicMaterial({color, transparent: true, opacity: .9}));
+    l.position.copy(a).addScaledVector(d, .5); l.quaternion.setFromUnitVectors(new V3(0, 1, 0), d.multiplyScalar(1 / len));
+  } else l = new THREE.Line(new THREE.BufferGeometry().setFromPoints([a, b]), new THREE.LineBasicMaterial({color, transparent: true, opacity: .9}));
+  scene.add(l); tracers.push({l, life: width ? .1 : .07});
 }
 const rings = [];
 function ring(pos, color, size) {
@@ -813,25 +851,26 @@ function worldHit(origin, dir, max) {
   const h = ray.intersectObjects(solids, false)[0];
   return h ? h.distance : Infinity;
 }
-function rayEnts(origin, dir, max, filter) {   // nearest entity hit-sphere along a ray
-  let best = null, bt = max;
+function rayEnts(origin, dir, max, filter, fat) {   // nearest entity hit-sphere along a ray
+  let best = null, bt = max, si = 0;
   for (const e of ents) {
     if (!e.alive || !filter(e)) continue;
     for (const [oy, r] of e.spheres) {
       const cx = e.pos.x - origin.x, cy = e.pos.y + oy - origin.y, cz = e.pos.z - origin.z;
       const t = cx * dir.x + cy * dir.y + cz * dir.z; if (t < 0 || t > bt) continue;
       const d2 = cx * cx + cy * cy + cz * cz - t * t;
-      if (d2 < r * r) { bt = t; best = e; }
+      const rr = r + (fat || 0); if (d2 < rr * rr) { bt = t; best = e; si = e.spheres.indexOf(e.spheres.find(q => q[0] === oy)); }
     }
   }
-  return best ? {e: best, t: bt} : null;
+  return best ? {e: best, t: bt, head: (best.kind === 'hero' || best.kind === 'wickie') && si === best.spheres.length - 1} : null;
 }
 function giveSpark(team, amount, near, range) {
   const hs = heroes.filter(h => h.team === team && h.alive && (!near || h.pos.distanceTo(near) < range));
   for (const h of hs) h.spark += Math.round(amount / hs.length);
   if (hs.length) state.teamSpark[team] += amount;
 }
-function damage(t, amt, src) {
+let critFlag = false, hitMark = null; const nums = [];
+function damage(t, amt, src, quiet) {
   if (!t.alive || state.over) return;
   if (t.kind === 'hero') {
     if (t.marked > 0) amt *= 1.3;
@@ -844,7 +883,11 @@ function damage(t, amt, src) {
   if (t.kind === 'crab' && !t.active) return;
   t.hp -= amt; t.lastHit = state.time;
   if (src && src.isPlayer && player.rig[2] && state.tide.high) player.hp = Math.min(player.maxHp, player.hp + amt * .15);
-  if (src === player) beep(900, .03, 'square', .02);
+  if (src === player && !AUTO) {
+    if (!quiet) { beep(critFlag ? 1500 : 900, .03, 'square', .02); hitMark = {t: .16, crit: critFlag}; }
+    const n = nums.find(q => q.e === t && q.life > .45);                       // damage numbers gather per target
+    if (n) { n.v += amt; n.crit = n.crit || critFlag; n.life = .7; } else { if (nums.length > 16) nums.shift(); nums.push({e: t, v: amt, crit: critFlag, life: .7, pos: t.pos.clone().setY(t.pos.y + t.h + .9)}); }
+  }
   if (t.hp > 0) return;
   t.hp = 0; t.alive = false; t.mesh.visible = false;
   if (t.solid) solids.splice(solids.indexOf(t.solid), 1);   // a fallen Foghorn no longer blocks shots or tethers
@@ -991,6 +1034,7 @@ function updateFields(dt) {
       if (z.kind === 'weed' && foe) { e.slow = .3; if (waterDepth(e) > .2) e.root = .3; }
       if (z.kind === 'slag') { if (steam) e.hidden = .3; else if (foe) damage(e, 18 * dt, null); }
       if (z.kind === 'smoke') { if (!foe) e.hidden = .3; else if (e.tether) e.tether = null; }
+      if (z.kind === 'trap' && foe && z.life > 0) { damage(e, 30, null); e.root = 1.8; e.stun = Math.max(e.stun || 0, .4); pop('SNAP!', e.pos.clone().setY(e.pos.y + 2), '#fff', 26); z.life = 0; }
     }
     if (z.life <= 0) { scene.remove(z.mesh); zones.splice(i, 1); }
   }
@@ -1003,33 +1047,141 @@ function updateFields(dt) {
     if (q.life <= 0) { scene.remove(q.mesh); solids.splice(solids.indexOf(q.mesh), 1); posts.splice(i, 1); }
   }
   for (const h of heroes) if (h.alive && h.deep > 0 && waterDepth(h) > 1) h.hidden = .2;
+  for (const h of heroes) if (h.alive && h.charge > 0) {                  // a Charge bowls enemies aside
+    h.charge -= dt;
+    for (const e of ents) if (e.alive && e.team !== h.team && !e.structure && !h.struck.has(e) && e.pos.distanceTo(h.pos) < 2.5) { h.struck.add(e); damage(e, 30, h); if (e.alive) knockback(e, h.pos.x, h.pos.z, 17, 7); }
+  }
+  updateShots(dt);
 }
 
 const rigOn = (i, high) => player.rig[i] && state.tide.high === high;      // is this item's Low (false) or High (true) face working now?
-const reloadTime = () => rigOn(5, false) ? .75 : 1.5;
+const reloadTime = () => player.wpn.reload * (rigOn(5, false) ? .5 : 1);
+
+/* ---------- weapons ---------- */
+const shots = [];
+function applyHit(src, w, e, mult, crit, dist) {
+  if (e.team === src.team) {                             // only the Needle does anything to a crewmate
+    if (w.heal && e.kind === 'hero' && e !== src) { e.hp = Math.min(e.maxHp, e.hp + w.heal); ring(e.pos.clone().setY(e.pos.y + 1.4), 0x9fe6d8, 1.4); if (src === player) hitMark = {t: .16, heal: 1}; }
+    return;
+  }
+  let dmg = w.dmg * src.kit.dmg * mult;
+  if (w.falloff && dist > w.falloff[0]) dmg *= lerp(1, .3, clamp((dist - w.falloff[0]) / (w.falloff[1] - w.falloff[0]), 0, 1));
+  if (crit) dmg *= w.crit || 1.5;
+  if (w.wet && waterDepth(e) > .2) dmg *= w.wet;
+  if (w.soak && waterDepth(src) > .2) dmg *= w.soak;
+  if (src === player && !AUTO) {
+    if (player.rig[0] && !state.tide.high) dmg *= 1.25;
+    if (rigOn(7, true) && waterDepth(e) > .2) dmg *= 1.35;
+    if (rigOn(7, false) && e.kind === 'hero') e.slow = Math.max(e.slow || 0, .7);
+    if (rigOn(8, false) && e.structure) dmg *= 1.3;
+    if (rigOn(8, true) && e.kind === 'wickie') dmg *= 1.3;
+  }
+  critFlag = !!crit; damage(e, e.structure ? dmg * .8 : dmg, src); critFlag = false;
+  if (!e.alive || e.structure) return;
+  if (w.slow) e.slow = Math.max(e.slow || 0, w.slow);
+  if (w.dot) e.dot = {t: w.dot[1], dps: w.dot[0] / w.dot[1], src};
+  if (w.knock && !(e.iron > 0)) knockback(e, src.pos.x, src.pos.z, w.knock, 3);
+}
+function burst(s, point, skip) {                         // a shell or rivet going off
+  const w = s.w, wet = state.tide.level > heightfield(point.x) + .1, r = w.splash * (w.deep && wet ? w.deep : 1);
+  ring(point, w.color, r * 1.6); if (r > 3) pop(wet && w.deep ? 'FWOOSH!' : 'BOOM!', point, '#ffd23f', 30); if (s.src === player) beep(90, .25, 'sawtooth', .06);
+  const sw = Object.assign({}, w, {dmg: w.splashDmg, falloff: null});
+  for (const e of ents) {
+    if (!e.alive || e === skip || e.team === s.src.team || (e.kind === 'crab' && !e.active)) continue;
+    const d = Math.hypot(e.pos.x - point.x, e.pos.z - point.z, e.pos.y + 1 - point.y);
+    if (d < r + e.r) applyHit(s.src, sw, e, s.mult * (1 - .5 * d / (r + e.r)), false, 0);
+  }
+}
+function launch(src, w, from, to, mult) {
+  const d = to.clone().sub(from), dist = d.length() || 1, tt = dist / w.speed, grav = w.kind === 'lob' ? 22 : 0;
+  const vel = d.multiplyScalar(1 / tt); vel.y += .5 * grav * tt;
+  const mesh = new THREE.Mesh(w.ring ? new THREE.TorusGeometry(w.size, .06, 5, 14) : new THREE.SphereGeometry(w.size, 8, 6), new THREE.MeshBasicMaterial({color: w.color}));
+  if (!w.ring && w.kind === 'proj') mesh.scale.set(1, 1, 3.2);
+  mesh.position.copy(from); scene.add(mesh);
+  shots.push({src, w, mult, pos: from.clone(), vel, grav, life: w.range / w.speed + (grav ? 1.5 : 0), mesh, seen: new Set(), far: 0});
+}
+const sdir = new V3();
+function updateShots(dt) {
+  for (let i = shots.length - 1; i >= 0; i--) {
+    const s = shots[i], w = s.w; s.life -= dt; s.vel.y -= s.grav * dt;
+    const len = s.vel.length() * dt; sdir.copy(s.vel).normalize();
+    const wd = worldHit(s.pos, sdir, len + .1);
+    const hit = rayEnts(s.pos, sdir, Math.min(wd, len), e => !s.seen.has(e) && e !== s.src && (e.team !== s.src.team) && !(e.kind === 'crab' && !e.active), w.radius || .25);
+    let dead = false;
+    if (hit) {
+      s.seen.add(hit.e); applyHit(s.src, w, hit.e, s.mult, false, s.far);
+      if (!w.pierce) { const pt = s.pos.clone().addScaledVector(sdir, hit.t); if (w.splash) burst(s, pt, hit.e); else ring(pt, w.color, .8); dead = true; }
+    }
+    if (!dead && (wd <= len + .1 || s.life <= 0)) { if (w.splash) burst(s, s.pos.clone().addScaledVector(sdir, Math.min(wd, len)), null); dead = true; }
+    if (dead) { scene.remove(s.mesh); s.mesh.geometry.dispose(); shots.splice(i, 1); continue; }
+    s.pos.addScaledVector(sdir, len); s.far += len; s.mesh.position.copy(s.pos); s.mesh.lookAt(tmp.copy(s.pos).add(sdir));
+  }
+}
+const SND = {hit: [180, .05, 'square'], scatter: [95, .16, 'sawtooth'], proj: [260, .07, 'triangle'], lob: [120, .14, 'triangle']};
+const jit = new V3(), camR = new V3(), camU = new V3();
+function aimRay(d, max, w) {                             // what one shot along d from the camera reaches
+  const back = camPos.distanceTo(player.pos), wd = worldHit(camPos, d, max + back);
+  const hit = rayEnts(camPos, d, Math.min(wd, max + back), e => e !== player && (e.team !== PT ? !(e.kind === 'crab' && !e.active) : !!(w && w.heal) && e.kind === 'hero'));
+  const tt = hit ? hit.t : Math.min(wd, max + back);
+  return {ent: hit && hit.e, head: hit && hit.head, point: camPos.clone().addScaledVector(d, tt), dist: Math.max(0, tt - back)};
+}
+const spreadOf = p => (p.wpn.spread || .006) * (p.aiming ? .45 : 1) + p.bloom + (p.speedNow > 6 && !p.aiming ? .006 : 0) + (p.onGround || p.swim ? 0 : .012);
+function playerShot(p) {
+  const w = p.wpn, wake = p.wake >= 100, mult = wake ? 3 : 1, sp = spreadOf(p), base = aimDir().clone();
+  camR.set(Math.cos(yaw), 0, -Math.sin(yaw)); camU.crossVectors(camR, base);
+  const off = () => { const a = Math.random() * 6.283, r = Math.sqrt(Math.random()) * sp; return jit.copy(base).addScaledVector(camR, Math.cos(a) * r).addScaledVector(camU, Math.sin(a) * r).normalize(); };
+  const muzzle = p.pos.clone().setY(p.pos.y + 1.75).addScaledVector(tmp.set(-Math.sin(yaw), 0, -Math.cos(yaw)), .6);
+  const col = wake ? 0x7fd4ff : w.color;
+  if (w.kind === 'hit' || w.kind === 'scatter') {
+    for (let n = w.pellets || 1; n--;) {
+      const r = aimRay(off(), w.range, w);
+      if (r.ent) applyHit(p, w, r.ent, mult, r.head, r.dist);
+      tracer(muzzle, r.point, col, w.w);
+    }
+  } else launch(p, w, muzzle, aimRay(off(), w.range, w).point, mult);
+  if (wake) { p.wake = 0; p.ammo = w.mag; const pt = aimRay(base, w.range, w).point; ring(pt, 0x7fd4ff, 2.5); pop('KRAK!', pt, '#7fd4ff', 42); beep(1300, .12, 'triangle', .07); } else p.ammo--;
+  p.bloom = Math.min(w.maxBloom || .06, p.bloom + (w.bloom === undefined ? .006 : w.bloom));
+  const s = SND[w.kind]; beep(s[0] * (w.beam ? 4 : 1) * (.95 + Math.random() * .1), s[1], s[2], w.beam ? .012 : .035);
+}
+
+/* ---------- moves (Shift) ---------- */
+function useMove(h) {
+  const mv = MOVES[h.move];
+  if (!state.started || state.over || !h.alive || h.moveCd > 0 || h.stun > 0 || h.root > 0) return;
+  h.moveCd = mv.cd; const f = fwdOf(h), sp = Math.hypot(h.vel.x, h.vel.z), dir = sp > 2 ? [h.vel.x / sp, h.vel.z / sp] : h.move === 'roll' ? [-f[0], -f[1]] : f;
+  if (h.move === 'charge') { h.vel.x = f[0] * 24; h.vel.z = f[1] * 24; h.knock = .45; h.charge = .5; h.struck = new Set(); }
+  if (h.move === 'roll') { h.vel.x = dir[0] * 22; h.vel.z = dir[1] * 22; h.knock = .3; h.hidden = .5; }
+  if (h.move === 'leap') { h.vel.y = 13; h.vel.x = f[0] * 12; h.vel.z = f[1] * 12; h.onGround = false; h.knock = .3; h.tether = null; }
+  if (h.move === 'trap') addZone('trap', h.team, h.pos.x, h.pos.z, 1.6, 25, 0x8c8f90);
+  if (h.move === 'mend') { h.vel.x = dir[0] * 18; h.vel.z = dir[1] * 18; h.knock = .25; h.hp = Math.min(h.maxHp, h.hp + 35); ring(h.pos.clone().setY(h.pos.y + 1), 0x9fe6d8, 2); }
+  if (h.move === 'slide') { h.haste = 1.3; h.hasteK = 1.85; if (h.isPlayer) h.wake = Math.min(100, h.wake + 30); }
+  if (h.isPlayer) beep(420, .1, 'triangle', .05);
+}
 
 /* ---------- player ---------- */
 const keys = {}, mouse = {down: false};
 let yaw = PT ? 0 : Math.PI, pitch = -.08;      // face down the lane toward the enemy ship
 let padMode = false;      // playing on a controller: the game runs without the mouse being captured
-const pad = {f: 0, s: 0, fire: false, jump: false, prev: []};
+const pad = {f: 0, s: 0, fire: false, jump: false, aim: false, prev: []};
 const locked = () => TEST || padMode || document.pointerLockElement === renderer.domElement;
 addEventListener('keydown', e => { keys[e.code] = true; if (e.code === 'Space') e.preventDefault(); onKey(e.code); });
 addEventListener('keyup', e => keys[e.code] = false);
 addEventListener('mousemove', e => {
   if (!locked() || TEST) return;
-  yaw -= e.movementX * .0023; pitch = clamp(pitch - e.movementY * .0023, -1.2, 1.2);
+  const sens = .0023 * camera.fov / 68;       // slower when scoped
+  yaw -= e.movementX * sens; pitch = clamp(pitch - e.movementY * sens, -1.2, 1.2);
 });
-addEventListener('mousedown', e => { if (!locked()) return; if (e.button === 0) mouse.down = true; if (e.button === 2) fireTether(); });
-addEventListener('mouseup', e => { if (e.button === 0) mouse.down = false; });
+addEventListener('mousedown', e => { if (!locked()) return; if (e.button === 0) mouse.down = true; if (e.button === 2) mouse.aim = true; });
+addEventListener('mouseup', e => { if (e.button === 0) mouse.down = false; if (e.button === 2) mouse.aim = false; });
 addEventListener('contextmenu', e => e.preventDefault());
 function onKey(c) {
   if (!state.started || !player.alive || state.over) return;
   if (c === 'KeyE') fireTether();
   if (c === 'KeyC') useAbility(player);
+  if (c === 'ShiftLeft' || c === 'ShiftRight') useMove(player);
   if (c === 'KeyF' && player.shoveCd <= 0 && player.stun <= 0) shove(player);
   if (c === 'KeyQ' && player.braceCd <= 0) { player.brace = .7; player.braceCd = 5; ring(player.pos.clone().setY(player.pos.y + 1), 0x7fd4ff, 1.6); }
-  if (c === 'KeyR' && player.ammo < 24 && player.reload <= 0) player.reload = reloadTime();
+  if (c === 'KeyR' && player.ammo < player.wpn.mag && player.reload <= 0) player.reload = reloadTime();
   if (c === 'KeyB') toggleShop();
   const m = /^Digit([1-9])$/.exec(c); if (m) buy(+m[1] - 1);
 }
@@ -1048,7 +1200,7 @@ function aimDir() {
 function playerAim(max) {   // what the crosshair is on: an enemy, the world, or thin air
   const d = aimDir(), back = camPos.distanceTo(player.pos);
   const w = worldHit(camPos, d, max + back);
-  const hit = rayEnts(camPos, d, Math.min(w, max + back), e => e.team !== PT && !(e.kind === 'crab' && !e.active));
+  const hit = rayEnts(camPos, d, Math.min(w, max + back), e => e !== player && e.team !== PT && !(e.kind === 'crab' && !e.active));
   const t = hit ? hit.t : Math.min(w, max + back);
   return {ent: hit && hit.e, point: tmp.copy(camPos).addScaledVector(d, t).clone(), solid: !!hit || w < max + back};
 }
@@ -1081,32 +1233,20 @@ function updatePlayer(dt) {
     if (d < 2.4 || t.t <= 0 || (keys.Space || pad.jump) && t.t < 1.3) { p.tether = null; if (p.vel.y < 6) p.vel.y += 5; }
     else { p.vel.addScaledVector(tmp2.normalize(), 70 * dt); if (p.vel.length() > 28) p.vel.setLength(28); }
   }
-  moveEnt(p, dt, fx_, fz_, 9 * p.kit.speed * speedMul * (p.carry ? (rigOn(6, true) ? 1.15 : .9) : 1));
+  moveEnt(p, dt, fx_, fz_, 9 * p.kit.speed * speedMul * (p.aiming ? .75 : 1) * (p.carry ? (rigOn(6, true) ? 1.15 : .9) : 1));
   p.face = yaw + Math.PI;
   // Wake: speed is the resource
   if (p.speedNow > 10.5) p.wake = Math.min(100, p.wake + (p.speedNow - 8) * 4.2 * (rigOn(5, true) ? 1.6 : 1) * dt); else if (p.wake < 100) p.wake = Math.max(0, p.wake - 2.5 * dt);   // a full Wake holds until it is spent
   // weapon
-  p.fireT -= dt;
-  if (p.reload > 0) { p.reload -= dt; if (p.reload <= 0) p.ammo = 24; }
-  if ((mouse.down || pad.fire) && p.fireT <= 0 && p.reload <= 0 && p.stun <= 0 && !p.carry) {
+  const w = p.wpn, rate = w.rate / (p.rig[0] && high ? 1.25 : 1), trigger = mouse.down || pad.fire;
+  p.aiming = (mouse.aim || pad.aim) && !p.carry && p.reload <= 0;
+  p.fireT -= dt; p.bloom = Math.max(0, p.bloom - dt * .09);
+  if (p.reload > 0) { p.reload -= dt; if (p.reload <= 0) p.ammo = w.mag; }
+  if (p.stun > 0 || p.carry) p.burst = 0;
+  else if (p.burst > 0 && p.fireT <= 0 && p.ammo > 0) { playerShot(p); p.burst--; p.fireT = p.burst > 0 ? .07 : rate; }
+  else if (trigger && p.fireT <= 0 && p.reload <= 0) {
     if (p.ammo <= 0) p.reload = reloadTime();
-    else {
-      const wakeShot = p.wake >= 100;
-      p.fireT = .13 / (p.rig[0] && high ? 1.25 : 1);
-      const a = playerAim(90);
-      let dmg = 16 * p.kit.dmg * (p.rig[0] && !high ? 1.25 : 1);
-      if (wakeShot) { dmg *= 3; p.wake = 0; p.ammo = 24; ring(a.point, 0x7fd4ff, 2.5); pop('KRAK!', a.point, '#7fd4ff', 42); beep(1300, .12, 'triangle', .07); } else p.ammo--;
-      if (a.ent) {
-        const e = a.ent;
-        if (rigOn(7, true) && waterDepth(e) > .2) dmg *= 1.35;
-        if (rigOn(7, false) && e.kind === 'hero') e.slow = Math.max(e.slow || 0, .7);
-        if (rigOn(8, false) && e.structure) dmg *= 1.3;
-        if (rigOn(8, true) && e.kind === 'wickie') dmg *= 1.3;
-        damage(e, e.structure ? dmg * .8 : dmg, p);
-      }
-      tracer(tmp2.copy(p.pos).setY(p.pos.y + 1.75).clone(), a.point, wakeShot ? 0x7fd4ff : 0xfff2b0);
-      beep(wakeShot ? 240 : 180, .05, 'square', .03);
-    }
+    else { playerShot(p); if (w.burst) { p.burst = w.burst - 1; p.fireT = .07; } else p.fireT = rate; }
   }
   if (p.rig[2] && !high) p.hp = Math.min(p.maxHp, p.hp + 4 * dt);
   if (rigOn(3, true) && waterDepth(p) > .2) p.hp = Math.min(p.maxHp, p.hp + 6 * dt);
@@ -1131,12 +1271,14 @@ function frontOf(team) {         // how far down the lane this team's wave has r
 function wickiesNear(team, z, range) {
   return ents.some(w => w.alive && w.kind === 'wickie' && w.team === team && Math.abs(w.pos.z - z) < range);
 }
-function shootAt(e, t, dmg, chance, color) {
+function shootAt(e, t, mult, chance, w) {      // a bot's shot: a hit roll, then the weapon's own effects. Wickies pass a plain damage and colour.
   const a = e.pos.clone().setY(e.pos.y + e.h * .7), b = t.pos.clone().setY(t.pos.y + (t.spheres[0][0]));
   let hit = Math.random() < chance * (t.hidden > 0 ? .3 : 1);
   if (hit && t.isPlayer) { tmp.copy(b).sub(a); const d = tmp.length(); if (worldHit(a, tmp.normalize(), d) < d - .5) hit = false; }  // cover works
   if (!hit) b.add(tmp.set(Math.random() - .5, Math.random() - .3, Math.random() - .5).multiplyScalar(2.4));
-  tracer(a, b, color); if (hit) damage(t, dmg, e);
+  if (typeof w === 'number') { tracer(a, b, w); if (hit) damage(t, mult, e); return; }
+  tracer(a, b, w.color, w.w || (w.kind === 'hit' ? 0 : .04)); if (w.splash && hit) ring(b, w.color, w.splash);
+  if (hit) applyHit(e, w, t, mult, false, 0);
 }
 function updateBot(h, dt) {
   const d = dirOf(h.team), foe = 1 - h.team, lan = state.lantern;
@@ -1160,11 +1302,15 @@ function updateBot(h, dt) {
   if (t) h.face = Math.atan2(t.pos.x - h.pos.x, t.pos.z - h.pos.z); else if (l > 1) h.face = Math.atan2(wx, wz);
   h.fireT -= dt;
   if (t && h.fireT <= 0 && h.stun <= 0 && !h.carry) {
-    h.fireT = .26;
+    const w = h.wpn, cad = Math.max(.22, w.rate * (w.burst ? .6 : 1)); h.fireT = cad;
     const dist = t.pos.distanceTo(h.pos);
-    shootAt(h, t, (h.isPlayer ? 15 : 9) * h.kit.dmg * (t.structure ? 2 : 1), t.kind === 'hero' ? .42 - dist * .007 : .6, TEAM_COL[h.team]);
+    shootAt(h, t, 34.6 * cad * (h.isPlayer ? 1.67 : 1) * (t.structure ? 2.5 : 1) / w.dmg, t.kind === 'hero' ? .42 - dist * .007 : .6, w);
   }
   if (h.abCd <= 0 && h.stun <= 0 && wantsAbility(h)) useAbility(h);
+  if (h.moveCd <= 0 && h.stun <= 0 && Math.random() < dt * .6) {          // bots reach for their move now and then
+    const near = heroNear(h, h.move === 'trap' ? 12 : 9);
+    if (h.move === 'mend' || h.move === 'roll' ? h.hp < h.maxHp * .55 && heroNear(h, 20) : near) useMove(h);
+  }
   // Shove with a tell, so the player can Brace
   if (h.windup > 0) { h.windup -= dt; h.mesh.scale.setScalar(1.25); if (h.windup <= 0) { h.mesh.scale.setScalar(1); shove(h); } }
   else if (h.shoveCd <= 0 && h.stun <= 0 && nearest(h, 2.8, o => o.kind === 'hero')) h.windup = .45;
@@ -1267,10 +1413,11 @@ function step(dt) {
   for (const e of ents) {
     if (e.kind === 'crab') { updateCrab(e, dt); continue; }
     if (!e.alive) {
-      if (e.kind === 'hero') { e.respawn -= dt; if (e.respawn <= 0) { e.alive = true; e.hp = e.maxHp; e.mesh.visible = true; e.pos.set(e.laneX, 0, -dirOf(e.team) * SPAWN_Z); e.vel.set(0, 0, 0); e.ammo = 24; e.retreat = false; } }
+      if (e.kind === 'hero') { e.respawn -= dt; if (e.respawn <= 0) { e.alive = true; e.hp = e.maxHp; e.mesh.visible = true; e.pos.set(e.laneX, 0, -dirOf(e.team) * SPAWN_Z); e.vel.set(0, 0, 0); e.ammo = e.wpn.mag; e.reload = 0; e.dot = null; e.retreat = false; } }
       continue;
     }
-    for (const k of ['knock', 'slow', 'stun', 'brace', 'tetherCd', 'shoveCd', 'braceCd', 'abCd', 'marked', 'iron', 'haste', 'root', 'deep', 'skiff', 'hidden']) if (e[k] > 0) e[k] -= dt;
+    if (e.dot) { e.dot.t -= dt; damage(e, e.dot.dps * dt, e.dot.src, true); if (e.dot && e.dot.t <= 0) e.dot = null; }
+    for (const k of ['moveCd', 'knock', 'slow', 'stun', 'brace', 'tetherCd', 'shoveCd', 'braceCd', 'abCd', 'marked', 'iron', 'haste', 'root', 'deep', 'skiff', 'hidden']) if (e[k] > 0) e[k] -= dt;
     if (e.kind === 'hero') {
       if (e.isPlayer && !AUTO) updatePlayer(dt); else updateBot(e, dt);
       const home = e.pos.z * dirOf(e.team) < -86;      // only behind your own chain, so defenders at the chain can be worn down
@@ -1350,9 +1497,26 @@ function drawFx(dt) {
     fxc.lineWidth = lw; fxc.strokeStyle = '#f6ecd2'; fxc.beginPath(); fxc.arc(cx, cy, r, a0, a1); fxc.stroke();
     if (f > 0) { fxc.strokeStyle = col; fxc.beginPath(); fxc.arc(cx, cy, r, a1 - (a1 - a0) * f, a1); fxc.stroke(); }
   };
-  fxc.lineWidth = 5; fxc.strokeStyle = '#141414'; fxc.beginPath(); fxc.arc(cx, cy, 4, 0, 7); fxc.stroke();
-  fxc.lineWidth = 2; fxc.strokeStyle = '#fff'; fxc.beginPath(); fxc.arc(cx, cy, 4, 0, 7); fxc.stroke();
-  arc(36, Math.PI * .7, Math.PI * 1.3, p.reload > 0 ? 1 - p.reload / 1.5 : p.ammo / 24, p.reload > 0 ? '#999' : '#e2432a', 5);
+  const w = p.wpn, probe = p.alive && !AUTO ? aimRay(aimDir(), w.range, w) : null, on = probe && probe.ent, friend = on && probe.ent.team === PT;
+  const rcol = friend ? '#7df0a0' : on ? '#ff5a3c' : '#fff', rpx = Math.max(w.kind === 'scatter' ? 10 : 5, Math.tan(spreadOf(p)) / Math.tan(camera.fov * Math.PI / 360) * H / 2);
+  const stroke = draw => { fxc.lineCap = 'round'; fxc.lineWidth = 5; fxc.strokeStyle = '#141414'; fxc.beginPath(); draw(); fxc.stroke(); fxc.lineWidth = 2; fxc.strokeStyle = rcol; fxc.beginPath(); draw(); fxc.stroke(); };
+  if (w.kind === 'scatter') stroke(() => fxc.arc(cx, cy, rpx, 0, 7));                                  // a ring the size of the pattern
+  else if (w.kind === 'lob') stroke(() => { fxc.arc(cx, cy - 2, rpx + 6, Math.PI * 1.15, Math.PI * 1.85); fxc.moveTo(cx - 6, cy + 8); fxc.lineTo(cx, cy + 2); fxc.lineTo(cx + 6, cy + 8); });
+  else if (w.kind === 'proj') stroke(() => { for (const s of [-1, 1]) { fxc.moveTo(cx + s * (rpx + 9), cy - 6); fxc.lineTo(cx + s * (rpx + 3), cy); fxc.lineTo(cx + s * (rpx + 9), cy + 6); } });
+  else stroke(() => { for (const [x, y] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { fxc.moveTo(cx + x * (rpx + 4), cy + y * (rpx + 4)); fxc.lineTo(cx + x * (rpx + 11), cy + y * (rpx + 11)); } });   // ticks that open with the spread
+  stroke(() => fxc.arc(cx, cy, 1.6, 0, 7));
+  if (p.aiming && w.zoom > 1.5) { fxc.fillStyle = 'rgba(10,10,14,.55)'; fxc.beginPath(); fxc.rect(0, 0, W, H); fxc.arc(cx, cy, H * .42, 0, 7, true); fxc.fill('evenodd'); fxc.lineWidth = 6; fxc.strokeStyle = '#141414'; fxc.beginPath(); fxc.arc(cx, cy, H * .42, 0, 7); fxc.stroke(); }
+  if (hitMark) {                                                                                      // an X on every hit; gold on a head shot
+    hitMark.t -= dt; const a = clamp(hitMark.t / .16, 0, 1), s = 9 + (1 - a) * 5; fxc.globalAlpha = a;
+    fxc.lineCap = 'round'; for (const [lw, c] of [[6, '#141414'], [3, hitMark.heal ? '#7df0a0' : hitMark.crit ? '#ffd23f' : '#fff']]) { fxc.lineWidth = lw; fxc.strokeStyle = c; fxc.beginPath(); for (const [x, y] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) { fxc.moveTo(cx + x * s, cy + y * s); fxc.lineTo(cx + x * (s + 8), cy + y * (s + 8)); } fxc.stroke(); }
+    fxc.globalAlpha = 1; if (hitMark.t <= 0) hitMark = null;
+  }
+  for (let i = nums.length - 1; i >= 0; i--) {
+    const n = nums[i]; n.life -= dt; if (n.life <= 0) { nums.splice(i, 1); continue; }
+    pv.copy(n.pos).project(camera); if (pv.z > 1) continue;
+    fxc.globalAlpha = Math.min(1, n.life * 3); inked(Math.round(n.v) + (n.crit ? '!' : ''), (pv.x + 1) / 2 * W, (1 - pv.y) / 2 * H - (.7 - n.life) * 40, n.crit ? 24 : 17, n.crit ? '#ffd23f' : '#fff'); fxc.globalAlpha = 1;
+  }
+  arc(36, Math.PI * .7, Math.PI * 1.3, p.reload > 0 ? 1 - p.reload / reloadTime() : p.ammo / p.wpn.mag, p.reload > 0 ? '#999' : '#e2432a', 5);
   arc(36, -Math.PI * .3, Math.PI * .3, p.wake / 100, p.wake >= 100 ? '#ffd23f' : '#2f9db0', p.wake >= 100 ? 7 : 5);
   fxc.fillStyle = '#141414'; fxc.beginPath(); fxc.arc(cx, cy + 50, 7, 0, 7); fxc.fill();
   fxc.fillStyle = p.tetherCd > 0 ? '#666' : '#f6ecd2'; fxc.beginPath(); fxc.arc(cx, cy + 50, 4, 0, 7); fxc.fill();
@@ -1391,10 +1555,10 @@ function drawHud(dt) {
     $('sp' + t).textContent = state.teamSpark[t];
     $('t' + t).style.width = towers[t].hp / towers[t].maxHp * 100 + '%'; $('c' + t).style.width = chains[t].hp / chains[t].maxHp * 100 + '%';
   }
-  $('hp').style.width = p.hp / p.maxHp * 100 + '%'; $('hptxt').textContent = `${Math.ceil(p.hp)} / ${p.maxHp} HP · ${p.reload > 0 ? 'reloading' : p.ammo + ' / 24'}`;
+  $('hp').style.width = p.hp / p.maxHp * 100 + '%'; $('hptxt').textContent = `${Math.ceil(p.hp)} / ${p.maxHp} HP · ${p.wpn.name} ${p.reload > 0 ? 'reloading' : p.ammo + ' / ' + p.wpn.mag}`;
   $('spark').textContent = p.spark; $('pearl').textContent = p.pearl;
   if (shopOpen && (hudN = (hudN || 0) + 1) % 5 === 0) buildRig();
-  $('cdE').style.height = clamp(p.tetherCd / 3.5, 0, 1) * 100 + '%'; $('cdF').style.height = clamp(p.shoveCd / 4, 0, 1) * 100 + '%'; $('cdQ').style.height = clamp(p.braceCd / 5, 0, 1) * 100 + '%'; $('cdC').style.height = clamp(p.abCd / p.kit.cd, 0, 1) * 100 + '%';
+  $('cdE').style.height = clamp(p.tetherCd / 3.5, 0, 1) * 100 + '%'; $('cdF').style.height = clamp(p.shoveCd / 4, 0, 1) * 100 + '%'; $('cdQ').style.height = clamp(p.braceCd / 5, 0, 1) * 100 + '%'; $('cdV').style.height = clamp(p.moveCd / MOVES[p.move].cd, 0, 1) * 100 + '%'; $('cdC').style.height = clamp(p.abCd / p.kit.cd, 0, 1) * 100 + '%';
   $('feed').innerHTML = feed.map(f => `<div style="opacity:${clamp(f.t, 0, 1)}">${f.html}</div>`).join('');
   const dead = $('dead');
   if (state.over) { dead.style.display = 'block'; dead.innerHTML = (state.over.winner === PT ? `CHAIN CUT — the ${THEIRS} ship drifts for the Maelstrom. <span class="${cls(PT)}">${MINE} wins!</span>` : `Your Anchor Chain is cut. <span class="${cls(1 - PT)}">${THEIRS} wins.</span>`) + '<br><small>Press Enter to play again</small>'; }
@@ -1443,9 +1607,12 @@ function render(dt) {
 }
 function updateCamera() {   // third-person camera over the right shoulder
   if (AUTO) { yaw = player.face - Math.PI; pitch = -.25; }
-  const d = aimDir(), head = tmp2.copy(player.pos).setY(player.pos.y + 2.7);
-  const back = Math.min(6, worldHit(head, d.clone().negate(), 6.3) - .3);
-  camPos.copy(head).addScaledVector(d, -Math.max(1.2, back)).add(tmp.set(Math.cos(yaw), 0, -Math.sin(yaw)).multiplyScalar(.9));
+  const zoom = player.aiming && !AUTO ? player.wpn.zoom || 1.3 : 1, fov = 68 / zoom;
+  if (Math.abs(camera.fov - fov) > .05) { camera.fov += (fov - camera.fov) * .25; camera.updateProjectionMatrix(); }
+  const d = aimDir(), head = tmp2.copy(player.pos).setY(player.pos.y + 2.7), scoped = zoom > 1.5, reach = scoped ? .2 : zoom > 1 ? 4.2 : 6;
+  player.mesh.visible = player.alive && !(scoped && camera.fov < 52);      // through the scope you look past your own hat
+  const back = Math.min(reach, worldHit(head, d.clone().negate(), reach + .3) - .3);
+  camPos.copy(head).addScaledVector(d, -Math.max(scoped ? .1 : 1.2, back)).add(tmp.set(Math.cos(yaw), 0, -Math.sin(yaw)).multiplyScalar(scoped ? .25 : .9));
   camPos.y = Math.max(camPos.y, heightfield(camPos.x) + .4);
   camera.position.copy(camPos); camera.lookAt(tmp.copy(camPos).add(d));
 }
@@ -1464,12 +1631,12 @@ function start(viaPad) {
   if (viaPad === true) setPadMode(true); else if (!TEST) renderer.domElement.requestPointerLock();
 }
 /* ---------- controller (standard gamepad layout) ---------- */
-const PAD_LABELS = [['E', 'F', 'Q', 'C'], ['LT', 'B', 'RB', 'Y']];
+const PAD_LABELS = [['E', 'F', 'Q', 'C', '⇧'], ['LB', 'B', 'RB', 'Y', 'L3']];
 function setPadMode(on) {
   if (padMode === on) return; padMode = on;
   document.querySelectorAll('#bc .ab kbd').forEach((k, i) => k.textContent = PAD_LABELS[on ? 1 : 0][i]); buildRig();
 }
-function pause() { setPadMode(false); if (document.pointerLockElement) document.exitPointerLock(); $('overlay').style.display = 'flex'; $('go').textContent = 'Resume'; pad.fire = pad.jump = false; pad.f = pad.s = 0; }
+function pause() { setPadMode(false); if (document.pointerLockElement) document.exitPointerLock(); $('overlay').style.display = 'flex'; $('go').textContent = 'Resume'; pad.fire = pad.jump = pad.aim = false; pad.f = pad.s = 0; }
 function pollPad(dt) {
   const gp = navigator.getGamepads ? [...navigator.getGamepads()].find(q => q && q.connected) : null;
   if (!gp) { pad.f = pad.s = 0; pad.fire = pad.jump = false; return; }
@@ -1488,7 +1655,23 @@ function pollPad(dt) {
     if (edge(9)) { pause(); pad.prev = now; return; }
     pad.s = ax(0); pad.f = -ax(1);
     const lx = ax(2), ly = ax(3);                        // right stick looks; a curve keeps small movements precise
-    yaw -= lx * Math.abs(lx) ** .6 * 3.1 * dt; pitch = clamp(pitch - ly * Math.abs(ly) ** .6 * 2.1 * dt, -1.2, 1.2);
+    pad.aim = now[6];
+    // aim assist: when the reticle is close to an enemy, the stick slows down and the view leans gently toward them
+    let slow = 1; const fwd = aimDir();
+    if (player.alive) {
+      let best = null, ba = .1;
+      for (const e of ents) {
+        if (!e.alive || e.team === PT || e.structure || (e.kind === 'crab' && !e.active)) continue;
+        tmp.set(e.pos.x, e.pos.y + e.h * .65, e.pos.z).sub(camPos); const d = tmp.length(); if (d > 70) continue;
+        const ang = Math.acos(clamp(tmp.dot(fwd) / d, -1, 1)); if (ang < ba) { ba = ang; best = tmp.clone().multiplyScalar(1 / d); }
+      }
+      if (best) {
+        slow = .5 + ba * 5;
+        if (lx || ly || pad.f || pad.s) { const ty = Math.atan2(-best.x, -best.z), tp = Math.asin(best.y); let dy = ty - yaw; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); yaw += dy * Math.min(1, dt * 2.2); pitch += (tp - pitch) * Math.min(1, dt * 2.2); }
+      }
+    }
+    const turn = slow * camera.fov / 68;
+    yaw -= lx * Math.abs(lx) ** .6 * 3.1 * turn * dt; pitch = clamp(pitch - ly * Math.abs(ly) ** .6 * 2.1 * turn * dt, -1.2, 1.2);
     if (shopOpen) {                                      // the shop takes the d-pad, A and B while it is open
       pad.fire = now[7]; pad.jump = false;
       if (edge(12) || edge(13)) { shopSel = (shopSel + (edge(13) ? 1 : -1) + RIG.length) % RIG.length; buildRig(); }
@@ -1497,9 +1680,9 @@ function pollPad(dt) {
     } else {
       pad.fire = now[7]; pad.jump = now[0];
       if (edge(12) || edge(8)) toggleShop(true);
-      for (const [b, c] of [[1, 'KeyF'], [3, 'KeyC'], [4, 'KeyC'], [5, 'KeyQ']]) if (edge(b)) onKey(c);
+      for (const [b, c] of [[1, 'KeyF'], [3, 'KeyC'], [5, 'KeyQ'], [10, 'ShiftLeft'], [11, 'ShiftLeft']]) if (edge(b)) onKey(c);
     }
-    if (edge(6)) fireTether();
+    if (edge(4)) fireTether();
     if (edge(2)) onKey('KeyR');
   }
   pad.prev = now;
@@ -1512,7 +1695,7 @@ document.addEventListener('pointerlockchange', () => {
 });
 if (TEST) start();
 say(`Kill the ${THEIRS} Foghorn, then cut their Anchor Chain. Watch the tide clock.`);
-window.__bh = {PT, RIG, toggleShop, rigOn, pad, isPad: () => padMode, KITS, useAbility, zones, walls, posts, state, ents, heroes, player, ROSTER, heroLook, pickHero, model, scene, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
+window.__bh = {camPos, PT, WEAPONS, MOVES, useMove, shots, playerShot, RIG, toggleShop, rigOn, pad, isPad: () => padMode, KITS, useAbility, zones, walls, posts, state, ents, heroes, player, ROSTER, heroLook, pickHero, model, scene, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
   setAim: (y, p) => { yaw = y; pitch = p; updateCamera(); }};
 requestAnimationFrame(frame);
 }
