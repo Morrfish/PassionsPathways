@@ -223,6 +223,11 @@ kbd{border:2px solid var(--line);border-bottom-width:3px;border-radius:6px;paddi
   .rp-track{grid-auto-columns:100%}
   .hbox{min-width:200px}.portrait{width:70px;height:70px}#ammo{right:170px}
 }
+/* game controller */
+.padfocus{outline:4px solid #f07a22!important;outline-offset:3px;box-shadow:0 0 0 8px rgba(240,122,34,.22)!important;position:relative;z-index:1}
+#padHint{display:none;position:fixed;left:16px;bottom:16px;z-index:11;background:var(--panel);border:3px solid var(--line);border-radius:14px;padding:7px 12px;font-size:12.5px;font-weight:800;color:var(--ink);box-shadow:0 4px 0 rgba(29,42,68,.1)}
+body.pad #padHint{display:block}
+#padHint b{display:inline-block;min-width:20px;text-align:center;background:var(--navy);color:#fff;border-radius:7px;padding:0 5px;margin:0 2px}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;700;800;900&display=swap">
@@ -322,6 +327,7 @@ kbd{border:2px solid var(--line);border-bottom-width:3px;border-radius:6px;paddi
   <div id="caption">Your move.</div>
 </div>
 <div id="tip" class="hidden"></div>
+<div id="padHint"><b>A</b> select / move · <b>B</b> cancel · <b>✚</b> move cursor · <b>RS</b> turn board · <b>LT</b>/<b>RT</b> zoom · <b>Y</b> reset view · <b>Start</b> menu</div>
 
 <!-- DUEL INTRO = LOADOUT -->
 <div id="intro" class="overlay hidden">
@@ -2355,7 +2361,7 @@ function hurt(e,amt,src,head,fromNet){
   }
   if(e.barrier>0)amt*=.25;
   e.hp-=amt;e.flash=.12;
-  if(e.isPlayer){D.vig=Math.min(1,D.vig+amt/50);if(amt>3)Sound.hurt();}
+  if(e.isPlayer){D.vig=Math.min(1,D.vig+amt/50);if(amt>3)Sound.hurt();rumble(Math.min(1,amt/45),.5,140);}
   else{D.recentHitBot=1;if(src)dmgNumber(tmpV.copy(e.pos).setY(e.pos.y+2.2+Math.random()*.3),amt,head);}
   if(e.hp<=0){
     if(e.t==='k'&&!e.lsUsed&&D.fighting){startLastStand(e);return;}   // the King gets one last shot
@@ -2522,7 +2528,7 @@ function fireHook(){
 }
 function updateGadget(P,dt,live){
   const g=D.gad;g.cd=Math.max(0,g.cd-dt);P.gravScale=1;let airAcc=2.2;
-  const hold=live&&!(P.lastStand>0)&&(keys.KeyF||(keys.Space&&!P.onGround&&P.airT>.18));
+  const hold=live&&!(P.lastStand>0)&&(keys.KeyF||(PAD.active&&PAD.gadget)||((keys.Space||(PAD.active&&PAD.jump))&&!P.onGround&&P.airT>.18));
   if(g.type==='jetpack'){
     if(hold&&g.fuel>0){P.vy=Math.min(9,P.vy+46*dt);g.fuel=Math.max(0,g.fuel-dt/2.6);airAcc=6;g.thrust=true;
       if(Math.random()<dt*16)puff(new V3(P.pos.x+(Math.random()-.5)*.4,P.pos.y+.1,P.pos.z+(Math.random()-.5)*.4),.9,new V3((Math.random()-.5)*.8,-1.6,(Math.random()-.5)*.8));if(Math.random()<dt*8)Sound.jet();}
@@ -2756,19 +2762,20 @@ function updateDuel(rdt){
   const gad=updateGadget(P,dt,live);
   if(live||(!D.over&&D.count>0)){
     const c=P.cls;
-    const f=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),s=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);
-    const sprint=(keys.ShiftLeft||keys.ShiftRight)&&f>0&&!adsDown;
+    let f=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),s=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0);
+    if(PAD.active){f-=PAD.ly;s+=PAD.lx;}
+    const sprint=(keys.ShiftLeft||keys.ShiftRight||(PAD.active&&PAD.sprint))&&f>0&&!adsDown;
     const flying=D.gad.type==='hat'&&!P.onGround;
     const spd=live&&!(P.lastStand>0)?c.speed*(sprint?1.35:1)*(P.over>0?1.3:1)*(adsDown?.55:1)*(flying?1.15:1):0;
     const fx=-Math.sin(P.yaw),fz=-Math.cos(P.yaw),rx=Math.cos(P.yaw),rz=-Math.sin(P.yaw);
-    let wx=fx*f+rx*s,wz=fz*f+rz*s;const l=Math.hypot(wx,wz)||1;wx=wx/l*spd;wz=wz/l*spd;
+    let wx=fx*f+rx*s,wz=fz*f+rz*s;const l=Math.max(1,Math.hypot(wx,wz));wx=wx/l*spd;wz=wz/l*spd;   // keyboard diagonals capped; a half-tilted stick walks
     if(gad!=='hooked'&&!(P.bounceT>0)){
       const acc=P.onGround?12:gad;
       P.vel.x+=(wx-P.vel.x)*Math.min(1,acc*dt);P.vel.z+=(wz-P.vel.z)*Math.min(1,acc*dt);
     }
     if(P.bounceT>0)P.bounceT-=dt;
-    if(live&&keys.Space&&P.onGround&&!(P.lastStand>0)){P.vy=c.jump;P.onGround=false;}
-    if(live&&mouseDown&&(P.w.auto||P.triggerReleased)){if(playerFire())P.triggerReleased=false;}
+    if(live&&(keys.Space||(PAD.active&&PAD.jump))&&P.onGround&&!(P.lastStand>0)){P.vy=c.jump;P.onGround=false;}
+    if(live&&mouseDown&&(P.w.auto||P.triggerReleased)){if(playerFire()){P.triggerReleased=false;rumble(0,.22,45);}}
     D.bobT=(D.bobT||0)+dt*Math.hypot(P.vel.x,P.vel.z)*(P.onGround?1.6:0);
   }
   P.blocked=false;moveEntity(P,dt);
@@ -3318,8 +3325,12 @@ addEventListener('pointermove',e=>{
 });
 canvas.addEventListener('wheel',e=>{if(G.mode!=='board')return;e.preventDefault();orbit.tR=Math.max(7,Math.min(32,orbit.tR*(1+Math.sign(e.deltaY)*.08)));},{passive:false});
 async function boardClick(x,y){
-  if(G.busy||G.over||G.st.turn!==G.human)return;
   const s=pickSquare(x,y);if(s==null)return;
+  boardSelectSquare(s);
+}
+async function boardSelectSquare(s){
+  if(G.busy||G.over||G.st.turn!==G.human)return;
+  if(s==null||s<0)return;
   const p=G.st.b[s];
   if(G.sel>=0){
     const cands=G.selMoves.filter(m=>m.to===s);
@@ -3387,6 +3398,190 @@ document.addEventListener('pointerlockerror',()=>{fallbackLook=true;});
 function pauseDuel(){mouseDown=false;adsDown=false;show('pause',true);if(G.net&&NET.on)return;   // a network duel keeps running while your menu is open
   D.paused=true;}
 function resumeDuel(){show('pause',false);D.paused=false;if(!fallbackLook)requestLock();}
+
+// ---------------------------------------------------------------- input: game controller (Gamepad API, standard mapping)
+// Duel:  left stick move · right stick look · RT fire · LT aim/scope · A jump (hold in the air: Jetpack/Hat) · X reload
+//        RB / Y ability · LB gadget · B / R3 King's melee · L3 sprint · Start pause
+// Board: left stick / D-pad move the square cursor · A select / move · B cancel · right stick orbit · LT/RT zoom
+//        Y reset view · Back Armory · Start menu
+// Menus: left stick / D-pad move between buttons · A press · B back · LB/RB switch tabs · right stick turns the loadout figure
+const PAD={active:false,gp:null,prev:[],lx:0,ly:0,rx:0,ry:0,fire:false,ads:false,jump:false,gadget:false,sprint:false,
+  navT:0,navDir:'',focus:null,cont:null,sq:-1,cursor:null,tipT:0,sens:1,invert:false};
+const PB={A:0,B:1,X:2,Y:3,LB:4,RB:5,LT:6,RT:7,BACK:8,START:9,L3:10,R3:11,UP:12,DOWN:13,LEFT:14,RIGHT:15};
+try{const s=JSON.parse(localStorage.getItem('checkfire-pad')||'{}');PAD.sens=s.sens||1;PAD.invert=!!s.invert;}catch(e){}
+function padSave(){try{localStorage.setItem('checkfire-pad',JSON.stringify({sens:PAD.sens,invert:PAD.invert}));}catch(e){}}
+function padDead(x,y,dz){const m=Math.hypot(x,y);if(m<dz)return [0,0];const k=Math.min(1,(m-dz)/(1-dz))/m;return [x*k,y*k];}
+function rumble(strong,weak,ms){
+  const gp=PAD.gp;if(!PAD.active||!gp||!gp.vibrationActuator)return;
+  try{gp.vibrationActuator.playEffect('dual-rumble',{duration:ms,strongMagnitude:Math.min(1,strong),weakMagnitude:Math.min(1,weak)});}catch(e){}
+}
+function padSetActive(on){
+  if(PAD.active===on)return;PAD.active=on;document.body.classList.toggle('pad',on);
+  const q=document.querySelector('#dialQ .k'),f=document.querySelector('#dialF .k');if(q)q.textContent=on?'RB':'Q';if(f)f.textContent=on?'LB':'F';
+  if(!on){padBlur();if(PAD.cursor)PAD.cursor.visible=false;canvas.style.cursor='';}
+}
+addEventListener('mousemove',e=>{if(PAD.active&&(Math.abs(e.movementX)+Math.abs(e.movementY)>3))padSetActive(false);});
+addEventListener('keydown',()=>{if(PAD.active)padSetActive(false);});
+addEventListener('gamepadconnected',e=>{toast(`Controller connected — A to choose, B to go back, Start for the menu`);});
+addEventListener('gamepaddisconnected',()=>{PAD.gp=null;padSetActive(false);mouseDown=false;adsDown=false;});
+
+// ---- menu navigation
+const PAD_SEL='button:not([disabled]),.tile,.chip,.swatch,.rp-card,.wcard,.roomcard,input,select,[data-sel],[data-room],[data-lt]';
+const padVis=el=>el.getClientRects().length>0&&getComputedStyle(el).visibility!=='hidden';   // (fixed overlays have no offsetParent)
+function padTopOverlay(){
+  const ov=[...document.querySelectorAll('.overlay')].filter(o=>!o.classList.contains('hidden')&&padVis(o));
+  return ov.length?ov[ov.length-1]:null;
+}
+function padItems(cont){
+  const seen=new Set(),out=[];
+  for(const el of cont.querySelectorAll(PAD_SEL)){
+    if(!padVis(el))continue;const r=el.getBoundingClientRect();if(r.width<4||r.height<4)continue;
+    const host=el.closest('.tile,.swatch,.rp-card,.wcard,.roomcard');const key=host&&host!==el&&cont.contains(host)?host:el;   // one stop per tile
+    if(seen.has(key))continue;seen.add(key);out.push(key);
+  }
+  return out;
+}
+function padBlur(){if(PAD.focus)PAD.focus.classList.remove('padfocus');PAD.focus=null;}
+function padFocus(el){
+  if(PAD.focus===el)return;padBlur();if(!el)return;PAD.focus=el;el.classList.add('padfocus');
+  try{el.scrollIntoView({block:'nearest',inline:'nearest'});}catch(e){}
+}
+function padPickDefault(items){
+  return items.find(e=>e.matches('#bStart,#bFight,#bResume,#bAgain,#rpConfirm'))||items.find(e=>e.matches('.btn.big'))||items.find(e=>e.classList.contains('on'))||items[0];
+}
+function padMove(dx,dy){
+  const items=padItems(PAD.cont);if(!items.length)return;
+  if(!PAD.focus||!items.includes(PAD.focus)){padFocus(padPickDefault(items));return;}
+  const f=PAD.focus;
+  if(f.matches('input[type=range]')&&dx){const st=+f.step||.1;f.value=Math.max(+f.min,Math.min(+f.max,+f.value+dx*st));f.dispatchEvent(new Event('input',{bubbles:true}));Sound.click();return;}
+  const a=f.getBoundingClientRect(),ax=a.left+a.width/2,ay=a.top+a.height/2;let best=null,bs=1e9;
+  for(const el of items){if(el===f)continue;const b=el.getBoundingClientRect(),bx=b.left+b.width/2,by=b.top+b.height/2;
+    const vx=bx-ax,vy=by-ay,along=vx*dx+vy*dy;if(along<=6)continue;const perp=Math.abs(vx*dy-vy*dx);
+    const sc=along+perp*2.4;if(sc<bs){bs=sc;best=el;}}
+  if(best){padFocus(best);Sound.click();}
+}
+function padPress(){
+  const f=PAD.focus;if(!f)return;
+  if(f.matches('input[type=text],input:not([type]),input[type=search],input[type=number]')){f.focus();toast('Type with the keyboard, then press Enter');return;}
+  if(f.matches('input[type=range]'))return;
+  f.click();
+}
+function padBack(cont){
+  const cand=[...cont.querySelectorAll('button')].filter(padVis);
+  const b=cand.find(b=>/^(‹\s*)?(back|close|done|resume|got it|cancel)\b/i.test(b.textContent.trim()))||cand.find(b=>/close|back/i.test(b.id));
+  if(b){b.click();Sound.click();}
+}
+function padTabs(cont,dir){
+  const tabs=[...cont.querySelectorAll('[data-lt],#armTabs .chip,.seg button')].filter(padVis);
+  const groups=[...new Set(tabs.map(t=>t.parentElement))];if(!groups.length)return;
+  const g=groups[0],list=[...g.children].filter(t=>tabs.includes(t));const i=Math.max(0,list.findIndex(t=>t.classList.contains('on')));
+  const n=list[(i+dir+list.length)%list.length];if(n){n.click();Sound.click();}
+}
+// ---- board cursor
+function padCursorMesh(){
+  if(PAD.cursor)return PAD.cursor;
+  const m=new THREE.Mesh(new THREE.RingGeometry(.4,.5,4,1,Math.PI/4),new THREE.MeshBasicMaterial({color:0xf07a22,transparent:true,opacity:.95,depthWrite:false}));
+  m.rotation.x=-Math.PI/2;m.visible=false;BOARD.group.add(m);return PAD.cursor=m;
+}
+function padBoardMove(dx,dy){
+  if(PAD.sq<0)PAD.sq=G.sel>=0?G.sel:(G.human==='w'?sqi(4,1):sqi(4,6));
+  // turn stick directions into board directions using where the camera is looking
+  const q=Math.round(((orbit.theta%(Math.PI*2))+Math.PI*2)%(Math.PI*2)/(Math.PI/2))%4;
+  const rot=[[1,0,0,1],[0,-1,1,0],[-1,0,0,-1],[0,1,-1,0]][q];   // [fx,fy,rx,ry]: screen right/up -> file/rank
+  const df=Math.round(dx*rot[0]+(-dy)*rot[1]),dr=Math.round(dx*rot[2]+(-dy)*rot[3]);
+  const f=Math.max(0,Math.min(7,fileOf(PAD.sq)+df)),r=Math.max(0,Math.min(7,rankOf(PAD.sq)+dr));
+  PAD.sq=sqi(f,r);Sound.click();PAD.tipT=0;
+}
+function padBoardTip(){
+  if(PAD.sq<0)return;const v=sqPos(PAD.sq).clone().setY(.6).project(boardCam);
+  hoverTip((v.x+1)/2*innerWidth,(1-v.y)/2*innerHeight);
+}
+// ---- poll once per frame
+function padPoll(dt){
+  const list=navigator.getGamepads?[...navigator.getGamepads()].filter(Boolean):[];
+  const gp=list.find(g=>g.mapping==='standard')||list[0];PAD.gp=gp||null;
+  if(!gp){if(PAD.cursor)PAD.cursor.visible=false;return;}
+  const B=gp.buttons.map(b=>!!(b&&(b.pressed||b.value>.4))),prev=PAD.prev;PAD.prev=B;
+  const down=i=>B[i]&&!prev[i],up=i=>!B[i]&&prev[i];
+  const [lx,ly]=padDead(gp.axes[0]||0,gp.axes[1]||0,.2),[rx,ry]=padDead(gp.axes[2]||0,gp.axes[3]||0,.16);
+  PAD.lx=lx;PAD.ly=ly;PAD.rx=rx;PAD.ry=ry;
+  const anyInput=B.some(Boolean)||Math.hypot(lx,ly)>0||Math.hypot(rx,ry)>0;
+  if(anyInput&&!PAD.active){padSetActive(true);}
+  if(!PAD.active)return;
+  // stick/D-pad as repeating directional presses (menus and board)
+  let dir='',ddx=0,ddy=0;
+  if(B[PB.UP]||ly<-.55){dir='u';ddy=-1;}else if(B[PB.DOWN]||ly>.55){dir='d';ddy=1;}else if(B[PB.LEFT]||lx<-.55){dir='l';ddx=-1;}else if(B[PB.RIGHT]||lx>.55){dir='r';ddx=1;}
+  let step=false;
+  if(dir){if(dir!==PAD.navDir){step=true;PAD.navT=.36;}else{PAD.navT-=dt;if(PAD.navT<=0){step=true;PAD.navT=.13;}}}
+  PAD.navDir=dir;
+  const ov=padTopOverlay(),fighting=G.mode==='duel'&&D.active&&!ov;
+  if(PAD.cursor)PAD.cursor.visible=false;
+  if(ov){   // ------------------------------------------------ menus / overlays
+    if(PAD.cont!==ov){PAD.cont=ov;padBlur();padFocus(padPickDefault(padItems(ov)));}
+    if(!PAD.focus||!PAD.focus.isConnected||!padVis(PAD.focus)){padBlur();padFocus(padPickDefault(padItems(ov)));}
+    if(step)padMove(ddx,ddy);
+    if(down(PB.A))padPress();
+    if(down(PB.B))padBack(ov);
+    if(down(PB.LB))padTabs(ov,-1);
+    if(down(PB.RB))padTabs(ov,1);
+    if(down(PB.START)&&ov.id==='pause')resumeDuel();
+    if(ov.id==='intro'&&typeof LV!=='undefined')LV.rot+=rx*dt*3;
+    if(Math.abs(ry)>.3){const sc=ov.querySelector('.card');if(sc)sc.scrollTop+=ry*dt*700;}
+    mouseDown=false;adsDown=false;PAD.fire=PAD.ads=PAD.jump=PAD.gadget=false;
+    return;
+  }
+  PAD.cont=null;padBlur();
+  if(G.mode==='board'){   // ----------------------------------- board
+    const cur=padCursorMesh();
+    if(PAD.sq<0)PAD.sq=G.human==='w'?sqi(4,1):sqi(4,6);
+    if(step)padBoardMove(ddx,ddy);
+    const p=sqPos(PAD.sq);cur.position.set(p.x,.13,p.z);cur.visible=true;cur.scale.setScalar(1+Math.sin(performance.now()/200)*.05);
+    PAD.tipT-=dt;if(PAD.tipT<=0){PAD.tipT=.25;padBoardTip();}
+    if(down(PB.A))boardSelectSquare(PAD.sq);
+    if(down(PB.B)){G.sel=-1;G.selMoves=[];refreshMarks();Sound.click();}
+    orbit.tTheta-=rx*dt*2.2;orbit.tPhi=Math.max(.15,Math.min(1.35,orbit.tPhi+ry*dt*1.6));
+    const z=(B[PB.LT]?1:0)-(B[PB.RT]?1:0);if(z)orbit.tR=Math.max(7,Math.min(32,orbit.tR*(1+z*dt*1.2)));
+    if(down(PB.Y))resetView();
+    if(down(PB.START))document.getElementById('bMenu').click();
+    if(down(PB.BACK))document.getElementById('bArmory2').click();
+    return;
+  }
+  if(!fighting){mouseDown=false;adsDown=false;return;}
+  // ------------------------------------------------------------- duel
+  const P=D.player;canvas.style.cursor='none';
+  if(down(PB.START)||down(PB.BACK)){pauseDuel();return;}
+  if(D.paused||D.over)return;
+  // look: curved response, slower while aiming, and a little aim "friction" when the crosshair is on the enemy
+  const curve=v=>Math.sign(v)*Math.pow(Math.abs(v),1.6);
+  let k=2.9*sens*PAD.sens*(adsDown?(P.w.adsFov<40?.32:.62):1);
+  const Bt=D.bot;if(Bt&&Bt.hp>0){const ex=Bt.pos.x-P.pos.x,ez=Bt.pos.z-P.pos.z,ey=(Bt.pos.y+1.1)-(P.pos.y+P.eye);
+    const dyaw=Math.abs(angDiff(P.yaw,Math.atan2(-ex,-ez))),dp=Math.abs(Math.atan2(ey,Math.hypot(ex,ez))-P.pitch);
+    if(dyaw<.09&&dp<.12)k*=.55;}
+  P.yaw-=curve(rx)*k*dt;P.pitch=Math.max(-1.45,Math.min(1.45,P.pitch-curve(ry)*k*dt*(PAD.invert?-1:1)*.85));
+  // triggers and buttons
+  if(B[PB.RT]&&!PAD.fire){PAD.fire=true;mouseDown=true;}
+  if(!B[PB.RT]&&PAD.fire){PAD.fire=false;mouseDown=false;P.triggerReleased=true;}
+  if(B[PB.LT]&&!PAD.ads){PAD.ads=true;adsDown=true;}
+  if(!B[PB.LT]&&PAD.ads){PAD.ads=false;adsDown=false;}
+  PAD.jump=B[PB.A];PAD.gadget=B[PB.LB];
+  if(down(PB.L3))PAD.sprint=!PAD.sprint;
+  if(Math.hypot(lx,ly)<.3||ly>.2)PAD.sprint=false;          // sprint stops when you stop running forward
+  const free=!(P.lastStand>0);
+  if(down(PB.X)&&D.fighting&&free)startReload(P);
+  if((down(PB.RB)||down(PB.Y))&&D.fighting&&free){const was=P.abCd;useAbility(P);if(G.net&&NET.on&&was<=0&&P.abCd>0)netSend({t:'ab'});}
+  if((down(PB.B)||down(PB.R3))&&D.fighting)meleeSwing(P);
+  if(down(PB.LB)&&D.fighting&&D.gad&&D.gad.type==='grapple')fireHook();
+}
+// controller section in How to play + controller settings
+(()=>{
+  const k=document.querySelector('#rules .keys');
+  if(k)k.insertAdjacentHTML('afterend','<p class="keys"><b>Controller:</b> <kbd>Left stick</kbd> move · <kbd>Right stick</kbd> aim · <kbd>RT</kbd> fire · <kbd>LT</kbd> aim / scope · <kbd>A</kbd> jump (hold in the air for Jetpack or Hat) · <kbd>X</kbd> reload · <kbd>RB</kbd> or <kbd>Y</kbd> ability · <kbd>LB</kbd> gadget · <kbd>B</kbd> King\'s melee · <kbd>L3</kbd> sprint · <kbd>Start</kbd> pause.<br>On the board and in menus: <kbd>D-pad</kbd> or <kbd>Left stick</kbd> move · <kbd>A</kbd> choose · <kbd>B</kbd> back · <kbd>LB</kbd>/<kbd>RB</kbd> switch tabs · <kbd>Right stick</kbd> turn the board · <kbd>LT</kbd>/<kbd>RT</kbd> zoom · <kbd>Y</kbd> reset view · <kbd>Back</kbd> Armory.</p>');
+  const s=document.getElementById('sens3');
+  if(s){s.insertAdjacentHTML('afterend',`<label class="opt">Controller look speed</label><input type="range" id="padSens" min="0.4" max="2.5" step="0.1" value="${PAD.sens}" style="width:100%">
+    <div class="row" style="margin-top:8px"><button class="chip${PAD.invert?' on':''}" id="padInv">Invert controller look (up/down)</button></div>`);
+    document.getElementById('padSens').oninput=e=>{PAD.sens=+e.target.value;padSave();};
+    document.getElementById('padInv').onclick=e=>{PAD.invert=!PAD.invert;e.target.classList.toggle('on',PAD.invert);padSave();};}
+})();
 
 // ---------------------------------------------------------------- UI wiring
 function show(id,on){document.getElementById(id).classList.toggle('hidden',!on);}
@@ -3617,6 +3812,7 @@ refreshMenu();
 let lastT=performance.now();
 function frame(now){
   const dt=Math.min(.05,(now-lastT)/1000);lastT=now;
+  padPoll(dt);document.getElementById('padHint').style.visibility=G.mode==='board'&&!padTopOverlay()?'visible':'hidden';
   updateTweens(dt);previewFrame(dt);loadoutFrame(dt);
   if(G.mode==='duel'&&D.active){updateDuel(dt);renderScene(duelScene,duelCam);}
   else{

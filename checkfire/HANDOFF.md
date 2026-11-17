@@ -147,3 +147,18 @@ blaster-coloured body + orange suction cup; foam rocket teal with orange nose/fi
    (keep the footprints in the `prop(...)` calls). Decide whether the 4 neon arenas stay, get restyled, or go.
 3. Act on `PLAYTEST_NOTES.md` when Courtnee returns it (hand spots per blaster live in `HOLD`; board readability; difficulty).
 4. Still pending Courtnee's say-so: the four neon arenas (left as-is), publishing, a main-branch pull request, the Game Closet.
+
+## Game controller (Nov 2026)
+Gamepad API, standard mapping (Xbox / PlayStation / most USB pads), in `game.src.html` under "input: game controller"
+(`PAD`, `padPoll()` called first thing in `frame()`). The last-used device wins: any pad input switches to controller mode
+(`body.pad`, orange focus rings, board cursor, RB/LB labels on the dials); moving the mouse or typing switches back.
+- **Duel:** left stick move (half tilt walks), right stick look (curved response, slower while aiming, light aim "friction"
+  over the enemy), RT fire, LT aim/scope, A jump (hold in the air for Jetpack/Hat), X reload, RB or Y ability, LB gadget,
+  B or R3 King's melee, L3 sprint, Start/Back pause. Rumble on hits taken and shots fired (`rumble()`).
+- **Board:** stick/D-pad moves a square cursor (`PAD.sq`, follows the camera's facing), A = `boardSelectSquare()`,
+  B cancel, right stick orbit, LT/RT zoom, Y reset view, Back Armory, Start menu.
+- **Menus/overlays:** spatial navigation over the topmost visible `.overlay` (`padItems()`, `padMove()`), A presses,
+  B finds a Back/Close/Done/Resume button, LB/RB switch tabs, right stick turns the loadout figure.
+- Settings → Controller look speed and Invert controller look (stored in localStorage `checkfire-pad`).
+- Text boxes (join code, teacher code) still need a keyboard.
+- Test: `node tools/tests/controller.js` (fake gamepad: menu → board move → loadout → duel move/look/fire → pause/resume).
