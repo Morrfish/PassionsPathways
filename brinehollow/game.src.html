@@ -32,12 +32,22 @@
   #hpbar i{background:#e2432a}
   #res span{margin-right:14px}
   #bc{left:50.5%;bottom:16px;transform:translateX(-50%);display:flex;gap:10px;align-items:flex-end}
+  .chip{background:#ffe27a;border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);border-radius:3px;padding:3px 7px;font-size:9px;text-transform:uppercase;line-height:1.25;max-width:128px}
+  .chip b{font-family:var(--head);font-size:12px;letter-spacing:.04em}
+  .chip.shopkey{background:var(--paper)}
+  #shop{display:none;right:170px;bottom:150px;width:560px;background:#fff;border:4px solid var(--ink);box-shadow:7px 7px 0 var(--ink);padding:8px 12px 10px;font-size:10px;text-transform:uppercase;transform:rotate(-.4deg)}
+  #shop h3{margin:0 0 5px;font-family:var(--head);font-size:22px;letter-spacing:.06em}
+  #shop h3 small{font-family:inherit;font-size:10px;letter-spacing:0;margin-left:8px}
+  #shop .row{display:grid;grid-template-columns:18px 92px 1fr 1fr 118px;gap:5px;align-items:center;padding:3px 4px;border-top:2px dotted #14141440;opacity:.55}
+  #shop .row.can{opacity:1}#shop .row.own{opacity:1;background:#ffe27a}#shop .row.sel{outline:3px solid #c0522d}
+  #shop .row b,#shop .nm{font-family:var(--head);font-size:13px;letter-spacing:.04em}
+  #shop .pr{color:#a8641a;text-align:right}
   .slot{padding:5px 7px;width:120px;font-size:9.5px;text-transform:uppercase}
   .slot.own{background:#ffe27a}
   .slot h4{margin:0 0 3px;font-family:var(--head);font-weight:900;font-size:14px;letter-spacing:.04em}
   .face{opacity:.4;padding:1px 4px}
   .face.on{opacity:1;background:var(--ink);color:#fff}
-  .ab{padding:5px 8px;width:60px;text-align:center;font-size:10px;position:relative;overflow:hidden;text-transform:uppercase}
+  .ab{flex-shrink:0;padding:5px 8px;width:60px;text-align:center;font-size:10px;position:relative;overflow:hidden;text-transform:uppercase}
   .ab kbd{display:block;font-family:var(--head);font-weight:900;font-size:22px;font-weight:400}
   .ab i{position:absolute;left:0;bottom:0;width:100%;background:repeating-linear-gradient(45deg,#141414cc 0 3px,#14141455 3px 6px)}
   #mm{right:16px;bottom:16px;padding:5px;transform:rotate(1deg)}
@@ -87,8 +97,9 @@
   <div class="ab"><kbd>F</kbd>Shove<i id="cdF"></i></div>
   <div class="ab"><kbd>Q</kbd>Brace<i id="cdQ"></i></div>
   <div class="ab" style="width:86px;background:#ffe27a"><kbd>C</kbd><span id="abName"></span><i id="cdC"></i></div>
-  <div id="rig" style="display:flex;gap:8px"></div>
+  <div id="rig" style="display:flex;gap:6px;align-items:flex-end;flex-wrap:wrap;max-width:430px"></div>
 </div>
+<div id="shop" class="hud"></div>
 <div id="mm" class="hud"><canvas id="map" width="130" height="290"></canvas></div>
 
 <div id="overlay"><div id="card">
@@ -104,8 +115,8 @@
     <tr><td>E / Right-click</td><td>Harpoon tether — pulls you to what you hit, or yanks an enemy hero</td></tr>
     <tr><td>F · Q</td><td>Shove (knockback) · Brace (throws a Shove back at the attacker)</td></tr>
     <tr><td>C</td><td>Your hero's signature ability (shown under the picker)</td></tr>
-    <tr><td>1 · 2 · 3</td><td>Buy Rigging. Every item has a Low-Tide face and a High-Tide face</td></tr>
-    <tr><td>Controller</td><td>Left stick move · right stick aim · RT fire · LT tether · A jump · B shove · RB brace · Y ability · X reload · D-pad ← ↑ → buy Rigging · Start pause</td></tr>
+    <tr><td>B · 1–9</td><td>Open the Rigging shop · buy an item. Every item has a Low-Tide face and a High-Tide face</td></tr>
+    <tr><td>Controller</td><td>Left stick move · right stick aim · RT fire · LT tether · A jump · B shove · RB brace · Y ability · X reload · D-pad ↑ Rigging shop (↑ ↓ choose, A buy, B close) · Start pause</td></tr>
     <tr><td>Wake</td><td>Move fast (tether, current) to fill the blue ring. Full Wake: next shot hits ×3 and refills your magazine</td></tr>
   </table>
   <div id="pickrow"><b>Your crew:</b> <span id="side"></span></div>
@@ -161,6 +172,12 @@ const RIG = [
   {name: 'Gaff Rounds', cost: 250, pearl: 0, low: '+25% damage', high: '+25% fire rate'},
   {name: 'Tar Boots', cost: 200, pearl: 0, low: '+15% move speed', high: 'no wading slow'},
   {name: 'Bilge Pump', cost: 150, pearl: 2, low: 'regen 4 HP/s', high: '15% lifesteal'},
+  {name: 'Oilskin', cost: 350, pearl: 0, low: 'take 15% less damage', high: 'heal 6 HP/s standing in water'},
+  {name: 'Long Line', cost: 300, pearl: 0, low: 'tether reaches 40% further', high: 'tether recharges 40% faster'},
+  {name: 'Brass Drum', cost: 400, pearl: 0, low: 'reload twice as fast', high: 'Wake fills 60% faster'},
+  {name: 'Lamp Oil', cost: 350, pearl: 1, low: 'ability recharges 25% faster', high: 'run faster carrying the lantern'},
+  {name: 'Barbed Head', cost: 450, pearl: 0, low: 'shots slow enemy heroes', high: '+35% damage to enemies in water'},
+  {name: 'Storm Glass', cost: 600, pearl: 3, low: '+30% damage to Foghorns and chains', high: '+30% damage to Wickies'},
 ];
 
 const MODELS = {};
@@ -545,6 +562,7 @@ function model(name, ov) {
   o.traverse(m => { if (m.isMesh) { parts.push(m); const n = m.material.name; m.material = namedMat(n, ov); m.castShadow = m.material.type !== 'MeshBasicMaterial'; m.receiveShadow = !/^(skin|face|head)_/.test(n); m.userData.noHull = n.startsWith('face_'); m.userData.mn = n; } });   // faces are never lost in hat shadow
   if (!NO_HULL.test(name)) for (const m of parts) if (m.material.type !== 'MeshBasicMaterial' && !m.userData.noHull) m.add(new THREE.Mesh(m.geometry, m.userData.mn.startsWith('head_') || /^c_(1c1820|e8e4da|3a2c24|7a3a22|3a2a1e|22201e)$/.test(m.userData.mn) ? headHull : FACES[name] && FACES[name].sculpt ? thinHull : hullMat));
   if (FACES[name]) addFace(o, name);
+  o.userData.legs = o.children.filter(c => /_leg[LR]$/.test(c.name));      // hinged at the hip, swung by the walk cycle
   scene.add(o); return o;
 }
 
@@ -633,7 +651,7 @@ function makeHero(team, i, isPlayer, who) {
   const d = dirOf(team), laneX = [-4, 0, 4][i];
   const h = spawn({kind: 'hero', team, hp: 220, r: .6, h: 2.55, pos: new V3(laneX, 0, -d * SPAWN_Z),
     spheres: [[.7, .7], [1.5, .6], [2.15, .5]], laneX, seed: Math.random() * 9, isPlayer, mesh: null});
-  Object.assign(h, {spark: 0, pearl: 0, rig: [false, false, false], ammo: 24, reload: 0, wake: 0, fireT: 0,
+  Object.assign(h, {spark: 0, pearl: 0, rig: RIG.map(() => false), ammo: 24, reload: 0, wake: 0, fireT: 0,
     abCd: 0, tetherCd: 0, tether: null, shoveCd: 0, braceCd: 0, brace: 0, windup: 0, stun: 0, respawn: 0, carry: false, lastHit: -9,
     name: 'You'});
   heroLook(h, who); heroes.push(h); return h;
@@ -815,6 +833,7 @@ function damage(t, amt, src) {
   if (t.kind === 'hero') {
     if (t.marked > 0) amt *= 1.3;
     if (t.iron > 0) amt *= .5;
+    if (t === player && rigOn(3, false)) amt *= .85;
     if (posts.some(q => q.team === t.team && Math.hypot(q.x - t.pos.x, q.z - t.pos.z) < 7)) amt *= .75;
   }
   if (t.kind === 'chain' && towers[t.team].alive) return;          // the Foghorn guards the chain
@@ -939,7 +958,7 @@ const ABIL = {
 function useAbility(h) {
   const k = h.kit;
   if (!state.started || state.over || !h.alive || h.abCd > 0 || h.stun > 0 || (h.carry && k.ab !== 'Launch')) return;
-  h.abCd = k.cd; ABIL[k.ab](h, fwdOf(h));
+  h.abCd = k.cd * (h === player && rigOn(6, false) ? .75 : 1); ABIL[k.ab](h, fwdOf(h));
   pop(k.ab.toUpperCase() + '!', h.pos.clone().setY(h.pos.y + 3.1), h.team ? '#ffb48c' : '#9fe6d8', 24);
   if (h.isPlayer) beep(700, .12, 'triangle', .06);
 }
@@ -983,6 +1002,9 @@ function updateFields(dt) {
   for (const h of heroes) if (h.alive && h.deep > 0 && waterDepth(h) > 1) h.hidden = .2;
 }
 
+const rigOn = (i, high) => player.rig[i] && state.tide.high === high;      // is this item's Low (false) or High (true) face working now?
+const reloadTime = () => rigOn(5, false) ? .75 : 1.5;
+
 /* ---------- player ---------- */
 const keys = {}, mouse = {down: false};
 let yaw = PT ? 0 : Math.PI, pitch = -.08;      // face down the lane toward the enemy ship
@@ -1004,13 +1026,14 @@ function onKey(c) {
   if (c === 'KeyC') useAbility(player);
   if (c === 'KeyF' && player.shoveCd <= 0 && player.stun <= 0) shove(player);
   if (c === 'KeyQ' && player.braceCd <= 0) { player.brace = .7; player.braceCd = 5; ring(player.pos.clone().setY(player.pos.y + 1), 0x7fd4ff, 1.6); }
-  if (c === 'KeyR' && player.ammo < 24 && player.reload <= 0) player.reload = 1.5;
-  const i = ['Digit1', 'Digit2', 'Digit3'].indexOf(c); if (i >= 0) buy(i);
+  if (c === 'KeyR' && player.ammo < 24 && player.reload <= 0) player.reload = reloadTime();
+  if (c === 'KeyB') toggleShop();
+  const m = /^Digit([1-9])$/.exec(c); if (m) buy(+m[1] - 1);
 }
 function buy(i) {
   const it = RIG[i];
-  if (player.rig[i]) return;
-  if (player.spark < it.cost || player.pearl < it.pearl) { say(`Not enough for ${it.name} (${it.cost} Spark${it.pearl ? ' + ' + it.pearl + ' Pearl' : ''})`); return; }
+  if (!it || player.rig[i]) return;
+  if (player.spark < it.cost || player.pearl < it.pearl) { say(`Not enough for ${it.name} (${price(it)})`); return; }
   player.spark -= it.cost; player.pearl -= it.pearl; player.rig[i] = true;
   say(`Rigged: <b>${it.name}</b>`); beep(520, .15, 'triangle', .06); buildRig();
 }
@@ -1028,9 +1051,9 @@ function playerAim(max) {   // what the crosshair is on: an enemy, the world, or
 }
 function fireTether() {
   if (!state.started || !player.alive || player.tetherCd > 0 || player.carry || player.stun > 0) return;
-  const a = playerAim(45);
+  const a = playerAim(rigOn(4, false) ? 63 : 45);
   if (!a.solid) { say('Tether: nothing in reach'); return; }
-  player.tetherCd = 3.5 * (player.kit.tether || 1); beep(300, .12, 'sawtooth', .05); pop('THWIP!', a.point, '#fff', 24);
+  player.tetherCd = 3.5 * (player.kit.tether || 1) * (rigOn(4, true) ? .6 : 1); beep(300, .12, 'sawtooth', .05); pop('THWIP!', a.point, '#fff', 24);
   if (a.ent && a.ent.kind === 'hero') {       // trip an enemy hero: yank them in and slow them
     knockback(a.ent, a.ent.pos.x * 2 - player.pos.x, a.ent.pos.z * 2 - player.pos.z, 13, 5); a.ent.slow = 2;
     if (a.ent.marked > 0) player.tetherCd = 0;
@@ -1055,27 +1078,35 @@ function updatePlayer(dt) {
     if (d < 2.4 || t.t <= 0 || (keys.Space || pad.jump) && t.t < 1.3) { p.tether = null; if (p.vel.y < 6) p.vel.y += 5; }
     else { p.vel.addScaledVector(tmp2.normalize(), 70 * dt); if (p.vel.length() > 28) p.vel.setLength(28); }
   }
-  moveEnt(p, dt, fx_, fz_, 9 * p.kit.speed * speedMul * (p.carry ? .9 : 1));
+  moveEnt(p, dt, fx_, fz_, 9 * p.kit.speed * speedMul * (p.carry ? (rigOn(6, true) ? 1.15 : .9) : 1));
   p.face = yaw + Math.PI;
   // Wake: speed is the resource
-  if (p.speedNow > 10.5) p.wake = Math.min(100, p.wake + (p.speedNow - 8) * 4.2 * dt); else if (p.wake < 100) p.wake = Math.max(0, p.wake - 2.5 * dt);   // a full Wake holds until it is spent
+  if (p.speedNow > 10.5) p.wake = Math.min(100, p.wake + (p.speedNow - 8) * 4.2 * (rigOn(5, true) ? 1.6 : 1) * dt); else if (p.wake < 100) p.wake = Math.max(0, p.wake - 2.5 * dt);   // a full Wake holds until it is spent
   // weapon
   p.fireT -= dt;
   if (p.reload > 0) { p.reload -= dt; if (p.reload <= 0) p.ammo = 24; }
   if ((mouse.down || pad.fire) && p.fireT <= 0 && p.reload <= 0 && p.stun <= 0 && !p.carry) {
-    if (p.ammo <= 0) p.reload = 1.5;
+    if (p.ammo <= 0) p.reload = reloadTime();
     else {
       const wakeShot = p.wake >= 100;
       p.fireT = .13 / (p.rig[0] && high ? 1.25 : 1);
       const a = playerAim(90);
       let dmg = 16 * p.kit.dmg * (p.rig[0] && !high ? 1.25 : 1);
       if (wakeShot) { dmg *= 3; p.wake = 0; p.ammo = 24; ring(a.point, 0x7fd4ff, 2.5); pop('KRAK!', a.point, '#7fd4ff', 42); beep(1300, .12, 'triangle', .07); } else p.ammo--;
-      if (a.ent) damage(a.ent, a.ent.structure ? dmg * .8 : dmg, p);
+      if (a.ent) {
+        const e = a.ent;
+        if (rigOn(7, true) && waterDepth(e) > .2) dmg *= 1.35;
+        if (rigOn(7, false) && e.kind === 'hero') e.slow = Math.max(e.slow || 0, .7);
+        if (rigOn(8, false) && e.structure) dmg *= 1.3;
+        if (rigOn(8, true) && e.kind === 'wickie') dmg *= 1.3;
+        damage(e, e.structure ? dmg * .8 : dmg, p);
+      }
       tracer(tmp2.copy(p.pos).setY(p.pos.y + 1.75).clone(), a.point, wakeShot ? 0x7fd4ff : 0xfff2b0);
       beep(wakeShot ? 240 : 180, .05, 'square', .03);
     }
   }
   if (p.rig[2] && !high) p.hp = Math.min(p.maxHp, p.hp + 4 * dt);
+  if (rigOn(3, true) && waterDepth(p) > .2) p.hp = Math.min(p.maxHp, p.hp + 6 * dt);
 }
 
 /* ---------- AI ---------- */
@@ -1256,10 +1287,19 @@ function step(dt) {
 }
 
 /* ---------- drawing ---------- */
-function buildRig() {
-  $('rig').innerHTML = RIG.map((it, i) => `<div class="slot ${player.rig[i] ? 'own' : ''}"><h4><span>${i + 1} · ${it.name}</span></h4>
-    <div class="face ${!state.tide.high ? 'on' : ''}">Low: ${it.low}</div><div class="face ${state.tide.high ? 'on' : ''}">High: ${it.high}</div>
-    <div style="margin-top:2px;color:#a8641a">${player.rig[i] ? 'Rigged' : it.cost + ' Spark' + (it.pearl ? ' + ' + it.pearl + ' Pearl' : '')}</div></div>`).join('');
+let shopOpen = false, shopSel = 0, hudN = 0;
+const price = it => it.cost + ' Spark' + (it.pearl ? ' + ' + it.pearl + ' Pearl' : '');
+function toggleShop(on) { shopOpen = on === undefined ? !shopOpen : on; $('shop').style.display = shopOpen ? 'block' : 'none'; buildRig(); }
+function buildRig() {       // the HUD strip shows what you own; the shop (B) lists everything
+  const high = state.tide.high, own = RIG.map((it, i) => [it, i]).filter(([, i]) => player.rig[i]);
+  $('rig').innerHTML = own.map(([it]) => `<div class="chip" title="${high ? it.high : it.low}"><b>${it.name}</b></div>`).join('') +
+    `<div class="chip shopkey"><b>${padMode ? 'D-pad ↑' : 'B'}</b><br>Rigging shop${own.length ? '' : ' — spend Spark'}</div>`;
+  if (!shopOpen) return;
+  $('shop').innerHTML = `<h3>Rigging <small>${padMode ? 'D-pad ↑ ↓ choose · A buy · B close' : 'press a number to buy · B closes'}</small></h3>` + RIG.map((it, i) => {
+    const can = player.spark >= it.cost && player.pearl >= it.pearl;
+    return `<div class="row${player.rig[i] ? ' own' : can ? ' can' : ''}${padMode && i === shopSel ? ' sel' : ''}"><b>${i + 1}</b><span class="nm">${it.name}</span>
+      <span class="face ${!high ? 'on' : ''}">Low: ${it.low}</span><span class="face ${high ? 'on' : ''}">High: ${it.high}</span>
+      <span class="pr">${player.rig[i] ? 'Rigged' : price(it)}</span></div>`; }).join('');
 }
 buildRig();
 const pv = new V3();
@@ -1350,6 +1390,7 @@ function drawHud(dt) {
   }
   $('hp').style.width = p.hp / p.maxHp * 100 + '%'; $('hptxt').textContent = `${Math.ceil(p.hp)} / ${p.maxHp} HP · ${p.reload > 0 ? 'reloading' : p.ammo + ' / 24'}`;
   $('spark').textContent = p.spark; $('pearl').textContent = p.pearl;
+  if (shopOpen && (hudN = (hudN || 0) + 1) % 5 === 0) buildRig();
   $('cdE').style.height = clamp(p.tetherCd / 3.5, 0, 1) * 100 + '%'; $('cdF').style.height = clamp(p.shoveCd / 4, 0, 1) * 100 + '%'; $('cdQ').style.height = clamp(p.braceCd / 5, 0, 1) * 100 + '%'; $('cdC').style.height = clamp(p.abCd / p.kit.cd, 0, 1) * 100 + '%';
   $('feed').innerHTML = feed.map(f => `<div style="opacity:${clamp(f.t, 0, 1)}">${f.html}</div>`).join('');
   const dead = $('dead');
@@ -1364,6 +1405,16 @@ function render(dt) {
   for (const e of ents) {
     if (!e.alive) continue;
     if (!e.structure) { e.mesh.position.copy(e.pos); e.mesh.rotation.y = e.face; if (e.swim) e.mesh.position.y += .2; }
+    const legs = e.mesh.userData.legs;
+    if (legs && legs.length) {                         // walk cycle: legs swing with ground speed, the body bobs and leans into it
+      const live = state.started && locked() && !state.over, sp = live && (e.onGround || e.swim) && !(e.stun > 0) ? Math.min(e.speedNow || 0, 14) : 0;
+      e.walk = (e.walk || 0) + sp * dt * 1.25 * SPEED / (e.mesh.userData.stride || 1);
+      e.gait = (e.gait || 0) + (Math.min(.46, sp * .06) - (e.gait || 0)) * Math.min(1, dt * 10);
+      const sw = Math.sin(e.walk) * e.gait;
+      legs[0].rotation.x = sw; legs[1].rotation.x = -sw;
+      e.mesh.position.y += Math.abs(Math.cos(e.walk)) * e.gait * .07 - (e.onGround ? 0 : 0);
+      e.mesh.rotation.x = e.gait * .12 + (e.onGround || e.swim ? 0 : -.18);
+    }
   }
   for (const b of buoys) b.mesh.position.y = Math.max(heightfield(b.x), state.tide.level - .3) + Math.sin(state.time * 1.5 + b.z) * .06;
   for (let i = tracers.length - 1; i >= 0; i--) { const t = tracers[i]; t.life -= dt; t.l.material.opacity = t.life / .07; if (t.life <= 0) { scene.remove(t.l); t.l.geometry.dispose(); tracers.splice(i, 1); } }
@@ -1406,7 +1457,7 @@ function start(viaPad) {
 const PAD_LABELS = [['E', 'F', 'Q', 'C'], ['LT', 'B', 'RB', 'Y']];
 function setPadMode(on) {
   if (padMode === on) return; padMode = on;
-  document.querySelectorAll('#bc .ab kbd').forEach((k, i) => k.textContent = PAD_LABELS[on ? 1 : 0][i]);
+  document.querySelectorAll('#bc .ab kbd').forEach((k, i) => k.textContent = PAD_LABELS[on ? 1 : 0][i]); buildRig();
 }
 function pause() { setPadMode(false); if (document.pointerLockElement) document.exitPointerLock(); $('overlay').style.display = 'flex'; $('go').textContent = 'Resume'; pad.fire = pad.jump = false; pad.f = pad.s = 0; }
 function pollPad(dt) {
@@ -1428,9 +1479,18 @@ function pollPad(dt) {
     pad.s = ax(0); pad.f = -ax(1);
     const lx = ax(2), ly = ax(3);                        // right stick looks; a curve keeps small movements precise
     yaw -= lx * Math.abs(lx) ** .6 * 3.1 * dt; pitch = clamp(pitch - ly * Math.abs(ly) ** .6 * 2.1 * dt, -1.2, 1.2);
-    pad.fire = now[7]; pad.jump = now[0];
+    if (shopOpen) {                                      // the shop takes the d-pad, A and B while it is open
+      pad.fire = now[7]; pad.jump = false;
+      if (edge(12) || edge(13)) { shopSel = (shopSel + (edge(13) ? 1 : -1) + RIG.length) % RIG.length; buildRig(); }
+      if (edge(0)) buy(shopSel);
+      if (edge(1) || edge(8)) toggleShop(false);
+    } else {
+      pad.fire = now[7]; pad.jump = now[0];
+      if (edge(12) || edge(8)) toggleShop(true);
+      for (const [b, c] of [[1, 'KeyF'], [3, 'KeyC'], [4, 'KeyC'], [5, 'KeyQ']]) if (edge(b)) onKey(c);
+    }
     if (edge(6)) fireTether();
-    for (const [b, c] of [[1, 'KeyF'], [2, 'KeyR'], [3, 'KeyC'], [4, 'KeyC'], [5, 'KeyQ'], [14, 'Digit1'], [12, 'Digit2'], [15, 'Digit3']]) if (edge(b)) onKey(c);
+    if (edge(2)) onKey('KeyR');
   }
   pad.prev = now;
 }
@@ -1442,7 +1502,7 @@ document.addEventListener('pointerlockchange', () => {
 });
 if (TEST) start();
 say(`Kill the ${THEIRS} Foghorn, then cut their Anchor Chain. Watch the tide clock.`);
-window.__bh = {PT, pad, isPad: () => padMode, KITS, useAbility, zones, walls, posts, state, ents, heroes, player, ROSTER, heroLook, pickHero, model, scene, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
+window.__bh = {PT, RIG, toggleShop, rigOn, pad, isPad: () => padMode, KITS, useAbility, zones, walls, posts, state, ents, heroes, player, ROSTER, heroLook, pickHero, model, scene, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
   setAim: (y, p) => { yaw = y; pitch = p; updateCamera(); }};
 requestAnimationFrame(frame);
 }

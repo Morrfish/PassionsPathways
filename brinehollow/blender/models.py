@@ -68,17 +68,29 @@ def limb(p0, p1, r0, r1, m, v=10):
     bpy.ops.mesh.primitive_cone_add(vertices=v, radius1=r0, radius2=r1, depth=d.length, location=(a + b) / 2,
                                     rotation=Vector((0, 0, 1)).rotation_difference(d).to_euler())
     return fin(m)
+LEGS = {}       # parts of each leg (keys -1 and 1), kept as separate objects hinged at the hip so the game can swing them
 def done(name, k=1.0):
-    bpy.ops.object.select_all(action='DESELECT')
-    for o in P: o.select_set(True)
-    bpy.context.view_layer.objects.active = P[0]
-    bpy.ops.object.join(); o = bpy.context.object; o.name = name; o.data.name = name
-    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)   # bake the first part's own scale before sizing the whole figure
-    o.scale = (k, k, k)
-    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
-    o.data.use_auto_smooth = True; o.data.auto_smooth_angle = math.radians(48)   # curved surfaces shade smooth, real corners stay crisp
+    def join(parts, nm):
+        bpy.ops.object.select_all(action='DESELECT')
+        for o in parts: o.select_set(True)
+        bpy.context.view_layer.objects.active = parts[0]
+        bpy.ops.object.join(); o = bpy.context.object; o.name = nm; o.data.name = nm
+        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)   # bake the first part's own scale before sizing the whole figure
+        o.scale = (k, k, k)
+        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+        o.data.use_auto_smooth = True; o.data.auto_smooth_angle = math.radians(48)   # curved surfaces shade smooth, real corners stay crisp
+        return o
+    legs = {sd: [o for o in LEGS.get(sd, []) if o in P] for sd in (-1, 1)}
+    taken = set(legs[-1]) | set(legs[1])
+    body = join([o for o in P if o not in taken], name)
     bpy.context.scene.cursor.location = (0, 0, 0); bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
-    P.clear(); RIG['on'] = False; RIG['lift'] = 0.0
+    for sd in (-1, 1):
+        if not legs[sd]: continue
+        leg = join(legs[sd], name + ('_legL' if sd < 0 else '_legR'))
+        bpy.context.scene.cursor.location = (sd * LEGS.get('hip', .16) * k, 0, 1.2 * k); bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+        leg.parent = body
+    bpy.context.scene.cursor.location = (0, 0, 0)
+    P.clear(); LEGS.clear(); RIG['on'] = False; RIG['lift'] = 0.0
 
 INK, WOOD, DARKWOOD, STEEL, SKIN = 'c_1c1c22', 'c_6b4a34', 'c_2c2630', 'c_8c8f90', 'skin_e2b48a'
 STRAW, STRAW2, ROPE, LEATHER, BRASS, STONE = 'c_d9b877', 'c_9c7a45', 'c_c9a36a', 'c_5a4030', 'c_d9a520', 'c_74747c'
@@ -358,7 +370,9 @@ def split_skirt(r_bot, r_top, h, zc, m, folds=9, amp=.1, amp_top=0.0, gap=.3, v=
 def adult(skin, sw=.25, hw=.19, fem=True, legs='c_33302e', coat_hem=.5, hem_r=.36, glove='c_2a2c34', brow=1.0, bulk=1.0):
     """The body: boots, trousers, a belted long coat, arms and hands. The gun is held at the hip in the +X hand."""
     RIG['on'] = False
+    LEGS.clear(); LEGS['hip'] = hw * .55 + .06
     for s in (-1, 1):
+        n0 = len(P)
         fx, kx, hx = s * (hw + .07), s * (hw + .04), s * hw * .55
         box((.115 * bulk, .29, .095), (fx, -.06, .048), LEATHER, r=.04)                       # boot
         limb((fx, .01, .07), (fx, 0, .46), .062 * bulk, .074 * bulk, LEATHER)
@@ -368,6 +382,7 @@ def adult(skin, sw=.25, hw=.19, fem=True, legs='c_33302e', coat_hem=.5, hem_r=.3
         limb((fx, 0, .52), (kx, -.01, .72), .09 * bulk, .086 * bulk, legs)
         limb((kx, -.01, .72), (hx + s * .06, 0, 1.26), .105 * bulk, .135 * bulk, legs)        # baggy trousers
         sph(.11 * bulk, (kx, -.015, .74), legs)
+        LEGS[s] = P[n0:]
     sph(1, (0, 0, 1.27), legs, scale=(hw + .07, .13 * bulk, .13))
     split_skirt(hem_r, .165 * bulk, 1.5 - coat_hem, (1.5 + coat_hem) / 2, 'team')              # coat skirt, open at the front over the trousers
     split_skirt(hem_r + .014, hem_r - .02, .1, coat_hem + .05, 'team2', amp_top=.092, flare=.42, flare_top=.42 * (1 - .1 / (1.5 - coat_hem)))   # pale hem band, following the skirt
@@ -518,7 +533,7 @@ done('mainsail', 1.05)
 SK = 'skin_c4906a'
 sw = adult(SK, sw=.22, hw=.17, fem=True, coat_hem=1.02, hem_r=.27, legs='c_3a3a40')
 for s in (-1, 1):
-    for z in (.5, .56, .62): tor(.088, .022, (s * .24, 0, z), CREAM)
+    for z in (.5, .56, .62): tor(.088, .022, (s * .24, 0, z), CREAM); LEGS[s].append(P[-1])
 head(SK, fem=True, wide=.93, jaw=.84, chin=1.05, nose=.9, cheek=1.7); hair_cap('c_1c1820'); fringe('c_1c1820', 'swept'); locks('c_1c1820', False); back_braid('c_1c1820', n=4); tilted_hat(.46)
 tor(.11, .045, (0, .01, 2.01), 'c_b8431c', rot=(R(-10), 0, 0))
 for i in range(2): box((.3, .014, .07), (.2 + i * .04, .14, 1.95 - i * .1), 'c_b8431c', rot=(0, R(20 - i * 24), R(34)), r=.006)
@@ -656,7 +671,7 @@ cyl(.4, .04, .2, (0, 0, HC + .25), IRONHAT, v=18); cyl(.4, .39, .03, (0, 0, HC +
 for s in (-1, 1):
     sph(.17, (s * (sw + .04), 0, 1.98), IRONHAT, scale=(1.1, 1.15, .7)); tor(.17, .02, (s * (sw + .04), 0, 1.92), 'c_4a4e58', scale=(1.1, 1.15, 1))
     for y in (-.1, .1): sph(.022, (s * (sw + .14), y, 1.97), BRASS)
-    sph(.11, (s * .27, -.1, .74), IRONHAT, scale=(1, .5, 1.15))
+    sph(.11, (s * .27, -.1, .74), IRONHAT, scale=(1, .5, 1.15)); LEGS[s].append(P[-1])
 tor(sw * .92, .04, (0, 0, 1.74), ROPE, rot=(R(90), R(-42), 0), scale=(1, 1.25, 1))
 satchel(.3, -.2, 1.36, 1.2); satchel(-.3, -.2, 1.36, 1.2)
 arms(sw, SK, glove='c_55555e', r=.08)
@@ -666,7 +681,7 @@ done('knuckle', 1.0)
 SK = 'skin_c99870'
 sw = adult(SK, sw=.215, hw=.17, fem=True, coat_hem=.95, hem_r=.28, legs=RL)
 for s in (-1, 1):
-    for z in (.5, .56, .62): tor(.088, .022, (s * .24, 0, z), CREAM)
+    for z in (.5, .56, .62): tor(.088, .022, (s * .24, 0, z), CREAM); LEGS[s].append(P[-1])
 head(SK, fem=True, wide=.95, chin=.95, cheek=1.2); hair_cap(BLK); fringe(BLK); locks(BLK, False); tilted_hat(.46)
 sph(1, (0, -.005, HC - .105), 'c_2a2a30', scale=(.12, .16, .095))
 tor(.11, .05, (0, .01, 2.01), 'team2', rot=(R(-10), 0, 0))
