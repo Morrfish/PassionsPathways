@@ -68,6 +68,7 @@ def limb(p0, p1, r0, r1, m, v=10):
     bpy.ops.mesh.primitive_cone_add(vertices=v, radius1=r0, radius2=r1, depth=d.length, location=(a + b) / 2,
                                     rotation=Vector((0, 0, 1)).rotation_difference(d).to_euler())
     return fin(m)
+SKIRT = {}      # front and back halves of the coat skirt, hinged at the waist so they kick out with the stride
 ARMS = {}       # the free arm, hinged at the shoulder
 LEGS = {}       # parts of each leg (keys -1 and 1), kept as separate objects hinged at the hip so the game can swing them
 def done(name, k=1.0):
@@ -89,7 +90,8 @@ def done(name, k=1.0):
     legs = {sd: [o for o in LEGS.get(sd, []) if o in P] for sd in (-1, 1)}
     shins = {sd: [o for o in LEGS.get((sd, 'shin'), []) if o in P] for sd in (-1, 1)}
     arm = [o for o in ARMS.get('free', []) if o in P] + (P[ARMS['mark']:] if ARMS.get('tail') else []) if ARMS.get('swing') else []
-    taken = set(legs[-1]) | set(legs[1]) | set(arm)
+    skirts = {q: [o for o in SKIRT.get(q, []) if o in P] for q in 'fb'}
+    taken = set(legs[-1]) | set(legs[1]) | set(arm) | set(skirts['f']) | set(skirts['b'])
     body = join([o for o in P if o not in taken], name)
     hinge(body, (0, 0, 0))
     for sd in (-1, 1):
@@ -101,7 +103,9 @@ def done(name, k=1.0):
             shin = join(shins[sd], name + '_shin' + tag); hinge(shin, (sd * LEGS.get('knee', .22), -.01, .72)); child(shin, thigh)
     if arm:
         a = join(arm, name + ('_armh' if ARMS.get('tail') else '_arm')); hinge(a, ARMS['sh']); child(a, body)
-    bpy.context.scene.cursor.location = (0, 0, 0); ARMS.clear()
+    for q in 'fb':
+        if skirts[q]: sk = join(skirts[q], name + '_sk' + q.upper()); hinge(sk, (0, 0, 1.5)); child(sk, body)
+    bpy.context.scene.cursor.location = (0, 0, 0); ARMS.clear(); SKIRT.clear()
     P.clear(); LEGS.clear(); RIG['on'] = False; RIG['lift'] = 0.0
 
 INK, WOOD, DARKWOOD, STEEL, SKIN = 'c_1c1c22', 'c_6b4a34', 'c_2c2630', 'c_8c8f90', 'skin_e2b48a'
@@ -360,12 +364,14 @@ def sleeve(sh, el, wr, r, m, cuff='team2', cuff_at=.5):
     limb(q, q2, r * 1.08, r * 1.12, cuff)                                                                     # the rolled cuff
     return q2
 
-def split_skirt(r_bot, r_top, h, zc, m, folds=9, amp=.1, amp_top=0.0, gap=.3, v=44, flare=.42, flare_top=0.0):
+def split_skirt(r_bot, r_top, h, zc, m, folds=9, amp=.1, amp_top=0.0, gap=.3, v=44, flare=.42, flare_top=0.0, part=None):
     """A coat skirt open down the front (it parts wider toward the hem), with thickness so the lining shows."""
     import bmesh
     bpy.ops.mesh.primitive_cone_add(vertices=v, radius1=r_bot, radius2=r_top, depth=h, location=(0, 0, zc), end_fill_type='NOTHING')
     o = bpy.context.object; bm = bmesh.new(); bm.from_mesh(o.data)
     bmesh.ops.delete(bm, geom=[f for f in bm.faces if abs(math.atan2(f.calc_center_median().x, -f.calc_center_median().y)) < gap * .5], context='FACES')
+    if part:                      # keep only the front or the back half, so each can swing with the legs
+        bmesh.ops.delete(bm, geom=[f for f in bm.faces if (f.calc_center_median().y < 0) != (part == 'f')], context='FACES')
     for vert in bm.verts:
         a = math.atan2(vert.co.y, vert.co.x); low = vert.co.z < 0
         k = 1 + (amp if low else amp_top) * math.sin(folds * a + 1.3); vert.co.x *= k; vert.co.y *= k
@@ -397,9 +403,11 @@ def adult(skin, sw=.25, hw=.19, fem=True, legs='c_33302e', coat_hem=.5, hem_r=.3
         sph(.11 * bulk, (kx, -.015, .74), legs)
         LEGS[s] = P[n0:]; LEGS[(s, 'shin')] = P[n0:n1]
     sph(1, (0, 0, 1.27), legs, scale=(hw + .07, .13 * bulk, .13))
-    split_skirt(hem_r, .165 * bulk, 1.5 - coat_hem, (1.5 + coat_hem) / 2, 'team')              # coat skirt, open at the front over the trousers
-    split_skirt(hem_r + .014, hem_r - .02, .1, coat_hem + .05, 'team2', amp_top=.092, flare=.42, flare_top=.42 * (1 - .1 / (1.5 - coat_hem)))   # pale hem band, following the skirt
-    P[-1].rotation_euler = (0, 0, 0)
+    for part in 'fb':            # coat skirt, open at the front over the trousers; front and back halves hinge at the waist
+        n0 = len(P)
+        split_skirt(hem_r, .165 * bulk, 1.5 - coat_hem, (1.5 + coat_hem) / 2, 'team', part=part)
+        split_skirt(hem_r + .014, hem_r - .02, .1, coat_hem + .05, 'team2', amp_top=.092, flare=.42, flare_top=.42 * (1 - .1 / (1.5 - coat_hem)), part=part)   # pale hem band
+        SKIRT[part] = P[n0:]
     o = cyl(.16 * bulk, sw * .82, .36, (0, 0, 1.67), 'team', v=24); o.scale = (1, .7, 1)       # torso
     sph(1, (0, .005, 1.88), 'team', scale=(sw + .035, .128 * bulk, .12))
     if fem:
@@ -483,7 +491,7 @@ def satchel(x, y, z=1.3, s=1.0):
     box((.17 * s, .075 * s, .17 * s), (x, y, z), 'c_7a5a40', r=.03 * s); box((.18 * s, .08 * s, .08 * s), (x, y - .005, z + .07 * s), LEATHER, r=.025 * s); sph(.014 * s, (x, y - .045 * s, z + .03 * s), BRASS)
 def apron(col, bulk=1.0, cross=None):
     box((.24 * bulk, .02, .3), (0, -.118 * bulk - .028, 1.72), col, r=.008)
-    box((.32 * bulk, .02, .64), (0, -.2 * bulk - .04, 1.17), col, rot=(R(-13), 0, 0), r=.008)
+    box((.32 * bulk, .02, .64), (0, -.2 * bulk - .04, 1.17), col, rot=(R(-13), 0, 0), r=.008); SKIRT['f'].append(P[-1])
     if cross:
         box((.09, .012, .03), (0, -.118 * bulk - .042, 1.74), cross, r=.004); box((.03, .012, .09), (0, -.118 * bulk - .042, 1.74), cross, r=.004)
 
