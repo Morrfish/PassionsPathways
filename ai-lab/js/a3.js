@@ -5,7 +5,7 @@
   const h = AI.h, G = () => AI.gen;
 
   function plotBox(aspect) {
-    const canvas = h('canvas', { role: 'img', 'aria-label': 'Plot of creatures by height and number of spots' });
+    const canvas = h('canvas', { role: 'img', 'aria-label': 'Plot of creatures by height and number of spots', 'data-habitat': '1' });
     return { canvas, wrap: h('div', { class: 'stage' }, canvas) };
   }
   function specimenCard() {
@@ -13,13 +13,18 @@
     box.show = (p, reveal) => {
       box.innerHTML = '';
       const info = h('div', null, h('b', { text: (reveal === false || p.cls == null ? 'Creature' : AI.CLS[p.cls].name) }), h('div', { text: 'Height ' + Math.round(p.x) + ' cm, ' + Math.round(p.y) + ' spots' }));
-      box.appendChild(h('div', { html: AI.creatureSVG(p.cls == null ? 0 : p.cls, p.x, p.y, p.id + 3, 84) })); box.appendChild(info);
+      if (p.cls == null || reveal === false) box.appendChild(h('div', null, AI.art('species/mystery_silhouette.png', 'Unknown creature', { w: 84, h: 84, fallback: () => h('div', { html: AI.creatureSVG(0, p.x, p.y, p.id + 3, 84) }) })));
+      else box.appendChild(h('div', { html: AI.creatureSVG(p.cls, p.x, p.y, p.id + 3, 84) }));
+      box.appendChild(info);
     };
     return box;
   }
   const acc = (pred, pts) => (pts.length ? pts.filter((p) => pred(p) === p.cls).length / pts.length : null);
   const meters = (items) => h('div', { class: 'meter' }, items.map((m) => AI.meterBox(m[0], m[1], m[2])));
   const label = (n) => 'abcdefghijklmnopqrstuvwxyz'[n];
+  const SP = ['zorb', 'quib', 'flonk'];
+  // small happy (sorted right) or confused (sorted wrong) picture of a creature's true species
+  const faceImg = (cls, ok) => AI.art('species/' + SP[cls] + '_' + (ok ? 'happy' : 'confused') + '.png', AI.CLS[cls].name + (ok ? ', happy: sorted correctly' : ', confused: sorted wrong'), { cls: 'mini' });
 
   // ============================== MISSION 1 ==============================
   function mission1(body) {
@@ -51,9 +56,9 @@
       tested = true; const te = acc(pred, d.test), ta = acc(pred, d.train);
       AI.logPush('m1', { seed, trainAcc: ta, testAcc: te, line: { a: { x: +line.a.x.toFixed(2), y: +line.a.y.toFixed(2) }, b: { x: +line.b.x.toFixed(2), y: +line.b.y.toFixed(2) } }, flip });
       update(); msg.innerHTML = '';
-      msg.appendChild(first ? AI.mascot('<b>Test result: ' + AI.pct(te) + '.</b> This is your official score for dataset #' + (seed - 100) + '. Look at the starred creatures that fooled your line. Press <b>New dataset</b> to try again with what you learned.', te >= .875 ? 'think' : 'oops')
+      msg.appendChild(first ? AI.mascot('<b>Test result: ' + AI.pct(te) + '.</b> This is your official score for dataset #' + (seed - 100) + '. Look at the starred creatures that fooled your line. Press <b>New dataset</b> to try again with what you learned.', te >= .875 ? 'cheer' : 'oops')
         : AI.mascot('You already tested this dataset, so the first test is the one that counts. Press <b>New dataset</b> to try again.', 'think'));
-      const rows = d.test.map((p) => { const pr = pred(p); return h('tr', null, h('td', { text: p.label }), h('td', { class: 'num', text: Math.round(p.x) }), h('td', { class: 'num', text: p.y }), h('td', { text: AI.CLS[pr].name }), h('td', { text: AI.CLS[p.cls].name }), h('td', { class: 'num ' + (pr === p.cls ? 'ok' : 'no'), text: pr === p.cls ? '\u2713' : '\u2717' })); });
+      const rows = d.test.map((p) => { const pr = pred(p); return h('tr', null, h('td', { text: p.label }), h('td', { class: 'num', text: Math.round(p.x) }), h('td', { class: 'num', text: p.y }), h('td', { text: AI.CLS[pr].name }), h('td', { text: AI.CLS[p.cls].name }), h('td', { class: 'num ' + (pr === p.cls ? 'ok' : 'no') }, faceImg(p.cls, pr === p.cls), pr === p.cls ? '\u2713' : '\u2717')); });
       results.innerHTML = ''; results.appendChild(h('table', { class: 't' }, h('tr', null, ['New', 'Height', 'Spots', 'My model says', 'Truth', ''].map((x) => h('th', { text: x }))), rows));
       results.appendChild(h('button', { class: 'btn sm alt', style: { marginTop: '8px' }, type: 'button', text: 'Show me the hidden rule', onclick: () => { plot.hlines = [{ y: d.t, label: 'The real rule: ' + d.rule }]; plot.render(); } }));
     }
@@ -104,7 +109,7 @@
       msg.innerHTML = ''; msg.appendChild(AI.mascot('<b>The machine scored ' + AI.pct(te) + ' on new creatures</b>' + (mine ? ' (your line: ' + AI.pct(mine.testAcc) + ')' : '') + '. Compare the <b>height dial</b> (' + Math.abs(m.w[0]).toFixed(1) + ') with the <b>spots dial</b> (' + Math.abs(m.w[1]).toFixed(1) + '). The machine trusts whichever clue has the bigger dial. Was the training data fair about which clue matters?', te >= .875 ? 'think' : 'oops'));
     }
     const side = h('div', null,
-      h('div', { class: 'card tint' }, h('h3', { text: 'Let the machine tune its dials' }), h('p', { html: 'A model has <b>parameters</b>, numbers it can adjust. The machine starts with random dials, checks its mistakes, and nudges every dial a tiny bit to shrink its <b>error</b>. Repeat. This is the same data as Mission 1 (dataset #' + (seed - 100) + '). Press <b>Play</b> and watch the line move and the error fall.' })),
+      h('div', { class: 'card tint' }, AI.iconHead('ui/icon_dial.png', 'Let the machine tune its dials'), h('p', { html: 'A model has <b>parameters</b>, numbers it can adjust. The machine starts with random dials, checks its mistakes, and nudges every dial a tiny bit to shrink its <b>error</b>. Repeat. This is the same data as Mission 1 (dataset #' + (seed - 100) + '). Press <b>Play</b> and watch the line move and the error fall.' })),
       readout, h('div', { class: 'toolbar' }, playBtn, h('button', { class: 'btn alt', type: 'button', text: 'Step \u00D71', onclick: () => step(1) }), h('button', { class: 'btn alt', type: 'button', text: 'Step \u00D710', onclick: () => step(10) }), h('button', { class: 'btn alt', type: 'button', text: 'Restart with new random dials', onclick: reset })),
       h('div', { class: 'card' }, h('h3', { text: 'The dials' }), dials), h('div', { class: 'card' }, chart),
       h('button', { class: 'btn warn', type: 'button', text: 'Test the machine on new creatures', onclick: runTest }), msg, spec);
@@ -134,10 +139,10 @@
       const first = !AI.logGet('m3').some((a) => a.seed === seed); tested = true; update();
       const te = acc(pred, d.test), ta = acc(pred, d.train);
       AI.logPush('m3', { seed, trainAcc: ta, testAcc: te, flags: plot.flags.map((f) => ({ x: +f.x.toFixed(1), y: +f.y.toFixed(1) })) });
-      msg.innerHTML = ''; msg.appendChild(AI.mascot(first ? '<b>Test accuracy: ' + AI.pct(te) + '.</b> Official score for dataset #' + seed + '. Try <b>Snap flags to the averages</b> to see a classic trick, then press <b>New dataset</b> to replay.' : 'Only the first test on a dataset counts. Press <b>New dataset</b> to try again.', te >= .8 ? 'think' : 'oops'));
+      msg.innerHTML = ''; msg.appendChild(AI.mascot(first ? '<b>Test accuracy: ' + AI.pct(te) + '.</b> Official score for dataset #' + seed + '. Try <b>Snap flags to the averages</b> to see a classic trick, then press <b>New dataset</b> to replay.' : 'Only the first test on a dataset counts. Press <b>New dataset</b> to try again.', first && te >= .8 ? 'cheer' : first ? 'oops' : 'think'));
     }
     const side = h('div', null,
-      h('div', { class: 'card tint' }, h('h3', { text: 'Three species, two clues' }), h('p', { html: 'A new species appeared: <b>Flonks</b> (\u25A0). One line is not enough now. Instead, <b>plant three flags</b> by dragging them. The machine labels every creature with the species of its <b>closest flag</b>, and the colored regions show what it believes. Zorbs are short with few spots, Quibs are tall with many, and Flonks are tall with few. Where do the flags belong?' })),
+      h('div', { class: 'card tint' }, AI.iconHead('ui/icon_flag.png', 'Three species, two clues'), h('p', { html: 'A new species appeared: <b>Flonks</b> (\u25A0). One line is not enough now. Instead, <b>plant three flags</b> by dragging them. The machine labels every creature with the species of its <b>closest flag</b>, and the colored regions show what it believes. Zorbs are short with few spots, Quibs are tall with many, and Flonks are tall with few. Where do the flags belong?' })),
       readout, h('div', { class: 'toolbar' }, h('button', { class: 'btn go', type: 'button', text: 'Test my flags', onclick: runTest }),
         h('button', { class: 'btn alt', type: 'button', text: 'Snap flags to the averages', onclick: () => { plot.flags = d.means.map((m) => ({ x: m.x, y: m.y, cls: m.cls })); update(); AI.toast('Each flag moved to the average of its training group.'); } }),
         h('button', { class: 'btn warn', type: 'button', text: 'New dataset', onclick: () => { seed++; AI.setA('a3_seed3', seed); load(); } })), msg, spec, results);
@@ -182,7 +187,7 @@
     slider.addEventListener('input', () => { k = +slider.value; update(); });
     slider.addEventListener('change', record);
     const side = h('div', null,
-      h('div', { class: 'card tint' }, h('h3', { text: 'Memorize or generalize?' }), h('p', { html: 'Real data is messy: some creatures were mislabeled by tired scientists. A <b>k-nearest-neighbors</b> model labels a creature by taking a vote of the <b>k closest</b> training creatures. Slide <b>k</b> and watch the regions change. Circled creatures are ones the model gets wrong. Try at least four different values of k.' })),
+      h('div', { class: 'card tint' }, AI.iconHead('ui/icon_magnifier.png', 'Memorize or generalize?'), h('p', { html: 'Real data is messy: some creatures were mislabeled by tired scientists. A <b>k-nearest-neighbors</b> model labels a creature by taking a vote of the <b>k closest</b> training creatures. Slide <b>k</b> and watch the regions change. Circled creatures are ones the model gets wrong. Try at least four different values of k.' })),
       readout, h('label', { class: 'f', text: 'k = ' }), slider, h('div', { class: 'tag', text: 'k = 1 copies the single nearest creature. Large k averages over many.' }),
       h('div', { class: 'toolbar' }, h('button', { class: 'btn alt', type: 'button', text: 'Show/hide test creatures', onclick: () => { showTest = !showTest; update(); } }),
         h('button', { class: 'btn alt', type: 'button', text: 'Reveal the full curve', onclick: () => { if (Object.keys(tried).length < 3) { AI.toast('Try at least 3 values of k first.'); return; } reveal = true; draw(); } }),
@@ -222,7 +227,7 @@
       asg = AI.ml.kmAssign(d.pts, cent); phase = 'assign'; AI.logPush('m5', { seed, k, steps, inertia: AI.ml.kmInertia(d.pts, asg, cent) }); draw();
     }
     const side = h('div', null,
-      h('div', { class: 'card tint' }, h('h3', { text: 'No labels at all' }), h('p', { html: 'Here are 36 new creatures with <b>no species labels</b>. K-means is an unsupervised method: it drops <b>k starting points</b> (the G circles), sends every creature to its closest one, moves each circle to the middle of its group, and repeats until nothing changes. <b>You choose k.</b> Try 2, 3, 4, and 5 and compare how tight the groups become.' })),
+      h('div', { class: 'card tint' }, AI.iconHead('species/mystery_silhouette.png', 'No labels at all'), h('p', { html: 'Here are 36 new creatures with <b>no species labels</b>. K-means is an unsupervised method: it drops <b>k starting points</b> (the G circles), sends every creature to its closest one, moves each circle to the middle of its group, and repeats until nothing changes. <b>You choose k.</b> Try 2, 3, 4, and 5 and compare how tight the groups become.' })),
       h('div', { class: 'toolbar' }, h('label', { for: 'ksel', text: 'Number of groups:' }), sel), readout,
       h('div', { class: 'toolbar' }, h('button', { class: 'btn alt', type: 'button', text: 'Step (assign, then move)', onclick: stepOnce }), h('button', { class: 'btn go', type: 'button', text: 'Run to the end', onclick: runAll }), h('button', { class: 'btn alt', type: 'button', text: 'Restart this k', onclick: init }),
         h('button', { class: 'btn alt', type: 'button', text: 'Reveal hidden species (rings)', onclick: () => { truthOn = !truthOn; draw(); } }), h('button', { class: 'btn warn', type: 'button', text: 'New creatures', onclick: () => { seed++; AI.setA('a3_seed5', seed); load(); } })),
@@ -253,7 +258,7 @@
       AI.logPush('m6', { counts: counts.slice(), per, overall, rareAcc: rare, commonAcc: common });
       readout.innerHTML = ''; readout.appendChild(meters([['Overall accuracy (real-world mix)', AI.pct(overall), overall >= .9 ? 'good' : ''], ['Common creatures (A and B)', AI.pct(common), 'good'], ['Rare creatures (C and D)', AI.pct(rare), rare >= .9 ? 'good' : 'low']]));
       bars.innerHTML = ''; G().GROUPS.forEach((gp, i) => bars.appendChild(h('div', { style: { margin: '6px 0' } }, h('div', { text: gp.id + ': ' + gp.name + (gp.rare ? ' (rare in the wild)' : '') + ' \u2014 ' + AI.pct(per[i])}), h('div', { class: 'bar' }, h('i', { style: { width: per[i] * 100 + '%', background: per[i] >= .9 ? '#16845A' : '#C7344E' } })))));
-      msg.innerHTML = ''; msg.appendChild(AI.mascot(rare < .6 ? '<b>' + AI.pct(overall) + ' overall looks great, but the rare creatures are at ' + AI.pct(rare) + '.</b> The sample had almost none of them, so the machine never learned that height is the wrong clue for them. Add some rare creatures and train again.' : rare >= .9 ? '<b>Fixed.</b> Rare creatures now score ' + AI.pct(rare) + '. Representative data fixed the problem; the model itself did not change.' : 'Getting better. Keep adding rare creatures.', rare >= .9 ? 'think' : 'oops'));
+      msg.innerHTML = ''; msg.appendChild(AI.mascot(rare < .6 ? '<b>' + AI.pct(overall) + ' overall looks great, but the rare creatures are at ' + AI.pct(rare) + '.</b> The sample had almost none of them, so the machine never learned that height is the wrong clue for them. Add some rare creatures and train again.' : rare >= .9 ? '<b>Fixed.</b> Rare creatures now score ' + AI.pct(rare) + '. Representative data fixed the problem; the model itself did not change.' : 'Getting better. Keep adding rare creatures.', rare >= .9 ? 'cheer' : 'oops'));
       draw();
     }
     function sliders() {
@@ -261,7 +266,7 @@
       G().GROUPS.forEach((gp, g) => { const out = h('b', { text: counts[g] }); const sl = h('input', { type: 'range', min: 0, max: 14, value: counts[g], 'aria-label': 'Number of group ' + gp.id + ' creatures in the training sample' }); sl.addEventListener('input', () => { counts[g] = +sl.value; out.textContent = counts[g]; AI.setA('a3_m6counts', counts.slice()); trained = false; draw(); }); ctr.appendChild(h('div', { style: { margin: '6px 0' } }, h('div', null, h('b', { style: { color: AI.CLS[gp.cls].color }, text: AI.CLS[gp.cls].sym + ' ' }), gp.id + ': ' + gp.name + ' \u2014 in sample: ', out), sl)); });
     }
     const side = h('div', null,
-      h('div', { class: 'card tint' }, h('h3', { text: 'The sample was missing something' }), h('p', { html: 'Out in the wild there are four kinds of creatures. <b>Zorbs</b> can be short <i>or</i> tall (A and C), and <b>Quibs</b> can be tall <i>or</i> short (B and D). But the first expedition mostly found the common kinds, A and B. Press <b>Train</b> to see how the machine does on <b>every</b> kind, then use the sliders to change who is in the training sample. Goal: get the <b>rare</b> creatures to 90% or better.' })),
+      h('div', { class: 'card tint' }, AI.iconHead('ui/icon_scales.png', 'The sample was missing something'), h('p', { html: 'Out in the wild there are four kinds of creatures. <b>Zorbs</b> can be short <i>or</i> tall (A and C), and <b>Quibs</b> can be tall <i>or</i> short (B and D). But the first expedition mostly found the common kinds, A and B. Press <b>Train</b> to see how the machine does on <b>every</b> kind, then use the sliders to change who is in the training sample. Goal: get the <b>rare</b> creatures to 90% or better.' })),
       ctr, h('div', { class: 'toolbar' }, h('button', { class: 'btn go', type: 'button', text: 'Train the machine on this sample', onclick: train })), readout, bars, msg, spec);
     body.appendChild(h('div', { class: 'bench' }, h('div', null, pb.wrap, AI.legend([0, 1])), side));
     body.appendChild(AI.cfuBlock(['a3q7', 'a3q8'], 'Check for understanding'));
@@ -281,8 +286,21 @@
       { id: 'm6', title: '6 \u00B7 Fix the sample', render: mission6, done: () => log('m6') },
     ];
     root.appendChild(AI.hero('Activity 3: Train the Machine', 'Teach a machine to sort imaginary creatures. Every mission can be replayed with a new dataset, so try, fail, and try again.'));
-    root.appendChild(h('details', { class: 'intro' }, h('summary', { text: 'Meet Nibble and how scoring works' }), AI.mascot('Hi, I\'m <b>Nibble</b>, your lab assistant. In the paper version you drew one line on one graph. Here you can <b>replay as many times as you like</b>. Only your <b>first test on each dataset</b> counts for points, so use the practice time to learn, then test.')));
+    const GUIDE = [['zorb', 'Zorb', 'Round, with two antennae. Usually short.'], ['quib', 'Quib', 'Tall oval with pointed ears.'], ['flonk', 'Flonk', 'Squat and boxy, with a head fin. Shows up in Mission 3.']];
+    root.appendChild(h('details', { class: 'intro' }, h('summary', { text: 'Meet Nibble, the creatures, and how scoring works' }), AI.mascot('Hi, I\'m <b>Nibble</b>, your lab assistant. In the paper version you drew one line on one graph. Here you can <b>replay as many times as you like</b>. Only your <b>first test on each dataset</b> counts for points, so use the practice time to learn, then test.', 'wave'),
+      h('h4', { text: 'Field guide' }), h('div', { class: 'guide' }, GUIDE.map((g) => h('figure', null, AI.art('species/' + g[0] + '_portrait.png', g[1] + ' portrait'), h('figcaption', null, h('b', { text: g[1] }), h('br'), g[2])))),
+      h('p', { class: 'tag', text: 'Spots are the data, so the portraits have none. On the plot, Zorbs are circles, Quibs are triangles, and Flonks are squares.' })));
+    // mission badges: earned when a mission is done; replay badge when any dataset mission is played on 3 different datasets
+    const BADGES = [['m1', 'ui/badge_m1_line.png', 'Line Drawer'], ['m2', 'ui/badge_m2_dial.png', 'Dial Tuner'], ['m3', 'ui/badge_m3_flag.png', 'Flag Planter'], ['m4', 'ui/badge_m4_generalize.png', 'Generalizer'], ['m5', 'ui/badge_m5_group.png', 'Group Namer'], ['m6', 'ui/badge_m6_sample.png', 'Fair Sampler'], ['replay', 'ui/badge_replay.png', 'Replayed 3 datasets']];
+    const replayed = () => ['m1', 'm3', 'm5'].some((k) => new Set(AI.logGet(k).map((a) => a.seed)).size >= 3);
+    const badgeFigs = BADGES.map((b) => { const f = h('figure', null, AI.art(b[1], b[2] + ' badge'), h('figcaption', { text: b[2] })); return { b, f }; });
+    const strip = h('div', { class: 'badges', 'aria-label': 'Mission badges' }, h('span', { class: 'lbl', text: 'Badges' }), badgeFigs.map((x) => x.f));
+    function paintBadges() {
+      badgeFigs.forEach((x) => { const got = x.b[0] === 'replay' ? replayed() : !!parts.find((p) => p.id === x.b[0]).done(); x.f.classList.toggle('locked', !got); x.f.title = got ? 'Earned: ' + x.b[2] : 'Not earned yet: ' + x.b[2]; x.f.querySelector('img').alt = x.b[2] + ' badge, ' + (got ? 'earned' : 'not earned yet'); });
+    }
+    root.appendChild(strip);
     const tv = AI.tabsView(parts, 'a3'); root.appendChild(tv.el);
-    tv.show(startPart && parts.find((p) => p.id === startPart) ? startPart : 'm1'); tv.refresh();
+    const baseRefresh = tv.refresh; AI.tabRefresh = () => { baseRefresh(); paintBadges(); };
+    tv.show(startPart && parts.find((p) => p.id === startPart) ? startPart : 'm1'); AI.tabRefresh();
   };
 })();

@@ -2,6 +2,8 @@
 
 **Good news first:** the lab already works with **zero images**. It draws its own creatures (as SVG), a small robot mascot, charts, and pixel grids in code. Everything below is optional polish. Add art whenever you have it.
 
+**Update:** all 70 images are now in the site and wired into the lab. Every "Not yet" below is now connected; the column is kept as a record of the original plan. Any image that goes missing simply hides itself.
+
 Legend for the "Wired?" column:
 
 - **Yes** = drop the file in the exact folder with the exact name and the lab uses it automatically.

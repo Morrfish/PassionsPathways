@@ -3,13 +3,27 @@
   const AI = (window.AI = window.AI || {});
   const h = AI.h;
 
-  AI.mascot = function (msg, mood) {
-    const face = '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="10" y="14" width="44" height="36" rx="10" fill="#1E2761"/><rect x="29" y="4" width="6" height="10" fill="#1E2761"/><circle cx="32" cy="5" r="4" fill="#00D4FF"/><circle cx="23" cy="30" r="6" fill="#00D4FF"/><circle cx="41" cy="30" r="6" fill="#00D4FF"/><circle cx="24" cy="30" r="2.4" fill="#0E1330"/><circle cx="42" cy="30" r="2.4" fill="#0E1330"/>' +
+  // ---------- art helpers: every image is optional and hides itself if the file is missing ----------
+  AI.art = function (src, alt, o) {
+    o = o || {};
+    const img = h('img', { src, alt: alt || '', class: 'art ' + (o.cls || ''), loading: o.eager ? null : 'lazy', width: o.w || null, height: o.h || null, style: o.style || null });
+    img.addEventListener('error', () => { img.style.display = 'none'; if (o.fallback) img.replaceWith(o.fallback()); });
+    return img;
+  };
+  // card heading with a small decorative icon in front
+  AI.iconHead = (src, text, tag) => h(tag || 'h3', { class: 'ihead' }, AI.art(src, ''), h('span', { text }));
+
+  const NIBBLE = { think: 'assets/mascot/nibble_think.png', oops: 'assets/mascot/nibble_oops.png', cheer: 'mascot/nibble_cheer.png', wave: 'mascot/nibble_wave.png' };
+  function nibbleSVG(mood) {
+    return '<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="10" y="14" width="44" height="36" rx="10" fill="#1E2761"/><rect x="29" y="4" width="6" height="10" fill="#1E2761"/><circle cx="32" cy="5" r="4" fill="#00D4FF"/><circle cx="23" cy="30" r="6" fill="#00D4FF"/><circle cx="41" cy="30" r="6" fill="#00D4FF"/><circle cx="24" cy="30" r="2.4" fill="#0E1330"/><circle cx="42" cy="30" r="2.4" fill="#0E1330"/>' +
       (mood === 'oops' ? '<path d="M22 43 Q32 37 42 43" stroke="#F5A623" stroke-width="3" fill="none" stroke-linecap="round"/>' : '<path d="M22 41 Q32 49 42 41" stroke="#F5A623" stroke-width="3" fill="none" stroke-linecap="round"/>') + '</svg>';
-    const d = h('div', { class: 'mascot' }, h('div', { html: face, style: { width: '54px', flex: 'none' } }), h('p', { html: msg }));
-    const img = AI.assets.has['mascot/nibble_' + (mood || 'think') + '.png'];
-    if (img) d.firstChild.innerHTML = '<img alt="" src="assets/mascot/nibble_' + (mood || 'think') + '.png" width="54" height="54">';
-    return d;
+  }
+  // mood: think (default), oops, cheer, wave
+  AI.mascot = function (msg, mood) {
+    mood = NIBBLE[mood] ? mood : 'think';
+    const holder = h('div', { style: { width: '54px', flex: 'none' } });
+    holder.appendChild(AI.art(NIBBLE[mood], '', { w: 54, h: 54, eager: true, fallback: () => h('div', { html: nibbleSVG(mood) }) }));
+    return h('div', { class: 'mascot' }, holder, h('p', { html: msg }));
   };
 
   AI.hero = (title, sub) => h('div', { class: 'hero' }, h('h1', { text: title }), h('p', { text: sub }));

@@ -14,11 +14,11 @@
     const F = { all: () => true, ins: (x) => isIn(x) && !x.g, out: (x) => !isIn(x) && !x.g, gap: (x) => x.g };
     function draw() {
       tblHost.innerHTML = '';
-      tblHost.appendChild(h('table', { class: 't' }, h('tr', null, ['ID', 'Skills score', 'Westbrook Prep?', 'Lacrosse / golf club?', 'Resume gap?', 'Past decision'].map((x) => h('th', { text: x }))),
+      tblHost.appendChild(h('table', { class: 't' }, h('tr', null, [['ID'], ['Skills score', 'bias/icon_resume.png'], ['Westbrook Prep?', 'bias/icon_school.png'], ['Lacrosse / golf club?', 'bias/icon_club.png'], ['Resume gap?', 'bias/icon_gap.png'], ['Past decision']].map((x) => h('th', null, x[1] ? AI.art(x[1], '', { cls: 'thi' }) : null, x[0]))),
         R.map((x) => h('tr', { class: F[filter](x) && filter !== 'all' ? 'hl' : '' }, h('td', { text: x.id }), h('td', { class: 'num', text: x.score }), h('td', { class: 'num', text: yn(x.w) }), h('td', { class: 'num', text: yn(x.c) }), h('td', { class: 'num', text: yn(x.g) }), h('td', { class: x.hired ? 'ok' : 'no', text: x.hired ? 'Hired' : 'Not hired' })))));
     }
     const chips = [['all', 'All 20'], ['ins', 'Insiders, no gap'], ['out', 'Outsiders, no gap'], ['gap', 'Any resume gap']].map((c) => h('button', { class: 'btn sm alt', type: 'button', text: 'Highlight: ' + c[1], onclick: () => { filter = c[0]; draw(); } }));
-    body.appendChild(h('div', { class: 'card tint' }, h('h3', { text: 'The case' }), h('p', { html: '<b>SkyBright Tech</b> wants an AI to screen applicants for a Junior Developer job. It will learn from the company\u2019s <b>past hiring decisions</b>. All applicants are fictional and took the same skills test (0\u2013100). <b>Westbrook Prep</b> is a private school; <b>club</b> means a lacrosse or golf club. Call an applicant an <b>insider</b> if they went to Westbrook <i>or</i> were in the club.' }), h('div', { class: 'toolbar' }, chips), tblHost));
+    body.appendChild(h('div', { class: 'card tint' }, h('h3', { text: 'The case' }), AI.art('bias/office_building.png', 'Illustration of the fictional SkyBright Tech office building', { cls: 'banner-art' }), h('p', { html: '<b>SkyBright Tech</b> wants an AI to screen applicants for a Junior Developer job. It will learn from the company\u2019s <b>past hiring decisions</b>. All applicants are fictional and took the same skills test (0\u2013100). <b>Westbrook Prep</b> is a private school; <b>club</b> means a lacrosse or golf club. Call an applicant an <b>insider</b> if they went to Westbrook <i>or</i> were in the club.' }), h('div', { class: 'toolbar' }, chips), tblHost));
     draw();
     // Step 1
     const groups = ['Everyone', 'Insiders (Westbrook or club), NO resume gap', 'Outsiders (neither), NO resume gap', 'Anyone with a resume gap'], G = AI.biasGroups();
@@ -36,10 +36,10 @@
       h('div', { class: 'flex' }, h('div', null, h('label', { class: 'f', text: 'People who were hired' }), AI.numField('b_avgH', { step: 0.1, label: 'Average score hired', check: (v) => Math.abs(v - av.hired) <= 0.2 })), h('div', null, h('label', { class: 'f', text: 'People who were NOT hired' }), AI.numField('b_avgN', { step: 0.1, label: 'Average score not hired', check: (v) => Math.abs(v - av.notHired) <= 0.2 }))),
       AI.openBlock('a6o1')));
     // Step 3
-    const RK = [['b_rank_ins', 'Westbrook Prep or club (insider)'], ['b_rank_gap', 'Resume gap'], ['b_rank_score', 'Skills score'], ['b_rank_id', 'Applicant ID number']];
+    const RK = [['b_rank_ins', 'Westbrook Prep or club (insider)', 'bias/icon_school.png'], ['b_rank_gap', 'Resume gap', 'bias/icon_gap.png'], ['b_rank_score', 'Skills score', 'bias/icon_resume.png'], ['b_rank_id', 'Applicant ID number']];
     const rankMsg = h('div'); const rk = () => { const v = RK.map((r) => Number(AI.S.answers[r[0]])); const all = RK.every((r) => AI.S.answers[r[0]] != null); rankMsg.innerHTML = ''; if (all) { const ok = [v[0], v[1]].every((x) => x === 1 || x === 2) && v[0] !== v[1] && v[2] === 3 && v[3] === 4; rankMsg.appendChild(h('div', { class: 'banner ' + (ok ? 'ok' : 'warn'), text: ok ? '\u2713 That matches the pattern in the data.' : 'Look again: which feature best separates hired from not hired? Which has no pattern at all?' })); } };
     body.appendChild(h('div', { class: 'card' }, h('h3', { text: 'Step 3: Which features would an AI rely on?' }), h('p', { text: 'Rank from 1 (strongest predictor of the past decisions) to 4 (weakest). Use each rank once.' }),
-      h('table', { class: 't' }, RK.map((r) => h('tr', null, h('td', { text: r[1] }), h('td', null, AI.selField(r[0], ['1', '2', '3', '4'].map((n) => ({ v: n, t: n })), { inline: true, label: 'Rank for ' + r[1] }))))), rankMsg));
+      h('table', { class: 't' }, RK.map((r) => h('tr', null, h('td', null, r[2] ? AI.art(r[2], '', { cls: 'thi' }) : null, r[1]), h('td', null, AI.selField(r[0], ['1', '2', '3', '4'].map((n) => ({ v: n, t: n })), { inline: true, label: 'Rank for ' + r[1] }))))), rankMsg));
     body.addEventListener('change', rk); rk();
   }
 
@@ -59,7 +59,13 @@
     function builder() {
       const sc = h('input', { type: 'range', min: 40, max: 100, value: cur.score, 'aria-label': 'Skills score' }), so = h('b', { text: cur.score }); sc.addEventListener('input', () => { cur.score = +sc.value; so.textContent = cur.score; whatIf(); });
       const tg = (k, t) => { const c = h('input', { type: 'checkbox', 'aria-label': t }); c.addEventListener('change', () => { cur[k] = c.checked ? 1 : 0; whatIf(); }); return h('label', { style: { marginRight: '14px' } }, c, ' ' + t); };
-      return h('div', { class: 'card' }, h('h3', { text: 'What-if applicant' }), h('div', null, 'Skills score: ', so), sc, h('div', { style: { margin: '8px 0' } }, tg('w', 'Westbrook Prep'), tg('c', 'Lacrosse/golf club'), tg('g', 'Resume gap')), live);
+      // the look never changes the verdict: the AI only sees the four features
+      let look = 1; const SIL = ['Neutral applicant silhouette', 'Applicant silhouette with broad hair shape', 'Applicant silhouette using a wheelchair', 'Applicant silhouette with a head covering', 'Tall applicant silhouette with a cane', 'Short applicant silhouette'];
+      const sil = AI.art('bias/applicant_silhouette_1.png', SIL[0], { cls: 'sil' });
+      const nextLook = () => { look = look % 6 + 1; sil.src = 'bias/applicant_silhouette_' + look + '.png'; sil.alt = SIL[look - 1]; sil.style.display = ''; };
+      return h('div', { class: 'card' }, h('h3', { text: 'What-if applicant' }),
+        h('div', { class: 'whatif' }, sil, h('div', null, h('button', { class: 'btn sm alt', type: 'button', text: 'Change how they look', onclick: nextLook }), h('p', { class: 'tag', style: { marginTop: '6px' }, text: 'Watch the verdict when you change the look. The AI never sees the person, only the four features below. So where did its bias come from?' }))),
+        h('div', null, 'Skills score: ', so), sc, h('div', { style: { margin: '8px 0' } }, tg('w', 'Westbrook Prep'), tg('c', 'Lacrosse/golf club'), tg('g', 'Resume gap')), live);
     }
     const cards = AI.BIAS.newApps.map((n) => {
       const key = 'b_pred_' + n.id, out = h('div'); const pr = AI.biasPredict(base, n);
@@ -83,12 +89,13 @@
     function tryFix(f) {
       const m = AI.biasTrain(f.cfg), a = AI.biasAudit(m); tried[f.id] = { fix: f.id, inRate: a.inRate, outRate: a.outRate, ratio: a.ratio };
       AI.logPush('b_fix', { fix: f.id, inRate: a.inRate, outRate: a.outRate, ratio: a.ratio });
-      out.innerHTML = ''; out.appendChild(h('div', { class: 'card' }, h('h4', { text: f.label }), meters([['Insiders selected', AI.pct(a.inRate)], ['Outsiders selected', AI.pct(a.outRate)], ['Outsider \u00F7 insider', a.ratio.toFixed(2), a.ratio >= .8 && a.ratio <= 1.25 ? 'good' : 'low']]),
+      const fair = a.ratio >= 0.8 && a.ratio <= 1.25;
+      out.innerHTML = ''; out.appendChild(h('div', { class: 'card' }, AI.art(fair ? 'bias/icon_scales_balanced.png' : 'bias/icon_scales_tipped.png', fair ? 'Balanced scales: passes the four-fifths rule' : 'Tipped scales: four-fifths rule warning', { cls: 'scales' }), h('h4', { text: f.label }), meters([['Insiders selected', AI.pct(a.inRate)], ['Outsiders selected', AI.pct(a.outRate)], ['Outsider \u00F7 insider', a.ratio.toFixed(2), a.ratio >= .8 && a.ratio <= 1.25 ? 'good' : 'low']]),
         h('p', { class: 'tag', text: 'Tested on 1,000 new simulated applicants whose skills do not depend on school or clubs. A fair tool would select both groups at similar rates.' }),
         h('div', { class: 'flex' }, AI.BIAS.newApps.map((n) => h('div', { class: 'meter', style: { minWidth: '120px' } }, AI.meterBox(n.id + ' hire chance', AI.pct(AI.biasPredict(m, n))))))));
       renderTable();
     }
-    body.appendChild(h('div', { class: 'card tint' }, h('h3', { text: 'The Fix Lab' }), h('p', { html: 'Try each fix. The lab retrains the AI and tests it on <b>1,000 simulated applicants</b> whose skills do <b>not</b> depend on where they went to school. A fair tool should select insiders and outsiders at similar rates. The <b>four-fifths rule</b> is a common warning sign: if one group\u2019s selection rate is under 80% of another\u2019s, take a closer look. Try at least three fixes.' })));
+    body.appendChild(h('div', { class: 'card tint' }, AI.iconHead('ui/icon_scales.png', 'The Fix Lab'), h('p', { html: 'Try each fix. The lab retrains the AI and tests it on <b>1,000 simulated applicants</b> whose skills do <b>not</b> depend on where they went to school. A fair tool should select insiders and outsiders at similar rates. The <b>four-fifths rule</b> is a common warning sign: if one group\u2019s selection rate is under 80% of another\u2019s, take a closer look. Try at least three fixes.' })));
     body.appendChild(h('div', { class: 'toolbar' }, AI.BIAS_FIXES.map((f) => h('button', { class: 'btn sm alt', type: 'button', text: f.label, onclick: () => tryFix(f) }))));
     body.appendChild(out); body.appendChild(h('h3', { text: 'Your results so far' })); body.appendChild(tbl);
     body.appendChild(h('div', { class: 'card' }, h('label', { class: 'f', text: 'Which fix did the LEAST to close the gap between insiders and outsiders?' }), AI.selField('b_least', AI.BIAS_FIXES.filter((f) => f.id !== 'base').map((f) => ({ v: f.id, t: f.label })), { label: 'Fix that did the least', ph: 'Choose after trying the fixes\u2026', check: (v) => v === 'dropW' })));
@@ -106,16 +113,18 @@
 
   // ============================== ACTIVITY 7 ==============================
   function a7Read(body) {
+    // [title, text, optional icon, optional illustration, illustration alt]
     const ev = [
-      ['2018: The theft', 'A thief steals watches from a store in Detroit. Security video captures a <b>blurry, low-quality image</b>.'],
-      ['The search', 'Police run the still image through a facial recognition system. It returns <b>many possible matches</b>, not one certain answer.'],
-      ['Picking a match', 'Detectives focus on one: the <b>expired driver\u2019s license photo</b> of Robert Williams, a Black man living in a Detroit suburb.'],
-      ['The lineup', 'His photo and five others are shown to a <b>store loss-prevention worker</b>, who picks him.'],
-      ['January 2020: the arrest', 'Police arrest Mr. Williams outside his home in front of his wife and daughters. He is held about <b>30 hours</b>. He was innocent.'],
-      ['June 28, 2024: the settlement', 'Detroit agrees to <b>stop arrests based only on facial recognition</b> or on photo lineups that directly follow a search, to <b>train officers</b> on the technology\u2019s risks (including higher misidentification of people of color), and to <b>audit</b> older cases. Detroit pays Mr. Williams $300,000. The court can enforce the agreement for four years.'],
+      ['2018: The theft', 'A thief steals watches from a store in Detroit. Security video captures a <b>blurry, low-quality image</b>.', null, 'case/evidence_blurry_still.png', 'Illustration of a blurry, faceless figure on a security camera'],
+      ['The search', 'Police run the still image through a facial recognition system. It returns <b>many possible matches</b>, not one certain answer.', null, 'case/evidence_many_matches.png', 'Illustration: six blank silhouette cards, each labeled possible match'],
+      ['Picking a match', 'Detectives focus on one: the <b>expired driver\u2019s license photo</b> of Robert Williams, a Black man living in a Detroit suburb.', 'case/icon_document.png'],
+      ['The lineup', 'His photo and five others are shown to a <b>store loss-prevention worker</b>, who picks him.', 'case/icon_lineup.png'],
+      ['January 2020: the arrest', 'Police arrest Mr. Williams outside his home in front of his wife and daughters. He is held about <b>30 hours</b>. He was innocent.', 'case/icon_handcuffs_crossed.png'],
+      ['June 28, 2024: the settlement', 'Detroit agrees to <b>stop arrests based only on facial recognition</b> or on photo lineups that directly follow a search, to <b>train officers</b> on the technology\u2019s risks (including higher misidentification of people of color), and to <b>audit</b> older cases. Detroit pays Mr. Williams $300,000. The court can enforce the agreement for four years.', 'case/icon_courthouse.png'],
     ];
-    body.appendChild(h('div', { class: 'card tint' }, h('h3', { text: 'Read the case file' }), h('p', { html: 'This is a <b>real case</b> about a real family. Read it carefully, then work through the decision points. Facts come from the ACLU, University of Michigan Law, the Associated Press, and CBS Detroit. Our job is to understand what went wrong so it does not happen to others.' })));
-    ev.forEach((e) => body.appendChild(h('details', { class: 'card', open: e === ev[0] }, h('summary', { text: e[0] }), h('p', { html: e[1] }))));
+    body.appendChild(h('div', { class: 'card tint' }, h('h3', { text: 'Read the case file' }), h('p', { html: 'This is a <b>real case</b> about a real family. Read it carefully, then work through the decision points. Facts come from the ACLU, University of Michigan Law, the Associated Press, and CBS Detroit. Our job is to understand what went wrong so it does not happen to others.' }), h('div', { class: 'tl' }, AI.art('case/timeline_strip.png', ''), [['7%', '2018: theft'], ['50%', '2020: arrest'], ['92%', '2024: settlement']].map((x) => h('span', { style: { left: x[0] }, text: x[1] })))));
+    ev.forEach((e) => body.appendChild(h('details', { class: 'card', open: e === ev[0] }, h('summary', null, e[2] ? AI.art(e[2], '') : null, e[0]), h('p', { html: e[1] }),
+      e[3] ? h('figure', { class: 'fig' }, AI.art(e[3], e[4], { cls: 'ev' }), h('figcaption', { text: 'Illustration only. Not the real evidence and not a real person.' })) : null)));
     body.appendChild(h('div', { class: 'card amber' }, h('p', { html: '<b>Notice:</b> the slide says the error was \u201ctraced directly\u201d to biased training data. As you work, look for evidence about what else contributed.' })));
     body.appendChild(AI.cfuBlock(['a7q1'], 'Check for understanding'));
   }

@@ -46,6 +46,7 @@
     const S = AI.S.student;
     const f = (k, label, type) => { const i = h('input', { type: type || 'text', id: 'in_' + k, value: S[k] || '', autocomplete: 'off' }); i.addEventListener('input', () => { S[k] = i.value.trim(); AI.dirty(); updateWho(); }); return h('div', null, h('label', { class: 'f', for: 'in_' + k, text: label }), i); };
     main.appendChild(h('div', { class: 'hero' }, h('h1', { text: 'Chapter 3 AI Lab' }), h('p', { text: 'Hands-on activities for Types of AI and How Machines Learn. Train a machine, break a network, catch fraud, and audit a hiring AI.' })));
+    main.appendChild(AI.mascot('Hi, I\'m <b>Nibble</b>! Type your name below to get started. Your work stays on this computer.', 'wave'));
     main.appendChild(h('div', { class: 'card' }, h('h3', { text: 'Who is working?' }), h('div', { class: 'grid2' }, f('first', 'First name'), f('last', 'Last name')), h('div', { class: 'grid2' }, f('period', 'Class period'), f('email', 'School email (optional)', 'email')),
       h('div', { class: 'toolbar' }, h('button', { class: 'btn go', type: 'button', text: 'Start Activity 3', onclick: () => { if (!AI.S.student.first || !AI.S.student.last) { AI.toast('Please enter your first and last name.'); return; } AI.save(); location.hash = '#a3'; } }))));
     main.appendChild(h('div', { class: 'card tint' }, h('h3', { text: 'How this works' }),

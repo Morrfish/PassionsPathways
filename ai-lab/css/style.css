@@ -141,3 +141,34 @@ table.t.sortable th{cursor:pointer;white-space:nowrap}
 .mascot{display:flex;gap:12px;align-items:flex-start;background:#EAF7FB;border:1px solid #B8E6F2;border-radius:12px;padding:10px 14px;margin:10px 0}
 .mascot svg,.mascot img{flex:none;width:54px;height:54px}
 .mascot p{margin:0}
+/* art */
+.ihead{display:flex;align-items:center;gap:10px}
+.ihead img{width:36px;height:36px;flex:none}
+img.art{max-width:100%}
+.top .brand img{height:30px;width:auto;display:block}
+.banner-art{display:block;width:100%;max-height:190px;object-fit:cover;border-radius:8px;margin:6px 0 10px}
+.fig{margin:8px 0 4px}.fig img{display:block;width:100%;max-width:520px;border-radius:8px;border:1px solid var(--line)}
+.fig figcaption{font-size:.82rem;color:var(--muted);margin-top:4px}
+.guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:8px 0}
+.guide figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center}
+.guide img{width:110px;height:110px}
+.guide figcaption{font-size:.88rem}
+.badges{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:0 0 12px}
+.badges .lbl{font-weight:700;color:var(--navy-700);font-size:.9rem;margin-right:4px}
+.badges figure{margin:0;text-align:center;width:72px}
+.badges img{width:52px;height:52px;transition:filter .2s,opacity .2s}
+.badges figure.locked img{filter:grayscale(1);opacity:.3}
+.badges figcaption{font-size:.7rem;line-height:1.15;color:var(--muted)}
+.badges figure:not(.locked) figcaption{color:var(--ok);font-weight:700}
+td .mini{width:30px;height:30px;vertical-align:middle;margin-right:4px}
+th .thi{width:20px;height:20px;vertical-align:-4px;margin-right:4px}
+.layers{display:flex;gap:6px;align-items:center}.layers img{width:44px;height:44px}
+.whatif{display:flex;gap:14px;align-items:center}.whatif .sil{width:96px;height:96px;flex:none;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:6px}
+.scales{width:72px;height:72px;float:right;margin-left:10px}
+.groups{display:flex;gap:18px;flex-wrap:wrap;margin:8px 0}.groups span{display:inline-flex;align-items:center;gap:6px}.groups img{width:36px;height:36px}
+details.card img.ev{display:block;width:100%;max-width:480px;border-radius:8px;margin:6px 0 2px}
+details.card summary img{width:26px;height:26px;vertical-align:-7px;margin-right:6px}
+.top .brand{display:flex;align-items:center;gap:8px}
+.landart{display:flex;gap:10px;align-items:flex-end;margin:6px 0 4px}.landart img{width:84px;height:84px}.landart img:first-child{width:64px;height:64px}
+.tl{position:relative;width:100%;max-width:480px;margin:6px auto 22px}.tl img{display:block;width:100%}
+.tl span{position:absolute;top:100%;transform:translateX(-50%);font-size:.8rem;font-weight:700;color:var(--navy-700);white-space:nowrap}

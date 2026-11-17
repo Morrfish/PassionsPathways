@@ -62,6 +62,8 @@
     names.forEach((n) => { const im = new Image(); im.onload = () => { AI.assets.has[n] = true; }; im.src = 'assets/' + n; });
   };
 
+  if (typeof Image !== 'undefined') { AI.habitatImg = new Image(); AI.habitatImg.src = 'ui/habitat_meadow.png'; }
+
   // ---------- creature sprite (SVG) ----------
   AI.creatureSVG = function (cls, height, spots, seed, size) {
     size = size || 96;
@@ -126,6 +128,12 @@
     P.render = function () {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
       ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+      // optional pale meadow behind the data (Activity 3 plots)
+      if (canvas.dataset.habitat && AI.habitatImg && !AI.habitatImg.complete) AI.habitatImg.addEventListener('load', () => P.render(), { once: true });
+      if (canvas.dataset.habitat && AI.habitatImg && AI.habitatImg.complete && AI.habitatImg.naturalWidth) {
+        const pw = W - M.l - M.r, ph = H - M.t - M.b, im = AI.habitatImg, sc = Math.max(pw / im.naturalWidth, ph / im.naturalHeight), sw = pw / sc, sh = ph / sc;
+        ctx.save(); ctx.globalAlpha = .45; ctx.drawImage(im, (im.naturalWidth - sw) / 2, (im.naturalHeight - sh) / 2, sw, sh, M.l, M.t, pw, ph); ctx.restore();
+      }
       // shading
       if (P.shade) {
         const nx = 70, ny = 44, cw = (W - M.l - M.r) / nx, ch = (H - M.t - M.b) / ny;
