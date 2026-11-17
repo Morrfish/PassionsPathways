@@ -1,0 +1,222 @@
+{
+ "schema": "ai-lab-ch3",
+ "version": 1,
+ "student": {
+  "first": "Test",
+  "last": "Student",
+  "period": "1",
+  "email": ""
+ },
+ "startedAt": 1794936247505,
+ "updatedAt": 1794936268676,
+ "activeSeconds": 2400,
+ "answers": {},
+ "text": {},
+ "log": {
+  "m1": [
+   {
+    "ts": 1794936248260,
+    "seed": 101,
+    "trainAcc": 0.9333333333333333,
+    "testAcc": 0.5,
+    "line": {
+     "a": {
+      "x": 26,
+      "y": 1
+     },
+     "b": {
+      "x": 26,
+      "y": 9
+     }
+    },
+    "flip": true
+   }
+  ]
+ },
+ "cfu": {
+  "a3q1": {
+   "attempts": [
+    0
+   ]
+  },
+  "a3q2": {
+   "attempts": [
+    1
+   ]
+  },
+  "a3q3": {
+   "attempts": [
+    1
+   ]
+  },
+  "a3q5": {
+   "attempts": [
+    2
+   ]
+  },
+  "a3q4": {
+   "attempts": [
+    0
+   ]
+  },
+  "a3q6": {
+   "attempts": [
+    1
+   ]
+  },
+  "a3q7": {
+   "attempts": [
+    1
+   ]
+  },
+  "a3q8": {
+   "attempts": [
+    1
+   ]
+  },
+  "a4q1": {
+   "attempts": [
+    0
+   ]
+  },
+  "a4q2": {
+   "attempts": [
+    1
+   ]
+  },
+  "a4q3": {
+   "attempts": [
+    1
+   ]
+  },
+  "a5q1": {
+   "attempts": [
+    1
+   ]
+  },
+  "a5q2": {
+   "attempts": [
+    0
+   ]
+  },
+  "a5q3": {
+   "attempts": [
+    1
+   ]
+  },
+  "a6q1": {
+   "attempts": [
+    1
+   ]
+  },
+  "a6q2": {
+   "attempts": [
+    1
+   ]
+  },
+  "a6q3": {
+   "attempts": [
+    1
+   ]
+  },
+  "a6q4": {
+   "attempts": [
+    1
+   ]
+  },
+  "a7q1": {
+   "attempts": [
+    1
+   ]
+  },
+  "a7q2": {
+   "attempts": [
+    1
+   ]
+  },
+  "a7q3": {
+   "attempts": [
+    1
+   ]
+  },
+  "f1": {
+   "attempts": [
+    1
+   ]
+  },
+  "f2": {
+   "attempts": [
+    2
+   ]
+  },
+  "f3": {
+   "attempts": [
+    1
+   ]
+  },
+  "f4": {
+   "attempts": [
+    0
+   ]
+  },
+  "f5": {
+   "attempts": [
+    1
+   ]
+  },
+  "f6": {
+   "attempts": [
+    1
+   ]
+  },
+  "f7": {
+   "attempts": [
+    0
+   ]
+  },
+  "f8": {
+   "attempts": [
+    1
+   ]
+  },
+  "f9": {
+   "attempts": [
+    0
+   ]
+  },
+  "f10": {
+   "attempts": [
+    1
+   ]
+  }
+ },
+ "visited": {
+  "a3": 1794936247838,
+  "part_m1": 1794936247853,
+  "part_m2": 1794936248480,
+  "part_m3": 1794936249271,
+  "part_m4": 1794936249596,
+  "part_m5": 1794936249950,
+  "part_m6": 1794936251573,
+  "a4": 1794936252366,
+  "part_run": 1794936252368,
+  "part_build": 1794936254365,
+  "a5": 1794936257428,
+  "part_lazy": 1794936257431,
+  "part_tune": 1794936259034,
+  "part_cost": 1794936260616,
+  "a6": 1794936261030,
+  "part_data": 1794936261033,
+  "part_train": 1794936261343,
+  "part_fix": 1794936261645,
+  "a7": 1794936262231,
+  "part_read": 1794936262232,
+  "part_decide": 1794936263832,
+  "part_sort": 1794936266915,
+  "fin": 1794936267223
+ },
+ "submittedAt": 1794936268676,
+ "kind": "submission",
+ "exportedAt": 1794936268676,
+ "checksum": "1bxc9lrvcj0"
+}

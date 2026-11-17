@@ -1,0 +1,56 @@
+{
+ "schema": "ai-lab-ch3",
+ "version": 1,
+ "student": {
+  "first": "Grace",
+  "last": "Hopper",
+  "period": "3",
+  "email": ""
+ },
+ "startedAt": 1794933567872,
+ "updatedAt": 1794933569101,
+ "activeSeconds": 0,
+ "answers": {},
+ "text": {},
+ "log": {
+  "m1": [
+   {
+    "ts": 1794933568541,
+    "seed": 101,
+    "trainAcc": 0.9333333333333333,
+    "testAcc": 0.5,
+    "line": {
+     "a": {
+      "x": 26,
+      "y": 1
+     },
+     "b": {
+      "x": 26,
+      "y": 9
+     }
+    },
+    "flip": true
+   }
+  ]
+ },
+ "cfu": {
+  "a3q1": {
+   "attempts": [
+    0
+   ]
+  },
+  "a3q2": {
+   "attempts": [
+    1
+   ]
+  }
+ },
+ "visited": {
+  "a3": 1794933568019,
+  "part_m1": 1794933568028
+ },
+ "submittedAt": 1794933569101,
+ "kind": "submission",
+ "exportedAt": 1794933569101,
+ "checksum": "2d01ckq24yi"
+}
