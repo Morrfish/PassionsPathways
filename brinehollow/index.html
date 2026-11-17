@@ -22,6 +22,8 @@
   #tide{padding:4px 18px 7px;text-align:center;min-width:230px;background:#fff}
   #tideName{font-family:var(--head);font-weight:900;font-size:27px;font-weight:400;letter-spacing:.1em}
   #tideSub{font-size:11px;text-transform:uppercase}
+  #score{font-family:var(--head);font-weight:900;font-size:19px;letter-spacing:.05em;margin-top:3px}
+  #score small{font-family:inherit;font-size:10px;letter-spacing:0;text-transform:uppercase}
   #tideBar{height:7px;background:#fff;border:2px solid var(--ink);margin-top:4px;overflow:hidden}
   #tideBar i{display:block;height:100%;background:#2f9db0}
   #feed{top:104px;left:14px;font-size:12px;line-height:1.35;max-width:330px;text-transform:uppercase}
@@ -52,16 +54,19 @@
   .ab i{position:absolute;left:0;bottom:0;width:100%;background:repeating-linear-gradient(45deg,#141414cc 0 3px,#14141455 3px 6px)}
   #mm{right:16px;bottom:16px;padding:5px;transform:rotate(1deg)}
   #mm canvas{width:130px;height:290px;display:block}
-  #overlay{position:fixed;inset:0;background:#e9d9b0 radial-gradient(#1414142e 24%,transparent 26%) 0 0/10px 10px;display:flex;align-items:center;justify-content:center;z-index:5}
-  #card{max-width:700px;background:#fff;border:5px solid var(--ink);box-shadow:12px 12px 0 var(--ink);padding:20px 30px 24px;line-height:1.45;font-size:13px;transform:rotate(-.6deg)}
-  #card h1{margin:0;font-family:var(--head);font-weight:900;font-size:74px;letter-spacing:.05em;color:#c0522d;-webkit-text-stroke:2.5px var(--ink);text-shadow:5px 5px 0 var(--ink);line-height:1}
+  #overlay{overflow:auto;position:fixed;inset:0;background:#e9d9b0 radial-gradient(#1414142e 24%,transparent 26%) 0 0/10px 10px;display:flex;align-items:flex-start;justify-content:center;z-index:5}
+  #card{margin:14px 0 30px;max-width:760px;background:#fff;border:5px solid var(--ink);box-shadow:12px 12px 0 var(--ink);padding:20px 30px 24px;line-height:1.45;font-size:13px;transform:rotate(-.6deg)}
+  #card h1{margin:0;font-family:var(--head);font-weight:900;font-size:54px;letter-spacing:.05em;color:#c0522d;-webkit-text-stroke:2.5px var(--ink);text-shadow:5px 5px 0 var(--ink);line-height:1}
   #issue{display:inline-block;background:#ffe27a;border:2px solid var(--ink);padding:1px 9px;margin:10px 0 8px;text-transform:uppercase;font-size:12px;transform:rotate(-1deg)}
   #card table{border-collapse:collapse;margin:8px 0}
-  #card td{padding:3px 14px 3px 0;vertical-align:top;border-top:2px dotted #14141440}
+  #card td{font-size:12px;padding:1px 14px 1px 0;vertical-align:top;border-top:2px dotted #14141440}
   #card td:first-child{font-family:var(--head);font-weight:900;font-size:15px;letter-spacing:.04em;color:#0c8a78;white-space:nowrap}
   #go{margin-top:12px;padding:8px 28px;font-family:var(--head);font-weight:900;font-size:24px;letter-spacing:.06em;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);border-radius:3px;background:#ffd23f;color:var(--ink);cursor:pointer}
   #kit{margin-top:8px;padding:6px 10px;background:#f6ecd2;border:2px solid var(--ink);font-size:12px;line-height:1.4;min-height:50px}
-  #pickrow,#pickrow2{margin-top:6px;font-size:12px;text-transform:uppercase}
+  #pickrow,#pickrow2,.prow{margin-top:6px;font-size:12px;text-transform:uppercase}
+  .prow button{font-family:var(--head);font-weight:900;font-size:14px;letter-spacing:.04em;margin:3px 3px 0 0;padding:2px 10px;border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);background:#fff;color:var(--ink);cursor:pointer;border-radius:2px}
+  .prow button.on{background:#ffd23f}
+  #where{font-size:11.5px;margin:5px 0 2px;line-height:1.35}
   #pick button{font-family:var(--head);font-weight:900;font-size:15px;letter-spacing:.04em;margin:3px 3px 0 0;padding:3px 10px;border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);background:#fff;color:var(--ink);cursor:pointer;border-radius:2px}
   #pick button.on{background:#238a7c;color:#fff}
   body.side-rust #pick button.on{background:#c0522d}
@@ -79,7 +84,7 @@
   <div class="side"><b class="teal">TEAL CREW</b> · <span id="sp0">0</span> Spark
     <div>Foghorn</div><div class="bar"><i id="t0" style="background:#238a7c"></i></div>
     <div>Anchor Chain</div><div class="bar"><i id="c0" style="background:#238a7c"></i></div></div>
-  <div id="tide"><div id="tideName">LOW TIDE</div><div id="tideSub"></div><div id="tideBar"><i id="tideFill"></i></div></div>
+  <div id="tide"><div id="tideName">LOW TIDE</div><div id="tideSub"></div><div id="tideBar"><i id="tideFill"></i></div><div id="score"></div></div>
   <div class="side"><b class="rust">RUST CREW</b> · <span id="sp1">0</span> Spark
     <div>Foghorn</div><div class="bar"><i id="t1" style="background:#c0522d"></i></div>
     <div>Anchor Chain</div><div class="bar"><i id="c1" style="background:#c0522d"></i></div></div>
@@ -123,10 +128,13 @@
     <tr><td>Wake</td><td>Move fast (tether, current) to fill the blue ring. Full Wake: next shot hits ×3 and refills your magazine</td></tr>
   </table>
   <div id="pickrow"><b>Your crew:</b> <span id="side"></span></div>
+  <div class="prow"><b>Where:</b> <span id="mapPick"></span></div>
+  <div class="prow"><b>Mode:</b> <span id="modePick"></span></div>
+  <div id="where"></div>
   <div id="pickrow2"><b>Your hand:</b> <span id="pick"></span></div>
   <div id="kit"></div>
   <button id="go">Cast off</button>
-  <span id="padhint" style="display:none;margin-left:14px;font-size:12px;text-transform:uppercase">Controller found: D-pad ← → picks a hero · Y swaps crew · A casts off</span>
+  <span id="padhint" style="display:none;margin-left:14px;font-size:12px;text-transform:uppercase">Controller found: D-pad ← → hero · Y crew · X place · LB mode · A casts off</span>
 </div></div>
 
 <script>
@@ -3778,6 +3786,47 @@ const V3 = THREE.Vector3, $ = id => document.getElementById(id);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v)), lerp = (a, b, t) => a + (b - a) * t;
 const TEAM_COL = [0x238a7c, 0xc0522d], TEAM_TRIM = [0x55b3a2, 0x8a3520], TEAM_NAME = ['Teal', 'Rust'];
 const dirOf = t => t === 0 ? 1 : -1;
+// Places to battle. Each has its own light, buildings, cover, walkways and tide.
+// crates: [x, z, height]; steps: z of the crates beside the boardwalk; walk: boardwalk stretches; extra: [x0, x1, y0, y1, z0, z1, colour, texture].
+const MAPS = {
+  row: {name: 'Lantern Row', text: 'Dusk on the old quay. Cover on both sides and a long boardwalk.',
+    sky: [[.35, .5, .68], [.13, .22, .4], [.44, .55, .7], [.24, .33, .5]], fog: [0x5980ad, 85, 250], hemi: [0xb9cff0, 0x3a4058, .92], sun: [0xffd9a8, .95, [-52, 48, -18]],
+    facades: [0x3d4a66, 0x4e4458, 0x35475e, 0x5a4a50], walls: [0x313c54, 0x3f3748, 0x2b3a4e, 0x483b42], tideLen: 70, tideHigh: .55,
+    crates: [[6, -64, 1.2], [-6, -48, 2.4], [6.5, -20, 2.4], [-6.5, -8, 1.2], [6.5, 8, 1.2], [-6.5, 20, 2.4], [6, 48, 2.4], [-6, 64, 1.2]],
+    steps: [-62, -22, 12, 48], walk: [[-70, -40], [-30, -5], [5, 30], [40, 70]], extra: []},
+  cannery: {name: 'Cannery Wharf', text: 'Morning fog between brick canneries. Crates everywhere, catwalks overhead, and a tide that turns every 45 seconds.',
+    sky: [[.8, .82, .78], [.5, .6, .66], [.93, .92, .86], [.68, .72, .72]], fog: [0xb4c2c2, 45, 170], hemi: [0xf2f6f2, 0x5a6258, 1.0], sun: [0xfff4e0, .6, [30, 62, -30]],
+    facades: [0x8a4a3a, 0x7a5a48, 0x9a5540, 0x6e4a40], walls: [0x6a3a2e, 0x5e463a, 0x783f30, 0x553a32], tideLen: 45, tideHigh: .55,
+    crates: [[6, -66, 2.4], [-6, -60, 1.2], [5.5, -50, 1.2], [-6.5, -42, 2.4], [6.5, -30, 2.4], [-5.5, -24, 1.2], [6, -12, 1.2], [-6.5, -6, 2.4], [6.5, 6, 2.4], [-6, 12, 1.2],
+      [5.5, 24, 1.2], [-6.5, 30, 2.4], [6.5, 42, 2.4], [-5.5, 50, 1.2], [6, 60, 1.2], [-6, 66, 2.4]],
+    steps: [-62, -22, 12, 48], walk: [[-72, -38], [-30, -5], [5, 30], [38, 72]],
+    extra: [[-15, -11, 2.4, 3.0, -37.5, -35.5, 0x9a7a4a, 'crate'], [-15, -11, 2.4, 3.0, 35.5, 37.5, 0x9a7a4a, 'crate'],
+      [-11, 8.5, 3.1, 3.4, -38, -35, 0x7b5d3b, 'plank'], [-11, 8.5, 3.1, 3.4, 35, 38, 0x7b5d3b, 'plank']]},
+  market: {name: 'Drowned Market', text: 'Night market under lanterns. The flood comes in deep: at high tide the street is for swimming and the fight moves up onto the stall roofs.',
+    sky: [[.22, .17, .36], [.05, .05, .14], [.32, .25, .44], [.14, .12, .27]], fog: [0x2c2548, 60, 200], hemi: [0xa59ad8, 0x2c2644, .9], sun: [0xc8d0ff, .75, [40, 60, 20]],
+    facades: [0x4a3a66, 0x35506a, 0x5a3a5a, 0x3a4a70], walls: [0x382c52, 0x2a3e54, 0x452c46, 0x2c3858], tideLen: 60, tideHigh: 1.5,
+    crates: [[5.2, -70, 1.2], [-5.2, 70, 1.2], [5.2, -9, 1.2], [-5.2, 9, 1.2]],
+    steps: [-62, -22, 12, 48], walk: [[-70, -40], [-30, -5], [5, 30], [40, 70]],
+    extra: [[5, 8.4, 0, 3.1, -58, -52, 0xb8431c, 'crate'], [-8.4, -5, 0, 3.1, -44, -38, 0x238a7c, 'crate'], [5, 8.4, 0, 3.1, -30, -24, 0xd9a520, 'crate'],
+      [-8.4, -5, 0, 3.1, -14, -8, 0xb8431c, 'crate'], [5, 8.4, 0, 3.1, -3, 3, 0x6a4fb0, 'crate'], [-8.4, -5, 0, 3.1, 8, 14, 0xd9a520, 'crate'],
+      [5, 8.4, 0, 3.1, 24, 30, 0x238a7c, 'crate'], [-8.4, -5, 0, 3.1, 38, 44, 0x6a4fb0, 'crate'], [5, 8.4, 0, 3.1, 52, 58, 0xb8431c, 'crate']]},
+  yard: {name: 'Breakwater Yard', text: 'Dawn over an open shipping yard. Long sight lines, little cover, tall container stacks, and a slow 90-second tide.',
+    sky: [[.96, .64, .42], [.36, .42, .64], [1, .8, .58], [.82, .52, .46]], fog: [0xd8946e, 95, 280], hemi: [0xffe2c4, 0x4c4252, .98], sun: [0xffb070, 1.0, [-24, 30, 58]],
+    facades: [0x6a5a50, 0x4e5a66, 0x7a5a44, 0x56505e], walls: [0x55483f, 0x3e4852, 0x624836, 0x45404c], tideLen: 90, tideHigh: .55,
+    crates: [[6, -62, 1.2], [-6, 62, 1.2]],
+    steps: [-58, 22], walk: [[-64, -24], [24, 64]],
+    extra: [[5, 7.6, 0, 2.6, -36, -29, 0x2f6f8a, 'crate'], [-7.6, -5, 0, 2.6, 29, 36, 0xb8431c, 'crate'],
+      [5, 7.6, 0, 2.6, -4, 4, 0xd9a520, 'crate'], [5, 7.6, 2.6, 5.2, -4, 4, 0x2f6f8a, 'crate'], [-7.6, -5, 0, 2.6, -4, 4, 0x4f7a4a, 'crate'], [-7.6, -5, 2.6, 5.2, -4, 4, 0xb8431c, 'crate']]},
+};
+const MAP_ID = MAPS[Q.get('map')] ? Q.get('map') : 'row', MAP = MAPS[MAP_ID];
+// Ways to win.
+const MODES = {
+  chain: {name: 'Cut the Chain', text: 'Silence their Foghorn, then cut their Anchor Chain.'},
+  rush:  {name: 'Lantern Rush', goal: 5, text: 'Lanterns wash up in the middle of the quay. First crew to bank 5 wins. Foghorns and chains cannot be destroyed.'},
+  brawl: {name: 'Dockside Brawl', goal: 12, text: 'No Wickies and no objectives. First crew to 12 knockouts wins.'},
+  king:  {name: 'King Tide', goal: 100, text: 'Hold the ring in the middle of the quay. First crew to 100 wins; the ring pays double at high tide.'},
+};
+const MODE = MODES[Q.get('mode')] ? Q.get('mode') : 'chain';
 const PT = Q.get('side') === 'rust' ? 1 : 0, MINE = TEAM_NAME[PT], THEIRS = TEAM_NAME[1 - PT], cls = t => t ? 'rust' : 'teal';      // the crew you play for
 // The starting cast. Heroes are playable looks; Wickie is the crew unit and Glimmer / Ember carry the lanterns.
 const ROSTER = [
@@ -3838,7 +3887,7 @@ const KITS = {
 const shuffled = a => a.map(v => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map(v => v[1]);
 
 /* ---------- tuning ---------- */
-const TIDE_LEN = 70, TIDE_LOW = -4.6, TIDE_HIGH = 0.55, WAVE_EVERY = 24;
+const TIDE_LEN = MAP.tideLen, TIDE_LOW = -4.6, TIDE_HIGH = MAP.tideHigh, WAVE_EVERY = 24;
 const TOWER_Z = 40, CHAIN_Z = 74, SPAWN_Z = 90;
 const RIG = [
   {name: 'Gaff Rounds', cost: 250, pearl: 0, low: '+25% damage', high: '+25% fire rate'},
@@ -3857,13 +3906,13 @@ function main() {
 /* ---------- renderer & scene ---------- */
 const renderer = new THREE.WebGLRenderer({canvas: $('gl'), antialias: true});
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-const DUSK = 0x5980ad;   // the horizon colour; distance fades into it
+const DUSK = MAP.fog[0];   // the horizon colour; distance fades into it
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(DUSK);
-scene.fog = new THREE.Fog(DUSK, 85, 250);
+scene.fog = new THREE.Fog(DUSK, MAP.fog[1], MAP.fog[2]);
 const camera = new THREE.PerspectiveCamera(68, 1, 0.3, 400);
-scene.add(new THREE.HemisphereLight(0xb9cff0, 0x3a4058, 0.92));
-const sun = new THREE.DirectionalLight(0xffd9a8, 0.95); scene.add(sun, sun.target);   // low, warm, from over the western roofs
+scene.add(new THREE.HemisphereLight(...MAP.hemi));
+const sun = new THREE.DirectionalLight(MAP.sun[0], MAP.sun[1]); scene.add(sun, sun.target);   // low, warm, from over the western roofs
 // cel shadows: hard cast shadows drop a surface into the darkest ink band
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
 sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -.0012; sun.shadow.normalBias = .05;
@@ -3964,16 +4013,17 @@ const TEX = {
     for (let i = 0; i < 7; i++) { const x = rnd() * W, y = rnd() * H, r = 14 + rnd() * 22, a = rnd() * 6; g.lineWidth = 2 + rnd() * 3; g.beginPath(); g.arc(x, y, r, a, a + 1.6 + rnd() * 1.6); g.stroke(); g.beginPath(); g.arc(x + 4, y + 3, r * .55, a + 1, a + 3); g.stroke(); }
   }),
 };
-const FACADES = [0x3d4a66, 0x4e4458, 0x35475e, 0x5a4a50].map(facade);
+const FACADES = MAP.facades.map(facade);
 
 // Comic look, part 3: an ink pass over the finished picture — outlines from depth, Ben-Day dots in the shadows, paper grain
 const target = new THREE.WebGLRenderTarget(4, 4, {minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter});
 target.depthTexture = new THREE.DepthTexture(4, 4); target.depthTexture.type = THREE.UnsignedIntType;
 const inkPass = new THREE.ShaderMaterial({
-  uniforms: {tC: {value: target.texture}, tD: {value: target.depthTexture}, px: {value: new THREE.Vector2()}, scale: {value: 1}, look: {value: new THREE.Vector3()}},
+  uniforms: {tC: {value: target.texture}, tD: {value: target.depthTexture}, px: {value: new THREE.Vector2()}, scale: {value: 1}, look: {value: new THREE.Vector3()},
+    skyA: {value: new THREE.Vector3(...MAP.sky[0])}, skyB: {value: new THREE.Vector3(...MAP.sky[1])}, cloudA: {value: new THREE.Vector3(...MAP.sky[2])}, cloudB: {value: new THREE.Vector3(...MAP.sky[3])}},
   vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
   fragmentShader: `
-    varying vec2 vUv; uniform sampler2D tC, tD; uniform vec2 px; uniform float scale; uniform vec3 look;
+    varying vec2 vUv; uniform sampler2D tC, tD; uniform vec2 px; uniform float scale; uniform vec3 look, skyA, skyB, cloudA, cloudB;
     float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
     float noise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);
       return mix(mix(hash(i), hash(i + vec2(1., 0.)), f.x), mix(hash(i + vec2(0., 1.)), hash(i + vec2(1., 1.)), f.x), f.y); }
@@ -3992,10 +4042,10 @@ const inkPass = new THREE.ShaderMaterial({
       if (raw > .99999) {                                   // sky: dusk blue, flat cloud banks, dots thickening overhead
         vec2 sv = vec2(look.x - (vUv.x - .5) * look.z * 1.15, look.y + (vUv.y - .5) * 1.15);
         float h = clamp(sv.y * 1.5 + .05, 0., 1.);
-        c = mix(vec3(.35, .5, .68), vec3(.13, .22, .4), h);
+        c = mix(skyA, skyB, h);
         float cl = fbm(vec2(sv.x * 2.4, sv.y * 7.)) * smoothstep(-.02, .12, sv.y);
-        c = mix(c, vec3(.44, .55, .7), smoothstep(.5, .52, cl));
-        c = mix(c, vec3(.24, .33, .5), smoothstep(.6, .62, cl));
+        c = mix(c, cloudA, smoothstep(.5, .52, cl));
+        c = mix(c, cloudB, smoothstep(.6, .62, cl));
         c = mix(c, c * .7, dots(gl_FragCoord.xy, 7. * scale, .22 + h * .2));
         edge = max(edge, (smoothstep(.49, .5, cl) - smoothstep(.51, .525, cl)) * .9);
       } else {
@@ -4027,7 +4077,7 @@ const boxes = [];    // walkable, blocking AABBs
 
 function addBox(x0, x1, y0, y1, z0, z1, color, opts) {
   opts = opts || {};
-  let m = mat(color, opts.tex ? {map: opts.tex, color: 0xffffff} : null);
+  let m = mat(color, opts.tex ? {map: opts.tex, color: opts.tint || 0xffffff} : null);
   if (opts.face) { const plain = m; m = [plain, plain, plain, plain, plain, plain]; m[opts.face[0]] = mat(0xffffff, opts.face[1]); }
   const mesh = new THREE.Mesh(new THREE.BoxGeometry(x1 - x0, y1 - y0, z1 - z0), m);
   mesh.position.set((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2);
@@ -4253,12 +4303,14 @@ quad([9, 0, -L], [13, -4, -L], [13, -4, L], [9, 0, L], TEX.sand, 7);            
 quad([13, -4, -L], [23, -4, -L], [23, -4, L], [13, -4, L], TEX.sand, 9);        // seabed
 for (let z = -L; z < L; z += 25) {                                           // buildings both sides
   const hW = 8 + ((z * 7 + 300) % 5), hE = 7 + ((z * 3 + 300) % 6);
-  addBox(-27, -15, 0, hW, z, z + 25, [0x313c54, 0x3f3748, 0x2b3a4e, 0x483b42][((z + 100) / 25) % 4], {face: [0, FACADES[((z + 100) / 25) % 4]]});
-  addBox(23, 31, -4, hE, z, z + 25, [0x3f3748, 0x313c54, 0x483b42, 0x2b3a4e][((z + 100) / 25) % 4], {face: [1, FACADES[((z + 125) / 25) % 4]]});
+  addBox(-27, -15, 0, hW, z, z + 25, MAP.walls[((z + 100) / 25) % 4], {face: [0, FACADES[((z + 100) / 25) % 4]]});
+  addBox(23, 31, -4, hE, z, z + 25, MAP.walls[((z + 125) / 25) % 4], {face: [1, FACADES[((z + 125) / 25) % 4]]});
 }
-for (const [a, b] of [[-70, -40], [-30, -5], [5, 30], [40, 70]]) addBox(-15, -9.5, 2.0, 2.4, a, b, 0x8b6b45, {tex: tiled(TEX.plank, 6, 1)}); // west boardwalk
-for (const z of [-62, -22, 12, 48]) addBox(-9.3, -7.7, 0, 1.2, z, z + 1.8, 0x9a7a4a, {tex: TEX.crate});                            // step-up crates
-for (const [x, z, h] of [[6, -64, 1.2], [-6, -48, 2.4], [6.5, -20, 2.4], [-6.5, -8, 1.2], [6.5, 8, 1.2], [-6.5, 20, 2.4], [6, 48, 2.4], [-6, 64, 1.2]])
+for (const [a, b] of MAP.walk) addBox(-15, -9.5, 2.0, 2.4, a, b, 0x8b6b45, {tex: tiled(TEX.plank, 6, 1)}); // west boardwalk
+const onWalk = z => MAP.walk.some(([a, b]) => z > a + .6 && z < b - .6);
+for (const z of MAP.steps) addBox(-9.3, -7.7, 0, 1.2, z, z + 1.8, 0x9a7a4a, {tex: TEX.crate});                            // step-up crates
+for (const [x0, x1, y0, y1, z0, z1, col, tex] of MAP.extra) addBox(x0, x1, y0, y1, z0, z1, col, {tex: TEX[tex], tint: tex === 'crate' && y1 > 2.5 ? col : 0});                  // stalls, stacks and catwalks
+for (const [x, z, h] of MAP.crates)
   addBox(x - 1.1, x + 1.1, 0, h, z - 1.1, z + 1.1, 0xa0814f, {tex: TEX.crate});                                                    // cover crates
 for (const z of [-60, -30, 0, 30, 60]) {                                                                         // masts: tether points
   addBox(21.9, 22.5, -4, 9, z - .3, z + .3, 0x2c2630);                                                          // kept to the far wall so the current stays clear
@@ -4276,8 +4328,8 @@ for (let i = 0; i < 34; i++) {                       // seabed rocks hug the tre
   const east = i % 2, z = -96 + i * 5.8 + rnd() * 3, o = prop('rock' + (1 + i % 3), east ? 21.4 + rnd() * .9 : 13.6 + rnd() * 1.3, -4, z, 0, 0, rnd() * 6.28);
   o.scale.setScalar(.7 + rnd() * .7);
 }
-for (const [x, z] of [[8.2, -38], [-8.4, -70], [8.3, 33], [-8.5, 72], [-13.8, -55], [-13.8, 20]]) prop('float', x, x < -9.5 ? 2.4 : 0, z, .5, 1);
-for (const [x, z] of [[8.3, -68], [8.2, -12], [8.3, 14], [8.2, 66], [-13.6, -12], [-13.6, 58]]) prop('coil', x, x < -9.5 ? 2.4 : 0, z);
+for (const [x, z] of [[8.2, -38], [-8.4, -70], [8.3, 33], [-8.5, 72], [-13.8, -55], [-13.8, 20]].filter(([x, z]) => x > -9.5 || onWalk(z))) prop('float', x, x < -9.5 ? 2.4 : 0, z, .5, 1);
+for (const [x, z] of [[8.3, -68], [8.2, -12], [8.3, 14], [8.2, 66], [-13.6, -12], [-13.6, 58]].filter(([x, z]) => x > -9.5 || onWalk(z))) prop('coil', x, x < -9.5 ? 2.4 : 0, z);
 for (const z of [-85, -45, -5, 35, 75]) prop('cleat', 8.6, 0, z + 5, 0, 0, Math.PI / 2);
 for (const z of [-52, 52]) prop('crane', 7.7, 0, z, .45, 6.2, Math.PI / 2);
 prop('lighthouse', 82, -6, -35); prop('lighthouse', -84, -6, 45);
@@ -4291,7 +4343,7 @@ prop('lighthouse', 82, -6, -35); prop('lighthouse', -84, -6, 45);
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx);
   scene.add(new THREE.Mesh(g, new THREE.MeshBasicMaterial({map: TEX.water, color: 0xb8e2f2, side: THREE.DoubleSide})));
 }
-for (const [x, z] of [[-14.2, -66], [-14.2, -34], [-13.9, -32.8], [-14.2, 9], [-14.2, 44], [-13.9, 45.3], [8, -75], [8, 76]]) prop('barrel', x, x < -9 ? 2.4 : 0, z, .5, 1);
+for (const [x, z] of [[-14.2, -66], [-14.2, -34], [-13.9, -32.8], [-14.2, 9], [-14.2, 44], [-13.9, 45.3], [8, -75], [8, 76]].filter(([x, z]) => x > -9 || onWalk(z))) prop('barrel', x, x < -9 ? 2.4 : 0, z, .5, 1);
 for (let z = -87.5; z < L; z += 25) { prop('lamp', -15, 5.6, z, 0, 0, Math.PI / 2); prop('lamp', 23, 4.4, z + 12, 0, 0, -Math.PI / 2); }                      // end walls
 
 const water = new THREE.Mesh(new THREE.PlaneGeometry(64, 2 * L), new THREE.MeshBasicMaterial({map: tiled(TEX.water, 7, 22), transparent: true, opacity: 0.86}));
@@ -4308,7 +4360,7 @@ const ents = [], heroes = [];
 const state = {
   time: 0, over: null, started: false,
   tide: {high: false, t: TIDE_LEN, level: TIDE_LOW, flow: -1},
-  waveT: 4, waveN: 0, surge: [0, 0], teamSpark: [0, 0],
+  waveT: 4, waveN: 0, score: [0, 0], surge: [0, 0], teamSpark: [0, 0],
   lantern: null,     // {pos, life, mesh, carrier}
 };
 
@@ -4388,10 +4440,19 @@ for (const b of document.querySelectorAll('#side button')) b.onclick = () => {  
   const q = new URLSearchParams(location.search); if (b.textContent === 'Rust') q.set('side', 'rust'); else q.delete('side');
   location.search = q.toString();
 };
-$('blurb').innerHTML = $('blurb').innerHTML.replace("Kill the Rust crew's", `You sail with the <b class="${cls(PT)}">${MINE}</b> crew. Kill the ${THEIRS} crew's`).replace('on your left', PT ? 'on your right' : 'on your left');
+function setParam(k, v, dflt) { const q = new URLSearchParams(location.search); if (v === dflt) q.delete(k); else q.set(k, v); location.search = q.toString(); }      // the world is built at load, so a change reloads
+$('mapPick').innerHTML = Object.keys(MAPS).map(k => `<button data-k="${k}" class="${k === MAP_ID ? 'on' : ''}">${MAPS[k].name}</button>`).join('');
+$('modePick').innerHTML = Object.keys(MODES).map(k => `<button data-k="${k}" class="${k === MODE ? 'on' : ''}">${MODES[k].name}</button>`).join('');
+for (const b of document.querySelectorAll('#mapPick button')) b.onclick = () => setParam('map', b.dataset.k, 'row');
+for (const b of document.querySelectorAll('#modePick button')) b.onclick = () => setParam('mode', b.dataset.k, 'chain');
+$('where').innerHTML = `<b>${MAP.name}:</b> ${MAP.text}<br><b>${MODES[MODE].name}:</b> ${MODES[MODE].text}`;
+const cycle = (obj, cur, k, dflt) => { const ks = Object.keys(obj); setParam(k, ks[(ks.indexOf(cur) + 1) % ks.length], dflt); };
+$('blurb').innerHTML = $('blurb').innerHTML.replace('every 70 seconds', `every ${MAP.tideLen} seconds`).replace(/Kill the Rust crew's <b>Foghorn<\/b>, then cut their <b>Anchor Chain<\/b> to win\./, m => MODE === 'chain' ? m : `Kill the Rust crew's — <b>${MODES[MODE].name}</b>: ${MODES[MODE].text}`).replace("Kill the Rust crew's", `You sail with the <b class="${cls(PT)}">${MINE}</b> crew. Kill the ${THEIRS} crew's`).replace('on your left', PT ? 'on your right' : 'on your left');
 const towers = [makeTower(0), makeTower(1)], chains = [makeChain(0), makeChain(1)];
 const crabs = [makeCrab(-32), makeCrab(32)];
 const buoys = [makeBuoy(0, 6, -56, 1), makeBuoy(0, 18, -14, 1.5), makeBuoy(1, -6, 56, 1), makeBuoy(1, 18, 14, 1.5)];
+const kingRing = new THREE.Mesh(new THREE.TorusGeometry(9, .22, 6, 48), new THREE.MeshBasicMaterial({color: 0xf6ecd2}));
+kingRing.rotation.x = Math.PI / 2; kingRing.visible = MODE === 'king'; scene.add(kingRing);
 const lanternMesh = model('lantern'); lanternMesh.scale.setScalar(1.7); lanternMesh.visible = false;
 
 /* ---------- small effects ---------- */
@@ -4518,7 +4579,7 @@ function damage(t, amt, src, quiet) {
     if (posts.some(q => q.team === t.team && Math.hypot(q.x - t.pos.x, q.z - t.pos.z) < 7)) amt *= .75;
   }
   if (t.kind === 'chain' && towers[t.team].alive) return;          // the Foghorn guards the chain
-  if (t.structure) amt *= overtime();
+  if (t.structure) { if (MODE !== 'chain') return; amt *= overtime(); }
   if (t.kind === 'crab' && !t.active) return;
   t.hp -= amt; t.lastHit = state.time;
   if (src && src.isPlayer && player.rig[2] && state.tide.high) player.hp = Math.min(player.maxHp, player.hp + amt * .15);
@@ -4536,7 +4597,9 @@ function damage(t, amt, src, quiet) {
     if (t.bearer) pop('CRASH!', t.pos.clone().setY(3), '#ffd23f', 34);
     if (t.bearer) dropLantern(t.pos, (t.team ? 'Ember' : 'Glimmer') + " is down — the lantern is loose!");
   } else if (t.kind === 'hero') {
-    t.respawn = 8 + Math.min(17, state.time / 50); t.tether = null;      // the longer the match, the longer you are overboard pop('SPLASH!', t.pos.clone().setY(t.pos.y + 2), '#ff5a3c', 38);
+    t.respawn = MODE === 'brawl' ? 5 : 8 + Math.min(17, state.time / 50); t.tether = null;      // the longer the match, the longer you are overboard
+    pop('SPLASH!', t.pos.clone().setY(t.pos.y + 2), '#ff5a3c', 38);
+    if (MODE === 'brawl') point(foe, 1);
     if (t.carry) { t.carry = false; state.lantern = null; dropLantern(t.pos, 'The lantern carrier fell — the lantern is loose!'); }
     giveSpark(foe, 150, null); say(`<b class="${foe ? 'rust' : 'teal'}">${src && src.name || TEAM_NAME[foe]}</b> downed ${t.name}`);
   } else if (t.kind === 'tower') {
@@ -4549,6 +4612,11 @@ function damage(t, amt, src, quiet) {
     state.over = {winner: foe, t: 0}; pop('SNAP!', t.pos.clone().setY(5), '#fff', 76);
     say(`The ${TEAM_NAME[t.team]} Anchor Chain is cut!`); beep(80, 1.4, 'sawtooth', .1);
   }
+}
+function win(team) { if (!state.over) { state.over = {winner: team, t: 0}; beep(80, 1.4, 'sawtooth', .1); } }
+function point(team, n) {            // score in the modes that count points
+  state.score[team] += n;
+  if (state.score[team] >= MODES[MODE].goal) win(team);
 }
 function dropLantern(pos, msg) {
   if (state.lantern) return;
@@ -4923,17 +4991,22 @@ function updateBot(h, dt) {
   const d = dirOf(h.team), foe = 1 - h.team, lan = state.lantern;
   let gx = h.laneX + Math.sin(state.time * .7 + h.seed) * 3, gz;
   if (h.hp < h.maxHp * .3) h.retreat = true; else if (h.hp > h.maxHp * .8) h.retreat = false;
-  if (h.carry) { const b = buoys.find(b => b.team === h.team && b.bonus === 1); gx = b.x; gz = b.z; }
+  if (h.carry) { const b = buoys.find(b => b.team === h.team && b.bonus === 1); gz = b.z; gx = Math.abs(h.pos.z - b.z) > 2 ? 0 : b.x; }      // run home down the clear middle, then step across to the buoy
   else if (lan && !lan.carrier && lan.pos.x < 9 && Math.abs(lan.pos.z - h.pos.z) < 45 && !h.retreat) { gx = lan.pos.x; gz = lan.pos.z; }
   else if (h.retreat) gz = -d * SPAWN_Z;
   else {
     let f = frontOf(h.team) - 6;
     const tw = towers[foe];
     if (tw.alive && !wickiesNear(h.team, tw.pos.z, 20)) f = Math.min(f, tw.pos.z * d - 25);   // respect the Foghorn
+    if (MODE === 'brawl') f = -5 + Math.sin(state.time * .3 + h.seed) * 4;                      // meet in the middle
+    if (MODE === 'king') f = -1 + Math.sin(state.time * .4 + h.seed) * 4;                       // stand in the ring
     gz = clamp(f, -SPAWN_Z, CHAIN_Z - 8) * d;
   }
   let wx = gx - h.pos.x, wz = gz - h.pos.z; const l = Math.hypot(wx, wz);
   if (l > 1) { wx /= l; wz /= l; } else wx = wz = 0;
+  if ((wx || wz) && (h.speedNow || 0) < 1.2 && !(h.root > 0)) h.stuckT = (h.stuckT || 0) + dt; else h.stuckT = 0;
+  if (h.stuckT > .5) { h.dodge = .9; h.dodgeDir = h.pos.x > 0 ? -1 : 1; h.stuckT = 0; }                     // blocked by a crate or stall: step toward the middle
+  if (h.dodge > 0) { h.dodge -= dt; wx = h.dodgeDir; wz *= .25; }
   if (h.stun > 0 || h.windup > 0) wx = wz = 0;
   moveEnt(h, dt, wx, wz, 8.2 * h.kit.speed);
   const t = nearest(h, 34, o => o.kind === 'hero' && o.carry) || nearest(h, 26, o => o.kind === 'hero')
@@ -5003,11 +5076,11 @@ function spawnWave() {
 const OVERTIME = 480;      // after 8 minutes the Titan stirs: Foghorns and chains weaken, more every minute
 const overtime = () => 1 + Math.max(0, state.time - OVERTIME) / 120;
 function updateTide(dt) {
-  if (state.stirred && !state.over) for (const team of [0, 1]) {      // sudden death: every structure rusts, the leader's half as fast
+  if (MODE === 'chain' && state.stirred && !state.over) for (const team of [0, 1]) {      // sudden death: every structure rusts, the leader's half as fast
     const s = towers[team].alive ? towers[team] : chains[team], lead = state.teamSpark[team] > state.teamSpark[1 - team];
     damage(s, 6 * (lead ? .5 : 1) * dt, null);
   }
-  if (state.time >= OVERTIME && !state.stirred) { state.stirred = true; banner('The Titan stirs — the chains are weakening!'); say('⚓ <b>The Titan stirs.</b> Foghorns and chains weaken every minute, and rust away on their own. The crew with more Spark rusts half as fast.'); beep(70, 1.6, 'sawtooth', .09); }
+  if (MODE === 'chain' && state.time >= OVERTIME && !state.stirred) { state.stirred = true; banner('The Titan stirs — the chains are weakening!'); say('⚓ <b>The Titan stirs.</b> Foghorns and chains weaken every minute, and rust away on their own. The crew with more Spark rusts half as fast.'); beep(70, 1.6, 'sawtooth', .09); }
   const T = state.tide; T.t -= dt;
   if (T.t <= 0) {
     T.t = TIDE_LEN; T.high = !T.high;
@@ -5030,6 +5103,7 @@ function updateLantern(dt) {
     for (const b of buoys) if (b.team === c.team && Math.hypot(b.x - c.pos.x, b.z - c.pos.z) < 3.6) {
       const pay = Math.round(300 * b.bonus);
       giveSpark(c.team, pay, null); state.surge[c.team] += 3; c.carry = false; state.lantern = null;
+      if (MODE === 'rush') point(c.team, 1);
       say(`🏮 <b class="${c.team ? 'rust' : 'teal'}">${c.name}</b> banked the lantern: +${Math.round(pay / 3)} Spark each${b.bonus > 1 ? ' (forward buoy bonus)' : ''}`);
       beep(880, .3, 'triangle', .07); ring(new V3(b.x, b.mesh.position.y + 2, b.z), 0xffe27a, 5); pop('KA-CHING!', new V3(b.x, b.mesh.position.y + 4, b.z), '#ffd23f', 36); return;
     }
@@ -5048,7 +5122,15 @@ function step(dt) {
   if (state.over) { state.over.t += dt; const s = ships[1 - state.over.winner]; s.rotation.z = Math.min(.42, s.rotation.z + dt * .12); s.position.y -= dt * .5; return; }
   state.time += dt;
   updateTide(dt);
-  state.waveT -= dt; if (state.waveT <= 0) { state.waveT = WAVE_EVERY; spawnWave(); }
+  state.waveT -= dt; if (state.waveT <= 0) { state.waveT = WAVE_EVERY; if (MODE !== 'brawl') spawnWave(); }
+  if (MODE === 'king') {                               // whoever has more heroes in the ring scores
+    const n = [0, 0]; for (const h of heroes) if (h.alive && Math.hypot(h.pos.x, h.pos.z) < 9) n[h.team]++;
+    const hold = n[0] > n[1] ? 0 : n[1] > n[0] ? 1 : -1; state.hold = hold;
+    if (hold >= 0) point(hold, dt * .6 * (state.tide.high ? 2 : 1));
+    kingRing.material.color.set(hold < 0 ? 0xf6ecd2 : TEAM_COL[hold]); kingRing.position.y = Math.max(0, state.tide.level) + .15;
+  }
+  if (MODE === 'rush' && !state.lantern && state.time > (state.nextLan || 12)) { state.nextLan = state.time + 18; dropLantern(new V3(0, 0, 0), 'A lantern washes up in the middle of the quay!'); }
+  if (MODE !== 'chain' && state.time > 600 && state.score[0] !== state.score[1]) win(state.score[0] > state.score[1] ? 0 : 1);      // ten-minute cap: the leader takes it
   for (const e of ents) {
     if (e.kind === 'crab') { updateCrab(e, dt); continue; }
     if (!e.alive) {
@@ -5190,6 +5272,7 @@ function drawHud(dt) {
   $('tideName').textContent = T.high ? 'HIGH TIDE' : 'LOW TIDE'; $('tideName').style.color = T.high ? '#0d6f8f' : '#a8641a';
   $('tideSub').textContent = (T.high ? 'Ebbs in ' : 'Floods in ') + fmt(T.t) + (T.high ? ` · current → ${TEAM_NAME[T.flow > 0 ? 1 : 0]} ship` : ` · next current → ${TEAM_NAME[T.flow > 0 ? 0 : 1]} ship`);
   $('tideFill').style.width = (1 - T.t / TIDE_LEN) * 100 + '%';
+  if (MODE !== 'chain') $('score').innerHTML = `<span class="teal">${Math.floor(state.score[0])}</span> — <span class="rust">${Math.floor(state.score[1])}</span> <small>${MODES[MODE].name} · first to ${MODES[MODE].goal}${MODE === 'king' && state.hold >= 0 ? ' · ' + TEAM_NAME[state.hold] + ' holds' : ''}</small>`;
   for (const t of [0, 1]) {
     $('sp' + t).textContent = state.teamSpark[t];
     $('t' + t).style.width = towers[t].hp / towers[t].maxHp * 100 + '%'; $('c' + t).style.width = chains[t].hp / chains[t].maxHp * 100 + '%';
@@ -5200,7 +5283,7 @@ function drawHud(dt) {
   $('cdE').style.height = clamp(p.tetherCd / 3.5, 0, 1) * 100 + '%'; $('cdF').style.height = clamp(p.shoveCd / 4, 0, 1) * 100 + '%'; $('cdQ').style.height = clamp(p.braceCd / 5, 0, 1) * 100 + '%'; $('cdV').style.height = clamp(p.moveCd / MOVES[p.move].cd, 0, 1) * 100 + '%'; $('cdC').style.height = clamp(p.abCd / p.kit.cd, 0, 1) * 100 + '%';
   $('feed').innerHTML = feed.map(f => `<div style="opacity:${clamp(f.t, 0, 1)}">${f.html}</div>`).join('');
   const dead = $('dead');
-  if (state.over) { dead.style.display = 'block'; dead.innerHTML = (state.over.winner === PT ? `CHAIN CUT — the ${THEIRS} ship drifts for the Maelstrom. <span class="${cls(PT)}">${MINE} wins!</span>` : `Your Anchor Chain is cut. <span class="${cls(1 - PT)}">${THEIRS} wins.</span>`) + '<br><small>Press Enter to play again</small>'; }
+  if (state.over) { dead.style.display = 'block'; dead.innerHTML = (MODE !== 'chain' ? `${MODES[MODE].name}: <span class="${cls(state.over.winner)}">${TEAM_NAME[state.over.winner]} wins${state.over.winner === PT ? '!' : '.'}</span> ${Math.floor(state.score[0])} — ${Math.floor(state.score[1])}` : state.over.winner === PT ? `CHAIN CUT — the ${THEIRS} ship drifts for the Maelstrom. <span class="${cls(PT)}">${MINE} wins!</span>` : `Your Anchor Chain is cut. <span class="${cls(1 - PT)}">${THEIRS} wins.</span>`) + '<br><small>Press Enter to play again</small>'; }
   else if (!p.alive) { dead.style.display = 'block'; dead.textContent = 'Overboard — back on deck in ' + Math.ceil(p.respawn); }
   else dead.style.display = 'none';
   drawMap();
@@ -5238,7 +5321,7 @@ function render(dt) {
   updateCamera();
   const wm = water.material.map; wm.offset.y -= dt * .012 * state.tide.flow; wm.offset.x = Math.sin(state.time * .3) * .02;
   if (bannerT > 0 && (bannerT -= dt) <= 0) $('banner').style.display = 'none';
-  sun.target.position.copy(player.pos); sun.position.copy(player.pos).add(tmp.set(-52, 48, -18));
+  sun.target.position.copy(player.pos); sun.position.copy(player.pos).add(tmp.set(...MAP.sun[2]));
   inkPass.uniforms.look.value.set(yaw, pitch, camera.aspect);
   renderer.setRenderTarget(target); renderer.render(scene, camera);
   renderer.setRenderTarget(null); renderer.render(postScene, postCam);
@@ -5287,6 +5370,8 @@ function pollPad(dt) {
     const names = ROSTER[PT], i = names.indexOf(player.who), step_ = (edge(15) ? 1 : 0) - (edge(14) ? 1 : 0);
     if (step_ && !state.started) pickHero(names[(i + step_ + names.length) % names.length]);
     if (edge(3) && !state.started) document.querySelector('#side button:not(.on)').click();
+    if (edge(2) && !state.started) cycle(MAPS, MAP_ID, 'map', 'row');
+    if (edge(4) && !state.started) cycle(MODES, MODE, 'mode', 'chain');
     if (edge(0) || edge(9)) start(true);
   } else {
     const any = now.some(Boolean) || [0, 1, 2, 3].some(i => ax(i));
@@ -5333,8 +5418,8 @@ document.addEventListener('pointerlockchange', () => {
   if (state.started && !locked() && !state.over) { $('overlay').style.display = 'flex'; $('go').textContent = 'Resume'; mouse.down = false; }
 });
 if (TEST) start();
-say(`Kill the ${THEIRS} Foghorn, then cut their Anchor Chain. Watch the tide clock.`);
-window.__bh = {camPos, PT, WEAPONS, MOVES, useMove, shots, playerShot, RIG, toggleShop, rigOn, pad, isPad: () => padMode, KITS, useAbility, zones, walls, posts, state, ents, heroes, player, ROSTER, heroLook, pickHero, model, scene, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
+say(MODE === 'chain' ? `Kill the ${THEIRS} Foghorn, then cut their Anchor Chain. Watch the tide clock.` : `<b>${MODES[MODE].name}.</b> ${MODES[MODE].text}`);
+window.__bh = {MAP_ID, MODE, MODES, MAPS, win, point, camPos, PT, WEAPONS, MOVES, useMove, shots, playerShot, RIG, toggleShop, rigOn, pad, isPad: () => padMode, KITS, useAbility, zones, walls, posts, state, ents, heroes, player, ROSTER, heroLook, pickHero, model, scene, towers, chains, buoys, step, damage, keys, mouse, fireTether, shove, buy,
   setAim: (y, p) => { yaw = y; pitch = p; updateCamera(); }};
 requestAnimationFrame(frame);
 }

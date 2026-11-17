@@ -58,7 +58,26 @@ Nine items to spend Spark on, each with a Low-Tide face and a High-Tide face; on
 
 Bots do not buy Rigging.
 
-## How a match ends
+## Places and modes
+Pick both on the title screen (they reload the page; `?map=` and `?mode=` in the address do the same). `MAPS` and `MODES` in `game.src.html` define them.
+
+| Place | What is different |
+| --- | --- |
+| Lantern Row | Dusk. Cover on both sides and a long boardwalk. 70-second tide |
+| Cannery Wharf | Foggy morning, brick canneries, crates everywhere, two catwalks over the street. 45-second tide |
+| Drowned Market | Night. The flood is deep enough to swim the street at high tide; the fight moves onto the stall roofs. 60-second tide |
+| Breakwater Yard | Dawn. Open ground, long sight lines, tall container stacks. 90-second tide |
+
+| Mode | How you win |
+| --- | --- |
+| Cut the Chain | Silence the Foghorn, then cut the Anchor Chain |
+| Lantern Rush | Lanterns wash up mid-quay; first crew to bank 5 |
+| Dockside Brawl | No Wickies; first crew to 12 knockouts |
+| King Tide | Hold the ring mid-quay; first to 100, double at high tide |
+
+In the three new modes Foghorns and chains cannot be destroyed, and after ten minutes the crew ahead wins.
+
+## How a match ends (Cut the Chain)
 - **Foghorn, then chain:** the Foghorn guards the Anchor Chain. Once a Foghorn falls, one extra enemy Wickie comes through it every wave.
 - **Sappers:** one Wickie in three goes for the Foghorn or chain before anything else.
 - **Overboard longer:** respawn starts at 8 seconds and grows through the match, up to 25.
