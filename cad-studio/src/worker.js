@@ -93,7 +93,14 @@ self.onmessage = async (ev) => {
       const buf = await blob.arrayBuffer();
       postMessage({ type: 'exported', id: m.id, buf, format: m.format }, [buf]);
     } else if (m.type === 'drawing') {
-      postMessage({ type: 'drawing', id: m.id, ...model.drawingViews(m) });
+      let body;
+      if (m.doc) body = partBody(m.doc).body;
+      else {
+        const items = placedBodies(m);
+        body = items.length ? r.makeCompound(items.map((x) => x.body)) : null;
+      }
+      if (!body) throw new Error('There is nothing to draw yet');
+      postMessage({ type: 'drawing', id: m.id, views: model.drawingViews(body, m.views), ms: performance.now() - t0 });
     }
   } catch (e) {
     postMessage({ type: 'error', id: m.id, msg: String((e && e.message) || e) });

@@ -13,14 +13,18 @@ A 3D part modeler for students, in the style of professional parametric CAD tool
 - **Parameters:** named sizes (`len = 60`) used anywhere a number goes.
 - **Inspect:** measure distances and round-edge diameters; Part Info shows size, volume, surface area and mass in 11 materials.
 - **Files:** Save/Open `.pcad` part files; export STL (3D printing) and STEP (other CAD programs); save a picture. Work is also kept automatically on the computer.
-- **Examples:** a mounting bracket, wheel hub, key tag and pencil cup, each built step by step.
+- **Sketch rules (constraints):** coincident, horizontal, vertical, parallel, perpendicular, equal, tangent, concentric, midpoint and fix, plus line lengths and arc radii that drive the shape. Auto rules are added while drawing; a solver keeps them true when sizes or parameters change, and refuses rules that fight each other.
+- **Assemblies (.pasm):** place parts (from files, examples, copies or new parts made in place), then hold them together with Mate, Flush, Insert, Axis and Angle constraints. Drag parts to see how they can still move, ground parts, edit a part in place, check interference (overlaps shown in red), and get a parts list with mass (also as CSV). Assembly files keep their parts inside them.
+- **Drawings:** printable 2D sheets (A4, A3, Letter, Tabloid) with front, top, right and isometric views, hidden lines, overall sizes, hole callouts, sizes and notes you add, a title block, third or first angle layout, and a parts list for assemblies. Print to PDF at real scale or save SVG.
+- **Units:** millimetres or inches per part or assembly, with conversion. STL and STEP exports are always in millimetres.
+- **Examples:** a mounting bracket, wheel hub, key tag and pencil cup, plus two assemblies (bracket and pin, wheels on an axle).
 
-Mouse: right-drag turns, middle-drag (or Shift + right-drag) slides, the wheel zooms toward the pointer. All sizes are millimetres.
+Mouse: right-drag turns, middle-drag (or Shift + right-drag) slides, the wheel zooms toward the pointer.
 
 ## Files
 
-- `src/` is the source: `app.js` (screens, commands, history), `model.js` (rebuilds the part from its feature list), `sketch.js` (sketch shapes and closed loops), `sketcher.js` (drawing on a plane), `viewport.js` (3D view and picking), `expr.js` (formulas), `examples.js`, `worker.js` (runs the modeling engine in the background).
-- `index.html`, `app.js`, `worker.js`, `style.css`, `replicad_single.wasm` are the built app. Rebuild after changing `src/`:
+- `src/` is the source: `app.js` (screens, commands, history), `assembly.js` (assemblies and their solver), `constraints.js` (sketch rules solver), `drawing.js` (drawing sheets), `units.js`, `model.js` (rebuilds the part from its feature list), `sketch.js` (sketch shapes and closed loops), `sketcher.js` (drawing on a plane), `viewport.js` (3D view and picking), `expr.js` (formulas), `examples.js`, `worker.js` (runs the modeling engine in the background).
+- `index.html`, `app.js`, `worker.js`, `style.css`, `replicad_single.wasm` and `assets/` (logo and icons) are the built app. Rebuild after changing `src/`:
 
       npm install
       npm run build

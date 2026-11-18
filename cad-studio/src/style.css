@@ -212,3 +212,23 @@ table.info tr + tr { border-top: 1px solid #eef1f4; }
 .rgroup.compact .rbtns { display: grid; grid-template-rows: repeat(3, auto); grid-auto-flow: column; gap: 0 2px; }
 .rgroup.compact .rbtn { flex-direction: row; justify-content: flex-start; min-width: 0; padding: 1px 6px; gap: 4px; }
 .rgroup.compact .rbtn span { font-size: 11px; }
+#drawWrap { position: absolute; inset: 0; z-index: 2; background: #dfe4ea; }
+#drawWrap[hidden] { display: none; }
+#viewWrap .panel { z-index: 3; }
+.sheetScroll { position: absolute; inset: 0; overflow: auto; }
+.sheetPad { padding: 24px 24px 24px 320px; display: inline-block; min-width: 100%; box-sizing: border-box; }
+#sheetSvg { display: block; box-shadow: 0 4px 24px rgba(10,30,50,.25); background: #fff; margin: 0 auto; }
+.drawZoom { position: absolute; right: 14px; bottom: 12px; display: flex; gap: 4px; align-items: center; background: rgba(255,255,255,.95); border: 1px solid var(--line); border-radius: 6px; padding: 3px 6px; font-size: 12px; }
+.drawZoom button { border: 1px solid #c2ccd5; background: #fff; border-radius: 4px; padding: 1px 8px; }
+.drawempty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--muted); }
+#printSheet { display: none; }
+@media print {
+  body.printing > *:not(#printSheet) { display: none !important; }
+  body.printing #printSheet { display: block !important; }
+  body.printing { background: #fff; overflow: visible; display: block; }
+}
+@media print {
+  html, body.printing { height: auto !important; margin: 0; padding: 0; }
+  body.printing #printSheet { overflow: hidden; page-break-after: avoid; break-after: avoid; }
+  body.printing #printSheet svg { display: block; }
+}

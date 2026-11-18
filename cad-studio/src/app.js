@@ -4,6 +4,7 @@ import { Sketcher } from './sketcher.js';
 import { evaluate, paramMap, tryEval, fmt } from './expr.js';
 import { evalSketch, buildLoops } from './sketch.js';
 import { CONS_INFO } from './constraints.js';
+import { Drafter, SHEETS, defaultDrawing } from './drawing.js';
 import { icon } from './icons.js';
 import { EXAMPLES, ASM_EXAMPLES } from './examples.js';
 import { Assembler, ASM_COMMANDS, newAssembly } from './assembly.js';
@@ -66,6 +67,7 @@ class App {
     this.editPid = null;
     this.materials = MATERIALS;
     this.asmr = new Assembler(this);
+    this.drw = new Drafter(this);
     this.vp.onStyle = () => this.mode === 'assembly' && this.asmr.render();
     this.startKernel();
     this.bindViewportPicking();
@@ -120,6 +122,7 @@ class App {
   rebuild() {
     if (!this.ready) return;
     if (this.mode === 'assembly') { this.asmr.rebuild(); return; }
+    if (this.mode === 'drawing') { this.drw.update(); this.ui.renderTree(); return; }
     clearTimeout(this._rb);
     this._rb = setTimeout(async () => {
       const plan = this.buildPlan();
@@ -227,6 +230,33 @@ class App {
     this.ui.renderTree();
     this.rebuild();
     if (!keepView) this.vp.setView('home');
+  }
+  // ---------- drawings ----------
+  drawTarget() { return this.drawPrev === 'assembly' ? this.asm : this.doc; }
+  openDrawing() {
+    if (this.mode === 'sketch') this.exitSketch(true);
+    if (this.cmd) this.cancelCmd();
+    const t = this.mode === 'assembly' ? this.asm : this.doc;
+    if (t.kind === 'assembly' ? !t.components.length : !this.result.desc) return this.toast('Make a solid (or place parts) first, then make its drawing.', 'error');
+    this.drawPrev = this.mode;
+    this.mode = 'drawing';
+    if (!t.drawing) { t.drawing = defaultDrawing(); if ((t.units || 'mm') === 'mm') t.drawing.sheet = 'A4'; if (t.kind === 'assembly') t.drawing.holeNotes = false; }
+    this.ui.tab = 'drawing';
+    this.ui.renderRibbon();
+    this.ui.renderTree();
+    this.drw.open();
+    this.drw.setTool('select');
+  }
+  closeDrawing() {
+    if (this.mode !== 'drawing') return;
+    this.drw.close();
+    this.mode = this.drawPrev || 'model';
+    this.drawPrev = null;
+    this.ui.closeCmd();
+    this.ui.tab = this.mode === 'assembly' ? 'assemble' : 'model';
+    this.ui.renderRibbon();
+    this.ui.renderTree();
+    this.rebuild();
   }
   units() { return (this.mode === 'assembly' ? this.asm.units : this.doc.units) || 'mm'; }
 
@@ -365,6 +395,15 @@ class App {
     if ((e.ctrlKey || e.metaKey) && k === 'o') { e.preventDefault(); this.openFile(); return; }
     if (typing) { if (e.key === 'Enter' && this.cmd && tag !== 'TEXTAREA' && tag !== 'SELECT') { e.target.blur(); setTimeout(() => this.okCmd(), 60); } return; }
     if (this.ui.modalOpen()) { if (e.key === 'Escape') this.ui.closeModal(); return; }
+    if (this.mode === 'drawing') {
+      if (e.key === 'Escape') { if (this.drw.tool !== 'select' || this.drw.picks.length) this.drw.setTool('select'); else this.closeDrawing(); return; }
+      if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); this.drw.deleteSel(); return; }
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (k === 'd') this.drw.setTool('dim');
+      if (k === 'n') this.drw.setTool('note');
+      if (k === 's') this.drw.setTool('select');
+      return;
+    }
     if (this.mode === 'assembly') {
       if (e.key === 'Escape') { if (this.cmd) this.cancelCmd(); else { this.asmr.sel = null; this.asmr.render(); this.ui.renderTree(); } return; }
       if (e.key === 'Enter' && this.cmd) { this.okCmd(); return; }
@@ -1010,6 +1049,12 @@ class UI {
         ['Modify', [['fillet', 'Fillet', () => a.run('fillet'), 'F'], ['chamfer', 'Chamfer', () => a.run('chamfer')], ['shell', 'Shell', () => a.run('shell')]]],
         ['Pattern', [['rectPattern', 'Rectangular', () => a.run('pattern', { kind: 'rect' })], ['circPattern', 'Circular', () => a.run('pattern', { kind: 'circ' })], ['mirror', 'Mirror', () => a.run('pattern', { kind: 'mirror' })], ['mirrorBody', 'Mirror Part', () => a.run('mirrorBody')]]],
         ['Setup', [['params', 'Parameters', () => this.openParams()]]],
+        ['Document', [['drawing', 'Drawing', () => a.openDrawing()]]],
+      ],
+      drawing: [
+        ['Annotate', [['select', 'Select', () => a.drw.setTool('select'), 'S'], ['g:↔', 'Size', () => a.drw.setTool('dim'), 'D'], ['g:A', 'Note', () => a.drw.setTool('note'), 'N'], ['trash', 'Delete', () => a.drw.deleteSel(), 'Del']]],
+        ['Output', [['open', 'Print / PDF', () => a.drw.print()], ['stl', 'Save SVG', () => a.drw.saveSvg()]]],
+        ['Exit', [['back', 'Close drawing', () => a.closeDrawing()]]],
       ],
       sketch: [
         ['Draw', [['line', 'Line', () => a.sk.setTool('line'), 'L'], ['rect', 'Rectangle', () => a.sk.setTool('rect'), 'R'], ['circle', 'Circle', () => a.sk.setTool('circle'), 'C'], ['arc', 'Arc', () => a.sk.setTool('arc'), 'A'], ['polygon', 'Polygon', () => a.sk.setTool('polygon'), 'P'], ['slot', 'Slot', () => a.sk.setTool('slot'), 'O']]],
@@ -1031,6 +1076,7 @@ class UI {
         ['Parts', [['place', 'Place', () => a.run('place'), 'P'], ['move', 'Move / Turn', () => a.run('moveComp'), 'G']]],
         ['Constrain', [['mate', 'Mate', () => a.run('constrain', { type: 'mate' }), 'C'], ['flush', 'Flush', () => a.run('constrain', { type: 'flush' })], ['insert', 'Insert', () => a.run('constrain', { type: 'insert' })], ['axisMate', 'Axis', () => a.run('constrain', { type: 'axis' })], ['angleMate', 'Angle', () => a.run('constrain', { type: 'angle' })]]],
         ['Check', [['clash', 'Interference', () => a.asmr.checkInterference()], ['bom', 'Parts list', () => a.asmr.openPartsList()]]],
+        ['Document', [['drawing', 'Drawing', () => a.openDrawing()]]],
       ],
       view: [
         ['Orientation', [['home', 'Home', () => this.vp.setView('home'), 'F6'], ['front', 'Front', () => this.vp.setView('front')], ['top', 'Top', () => this.vp.setView('top')], ['right', 'Right', () => this.vp.setView('right')], ['fit', 'Zoom all', () => this.vp.fit()]]],
@@ -1044,7 +1090,7 @@ class UI {
 
   renderRibbon() {
     const mode = this.app.mode;
-    const tabs = mode === 'sketch' ? [['sketch', 'Sketch'], ['inspect', 'Inspect'], ['view', 'View']] : mode === 'assembly' ? [['file', 'File'], ['assemble', 'Assemble'], ['inspect', 'Inspect'], ['view', 'View']] : [['file', 'File'], ['model', 'Model'], ['inspect', 'Inspect'], ['view', 'View']];
+    const tabs = mode === 'drawing' ? [['drawing', 'Drawing']] : mode === 'sketch' ? [['sketch', 'Sketch'], ['inspect', 'Inspect'], ['view', 'View']] : mode === 'assembly' ? [['file', 'File'], ['assemble', 'Assemble'], ['inspect', 'Inspect'], ['view', 'View']] : [['file', 'File'], ['model', 'Model'], ['inspect', 'Inspect'], ['view', 'View']];
     if (!tabs.some((t) => t[0] === this.tab)) this.tab = tabs[0][0] === 'file' ? tabs[1][0] : tabs[0][0];
     $('#tabs').innerHTML = tabs.map(([k, l]) => `<button class="tab ${k === this.tab ? 'on' : ''} ${k === 'sketch' ? 'sketchtab' : ''}" data-tab="${k}">${l}</button>`).join('') +
       `<span class="spacer"></span><button class="tb-btn" id="undoBtn" title="Undo (Ctrl+Z)">${icon('undo', 18)}</button><button class="tb-btn" id="redoBtn" title="Redo (Ctrl+Y)">${icon('redo', 18)}</button><button class="tb-btn" id="helpBtn" title="How to use Pathway CAD">${icon('help', 18)}</button>`;
@@ -1079,6 +1125,10 @@ class UI {
       body.appendChild(g);
     }
     if (this.app.mode === 'sketch') this.sketchToolChanged(this.app.sk.tool);
+    if (this.app.mode === 'drawing') {
+      const t = this.app.drw.tool;
+      for (const b of document.querySelectorAll('#ribbon .rbtn')) b.classList.toggle('on', (t === 'select' && b.dataset.ic === 'select') || (t === 'dim' && b.dataset.ic === 'g:↔') || (t === 'note' && b.dataset.ic === 'g:A'));
+    }
   }
 
   sketchToolChanged(tool) {
@@ -1102,6 +1152,13 @@ class UI {
   renderTree() {
     const a = this.app, doc = a.doc;
     if (a.mode === 'assembly') { a.asmr.renderTree($('#tree')); return; }
+    if (a.mode === 'drawing') {
+      const t = a.drawTarget(), d = t.drawing || {};
+      const views = Object.entries(d.views || {}).filter(([, on]) => on).map(([k]) => k);
+      $('#tree').innerHTML = `<div class="trow backrow" data-act="closedraw">${icon('back', 16)}<span>Back to ${esc(t.name)}</span></div><div class="trow root">${icon('drawing', 16)}<b>${esc(t.name)} drawing</b></div>${views.map((v) => `<div class="trow sub">${icon('front', 16)}<span>${v[0].toUpperCase() + v.slice(1)} view</span></div>`).join('')}<div class="trow sub">${icon('g:↔', 16)}<span>${(d.dims || []).length} sizes you added</span></div><div class="trow sub">${icon('g:A', 16)}<span>${(d.notes || []).length} notes</span></div>`;
+      $('#tree [data-act=closedraw]').onclick = () => a.closeDrawing();
+      return;
+    }
     const errs = a.result.errors || {}, warns = a.result.warnings || {};
     const end = doc.rollback ?? doc.features.length;
     let html = a.asm && a.editPid ? `<div class="trow backrow" data-act="back">${icon('back', 16)}<span>Back to ${esc(a.asm.name)}</span></div>` : '';
@@ -1475,7 +1532,43 @@ class UI {
     $('#colorSel').oninput = (e) => { a.doc.color = e.target.value; this.vp.setColor(e.target.value); };
     $('#colorSel').onchange = (e) => a.change(() => { a.doc.color = e.target.value; });
   }
+  // ----- drawing settings panel -----
+  renderDrawPanel() {
+    const a = this.app, drw = a.drw;
+    if (a.mode !== 'drawing') return;
+    const t = a.drawTarget(), d = t.drawing;
+    const p = $('#cmdPanel');
+    p.hidden = false;
+    const sel = (key, opts, val) => `<select data-dk="${key}">${opts.map(([v, l]) => `<option value="${esc(v)}" ${String(val) === String(v) ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>`;
+    const scales = [['auto', 'Fit the sheet' + (drw.L ? ` (now ${drw.L.scale >= 1 ? fmt(drw.L.scale) + ':1' : '1:' + fmt(1 / drw.L.scale)})` : '')], ...[[5, '5:1'], [2, '2:1'], [1, '1:1'], [0.5, '1:2'], [0.25, '1:4'], [0.2, '1:5'], [0.1, '1:10'], [0.05, '1:20']]];
+    const tf = (k, label) => `<label class="fld"><span>${label}</span><input data-tk="${k}" value="${esc(d.title[k] || '')}"></label>`;
+    p.innerHTML = `<div class="cmdhead"><span>Drawing sheet</span><button class="x" data-act="closedraw" title="Close drawing (Esc)">×</button></div>
+      <div class="cmdhelp">${esc(drw.tool === 'dim' ? (drw.picks.length ? `Point ${drw.picks.length} picked. ${drw.picks.length === 1 ? 'Click a second point in the same view.' : 'Click where the size line goes.'}` : 'Click two corners, line ends or hole centers in one view, then click where the size goes (Shift = slanted).') : drw.tool === 'note' ? 'Click on the sheet where the note goes.' : 'Views, sizes and the title block update when the part changes.')}</div>
+      <div class="cmdbody">
+      <label class="fld"><span>Paper</span>${sel('sheet', Object.entries(SHEETS).map(([k, v]) => [k, v.name]), d.sheet)}</label>
+      <label class="fld"><span>Scale</span>${sel('scale', scales, d.scale)}</label>
+      <label class="fld"><span>View layout</span>${sel('projection', [['third', 'Third angle (USA)'], ['first', 'First angle (Europe)']], d.projection)}</label>
+      <div class="fld"><span>Views</span><div class="btnrow">${['front', 'top', 'right', 'iso'].map((v) => `<label class="chk"><input type="checkbox" data-vk="${v}" ${d.views[v] ? 'checked' : ''}> ${v === 'iso' ? 'Iso' : v[0].toUpperCase() + v.slice(1)}</label>`).join(' ')}</div></div>
+      <label class="chk"><input type="checkbox" data-bk="hidden" ${d.hidden ? 'checked' : ''}> Hidden lines (dashed)</label>
+      <label class="chk"><input type="checkbox" data-bk="autoDims" ${d.autoDims ? 'checked' : ''}> Overall sizes</label>
+      <label class="chk"><input type="checkbox" data-bk="holeNotes" ${d.holeNotes ? 'checked' : ''}> Hole sizes (Ø)</label>
+      <label class="fld"><span>Decimal places</span>${sel('decimals', [[0, '0'], [1, '1'], [2, '2'], [3, '3']], d.decimals)}</label>
+      <details open class="planeopts"><summary>Title block</summary>
+      ${tf('drawnBy', 'Drawn by')}${tf('school', 'School')}${tf('course', 'Class / period')}${tf('date', 'Date')}${tf('partNo', 'Part number')}
+      </details>
+      ${drw.sel ? `<div class="note">A ${drw.sel[0] === 'd' ? 'size' : 'note'} is picked. Press Delete to remove it.</div>` : ''}
+      </div>
+      <div class="cmdfoot"><button data-act="print">Print / PDF</button><button class="ok" data-act="closedraw2">Done</button></div>`;
+    p.querySelectorAll('[data-act=closedraw],[data-act=closedraw2]').forEach((b) => (b.onclick = () => a.closeDrawing()));
+    p.querySelector('[data-act=print]').onclick = () => drw.print();
+    for (const el of p.querySelectorAll('[data-dk]')) el.onchange = () => { const k = el.dataset.dk; a.change(() => { d[k] = k === 'scale' ? (el.value === 'auto' ? 'auto' : +el.value) : k === 'decimals' ? +el.value : el.value; }); if (k === 'sheet' || k === 'scale') drw.fitZoom = true; };
+    for (const el of p.querySelectorAll('[data-vk]')) el.onchange = () => a.change(() => { d.views[el.dataset.vk] = el.checked; });
+    for (const el of p.querySelectorAll('[data-bk]')) el.onchange = () => a.change(() => { d[el.dataset.bk] = el.checked; });
+    for (const el of p.querySelectorAll('[data-tk]')) el.onchange = () => a.change(() => { d.title[el.dataset.tk] = el.value; });
+  }
+
   renderStatusInfo() {
+    if (this.app.mode === 'drawing') return;
     if (this.app.mode === 'assembly') {
       const A = this.app.asm, bad = Object.keys(this.app.asmr.bad).length;
       $('#statusRight').innerHTML = `${bad ? `<span class="bad">${bad} constraint${bad > 1 ? 's' : ''} not met</span> · ` : ''}${A.components.length} parts · ${A.constraints.length} constraints · <button class="linkbtn" id="unitBtn" title="Change units">${esc(A.units || 'mm')}</button>`;
@@ -1572,10 +1665,17 @@ class UI {
       <li>Drag a part to see how it can still move: a pin with only an Axis constraint slides and spins in its hole.</li>
       <li>Double-click a part in the tree to <b>edit it</b> right there; press <b>Back to assembly</b> when done. Every copy of that part changes.</li>
       <li>Inspect ▸ <b>Interference</b> finds parts that run into each other (shown in red). <b>Parts list</b> counts parts and adds up the mass.</li></ul>
+      <h3>Drawings (2D plans)</h3>
+      <ul><li>Press <b>Drawing</b> (Model or Assemble tab) to make a printable sheet with front, top, right and isometric views. Hidden edges are dashed.</li>
+      <li>Overall sizes and hole sizes are added for you. <b>Size</b> (D): click two corners or hole centers in one view, then click where the size line goes. <b>Note</b> (N) adds text.</li>
+      <li>Pick the paper, scale, view layout (USA third angle or European first angle) and fill in the title block on the left.</li>
+      <li><b>Print / PDF</b> prints at real scale (choose "Save as PDF" as the printer to make a PDF). <b>Save SVG</b> saves a file for a laser cutter or Inkscape. Assembly drawings include a parts list.</li></ul>
+      <h3>Units</h3>
+      <ul><li>Click the unit at the bottom right (or File ▸ Units) to switch between millimetres and inches. You can convert the sizes so the part stays the same real size.</li></ul>
       <h3>Saving and sharing</h3>
       <ul><li>File ▸ Save downloads a <b>.pcad</b> part file or a <b>.pasm</b> assembly file (the assembly file holds its parts inside it). File ▸ Open loads it again. Your work is also kept on this computer automatically.</li>
       <li>Export <b>STL</b> for 3D printing (slicers like Cura or PrusaSlicer) and <b>STEP</b> for other CAD programs.</li>
-      <li>All sizes are millimetres. For inches, type <code>2*25.4</code> (= 2 in).</li></ul>
+      </ul>
       <h3>Keys</h3>
       <p class="muted">Pathway CAD uses the OpenCascade modeling engine (LGPL-2.1) through replicad (MIT), and three.js (MIT) for the 3D view.</p>
       <p class="keys">S sketch · E extrude · R revolve · H hole · F fillet · M measure · Esc cancel · Enter OK<br>In a sketch: L line · R rectangle · C circle · A arc · P polygon · O slot · S select · X construction · G grid</p>

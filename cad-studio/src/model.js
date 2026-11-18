@@ -415,5 +415,54 @@ export function createModel(r) {
     return s;
   }
 
-  return { rebuild, describe, placed, isValid };
+  // 2D drawing views with hidden lines. Paths are SVG path strings in model units
+  // (x to the right, y down the page). Also lists round edges seen face-on.
+  const VIEW_DIRS = {
+    // [direction toward the viewer, page right]
+    front: [[0, -1, 0], [1, 0, 0]], top: [[0, 0, 1], [1, 0, 0]], right: [[1, 0, 0], [0, 1, 0]],
+    left: [[-1, 0, 0], [0, -1, 0]], back: [[0, 1, 0], [-1, 0, 0]], bottom: [[0, 0, -1], [1, 0, 0]],
+    iso: [[1, -1, 1], [1, 1, 0]],
+  };
+  const flat = (x) => (Array.isArray(x) ? x.flat(Infinity) : [x]).filter(Boolean);
+  function drawingViews(body, names) {
+    const out = {};
+    const circles = [];
+    for (const e of body.edges) {
+      if (e.geomType !== 'CIRCLE') continue;
+      try {
+        const ci = e._geomAdaptor().Circle(), ax = ci.Axis(), l = ax.Location(), d = ax.Direction();
+        circles.push({ c: [l.X(), l.Y(), l.Z()], n: [d.X(), d.Y(), d.Z()], r: ci.Radius(), full: dist(e.startPoint.toTuple(), e.endPoint.toTuple()) < 1e-6 });
+      } catch { /* ignore */ }
+    }
+    for (const name of names) {
+      const [d0, x0] = VIEW_DIRS[name];
+      const dl = Math.hypot(...d0), xl = Math.hypot(...x0);
+      const dir = d0.map((v) => v / dl), xa = x0.map((v) => v / xl);
+      const cam = new r.ProjectionCamera(dir.map((v) => v * 10000), dir, xa);
+      const ya = cam.yAxis.toTuple();
+      let pr;
+      try { pr = r.drawProjection(body, cam); } catch (e) { out[name] = { error: String(e && e.message || e) }; continue; }
+      const toPaths = (dr) => { try { return flat(dr.toSVGPaths()); } catch { return []; } };
+      const visible = toPaths(pr.visible), hidden = toPaths(pr.hidden);
+      // Bounds in the same (SVG, y-down) coordinates as the paths.
+      let bounds = [[0, 0], [0, 0]];
+      try {
+        const vb = String(pr.visible.toSVGViewBox(0)).trim().split(/[\s,]+/).map(Number);
+        if (vb.length === 4 && vb.every(Number.isFinite)) bounds = [[vb[0], vb[1]], [vb[0] + vb[2], vb[1] + vb[3]]];
+      } catch { /* keep zero bounds */ }
+      const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+      const seen = [];
+      if (name !== 'iso') for (const c of circles) {
+        if (Math.abs(dot(c.n, dir)) < 0.999) continue;
+        if (!c.full) continue;
+        const u = dot(c.c, xa), v = -dot(c.c, ya);
+        if (seen.some((q) => Math.hypot(q.c[0] - u, q.c[1] - v) < 1e-4 && Math.abs(q.r - c.r) < 1e-4)) continue;
+        seen.push({ c: [u, v], r: c.r, full: c.full });
+      }
+      out[name] = { visible, hidden, bounds, circles: seen };
+    }
+    return out;
+  }
+
+  return { rebuild, describe, placed, isValid, drawingViews };
 }
