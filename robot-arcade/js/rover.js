@@ -9,8 +9,8 @@
   const DC = [0, 1, 0, -1], DR = [1, 0, -1, 0];
 
   const commands = [
-    { name: 'forward', words: ['forward'], aliases: [['forwards'], ['go'], ['drive'], ['move']], arg: 'number', min: 1, max: 9, unit: ['squares', 'square', 'spaces', 'space'], example: 'forward 1', help: 'Drive ahead N squares' },
-    { name: 'backward', words: ['backward'], aliases: [['back'], ['backwards'], ['reverse']], arg: 'number', min: 1, max: 9, unit: ['squares', 'square', 'spaces', 'space'], example: 'backward 1', help: 'Back up N squares' },
+    { name: 'forward', words: ['forward'], aliases: [['forwards'], ['go'], ['drive'], ['move']], arg: 'number', min: 0.1, decimals: true, max: 9, unit: ['squares', 'square', 'spaces', 'space'], example: 'forward 1', help: 'Drive ahead N squares' },
+    { name: 'backward', words: ['backward'], aliases: [['back'], ['backwards'], ['reverse']], arg: 'number', min: 0.1, decimals: true, max: 9, unit: ['squares', 'square', 'spaces', 'space'], example: 'backward 1', help: 'Back up N squares' },
     { name: 'left', words: ['turn', 'left'], aliases: [['left']], arg: 'none', example: 'turn left', help: 'Turn ¼ to the left' },
     { name: 'right', words: ['turn', 'right'], aliases: [['right']], arg: 'none', example: 'turn right', help: 'Turn ¼ to the right' },
     { name: 'drill', words: ['drill'], aliases: [['collect'], ['dig'], ['scoop']], arg: 'none', example: 'drill', help: 'Collect a sample here' }
@@ -117,7 +117,8 @@ forward 1
       '<code>turn left</code> / <code>turn right</code> spin the rover in place, a quarter turn.',
       'Loops: lines between <code>repeat 3</code> and <code>end</code> run 3 times.',
       'Rocks and craters stop the rover. So does the edge of the map.',
-      'Fewer lines = more stars. Loops are the secret!'
+      'Fewer lines = more stars. Loops are the secret!',
+      'Decimals work too: <code>forward 0.5</code> drives half a square. Samples are in the middle of a square.'
     ]
   });
 
@@ -243,7 +244,7 @@ forward 1
     placeRover(); hud(); stage.want('front');
   }
   function hud() {
-    sh.setHud([['Facing', HEAD[R.h]], ['Samples', collected + ' / ' + samples.length]].concat(homePad ? [['Home', collected === samples.length && R.c === homePad.c && R.r === homePad.r ? 'parked ✔' : 'not yet']] : []));
+    sh.setHud([['Facing', HEAD[R.h]], ['Samples', collected + ' / ' + samples.length]].concat(homePad ? [['Home', collected === samples.length && near(homePad.c, homePad.r) ? 'parked ✔' : 'not yet']] : []));
   }
 
   /* ---------------- missions panel ---------------- */
@@ -269,28 +270,42 @@ forward 1
   }
 
   /* ---------------- commands ---------------- */
+  const r2 = v => Math.round(v * 100) / 100;
+  const near = (c, r) => Math.abs(R.c - c) < 0.25 && Math.abs(R.r - r) < 0.25;
+  const sq = d => d + ' square' + (d === 1 ? '' : 's');
   async function drive(n, dir) {
     stage.want('top');
     const h = dir > 0 ? R.h : (R.h + 2) % 4;
-    for (let i = 0; i < n; i++) {
-      const nc = R.c + DC[h], nr = R.r + DR[h];
-      const what = cellAt(nc, nr);
-      const x0 = R.x, z0 = R.z, x1 = wx(nc), z1 = wz(nr);
-      if (what === 'rock' || what === 'edge') {
-        await RA.tween(150, k => { R.x = RA.lerp(x0, x1, k * 0.3); R.z = RA.lerp(z0, z1, k * 0.3); placeRover(); });
-        await RA.tween(180, k => { R.x = RA.lerp(x0, x1, (1 - k) * 0.3); R.z = RA.lerp(z0, z1, (1 - k) * 0.3); placeRover(); });
-        R.x = x0; R.z = z0; placeRover();
-        RA.crash(what === 'rock'
-          ? 'Bonk! A rock is in the way after ' + i + ' square' + (i === 1 ? '' : 's') + '. Turn and go around it.'
-          : 'Whoa! That is the edge of the map. The rover stopped after ' + i + ' square' + (i === 1 ? '' : 's') + '.');
-      }
+    // check the path a little at a time: how far can the rover go before it hits something?
+    const STEP = 0.05, total = Math.round(n / STEP);
+    let ok = 0, hit = null;
+    for (let i = 1; i <= total; i++) {
+      const c = R.c + DC[h] * STEP * i, r = R.r + DR[h] * STEP * i;
+      if (c < -1e-6 || r < -1e-6 || c > N - 1 + 1e-6 || r > N - 1 + 1e-6) { hit = 'edge'; break; }
+      const what = cellAt(Math.round(c), Math.round(r));
+      if (what === 'rock') { hit = 'rock'; break; }
+      ok = i;
+      if (what === 'crater') { hit = 'crater'; break; }
+    }
+    const dist = r2(ok * STEP);
+    const c0 = R.c, r0 = R.r, c1 = r2(c0 + DC[h] * dist), r1 = r2(r0 + DR[h] * dist);
+    if (dist > 0) {
       RA.sfx.step();
-      await RA.tween(380, k => { R.x = RA.lerp(x0, x1, k); R.z = RA.lerp(z0, z1, k); wheels.forEach(w => w.rotation.x += 0.2 * dir); placeRover(); }, RA.ease.linear);
-      R.c = nc; R.r = nr; R.x = x1; R.z = z1; placeRover(); hud();
-      if (what === 'crater') {
-        await RA.tween(500, k => { R.sink = k * 0.45; R.tilt = k * 0.5 * dir; placeRover(); }, RA.ease.in);
-        RA.crash('Oh no, the rover drove into a crater! Craters are the dark holes. Steer around them.');
-      }
+      await RA.tween(380 * dist, k => { R.c = c0 + (c1 - c0) * k; R.r = r0 + (r1 - r0) * k; R.x = wx(R.c); R.z = wz(R.r); wheels.forEach(w => w.rotation.x += 0.2 * dir); placeRover(); }, RA.ease.linear);
+    }
+    R.c = c1; R.r = r1; R.x = wx(c1); R.z = wz(r1); placeRover(); hud();
+    if (hit === 'rock' || hit === 'edge') {
+      const x0 = R.x, z0 = R.z, bx = DC[h] * 0.25, bz = -DR[h] * 0.25;
+      await RA.tween(150, k => { R.x = x0 + bx * k; R.z = z0 + bz * k; placeRover(); });
+      await RA.tween(180, k => { R.x = x0 + bx * (1 - k); R.z = z0 + bz * (1 - k); placeRover(); });
+      R.x = x0; R.z = z0; placeRover();
+      RA.crash(hit === 'rock'
+        ? 'Bonk! A rock is in the way after ' + sq(dist) + '. Turn and go around it.'
+        : 'Whoa! That is the edge of the map. The rover stopped after ' + sq(dist) + '.');
+    }
+    if (hit === 'crater') {
+      await RA.tween(500, k => { R.sink = k * 0.45; R.tilt = k * 0.5 * dir; placeRover(); }, RA.ease.in);
+      RA.crash('Oh no, the rover drove into a crater after ' + sq(dist) + '! Craters are the dark holes. Steer around them.');
     }
   }
   async function turn(d) {
@@ -303,13 +318,13 @@ forward 1
   }
   async function drillHere() {
     stage.want('front');
-    const s = samples.find(s => !s.got && s.c === R.c && s.r === R.r);
+    const s = samples.find(s => !s.got && near(s.c, s.r));
     RA.sfx.whirr();
     await RA.tween(300, k => { drill.position.y = 0.3 - k * 0.22; drill.rotation.y += 0.6; });
     if (!s) {
       await RA.tween(250, k => { drill.position.y = 0.08 + k * 0.22; });
-      const got = samples.find(x => x.got && x.c === R.c && x.r === R.r);
-      RA.crash(got ? 'You already drilled this sample! Move on to the next one.' : 'Nothing to drill here. There is no sample on this square.');
+      const got = samples.find(x => x.got && near(x.c, x.r));
+      RA.crash(got ? 'You already drilled this sample! Move on to the next one.' : (Math.abs(R.c - Math.round(R.c)) > 0.24 || Math.abs(R.r - Math.round(R.r)) > 0.24) ? 'The rover is between squares. Samples are in the middle of a square, so drive to the middle first.' : 'Nothing to drill here. There is no sample on this square.');
     }
     s.got = true; collected++;
     RA.sfx.grab();
@@ -336,7 +351,7 @@ forward 1
       stage.want('front');
       if (!res.ok) return;
       const left = samples.length - collected;
-      const homeOk = !homePad || (R.c === homePad.c && R.r === homePad.r);
+      const homeOk = !homePad || near(homePad.c, homePad.r);
       if (left) { sh.log('Program finished, but ' + left + ' sample' + (left > 1 ? 's are' : ' is') + ' still out there.', 'warn'); return; }
       if (!homeOk) { sh.log('All samples collected, but the rover must finish on the H pad.', 'warn'); return; }
       const stars = res.lines <= mission.par ? 3 : res.lines <= mission.par + 3 ? 2 : 1;

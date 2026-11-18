@@ -13,6 +13,8 @@ The camera starts in front and, in **Auto**, swings to a top view while the mach
 - **Rover Run** (`rover.html`): a Mars rover. `forward/backward N`, `turn left/right`, `drill`, plus `repeat N ... end`
   loops. Twelve missions (including backing up, nested loops and a return-home maze); stars depend on how few lines the program uses, so later levels need loops.
 
+Movement numbers can be decimals (up to 2 places, e.g. `right 1.5`, `lower 0.5`, `forward 2.25`); `repeat` takes whole numbers.
+
 All games: Step mode, speed control, plain-English error messages with the line highlighted, sound toggle,
 Front/Top camera buttons (plus Cab view on the crane and Chase view on the rover), scroll to zoom.
 

@@ -96,6 +96,7 @@ end</code>
     <ul>
       <li>Everything runs in the browser with no logins. Prize shelves, mission stars and the last program are saved on each computer.</li>
       <li>Each game has <b>Run</b>, <b>Step</b> (one line at a time, good for debugging) and a speed setting. The camera starts in front, and in <b>Auto</b> it switches to a top view while things move. Students can also pick Front or Top themselves.</li>
+      <li>Movement numbers can be decimals (<code>right 1.5</code>, <code>trolley out 2.25</code>, <code>forward 0.5</code>), up to 2 digits after the point. <code>repeat</code> still needs a whole number.</li>
       <li>When code has a mistake, the line turns red and a plain-English message says what went wrong ("The hook is 2 levels above the crate. Lower 2 more").</li>
       <li><b>Adding Code Claw prizes:</b> open <code>robot-arcade/js/prizes.js</code> and add a line like
         <code>{ name: 'Rubber Chicken', emoji: '🐔', rarity: 'common', kind: 'funny', note: 'Squeaks when sad.' },</code>

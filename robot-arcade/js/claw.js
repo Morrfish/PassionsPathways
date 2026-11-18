@@ -11,10 +11,10 @@
   const isChute = (c, r) => c === CHUTE.c && r === CHUTE.r;
 
   const commands = [
-    { name: 'left', words: ['left'], arg: 'number', min: 1, max: 9, def: null, example: 'left 1', help: 'Move left N spaces', unit: ['space', 'spaces'] },
-    { name: 'right', words: ['right'], arg: 'number', min: 1, max: 9, example: 'right 1', help: 'Move right N spaces', unit: ['space', 'spaces'] },
-    { name: 'back', words: ['back'], aliases: [['backward'], ['backwards']], arg: 'number', min: 1, max: 9, example: 'back 1', help: 'Move away from you', unit: ['space', 'spaces'] },
-    { name: 'front', words: ['front'], aliases: [['toward'], ['towards']], arg: 'number', min: 1, max: 9, example: 'front 1', help: 'Move toward you', unit: ['space', 'spaces'] },
+    { name: 'left', words: ['left'], arg: 'number', min: 0.1, decimals: true, max: 9, def: null, example: 'left 1', help: 'Move left N spaces', unit: ['space', 'spaces'] },
+    { name: 'right', words: ['right'], arg: 'number', min: 0.1, decimals: true, max: 9, example: 'right 1', help: 'Move right N spaces', unit: ['space', 'spaces'] },
+    { name: 'back', words: ['back'], aliases: [['backward'], ['backwards']], arg: 'number', min: 0.1, decimals: true, max: 9, example: 'back 1', help: 'Move away from you', unit: ['space', 'spaces'] },
+    { name: 'front', words: ['front'], aliases: [['toward'], ['towards']], arg: 'number', min: 0.1, decimals: true, max: 9, example: 'front 1', help: 'Move toward you', unit: ['space', 'spaces'] },
     { name: 'down', words: ['down'], aliases: [['lower'], ['drop']], arg: 'none', example: 'down', help: 'Lower the claw' },
     { name: 'up', words: ['up'], aliases: [['raise'], ['lift']], arg: 'none', example: 'up', help: 'Raise the claw' },
     { name: 'open', words: ['open'], aliases: [['release']], arg: 'none', example: 'open', help: 'Open the claw' },
@@ -46,6 +46,7 @@ up
       'Open the claw <b>before</b> it goes down, close it at the bottom.',
       'Come home with the <b>same steps, opposite way</b>, then <code>open</code>.',
       'Tap a prize in the machine to see what it is.',
+      'Decimals work too: <code>right 1.5</code> stops between two spaces, right over a prize lying there.',
       '<kbd>Ctrl</kbd>+<kbd>Enter</kbd> runs your program.'
     ]
   });
@@ -313,7 +314,7 @@ up
     cable.scale.y = Math.max(0.01, topY - botY); cable.position.set(x, (topY + botY) / 2, z);
     setOpen(S.open);
     if (held) { held.x = x; held.z = z; held.y = S.y - 0.05; held.g.position.set(x, held.y, z); }
-    const ground = isChute(Math.round(S.c), Math.round(S.r)) ? -0.2 : pileTopAt(x, z) + 0.02;
+    const ground = overChute() ? -0.2 : pileTopAt(x, z) + 0.02;
     const from = S.y - (held ? 0.4 : 0.1);
     laser.visible = dot.visible = from - ground > 0.2;
     laser.scale.y = Math.max(0.01, from - ground); laser.position.set(x, (from + ground) / 2, z);
@@ -345,23 +346,33 @@ up
   /* ---------------- commands ---------------- */
   const DIR = { left: [-1, 0], right: [1, 0], back: [0, 1], front: [0, -1] };
   const WALL = { left: 'left', right: 'right', back: 'back', front: 'front' };
+  const r2 = v => Math.round(v * 100) / 100;
+  const overChute = () => Math.abs(S.c - CHUTE.c) < 0.3 && Math.abs(S.r - CHUTE.r) < 0.3;
   async function move(name, n) {
     if (S.isDown) RA.crash('The claw is still down! Use "up" before you move it ' + name + '.');
     stage.want('top');
     const [dc, dr] = DIR[name];
-    for (let i = 0; i < n; i++) {
-      const nc = S.c + dc, nr = S.r + dr;
-      if (nc < 0 || nc >= COLS || nr < 0 || nr >= ROWS) {
+    let left = n, done = 0;
+    while (left > 1e-6) {
+      let step = Math.min(1, left);
+      const room = r2(dc > 0 ? COLS - 1 - S.c : dc < 0 ? S.c : dr > 0 ? ROWS - 1 - S.r : S.r);
+      const blocked = step > room + 1e-6;
+      if (blocked) step = room;           // go as far as the wall allows, then bonk
+      if (step > 1e-6) {
+        RA.sfx.step();
+        const c0 = S.c, r0 = S.r;
+        await RA.tween(330 * Math.max(0.35, step), k => { S.c = c0 + dc * step * k; S.r = r0 + dr * step * k; place(); });
+        S.c = r2(c0 + dc * step); S.r = r2(r0 + dr * step); left = r2(left - step); done = r2(done + step); place(); hud();
+      }
+      if (blocked) {
+        // bonk animation
         const c0 = S.c, r0 = S.r;
         await RA.tween(140, k => { S.c = c0 + dc * 0.18 * k; S.r = r0 + dr * 0.18 * k; place(); });
         await RA.tween(160, k => { S.c = c0 + dc * 0.18 * (1 - k); S.r = r0 + dr * 0.18 * (1 - k); place(); });
         S.c = c0; S.r = r0; place();
-        RA.crash('Bonk! The claw hit the ' + WALL[name] + ' wall after ' + i + ' space' + (i === 1 ? '' : 's') + '. Try a smaller number.');
+        RA.crash(done ? 'Bonk! The claw hit the ' + WALL[name] + ' wall after ' + done + ' space' + (done === 1 ? '' : 's') + '. You asked for ' + n + '. Try "' + name + ' ' + done + '".'
+          : 'Bonk! The claw is already against the ' + WALL[name] + ' wall. It cannot go ' + name + ' any more.');
       }
-      RA.sfx.step();
-      const c0 = S.c, r0 = S.r;
-      await RA.tween(330, k => { S.c = c0 + dc * k; S.r = r0 + dr * k; place(); });
-      S.c = nc; S.r = nr; place(); hud();
     }
   }
   async function down() {
@@ -370,7 +381,7 @@ up
     RA.sfx.whirr();
     const top = topUnderClaw();
     let bottom;
-    if (isChute(S.c, S.r)) bottom = held ? 1.35 : 0.95;
+    if (overChute()) bottom = held ? 1.35 : 0.95;
     else if (held) bottom = Math.max(0.75, pileTopAt(wx(S.c), wz(S.r)) + 0.45);
     else if (!top) bottom = DOWN_Y - 0.1;
     else if (S.isOpen) bottom = top.y + 0.08;          // open claw wraps around the top toy
@@ -378,7 +389,7 @@ up
     const y0 = S.y;
     await RA.tween(400 + (y0 - bottom) * 160, k => { S.y = RA.lerp(y0, bottom, k); place(); });
     S.isDown = true; hud();
-    if (top && !S.isOpen && !held && !isChute(S.c, S.r)) sh.log('Bump! The claw came down closed on top of the ' + top.prize.name + '. Open it first next time.', 'warn');
+    if (top && !S.isOpen && !held && !overChute()) sh.log('Bump! The claw came down closed on top of the ' + top.prize.name + '. Open it first next time.', 'warn');
   }
   async function up() {
     if (!S.isDown) { sh.log('The claw is already up.', 'info'); return; }
@@ -402,7 +413,7 @@ up
   async function closeClaw() {
     stage.want('front');
     if (!S.isOpen) { sh.log('The claw is already closed.', 'info'); return; }
-    const top = S.isDown && !held && !isChute(S.c, S.r) ? topUnderClaw() : null;
+    const top = S.isDown && !held && !overChute() ? topUnderClaw() : null;
     const it = top && S.y <= top.y + 0.2 ? top : null;
     RA.sfx.grab();
     await RA.tween(420, k => { S.open = 1 - k * (it ? 0.75 : 1); place(); });
@@ -411,14 +422,14 @@ up
       held = it; place();
       sh.log('Got it! Holding: ' + it.prize.emoji + ' ' + it.prize.name + '. Now bring it to the chute.', 'ok');
     } else if (S.isDown) {
-      sh.log(isChute(S.c, S.r) ? 'Nothing to grab in the chute.' : 'The claw grabbed… air. Nothing here to grab.', 'warn');
+      sh.log(overChute() ? 'Nothing to grab in the chute.' : 'The claw grabbed… air. Nothing here to grab.', 'warn');
     }
     hud();
   }
   async function dropHeld() {
     const it = held; held = null;
     const x = wx(S.c), z = wz(S.r), y0 = it.g.position.y;
-    if (isChute(S.c, S.r)) {
+    if (overChute()) {
       await RA.tween(650, k => { it.g.position.set(x, RA.lerp(y0, -1.9, k), z); it.g.rotation.x = k * 2; }, RA.ease.in);
       items = items.filter(o => o !== it); scene.remove(it.g);
       await win(it.prize);
@@ -517,7 +528,7 @@ up
     async afterRun(res) {
       stage.want('front');
       if (res.ok) {
-        if (held && !(S.c === 0 && S.r === 0)) sh.log('Program done. You are holding a prize but the claw is not over the chute yet. Keep going!', 'warn');
+        if (held && !overChute()) sh.log('Program done. You are holding a prize but the claw is not over the chute yet. Keep going!', 'warn');
         else if (held) sh.log('You are over the chute holding a prize. Add "open" to drop it in!', 'warn');
         else sh.log('✔ Program finished.', 'info');
       }

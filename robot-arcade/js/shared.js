@@ -98,7 +98,7 @@
       s = s.replace(/[,;]+$/, '').replace(/[()]/g, ' ');
       let toks = s.split(/\s+/).filter(Boolean);
       // allow "right2" style typos -> "right 2"
-      toks = toks.flatMap(t => { const m = t.match(/^([a-z]+)(-?\d+)$/); return m ? [m[1], m[2]] : [t]; });
+      toks = toks.flatMap(t => { const m = t.match(/^([a-z]+)(-?\d*\.?\d+)$/); return m ? [m[1], m[2]] : [t]; });
       if (!toks.length) return;
       count++;
       const top = stack[stack.length - 1];
@@ -147,7 +147,10 @@
           else { errors.push({ line, msg: '"' + best.words.join(' ') + '" needs a number, like:  ' + best.example }); return; }
         } else {
           const n = Number(rest[0]);
-          if (!Number.isInteger(n)) { errors.push({ line, msg: '"' + rest[0] + '" is not a whole number. Try:  ' + best.example }); return; }
+          if (best.decimals) {
+            if (!/^\d*\.?\d+$/.test(rest[0]) || !isFinite(n)) { errors.push({ line, msg: '"' + rest[0] + '" is not a number. Try:  ' + best.example + '  or  ' + best.words.join(' ') + ' 1.5' }); return; }
+            if ((rest[0].split('.')[1] || '').length > 2) { errors.push({ line, msg: 'Use at most 2 digits after the decimal point, like 1.25' }); return; }
+          } else if (!Number.isInteger(n)) { errors.push({ line, msg: '"' + rest[0] + '" is not a whole number. Try:  ' + best.example }); return; }
           if (best.min != null && n < best.min || best.max != null && n > best.max) {
             errors.push({ line, msg: best.words.join(' ') + ' needs a number from ' + best.min + ' to ' + best.max + '.' }); return;
           }
