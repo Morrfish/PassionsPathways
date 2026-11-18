@@ -1,6 +1,6 @@
 /* Bot Assembly Shop — core data: parts, bot math, tiles, courses, storage */
 'use strict';
-const VERSION = '2.7';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
+const VERSION = '2.8';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
 const pl = planck, V = pl.Vec2;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -270,7 +270,8 @@ function unpackCourse(o) {
   if (!o || !o.w || !o.h || o.w > 600 || o.h !== COURSE_H) throw new Error('bad course');
   const c = newCourse(o.w);
   Object.assign(c, { id: o.id || c.id, name: String(o.name || 'Course').slice(0, 40), kind: ['speed', 'strength', 'crazy'].includes(o.kind) ? o.kind : 'crazy', budget: clamp(+o.budget || 1000, 200, 9999), par: o.par || null, desc: String(o.desc || '').slice(0, 200), author: String(o.author || '').slice(0, 30), sky: SKIES.includes(o.sky) ? o.sky : '' });
-  if (typeof TASKS !== 'undefined' && TASKS.some(t => t.id === o.task)) { c.task = o.task; c.vsig = String(o.vsig || '').slice(0, 20); }
+  c.vsig = String(o.vsig || '').slice(0, 20);
+  if (typeof TASKS !== 'undefined' && TASKS.some(t => t.id === o.task)) c.task = o.task;
   if (o.rules && typeof o.rules === 'object') { const r = {}; if (+o.rules.slots > 0) r.slots = clamp(+o.rules.slots | 0, 1, 7); if (+o.rules.energy > 0) r.energy = clamp(+o.rules.energy, 10, 900); if (+o.rules.drain > 0) r.drain = clamp(+o.rules.drain, 0.1, 5); if (o.rules.dark) r.dark = true; if (Object.keys(r).length) c.rules = r; }
   let i = 0;
   for (const run of String(o.t || '').split(',')) { if (!run) continue; const [v, n] = run.split('*'); const val = parseInt(v, 36), cnt = n ? parseInt(n, 36) : 1; for (let k = 0; k < cnt && i < c.tiles.length; k++) c.tiles[i++] = val; }
@@ -585,7 +586,10 @@ const Store = {
   user: null,
   key(k, user = Store.user) { return 'botshop.' + (user && USER_KEYS.includes(k) ? 'u.' + user + '.' : '') + k; },
   get(k, d, user) { try { const v = localStorage.getItem(Store.key(k, user)); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
-  set(k, v, user) { try { localStorage.setItem(Store.key(k, user), JSON.stringify(v)); return true; } catch (e) { return false; } },
+  failed: false,
+  set(k, v, user) { try { localStorage.setItem(Store.key(k, user), JSON.stringify(v)); return true; } catch (e) { Store.failed = true; return false; } },
+  /* can this browser keep anything at all? (private windows and locked-down computers often cannot) */
+  works() { try { localStorage.setItem('botshop.probe', '1'); const ok = localStorage.getItem('botshop.probe') === '1'; localStorage.removeItem('botshop.probe'); return ok; } catch (e) { return false; } },
   del(k, user) { try { localStorage.removeItem(Store.key(k, user)); } catch (e) { } },
 };
 /* ---------------- Players ----------------
@@ -604,6 +608,23 @@ const TEACHER_HASH = '2bce514a6dffff96';
 const COIN_CODES = {'23cdfca4500e2680': 1000, 'ff2a956c359a487a': 1000, 'd012d57f928b9ed5': 1000, 'b2edd26e23c19725': 1000, '67a9f698f82919e2': 1000};
 const coinCodeKey = txt => { const k = scramble('coin|' + String(txt).toUpperCase().replace(/[^A-Z0-9]/g, '')); return COIN_CODES[k] ? k : null; };
 const isTeacherPw = pw => scramble('teacher|' + String(pw).trim()) === TEACHER_HASH;
+/* A player's whole save as one line of text, for moving between computers or keeping a spare copy */
+function packSave(id) {
+  const p = Players.all()[id]; if (!p) return '';
+  const data = {}; for (const k of USER_KEYS) { const v = Store.get(k, null, id); if (v != null) data[k] = v; }
+  return 'BOTSAVE1.' + btoa(unescape(encodeURIComponent(JSON.stringify({ p, data })))).replace(/\+/g, '-').replace(/\//g, '_');
+}
+function readSave(txt) {
+  const m = String(txt).match(/BOTSAVE1\.([A-Za-z0-9_\-=]+)/); if (!m) return null;
+  try { const o = JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g, '+').replace(/_/g, '/'))))); return o && o.p && /^[A-Za-z0-9 _-]{2,16}$/.test(String(o.p.name)) && typeof o.p.salt === 'string' && typeof o.p.hash === 'string' && o.data && typeof o.data === 'object' ? o : null; } catch (e) { return null; }
+}
+/* put a save file's player on this computer (replacing a player of the same name) */
+function restoreSave(o) {
+  const id = Players.id(o.p.name), a = Players.all(); a[id] = { name: String(o.p.name).slice(0, 16), salt: o.p.salt, hash: o.p.hash, made: o.p.made || Date.now() };
+  if (!Store.set('players', a)) return null;
+  for (const k of USER_KEYS) { if (o.data[k] != null) Store.set(k, o.data[k], id); else Store.del(k, id); }
+  return id;
+}
 const Players = {
   all() { return Store.get('players', {}); },
   id: name => String(name).trim().toLowerCase().replace(/\s+/g, ' '),

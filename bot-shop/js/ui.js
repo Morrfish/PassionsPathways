@@ -79,7 +79,8 @@ function signIn(id) {
   Store.user = id; try { sessionStorage.setItem('botshop.user', id); } catch (e) { }
   // a big update starts everyone fresh: medals, coins, bot and notebook go; name, password and own courses stay
   let fresh = false;
-  if (Store.get('sv', 0) !== SAVE_VERSION) { fresh = ['bot', 'best', 'log', 'wallet'].some(k => Store.get(k, null) != null); for (const k of ['bot', 'best', 'log', 'wallet']) Store.del(k); Store.set('sv', SAVE_VERSION); }
+  // (An earlier update cleared old saves here. Nothing is ever cleared at sign-in now: a missing marker is just written.)
+  if (Store.get('sv', 0) !== SAVE_VERSION) Store.set('sv', SAVE_VERSION);
   App.cfg = tidyBot(Object.assign({}, DEFAULT_BOT, Store.get('bot', {}))); App.lastTips = null; App.free = false;
   if (pendingCode) { const code = pendingCode; pendingCode = null; try { const c = importCourse(code); showGarage(c, 'home'); newsDialog(false); return toast(`Loaded “${c.name}”`); } catch (e) { toast('That course link did not work.'); } }
   showHome();
@@ -97,7 +98,8 @@ function showLogin(pick) {
       ? `<h2>${list.length ? 'New player' : 'Welcome! Make your player'}</h2><form id="lgF"><label>Pick a name<input type="text" id="lgName" maxlength="16" autocomplete="off" placeholder="Like RoboRosa7"></label><label>Make a password<input type="password" id="lgPw" maxlength="30" autocomplete="off"></label><label>Type it again<input type="password" id="lgPw2" maxlength="30" autocomplete="off"></label><div class="lgmsg" id="lgMsg" role="alert"></div>
         <div class="acts"><button class="go" type="submit">Create player ▶</button>${list.length ? '<button type="button" data-l="back">← Back</button>' : ''}</div></form><p class="lgnote">Use a password just for this game, not one you use anywhere else.</p>`
       : `<h2>Who is playing?</h2><div class="who">${list.map(p => `<button data-who="${p.id}"><b>${esc(p.name)}</b><small>${Players.beaten(p.id)} of ${BUILTIN.length} levels beaten</small></button>`).join('')}<button data-who="+" class="add"><b>＋ New player</b><small>Start a fresh save</small></button></div>`;
-  $('#login').innerHTML = `<div class="stripe"></div><div class="lgwrap"><h1>Bot <span>Assembly</span> Shop</h1><div class="lgbox">${body}</div><div class="ver">Version ${VERSION}</div></div>`;
+  $('#login').innerHTML = `<div class="stripe"></div><div class="lgwrap"><h1>Bot <span>Assembly</span> Shop</h1><div class="lgbox">${body}</div>${Store.works() ? '' : '<p class="lgwarn" role="alert">⚠️ This browser is not saving anything (it may be a private or guest window). Progress made here will be lost when it closes. Use a normal window, or save your progress to a file in Settings before you leave.</p>'}<p class="lgnote"><label class="lgfile">📂 Have a progress file? Load it here <input type="file" id="lgFile" accept=".txt,text/plain"></label></p><div class="ver">Version ${VERSION}</div></div>`;
+  $('#lgFile').onchange = e => { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = () => restoreDialog(String(r.result)); r.readAsText(f); } };
   const f = $('#lgF'), first = $('#lgName') || $('#lgPw'); if (first) first.focus();
   if (f) f.onsubmit = e => {
     e.preventDefault(); const pw = $('#lgPw').value, msg = t => { $('#lgMsg').textContent = t; };
@@ -118,7 +120,7 @@ function showHome() {
     const b = bestOf(c.id);
     return `<div class="card${c.boss ? ' boss' : ''}" data-id="${c.id}" tabindex="0" role="button" aria-label="Play ${esc(c.name)}">
       <canvas width="250" height="84"></canvas><div class="cb"><b>${esc(c.name)}${c.stars ? `<span class="stars" title="Difficulty ${c.stars} of 5">${'★'.repeat(c.stars)}<i>${'★'.repeat(5 - c.stars)}</i></span>` : ''}</b><p>${esc(c.desc || (custom ? 'A custom course.' : ''))}</p>
-      <div class="meta"><span>💰 $${c.budget}</span><span>${b ? MEDAL_ICON[b.medal] + ' ' + fmtT(b.time) + 's' : custom && c.par ? 'Builder: ' + fmtT(c.par) + 's' : 'Not beaten yet'}</span></div>
+      <div class="meta"><span>💰 $${c.budget}</span><span>${b ? MEDAL_ICON[b.medal] + ' ' + fmtT(b.time) + 's' : custom && c.par ? (c.vsig && c.vsig !== courseSig(c) ? 'Changed: test it again' : 'Builder: ' + fmtT(c.par) + 's') : 'Not beaten yet'}</span></div>
       ${custom ? `<div class="row"><span class="tag ${c.kind}">${c.kind}</span><span style="flex:1"></span><button class="small" data-c="edit">✏️ Edit</button><button class="small" data-c="share">🔗 Share</button><button class="small danger" data-c="del" aria-label="Delete">🗑</button></div>` : ''}</div></div>`;
   };
   const beaten = BUILTIN.filter(c => bestOf(c.id)).length;
@@ -135,6 +137,7 @@ function showHome() {
     ${sect('portal', 'Portal courses', 'Purple ring in, orange ring out.', 'portal')}
     ${sect('maze', 'Mazes', 'Dark, many floors, and a battery that never stops draining.', 'maze')}
     <div class="sect"><h2><span class="tag boss">legendary</span>The final five<small>Long, mean, and short on checkpoints. ${Wallet.get().sec.boss ? '✔ Bonus earned.' : 'Finish them all for a <b style="color:var(--y)">$800</b> bonus.'}</small></h2><div class="cards">${BUILTIN.filter(c => c.boss).map(c => card(c)).join('')}</div></div>
+    ${Store.failed || !Store.works() ? '<p class="lgwarn" role="alert">⚠️ This computer did not save your last change. Open ⚙️ Settings and press <b>Save my progress to a file</b> so nothing is lost.</p>' : ''}
     ${tasksHTML()}
     <div class="sect"><h2>🛠️ My courses<small>Build your own and dare a friend to beat it.</small></h2><div class="cards">
       <div class="card new" data-h="new" tabindex="0" role="button"><div style="font-size:34px">＋</div>Build a course</div>
@@ -157,9 +160,11 @@ function settings() {
   modal(`<h2>⚙️ Settings</h2>
     <label class="chk"><input type="checkbox" id="sSound" ${soundOn ? 'checked' : ''}> Sound effects</label>
     <div class="acts" style="margin-top:10px"><button id="sMine">Reset my medals and best times</button><button id="sMyPw">Change my password</button></div>
+    <h3 style="margin-top:20px">💾 My progress</h3><p style="margin:4px 0 10px">Your progress lives in this browser on this computer. Save a copy to a file so you can bring it back, or move to another computer.</p><div class="acts"><button id="sBackup" class="primary">💾 Save my progress to a file</button></div>
     <h3 style="margin-top:20px">🍎 Teacher area ${teacherOpen ? '<small style="color:var(--g);font-size:13px">unlocked</small>' : ''}</h3>${teacher}
     <div class="acts"><button class="primary" data-m="x" data-focus>Done</button></div>`);
   $('#sSound').onchange = e => { soundOn = e.target.checked; Store.set('sound', soundOn); };
+  $('#sBackup').onclick = backupFile;
   $('#sMine').onclick = () => { if (confirm('Erase your medals and best times? Your bot and courses stay.')) { Store.set('best', {}); closeModal(); showHome(); } };
   $('#sMyPw').onclick = () => askText({ title: 'Change my password', text: 'Type your password now.', type: 'password', cancel: settings }, old => {
     if (!Players.check(Store.user, old)) { toast('That is not your password.'); return settings(); }
@@ -263,6 +268,23 @@ function importDialog() {
   modal(`<h2>Load a course code</h2><p>Paste a code that starts with <b>BOT1.</b></p><textarea id="impTxt" data-focus aria-label="Paste course code"></textarea><p>Or pick a saved course file: <input type="file" id="impFile" accept=".txt,text/plain" aria-label="Course file"></p><div class="acts"><button class="primary" id="impGo">Load course</button><button data-m="x">Cancel</button></div>`);
   $('#impFile').onchange = e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { $('#impTxt').value = (String(r.result).match(/BOT1\.[A-Za-z0-9_\-]+/) || [''])[0]; if (!$('#impTxt').value) toast('That file has no course in it.'); else $('#impGo').click(); }; r.readAsText(f); };
   $('#impGo').onclick = () => { try { const c = importCourse($('#impTxt').value); closeModal(); showHome(); toast(`Loaded “${c.name}”`); } catch (e) { toast('That code did not work. Check you copied all of it.'); } };
+}
+
+/* ================= Progress files ================= */
+function backupFile() {
+  const who = myName(), safe = t => t.replace(/[\\/:*?"<>|]+/g, ' ').trim(), file = `Bot Shop progress - ${safe(who)}.txt`;
+  const txt = `Bot Assembly Shop progress file\r\nPlayer: ${who}\r\nSaved: ${new Date().toLocaleString()}\r\n\r\nTo use it: on the Bot Assembly Shop sign-in screen choose "Have a progress file? Load it here" and pick this file. You will need this player's password.\r\n\r\n${packSave(Store.user)}\r\n`;
+  const el = document.createElement('a'); el.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' })); el.download = file; document.body.appendChild(el); el.click(); setTimeout(() => { URL.revokeObjectURL(el.href); el.remove(); }, 2000);
+  modal(`<h2>💾 Progress saved</h2><p>Your file is called</p><p style="font-size:18px;color:var(--ink)"><b>${esc(file)}</b></p><p>It is in this computer's <b>Downloads</b> folder. Keep it somewhere safe, like your Google Drive. It holds your medals, coins, bots and courses.</p><div class="acts"><button class="primary" data-m="x" data-focus>OK</button></div>`);
+}
+function restoreDialog(txt) {
+  const o = readSave(txt); if (!o) return toast('That is not a Bot Assembly Shop progress file.');
+  const id = Players.id(o.p.name), here = Players.all()[id];
+  askText({ title: `Load ${o.p.name}'s progress`, text: `Type ${esc(o.p.name)}'s password.${here ? ' <b>This replaces the ' + esc(o.p.name) + ' already on this computer</b> with what is in the file.' : ''}`, type: 'password', label: 'Password', ok: 'Load progress', cancel: () => showLogin() }, pw => {
+    if (scramble(o.p.salt + '|' + pw) !== o.p.hash) { toast('That is not the right password for this file.'); return showLogin(); }
+    const nid = restoreSave(o); if (!nid) { toast('This computer could not save the file.'); return showLogin(); }
+    signIn(nid); toast(`Welcome back, ${o.p.name}! Progress loaded.`);
+  });
 }
 
 /* ================= Course assignments ================= */
@@ -561,7 +583,7 @@ function showResult() {
       { const golds = goldCount(best), sets = Math.floor(golds / GOLD_SET); if (sets > w.gold) { const n = sets - w.gold; w.gold = sets; w.coins += n * GOLD_BONUS; extra += `<p class="pay">🥇 ${sets * GOLD_SET} gold medals! Bonus: +$${n * GOLD_BONUS}</p>`; } else if (medal === 'gold') extra += `<p style="font-size:13px">🥇 ${golds} gold medal${golds === 1 ? '' : 's'}. ${GOLD_SET - golds % GOLD_SET} more for a $${GOLD_BONUS} bonus.</p>`; }
       Wallet.save(w); extra += `<p style="font-size:13px">You have $${w.coins}. Spend it in the Store.</p>`;
     }
-    if (!c.builtin) { const mine = loadMyCourses().find(m => m.id === c.id); if (mine && App.from === 'editor' && (!c.par || d.time < c.par)) { c.par = +d.time.toFixed(2); saveMyCourse(c); extra += '<p>✔ Course verified! Your time is now the time to beat.</p>'; const w = Wallet.get(); if (!w.made[c.id]) { w.made[c.id] = 1; w.coins += 40; Wallet.save(w); extra += '<p class="pay">🪙 +$40 for building a course that can be beaten</p>'; } } }
+    if (!c.builtin) { const mine = loadMyCourses().find(m => m.id === c.id); const sig = courseSig(c), changed = !!c.par && c.vsig !== sig; if (mine && App.from === 'editor' && (!c.par || changed || d.time < c.par)) { c.par = +d.time.toFixed(2); c.vsig = sig; saveMyCourse(c); if (changed) { const bb = Store.get('best', {}); bb[c.id] = { time: d.time, medal }; Store.set('best', bb); } extra += changed ? '<p>✔ You changed the course, so this is its new time to beat.</p>' : '<p>✔ Course verified! Your time is now the time to beat.</p>'; const w = Wallet.get(); if (!w.made[c.id]) { w.made[c.id] = 1; w.coins += 40; Wallet.save(w); extra += '<p class="pay">🪙 +$40 for building a course that can be beaten</p>'; } } }
     if (!c.builtin && App.from === 'editor' && taskOf(c)) { c.vsig = courseSig(c); saveMyCourse(c); extra += taskDone(c) ? '<p class="pay">📋 Assignment complete! Go to the home screen and press 💾 Save file.</p>' : '<p>📋 Test passed. Check the Assignment list for what is still missing.</p>'; }
     extra = `<div class="res"><div class="big">${MEDAL_ICON[medal]}</div><div><div class="tm">${fmtT(d.time)}s</div>${G.penalties ? `<div style="color:var(--o);font-size:13px">includes +${G.penalties}s for ${G.resets} reset${G.resets > 1 ? 's' : ''}</div>` : ''}</div></div>` + extra;
   }
@@ -847,6 +869,7 @@ function frame(ts) {
   requestAnimationFrame(frame);
 }
 soundOn = Store.get('sound', false);
+try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => { }); } catch (e) { }
 (function boot() {
   const m = location.hash.match(/#c=(BOT1\.[A-Za-z0-9_\-]+)/);
   if (m) { pendingCode = m[1]; history.replaceState(null, '', location.pathname + location.search); }
