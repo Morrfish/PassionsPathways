@@ -1,0 +1,44 @@
+# Builds the Pathway CAD Windows exe.
+# The exe is kept as a build artifact on the run page: only people signed in
+# to GitHub with access to this repo can download it. Nothing is published.
+name: Pathway CAD exe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'cad-studio/**'
+      - '.github/workflows/pathway-cad-exe.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pathway-cad-exe
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build the web app
+        working-directory: cad-studio
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+      - name: Build the exe
+        working-directory: cad-studio/desktop
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PathwayCAD
+          path: cad-studio/desktop/dist/PathwayCAD.exe
+          retention-days: 90
+          compression-level: 0

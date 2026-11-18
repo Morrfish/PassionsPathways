@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pathway CAD</title>
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="titlebar">
+  <div class="brand"><img src="assets/icon-256.png" alt="" width="28" height="28">Pathway<b>CAD</b></div>
+  <input id="docName" title="Part name" spellcheck="false">
+  <nav id="tabs"></nav>
+</header>
+<div id="ribbon"></div>
+<main>
+  <aside id="browser">
+    <div class="phead">Model</div>
+    <div id="tree"></div>
+  </aside>
+  <section id="viewWrap">
+    <div id="view3d"></div>
+    <div id="dimLayer"></div>
+    <div id="drawWrap" hidden></div>
+    <div id="cmdPanel" class="panel" hidden></div>
+    <div id="sketchPanel" class="panel" hidden></div>
+    <div id="navcube">
+      <button data-v="top" title="Top view">Top</button>
+      <button data-v="front" title="Front view">Front</button>
+      <button data-v="right" title="Right view">Right</button>
+      <button data-v="home" title="Home view (F6)">⌂</button>
+      <button data-v="fit" title="Zoom all">⤢</button>
+    </div>
+    <div id="busy" hidden><span></span>rebuilding</div>
+    <div id="loading"><img class="loadlogo" src="assets/logo.png" alt="Pathway CAD"><div class="spin"></div><p>Loading the modeling engine…</p></div>
+  </section>
+</main>
+<footer id="status"><span id="statusMsg">Loading…</span><span id="statusRight"></span></footer>
+<div id="toasts"></div>
+<div id="modal" hidden></div>
+<div id="printSheet"></div>
+<script type="module" src="app.js"></script>
+<script>
+  document.getElementById('navcube').addEventListener('click', function (e) {
+    var v = e.target.dataset && e.target.dataset.v; if (!v || !window.pathwayCad) return;
+    if (v === 'fit') window.pathwayCad.vp.fit(); else window.pathwayCad.vp.setView(v);
+  });
+</script>
+</body>
+</html>

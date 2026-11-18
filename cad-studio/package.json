@@ -1,0 +1,16 @@
+{
+  "name": "pathway-cad",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Pathway CAD: a student 3D part modeler.",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.10",
+    "replicad": "1.2.1",
+    "replicad-opencascadejs": "1.2.1",
+    "three": "0.180.0"
+  }
+}
