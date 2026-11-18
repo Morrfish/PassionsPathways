@@ -216,6 +216,8 @@ up
   const clampX = x => Math.max(XMIN, Math.min(XMAX, x)), clampZ = z => Math.max(ZMIN, Math.min(ZMAX, z));
   // drop a toy at (x,z) and let it roll a little downhill, like it would in a real machine
   function settleSpot(x, z, others) {
+    // never let a toy land in the chute (only a win goes in there)
+    if (inChute(x, z)) { x = Math.max(x, wx(0) + 0.5 + PR * 0.75); z = Math.min(z, wz(0) - 0.5 - PR * 0.75); }
     let best = { x, z, y: restY(x, z, others) };
     for (let it = 0; it < 7; it++) {
       let moved = false;
@@ -323,12 +325,19 @@ up
       ['Holding', held ? held.prize.emoji + ' ' + held.prize.name : 'nothing']
     ]);
   }
+  // where every toy was when the last program started (Reset puts them back there)
+  let snapshot = new Map();
+  function takeSnapshot() {
+    snapshot = new Map(items.map(it => [it, { x: it.x, y: it.y, z: it.z, rx: it.g.rotation.x }]));
+  }
   function resetClaw() {
-    if (held) {
-      const it = held; held = null;
-      const s = settleSpot(it.x, it.z, items.filter(o => o !== it));
-      Object.assign(it, s); it.g.position.set(s.x, s.y, s.z);
-    }
+    held = null;
+    items.forEach(it => {
+      const s = snapshot.get(it);
+      if (s) { it.x = s.x; it.y = s.y; it.z = s.z; it.g.rotation.x = s.rx; }
+      else Object.assign(it, settleSpot(it.x, it.z, items.filter(o => o !== it)));
+      it.g.position.set(it.x, it.y, it.z);
+    });
     Object.assign(S, { c: 0, r: 0, y: TOP_Y, open: 0, isDown: false, isOpen: false });
     place(); hud(); stage.want('front');
   }
@@ -480,7 +489,7 @@ up
         <span class="chip" style="background:#10132a;padding:6px 10px;border-radius:9px;font-weight:700">Shelf: ${shelfCount()}/${PRIZES.length}</span>
         <button class="refill">🎲 New prizes</button>
       </div>`;
-    sh.mission.querySelector('.refill').onclick = () => { if (sh.running) return; resetClaw(); fill(); sh.toast('The machine is full of new prizes!'); };
+    sh.mission.querySelector('.refill').onclick = () => { if (sh.running) return; held = null; fill(); takeSnapshot(); resetClaw(); sh.toast('The machine is full of new prizes!'); };
   }
 
   /* ---------------- tap a prize to peek ---------------- */
@@ -495,7 +504,7 @@ up
   /* ---------------- wire up ---------------- */
   RA.attachRunner(sh, {
     commands, hints,
-    beforeRun() { stage.want('front'); },
+    beforeRun() { stage.want('front'); if (!held) takeSnapshot(); },
     async exec(st) {
       switch (st.name) {
         case 'left': case 'right': case 'back': case 'front': return move(st.name, st.n);
@@ -513,9 +522,9 @@ up
         else sh.log('✔ Program finished.', 'info');
       }
     },
-    reset() { resetClaw(); sh.log('The claw went back to the chute.', 'info'); }
+    reset() { resetClaw(); sh.log('The claw went back to the chute, and every prize went back to where it was.', 'info'); }
   }, { noRepeat: false });
 
-  fill(); resetClaw(); renderMission();
+  fill(); takeSnapshot(); resetClaw(); renderMission();
   RA.debug = { items: () => items.map(i => ({ name: i.prize.name, c: Math.round(i.x - wx(0)), r: Math.round(wz(0) - i.z), y: i.y })) };
 })();
