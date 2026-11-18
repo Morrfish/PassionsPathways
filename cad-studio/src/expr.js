@@ -104,5 +104,5 @@ export function tryEval(src, params) {
 // Format a number for a dimension field.
 export function fmt(n) {
   if (!Number.isFinite(n)) return '';
-  return String(Math.round(n * 1000) / 1000);
+  return String(Math.round(n * 10000) / 10000);
 }

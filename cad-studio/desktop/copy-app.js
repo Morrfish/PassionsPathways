@@ -7,5 +7,6 @@ for (const f of ['index.html', 'app.js', 'worker.js', 'style.css', 'replicad_sin
   if (!fs.existsSync(path.join(src, f))) throw new Error(`Missing ${f}: run "npm run build" in cad-studio first`);
   fs.copyFileSync(path.join(src, f), path.join(out, f));
 }
+fs.cpSync(path.join(src, 'assets'), path.join(out, 'assets'), { recursive: true });
 fs.cpSync(path.join(src, 'licenses'), path.join(__dirname, 'licenses'), { recursive: true });
 console.log('app copied');

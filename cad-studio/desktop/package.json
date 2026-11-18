@@ -13,7 +13,7 @@
   "build": {
     "appId": "org.passionspathways.pathwaycad",
     "files": ["main.js", "app/**", "licenses/**"],
-    "win": { "target": "portable", "signAndEditExecutable": false },
+    "win": { "target": "portable", "signAndEditExecutable": false, "icon": "app/assets/icon.ico" },
     "portable": { "artifactName": "PathwayCAD.exe" },
     "directories": { "output": "dist" }
   },

@@ -5,6 +5,7 @@ import { evaluate, fmt } from './expr.js';
 
 const C = { line: 0x16457a, cons: 0xd9822b, sel: 0xe8590c, hover: 0x12a39a, err: 0xd62f2f, open: 0xd62f2f, pt: 0x16457a, fill: 0x2ec4b6, preview: 0x12a39a };
 const r3 = (n) => Math.round(n * 1000) / 1000;
+const r4 = (n) => Math.round(n * 100000) / 100000;
 const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
 const isNum = (x) => typeof x === 'number' || (typeof x === 'string' && /^\s*-?\d*\.?\d+(e-?\d+)?\s*$/i.test(x));
 const num = (x, P) => { try { return evaluate(x, P); } catch { return NaN; } };
@@ -117,8 +118,9 @@ export class Sketcher {
   }
   gridStep() {
     const px = this.vp.pixelSize();
-    for (const s of [0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500]) if (s / px >= 14) return s;
-    return 1000;
+    const steps = this.app.units() === 'in' ? [0.0625, 0.125, 0.25, 0.5, 1, 2, 5, 10, 20] : [0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500];
+    for (const s of steps) if (s / px >= 14) return s;
+    return steps[steps.length - 1] * 2;
   }
   snapPoints() {
     const out = [{ p: [0, 0], kind: 'origin' }];
@@ -143,14 +145,14 @@ export class Sketcher {
     if (best) return { p: [...best.p], kind: best.kind };
     let q = [...p];
     let kind = null;
-    if (this.gridOn && !(ev && ev.altKey)) { const g = this.gridStep() / 2; q = [Math.round(q[0] / g) * g, Math.round(q[1] / g) * g]; }
+    if (this.gridOn && !(ev && ev.altKey)) { const g = this.gridStep() / (this.app.units() === 'in' ? 1 : 2); q = [Math.round(q[0] / g) * g, Math.round(q[1] / g) * g]; }
     if (from) {
       const dx = q[0] - from[0], dy = q[1] - from[1];
       const ang = Math.abs((Math.atan2(dy, dx) * 180) / Math.PI);
       if (Math.abs(dy) < 1e-9 || ang < 4 || ang > 176) { q[1] = from[1]; kind = 'horizontal'; }
       else if (Math.abs(ang - 90) < 4) { q[0] = from[0]; kind = 'vertical'; }
     }
-    return { p: [r3(q[0]), r3(q[1])], kind };
+    return { p: [r4(q[0]), r4(q[1])], kind };
   }
 
   // ----- hit testing on entities -----

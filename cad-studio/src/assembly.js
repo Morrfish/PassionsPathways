@@ -10,7 +10,8 @@ const clone = (o) => JSON.parse(JSON.stringify(o));
 const r4 = (n) => Math.round(n * 10000) / 10000;
 const V = (a) => new THREE.Vector3(a[0], a[1], a[2]);
 const num = (x) => { try { return evaluate(x, {}); } catch { return 0; } };
-export const UNIT_MM = { mm: 1, in: 25.4 };
+import { UNIT_MM } from './units.js';
+export { UNIT_MM };
 
 export const CONSTRAINT_INFO = {
   mate: { label: 'Mate', icon: 'mate', help: 'Puts two flat faces against each other, facing opposite ways (like a part sitting on a table).', want: 'plane' },

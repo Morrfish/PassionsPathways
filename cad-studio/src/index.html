@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pathway CAD</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 8l8-4 8 4v8l-8 4-8-4z' fill='%231b9aaa'/%3E%3Cpath d='M4 8l8 4 8-4M12 12v8' stroke='white' fill='none'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="titlebar">
-  <div class="brand"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 8l8-4 8 4v8l-8 4-8-4z" fill="#2ec4b6"/><path d="M4 8l8 4 8-4M12 12v8" stroke="#0e3b43" stroke-width="1.4" fill="none"/></svg>Pathway <b>CAD</b></div>
+  <div class="brand"><img src="assets/icon-256.png" alt="" width="28" height="28">Pathway<b>CAD</b></div>
   <input id="docName" title="Part name" spellcheck="false">
   <nav id="tabs"></nav>
 </header>
@@ -32,7 +32,7 @@
       <button data-v="fit" title="Zoom all">⤢</button>
     </div>
     <div id="busy" hidden><span></span>rebuilding</div>
-    <div id="loading"><div class="spin"></div><p>Loading the modeling engine…</p></div>
+    <div id="loading"><img class="loadlogo" src="assets/logo.png" alt="Pathway CAD"><div class="spin"></div><p>Loading the modeling engine…</p></div>
   </section>
 </main>
 <footer id="status"><span id="statusMsg">Loading…</span><span id="statusRight"></span></footer>

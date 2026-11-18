@@ -13,7 +13,7 @@ const ROOT = path.join(__dirname, 'app');
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1440, height: 900, minWidth: 980, minHeight: 620, backgroundColor: '#eef1f4', title: 'Pathway CAD',
+    width: 1440, height: 900, minWidth: 980, minHeight: 620, backgroundColor: '#eef1f4', title: 'Pathway CAD', icon: path.join(ROOT, 'assets', 'icon-256.png'),
     webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true },
   });
   Menu.setApplicationMenu(null);

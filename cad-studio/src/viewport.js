@@ -5,7 +5,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 THREE.Object3D.DEFAULT_UP.set(0, 0, 1);
 
 export const COLORS = {
-  edge: 0x1f2a33, hoverFace: 0x2ec4b6, hoverEdge: 0xff8c1a, selFace: 0x1b9aaa, selEdge: 0xe8590c,
+  edge: 0x1f2a33, hoverFace: 0x1cc0e6, hoverEdge: 0xf58a1f, selFace: 0x0596bd, selEdge: 0xe86a00,
   planeXY: 0x4c8bf5, planeXZ: 0x39b26b, planeYZ: 0xe5534b,
 };
 

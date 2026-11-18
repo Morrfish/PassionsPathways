@@ -1,3 +1,5 @@
+<img src="assets/logo.png" alt="Pathway CAD" width="420">
+
 # Pathway CAD
 
 A 3D part modeler for students, in the style of professional parametric CAD tools: sketch, extrude, add details, then export for 3D printing. Open `index.html` from a web server (the GitHub Pages site works), or run the Windows app. It works offline once loaded, with no accounts.

@@ -6,6 +6,7 @@ import { evalSketch, buildLoops } from './sketch.js';
 import { icon } from './icons.js';
 import { EXAMPLES, ASM_EXAMPLES } from './examples.js';
 import { Assembler, ASM_COMMANDS, newAssembly } from './assembly.js';
+import { UNIT_MM, UNIT_NAMES, nice, lengthParams, convertPart, convertAssembly } from './units.js';
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -44,7 +45,7 @@ const AXIS_OPTS = [['X', 'X axis (red)'], ['Y', 'Y axis (green)'], ['Z', 'Z axis
 const PLANE_OPTS = [['YZ', 'YZ plane (flip left/right)'], ['XZ', 'XZ plane (flip front/back)'], ['XY', 'XY plane (flip up/down)']];
 
 export function newDoc() {
-  return { app: 'Pathway CAD', version: 1, name: 'Part1', material: 'pla', color: '#8fb3c9', params: [], features: [], rollback: null, nextId: 1 };
+  return { app: 'Pathway CAD', version: 1, name: 'Part1', units: 'mm', material: 'pla', color: '#8fb3c9', params: [], features: [], rollback: null, nextId: 1 };
 }
 
 class App {
@@ -226,6 +227,8 @@ class App {
     this.rebuild();
     if (!keepView) this.vp.setView('home');
   }
+  units() { return (this.mode === 'assembly' ? this.asm.units : this.doc.units) || 'mm'; }
+
   // ---------- assemblies ----------
   blankPart() { return newDoc(); }
   leaveAssembly() {
@@ -594,7 +597,7 @@ class App {
     if (this.mode === 'assembly') {
       if (!this.asm.components.length) return this.toast('Place some parts first.', 'error');
       this.toast(`Making the ${format.toUpperCase()} file for the whole assembly…`);
-      const k = format === 'stl' || format === 'step' ? 25.4 / 25.4 * ({ mm: 1, in: 25.4 }[this.asm.units || 'mm']) : 1;
+      const k = UNIT_MM[this.asm.units || 'mm'];
       const comps = this.asm.components.filter((c) => !c.hidden).map((c) => ({ id: c.id, part: c.part, pos: c.pos.map((v) => v * k), quat: c.quat }));
       const m = await this.send({ type: 'exportAsm', format, parts: this.asm.parts, comps });
       if (m.type === 'error') return this.toast('Export failed: ' + m.msg, 'error');
@@ -687,7 +690,7 @@ const COMMANDS = {
     if (!sketches.length) { app.toast('Make a sketch first (Model > Sketch).', 'error'); return null; }
     const unused = sketches.filter((s) => !app.doc.features.some((f) => f.sketch === s.id));
     const hasBody = hasBodyBefore(app, t.editIndex);
-    const f = t.feature || { id: app.newId(), type: 'extrude', name: app.nextName('extrude'), sketch: (arg && arg.sketch) || (unused[unused.length - 1] || sketches[sketches.length - 1]).id, distance: 10, extent: 'distance', direction: 'normal', op: hasBody ? 'join' : 'new', taper: 0 };
+    const f = t.feature || { id: app.newId(), type: 'extrude', name: app.nextName('extrude'), sketch: (arg && arg.sketch) || (unused[unused.length - 1] || sketches[sketches.length - 1]).id, distance: nice(10, app.units()), extent: 'distance', direction: 'normal', op: hasBody ? 'join' : 'new', taper: 0 };
     return {
       title: t.editIndex != null ? 'Edit ' + f.name : 'Extrude',
       help: 'Pushes a closed sketch shape out into a solid. Use "Remove material" to cut pockets and holes.',
@@ -732,7 +735,7 @@ const COMMANDS = {
   hole(app, arg) {
     const t = editTarget(app, arg);
     if (!hasBodyBefore(app, t.editIndex)) { app.toast('Make a solid first, then put holes in it.', 'error'); return null; }
-    const f = t.feature || { id: app.newId(), type: 'hole', name: app.nextName('hole'), origin: null, normal: null, diameter: 5, extent: 'through', depth: 10, style: 'simple', cbDiameter: 9, cbDepth: 3 };
+    const f = t.feature || { id: app.newId(), type: 'hole', name: app.nextName('hole'), origin: null, normal: null, diameter: nice(5, app.units()), extent: 'through', depth: nice(10, app.units()), style: 'simple', cbDiameter: nice(9, app.units()), cbDepth: nice(3, app.units()) };
     const cmd = {
       title: t.editIndex != null ? 'Edit ' + f.name : 'Hole',
       help: 'Click a flat face where the hole should go. Then type exact X, Y, Z numbers if you need to.',
@@ -766,7 +769,8 @@ const COMMANDS = {
     const t = editTarget(app, arg);
     const shape = (arg && arg.shape) || (t.feature && t.feature.shape) || 'box';
     const hasBody = hasBodyBefore(app, t.editIndex);
-    const defaults = { box: { w: 40, d: 30, h: 20 }, cylinder: { diameter: 30, h: 40, axis: 'Z' }, sphere: { diameter: 40 } };
+    const U = app.units();
+    const defaults = { box: { w: nice(40, U), d: nice(30, U), h: nice(20, U) }, cylinder: { diameter: nice(30, U), h: nice(40, U), axis: 'Z' }, sphere: { diameter: nice(40, U) } };
     const names = { box: 'Box', cylinder: 'Cylinder', sphere: 'Sphere' };
     const f = t.feature || { id: app.newId(), type: 'primitive', shape, name: names[shape] + (app.doc.features.filter((x) => x.shape === shape).length + 1), ...defaults[shape], x: 0, y: 0, z: 0, op: hasBody ? 'join' : 'new' };
     return {
@@ -794,7 +798,7 @@ const COMMANDS = {
   shell(app, arg) {
     const t = editTarget(app, arg);
     if (!hasBodyBefore(app, t.editIndex)) { app.toast('Make a solid first.', 'error'); return null; }
-    const f = t.feature || { id: app.newId(), type: 'shell', name: app.nextName('shell'), thickness: 2, faces: [] };
+    const f = t.feature || { id: app.newId(), type: 'shell', name: app.nextName('shell'), thickness: nice(2, app.units()), faces: [] };
     const sel = () => matchIndices(app.vp.desc && app.vp.desc.faces, f.faces, 'center');
     return {
       title: t.editIndex != null ? 'Edit ' + f.name : 'Shell',
@@ -827,7 +831,7 @@ const COMMANDS = {
     if (!feats.length) { app.toast('Make a feature to copy first (an extrusion, revolution, hole or shape).', 'error'); return null; }
     const last = [feats[feats.length - 1].id];
     const names = { rect: 'Rectangular Pattern', circ: 'Circular Pattern', mirror: 'Mirror' };
-    const base = { rect: { d1: 'X', n1: 3, s1: 20, d2: 'Y', n2: 1, s2: 20 }, circ: { axis: 'Z', n: 6, angle: 360 }, mirror: { plane: 'YZ' } };
+    const base = { rect: { d1: 'X', n1: 3, s1: nice(20, app.units()), d2: 'Y', n2: 1, s2: nice(20, app.units()) }, circ: { axis: 'Z', n: 6, angle: 360 }, mirror: { plane: 'YZ' } };
     let nm = names[kind].replace(/ /g, '');
     let k = 1; while (app.doc.features.some((x) => x.name === nm + k)) k++;
     const f = t.feature || { id: app.newId(), type: 'pattern', kind, name: nm + k, features: last, ...base[kind] };
@@ -892,10 +896,10 @@ const COMMANDS = {
           const e = ends.find((q) => dist(q, p) < px);
           if (e) p = e;
           const len = pl.reduce((s, q, i) => (i ? s + dist(q, pl[i - 1]) : 0), 0);
-          extra = `Edge length: <b>${fmt(len)} mm</b>`;
+          extra = `Edge length: <b>${fmt(len)} ${app.units()}</b>`;
           if (d.edges[hit.index].type === 'CIRCLE' && pl.length > 3) {
             const c = circleFrom3(pl[0], pl[Math.floor(pl.length / 3)], pl[Math.floor((2 * pl.length) / 3)]);
-            if (c) extra += `<br>Round edge: <b>Ø ${fmt(2 * c.r)} mm</b> (radius ${fmt(c.r)})`;
+            if (c) extra += `<br>Round edge: <b>Ø ${fmt(2 * c.r)} ${app.units()}</b> (radius ${fmt(c.r)})`;
           }
         }
         if (pts.length >= 2) pts.length = 0;
@@ -903,7 +907,7 @@ const COMMANDS = {
         if (pts.length === 1) info = `First point: (${pts[0].map(fmt).join(', ')})<br>${extra}<br>Now click a second point.`;
         else {
           const [a, b] = pts;
-          info = `Distance: <b class="big">${fmt(dist(a, b))} mm</b><br>X: ${fmt(Math.abs(b[0] - a[0]))} &nbsp; Y: ${fmt(Math.abs(b[1] - a[1]))} &nbsp; Z: ${fmt(Math.abs(b[2] - a[2]))}<br>${extra}<br><span class="muted">Click again to start a new measurement.</span>`;
+          info = `Distance: <b class="big">${fmt(dist(a, b))} ${app.units()}</b><br>X: ${fmt(Math.abs(b[0] - a[0]))} &nbsp; Y: ${fmt(Math.abs(b[1] - a[1]))} &nbsp; Z: ${fmt(Math.abs(b[2] - a[2]))}<br>${extra}<br><span class="muted">Click again to start a new measurement.</span>`;
         }
         app.ui.refreshCmd();
         app.refreshHighlights();
@@ -920,7 +924,7 @@ const COMMANDS = {
 function edgeCmd(app, arg, type) {
   const t = editTarget(app, arg);
   if (!hasBodyBefore(app, t.editIndex)) { app.toast('Make a solid first.', 'error'); return null; }
-  const f = t.feature || { id: app.newId(), type, name: app.nextName(type), radius: type === 'fillet' ? 2 : 1, allEdges: false, edges: [] };
+  const f = t.feature || { id: app.newId(), type, name: app.nextName(type), radius: nice(type === 'fillet' ? 2 : 1, app.units()), allEdges: false, edges: [] };
   const sel = () => matchIndices(app.vp.desc && app.vp.desc.edges, f.edges, 'mid');
   const word = type === 'fillet' ? 'round' : 'bevel';
   return {
@@ -994,6 +998,7 @@ class UI {
       file: [
         ['File', [['new', 'New Part', () => a.newFile()], ['assembly', 'New Assembly', () => a.newAssemblyFile()], ['open', 'Open', () => a.openFile(), 'Ctrl+O'], ['save', 'Save', () => a.saveFile(), 'Ctrl+S'], ...(a.asm && a.editPid ? [['save', 'Save part only', () => a.saveFile(true)]] : [])]],
         ['Export', [['stl', 'STL (3D print)', () => a.exportFile('stl')], ['stl', 'STEP (other CAD)', () => a.exportFile('step')], ['camera', 'Picture', () => a.screenshot()]]],
+        ['Setup', [['units', 'Units', () => this.openUnits()]]],
         ['Learn', [['examples', 'Examples', () => this.openExamples()], ['help', 'How to', () => this.openHelp()]]],
       ],
       model: [
@@ -1183,7 +1188,8 @@ class UI {
     const target = cmd.target || cmd.feature || cmd.draft || {};
     const P = a.params();
     let html = `<div class="cmdhead"><span>${esc(cmd.title)}</span><button class="x" data-act="cancel" title="Cancel (Esc)">×</button></div><div class="cmdhelp">${esc(cmd.help)}</div><div class="cmdbody">`;
-    const fields = cmd.fields ? cmd.fields() : [];
+    const U = a.units();
+    const fields = (cmd.fields ? cmd.fields() : []).map((fd) => (fd && fd.label && U !== 'mm' ? { ...fd, label: fd.label.replace('(mm)', `(${U})`) } : fd));
     fields.forEach((fd, i) => {
       if (fd.type === 'note') html += `<div class="note">${esc(fd.text)}</div>`;
       else if (fd.type === 'html') html += `<div class="note">${fd.html}</div>`;
@@ -1276,7 +1282,7 @@ class UI {
     const bad = (sk.evals || []).filter((x) => x.err);
     el.innerHTML = `${n ? `<span class="good">✔ ${n} closed shape${n > 1 ? 's' : ''}</span>` : '<span class="muted">No closed shape yet</span>'}${sk.openEnds ? ` · <span class="bad">${sk.openEnds} open chain${sk.openEnds > 1 ? 's' : ''} (red dots)</span>` : ''}${bad.length ? ` · <span class="bad">${esc(bad[0].err)}</span>` : ''}`;
   }
-  setGridStep(s) { const el = $('#gridStep'); if (el) el.textContent = this.app.sk.gridOn ? `grid ${s} mm` : 'grid off'; }
+  setGridStep(s) { const el = $('#gridStep'); if (el) el.textContent = this.app.sk.gridOn ? `grid ${fmt(s)} ${this.app.units()}` : 'grid off'; }
   renderSketchPanel() {
     const a = this.app, sk = a.sk, f = a.sketchFeature();
     if (!f) return;
@@ -1299,7 +1305,7 @@ class UI {
     } else if (sel.length > 1) html += `<div class="note">${sel.length} items picked. Press Delete to remove them, or X for construction.</div>`;
     else html += `<div class="note muted">${esc(TOOL_TIPS[sk.tool] || '')}</div>`;
     const off = f.offset ?? 0, ro = tryEval(off, P);
-    html += `<details class="planeopts"><summary>Sketch plane</summary><label class="fld"><span>Offset from plane (mm)</span><input id="planeOff" value="${esc(off)}"><em class="${ro.ok ? '' : 'bad'}">${ro.ok ? '' : esc(ro.err)}</em></label></details>`;
+    html += `<details class="planeopts"><summary>Sketch plane</summary><label class="fld"><span>Offset from plane (${a.units()})</span><input id="planeOff" value="${esc(off)}"><em class="${ro.ok ? '' : 'bad'}">${ro.ok ? '' : esc(ro.err)}</em></label></details>`;
     html += `</div><div class="cmdfoot"><span id="gridStep" class="muted"></span><button class="ok" id="finishBtn">${icon('finish', 16)} Finish Sketch</button></div>`;
     const p = $('#sketchPanel');
     const focused = document.activeElement && p.contains(document.activeElement) ? document.activeElement.dataset.k : null;
@@ -1395,6 +1401,40 @@ class UI {
     draw();
   }
 
+  // ----- units -----
+  openUnits() {
+    const a = this.app, isAsm = a.mode === 'assembly';
+    const d = isAsm ? a.asm : a.doc;
+    const cur = d.units || 'mm';
+    const lp = isAsm ? new Set() : lengthParams(d);
+    const params = isAsm ? [] : d.params;
+    this.modal(`<h2>${icon('units', 22)} Units for ${esc(d.name)}</h2>
+      <p>${isAsm ? 'Positions and gaps in this assembly use these units. Each part keeps its own units and is sized correctly when placed.' : 'Every size you type in this part uses these units. Exported STL and STEP files are always in millimetres, which is what 3D printers and other CAD programs expect.'}</p>
+      ${Object.entries(UNIT_NAMES).map(([k, n]) => `<label class="chk"><input type="radio" name="un" value="${k}" ${k === cur ? 'checked' : ''}> ${n}</label>`).join('')}
+      <label class="chk"><input type="checkbox" id="unConv" checked> Convert the sizes so the ${isAsm ? 'assembly' : 'part'} stays the same real size</label>
+      ${params.length ? `<div class="fld" id="unParams"><span>Parameters to convert (tick the ones that are lengths)</span><div class="multi">${params.map((p) => `<label class="chk"><input type="checkbox" data-p="${esc(p.name)}" ${lp.has(p.name) ? 'checked' : ''}> ${esc(p.name)} = ${esc(p.expr)}</label>`).join('')}</div></div>` : ''}
+      <p class="muted">Untick "Convert" to keep the numbers as they are (a 10 mm block becomes a 10 in block).</p>
+      <div class="welcomebtns"><button class="ok" id="unOk">Apply</button><button id="unNo">Cancel</button></div>`);
+    $('#unNo').onclick = () => this.closeModal();
+    $('#unOk').onclick = () => {
+      const to = document.querySelector('#modal input[name=un]:checked').value;
+      const conv = $('#unConv').checked;
+      const pset = new Set([...document.querySelectorAll('#modal [data-p]')].filter((x) => x.checked).map((x) => x.dataset.p));
+      this.closeModal();
+      if (to === cur) return;
+      let skipped = 0;
+      a.change(() => {
+        d.units = to;
+        if (!conv) return;
+        const k = UNIT_MM[cur] / UNIT_MM[to];
+        if (isAsm) convertAssembly(d, k); else skipped = convertPart(d, k, pset);
+      });
+      if (a.mode === 'sketch') { a.sk.recompute(); a.sk.redraw(); }
+      this.renderStatusInfo();
+      this.toast(`Now using ${UNIT_NAMES[to]}.` + (skipped ? ` ${skipped} formula(s) with numbers in them were left as typed; check them.` : ''), skipped ? 'warn' : '');
+    };
+  }
+
   // ----- part info -----
   openInfo() { this.infoOpen = true; this.renderInfo(); }
   renderInfo() {
@@ -1403,12 +1443,14 @@ class UI {
     let body = '<p class="muted">There is no solid yet.</p>';
     if (d) {
       const size = d.bb[1].map((v, i) => v - d.bb[0][i]);
-      const massG = (d.volume / 1000) * mat.density;
+      const u = doc.units || 'mm', k = UNIT_MM[u];
+      const volMm = d.volume * k * k * k, areaMm = d.area * k * k;
+      const massG = (volMm / 1000) * mat.density;
       body = `<table class="info">
-        <tr><th>Size (X × Y × Z)</th><td>${size.map(fmt).join(' × ')} mm</td></tr>
-        <tr><th>Volume</th><td>${fmt(d.volume / 1000)} cm³ <span class="muted">(${fmt(d.volume)} mm³)</span></td></tr>
-        <tr><th>Surface area</th><td>${fmt(d.area / 100)} cm² <span class="muted">(${fmt(d.area)} mm²)</span></td></tr>
-        <tr><th>Mass in ${esc(mat.name)}</th><td><b>${massG >= 1000 ? fmt(massG / 1000) + ' kg' : fmt(massG) + ' g'}</b> <span class="muted">(density ${mat.density} g/cm³)</span></td></tr>
+        <tr><th>Size (X × Y × Z)</th><td>${size.map(fmt).join(' × ')} ${u}</td></tr>
+        <tr><th>Volume</th><td>${u === 'in' ? `${fmt(d.volume)} in³ <span class="muted">(${fmt(volMm / 1000)} cm³)</span>` : `${fmt(volMm / 1000)} cm³ <span class="muted">(${fmt(volMm)} mm³)</span>`}</td></tr>
+        <tr><th>Surface area</th><td>${u === 'in' ? `${fmt(d.area)} in² <span class="muted">(${fmt(areaMm / 100)} cm²)</span>` : `${fmt(areaMm / 100)} cm² <span class="muted">(${fmt(areaMm)} mm²)</span>`}</td></tr>
+        <tr><th>Mass in ${esc(mat.name)}</th><td><b>${massG >= 1000 ? fmt(massG / 1000) + ' kg' : fmt(massG) + ' g'}</b> <span class="muted">(${fmt(massG / 453.592)} lb · density ${mat.density} g/cm³)</span></td></tr>
         <tr><th>Faces / edges</th><td>${d.faces.length} / ${d.edges.length}</td></tr>
       </table>`;
     }
@@ -1422,12 +1464,14 @@ class UI {
   renderStatusInfo() {
     if (this.app.mode === 'assembly') {
       const A = this.app.asm, bad = Object.keys(this.app.asmr.bad).length;
-      $('#statusRight').innerHTML = `${bad ? `<span class="bad">${bad} constraint${bad > 1 ? 's' : ''} not met</span> · ` : ''}${A.components.length} parts · ${A.constraints.length} constraints · ${esc(A.units || 'mm')}`;
+      $('#statusRight').innerHTML = `${bad ? `<span class="bad">${bad} constraint${bad > 1 ? 's' : ''} not met</span> · ` : ''}${A.components.length} parts · ${A.constraints.length} constraints · <button class="linkbtn" id="unitBtn" title="Change units">${esc(A.units || 'mm')}</button>`;
+      $('#unitBtn').onclick = () => this.openUnits();
       return;
     }
     const d = this.app.result.desc;
     const nErr = Object.keys(this.app.result.errors || {}).length;
-    $('#statusRight').innerHTML = `${nErr ? `<span class="bad">${nErr} feature${nErr > 1 ? 's' : ''} with problems</span> · ` : ''}${d ? `Volume ${fmt(d.volume / 1000)} cm³ · ` : ''}mm · ${this.app.result.ms ? Math.round(this.app.result.ms) + ' ms' : ''}`;
+    $('#statusRight').innerHTML = `${nErr ? `<span class="bad">${nErr} feature${nErr > 1 ? 's' : ''} with problems</span> · ` : ''}${d ? (this.app.units() === 'in' ? `Volume ${fmt(d.volume)} in³ · ` : `Volume ${fmt(d.volume / 1000)} cm³ · `) : ''}<button class="linkbtn" id="unitBtn" title="Change units">${this.app.units()}</button> · ${this.app.result.ms ? Math.round(this.app.result.ms) + ' ms' : ''}`;
+    $('#unitBtn').onclick = () => this.openUnits();
   }
 
   // ----- modals, help -----
@@ -1466,7 +1510,7 @@ class UI {
     };
   }
   showWelcome() {
-    this.modal(`<h2>Welcome to Pathway CAD</h2>
+    this.modal(`<img class="welcomelogo" src="assets/logo.png" alt="Pathway CAD">
       <p>Design real 3D parts, then export them for a 3D printer or another CAD program.</p>
       <ol class="steps"><li><b>Sketch</b> a flat shape on a plane.</li><li><b>Extrude</b> or <b>Revolve</b> it into a solid.</li><li>Add <b>holes, fillets and patterns</b>.</li><li><b>Export STL</b> to 3D print it.</li></ol>
       <p><b>Mouse:</b> right-drag turns the view, middle-drag (or Shift + right-drag) slides it, the wheel zooms.</p>
@@ -1477,7 +1521,7 @@ class UI {
     $('#wHelp').onclick = () => this.openHelp();
   }
   openHelp() {
-    this.modal(`<h2>${icon('help', 22)} How to use Pathway CAD</h2>
+    this.modal(`<h2><img class="helplogo" src="assets/icon-256.png" alt="">How to use Pathway CAD</h2>
       <div class="help">
       <h3>Moving around</h3>
       <ul><li><b>Turn:</b> right mouse drag. <b>Slide:</b> middle mouse drag or Shift + right drag. <b>Zoom:</b> mouse wheel (zooms toward the pointer).</li>
