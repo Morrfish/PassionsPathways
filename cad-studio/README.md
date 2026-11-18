@@ -31,13 +31,21 @@ Mouse: right-drag turns, middle-drag (or Shift + right-drag) slides, the wheel z
 
 ## Windows app
 
-`desktop/` wraps the app in its own window (Electron). The exe is a single portable file, no installer:
+`desktop/` wraps the app in its own window (Electron) and makes two files:
 
-    cd desktop
-    npm install
-    npm run build        # writes desktop/dist/PathwayCAD.exe
+- **PathwayCAD-Setup.exe**: an installer. It asks whether to install for just this user (no administrator password needed) or for everyone, lets you pick the folder, adds Start menu and desktop shortcuts, adds an uninstaller in Windows Settings › Apps, and makes `.pcad` part and `.pasm` assembly files open in Pathway CAD on double-click.
+- **PathwayCAD-Portable.exe**: one file that runs without installing (for USB sticks or locked-down computers).
 
-The **Pathway CAD exe** GitHub Action builds it too; download it from the run page.
+The **Pathway CAD exe** GitHub Action builds both on a Windows machine whenever `cad-studio/` changes on main (or when run by hand from the Actions tab). Download them from the run page under "PathwayCAD-Windows".
+
+To build them yourself on Windows:
+
+    cd cad-studio && npm install && npm run build
+    cd desktop && npm install && npm run build      # writes desktop/dist/*.exe
+
+Building the installer on Linux or macOS needs Wine; the portable exe does not (`npx electron-builder --win portable --x64`).
+
+The files are not code-signed, so Windows SmartScreen shows "Windows protected your PC" the first time: click **More info**, then **Run anyway**.
 
 ## Credits
 

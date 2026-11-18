@@ -1,6 +1,9 @@
-# Builds the Pathway CAD Windows exe.
-# The exe is kept as a build artifact on the run page: only people signed in
-# to GitHub with access to this repo can download it. Nothing is published.
+# Builds Pathway CAD for Windows on a Windows machine:
+#   PathwayCAD-Setup.exe     installer (Start menu + desktop shortcuts, uninstaller,
+#                            opens .pcad/.pasm files on double-click)
+#   PathwayCAD-Portable.exe  single file that runs without installing
+# Both are kept as a build artifact on the run page: only people signed in to
+# GitHub with access to this repo can download them. Nothing is published.
 name: Pathway CAD exe
 
 on:
@@ -15,12 +18,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: pathway-cad-exe
+  group: pathway-cad-exe-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -31,14 +34,16 @@ jobs:
         run: |
           npm ci --no-audit --no-fund
           npm run build
-      - name: Build the exe
+      - name: Build the installer and the portable exe
         working-directory: cad-studio/desktop
         run: |
           npm ci --no-audit --no-fund
           npm run build
       - uses: actions/upload-artifact@v4
         with:
-          name: PathwayCAD
-          path: cad-studio/desktop/dist/PathwayCAD.exe
+          name: PathwayCAD-Windows
+          path: |
+            cad-studio/desktop/dist/PathwayCAD-Setup.exe
+            cad-studio/desktop/dist/PathwayCAD-Portable.exe
           retention-days: 90
           compression-level: 0
