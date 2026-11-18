@@ -34,11 +34,25 @@
       solution: 'forward 6\nturn right\nforward 6\ndrill'
     },
     {
+      title: 'Reverse Gear', par: 4, start: [4, 4, 0],
+      story: 'Samples in front AND behind you, in a narrow canyon. No room to turn the rover around, so back up!',
+      tip: '\'backward 3\' drives the rover backwards without turning it. Count how far each sample is from the rover.',
+      map: ['.........', '...R*R...', '...R.R...', '...R.R...', '.........', '...R.R...', '...R.R...', '...R*R...', '.........'],
+      solution: "forward 3\ndrill\nbackward 6\ndrill"
+    },
+    {
       title: 'Rock Garden', par: 8, start: [1, 0, 0],
       story: 'Rocks everywhere! Find the gaps and reach the sample without a scratch.',
       tip: 'Go through the gap on the left, drive across, then up through the gap on the right.',
       map: ['.........', '.........', '.....*...', '.RRRRRR..', '.........', '.........', '..RRRRRRR', '.........', '.........'],
       solution: 'forward 3\nturn right\nforward 6\nturn left\nforward 3\nturn left\nforward 2\ndrill'
+    },
+    {
+      title: 'Sample Row', par: 4, start: [0, 2, 1], loops: true,
+      story: 'Four samples in a row, each 2 squares apart. Doing the same thing over and over? That is a job for a loop!',
+      tip: 'Drive 2 and drill. That is one piece. Put it inside \'repeat 4\' and \'end\'.',
+      map: ['.........', '.........', '.........', '.....R...', '..R......', '.........', '..*.*.*.*', '.......R.', '.........'],
+      solution: "repeat 4\n  forward 2\n  drill\nend"
     },
     {
       title: 'Square Dance', par: 5, start: [2, 1, 0], loops: true,
@@ -55,6 +69,13 @@
       solution: 'repeat 5\n  forward 1\n  turn right\n  forward 1\n  drill\n  turn left\nend'
     },
     {
+      title: 'Zig Zag', par: 7, start: [0, 0, 0], loops: true,
+      story: 'The samples zig-zag up the hill between craters. Find the pattern and loop it.',
+      tip: 'One zig-zag: forward 2, turn right, forward 2, turn left, drill. How many samples are there?',
+      map: ['.........', '.....C...', '......*..', '...C.C.C.', '....*....', '.C.C.C...', '..*......', '.C.C.....', '.........'],
+      solution: "repeat 3\n  forward 2\n  turn right\n  forward 2\n  turn left\n  drill\nend"
+    },
+    {
       title: 'Home Sweet Home', par: 7, start: [4, 0, 0], loops: true, home: true,
       story: 'Grab both samples and park back on your landing pad. Stay out of the craters!',
       tip: 'The trip has 2 halves that use the same moves: forward 6, drill, turn left, forward 3, turn left.',
@@ -67,7 +88,21 @@
       tip: 'Drive a lane, drill, turn left, forward 2, turn left, drive the next lane, drill, turn right, forward 2, turn right. Then repeat!',
       map: ['.........', '.CCCCCCCC', '*........', 'CCCCCCCC.', '........*', '.CCCCCCCC', '*........', 'CCCCCCCC.', '........*'],
       solution: 'repeat 2\n  forward 8\n  drill\n  turn left\n  forward 2\n  turn left\n  forward 8\n  drill\n  turn right\n  forward 2\n  turn right\nend'
-    }
+    },
+    {
+      title: 'Loop in a Loop', par: 9, start: [0, 1, 1], loops: true,
+      story: 'Two rows of samples. Drill a row, swing around, drill the next row. A loop can go INSIDE another loop!',
+      tip: 'Inside: repeat 3 (forward 2, drill). Outside, after that: turn left, forward 2, turn left. Repeat the whole thing 2 times.',
+      map: ['.........', '.........', '.........', '.........', '.........', '*.*.*....', '.RRRRR...', '..*.*.*..', '.........'],
+      solution: "repeat 2\n  repeat 3\n    forward 2\n    drill\n  end\n  turn left\n  forward 2\n  turn left\nend"
+    },
+    {
+      title: 'The Long Way Home', par: 12, start: [0, 0, 0], home: true,
+      story: 'The rarest crystal sits in the far corner. Weave through the rocks, drill it, and drive all the way back to your pad.',
+      tip: 'Plan it on paper first! Up, right, up, right to reach the corner. Then the outside edge of the map is clear all the way home.',
+      map: ['........*', '..R..R...', '...R.RRR.', '..C..RR..', '.........', '.R....C..', '.RRR...C.', '.RR...R..', 'H........'],
+      solution: "forward 4\nturn right\nforward 4\nturn left\nforward 4\nturn right\nforward 4\ndrill\nturn right\nforward 8\nturn right\nforward 8"
+    },
   ];
   /* note on map rows: the LAST string is the front row (r = 0). */
 
@@ -208,7 +243,7 @@ forward 1
     placeRover(); hud(); stage.want('front');
   }
   function hud() {
-    sh.setHud([['Facing', HEAD[R.h]], ['Samples', collected + ' / ' + samples.length]].concat(homePad ? [['Home', R.c === homePad.c && R.r === homePad.r ? 'parked ✔' : 'not yet']] : []));
+    sh.setHud([['Facing', HEAD[R.h]], ['Samples', collected + ' / ' + samples.length]].concat(homePad ? [['Home', collected === samples.length && R.c === homePad.c && R.r === homePad.r ? 'parked ✔' : 'not yet']] : []));
   }
 
   /* ---------------- missions panel ---------------- */
