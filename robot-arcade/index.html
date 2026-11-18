@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robot Code Arcade</title>
+<meta name="description" content="Three coding games for robotics class: program a claw machine, a construction crane and a Mars rover with simple commands.">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .wrap{max-width:1120px;margin:0 auto;padding:22px 18px 60px}
+  .hero{text-align:center;padding:26px 0 10px}
+  .hero h1{font-size:clamp(32px,6vw,58px);margin:0;line-height:1.05;letter-spacing:-.5px}
+  .hero h1 span{background:linear-gradient(90deg,#ff4fa3,#ffd23f,#2ee6d0);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{color:var(--dim);font-size:18px;max-width:640px;margin:10px auto 0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:18px;margin-top:28px}
+  .card{background:var(--panel);border:2px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit;transition:transform .15s,border-color .15s}
+  .card:hover{transform:translateY(-4px);border-color:var(--c)}
+  .card .art{height:150px;display:flex;align-items:center;justify-content:center;font-size:84px;background:var(--bgc);position:relative}
+  .card .art small{position:absolute;top:10px;left:12px;font-size:13px;font-weight:800;letter-spacing:1px;background:rgba(0,0,0,.35);color:#fff;padding:3px 9px;border-radius:99px}
+  .card .body{padding:16px 18px 18px;flex:1;display:flex;flex-direction:column}
+  .card h2{margin:0 0 6px;font-size:24px}
+  .card p{margin:0 0 10px;color:#d5daf5}
+  .learn{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 14px}
+  .learn span{font-size:12px;font-weight:700;background:#10132a;border:1px solid var(--line);border-radius:99px;padding:3px 9px}
+  .card code{font-family:var(--mono);font-size:13px;color:var(--y);background:#0a0c18;border-radius:8px;padding:8px 10px;display:block;white-space:pre;line-height:1.5;margin-bottom:14px}
+  .play{margin-top:auto;display:block;text-align:center;font-weight:800;font-size:17px;padding:11px;border-radius:12px;background:var(--c);color:#14080f}
+  .teacher{margin-top:36px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px 22px}
+  .teacher h2{margin:0 0 8px}
+  .teacher li{margin:5px 0;color:#d5daf5}
+  .teacher code{font-family:var(--mono);color:var(--y)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <h1>🤖 Robot <span>Code Arcade</span></h1>
+    <p>Robots only do exactly what you tell them. Write the steps, press Run, and watch your code move real machines.</p>
+  </div>
+
+  <div class="grid">
+    <a class="card" href="claw.html" style="--c:#ff4fa3;--bgc:linear-gradient(135deg,#3a1c6e,#ff4fa3)">
+      <div class="art"><small>LEVEL 1</small>🕹️🧸</div>
+      <div class="body">
+        <h2>Code Claw</h2>
+        <p>A claw machine full of funny, rare and brain rot prizes. Program the claw to grab one, then bring it back to the chute. Collect them all on your Prize Shelf!</p>
+        <div class="learn"><span>Step-by-step order</span><span>Counting moves</span><span>Reversing a path</span></div>
+        <code>right 3
+back 2
+open
+down
+close
+up
+left 3
+front 2
+open</code>
+        <span class="play">Play Code Claw</span>
+      </div>
+    </a>
+
+    <a class="card" href="crane.html" style="--c:#ffb000;--bgc:linear-gradient(135deg,#5aa9e6,#ffc21a)">
+      <div class="art"><small>LEVEL 2</small>🏗️🧱</div>
+      <div class="body">
+        <h2>Crane Crew</h2>
+        <p>Run a tower crane on a construction site. Swing the arm in degrees, slide the trolley, lower the hook just right, and finish each job without smashing anything.</p>
+        <div class="learn"><span>Angles &amp; degrees</span><span>Height math</span><span>Planning a sequence</span></div>
+        <code>rotate left 90
+trolley out 3
+lower 9
+hook
+raise 4
+rotate right 45
+lower 3
+unhook</code>
+        <span class="play">Play Crane Crew</span>
+      </div>
+    </a>
+
+    <a class="card" href="rover.html" style="--c:#ff7a3d;--bgc:linear-gradient(135deg,#7a2a12,#ff9a5c)">
+      <div class="art"><small>LEVEL 3</small>🚀💎</div>
+      <div class="body">
+        <h2>Rover Run</h2>
+        <p>Drive a Mars rover around rocks and craters to drill crystal samples. Turns are from the rover's point of view, and loops make your code shorter.</p>
+        <div class="learn"><span>Relative turning</span><span>Loops (repeat)</span><span>Fewer lines = more stars</span></div>
+        <code>repeat 4
+  forward 4
+  drill
+  turn right
+end</code>
+        <span class="play">Play Rover Run</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="teacher">
+    <h2>For the teacher</h2>
+    <ul>
+      <li>Everything runs in the browser with no logins. Prize shelves, mission stars and the last program are saved on each computer.</li>
+      <li>Each game has <b>Run</b>, <b>Step</b> (one line at a time, good for debugging) and a speed setting. The camera starts in front, and in <b>Auto</b> it switches to a top view while things move. Students can also pick Front or Top themselves.</li>
+      <li>When code has a mistake, the line turns red and a plain-English message says what went wrong ("The hook is 2 levels above the crate. Lower 2 more").</li>
+      <li><b>Adding Code Claw prizes:</b> open <code>robot-arcade/js/prizes.js</code> and add a line like
+        <code>{ name: 'Rubber Chicken', emoji: '🐔', rarity: 'common', kind: 'funny', note: 'Squeaks when sad.' },</code>
+        Rarities are common, uncommon, rare, epic and legendary. Rarer prizes show up less often and hide farther from the chute.</li>
+      <li>Crane and rover missions are listed at the top of <code>js/crane.js</code> and <code>js/rover.js</code>.</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>
