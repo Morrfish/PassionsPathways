@@ -484,16 +484,17 @@ function drawBody(view,p,act,ctx,e,opt){
   }
   if(face)face();
   /* muscles */
-  const special=(m,on)=>{const c=on?'s-ma':'s-mc',w=on?3.4+1.2*e:2.4;
-    if(m.sp==='dia'){const d=`M${xy(P('thorax',.1,-ribW[0]))}Q${xy(P('thorax',.62-.3*p.breath,0))} ${xy(P('thorax',.1,ribW[0]))}`;if(on)o.push(`<path d="${d}" class="s-mo" stroke-width="9"/>`);o.push(`<path d="${d}" class="${c}" stroke-width="${on?6:4}"/>`)}
+  const special=(m,on)=>{const c=on?'s-ma':'s-mc',w=on?2.2+.8*e:1.6;
+    if(m.sp==='dia'){const d=`M${xy(P('thorax',.1,-ribW[0]))}Q${xy(P('thorax',.62-.3*p.breath,0))} ${xy(P('thorax',.1,ribW[0]))}`;if(on)o.push(`<path d="${d}" class="s-mo" stroke-width="6" opacity=".55"/>`);o.push(`<path d="${d}" class="${c}" stroke-width="${on?4:3}" opacity=".75"/>`)}
     else for(let i=0;i<4;i++)for(const sd of[1,-1])for(let j=0;j<3;j++){const a=.5+.2*j,b=m.sp==='eic'?-.14:.14;ln(P('thorax',ribT(i+1)-.02,ribW[i+1]*(a-b/2)*sd),P('thorax',ribT(i)+.03,ribW[i]*(a+b/2)*sd),c,w)}};
   const mus=(m,mode,on)=>{
     if(m.sp){if(!side)special(m,on);return}
     const def=side?m.s:front?m.f:m.b;if(!def)return;
     const sides=side?[1]:(m.ax&&mode!=='U'?[1,-1]:[1]),w=m.wd||9;
     for(const sd of sides){const pts=def.map(d=>P(d[0],d[1],d[2],sd));
-      if(on){pl(pts,'s-mo',w+3.2+2*e);pl(pts,'s-ma',w+2*e,m.deep?'opacity=".92"':'');ci(pts[0],3,'f-att');ci(pts[pts.length-1],3,'f-att')}
-      else pl(pts,'s-mc',w*.8,'opacity=".7"')}
+      const z=opt.z,ww=(w*.42+1.2+.8*e)*z;
+      if(on){pl(pts,'s-mo',ww+1.6*z,'opacity=".55"');pl(pts,'s-ma',ww,`opacity="${m.deep?.55:.68}"`);pl(pts,'s-mo',.9*z,'opacity=".7" stroke-dasharray="'+(3*z).toFixed(1)+' '+(2.5*z).toFixed(1)+'"');ci(pts[0],1.9*z,'f-att');ci(pts[pts.length-1],1.9*z,'f-att')}
+      else pl(pts,'s-mc',w*.32*z,'opacity=".45"')}
   };
   if(opt.mus)for(const m of ctx)if(!act.some(a=>a.m===m))mus(m,'B',false);
   for(const a of act)mus(a.m,a.mode,true);
@@ -535,7 +536,7 @@ function drawFoot(act,ctx,e,opt,k,ex){
   if(opt.bone){o.push(`<ellipse cx="${X(-2)}" cy="128" rx="15" ry="23" class="f-bone"/><ellipse cx="${X(2)}" cy="78" rx="21" ry="17" class="f-bone"/>`);
     for(let i=0;i<5;i++){pl([[HX[i]*.5+1,52],[HX[i],HY[i]]],'s-bo',7.5);pl([[HX[i]*.5+1,52],[HX[i],HY[i]]],'s-bi',5);pl([T(i,.08),T(i,.5)],'s-bo',6);pl([T(i,.08),T(i,.5)],'s-bi',3.8);pl([T(i,.6),T(i,.95)],'s-bo',5.5);pl([T(i,.6),T(i,.95)],'s-bi',3.4)}}
   const mus=(m,on)=>{const d=PLAN[m.id];if(!d||(m.ly==='D')!==dorsal)return;const w=PW[m.id]||7;
-    for(const pts of d){if(on){pl(pts,'s-mo',w+3+1.5*e);pl(pts,'s-ma',w+1.5*e)}else pl(pts,'s-mc',w*.85,'opacity=".75"')}};
+    for(const pts of d){if(on){const ww=w*.5+1+.6*e;pl(pts,'s-mo',ww+1.4,'opacity=".55"');pl(pts,'s-ma',ww,'opacity=".7"')}else pl(pts,'s-mc',w*.4,'opacity=".5"')}};
   if(opt.mus)for(const m of ctx)if(!act.some(a=>a.m===m))mus(m,false);
   for(const a of act)mus(a.m,true);
   o.push(`<text x="${ox}" y="182" font-size="10" text-anchor="middle">${dorsal?'Top of right foot (dorsal)':'Sole of right foot (plantar)'} · 2nd toe is the midline</text>`);
@@ -581,7 +582,7 @@ function frame(ts){
   const sh=show(),mv=MV[sh.k];
   const ph=(st.clock/T)%1;let e=ph<.12?0:ph<.5?ease((ph-.12)/.38):ph<.8?1:1-ease((ph-.8)/.2);
   if(sh.still)e=0;
-  const opt={skin:st.ly.skin,mus:st.ly.mus,bone:st.ly.bone||(m&&m.concept&&st.tab==='explore'),skinA:(st.ly.mus||st.ly.bone||sh.act.length)?(st.ly.bone||st.ly.mus?.6:.85):1,blink:(ts%4200)<130};
+  const opt={z:Math.min(1,Math.max(.42,cam[2]/470)),skin:st.ly.skin,mus:st.ly.mus,bone:st.ly.bone||(m&&m.concept&&st.tab==='explore'),skinA:(st.ly.mus||st.ly.bone||sh.act.length)?(st.ly.bone||st.ly.mus?.6:.85):1,blink:(ts%4200)<130};
   let html,fo;
   if(mv.foot){html=drawFoot(sh.act,sh.ctx,e,opt,sh.still?'':sh.k,sh.ex);fo='map'}
   else{const p=Object.assign({},Z);if(!sh.still){for(const key in Z){const a=mv.a[key]||0,b=mv.b[key]||0;p[key]=a+(b-a)*e}}
