@@ -6,16 +6,17 @@
   const MAXD = 7, MAXH = 10; // trolley 1..7, hook level 0..10
   const MY = 12;           // top of the tower (jib height)
   const rad = a => a * Math.PI / 180;
-  const norm = a => ((Math.round(a) % 360) + 360) % 360;
+  const r2 = v => Math.round(v * 100) / 100;
+  const norm = a => r2(((r2(a) % 360) + 360) % 360);
   const posOf = (a, d) => ({ x: d * U * Math.cos(rad(a)), z: -d * U * Math.sin(rad(a)) });
 
   const commands = [
-    { name: 'rotl', words: ['rotate', 'left'], aliases: [['turn', 'left'], ['spin', 'left'], ['swing', 'left']], arg: 'number', min: 1, max: 360, unit: ['degrees', 'degree', 'deg', '°'], example: 'rotate left 90', help: 'Swing the arm left (degrees)' },
-    { name: 'rotr', words: ['rotate', 'right'], aliases: [['turn', 'right'], ['spin', 'right'], ['swing', 'right']], arg: 'number', min: 1, max: 360, unit: ['degrees', 'degree', 'deg', '°'], example: 'rotate right 90', help: 'Swing the arm right (degrees)' },
-    { name: 'tout', words: ['trolley', 'out'], aliases: [['move', 'out']], arg: 'number', min: 1, max: 7, example: 'trolley out 2', help: 'Slide the hook away from the tower' },
-    { name: 'tin', words: ['trolley', 'in'], aliases: [['move', 'in']], arg: 'number', min: 1, max: 7, example: 'trolley in 2', help: 'Slide the hook toward the tower' },
-    { name: 'lower', words: ['lower'], aliases: [['down']], arg: 'number', min: 1, max: 10, unit: ['levels', 'level'], example: 'lower 3', help: 'Let the hook down (levels)' },
-    { name: 'raise', words: ['raise'], aliases: [['up'], ['lift']], arg: 'number', min: 1, max: 10, unit: ['levels', 'level'], example: 'raise 3', help: 'Pull the hook up (levels)' },
+    { name: 'rotl', words: ['rotate', 'left'], aliases: [['turn', 'left'], ['spin', 'left'], ['swing', 'left']], arg: 'number', min: 0.1, decimals: true, max: 360, unit: ['degrees', 'degree', 'deg', '°'], example: 'rotate left 90', help: 'Swing the arm left (degrees)' },
+    { name: 'rotr', words: ['rotate', 'right'], aliases: [['turn', 'right'], ['spin', 'right'], ['swing', 'right']], arg: 'number', min: 0.1, decimals: true, max: 360, unit: ['degrees', 'degree', 'deg', '°'], example: 'rotate right 90', help: 'Swing the arm right (degrees)' },
+    { name: 'tout', words: ['trolley', 'out'], aliases: [['move', 'out']], arg: 'number', min: 0.1, decimals: true, max: 7, example: 'trolley out 2', help: 'Slide the hook away from the tower' },
+    { name: 'tin', words: ['trolley', 'in'], aliases: [['move', 'in']], arg: 'number', min: 0.1, decimals: true, max: 7, example: 'trolley in 2', help: 'Slide the hook toward the tower' },
+    { name: 'lower', words: ['lower'], aliases: [['down']], arg: 'number', min: 0.1, decimals: true, max: 10, unit: ['levels', 'level'], example: 'lower 3', help: 'Let the hook down (levels)' },
+    { name: 'raise', words: ['raise'], aliases: [['up'], ['lift']], arg: 'number', min: 0.1, decimals: true, max: 10, unit: ['levels', 'level'], example: 'raise 3', help: 'Pull the hook up (levels)' },
     { name: 'hook', words: ['hook'], aliases: [['attach'], ['grab']], arg: 'none', example: 'hook', help: 'Hook the load under you' },
     { name: 'unhook', words: ['unhook'], aliases: [['release'], ['detach'], ['let', 'go'], ['drop']], arg: 'none', example: 'unhook', help: 'Let go of the load' }
   ];
@@ -138,7 +139,8 @@ hook
       'Trolley steps are the white rings on the ground (1 to 7). Hook levels go from 0 (ground) to 10.',
       'Every load is <b>1 level</b> tall. To hook it, lower until the hook touches its top.',
       'Raise loads <b>above</b> anything in the way before you swing. No dragging!',
-      'Lower until the load touches, <b>then</b> unhook, or it falls and breaks.'
+      'Lower until the load touches, <b>then</b> unhook, or it falls and breaks.',
+      'Decimals work too: <code>rotate left 22.5</code>, <code>trolley out 1.5</code>, <code>lower 0.5</code>.'
     ]
   });
 
@@ -240,7 +242,7 @@ hook
     hookLbl.material.map = RA.textCanvas('↕' + RA.fmtH(S.h), { w: 192, h: 128, font: 'bold 80px system-ui', bg: 'rgba(0,0,0,.7)' });
     hookLbl.material.needsUpdate = true;
   }
-  RA.fmtH = h => String(Math.round(h));
+  RA.fmtH = h => String(Math.round(h * 100) / 100);
 
   // site decoration outside the working area
   const deco = new THREE.Group(); scene.add(deco);
@@ -404,8 +406,8 @@ hook
   }
   let lastLbl = '';
   function hud() {
-    sh.setHud([['Angle', norm(S.a) + '°'], ['Trolley', S.d], ['Hook level', Math.round(S.h)], ['Carrying', carried ? carried.mesh.userData.emoji + ' ' + NAMES[carried.kind] : 'nothing']]);
-    const t = String(Math.round(S.h)); if (t !== lastLbl) { lastLbl = t; setHookLabel(); }
+    sh.setHud([['Angle', norm(S.a) + '°'], ['Trolley', S.d], ['Hook level', r2(S.h)], ['Carrying', carried ? carried.mesh.userData.emoji + ' ' + NAMES[carried.kind] : 'nothing']]);
+    const t = String(r2(S.h)); if (t !== lastLbl) { lastLbl = t; setHookLabel(); }
   }
 
   /* ---------------- goals ---------------- */
@@ -454,41 +456,41 @@ hook
   async function rotate(dir, deg) {
     stage.want('top');
     RA.sfx.whirr();
-    const a0 = S.a, sgn = dir === 'left' ? 1 : -1, n = Math.max(1, Math.ceil(deg / 3));
+    const a0 = S.a, sgn = dir === 'left' ? 1 : -1, n = Math.max(2, Math.ceil(deg / 3));
     await sweep(i => a0 + sgn * deg * (i / n), n, v => { S.a = v; }, Math.max(350, deg * 14), 'swinging');
     S.a = norm(a0 + sgn * deg); placeCrane(); hud();
   }
   async function trolleyMove(dir, n) {
-    const d1 = S.d + (dir === 'out' ? n : -n);
-    if (d1 > MAXD) RA.crash('The trolley can only go out to ' + MAXD + '. It is at ' + S.d + ', so it can go out ' + (MAXD - S.d) + ' more at most.');
-    if (d1 < 1) RA.crash('The trolley cannot go into the tower! It is at ' + S.d + ', so it can come in ' + (S.d - 1) + ' at most.');
+    const d1 = r2(S.d + (dir === 'out' ? n : -n));
+    if (d1 > MAXD) RA.crash('The trolley can only go out to ' + MAXD + '. It is at ' + S.d + ', so it can go out ' + r2(MAXD - S.d) + ' more at most.');
+    if (d1 < 1) RA.crash('The trolley cannot go into the tower! It is at ' + S.d + ', so it can come in ' + r2(S.d - 1) + ' at most.');
     stage.want('top');
     RA.sfx.whirr();
-    const d0 = S.d, steps = n * 5;
-    await sweep(i => d0 + (d1 - d0) * (i / steps), steps, v => { S.d = v; }, n * 420, 'moving the trolley');
+    const d0 = S.d, steps = Math.max(2, Math.ceil(n * 5));
+    await sweep(i => d0 + (d1 - d0) * (i / steps), steps, v => { S.d = v; }, Math.max(250, n * 420), 'moving the trolley');
     S.d = d1; placeCrane(); hud();
   }
   async function lower(n) {
     stage.want('front');
     const p = posOf(S.a, S.d);
     const s = surfUnderHook(p.x, p.z, !!carried);
-    const room = bottomNow() - s.top; // how far it can go
+    const room = r2(bottomNow() - s.top); // how far it can go
     const h0 = S.h;
     RA.sfx.whirr();
-    if (n > room) {
+    if (n > room + 1e-6) {
       await RA.tween(140 * Math.max(1, room), k => { S.h = h0 - room * k; placeCrane(); });
       S.h = h0 - room; placeCrane(); hud();
       RA.crash('Crunch! ' + thing() + ' hit the ' + s.name + ' after ' + room + ' level' + (room === 1 ? '' : 's') + '. You asked for ' + n + '. Try "lower ' + room + '".');
     }
     await RA.tween(140 * n + 150, k => { S.h = h0 - n * k; placeCrane(); });
-    S.h = h0 - n; placeCrane(); hud();
+    S.h = r2(h0 - n); placeCrane(); hud();
   }
   async function raise(n) {
     stage.want('front');
-    if (S.h + n > MAXH) RA.crash('The hook can only go up to level ' + MAXH + '. It is at ' + S.h + ', so you can raise ' + (MAXH - S.h) + ' at most.');
+    if (r2(S.h + n) > MAXH) RA.crash('The hook can only go up to level ' + MAXH + '. It is at ' + S.h + ', so you can raise ' + r2(MAXH - S.h) + ' at most.');
     const h0 = S.h; RA.sfx.whirr();
     await RA.tween(140 * n + 150, k => { S.h = h0 + n * k; placeCrane(); });
-    S.h = h0 + n; placeCrane(); hud();
+    S.h = r2(h0 + n); placeCrane(); hud();
   }
   async function hook() {
     stage.want('front');
@@ -496,7 +498,7 @@ hook
     const p = posOf(S.a, S.d);
     const under = loads.filter(L => !L.broken && Math.hypot(L.x - p.x, L.z - p.z) < 0.45).sort((a, b) => b.level - a.level)[0];
     if (!under) RA.crash('There is nothing to hook here. Check the angle and trolley: the hook has to be right above a load.');
-    const gap = S.h - (under.level + 1);
+    const gap = r2(S.h - (under.level + 1));
     if (gap > 0) RA.crash('The hook is ' + gap + ' level' + (gap > 1 ? 's' : '') + ' above the ' + NAMES[under.kind] + '. Lower ' + gap + ' more so it touches, then hook.');
     RA.sfx.grab();
     carried = under; placeCrane(); hud();
@@ -508,7 +510,7 @@ hook
     const L = carried;
     const s = surfUnderHook(L.x, L.z, true);
     carried = null;
-    const drop = (S.h - 1) - s.top;
+    const drop = r2((S.h - 1) - s.top);
     L.level = s.top;
     // snap to the nearest spot on the grid if close
     const d = Math.round(S.d), a = Math.round(S.a / 45) * 45;
