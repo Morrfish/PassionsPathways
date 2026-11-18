@@ -1,0 +1,8 @@
+{
+  "appId": "org.passionspathways.animesquad",
+  "appName": "Anime Squad",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#120b24"
+  }
+}

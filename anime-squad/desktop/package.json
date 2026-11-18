@@ -1,0 +1,24 @@
+{
+  "name": "anime-squad-desktop",
+  "productName": "Anime Squad",
+  "version": "1.0.0",
+  "description": "Anime Squad: anime-character bots you can talk to and give jobs.",
+  "author": "Passions Pathways",
+  "main": "main.js",
+  "scripts": {
+    "start": "node copy-web.js && electron .",
+    "prebuild": "node copy-web.js",
+    "build": "electron-builder --win portable --x64"
+  },
+  "build": {
+    "appId": "org.passionspathways.animesquad",
+    "files": ["main.js", "icon.png", "web/**"],
+    "win": { "target": "portable", "icon": "icon.png", "signAndEditExecutable": false },
+    "portable": { "artifactName": "AnimeSquad.exe" },
+    "directories": { "output": "dist" }
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  }
+}
