@@ -3,6 +3,7 @@ import { Viewport, COLORS } from './viewport.js';
 import { Sketcher } from './sketcher.js';
 import { evaluate, paramMap, tryEval, fmt } from './expr.js';
 import { evalSketch, buildLoops } from './sketch.js';
+import { CONS_INFO } from './constraints.js';
 import { icon } from './icons.js';
 import { EXAMPLES, ASM_EXAMPLES } from './examples.js';
 import { Assembler, ASM_COMMANDS, newAssembly } from './assembly.js';
@@ -541,7 +542,7 @@ class App {
     const f = this.findFeature(id);
     if (!f) return;
     const used = this.doc.features.some((x) => x.sketch === id);
-    const { loops } = buildLoops(evalSketch(f.entities, this.params()));
+    const { loops } = buildLoops(evalSketch(f.entities, this.params(), f.constraints));
     if (!used && loops.length) this.run('extrude', { sketch: id });
     else if (!used && f.entities.length) this.toast('No closed shape yet, so nothing to extrude. Red dots show line ends that do not meet.');
   }
@@ -1013,6 +1014,9 @@ class UI {
       sketch: [
         ['Draw', [['line', 'Line', () => a.sk.setTool('line'), 'L'], ['rect', 'Rectangle', () => a.sk.setTool('rect'), 'R'], ['circle', 'Circle', () => a.sk.setTool('circle'), 'C'], ['arc', 'Arc', () => a.sk.setTool('arc'), 'A'], ['polygon', 'Polygon', () => a.sk.setTool('polygon'), 'P'], ['slot', 'Slot', () => a.sk.setTool('slot'), 'O']]],
         ['Edit', [['select', 'Select', () => a.sk.setTool('select'), 'S'], ['construction', 'Construction', () => a.sk.toggleConstruction(), 'X'], ['trash', 'Delete', () => a.sk.deleteSelected(), 'Del']]],
+        ['Rules', [...['coincident', 'horizontal', 'vertical', 'parallel', 'perpendicular', 'equal', 'tangent', 'concentric', 'midpoint', 'fix'].map((k) => ['g:' + CONS_INFO[k].glyph, CONS_INFO[k].label, () => a.sk.setTool('c:' + k)]),
+          ['g:A', 'Auto rules', () => { a.sk.autoCons = !a.sk.autoCons; this.renderRibbon(); a.toast(a.sk.autoCons ? 'Auto rules on: joined ends, level and upright lines get rules while you draw.' : 'Auto rules off.'); }],
+          ['eye', 'Show rules', () => { a.sk.showCons = !a.sk.showCons; this.renderRibbon(); a.sk.redraw(); }]]],
         ['View', [['look', 'Look at', () => a.sk.lookAt()], ['grid', 'Snap to grid', () => a.toggleGrid(), 'G']]],
         ['Setup', [['params', 'Parameters', () => this.openParams()]]],
         ['Exit', [['finish', 'Finish Sketch', () => a.exitSketch()]]],
@@ -1053,14 +1057,15 @@ class UI {
     body.innerHTML = '';
     for (const [gname, btns] of groups) {
       const g = document.createElement('div');
-      g.className = 'rgroup' + (gname === 'Exit' ? ' exit' : '') + (gname === 'Assembly' ? ' back' : '');
+      const compact = gname === 'Rules';
+      g.className = 'rgroup' + (gname === 'Exit' ? ' exit' : '') + (gname === 'Assembly' ? ' back' : '') + (compact ? ' compact' : '');
       const row = document.createElement('div');
       row.className = 'rbtns';
       for (const [ic, label, fn, key] of btns) {
         const b = document.createElement('button');
         b.className = 'rbtn';
         b.dataset.ic = ic;
-        b.innerHTML = icon(ic, 26) + `<span>${esc(label)}</span>`;
+        b.innerHTML = icon(ic, compact ? 17 : 26) + `<span>${esc(label)}</span>`;
         b.title = label + (key ? ` (${key})` : '');
         b.onclick = (e) => { e.stopPropagation(); fn(); };
         if (this.tab === 'view' && ['shaded', 'edges', 'wire'].includes(ic) && this.vp && this.vp.style === ic) b.classList.add('on');
@@ -1079,7 +1084,9 @@ class UI {
   sketchToolChanged(tool) {
     for (const b of document.querySelectorAll('#ribbon .rbtn')) {
       const ic = b.dataset.ic;
-      b.classList.toggle('on', ic === tool || (ic === 'grid' && this.app.sk && this.app.sk.gridOn));
+      const sk = this.app.sk;
+      const consOn = tool && tool.startsWith('c:') && ic === 'g:' + (CONS_INFO[tool.slice(2)] || {}).glyph;
+      b.classList.toggle('on', ic === tool || consOn || (ic === 'grid' && sk && sk.gridOn) || (ic === 'g:A' && sk && sk.autoCons) || (ic === 'eye' && sk && sk.showCons));
     }
     if (this.app.mode === 'sketch') this.renderSketchPanel();
   }
@@ -1280,7 +1287,10 @@ class UI {
     if (!el) return;
     const n = (sk.loops || []).filter((l) => l.depth % 2 === 0).length;
     const bad = (sk.evals || []).filter((x) => x.err);
-    el.innerHTML = `${n ? `<span class="good">✔ ${n} closed shape${n > 1 ? 's' : ''}</span>` : '<span class="muted">No closed shape yet</span>'}${sk.openEnds ? ` · <span class="bad">${sk.openEnds} open chain${sk.openEnds > 1 ? 's' : ''} (red dots)</span>` : ''}${bad.length ? ` · <span class="bad">${esc(bad[0].err)}</span>` : ''}`;
+    const sf = this.app.sketchFeature();
+    const nRules = sf && sf.constraints ? sf.constraints.length : 0;
+    const nBad = sk.badCons ? sk.badCons.size : 0;
+    el.innerHTML = `${n ? `<span class="good">✔ ${n} closed shape${n > 1 ? 's' : ''}</span>` : '<span class="muted">No closed shape yet</span>'}${sk.openEnds ? ` · <span class="bad">${sk.openEnds} open chain${sk.openEnds > 1 ? 's' : ''} (red dots)</span>` : ''}${bad.length ? ` · <span class="bad">${esc(bad[0].err)}</span>` : ''}${nRules ? ` · ${nRules} rule${nRules > 1 ? 's' : ''}` : ''}${nBad ? ` · <span class="bad">${nBad} not met</span>` : ''}`;
   }
   setGridStep(s) { const el = $('#gridStep'); if (el) el.textContent = this.app.sk.gridOn ? `grid ${fmt(s)} ${this.app.units()}` : 'grid off'; }
   renderSketchPanel() {
@@ -1302,14 +1312,18 @@ class UI {
         html += `<label class="fld"><span>${l}</span><input data-k="${k}" value="${esc(e[k])}" spellcheck="false"><em class="${r.ok ? '' : 'bad'}">${r.ok ? (String(e[k]).trim() === fmt(r.v) ? '' : '= ' + fmt(r.v)) : esc(r.err)}</em></label>`;
       }
       html += `<label class="chk"><input type="checkbox" id="consChk" ${e.construction ? 'checked' : ''}> Construction (dashed helper line, not part of the shape)</label>`;
+      const rules = sk.consFor(e.id);
+      if (rules.length) html += `<div class="fld"><span>Rules on it</span><div class="rulelist">${rules.map((c) => `<span class="rule ${sk.badCons && sk.badCons.has(c.id) ? 'bad' : ''}">${esc(sk.consLabel(c))}<button data-delcons="${c.id}" title="Remove this rule">×</button></span>`).join('')}</div></div>`;
     } else if (sel.length > 1) html += `<div class="note">${sel.length} items picked. Press Delete to remove them, or X for construction.</div>`;
-    else html += `<div class="note muted">${esc(TOOL_TIPS[sk.tool] || '')}</div>`;
+    else if (sk.selCons.size) html += `<div class="note">${[...sk.selCons].map((id) => { const c = (f.constraints || []).find((x) => x.id === id); return c ? esc(sk.consLabel(c)) : ''; }).join(', ')} rule picked. Press Delete to remove it.</div>`;
+    else html += `<div class="note muted">${esc(TOOL_TIPS[sk.tool] || (sk.tool.startsWith('c:') ? CONS_INFO[sk.tool.slice(2)].label + ': ' + CONS_INFO[sk.tool.slice(2)].help + (sk.picks.length ? ' (1 picked)' : '') : ''))}</div>`;
     const off = f.offset ?? 0, ro = tryEval(off, P);
     html += `<details class="planeopts"><summary>Sketch plane</summary><label class="fld"><span>Offset from plane (${a.units()})</span><input id="planeOff" value="${esc(off)}"><em class="${ro.ok ? '' : 'bad'}">${ro.ok ? '' : esc(ro.err)}</em></label></details>`;
     html += `</div><div class="cmdfoot"><span id="gridStep" class="muted"></span><button class="ok" id="finishBtn">${icon('finish', 16)} Finish Sketch</button></div>`;
     const p = $('#sketchPanel');
     const focused = document.activeElement && p.contains(document.activeElement) ? document.activeElement.dataset.k : null;
     p.innerHTML = html;
+    for (const b of p.querySelectorAll('[data-delcons]')) b.onclick = () => sk.deleteConstraints(new Set([b.dataset.delcons]));
     this.sketchInfo(sk);
     this.setGridStep(sk.gridStep());
     $('#finishBtn').onclick = () => a.exitSketch();
@@ -1532,6 +1546,8 @@ class UI {
       <li>Click a <span class="dimchip">blue number</span> to type an exact size. You can type a parameter name or a formula like <code>width/2</code>.</li>
       <li>A shape must be <b>closed</b> to become a solid. Closed areas are shaded. <b style="color:#d62f2f">Red dots</b> are line ends that do not meet anything.</li>
       <li>Select tool: click to pick, drag a dot to move it. Delete removes. <b>Construction</b> (X) turns a line into a dashed helper, e.g. a spin axis for Revolve.</li>
+      <li><b>Rules</b> keep a sketch neat when sizes change: Coincident (join points), Horizontal, Vertical, Parallel, Perpendicular, Equal, Tangent, Concentric, Midpoint and Fix. Pick a rule, then click the shapes. With <b>Auto rules</b> on, joined ends and level/upright lines get rules as you draw. Badges show each rule; click one and press Delete to remove it.</li>
+      <li>A size you type on a line or arc becomes a rule too, so it stays that size when you drag other points.</li>
       <li>Press <b>Finish Sketch</b>. A new closed sketch goes straight to Extrude.</li></ul>
       <h3>2. Make it solid</h3>
       <ul><li><b>Extrude</b> pushes the sketch out. Choose "Remove material" to cut a pocket, or "Through everything" for a cut-out.</li>

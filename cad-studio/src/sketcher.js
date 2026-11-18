@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { evalSketch, buildLoops, arcFrom3, arcPoint, arcSweep } from './sketch.js';
 import { evaluate, fmt } from './expr.js';
+import { solveSketch, CONS_INFO, pointOf, pointKeys } from './constraints.js';
 
 const C = { line: 0x16457a, cons: 0xd9822b, sel: 0xe8590c, hover: 0x12a39a, err: 0xd62f2f, open: 0xd62f2f, pt: 0x16457a, fill: 0x2ec4b6, preview: 0x12a39a };
 const r3 = (n) => Math.round(n * 1000) / 1000;
@@ -19,6 +20,7 @@ export const TOOL_HINTS = {
   polygon: 'Click the center, then a corner.',
   slot: 'Click one end center, then the other end center, then set the width.',
 };
+for (const [k, v] of Object.entries(CONS_INFO)) if (!v.dim) TOOL_HINTS['c:' + k] = v.label + ': ' + v.help;
 
 export class Sketcher {
   constructor(app) {
@@ -34,6 +36,10 @@ export class Sketcher {
     this.cursor = null;
     this.polySides = 6;
     this.gridOn = true;
+    this.autoCons = true;
+    this.showCons = true;
+    this.selCons = new Set();
+    this.picks = [];
     this.labels = [];
     this.vp.onBeforeRender = () => this.active && this.placeLabels();
     const cv = this.vp.renderer.domElement;
@@ -127,9 +133,9 @@ export class Sketcher {
     for (const it of this.evals || []) {
       if (!it.g) continue;
       const e = it.e;
-      if (e.type === 'line') { const s = it.g.segs[0]; out.push({ p: s.a, kind: 'end' }, { p: s.b, kind: 'end' }, { p: [(s.a[0] + s.b[0]) / 2, (s.a[1] + s.b[1]) / 2], kind: 'mid' }); }
-      else if (e.type === 'arc') { const s = it.g.segs[0]; out.push({ p: s.a, kind: 'end' }, { p: s.b, kind: 'end' }, { p: it.g.center, kind: 'center' }); }
-      else if (e.type === 'circle') out.push({ p: it.g.circle.c, kind: 'center' });
+      if (e.type === 'line') { const s = it.g.segs[0]; out.push({ p: s.a, kind: 'end', ref: { e: e.id, k: 'p1' } }, { p: s.b, kind: 'end', ref: { e: e.id, k: 'p2' } }, { p: [(s.a[0] + s.b[0]) / 2, (s.a[1] + s.b[1]) / 2], kind: 'mid', mid: e.id }); }
+      else if (e.type === 'arc') { out.push({ p: [num(e.x1, this.P), num(e.y1, this.P)], kind: 'end', ref: { e: e.id, k: 'p1' } }, { p: [num(e.x2, this.P), num(e.y2, this.P)], kind: 'end', ref: { e: e.id, k: 'p2' } }, { p: it.g.center, kind: 'center', ref: { e: e.id, k: 'c' } }); }
+      else if (e.type === 'circle') out.push({ p: it.g.circle.c, kind: 'center', ref: { e: e.id, k: 'c' } });
       else if (e.type === 'rect' || e.type === 'polygon') { for (const s of it.g.segs) out.push({ p: s.a, kind: 'end' }, { p: [(s.a[0] + s.b[0]) / 2, (s.a[1] + s.b[1]) / 2], kind: 'mid' }); if (e.type === 'polygon') out.push({ p: [num(e.cx, this.P), num(e.cy, this.P)], kind: 'center' }); }
       else if (e.type === 'slot') out.push({ p: [num(e.x1, this.P), num(e.y1, this.P)], kind: 'center' }, { p: [num(e.x2, this.P), num(e.y2, this.P)], kind: 'center' });
     }
@@ -140,9 +146,9 @@ export class Sketcher {
     let best = null, bd = 10 * px;
     for (const s of this.snapPoints()) {
       const d = Math.hypot(s.p[0] - p[0], s.p[1] - p[1]);
-      if (d < bd) { bd = d; best = s; }
+      if (d < bd - 1e-9 || (best && Math.abs(d - bd) < 1e-9 && s.ref && !best.ref)) { bd = d; best = s; }
     }
-    if (best) return { p: [...best.p], kind: best.kind };
+    if (best) return { p: [...best.p], kind: best.kind, ref: best.ref, mid: best.mid };
     let q = [...p];
     let kind = null;
     if (this.gridOn && !(ev && ev.altKey)) { const g = this.gridStep() / (this.app.units() === 'in' ? 1 : 2); q = [Math.round(q[0] / g) * g, Math.round(q[1] / g) * g]; }
@@ -218,6 +224,12 @@ export class Sketcher {
       const s = this.snap(raw, null, ev);
       const p = s.p;
       for (const h of this.drag.handles) { h.e[h.kx] = r3(p[0] + h.off[0]); h.e[h.ky] = r3(p[1] + h.off[1]); }
+      if (this.constraints.length) {
+        const h = this.drag.handles[0];
+        const k = h.kx === 'x1' ? 'p1' : h.kx === 'x2' ? 'p2' : h.kx === 'xm' ? 'pm' : 'c';
+        if (k !== 'pm' && h.e.type !== 'rect') this.solveNow([{ id: h.e.id, k, to: [p[0] + h.off[0], p[1] + h.off[1]] }]);
+        this.solveNow();
+      }
       this.drag.moved = true;
       this.recompute();
       this.redraw();
@@ -259,14 +271,138 @@ export class Sketcher {
         return;
       }
       const e = this.entityAt(raw);
-      if (!ev.shiftKey) this.sel.clear();
+      if (!ev.shiftKey) { this.sel.clear(); this.selCons.clear(); }
       if (e) { if (this.sel.has(e.id) && ev.shiftKey) this.sel.delete(e.id); else this.sel.add(e.id); }
       this.app.ui.sketchSelection();
       this.redraw();
       return;
     }
+    if (this.tool.startsWith('c:')) { this.consPick(raw); return; }
     const s = this.snap(raw, this.temp.length ? this.temp[this.temp.length - 1] : null, ev);
+    this.lastSnap = s;
     this.click(s.p);
+  }
+
+  // ----- constraints -----
+  get constraints() { const f = this.feature; return f.constraints || (f.constraints = []); }
+  // The point (end, center) nearest the mouse, as a constraint reference.
+  pointRefAt(p) {
+    const tol = 10 * this.vp.pixelSize();
+    let best = null, bd = tol;
+    for (const it of this.evals || []) {
+      if (!it.g || it.e.type === 'rect') continue;
+      for (const k of pointKeys(it.e.type)) {
+        const g = {};
+        for (const key of Object.keys(it.e)) g[key] = num(it.e[key], this.P);
+        const q = pointOf(it.e.type, g, k);
+        if (!q) continue;
+        const d = Math.hypot(q[0] - p[0], q[1] - p[1]);
+        if (d < bd) { bd = d; best = { e: it.e.id, k, p: q }; }
+      }
+    }
+    return best;
+  }
+  consPick(raw) {
+    const type = this.tool.slice(2);
+    const need = CONS_INFO[type].need;
+    const ent = this.entityAt(raw);
+    const pref = this.pointRefAt(raw);
+    const kind = (id) => { const e = this.entities().find((x) => x.id === id); return e && e.type; };
+    const isRound = (t) => t === 'circle' || t === 'arc';
+    const picks = this.picks;
+    let add = null;
+    const wantPoint = need === 'points' || need === 'point' || (need === 'pointLine' && !picks.length) || ((type === 'horizontal' || type === 'vertical') && pref && (!ent || picks.length));
+    if (wantPoint) {
+      if (!pref) return this.app.toast('Click on a point (an end or a center).', 'error');
+      add = { e: pref.e, k: pref.k };
+    } else {
+      if (!ent) return this.app.toast(CONS_INFO[type].help, 'error');
+      if (ent.type === 'rect') return this.app.toast('Rectangles stay square already. Draw it with lines to give it rules.', 'error');
+      add = { e: ent.id };
+    }
+    picks.push(add);
+    const t0 = kind(picks[0].e), t1 = picks[1] && kind(picks[1].e);
+    let done = false, err = null;
+    switch (need) {
+      case 'point': done = true; break;
+      case 'points': done = picks.length === 2; break;
+      case 'line':
+        if (picks[0].k) done = picks.length === 2;
+        else { done = true; if (t0 !== 'line') err = 'Pick a line.'; }
+        break;
+      case '2lines': if (kind(add.e) !== 'line') err = 'Pick lines.'; done = picks.length === 2; break;
+      case '2same': done = picks.length === 2; if (done && !(t0 === t1 || (isRound(t0) && isRound(t1)))) err = 'Pick two lines, or two circles/arcs.'; if (done && !(t0 === 'line' || isRound(t0))) err = 'Pick two lines, or two circles/arcs.'; break;
+      case '2round': if (!isRound(kind(add.e))) err = 'Pick circles or arcs.'; done = picks.length === 2; break;
+      case 'tangent': done = picks.length === 2; if (done && !((t0 === 'line' && isRound(t1)) || (isRound(t0) && t1 === 'line') || (isRound(t0) && isRound(t1)))) err = 'Pick a line and a circle/arc, or two circles/arcs.'; break;
+      case 'pointLine': done = picks.length === 2; if (done && t1 !== 'line') err = 'Then pick a line.'; break;
+    }
+    if (err) { this.picks = []; this.redraw(); return this.app.toast(err, 'error'); }
+    if (done && picks.length === 2 && picks[0].e === picks[1].e && !picks[0].k) { this.picks = []; return this.app.toast('Pick two different items.', 'error'); }
+    if (!done) { this.redraw(); return; }
+    const c = { id: this.app.newId('k'), type, refs: picks.map((r) => ({ ...r })) };
+    if (type === 'fix') c.at = pref.p.map(r4);
+    if (type === 'tangent' && isRound(t0) && isRound(t1)) {
+      const g = (id) => this.evals.find((x) => x.e.id === id).g;
+      const ga = g(picks[0].e), gb = g(picks[1].e);
+      const ca = ga.center || ga.circle.c, cb = gb.center || gb.circle.c, ra = ga.radius || ga.circle.r, rb = gb.radius || gb.circle.r;
+      const d = Math.hypot(ca[0] - cb[0], ca[1] - cb[1]);
+      c.inside = Math.abs(d - Math.abs(ra - rb)) < Math.abs(d - (ra + rb));
+    }
+    this.picks = [];
+    this.addConstraint(c);
+  }
+  // Add a rule and solve. If it fights the others, take it back.
+  addConstraint(c, quiet) {
+    const before = this.app.snapshot();
+    this.constraints.push(c);
+    const res = solveSketch(this.entities(), this.constraints, this.P);
+    if (!res.ok && res.bad.includes(c.id)) {
+      this.constraints.pop();
+      if (!quiet) this.app.toast(`${CONS_INFO[c.type].label} would fight the other rules (or a size typed as a formula), so it was not added.`, 'error');
+      this.redraw();
+      return false;
+    }
+    this.writeBack(res.entities);
+    if (!quiet) { this.app.undoStack.push(before); this.app.redoStack = []; }
+    this.app.changed();
+    this.redraw();
+    return true;
+  }
+  writeBack(solved) {
+    const f = this.feature;
+    const map = new Map(solved.map((e) => [e.id, e]));
+    for (const e of f.entities) { const s2 = map.get(e.id); if (s2 && s2 !== e) for (const k of Object.keys(s2)) if (typeof e[k] === 'number') e[k] = s2[k]; }
+  }
+  solveNow(pull) {
+    if (!this.constraints.length) return true;
+    const res = solveSketch(this.entities(), this.constraints, this.P, { pull });
+    this.writeBack(res.entities);
+    this.badCons = new Set(res.bad);
+    return res.ok;
+  }
+  deleteConstraints(ids) {
+    this.app.change(() => { const f = this.feature; f.constraints = (f.constraints || []).filter((c) => !ids.has(c.id)); });
+    this.selCons.clear();
+    this.recompute(); this.redraw(); this.app.ui.sketchSelection();
+  }
+  consFor(id) { return this.constraints.filter((c) => c.refs.some((r) => r.e === id)); }
+  consLabel(c) {
+    const i = CONS_INFO[c.type];
+    if (i.dim) return `${i.label} = ${c.value}`;
+    return i.label;
+  }
+  // Rules added automatically while drawing (like Inventor): joined ends, level and upright lines.
+  autoFor(newE, startSnap, endSnap, prevId) {
+    if (!this.autoCons) return;
+    const tryAdd = (c) => this.addConstraint({ id: this.app.newId('k'), ...c }, true);
+    if (prevId) tryAdd({ type: 'coincident', refs: [{ e: prevId, k: 'p2' }, { e: newE.id, k: 'p1' }] });
+    else if (startSnap && startSnap.ref && startSnap.ref.e !== newE.id) tryAdd({ type: 'coincident', refs: [{ ...startSnap.ref }, { e: newE.id, k: newE.type === 'circle' || newE.type === 'polygon' ? 'c' : 'p1' }] });
+    if (endSnap && endSnap.ref && endSnap.ref.e !== newE.id && newE.type !== 'circle') tryAdd({ type: 'coincident', refs: [{ ...endSnap.ref }, { e: newE.id, k: 'p2' }] });
+    if (newE.type === 'line') {
+      const dx = Math.abs(num(newE.x2, this.P) - num(newE.x1, this.P)), dy = Math.abs(num(newE.y2, this.P) - num(newE.y1, this.P));
+      if (dy < 1e-9 && dx > 1e-9) tryAdd({ type: 'horizontal', refs: [{ e: newE.id }] });
+      else if (dx < 1e-9 && dy > 1e-9) tryAdd({ type: 'vertical', refs: [{ e: newE.id }] });
+    }
   }
 
   onUp(ev) {
@@ -285,6 +421,8 @@ export class Sketcher {
   }
 
   cancelTemp() {
+    this.chainPrev = null;
+    if (this.picks.length) { this.picks = []; this.redraw(); return; }
     if (this.temp.length) { this.temp = []; this.redraw(); }
     else if (this.tool !== 'select') this.setTool('select');
   }
@@ -293,23 +431,31 @@ export class Sketcher {
     e.id = this.app.newId('e');
     this.app.change(() => this.entities().push(e));
     this.recompute();
+    const snaps = this.tempSnaps || [];
+    if (e.type === 'line') this.autoFor(e, snaps[snaps.length - 2], snaps[snaps.length - 1], this.chainPrev);
+    else if (e.type === 'arc') this.autoFor(e, snaps[0], snaps[1]);
+    else if (e.type === 'circle' || e.type === 'polygon') this.autoFor(e, snaps[0], null);
+    this.recompute();
     return e;
   }
 
   click(p) {
     const t = this.temp;
+    if (!t.length) this.tempSnaps = [];
+    this.tempSnaps = this.tempSnaps || [];
+    this.tempSnaps.push(this.lastSnap || null);
     switch (this.tool) {
       case 'line':
-        if (t.length && Math.hypot(p[0] - t[t.length - 1][0], p[1] - t[t.length - 1][1]) < 1e-6) return;
+        if (t.length && Math.hypot(p[0] - t[t.length - 1][0], p[1] - t[t.length - 1][1]) < 1e-6) { this.tempSnaps.pop(); return; }
+        if (!t.length) this.chainPrev = null;
         t.push(p);
         if (t.length >= 2) {
           const a = t[t.length - 2];
-          this.add({ type: 'line', x1: a[0], y1: a[1], x2: p[0], y2: p[1] });
+          const e = this.add({ type: 'line', x1: a[0], y1: a[1], x2: p[0], y2: p[1] });
+          this.chainPrev = e.id;
           // Closing the chain on its first point ends it.
-          if (t.length > 2 && Math.hypot(p[0] - t[0][0], p[1] - t[0][1]) < 1e-6) this.temp = [];
-          else this.temp = [p];
-          if (!this.temp.length) this.temp = [];
-          this.chainStart = this.chainStart || t[0];
+          if (t.length > 2 && Math.hypot(p[0] - t[0][0], p[1] - t[0][1]) < 1e-6) { this.temp = []; this.chainPrev = null; }
+          else { this.temp = [p]; this.tempSnaps = [this.tempSnaps[this.tempSnaps.length - 1]]; }
         }
         break;
       case 'rect':
@@ -360,9 +506,14 @@ export class Sketcher {
   }
 
   deleteSelected() {
+    if (this.selCons.size) { this.deleteConstraints(new Set(this.selCons)); return true; }
     if (!this.sel.size) return false;
     const ids = this.sel;
-    this.app.change(() => { const f = this.feature; f.entities = f.entities.filter((e) => !ids.has(e.id)); });
+    this.app.change(() => {
+      const f = this.feature;
+      f.entities = f.entities.filter((e) => !ids.has(e.id));
+      f.constraints = (f.constraints || []).filter((c) => !c.refs.some((r) => ids.has(r.e)));
+    });
     this.sel = new Set();
     this.recompute();
     this.app.ui.sketchSelection();
@@ -379,6 +530,7 @@ export class Sketcher {
 
   // ----- evaluation & drawing -----
   recompute() {
+    this.solveNow();
     this.evals = evalSketch(this.entities(), this.P);
     const { loops, openEnds } = buildLoops(this.evals);
     this.loops = loops;
@@ -537,7 +689,9 @@ export class Sketcher {
           const s = it.g.segs[0];
           const len = Math.hypot(s.b[0] - s.a[0], s.b[1] - s.a[1]);
           const nx = -(s.b[1] - s.a[1]) / (len || 1), ny = (s.b[0] - s.a[0]) / (len || 1);
-          add([(s.a[0] + s.b[0]) / 2, (s.a[1] + s.b[1]) / 2], fmt(len), 'length', [nx * 14, ny * 14]);
+          const dc = this.constraints.find((c) => c.type === 'length' && c.refs[0].e === e.id);
+          add([(s.a[0] + s.b[0]) / 2, (s.a[1] + s.b[1]) / 2], dc ? showExpr(dc.value, len) : fmt(len), 'length', [nx * 14, ny * 14]);
+          if (dc) L[L.length - 1].driving = dc;
           break;
         }
         case 'rect': {
@@ -554,7 +708,9 @@ export class Sketcher {
         }
         case 'arc': {
           const s = it.g.segs[0];
-          add(s.m, 'R' + fmt(s.r), 'radius', [12, 10]);
+          const dc = this.constraints.find((c) => c.type === 'radius' && c.refs[0].e === e.id);
+          add(s.m, 'R' + (dc ? showExpr(dc.value, s.r) : fmt(s.r)), 'radius', [12, 10]);
+          if (dc) L[L.length - 1].driving = dc;
           break;
         }
         case 'polygon': {
@@ -569,14 +725,54 @@ export class Sketcher {
         }
       }
     }
+    // Rule badges (H, V, ∥ ...) next to the shapes they belong to.
+    if (this.showCons) {
+      const count = new Map();
+      for (const c of this.constraints) {
+        if (CONS_INFO[c.type].dim || c.type === 'coincident') continue;
+        const r = c.refs[0];
+        const it = this.evals.find((x) => x.e.id === r.e);
+        if (!it || !it.g) continue;
+        let pos;
+        if (r.k) { const g = {}; for (const key of Object.keys(it.e)) g[key] = num(it.e[key], this.P); pos = pointOf(it.e.type, g, r.k); }
+        else if (it.g.segs[0]) { const s0 = it.g.segs[0]; pos = s0.type === 'line' ? [s0.a[0] * 0.65 + s0.b[0] * 0.35, s0.a[1] * 0.65 + s0.b[1] * 0.35] : s0.m; }
+        if (!pos) continue;
+        const n = count.get(r.e) || 0;
+        count.set(r.e, n + 1);
+        L.push({ pos, text: CONS_INFO[c.type].glyph, glyph: c, e: it.e, off: [-14 - n * 18, 14] });
+        if (c.refs[1]) {
+          const it2 = this.evals.find((x) => x.e.id === c.refs[1].e);
+          if (it2 && it2.g && it2.g.segs[0] && !c.refs[1].k) {
+            const s1 = it2.g.segs[0];
+            const n2 = count.get(it2.e.id) || 0;
+            count.set(it2.e.id, n2 + 1);
+            L.push({ pos: s1.type === 'line' ? [s1.a[0] * 0.65 + s1.b[0] * 0.35, s1.a[1] * 0.65 + s1.b[1] * 0.35] : s1.m, text: CONS_INFO[c.type].glyph, glyph: c, e: it2.e, off: [-14 - n2 * 18, 14] });
+          }
+        }
+      }
+    }
+    // Picks so far for a rule tool.
     this.labels = L;
     const el = this.labelsEl;
     el.innerHTML = '';
     for (const lab of L) {
+      if (lab.glyph) {
+        const g = document.createElement('button');
+        const c = lab.glyph;
+        g.className = 'cglyph' + (this.selCons.has(c.id) ? ' sel' : '') + (this.badCons && this.badCons.has(c.id) ? ' bad' : '');
+        g.textContent = lab.text;
+        g.title = CONS_INFO[c.type].label + ' rule. Click to pick it, then Delete removes it.';
+        g.addEventListener('pointerdown', (ev) => ev.stopPropagation());
+        g.addEventListener('click', (ev) => { ev.stopPropagation(); if (!ev.shiftKey) { this.selCons.clear(); this.sel.clear(); } this.selCons.add(c.id); this.app.ui.sketchSelection(); this.redraw(); });
+        lab.el = g;
+        el.appendChild(g);
+        continue;
+      }
       const d = document.createElement('button');
-      d.className = 'dim' + (this.sel.has(lab.e.id) ? ' sel' : '') + (lab.e.construction ? ' cons' : '');
+      const fixedSize = lab.driving || ['w', 'h', 'r', 'diameter', 'slotlen'].includes(lab.edit);
+      d.className = 'dim' + (this.sel.has(lab.e.id) ? ' sel' : '') + (lab.e.construction ? ' cons' : '') + (fixedSize ? ' driving' : ' loose');
       d.textContent = lab.text;
-      d.title = 'Click to type a new size';
+      d.title = fixedSize ? 'This size is set. Click to type a new size.' : 'Measured size (can change). Click to set it.';
       d.addEventListener('pointerdown', (ev) => ev.stopPropagation());
       d.addEventListener('click', (ev) => { ev.stopPropagation(); this.editLabel(lab, d); });
       lab.el = d;
@@ -598,6 +794,7 @@ export class Sketcher {
     const e = lab.e, P = this.P;
     let start = lab.text.replace(/^[ØRW]/, '');
     if (lab.edit === 'w' || lab.edit === 'h' || lab.edit === 'r') start = String(e[lab.edit]);
+    if (lab.driving) start = String(lab.driving.value);
     if (lab.edit === 'diameter' && !isNum(e.r)) { const m = String(e.r).match(/^\((.*)\)\/2$/); if (m) start = m[1]; }
     const inp = document.createElement('input');
     inp.className = 'dim-input';
@@ -628,7 +825,25 @@ export class Sketcher {
     const P = this.P;
     if (kind === 'w' || kind === 'h' || kind === 'r') { e[kind] = expr; return; }
     if (kind === 'diameter') { e.r = typeof expr === 'number' ? r3(expr / 2) : `(${expr})/2`; return; }
-    if (kind === 'length') {
+    if (kind === 'length' || kind === 'radius') {
+      // Sizes of lines and arcs are rules, so they stay put when other things change.
+      const type = kind === 'length' ? 'length' : 'radius';
+      const f = this.feature;
+      f.constraints = (f.constraints || []).filter((c) => !(c.type === type && c.refs[0].e === e.id));
+      const c = { id: this.app.newId('k'), type, refs: [{ e: e.id }], value: expr };
+      f.constraints.push(c);
+      // Keep the start point where it is when possible.
+      const pull = type === 'length' ? [{ id: e.id, k: 'p1', to: [num(e.x1, P), num(e.y1, P)] }] : [];
+      const res = solveSketch(f.entities, f.constraints, P, { pull });
+      if (!res.ok && res.bad.includes(c.id)) {
+        f.constraints.pop();
+        this.app.toast('That size fights the other rules, so it was not set.', 'error');
+        return;
+      }
+      this.writeBack(res.entities);
+      return;
+    }
+    if (kind === 'oldlength') {
       const a = [num(e.x1, P), num(e.y1, P)], b = [num(e.x2, P), num(e.y2, P)];
       const L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1;
       const ux = (b[0] - a[0]) / L, uy = (b[1] - a[1]) / L;
@@ -641,7 +856,7 @@ export class Sketcher {
       for (const h of others) { h.e[h.kx] = nb[0]; h.e[h.ky] = nb[1]; }
       return;
     }
-    if (kind === 'radius') {
+    if (kind === 'oldradius') {
       const a = [num(e.x1, P), num(e.y1, P)], b = [num(e.x2, P), num(e.y2, P)], m = [num(e.xm, P), num(e.ym, P)];
       const half = Math.hypot(b[0] - a[0], b[1] - a[1]) / 2;
       if (v < half - 1e-9) { this.app.toast(`Radius must be at least ${fmt(half)} for these end points`, 'error'); return; }

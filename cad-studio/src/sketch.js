@@ -1,5 +1,6 @@
 // Sketch entities -> evaluated 2D geometry -> closed loops (profiles).
 import { evaluate } from './expr.js';
+import { solveSketch } from './constraints.js';
 
 const TAU = Math.PI * 2;
 const rad = (d) => (d * Math.PI) / 180;
@@ -89,10 +90,18 @@ export function evalEntity(e, P) {
   throw new Error('Unknown sketch item ' + e.type);
 }
 
-export function evalSketch(entities, P) {
-  return entities.map((e) => {
+export function evalSketch(entities, P, constraints) {
+  let bad = [];
+  if (constraints && constraints.length) {
+    const r = solveSketch(entities, constraints, P);
+    entities = r.entities;
+    bad = r.bad;
+  }
+  const out = entities.map((e) => {
     try { return { e, g: evalEntity(e, P) }; } catch (err) { return { e, err: err.message }; }
   });
+  out.bad = bad;
+  return out;
 }
 
 function sampleSeg(s, out) {

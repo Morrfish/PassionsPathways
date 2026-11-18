@@ -243,9 +243,10 @@ export function createModel(r) {
                 plane = { origin: mul(n, d + off), xDir: plane.xDir, normal: n, base: mul(n, d) };
               } else warnings[f.id] = 'The face this sketch was drawn on is gone, so the sketch stays where it was.';
             }
-            const evals = evalSketch(f.entities || [], P);
+            const evals = evalSketch(f.entities || [], P, f.constraints);
             const bad = evals.find((x) => x.err);
             if (bad) warnings[f.id] = bad.err;
+            else if (evals.bad && evals.bad.length) warnings[f.id] = `${evals.bad.length} sketch rule(s) cannot all be met. Edit the sketch to fix them.`;
             let size = 0;
             for (const it of evals) if (it.g) for (const s of it.g.segs) size = Math.max(size, Math.abs(s.a[0]) + Math.abs(s.b[0]), Math.abs(s.a[1]) + Math.abs(s.b[1]));
             sketches[f.id] = { plane, evals, size };
