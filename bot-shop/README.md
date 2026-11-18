@@ -20,6 +20,8 @@ Open `index.html` — no install, no accounts, works offline. Progress saves in 
 - **Ceiling:** every built-in course has a striped ceiling 13 m above the highest nearby ground. Flying into it sends the bot back to the last checkpoint with the usual reset penalty.
 - **Checkpoints:** only count when the bot passes through the flag (within 2.8 m of its base). Flying over shows "Too high!" and does not save. The finish does not count until every checkpoint on the course has been passed.
 - **Must-press notice:** `NEWS` in `js/core.js` shows every player a one-time notice with a single button that pays `NEWS_COINS`. Raise `NEWS` to send another.
+- **Progress files:** Settings has "Save my progress to a file" (`Bot Shop progress - <Player>.txt`); the sign-in screen can load one (the player's password is required). Nothing is ever cleared at sign-in. The game warns when the browser cannot save (private or guest windows).
+- **Course times:** a builder's recorded time belongs to the layout it was driven on. After the course is changed, the next test win records a new time.
 - **Course assignments:** five named courses (`TASKS` in `js/core.js`) appear above My courses. Each has a minimum Start-to-Finish length and required pieces, which are free in that course. When the checklist is complete and the student has beaten the course since their last edit, Save file downloads `<Course> - <Player>.txt`, which Load a course code can open.
 - **Next course:** after a win on a built-in level, a Next course button opens the following level (home-screen order) with the same bot.
 - **Gold bonus:** every 20 gold medals on built-in levels pays $2000 (at 20, 40, 60 and 80 golds).
