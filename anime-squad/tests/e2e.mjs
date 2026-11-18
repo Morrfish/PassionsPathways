@@ -120,12 +120,22 @@ await page.click('text=Save character');
 check(await page.isVisible('text=Give them a job'), 'went on to jobs with new character');
 await page.fill('#custom-job', 'Cheer me on while I study');
 await page.click('text=Use this job');
+// picture for the character
+await page.click('[data-act="picture"]');
+await page.setInputFiles('#pic-file', { name: 'nezuko.png', mimeType: 'image/png', buffer: await page.screenshot() });
+await page.waitForSelector('.sheet .avatar.pic');
+check(await page.isVisible('text=Remove picture'), 'picture added');
+if (SHOTS) await page.screenshot({ path: `${SHOTS}/7-picture.png` });
+await page.click('text=Done');
+check((await page.locator('.preview .avatar.pic').count()) === 1, 'picture shows on the bot preview');
 await page.click('text=Create bot');
 check(await page.isVisible('text=Cheer me on while I study'), 'custom job bot created');
 
 // reload keeps everything
 await page.reload();
 check((await page.locator('.bot-card:not(.new-card)').count()) === 2, 'bots saved after reload');
+await page.waitForSelector('.bot-card .avatar.pic');
+check((await page.locator('.bot-card .avatar.pic').count()) === 1, 'picture saved after reload');
 
 await browser.close();
 server.close();

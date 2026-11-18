@@ -5,6 +5,7 @@ import { getState, save, uid, exportData, importData } from './store.js';
 import { MODELS, CONTEXT_MARK, buildSystemPrompt, userMessage, runTurn, generateCharacter, explainError } from './claude.js';
 import { toolLabel } from './tools.js';
 import { esc, renderMarkdown } from './markdown.js';
+import { loadPics, getPic, setPic, deletePic, fileToSquarePic } from './pics.js';
 
 const root = document.getElementById('app');
 const S = getState;
@@ -60,8 +61,11 @@ const STARTERS = {
 
 function avatar(c, size = '') {
   const [c1, c2] = c.colors ?? ['#7c4dff', '#ff4081'];
+  const pic = getPic(c.id);
+  if (pic) return `<div class="avatar ${size} pic" style="--c1:${esc(c1)};--c2:${esc(c2)};background-image:url(${esc(pic)})"></div>`;
   return `<div class="avatar ${size}" style="--c1:${esc(c1)};--c2:${esc(c2)}">${esc(c.emoji || '⭐')}</div>`;
 }
+const pictureBtn = (c) => `<button class="chip" data-act="picture" data-id="${esc(c.id)}">📷 ${getPic(c.id) ? 'Change' : 'Add'} picture</button>`;
 const colorVars = (c) => `--c1:${esc(c.colors?.[0])};--c2:${esc(c.colors?.[1])}`;
 
 // ---------- render ----------
@@ -158,7 +162,7 @@ function pickJob() {
   return `${topbar('Give them a job', { backBtn: true })}
   <main>
     <div class="steps"><i class="on"></i><i class="on"></i><i></i></div>
-    <div class="preview">${avatar(c, 'lg')}<div><div class="who">${esc(c.name)}</div><div class="what">${esc(c.anime)}</div><div class="quote">“${esc(c.phrases?.[0] ?? '')}”</div></div></div>
+    <div class="preview">${avatar(c, 'lg')}<div style="flex:1"><div class="who">${esc(c.name)}</div><div class="what">${esc(c.anime)}</div><div class="quote">“${esc(c.phrases?.[0] ?? '')}”</div></div>${pictureBtn(c)}</div>
     <div class="section-title">✏️ Tell them what to do</div>
     <textarea class="input" id="custom-job" rows="3" placeholder="e.g. Help me plan my sister's birthday party, or remind me to study every night">${esc(w.customJob)}</textarea>
     <button class="btn primary block" data-act="use-custom-job" style="margin-top:10px">Use this job</button>
@@ -175,7 +179,7 @@ function confirmBot() {
   return `${topbar(w.editBotId ? 'Save changes' : 'Meet your bot', { backBtn: true })}
   <main>
     <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i></div>
-    <div class="preview">${avatar(c, 'lg')}<div><div class="who">${esc(c.name)}</div><div class="what">${j.emoji} ${esc(j.name)}: ${esc(j.blurb)}</div><div class="quote">“${esc(c.phrases?.[0] ?? '')}”</div></div></div>
+    <div class="preview">${avatar(c, 'lg')}<div style="flex:1"><div class="who">${esc(c.name)}</div><div class="what">${j.emoji} ${esc(j.name)}: ${esc(j.blurb)}</div><div class="quote">“${esc(c.phrases?.[0] ?? '')}”</div></div>${pictureBtn(c)}</div>
     <label class="field"><span>Bot name (optional)</span>
       <input class="input" id="nickname" placeholder="${esc(c.name)}" value="${esc(w.nickname)}" maxlength="40">
       <div class="hint">Handy if you have more than one bot with the same character, like “Gym Goku” and “Chef Goku”.</div></label>
@@ -389,6 +393,7 @@ function sheetHtml() {
   let body = '';
   if (s.kind === 'bot-menu') {
     body = `<h3>${esc(botName(botById(s.botId)))}</h3>
+      <button class="btn block" data-act="picture" data-id="${esc(botById(s.botId).characterId)}">📷 Change picture</button>
       <button class="btn block" data-act="change-job">🔁 Change job</button>
       <button class="btn block" data-act="rename-bot">🏷️ Rename</button>
       <button class="btn block" data-act="clear-chat">🧽 Start a new chat</button>
@@ -413,6 +418,17 @@ function sheetHtml() {
       <button class="btn primary block" data-act="save-character">Save character</button>`
         : `<button class="btn block" data-act="blank-character">Or write one yourself</button>`}
       <button class="btn block" data-act="close-sheet">Cancel</button>`;
+  } else if (s.kind === 'picture') {
+    const c = charById(s.charId);
+    const has = !!getPic(c.id);
+    body = `<h3>Picture for ${esc(c.name)}</h3>
+      <div style="display:grid;place-items:center;padding:8px">${avatar(c, 'xl')}</div>
+      ${s.error ? `<div class="notice err">${esc(s.error)}</div>` : ''}
+      <label class="btn primary block" style="text-align:center">${s.loading ? 'Working…' : `🖼️ Choose ${has ? 'a new' : 'a'} picture`}
+        <input type="file" id="pic-file" accept="image/*" hidden></label>
+      ${has ? '<button class="btn danger block" data-act="remove-picture">Remove picture (use the emoji)</button>' : ''}
+      <div class="hint">Any picture works: one you made, fan art or a screenshot. It's cropped to a square and saved only on this device. Every bot with this character uses it.</div>
+      <button class="btn block" data-act="close-sheet">Done</button>`;
   } else if (s.kind === 'text') {
     body = `<h3>${esc(s.title)}</h3>
       <textarea class="input" id="sheet-text" rows="${s.rows ?? 2}">${esc(s.value ?? '')}</textarea>
@@ -439,6 +455,22 @@ function readDraft() {
 
 // ---------- after render: inputs that need live handlers ----------
 function afterRender(v) {
+  if (sheet?.kind === 'picture') {
+    document.getElementById('pic-file')?.addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const mySheet = sheet;
+      Object.assign(mySheet, { loading: true, error: null });
+      render();
+      try {
+        await setPic(mySheet.charId, await fileToSquarePic(file));
+      } catch (err) {
+        mySheet.error = err?.message || 'Could not use that picture.';
+      }
+      mySheet.loading = false;
+      render();
+    });
+  }
   if (v.name === 'pickCharacter') {
     const input = document.getElementById('char-search');
     input?.addEventListener('input', () => {
@@ -571,6 +603,12 @@ async function act(a, d) {
       return render();
     }
 
+    // pictures
+    case 'picture': sheet = { kind: 'picture', charId: d.id }; return render();
+    case 'remove-picture':
+      await deletePic(sheet.charId);
+      return render();
+
     // characters
     case 'add-character': sheet = { kind: 'character', draft: null }; render(); setTimeout(() => document.getElementById('gen-query')?.focus(), 50); return;
     case 'blank-character':
@@ -620,7 +658,9 @@ async function act(a, d) {
       if (used) return alert('A bot is using this character. Delete that bot first.');
       if (!confirm('Delete this character?')) return;
       s.customCharacters = s.customCharacters.filter((c) => c.id !== d.id);
-      save(); return render();
+      save();
+      await deletePic(d.id).catch(() => {});
+      return render();
     }
 
     // tasks
@@ -673,4 +713,4 @@ CapApp.addListener('backButton', () => {
   if (!back()) CapApp.exitApp();
 }).catch(() => { /* not running as a phone app */ });
 
-render();
+loadPics().finally(render);

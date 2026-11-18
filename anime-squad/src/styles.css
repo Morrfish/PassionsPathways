@@ -93,6 +93,9 @@ label.field > span { display: block; font-weight: 700; margin-bottom: 6px; }
 }
 .avatar.sm { width: 36px; height: 36px; font-size: 18px; border-width: 1.5px; }
 .avatar.lg { width: 76px; height: 76px; font-size: 40px; border-width: 3px; }
+.avatar.xl { width: 160px; height: 160px; font-size: 80px; border-width: 4px; }
+.avatar.pic { background-size: cover; background-position: center; }
+.preview .chip { align-self: flex-start; }
 
 /* ---------- squad (bot cards) ---------- */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
