@@ -1,7 +1,8 @@
 // Desktop shell for Pathway CAD: opens the app in its own window.
 // Files are served from a private pcad:// address so the modeling engine
 // (a WebAssembly file run in a background worker) can load offline.
-const { app, BrowserWindow, Menu, protocol, net, dialog } = require('electron');
+const { app, BrowserWindow, Menu, protocol, net, dialog, ipcMain } = require('electron');
+const fs = require('fs');
 const path = require('path');
 const { pathToFileURL } = require('url');
 
@@ -10,11 +11,30 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 const ROOT = path.join(__dirname, 'app');
+let mainWin = null;
+let pending = null; // a .pcad/.pasm file to open once the page is ready
+let pageReady = false;
+
+const fileArg = (argv) => argv.slice(1).find((a) => /\.(pcad|pasm)$/i.test(a) && fs.existsSync(a));
+function sendFile(file) {
+  if (!file) return;
+  if (!pageReady || !mainWin) { pending = file; return; }
+  try { mainWin.webContents.send('open-file', path.basename(file), fs.readFileSync(file, 'utf8')); } catch (e) { dialog.showErrorBox('Could not open file', String(e.message || e)); }
+}
+
+// One window only: opening another file sends it to the running app.
+const gotLock = app.requestSingleInstanceLock();
+if (!gotLock) app.quit();
+app.on('second-instance', (_e, argv) => {
+  if (mainWin) { if (mainWin.isMinimized()) mainWin.restore(); mainWin.focus(); }
+  sendFile(fileArg(argv));
+});
+ipcMain.on('renderer-ready', () => { pageReady = true; if (pending) { const f = pending; pending = null; sendFile(f); } });
 
 function createWindow() {
   const win = new BrowserWindow({
     width: 1440, height: 900, minWidth: 980, minHeight: 620, backgroundColor: '#eef1f4', title: 'Pathway CAD', icon: path.join(ROOT, 'assets', 'icon-256.png'),
-    webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true },
+    webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true, preload: path.join(__dirname, 'preload.js') },
   });
   Menu.setApplicationMenu(null);
   win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
@@ -35,9 +55,11 @@ function createWindow() {
     if (choice === 1) e.preventDefault();
   });
   win.loadURL('pcad://app/index.html');
+  mainWin = win;
 }
 
 app.whenReady().then(() => {
+  if (!gotLock) return;
   protocol.handle('pcad', (req) => {
     const u = new URL(req.url);
     let rel = decodeURIComponent(u.pathname);
@@ -46,6 +68,7 @@ app.whenReady().then(() => {
     if (!file.startsWith(ROOT)) return new Response('Not found', { status: 404 });
     return net.fetch(pathToFileURL(file).toString());
   });
+  pending = fileArg(process.argv) || null;
   createWindow();
 });
 app.on('window-all-closed', () => app.quit());

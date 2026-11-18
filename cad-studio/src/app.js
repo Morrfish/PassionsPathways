@@ -75,6 +75,8 @@ class App {
     this.restore();
     this.vp.setView('home');
     window.addEventListener('keydown', (e) => this.onKey(e));
+    // Windows app: files double-clicked in Explorer arrive here.
+    if (window.pathwayDesktop) { window.pathwayDesktop.onOpenFile((name, text) => this.openText(name, text)); window.pathwayDesktop.ready(); }
     window.addEventListener('beforeunload', () => this.autosave());
   }
 
@@ -617,16 +619,21 @@ class App {
     inp.accept = '.pcad,.pasm,.json';
     inp.onchange = async () => {
       const file = inp.files[0];
-      if (!file) return;
-      try {
-        const d = JSON.parse(await file.text());
-        if (d && d.kind === 'assembly' && Array.isArray(d.components)) { this.openAssembly(d); this.toast('Opened ' + file.name); return; }
-        if (!d || !Array.isArray(d.features)) throw new Error('This is not a Pathway CAD file');
-        this.setDoc(d);
-        this.toast('Opened ' + file.name);
-      } catch (e) { this.toast('Could not open: ' + e.message, 'error'); }
+      if (file) this.openText(file.name, await file.text());
     };
     inp.click();
+  }
+  // Open a part or assembly from its file text (file picker, or double-clicked in Windows).
+  openText(name, text) {
+    try {
+      const d = JSON.parse(text);
+      if (d && d.kind === 'assembly' && Array.isArray(d.components)) { this.ui.closeModal(); this.openAssembly(d); this.toast('Opened ' + name); return; }
+      if (!d || !Array.isArray(d.features)) throw new Error('This is not a Pathway CAD file');
+      if (this.mode === 'drawing') this.closeDrawing();
+      this.ui.closeModal();
+      this.setDoc(d);
+      this.toast('Opened ' + name);
+    } catch (e) { this.toast('Could not open ' + name + ': ' + e.message, 'error'); }
   }
   newFile() {
     if (((this.root.features && this.root.features.length) || (this.root.components && this.root.components.length)) && !confirm('Start a new part? Save first if you want to keep this one (File > Save).')) return;

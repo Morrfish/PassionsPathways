@@ -1,21 +1,42 @@
 {
   "name": "pathway-cad-desktop",
   "productName": "Pathway CAD",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Pathway CAD: a student 3D part modeler.",
   "author": "Passions Pathways",
   "main": "main.js",
   "scripts": {
     "start": "node copy-app.js && electron .",
     "prebuild": "node copy-app.js",
-    "build": "electron-builder --win portable --x64"
+    "build": "electron-builder --win nsis portable --x64"
   },
   "build": {
     "appId": "org.passionspathways.pathwaycad",
-    "files": ["main.js", "app/**", "licenses/**"],
-    "win": { "target": "portable", "signAndEditExecutable": false, "icon": "app/assets/icon.ico" },
-    "portable": { "artifactName": "PathwayCAD.exe" },
-    "directories": { "output": "dist" }
+    "files": ["main.js", "preload.js", "app/**", "licenses/**"],
+    "directories": { "output": "dist", "buildResources": "build" },
+    "win": { "target": ["nsis", "portable"], "signAndEditExecutable": false, "icon": "app/assets/icon.ico" },
+    "portable": { "artifactName": "PathwayCAD-Portable.exe" },
+    "nsis": {
+      "artifactName": "PathwayCAD-Setup.exe",
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Pathway CAD",
+      "uninstallDisplayName": "Pathway CAD",
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
+      "installerHeaderIcon": "icon.ico",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "license": "license.txt"
+    },
+    "fileAssociations": [
+      { "ext": "pcad", "name": "PathwayCADPart", "description": "Pathway CAD part", "icon": "icon.ico", "role": "Editor" },
+      { "ext": "pasm", "name": "PathwayCADAssembly", "description": "Pathway CAD assembly", "icon": "icon.ico", "role": "Editor" }
+    ]
   },
   "devDependencies": {
     "electron": "^33.0.0",
