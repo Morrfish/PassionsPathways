@@ -359,10 +359,10 @@ export function createModel(r) {
     return { body, sketches, planes, errors, warnings };
   }
 
-  function describe(body, quality = 'normal') {
+  function describe(body, units = 'mm') {
     if (!body) return null;
-    const tol = quality === 'fine' ? 0.02 : 0.1;
-    const mesh = body.mesh({ tolerance: tol, angularTolerance: quality === 'fine' ? 5 : 15 });
+    const tol = units === 'in' ? 0.004 : 0.1;
+    const mesh = body.mesh({ tolerance: tol, angularTolerance: 15 });
     const em = body.meshEdges({ tolerance: tol, angularTolerance: 15 });
     const faces = body.faces.map((f) => {
       const type = f.geomType;
@@ -371,10 +371,24 @@ export function createModel(r) {
       if (type === 'PLANE') {
         const n = f.normalAt(f.center).toTuple();
         info.normal = n;
+      } else if (type === 'CYLINDRE') {
+        try {
+          const cy = f._geomAdaptor().Cylinder(), ax = cy.Axis(), l = ax.Location(), d = ax.Direction();
+          info.axis = { p: [l.X(), l.Y(), l.Z()], d: [d.X(), d.Y(), d.Z()], r: cy.Radius() };
+        } catch { /* ignore */ }
       }
       return info;
     });
-    const edges = body.edges.map((e) => ({ mid: e.pointAt(0.5).toTuple(), type: e.geomType, dir: edgeDir(e) }));
+    const edges = body.edges.map((e) => {
+      const info = { mid: e.pointAt(0.5).toTuple(), type: e.geomType, dir: edgeDir(e) };
+      if (info.type === 'CIRCLE') {
+        try {
+          const ci = e._geomAdaptor().Circle(), ax = ci.Axis(), l = ax.Location(), d = ax.Direction();
+          info.circle = { c: [l.X(), l.Y(), l.Z()], n: [d.X(), d.Y(), d.Z()], r: ci.Radius() };
+        } catch { /* ignore */ }
+      }
+      return info;
+    });
     const bb = body.boundingBox.bounds;
     let volume = 0, area = 0;
     try { volume = r.measureVolume(body); area = r.measureArea(body); } catch { /* ignore */ }
@@ -389,5 +403,16 @@ export function createModel(r) {
     };
   }
 
-  return { rebuild, describe };
+  // Turn a component's position + rotation (quaternion) into a moved copy.
+  function placed(body, pos, quat) {
+    let s = body.clone();
+    const [x, y, z, w] = quat;
+    const ang = 2 * Math.acos(Math.max(-1, Math.min(1, w)));
+    const sn = Math.sqrt(Math.max(0, 1 - w * w));
+    if (ang > 1e-9 && sn > 1e-9) s = s.rotate((ang * 180) / Math.PI, [0, 0, 0], [x / sn, y / sn, z / sn]);
+    if (pos[0] || pos[1] || pos[2]) s = s.translate(pos);
+    return s;
+  }
+
+  return { rebuild, describe, placed, isValid };
 }

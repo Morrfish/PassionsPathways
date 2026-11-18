@@ -154,6 +154,7 @@ export class Viewport {
 
   applyStyle(style = this.style) {
     this.style = style;
+    if (this.onStyle) this.onStyle();
     if (this.mesh) {
       this.mesh.visible = style !== 'wire';
     }
@@ -171,6 +172,7 @@ export class Viewport {
 
   // Frame a bounding box [[x,y,z],[x,y,z]].
   fit(bb) {
+    if (!bb && this.fitOverride) return this.fitOverride();
     if (!bb) bb = this.desc ? this.desc.bb : [[-50, -50, 0], [50, 50, 50]];
     const c = new THREE.Vector3((bb[0][0] + bb[1][0]) / 2, (bb[0][1] + bb[1][1]) / 2, (bb[0][2] + bb[1][2]) / 2);
     const size = Math.max(10, Math.hypot(bb[1][0] - bb[0][0], bb[1][1] - bb[0][1], bb[1][2] - bb[0][2]));
@@ -286,7 +288,11 @@ export class Viewport {
   // items: [{kind:'face'|'edge'|'plane', index|name, color}]
   highlight(items) {
     this.clearHighlights();
-    for (const it of items) {
+    for (const it of items) this.addHighlight(it);
+    this.render();
+  }
+  addHighlight(it) {
+    {
       if (it.kind === 'face' && this.desc && it.index >= 0 && it.index < this.desc.faceGroups.length) {
         const m = new THREE.Mesh(this.faceGeometry(it.index), new THREE.MeshBasicMaterial({ color: it.color, transparent: true, opacity: 0.55, side: THREE.DoubleSide, depthTest: true, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
         this.overlay.add(m);
@@ -312,7 +318,6 @@ export class Viewport {
         this.overlay.add(l);
       }
     }
-    this.render();
   }
 
   screenOf(v3) {

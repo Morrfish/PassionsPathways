@@ -4,7 +4,8 @@ import { Sketcher } from './sketcher.js';
 import { evaluate, paramMap, tryEval, fmt } from './expr.js';
 import { evalSketch, buildLoops } from './sketch.js';
 import { icon } from './icons.js';
-import { EXAMPLES } from './examples.js';
+import { EXAMPLES, ASM_EXAMPLES } from './examples.js';
+import { Assembler, ASM_COMMANDS, newAssembly } from './assembly.js';
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -59,6 +60,11 @@ class App {
     this.ui = new UI(this);
     this.vp = new Viewport($('#view3d'));
     this.sk = new Sketcher(this);
+    this.asm = null;
+    this.editPid = null;
+    this.materials = MATERIALS;
+    this.asmr = new Assembler(this);
+    this.vp.onStyle = () => this.mode === 'assembly' && this.asmr.render();
     this.startKernel();
     this.bindViewportPicking();
     this.ui.renderRibbon();
@@ -111,6 +117,7 @@ class App {
 
   rebuild() {
     if (!this.ready) return;
+    if (this.mode === 'assembly') { this.asmr.rebuild(); return; }
     clearTimeout(this._rb);
     this._rb = setTimeout(async () => {
       const plan = this.buildPlan();
@@ -138,7 +145,8 @@ class App {
   // ---------- document & history ----------
   params() { return paramMap(this.doc); }
   newId(prefix = 'f') { const id = prefix + this.doc.nextId; this.doc.nextId++; return id; }
-  snapshot() { return JSON.stringify(this.doc); }
+  get root() { return this.asm || this.doc; }
+  snapshot() { return JSON.stringify(this.root); }
   change(fn) {
     const before = this.snapshot();
     fn();
@@ -173,7 +181,13 @@ class App {
     this.loadState(this.redoStack.pop());
   }
   loadState(json) {
-    this.doc = JSON.parse(json);
+    const d = JSON.parse(json);
+    if (d.kind === 'assembly') {
+      this.asm = d;
+      if (this.editPid && !d.parts[this.editPid]) this.returnToAssembly();
+      if (this.editPid) this.doc = d.parts[this.editPid];
+      if (this.mode === 'assembly') { this.changed(); return; }
+    } else this.doc = d;
     if (this.mode === 'sketch' && !this.sketchFeature()) this.exitSketch(true);
     if (this.mode === 'sketch') { this.sk.sel = new Set([...this.sk.sel].filter((id) => this.sketchFeature().entities.some((e) => e.id === id))); this.sk.recompute(); this.sk.redraw(); this.ui.sketchSelection(); }
     this.vp.setColor(this.doc.color);
@@ -188,6 +202,7 @@ class App {
     if (saved) {
       try {
         const d = JSON.parse(saved);
+        if (d && d.kind === 'assembly') { this.openAssembly(d); this.toast('Opened your last assembly. Use File > New for a fresh one.'); return; }
         if (d && d.features && d.features.length) { this.setDoc(d, true); this.toast('Opened your last part. Use File > New for a fresh one.'); return; }
       } catch { /* ignore */ }
     }
@@ -197,6 +212,7 @@ class App {
   setDoc(d, keepView) {
     if (this.mode === 'sketch') this.exitSketch(true);
     if (this.cmd) this.cancelCmd();
+    this.leaveAssembly();
     const base = newDoc();
     this.doc = { ...base, ...d };
     if (!this.doc.nextId || this.doc.nextId < 2) this.doc.nextId = 1000;
@@ -210,6 +226,79 @@ class App {
     this.rebuild();
     if (!keepView) this.vp.setView('home');
   }
+  // ---------- assemblies ----------
+  blankPart() { return newDoc(); }
+  leaveAssembly() {
+    this.asm = null;
+    this.editPid = null;
+    if (this.mode === 'assembly') this.mode = 'model';
+    this.asmr.show(false);
+    this.asmr.clashes = [];
+    this.vp.fitOverride = null;
+    this.ui.renderRibbon();
+  }
+  openAssembly(d) {
+    if (this.mode === 'sketch') this.exitSketch(true);
+    if (this.cmd) this.cancelCmd();
+    this.asm = { ...newAssembly(), ...d };
+    this.editPid = null;
+    this.doc = newDoc();
+    this.mode = 'assembly';
+    this.undoStack = [];
+    this.redoStack = [];
+    this.asmr.sel = null;
+    this.asmr.clashes = [];
+    this.asmr._fitted = false;
+    this.asmr.show(true);
+    this.vp.fitOverride = () => this.asmr.fit();
+    this.ui.tab = 'assemble';
+    this.ui.renderRibbon();
+    this.ui.renderTitle();
+    this.ui.renderTree();
+    this.rebuild();
+    this.vp.setView('home');
+  }
+  newAssemblyFile() {
+    if (this.root && ((this.root.features && this.root.features.length) || (this.root.components && this.root.components.length)) && !confirm('Start a new assembly? Save first if you want to keep what is open (File > Save).')) return;
+    this.openAssembly(newAssembly());
+    this.asmr.placeDialog();
+  }
+  editPart(pid) {
+    if (!this.asm || !this.asm.parts[pid]) return;
+    if (this.cmd) this.cancelCmd();
+    this.editPid = pid;
+    this.mode = 'model';
+    this.doc = this.asm.parts[pid];
+    this.asmr.show(false);
+    this.vp.fitOverride = null;
+    this.vp.setColor(this.doc.color);
+    this.vp.desc = null;
+    this._fittedOnce = false;
+    this.ui.tab = 'model';
+    this.ui.renderRibbon();
+    this.ui.renderTitle();
+    this.ui.renderTree();
+    this.rebuild();
+    this.vp.setView('home');
+    this.toast(`Editing ${this.doc.name}. Press "Back to assembly" when done.`);
+  }
+  returnToAssembly() {
+    if (!this.asm) return;
+    if (this.mode === 'sketch') this.exitSketch(true);
+    if (this.cmd) this.cancelCmd();
+    this.editPid = null;
+    this.mode = 'assembly';
+    this.doc = newDoc();
+    this.vp.setPart(null);
+    this.asmr.show(true);
+    this.vp.fitOverride = () => this.asmr.fit();
+    this.ui.tab = 'assemble';
+    this.ui.renderRibbon();
+    this.ui.renderTitle();
+    this.ui.renderTree();
+    this.rebuild();
+  }
+
   findFeature(id) { return this.doc.features.find((f) => f.id === id); }
   featureIndex(id) { return this.doc.features.findIndex((f) => f.id === id); }
   sketchFeature() { return this.findFeature(this.sketchId); }
@@ -272,6 +361,16 @@ class App {
     if ((e.ctrlKey || e.metaKey) && k === 'o') { e.preventDefault(); this.openFile(); return; }
     if (typing) { if (e.key === 'Enter' && this.cmd && tag !== 'TEXTAREA' && tag !== 'SELECT') { e.target.blur(); setTimeout(() => this.okCmd(), 60); } return; }
     if (this.ui.modalOpen()) { if (e.key === 'Escape') this.ui.closeModal(); return; }
+    if (this.mode === 'assembly') {
+      if (e.key === 'Escape') { if (this.cmd) this.cancelCmd(); else { this.asmr.sel = null; this.asmr.render(); this.ui.renderTree(); } return; }
+      if (e.key === 'Enter' && this.cmd) { this.okCmd(); return; }
+      if ((e.key === 'Delete' || e.key === 'Backspace') && !this.cmd && this.asmr.sel) { e.preventDefault(); this.asmr.deleteComp(this.asmr.sel); return; }
+      if (e.ctrlKey || e.metaKey || e.altKey || this.cmd) return;
+      const ac = { p: 'place', c: 'constrain', m: 'measure', g: 'moveComp' };
+      if (ac[k]) this.run(ac[k]);
+      if (e.key === 'F6') this.vp.setView('home');
+      return;
+    }
     if (e.key === 'Escape') {
       if (this.mode === 'sketch') { if (this.sk.temp.length || this.sk.tool !== 'select') this.sk.cancelTemp(); else if (this.sk.sel.size) { this.sk.sel.clear(); this.sk.redraw(); this.ui.sketchSelection(); } }
       else if (this.cmd) this.cancelCmd();
@@ -301,8 +400,9 @@ class App {
   bindViewportPicking() {
     const cv = this.vp.renderer.domElement;
     let downAt = null;
-    cv.addEventListener('pointerdown', (e) => { if (e.button === 0) downAt = [e.clientX, e.clientY]; });
+    cv.addEventListener('pointerdown', (e) => { if (this.mode === 'assembly') return this.asmr.onDown(e); if (e.button === 0) downAt = [e.clientX, e.clientY]; });
     cv.addEventListener('pointermove', (e) => {
+      if (this.mode === 'assembly') return this.asmr.onMove(e);
       if (this.mode === 'sketch') return;
       const want = this.pickWant();
       if (!want) { if (this.hoverPick) { this.hoverPick = null; this.refreshHighlights(); } return; }
@@ -315,6 +415,7 @@ class App {
       }
     });
     cv.addEventListener('pointerup', (e) => {
+      if (this.mode === 'assembly') return this.asmr.onUp(e);
       if (e.button !== 0 || !downAt || this.mode === 'sketch') return;
       const moved = Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]);
       downAt = null;
@@ -331,6 +432,7 @@ class App {
     return this.cmd.want;
   }
   refreshHighlights() {
+    if (this.mode === 'assembly') { this.asmr.refreshHighlights(); return; }
     const items = [];
     if (this.cmd && this.cmd.highlights) items.push(...this.cmd.highlights());
     if (this.hoverPick) {
@@ -347,7 +449,7 @@ class App {
     if (!this.ready) return this.toast('The modeling engine is still loading…');
     if (this.mode === 'sketch' && !['params', 'info', 'measure'].includes(name)) { this.toast('Finish the sketch first (green check).'); return; }
     if (this.cmd) this.cancelCmd();
-    const make = COMMANDS[name];
+    const make = (this.mode === 'assembly' ? ASM_COMMANDS : COMMANDS)[name];
     if (!make) return;
     const cmd = make(this, arg);
     if (!cmd) return;
@@ -377,6 +479,8 @@ class App {
   closeCmd() {
     this.cmd = null;
     this.hoverPick = null;
+    this.asmr.hover = null;
+    if (this.mode === 'assembly') this.asmr.render();
     this.vp.showPlanes(false);
     this.ui.closeCmd();
     this.refreshHighlights();
@@ -454,23 +558,27 @@ class App {
     a.click();
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
   }
-  safeName() { return (this.doc.name || 'Part').replace(/[^\w\- ]+/g, '').trim() || 'Part'; }
-  saveFile() {
+  safeName() { return (this.root.name || 'Part').replace(/[^\w\- ]+/g, '').trim() || 'Part'; }
+  saveFile(partOnly) {
     if (this.mode === 'sketch') this.exitSketch(true);
-    this.download(this.safeName() + '.pcad', JSON.stringify(this.doc, null, 1), 'application/json');
+    const d = partOnly ? this.doc : this.root;
+    const ext = d.kind === 'assembly' ? '.pasm' : '.pcad';
+    const name = ((d.name || 'Part').replace(/[^\w\- ]+/g, '').trim() || 'Part') + ext;
+    this.download(name, JSON.stringify(d, null, 1), 'application/json');
     this.dirty = false;
-    this.toast('Saved ' + this.safeName() + '.pcad to your downloads.');
+    this.toast('Saved ' + name + ' to your downloads.');
   }
   openFile() {
     const inp = document.createElement('input');
     inp.type = 'file';
-    inp.accept = '.pcad,.json';
+    inp.accept = '.pcad,.pasm,.json';
     inp.onchange = async () => {
       const file = inp.files[0];
       if (!file) return;
       try {
         const d = JSON.parse(await file.text());
-        if (!d || !Array.isArray(d.features)) throw new Error('This is not a Pathway CAD part file');
+        if (d && d.kind === 'assembly' && Array.isArray(d.components)) { this.openAssembly(d); this.toast('Opened ' + file.name); return; }
+        if (!d || !Array.isArray(d.features)) throw new Error('This is not a Pathway CAD file');
         this.setDoc(d);
         this.toast('Opened ' + file.name);
       } catch (e) { this.toast('Could not open: ' + e.message, 'error'); }
@@ -478,11 +586,20 @@ class App {
     inp.click();
   }
   newFile() {
-    if (this.doc.features.length && !confirm('Start a new part? Save first if you want to keep this one (File > Save).')) return;
+    if (((this.root.features && this.root.features.length) || (this.root.components && this.root.components.length)) && !confirm('Start a new part? Save first if you want to keep this one (File > Save).')) return;
     this.setDoc(newDoc());
   }
   async exportFile(format) {
     if (this.mode === 'sketch') this.exitSketch(true);
+    if (this.mode === 'assembly') {
+      if (!this.asm.components.length) return this.toast('Place some parts first.', 'error');
+      this.toast(`Making the ${format.toUpperCase()} file for the whole assembly…`);
+      const k = format === 'stl' || format === 'step' ? 25.4 / 25.4 * ({ mm: 1, in: 25.4 }[this.asm.units || 'mm']) : 1;
+      const comps = this.asm.components.filter((c) => !c.hidden).map((c) => ({ id: c.id, part: c.part, pos: c.pos.map((v) => v * k), quat: c.quat }));
+      const m = await this.send({ type: 'exportAsm', format, parts: this.asm.parts, comps });
+      if (m.type === 'error') return this.toast('Export failed: ' + m.msg, 'error');
+      return this.download(`${this.safeName()}.${format === 'stl' ? 'stl' : 'step'}`, new Blob([m.buf]), 'application/octet-stream');
+    }
     if (!this.vp.desc) return this.toast('There is no part to export yet.', 'error');
     this.toast(`Making the ${format.toUpperCase()} file…`);
     const m = await this.send({ type: 'export', format, doc: this.doc, stopAt: this.doc.rollback ?? this.doc.features.length });
@@ -867,7 +984,7 @@ class UI {
     this.infoOpen = false;
     $('#tree').addEventListener('contextmenu', (e) => e.preventDefault());
     document.addEventListener('click', () => this.closeMenu());
-    $('#docName').addEventListener('change', (e) => { const v = e.target.value.trim() || 'Part1'; app.change(() => { app.doc.name = v; }); });
+    $('#docName').addEventListener('change', (e) => { const v = e.target.value.trim() || 'Part1'; app.change(() => { (app.mode === 'assembly' ? app.asm : app.doc).name = v; }); });
   }
   get vp() { return this.app.vp; }
 
@@ -875,11 +992,12 @@ class UI {
     const a = this.app;
     return {
       file: [
-        ['File', [['new', 'New', () => a.newFile()], ['open', 'Open', () => a.openFile(), 'Ctrl+O'], ['save', 'Save', () => a.saveFile(), 'Ctrl+S']]],
+        ['File', [['new', 'New Part', () => a.newFile()], ['assembly', 'New Assembly', () => a.newAssemblyFile()], ['open', 'Open', () => a.openFile(), 'Ctrl+O'], ['save', 'Save', () => a.saveFile(), 'Ctrl+S'], ...(a.asm && a.editPid ? [['save', 'Save part only', () => a.saveFile(true)]] : [])]],
         ['Export', [['stl', 'STL (3D print)', () => a.exportFile('stl')], ['stl', 'STEP (other CAD)', () => a.exportFile('step')], ['camera', 'Picture', () => a.screenshot()]]],
         ['Learn', [['examples', 'Examples', () => this.openExamples()], ['help', 'How to', () => this.openHelp()]]],
       ],
       model: [
+        ...(a.asm && a.editPid ? [['Assembly', [['back', 'Back to assembly', () => a.returnToAssembly()]]]] : []),
         ['Sketch', [['sketch', 'Sketch', () => a.run('sketch'), 'S']]],
         ['Create', [['extrude', 'Extrude', () => a.run('extrude'), 'E'], ['revolve', 'Revolve', () => a.run('revolve'), 'R'], ['hole', 'Hole', () => a.run('hole'), 'H']]],
         ['Shapes', [['box', 'Box', () => a.run('primitive', { shape: 'box' })], ['cylinder', 'Cylinder', () => a.run('primitive', { shape: 'cylinder' })], ['sphere', 'Sphere', () => a.run('primitive', { shape: 'sphere' })]]],
@@ -894,8 +1012,16 @@ class UI {
         ['Setup', [['params', 'Parameters', () => this.openParams()]]],
         ['Exit', [['finish', 'Finish Sketch', () => a.exitSketch()]]],
       ],
-      inspect: [
+      inspect: a.mode === 'assembly' ? [
+        ['Measure', [['measure', 'Measure', () => a.run('measure'), 'M']]],
+        ['Check', [['clash', 'Interference', () => a.asmr.checkInterference()], ['bom', 'Parts list', () => a.asmr.openPartsList()]]],
+      ] : [
         ['Measure', [['measure', 'Measure', () => a.run('measure'), 'M'], ['info', 'Part Info', () => this.openInfo()]]],
+      ],
+      assemble: [
+        ['Parts', [['place', 'Place', () => a.run('place'), 'P'], ['move', 'Move / Turn', () => a.run('moveComp'), 'G']]],
+        ['Constrain', [['mate', 'Mate', () => a.run('constrain', { type: 'mate' }), 'C'], ['flush', 'Flush', () => a.run('constrain', { type: 'flush' })], ['insert', 'Insert', () => a.run('constrain', { type: 'insert' })], ['axisMate', 'Axis', () => a.run('constrain', { type: 'axis' })], ['angleMate', 'Angle', () => a.run('constrain', { type: 'angle' })]]],
+        ['Check', [['clash', 'Interference', () => a.asmr.checkInterference()], ['bom', 'Parts list', () => a.asmr.openPartsList()]]],
       ],
       view: [
         ['Orientation', [['home', 'Home', () => this.vp.setView('home'), 'F6'], ['front', 'Front', () => this.vp.setView('front')], ['top', 'Top', () => this.vp.setView('top')], ['right', 'Right', () => this.vp.setView('right')], ['fit', 'Zoom all', () => this.vp.fit()]]],
@@ -908,8 +1034,9 @@ class UI {
   setStyle(s) { this.vp.applyStyle(s); this.renderRibbon(); }
 
   renderRibbon() {
-    const tabs = this.app.mode === 'sketch' ? [['sketch', 'Sketch'], ['inspect', 'Inspect'], ['view', 'View']] : [['file', 'File'], ['model', 'Model'], ['inspect', 'Inspect'], ['view', 'View']];
-    if (!tabs.some((t) => t[0] === this.tab)) this.tab = tabs[0][0] === 'file' ? 'model' : tabs[0][0];
+    const mode = this.app.mode;
+    const tabs = mode === 'sketch' ? [['sketch', 'Sketch'], ['inspect', 'Inspect'], ['view', 'View']] : mode === 'assembly' ? [['file', 'File'], ['assemble', 'Assemble'], ['inspect', 'Inspect'], ['view', 'View']] : [['file', 'File'], ['model', 'Model'], ['inspect', 'Inspect'], ['view', 'View']];
+    if (!tabs.some((t) => t[0] === this.tab)) this.tab = tabs[0][0] === 'file' ? tabs[1][0] : tabs[0][0];
     $('#tabs').innerHTML = tabs.map(([k, l]) => `<button class="tab ${k === this.tab ? 'on' : ''} ${k === 'sketch' ? 'sketchtab' : ''}" data-tab="${k}">${l}</button>`).join('') +
       `<span class="spacer"></span><button class="tb-btn" id="undoBtn" title="Undo (Ctrl+Z)">${icon('undo', 18)}</button><button class="tb-btn" id="redoBtn" title="Redo (Ctrl+Y)">${icon('redo', 18)}</button><button class="tb-btn" id="helpBtn" title="How to use Pathway CAD">${icon('help', 18)}</button>`;
     for (const b of document.querySelectorAll('#tabs .tab')) b.onclick = () => { this.tab = b.dataset.tab; this.renderRibbon(); };
@@ -921,7 +1048,7 @@ class UI {
     body.innerHTML = '';
     for (const [gname, btns] of groups) {
       const g = document.createElement('div');
-      g.className = 'rgroup' + (gname === 'Exit' ? ' exit' : '');
+      g.className = 'rgroup' + (gname === 'Exit' ? ' exit' : '') + (gname === 'Assembly' ? ' back' : '');
       const row = document.createElement('div');
       row.className = 'rbtns';
       for (const [ic, label, fn, key] of btns) {
@@ -954,16 +1081,19 @@ class UI {
 
   renderTitle() {
     const inp = $('#docName');
-    if (document.activeElement !== inp) inp.value = this.app.doc.name || 'Part1';
-    document.title = `${this.app.doc.name || 'Part'} - Pathway CAD`;
+    const d = this.app.mode === 'assembly' ? this.app.asm : this.app.doc;
+    if (document.activeElement !== inp) inp.value = d.name || 'Part1';
+    document.title = `${d.name || 'Part'} - Pathway CAD`;
   }
 
   // ----- model browser -----
   renderTree() {
     const a = this.app, doc = a.doc;
+    if (a.mode === 'assembly') { a.asmr.renderTree($('#tree')); return; }
     const errs = a.result.errors || {}, warns = a.result.warnings || {};
     const end = doc.rollback ?? doc.features.length;
-    let html = `<div class="trow root">${icon('part', 16)}<b>${esc(doc.name || 'Part1')}</b></div>`;
+    let html = a.asm && a.editPid ? `<div class="trow backrow" data-act="back">${icon('back', 16)}<span>Back to ${esc(a.asm.name)}</span></div>` : '';
+    html += `<div class="trow root">${icon('part', 16)}<b>${esc(doc.name || 'Part1')}</b></div>`;
     html += `<div class="trow sub" data-act="origin">${icon('origin', 16)}<span>Origin</span><span class="tmeta">${a.vp && a.vp.planesVisible ? 'shown' : ''}</span></div>`;
     const endRow = `<div class="trow endrow" data-act="end" title="Features below this line are switched off. Drag it with the menu on a feature: 'Roll back to here'.">${icon('end', 16)}<span>End of Part</span>${doc.rollback != null ? '<button class="mini" data-act="toend">move to end</button>' : ''}</div>`;
     doc.features.forEach((f, i) => {
@@ -987,6 +1117,8 @@ class UI {
     }
     const o = tree.querySelector('[data-act=origin]');
     if (o) o.onclick = () => { this.vp.showPlanes(!this.vp.planesVisible); this.renderTree(); };
+    const bk = tree.querySelector('[data-act=back]');
+    if (bk) bk.onclick = () => a.returnToAssembly();
     const te = tree.querySelector('[data-act=toend]');
     if (te) te.onclick = (e) => { e.stopPropagation(); a.change(() => { a.doc.rollback = null; }); };
   }
@@ -1048,7 +1180,7 @@ class UI {
     const a = this.app, cmd = a.cmd;
     if (!cmd) return;
     const p = $('#cmdPanel');
-    const target = cmd.feature || cmd.draft || {};
+    const target = cmd.target || cmd.feature || cmd.draft || {};
     const P = a.params();
     let html = `<div class="cmdhead"><span>${esc(cmd.title)}</span><button class="x" data-act="cancel" title="Cancel (Esc)">×</button></div><div class="cmdhelp">${esc(cmd.help)}</div><div class="cmdbody">`;
     const fields = cmd.fields ? cmd.fields() : [];
@@ -1067,6 +1199,8 @@ class UI {
       } else if (fd.type === 'multi') {
         const cur = new Set(target[fd.key] || []);
         html += `<div class="fld"><span>${esc(fd.label)}</span><div class="multi">${fd.options.map(([v, l]) => `<label class="chk"><input type="checkbox" data-i="${i}" data-v="${esc(v)}" ${cur.has(v) ? 'checked' : ''}> ${esc(l)}</label>`).join('')}</div></div>`;
+      } else if (fd.type === 'buttons') {
+        html += `<div class="fld">${fd.label ? `<span>${esc(fd.label)}</span>` : ''}<div class="btnrow">${fd.items.map(([l], k) => `<button data-b="${i}:${k}">${esc(l)}</button>`).join('')}</div></div>`;
       } else if (fd.type === 'xyz') {
         const v = target[fd.key] || [0, 0, 0];
         html += `<div class="fld"><span>${esc(fd.label)}</span><div class="xyz">${['X', 'Y', 'Z'].map((ax, k) => `<label>${ax}<input data-i="${i}" data-k="${k}" value="${fmt(v[k])}"></label>`).join('')}</div></div>`;
@@ -1078,6 +1212,10 @@ class UI {
     p.querySelectorAll('[data-act=cancel]').forEach((b) => (b.onclick = () => a.cancelCmd()));
     const ok = p.querySelector('[data-act=ok]');
     if (ok) ok.onclick = () => a.okCmd();
+    for (const b of p.querySelectorAll('[data-b]')) {
+      const [fi, k] = b.dataset.b.split(':').map(Number);
+      b.onclick = () => fields[fi].items[k][1]();
+    }
     const pv = p.querySelector('[data-preview]');
     if (pv) pv.onchange = () => { cmd.preview = pv.checked; a.hoverPick = null; a.cmdChanged(); };
     for (const el of p.querySelectorAll('[data-i]')) {
@@ -1102,9 +1240,10 @@ class UI {
           const em = el.nextElementSibling;
           em.className = r.ok ? '' : 'bad';
           em.textContent = r.ok ? (String(target[fd.key]).trim() === fmt(r.v) ? '' : '= ' + fmt(r.v)) : r.err;
+          if (cmd.onField) { if (r.ok) cmd.onField(fd); return; }
           a.refreshHighlights();
           a.rebuild();
-        } else a.cmdChanged();
+        } else { if (cmd.onField) cmd.onField(fd); a.cmdChanged(); }
       };
       el.addEventListener(fd.type === 'expr' ? 'input' : 'change', apply);
       if (fd.type === 'xyz') el.addEventListener('change', () => a.cmdChanged());
@@ -1281,6 +1420,11 @@ class UI {
     $('#colorSel').onchange = (e) => a.change(() => { a.doc.color = e.target.value; });
   }
   renderStatusInfo() {
+    if (this.app.mode === 'assembly') {
+      const A = this.app.asm, bad = Object.keys(this.app.asmr.bad).length;
+      $('#statusRight').innerHTML = `${bad ? `<span class="bad">${bad} constraint${bad > 1 ? 's' : ''} not met</span> · ` : ''}${A.components.length} parts · ${A.constraints.length} constraints · ${esc(A.units || 'mm')}`;
+      return;
+    }
     const d = this.app.result.desc;
     const nErr = Object.keys(this.app.result.errors || {}).length;
     $('#statusRight').innerHTML = `${nErr ? `<span class="bad">${nErr} feature${nErr > 1 ? 's' : ''} with problems</span> · ` : ''}${d ? `Volume ${fmt(d.volume / 1000)} cm³ · ` : ''}mm · ${this.app.result.ms ? Math.round(this.app.result.ms) + ' ms' : ''}`;
@@ -1308,11 +1452,17 @@ class UI {
   closeModal() { const m = $('#modal'); m.hidden = true; m.innerHTML = ''; if (this._onClose) { const f = this._onClose; this._onClose = null; f(); } }
 
   openExamples() {
-    this.modal(`<h2>${icon('examples', 22)} Example parts</h2><p>Open one to see how it was built. Double-click any step in the model tree to change it.</p><div class="excards">${EXAMPLES.map((e, i) => `<button class="excard" data-i="${i}"><b>${esc(e.title)}</b><span>${esc(e.about)}</span></button>`).join('')}</div>`, 'wide');
-    for (const b of document.querySelectorAll('.excard')) b.onclick = () => {
-      if (this.app.doc.features.length && !confirm('Open the example? Your current part is replaced (save it first if you want to keep it).')) return;
+    this.modal(`<h2>${icon('examples', 22)} Examples</h2><p>Open one to see how it was built. Double-click any step in the tree to change it.</p><h3>Parts</h3><div class="excards">${EXAMPLES.map((e, i) => `<button class="excard" data-i="${i}"><b>${esc(e.title)}</b><span>${esc(e.about)}</span></button>`).join('')}</div><h3>Assemblies</h3><div class="excards">${ASM_EXAMPLES.map((e, i) => `<button class="excard" data-a="${i}"><b>${esc(e.title)}</b><span>${esc(e.about)}</span></button>`).join('')}</div>`, 'wide');
+    const busy = () => { const r = this.app.root; return (r.features && r.features.length) || (r.components && r.components.length); };
+    for (const b of document.querySelectorAll('.excard[data-i]')) b.onclick = () => {
+      if (busy() && !confirm('Open the example? What is open now is replaced (save it first if you want to keep it).')) return;
       this.closeModal();
       this.app.setDoc(clone(EXAMPLES[+b.dataset.i].doc));
+    };
+    for (const b of document.querySelectorAll('.excard[data-a]')) b.onclick = () => {
+      if (busy() && !confirm('Open the example? What is open now is replaced (save it first if you want to keep it).')) return;
+      this.closeModal();
+      this.app.openAssembly(clone(ASM_EXAMPLES[+b.dataset.a].doc));
     };
   }
   showWelcome() {
@@ -1320,7 +1470,8 @@ class UI {
       <p>Design real 3D parts, then export them for a 3D printer or another CAD program.</p>
       <ol class="steps"><li><b>Sketch</b> a flat shape on a plane.</li><li><b>Extrude</b> or <b>Revolve</b> it into a solid.</li><li>Add <b>holes, fillets and patterns</b>.</li><li><b>Export STL</b> to 3D print it.</li></ol>
       <p><b>Mouse:</b> right-drag turns the view, middle-drag (or Shift + right-drag) slides it, the wheel zooms.</p>
-      <div class="welcomebtns"><button class="ok" id="wStart">Start a new part</button><button id="wEx">Open an example</button><button id="wHelp">How to</button></div>`);
+      <div class="welcomebtns"><button class="ok" id="wStart">Start a new part</button><button id="wAsm">New assembly</button><button id="wEx">Open an example</button><button id="wHelp">How to</button></div>`);
+    $('#wAsm').onclick = () => { this.closeModal(); this.app.openAssembly(newAssembly()); this.app.asmr.placeDialog(); };
     $('#wStart').onclick = () => { this.closeModal(); this.app.run('sketch'); };
     $('#wEx').onclick = () => this.openExamples();
     $('#wHelp').onclick = () => this.openHelp();
@@ -1352,8 +1503,17 @@ class UI {
       <li>Right-click a step to rename, turn it off, roll back, move or delete it. A step with a ✕ has a problem: click it to read why.</li>
       <li><b>Parameters</b> are named sizes. Change one and every place it is used updates.</li>
       <li>Undo: Ctrl+Z. Redo: Ctrl+Y.</li></ul>
+      <h3>Assemblies: putting parts together</h3>
+      <ul><li>File ▸ <b>New Assembly</b>, then <b>Place</b> parts: from a saved .pcad file, an example, a copy of a part already there, or a brand-new part.</li>
+      <li>The first part is <b>grounded</b> (fixed in place, pin icon). Other parts can be dragged with the left mouse button.</li>
+      <li><b>Constraints</b> hold parts together. Click a face or edge on the part that stays put, then one on the part to move:
+        <b>Mate</b> (faces touching), <b>Flush</b> (faces level), <b>Insert</b> (pin or bolt into a hole, using round edges), <b>Axis</b> (same center line, can still spin and slide), <b>Angle</b>.</li>
+      <li>A constraint with a ✕ cannot be met with the others. Right-click it to flip it or turn it off.</li>
+      <li>Drag a part to see how it can still move: a pin with only an Axis constraint slides and spins in its hole.</li>
+      <li>Double-click a part in the tree to <b>edit it</b> right there; press <b>Back to assembly</b> when done. Every copy of that part changes.</li>
+      <li>Inspect ▸ <b>Interference</b> finds parts that run into each other (shown in red). <b>Parts list</b> counts parts and adds up the mass.</li></ul>
       <h3>Saving and sharing</h3>
-      <ul><li>File ▸ Save downloads a <b>.pcad</b> file. File ▸ Open loads it again. Your work is also kept on this computer automatically.</li>
+      <ul><li>File ▸ Save downloads a <b>.pcad</b> part file or a <b>.pasm</b> assembly file (the assembly file holds its parts inside it). File ▸ Open loads it again. Your work is also kept on this computer automatically.</li>
       <li>Export <b>STL</b> for 3D printing (slicers like Cura or PrusaSlicer) and <b>STEP</b> for other CAD programs.</li>
       <li>All sizes are millimetres. For inches, type <code>2*25.4</code> (= 2 in).</li></ul>
       <h3>Keys</h3>

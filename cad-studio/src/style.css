@@ -171,3 +171,21 @@ table.info tr + tr { border-top: 1px solid #eef1f4; }
   .panel { width: calc(100% - 20px); }
 }
 #busy[hidden], .panel[hidden] { display: none; }
+.btnrow { display: flex; flex-wrap: wrap; gap: 4px; }
+.btnrow button { border: 1px solid #c2ccd5; background: #fff; border-radius: 4px; padding: 3px 9px; font-size: 12px; }
+.btnrow button:hover { border-color: var(--accent); background: var(--accent-soft); }
+.picks > div { padding: 3px 0; color: var(--muted); }
+.picks > div b { display: inline-block; width: 18px; height: 18px; line-height: 18px; text-align: center; border-radius: 50%; background: #d5dbe1; color: #fff; font-size: 11px; margin-right: 4px; }
+.picks > div.now { color: var(--ink); font-weight: 600; }
+.picks > div.now b { background: var(--sketch); }
+.picks > div.done { color: var(--ink); }
+.picks > div.done b { background: var(--good); }
+.groupHead { color: var(--muted); font-size: 12px; cursor: default !important; margin-top: 4px; }
+.groupHead:hover { background: none !important; }
+.trow.comp, .trow.con { padding-left: 34px; }
+.tpin { color: #7a5c00; display: flex; margin-left: 2px; }
+.trow.con .tmeta { max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
+.backrow { color: var(--accent-ink); font-weight: 600; cursor: pointer; background: var(--accent-soft); margin: 2px 6px 4px; border-radius: 5px; }
+.backrow:hover { background: #c9ece8; }
+.rgroup.back .rbtn { color: var(--accent-ink); background: var(--accent-soft); border-color: #b9e6e1; }
+.ptable.bom td { padding: 5px 4px; }

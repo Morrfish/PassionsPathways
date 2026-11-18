@@ -94,3 +94,68 @@ export const EXAMPLES = [
     }),
   },
 ];
+
+const pin = base('Pin', {
+  material: 'steel', color: '#9aa4ad',
+  params: [{ name: 'shank', expr: 5.8, note: 'a little under the 6 mm hole so it slides in' }],
+  features: [
+    { id: 'f1', type: 'primitive', shape: 'cylinder', name: 'Head', diameter: 10, h: 3, axis: 'Z', x: 0, y: 0, z: 0, op: 'new' },
+    { id: 'f2', type: 'primitive', shape: 'cylinder', name: 'Shank', diameter: 'shank', h: 15, axis: 'Z', x: 0, y: 0, z: -15, op: 'join' },
+    { id: 'f3', type: 'chamfer', name: 'Chamfer1', radius: 0.6, allEdges: false, edges: [[0, -2.9, -15]] },
+  ],
+});
+const axle = base('Axle', {
+  material: 'steel', color: '#9aa4ad',
+  params: [{ name: 'length', expr: 100, note: 'axle length' }],
+  features: [
+    { id: 'f1', type: 'primitive', shape: 'cylinder', name: 'Rod', diameter: 9.8, h: 'length', axis: 'Z', x: 0, y: 0, z: 0, op: 'new' },
+  ],
+});
+
+// Assemblies keep their own copies of the parts inside them.
+export const ASM_EXAMPLES = [
+  {
+    title: 'Bracket and pin',
+    about: 'A pin is Inserted into the bracket\'s side hole: the round edge under its head goes onto the hole\'s rim. Drag the pin: it can only spin.',
+    doc: {
+      app: 'Pathway CAD', kind: 'assembly', version: 1, name: 'Bracket and pin', units: 'mm', nextId: 50,
+      parts: { p1: JSON.parse(JSON.stringify(EXAMPLES[0].doc)), p2: pin },
+      components: [
+        { id: 'c1', name: 'Bracket:1', part: 'p1', pos: [0, 0, 0], quat: [0, 0, 0, 1], grounded: true },
+        { id: 'c2', name: 'Pin:1', part: 'p2', pos: [30, 45, 20], quat: [0, 0, 0, 1], grounded: false },
+      ],
+      constraints: [
+        { id: 'k1', name: 'Insert1', type: 'insert', offset: 0, sign: 1,
+          a: { comp: 'c1', kind: 'axis', p: [5, 0, 33], n: [1, 0, 0], r: 3, rim: true, label: 'round edge Ø6' },
+          b: { comp: 'c2', kind: 'axis', p: [0, 0, 0], n: [0, 0, 1], r: 5, rim: true, label: 'round edge Ø10' } },
+      ],
+    },
+  },
+  {
+    title: 'Wheels on an axle',
+    about: 'Two copies of the wheel hub ride on an axle. Axis constraints line up the centers, and Flush sets how far along the axle each wheel sits. Edit one hub and both change.',
+    doc: {
+      app: 'Pathway CAD', kind: 'assembly', version: 1, name: 'Wheels on an axle', units: 'mm', nextId: 50,
+      parts: { p1: axle, p2: JSON.parse(JSON.stringify(EXAMPLES[1].doc)) },
+      components: [
+        { id: 'c1', name: 'Axle:1', part: 'p1', pos: [0, 0, 0], quat: [0, 0, 0, 1], grounded: true },
+        { id: 'c2', name: 'Wheel hub:1', part: 'p2', pos: [70, 0, 0], quat: [0, 0, 0, 1], grounded: false },
+        { id: 'c3', name: 'Wheel hub:2', part: 'p2', pos: [-70, 0, 60], quat: [0, 0, 0, 1], grounded: false },
+      ],
+      constraints: [
+        { id: 'k1', name: 'Axis1', type: 'axis', offset: 0, sign: 1,
+          a: { comp: 'c1', kind: 'axis', p: [0, 0, 0], n: [0, 0, 1], r: 4.9, label: 'round face Ø9.8' },
+          b: { comp: 'c2', kind: 'axis', p: [0, 0, 0], n: [0, 0, 1], r: 5, rim: true, label: 'round edge Ø10' } },
+        { id: 'k2', name: 'Flush1', type: 'flush', offset: -8,
+          a: { comp: 'c1', kind: 'plane', p: [0, 0, 0], n: [0, 0, -1], label: 'flat face' },
+          b: { comp: 'c2', kind: 'plane', p: [0, 0, 0], n: [0, 0, -1], label: 'flat face' } },
+        { id: 'k3', name: 'Axis2', type: 'axis', offset: 0, sign: -1,
+          a: { comp: 'c1', kind: 'axis', p: [0, 0, 0], n: [0, 0, 1], r: 4.9, label: 'round face Ø9.8' },
+          b: { comp: 'c3', kind: 'axis', p: [0, 0, 0], n: [0, 0, 1], r: 5, rim: true, label: 'round edge Ø10' } },
+        { id: 'k4', name: 'Flush2', type: 'flush', offset: -8,
+          a: { comp: 'c1', kind: 'plane', p: [0, 0, 100], n: [0, 0, 1], label: 'flat face' },
+          b: { comp: 'c3', kind: 'plane', p: [0, 0, 0], n: [0, 0, -1], label: 'flat face' } },
+      ],
+    },
+  },
+];
