@@ -17,5 +17,6 @@ await build({
 
 cpSync('src/index.html', 'www/index.html');
 cpSync('src/styles.css', 'www/styles.css');
-cpSync('src/icon.svg', 'www/icon.svg');
+cpSync('src/icon.png', 'www/icon.png');
+cpSync('src/logo.webp', 'www/logo.webp');
 console.log('Built www/');

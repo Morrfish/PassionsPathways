@@ -9,7 +9,7 @@ protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { standard: t
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1100, height: 860, minWidth: 380, minHeight: 560, backgroundColor: '#120b24', title: 'Anime Squad',
+    width: 1100, height: 860, minWidth: 380, minHeight: 560, backgroundColor: '#0b0a24', title: 'Anime Squad',
     icon: path.join(__dirname, 'icon.png'),
     webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true },
   });

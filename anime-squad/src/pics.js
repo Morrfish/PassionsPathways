@@ -81,7 +81,7 @@ export async function fileToSquarePic(file, size = 320) {
     const canvas = document.createElement('canvas');
     canvas.width = canvas.height = size;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#120b24';
+    ctx.fillStyle = '#0b0a24';
     ctx.fillRect(0, 0, size, size);
     ctx.drawImage(img, (w - s) / 2, (h - s) * 0.25, s, s, 0, 0, size, size);
     return canvas.toDataURL('image/jpeg', 0.85);

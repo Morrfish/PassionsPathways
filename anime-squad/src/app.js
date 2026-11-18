@@ -102,8 +102,7 @@ function squad() {
   const s = S();
   const keyCard = !s.settings.apiKey ? `
     <div class="card welcome">
-      <div class="faces">🥋🍥👒🕶️🌊</div>
-      <div class="title logo">Anime Squad</div>
+      <img class="logo-big" src="logo.webp" alt="Anime Squad">
       <p>Build bots from your favorite anime characters, give them jobs, and talk to them.</p>
       <p class="hint">First, add your Claude API key so the bots can think.</p>
       <button class="btn primary" data-act="tab" data-id="settings">Add my API key</button>
@@ -115,7 +114,7 @@ function squad() {
       <div class="last">${esc(lastLine(b.id))}</div></button>`;
   }).join('');
   const syncBtn = syncOn() ? `<button class="icon-btn" data-act="sync-now" aria-label="Sync now" title="Sync now"><span class="sync-icon ${syncRunning() ? 'spin' : ''}">🔄</span></button>` : '';
-  return `${topbar('<span class="logo">Anime Squad</span>', { sub: `${s.bots.length} bot${s.bots.length === 1 ? '' : 's'} in your squad`, right: syncBtn })}
+  return `${topbar('<img class="logo-img" src="logo.webp" alt="Anime Squad">', { sub: `${s.bots.length} bot${s.bots.length === 1 ? '' : 's'} in your squad`, right: syncBtn })}
   <main>${keyCard}
     <div class="grid">
       <button class="bot-card new-card" data-act="new-bot"><div class="plus">＋</div>New bot</button>
