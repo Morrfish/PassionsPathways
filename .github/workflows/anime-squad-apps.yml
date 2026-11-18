@@ -1,0 +1,79 @@
+# Builds the Anime Squad Android app (APK) and Windows app (exe).
+# Both are kept as build artifacts on the run page: only people signed in
+# to GitHub with access to this repo can download them. Nothing is published.
+name: Anime Squad apps
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, 'claude/clever-bell-j0i04e']
+    paths:
+      - 'anime-squad/**'
+      - '.github/workflows/anime-squad-apps.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: anime-squad-apps-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Build the web app
+        working-directory: anime-squad
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+      - name: Make the Android project
+        working-directory: anime-squad
+        run: |
+          npx cap add android
+          npx --yes @capacitor/assets@4.0.0 generate --android --iconBackgroundColor '#120b24' --splashBackgroundColor '#120b24'
+          npx cap sync android
+      - name: Build the APK
+        working-directory: anime-squad/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+          mv app/build/outputs/apk/debug/app-debug.apk ../AnimeSquad.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AnimeSquad-Android
+          path: anime-squad/AnimeSquad.apk
+          retention-days: 90
+          compression-level: 0
+
+  windows:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build the web app
+        working-directory: anime-squad
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+      - name: Build the exe
+        working-directory: anime-squad/desktop
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AnimeSquad-Windows
+          path: anime-squad/desktop/dist/AnimeSquad.exe
+          retention-days: 90
+          compression-level: 0

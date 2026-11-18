@@ -1,0 +1,20 @@
+{
+  "name": "anime-squad",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Anime Squad: make anime-character bots you can talk to and give jobs.",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node build.mjs && node tests/e2e.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.10.0",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.6.2"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/cli": "^8.6.2",
+    "esbuild": "^0.28.2"
+  }
+}

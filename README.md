@@ -5,3 +5,4 @@
 - [Robot Code Arcade](robot-arcade/) — program a claw machine, a construction crane and a Mars rover with simple code.
 - [Album Studio](album-studio/) — plan an album: theme, song lyrics and style tags for Suno, cover prompt and tracklist.
 - [Pathway CAD](cad-studio/): a student 3D part modeler (sketch, extrude, revolve, holes, fillets, patterns) that exports STL for 3D printing. Also builds as a Windows app.
+- [Anime Squad](anime-squad/): make anime-character bots, give them jobs and talk to them. Builds as an Android app and a Windows app.
