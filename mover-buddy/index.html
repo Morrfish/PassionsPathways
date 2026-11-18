@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!--HEAD-->
+<title>Mover Buddy</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: three working columns (pick a muscle | watch the figure | read the card) that stack to one on a phone. */
+:root{
+  --bg:#eaf3f1; --panel:#ffffff; --panel2:#f3f9f7; --ink:#16302e; --muted:#54706c; --line:#cbdedb;
+  --accent:#0d857c; --accent-ink:#ffffff; --accent-soft:#d5efeb;
+  --coral:#e0405a; --coral-dk:#9c1f36; --coral-soft:#f3b6bd; --sun:#e8a31c; --ok:#1c8a4d; --bad:#c23a3a;
+  --stage:#dcefeb; --stage2:#c9e4df;
+  --skin:#f3c6a0; --skin2:#e2a981; --shirt:#86cfc6; --shorts:#33617f; --hair:#5d3b29; --face:#3a2a25; --blush:#f29b94;
+  --bone:#fff7de; --boneo:#b3a074; --mouth:#7a2231;
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif; --body:"Nunito","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0e1b1b; --panel:#162828; --panel2:#1b3131; --ink:#e4f1ee; --muted:#9ab6b1; --line:#2c4745;
+  --accent:#41c7ba; --accent-ink:#04211e; --accent-soft:#1d403d;
+  --coral:#ff6b81; --coral-dk:#7d1c2e; --coral-soft:#8f4a55; --sun:#f3bd4a; --ok:#58c98a; --bad:#ff8a8a;
+  --stage:#132626; --stage2:#1b3534;
+  --skin:#eebf99; --skin2:#d39c75; --shirt:#4fa59c; --shorts:#2b526c; --hair:#4a2f21; --face:#2c1f1b; --blush:#e58a84;
+  --bone:#f6eccd; --boneo:#8f7f58; --mouth:#6b1c2a; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0e1b1b; --panel:#162828; --panel2:#1b3131; --ink:#e4f1ee; --muted:#9ab6b1; --line:#2c4745;
+  --accent:#41c7ba; --accent-ink:#04211e; --accent-soft:#1d403d;
+  --coral:#ff6b81; --coral-dk:#7d1c2e; --coral-soft:#8f4a55; --sun:#f3bd4a; --ok:#58c98a; --bad:#ff8a8a;
+  --stage:#132626; --stage2:#1b3534;
+  --skin:#eebf99; --skin2:#d39c75; --shirt:#4fa59c; --shorts:#2b526c; --hair:#4a2f21; --face:#2c1f1b; --blush:#e58a84;
+  --bone:#f6eccd; --boneo:#8f7f58; --mouth:#6b1c2a; color-scheme:dark }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45}
+.wrap{max-width:1320px;margin:0 auto;padding-block:14px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+header.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
+h1{font-family:var(--display);font-size:1.9rem;line-height:1;margin:0;letter-spacing:.2px}
+h1 span{color:var(--accent)}
+.tag{color:var(--muted);margin:0;flex:1 1 220px;min-width:0}
+.tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px}
+.tabs button{border:0;background:none;border-radius:999px;padding:7px 15px;font-weight:800}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+.prog{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.bar{width:110px;height:8px;border-radius:9px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--sun);width:0}
+main{display:grid;grid-template-columns:minmax(260px,330px) minmax(0,1fr) minmax(270px,350px);gap:14px;align-items:start}
+.col{background:var(--panel);border:1px solid var(--line);border-radius:16px;min-width:0}
+.pick{padding:12px;max-height:86vh;overflow:auto}
+.pick input[type=search]{width:100%;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel2)}
+.grp{margin-top:12px}
+.grp h3{font-family:var(--display);font-size:1.02rem;margin:0 0 2px;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.grp h3 small{font-family:var(--body);font-weight:700;color:var(--muted);font-size:.74rem}
+.sub{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:800;margin:8px 0 4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid var(--line);background:var(--panel2);border-radius:10px;padding:5px 10px;font-weight:700;text-align:left;line-height:1.2}
+.chip:hover{border-color:var(--accent)}
+.chip.on{background:var(--coral);border-color:var(--coral);color:#fff}
+.chip.done::after{content:" ★";color:var(--sun)}
+.chip.on.done::after{color:#fff}
+.stagecol{padding:10px;display:flex;flex-direction:column;gap:8px}
+.stagebox{position:relative;border-radius:12px;background:radial-gradient(ellipse at 50% 35%,var(--stage),var(--stage2));overflow:hidden}
+.stg{display:block;width:100%;aspect-ratio:4/5;max-height:70vh}
+.cap{position:absolute;left:10px;right:10px;top:8px;display:flex;flex-direction:column;align-items:flex-start;gap:3px;pointer-events:none}
+.cap b{font-family:var(--display);font-size:1.25rem;line-height:1.1;background:var(--panel);padding:3px 10px;border-radius:9px;border:1px solid var(--line)}
+.cap span{font-size:.82rem;font-weight:700;background:var(--panel);padding:2px 8px;border-radius:8px;border:1px solid var(--line);color:var(--muted)}
+.ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.seg{display:flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:var(--panel2);padding:5px 10px;font-weight:700;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.ctl label{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;font-weight:800;color:var(--muted);display:flex;flex-direction:column;gap:3px}
+.info{padding:14px;display:flex;flex-direction:column;gap:10px}
+.info h2{font-family:var(--display);font-size:1.5rem;line-height:1.1;margin:0;text-wrap:balance}
+.badges{display:flex;flex-wrap:wrap;gap:5px}
+.badge{font-size:.72rem;font-weight:800;border-radius:99px;padding:2px 9px;background:var(--accent-soft)}
+.info h4{margin:4px 0 0;font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.info p{margin:0}
+.acts{display:flex;flex-direction:column;gap:6px}
+.act{display:flex;gap:8px;align-items:center;border:1.5px solid var(--line);background:var(--panel2);border-radius:11px;padding:7px 10px;text-align:left;width:100%}
+.act .pl{flex:none;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:.7rem}
+.act b{display:block;line-height:1.2}
+.act small{color:var(--muted);font-weight:700;display:block;line-height:1.25}
+.act.on{border-color:var(--coral);box-shadow:inset 0 0 0 1px var(--coral)}
+.act.on .pl{background:var(--coral);color:#fff}
+.act.weak{border-style:dashed}
+.tip{background:var(--accent-soft);border-radius:11px;padding:8px 11px}
+.note{font-size:.82rem;color:var(--muted)}
+.btn{border:1.5px solid var(--accent);background:var(--accent);color:var(--accent-ink);border-radius:11px;padding:8px 14px;font-weight:800}
+.btn.ghost{background:none;color:var(--ink);border-color:var(--line)}
+.btn.star[aria-pressed="true"]{background:var(--sun);border-color:var(--sun);color:#2a1c00}
+table.rel{border-collapse:collapse;width:100%;font-size:.86rem}
+table.rel th,table.rel td{border:1px solid var(--line);padding:5px 7px;text-align:left;vertical-align:top}
+table.rel th{background:var(--panel2);width:38%}
+.quiz{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.quiz select{padding:7px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);width:100%}
+.score{display:flex;gap:14px;font-weight:800;font-variant-numeric:tabular-nums}
+.qq{font-family:var(--display);font-size:1.15rem;line-height:1.2;margin:0}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{border:1.5px solid var(--line);background:var(--panel2);border-radius:10px;padding:7px 10px;text-align:left;font-weight:700}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.opt.right{border-color:var(--ok);box-shadow:inset 0 0 0 1px var(--ok)}
+.opt.right::after{content:" ✓";color:var(--ok)}
+.opt.wrong{border-color:var(--bad);text-decoration:line-through}
+.opt.missed{border-color:var(--bad);border-style:dashed}
+.opt.missed::after{content:" (missed)";color:var(--bad)}
+.fb{font-weight:800}
+.fb.good{color:var(--ok)} .fb.no{color:var(--bad)}
+footer{color:var(--muted);font-size:.82rem;max-width:80ch}
+@media (max-width:1080px){ main{grid-template-columns:minmax(0,1fr) minmax(260px,340px)} .pick{grid-column:1/-1;grid-row:2;max-height:none} }
+@media (max-width:700px){ main{grid-template-columns:minmax(0,1fr)} .pick{grid-row:auto;order:3} .stagecol{order:1} .info{order:2} .stg{aspect-ratio:1/1.05;max-height:58vh} h1{font-size:1.6rem} }
+/* figure */
+.stg path{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.stg .s-sk{stroke:var(--skin)} .stg .s-skd{stroke:var(--skin2)} .stg .s-shirt{stroke:var(--shirt)} .stg .s-shorts{stroke:var(--shorts)} .stg .s-hair{stroke:var(--hair)}
+.stg .f-sk{fill:var(--skin)} .stg .f-skd{fill:var(--skin2)} .stg .f-hair{fill:var(--hair)} .stg .f-face{fill:var(--face)} .stg .f-white{fill:#fff} .stg .f-blush{fill:var(--blush);opacity:.7}
+.stg .s-face{stroke:var(--face)} .stg .f-mouth{fill:var(--mouth)} .stg .f-heart{fill:var(--coral)} .stg .f-shadow{fill:var(--ink);opacity:.12}
+.stg .s-bo{stroke:var(--boneo)} .stg .s-bi{stroke:var(--bone)} .stg .f-bone{fill:var(--bone);stroke:var(--boneo);stroke-width:1.5} .stg .s-rib{stroke:var(--boneo)}
+.stg .s-mc{stroke:var(--coral-soft)} .stg .s-mo{stroke:var(--coral-dk)} .stg .s-ma{stroke:var(--coral)} .stg .f-att{fill:var(--bone);stroke:var(--coral-dk);stroke-width:1.4}
+.stg text{font-family:var(--body);font-weight:800;fill:var(--muted)}
+</style>
+<!--/HEAD-->
+</head>
+<body>
+<!--BODY-->
+<div class="wrap">
+<header class="top">
+  <h1>Mover <span>Buddy</span></h1>
+  <p class="tag">Pick a muscle. Flex shows you the movement, where the muscle sits, and what your chart says it does.</p>
+  <div class="prog" title="Muscles you starred as learned"><span id="progT">0 / 0 learned</span><div class="bar"><i id="progB"></i></div></div>
+  <div class="tabs" role="tablist">
+    <button role="tab" id="tab-explore" aria-selected="true" data-tab="explore">Muscles</button>
+    <button role="tab" id="tab-move" aria-selected="false" data-tab="move">Movements</button>
+    <button role="tab" id="tab-quiz" aria-selected="false" data-tab="quiz">Quiz</button>
+  </div>
+</header>
+<main>
+  <section class="col pick" id="pick" aria-label="Choose"></section>
+  <section class="col stagecol" aria-label="Figure">
+    <div class="stagebox">
+      <svg class="stg" id="stg" viewBox="-190 -260 380 475" role="img" aria-label="Animated figure showing the selected movement"></svg>
+      <div class="cap" id="cap"></div>
+    </div>
+    <div class="ctl">
+      <label>Layers<div class="seg" id="layers">
+        <button id="ly-skin" data-l="skin" aria-pressed="true">Skin</button>
+        <button id="ly-mus" data-l="mus" aria-pressed="true">Muscles</button>
+        <button id="ly-bone" data-l="bone" aria-pressed="true">Bones</button></div></label>
+      <label>View<div class="seg" id="views">
+        <button id="vw-auto" data-v="" aria-pressed="true">Auto</button>
+        <button id="vw-front" data-v="front" aria-pressed="false">Front</button>
+        <button id="vw-side" data-v="side" aria-pressed="false">Side</button>
+        <button id="vw-back" data-v="back" aria-pressed="false">Back</button></div></label>
+      <label>Speed<div class="seg" id="speeds">
+        <button id="sp-slow" data-s="0.45" aria-pressed="false">Slow</button>
+        <button id="sp-norm" data-s="1" aria-pressed="true">Normal</button>
+        <button id="sp-pause" data-s="0" aria-pressed="false">Pause</button></div></label>
+    </div>
+  </section>
+  <section class="col info" id="info" aria-live="polite"></section>
+</main>
+<footer>Actions and check marks come from your four prime mover answer charts. Location notes and memory tips are added study help, so confirm them against your textbook. Stars are saved in this browser only.</footer>
+</div>
+<script>
+"use strict";
+/* ---------- movements ---------- */
+const MV={
+elev:{l:'Elevation',pl:'s',fo:'head',a:{jawOpen:1},b:{},d:'The mandible lifts and the mouth closes.'},
+dep:{l:'Depression',pl:'s',fo:'head',a:{},b:{jawOpen:1},d:'The mandible drops and the mouth opens.'},
+pro:{l:'Protraction',pl:'s',fo:'head',a:{},b:{jawPro:1},d:'The mandible slides forward (underbite position).'},
+ret:{l:'Retraction',pl:'s',fo:'head',a:{jawPro:1},b:{jawPro:-.5},d:'The mandible slides backward.'},
+latS:{l:'Lateral deviation (same side)',pl:'f',fo:'head',a:{},b:{jawLat:1},d:'The jaw shifts sideways toward the working muscle.'},
+latO:{l:'Lateral deviation (opposite side)',pl:'f',fo:'head',a:{},b:{jawLat:-1},d:'The jaw shifts sideways away from the working muscle.'},
+inh:{l:'Inhalation',pl:'f',fo:'torso',a:{},b:{breath:1},d:'The chest gets bigger so air flows in. Ribs lift up and out; the diaphragm moves down.'},
+exh:{l:'Exhalation',pl:'f',fo:'torso',a:{breath:1},b:{},d:'The chest gets smaller so air flows out. Ribs drop down and in; the diaphragm recoils upward.'},
+comp:{l:'Compress abdomen',pl:'f',fo:'torso',a:{},b:{compress:1},d:'The abdominal wall draws in like a corset, raising pressure inside the abdomen.'},
+nFlex:{l:'Neck flexion',pl:'s',fo:'neck',a:{},b:{neckFlex:42},d:'Chin moves toward the chest.'},
+nExt:{l:'Neck extension',pl:'s',fo:'neck',a:{},b:{neckFlex:-36},d:'The head and neck tip backward (looking up).'},
+nRotS:{l:'Neck rotation (same side)',pl:'f',fo:'neck',a:{},b:{neckRot:1},d:'The face turns toward the side of the working muscle.'},
+nRotO:{l:'Neck rotation (opposite side)',pl:'f',fo:'neck',a:{},b:{neckRot:-1},d:'The face turns away from the side of the working muscle.'},
+nLat:{l:'Neck lateral flexion',pl:'f',fo:'neck',a:{},b:{neckLat:30},d:'Ear moves toward the shoulder on the working side.'},
+tFlex:{l:'Trunk flexion',pl:'s',fo:'body',a:{},b:{trunkFlex:46},d:'The trunk bends forward.'},
+tExt:{l:'Trunk extension',pl:'s',fo:'body',a:{},b:{trunkFlex:-24,neckFlex:-12},d:'The trunk bends backward (or returns upright from a forward bend).'},
+tRotS:{l:'Trunk rotation (same side)',pl:'f',fo:'torso',a:{},b:{trunkRot:1},d:'The chest turns toward the side of the working muscle.'},
+tRotO:{l:'Trunk rotation (opposite side)',pl:'f',fo:'torso',a:{},b:{trunkRot:-1},d:'The chest turns away from the side of the working muscle.'},
+tLat:{l:'Trunk lateral flexion',pl:'f',fo:'body',a:{},b:{trunkLat:28},d:'The trunk side-bends toward the working side.'},
+hFlex:{l:'Hip flexion',pl:'s',fo:'leg',a:{},b:{hipFlex:58,kneeFlex:14},d:'The thigh swings forward and up.'},
+hExt:{l:'Hip extension',pl:'s',fo:'leg',a:{hipFlex:30},b:{hipFlex:-22},d:'The thigh moves backward. Past neutral is hyperextension.'},
+hAbd:{l:'Hip abduction',pl:'f',fo:'leg',a:{},b:{hipAbd:36},d:'The thigh moves out to the side, away from midline.'},
+hAdd:{l:'Hip adduction',pl:'f',fo:'leg',a:{hipAbd:30},b:{hipAbd:-9},d:'The thigh moves in toward (and across) midline.'},
+hER:{l:'Hip external rotation',pl:'f',fo:'leg',a:{hipAbd:6},b:{hipAbd:6,hipRot:1},d:'The thigh spins outward. Watch the kneecap and toes turn away from midline.'},
+hIR:{l:'Hip internal rotation',pl:'f',fo:'leg',a:{hipAbd:6},b:{hipAbd:6,hipRot:-1},d:'The thigh spins inward. Watch the kneecap and toes turn toward midline.'},
+kFlex:{l:'Knee flexion',pl:'s',fo:'leg',a:{},b:{kneeFlex:95},d:'The knee bends, heel toward the buttock.'},
+kExt:{l:'Knee extension',pl:'s',fo:'leg',a:{hipFlex:50,kneeFlex:88},b:{hipFlex:50,kneeFlex:0},d:'The knee straightens.'},
+PF:{l:'Ankle plantarflexion',pl:'s',fo:'foot',a:{hipFlex:30,kneeFlex:35},b:{hipFlex:30,kneeFlex:35,ankle:-42},d:'The foot points down, like pressing a gas pedal.'},
+DF:{l:'Ankle dorsiflexion',pl:'s',fo:'foot',a:{hipFlex:30,kneeFlex:35,ankle:-15},b:{hipFlex:30,kneeFlex:35,ankle:22},d:'The top of the foot pulls up toward the shin.'},
+inv:{l:'Ankle inversion',pl:'f',fo:'footF',a:{hipAbd:12},b:{hipAbd:12,inv:28},d:'The sole turns in to face midline.'},
+ev:{l:'Ankle eversion',pl:'f',fo:'footF',a:{hipAbd:12},b:{hipAbd:12,inv:-20},d:'The sole turns out, away from midline.'},
+halFlex:{l:'Hallux flexion',pl:'s',fo:'foot',a:{hipFlex:30,kneeFlex:35},b:{hipFlex:30,kneeFlex:35,halFlex:42},d:'The big toe curls down.'},
+halExt:{l:'Hallux extension',pl:'s',fo:'foot',a:{hipFlex:30,kneeFlex:35},b:{hipFlex:30,kneeFlex:35,halFlex:-48},d:'The big toe lifts up.'},
+toeFlex:{l:'D2–D5 flexion',pl:'s',fo:'foot',a:{hipFlex:30,kneeFlex:35},b:{hipFlex:30,kneeFlex:35,toeFlex:42},d:'The four lesser toes curl down.'},
+toeExt:{l:'D2–D5 extension',pl:'s',fo:'foot',a:{hipFlex:30,kneeFlex:35},b:{hipFlex:30,kneeFlex:35,toeFlex:-42},d:'The four lesser toes lift up.'},
+iAbd:{l:'Toe abduction',foot:1,d:'Toes spread away from the 2nd toe, which is the midline of the foot.'},
+iAdd:{l:'Toe adduction',foot:1,d:'Toes draw in toward the 2nd toe, the midline of the foot.'},
+iFlex:{l:'Toe flexion',foot:1,d:'Toes curl down toward the sole.'},
+iExt:{l:'Toe extension / hyperextension',foot:1,d:'Toes lift up toward the top of the foot.'},
+antTilt:{l:'Anterior pelvic tilt',pl:'s',fo:'pelvis',a:{},b:{pelvisTilt:15},d:''},
+postTilt:{l:'Posterior pelvic tilt',pl:'s',fo:'pelvis',a:{},b:{pelvisTilt:-15},d:''},
+latTilt:{l:'Lateral pelvic tilt',pl:'f',fo:'pelvis',a:{ground:1},b:{pelvisLat:-11,ground:1},d:''},
+rotF:{l:'Pelvic rotation forward',pl:'s',fo:'leg',a:{},b:{hipFlex:26,hipFlexL:-20},d:''},
+rotB:{l:'Pelvic rotation backward',pl:'s',fo:'leg',a:{},b:{hipFlex:-20,hipFlexL:26},d:''}
+};
+const MVG=[['Jaw (TMJ)',['elev','dep','pro','ret','latS','latO']],['Breathing',['inh','exh','comp']],
+['Neck',['nFlex','nExt','nRotS','nRotO','nLat']],['Trunk',['tFlex','tExt','tRotS','tRotO','tLat']],
+['Hip',['hFlex','hExt','hAbd','hAdd','hER','hIR']],['Knee',['kFlex','kExt']],['Ankle',['PF','DF','inv','ev']],
+['Toes, long muscles',['halFlex','halExt','toeFlex','toeExt']],['Toes, intrinsic muscles',['iAbd','iAdd','iFlex','iExt']]];
+const CH={tmj:['elev','pro','ret','dep','latS','latO'],resp:['inh','exh'],neck:['nFlex','nExt','nRotS','nRotO','nLat'],
+trunk:['tFlex','tExt','tRotS','tRotO','tLat','comp'],hip:['hFlex','hExt','hAbd','hAdd','hER','hIR','kFlex','kExt'],
+knee:['hFlex','hExt','kFlex','kExt','PF','DF'],ankle:['kFlex','PF','DF','inv','ev','halFlex','halExt','toeFlex','toeExt'],foot:['iAbd','iAdd','iFlex','iExt']};
+const MODE={B:'Both sides together',U:'One side alone',BU:'Both sides, or one side alone'};
+/* ---------- muscles: acts = [movement, mode, note, weak, extra] ; s/f/b = path on side/front/back view as [segment, t along, offset] ---------- */
+const D1=[0],D25=[1,2,3,4],D5=[4],D24=[1,2,3],D35=[2,3,4];
+const M={
+temporalis:{n:'Temporalis',ch:'tmj',ax:1,wd:15,w:'Fan-shaped muscle on the side of the skull. Temporal fossa → coronoid process of the mandible.',tip:'Its back fibers run almost horizontally, which is why it is the retractor of the jaw.',
+ acts:[['elev','B'],['ret','B'],['latS','U','same side']],s:[['head',1.32,2],['jaw',.2,8]],f:[['head',1.25,35],['jaw',.15,30]]},
+masseter:{n:'Masseter',ch:'tmj',ax:1,wd:11,w:'Thick cheek muscle you can feel when you clench. Zygomatic arch → angle and ramus of the mandible.',tip:'Clench your teeth and touch the angle of your jaw. That bulge is masseter.',
+ acts:[['elev','B'],['latS','U','same side']],s:[['head',.82,14],['jaw',.45,-10]],f:[['head',.85,31],['jaw',.5,25]]},
+medPt:{n:'Medial pterygoid',ch:'tmj',ax:1,deep:1,wd:8,w:'Deep, on the inside of the mandible, mirroring masseter. Lateral pterygoid plate (medial surface) → inner surface of the angle of the mandible.',tip:'Masseter and medial pterygoid form a sling around the angle of the jaw.',
+ acts:[['elev','B'],['pro','B'],['latO','U','opposite side']],s:[['head',.72,12],['jaw',.5,-8]],f:[['head',.76,13],['jaw',.55,22]]},
+latPt:{n:'Lateral pterygoid',ch:'tmj',ax:1,deep:1,wd:8,w:'Deep, runs almost horizontally. Sphenoid and lateral pterygoid plate → neck of the mandibular condyle and the TMJ disc.',tip:'The only one of the four that opens the mouth. Its horizontal pull drags the condyle forward.',
+ acts:[['pro','B'],['dep','B'],['latO','U','opposite side']],s:[['head',.76,15],['jaw',.02,2]],f:[['head',.79,13],['jaw',.02,27]]},
+diaphragm:{n:'Diaphragm',ch:'resp',sp:'dia',w:'Dome-shaped sheet between the chest and abdomen. Xiphoid, lower ribs and lumbar vertebrae → central tendon.',tip:'Contract = flatten = moves DOWN = air in. Relax = dome recoils UP = air out.',
+ acts:[['inh','','Contracts during inhalation (moves down)'],['exh','','Recoils and moves up when relaxing during exhalation']]},
+extIC:{n:'External intercostals',ch:'resp',sp:'eic',w:'Outer layer between the ribs. Fibers run down and forward, like hands in front pockets.',tip:'External = Elevate = inhalation.',
+ acts:[['inh','','Moves bottom rib up and out during inhalation']]},
+intIC:{n:'Internal intercostals',ch:'resp',sp:'iic',deep:1,w:'Deep to the externals, with fibers at right angles to them (down and back).',tip:'Internal pulls ribs IN during exhalation.',
+ acts:[['exh','','Pulls top rib down and in during exhalation']]},
+scm:{n:'Sternocleidomastoid',ch:'neck',ax:1,wd:8,w:'Strap on the front and side of the neck. Sternum (manubrium) and medial clavicle → mastoid process.',tip:'The name lists its attachments: sterno-cleido-mastoid. One side turns the face to the OPPOSITE side.',
+ acts:[['nFlex','B','head / neck'],['nRotO','U'],['nLat','U'],['inh','B','Accessory muscle of inhalation',1]],s:[['thorax',.97,15],['head',.5,-12]],f:[['thorax',.98,5],['head',.6,27]]},
+scalene:{n:'Scalenes',ch:'neck',ax:1,wd:7,w:'Three muscles on the side of the neck. Cervical transverse processes → ribs 1 and 2.',tip:'With the neck fixed they lift ribs 1–2, which is why they help you inhale.',
+ acts:[['nFlex','B','head / neck'],['nLat','U'],['inh','B','Accessory muscle of inhalation',1]],s:[['neck',.6,1],['thorax',.95,9]],f:[['neck',.7,6],['thorax',.96,19]]},
+prevert:{n:'Prevertebral muscles',ch:'neck',ax:1,deep:1,wd:6,w:'Longus colli, longus capitis, rectus capitis anterior and lateralis. Deep on the front of the cervical spine, running up to the upper vertebrae and occiput.',tip:'These are the deep neck flexors that do the chin tuck.',
+ acts:[['nFlex','BU','head / neck'],['nLat','U']],s:[['neck',.05,5],['head',.2,4]],f:[['neck',.05,4],['head',.3,5]]},
+splCap:{n:'Splenius capitis',ch:'neck',ax:1,wd:8,w:'Back of the neck. Lower ligamentum nuchae and spinous processes C7–T3 → mastoid process and occiput.',tip:'Capitis = attaches to the head, so it moves the head. One side turns the face to the SAME side.',
+ acts:[['nExt','B','head and neck'],['nRotS','U','head'],['nLat','U']],s:[['thorax',.9,-15],['neck',.5,-10],['head',.5,-17]],b:[['thorax',.85,2],['head',.55,25]]},
+splCerv:{n:'Splenius cervicis',ch:'neck',ax:1,wd:7,w:'Back of the neck, just below splenius capitis. Spinous processes T3–T6 → transverse processes of C1–C3.',tip:'Cervicis = attaches to the neck, so it extends the neck.',
+ acts:[['nExt','B','neck'],['nLat','U']],s:[['thorax',.75,-16],['neck',.75,-8]],b:[['thorax',.7,2],['neck',.8,9]]},
+subocc:{n:'Suboccipitals',ch:'neck',ax:1,deep:1,wd:7,w:'Obliquus capitis and rectus capitis posterior muscles. Small, deep muscles from C1 and C2 up to the occiput.',tip:'Tiny muscles for fine head movements. They act on the head only.',
+ acts:[['nExt','BU','head'],['nRotS','U','head'],['nLat','U']],s:[['neck',.8,-7],['head',.35,-17]],b:[['neck',.85,3],['head',.4,13]]},
+ra:{n:'Rectus abdominis',ch:'trunk',ax:1,wd:11,w:'The "six-pack". Pubic crest and symphysis → xiphoid process and costal cartilages 5–7.',tip:'Straight vertical fibers = straight flexion only. No rotation.',
+ acts:[['tFlex','B','+ compresses abdomen'],['comp','B'],['exh','B','Accessory muscle of exhalation',1]],s:[['pelvis',.1,18],['lumbar',.3,26],['thorax',.25,24]],f:[['pelvis',.05,5],['lumbar',.3,8],['thorax',.3,8]]},
+eo:{n:'External oblique',ch:'trunk',ax:1,wd:10,w:'Outer side of the abdomen. Lower 8 ribs → iliac crest and linea alba. Fibers run down and in, like hands in front pockets.',tip:'One side rotates the trunk to the OPPOSITE side. Right external oblique teams up with left internal oblique.',
+ acts:[['tFlex','B','+ compresses abdomen'],['comp','B'],['tRotO','U'],['tLat','U'],['exh','B','Accessory muscle of exhalation',1]],s:[['thorax',.3,10],['lumbar',.4,20],['pelvis',.6,16]],f:[['thorax',.35,30],['lumbar',.5,22],['pelvis',.4,8]]},
+io:{n:'Internal oblique',ch:'trunk',ax:1,deep:1,wd:10,w:'Under the external oblique. Iliac crest, thoracolumbar fascia and inguinal ligament → lower ribs and linea alba. Fibers run up and in.',tip:'One side rotates the trunk to the SAME side.',
+ acts:[['tFlex','B','+ compresses abdomen'],['comp','B'],['tRotS','U'],['tLat','U'],['exh','B','Accessory muscle of exhalation',1]],s:[['pelvis',.8,8],['lumbar',.6,18],['thorax',.1,18]],f:[['pelvis',.8,28],['lumbar',.6,20],['thorax',.1,8]]},
+ta:{n:'Transverse abdominis',ch:'trunk',ax:1,deep:1,wd:14,w:'Deepest abdominal layer with horizontal fibers. Lower costal cartilages, thoracolumbar fascia and iliac crest → linea alba.',tip:'Horizontal fibers cannot flex the trunk. It is the body\'s corset.',
+ acts:[['comp','B','compresses abdomen'],['exh','B','Accessory muscle of exhalation',1]],s:[['lumbar',.5,-8],['lumbar',.5,22]],f:[['lumbar',.5,29],['lumbar',.5,3]]},
+es:{n:'Erector spinae group',ch:'trunk',ax:1,wd:10,w:'Three long columns beside the spine (iliocostalis, longissimus, spinalis). Sacrum and iliac crest up to the ribs, vertebrae and skull.',tip:'"I Love Spine": Iliocostalis, Longissimus, Spinalis, from lateral to medial.',
+ acts:[['tExt','B','trunk / neck'],['tLat','U','trunk / neck']],s:[['pelvis',.6,-18],['lumbar',.5,-20],['thorax',.6,-22],['neck',.5,-10]],b:[['pelvis',.7,8],['lumbar',.5,10],['thorax',.6,12],['neck',.6,7]]},
+ts:{n:'Transversospinalis',ch:'trunk',ax:1,deep:1,wd:7,w:'Deep to the erector spinae (semispinalis, multifidus, rotatores). Each runs from a transverse process up to a spinous process above.',tip:'Fibers angle up and in toward the spine, so one side rotates to the OPPOSITE side.',
+ acts:[['tExt','B','trunk / neck / head'],['tRotO','U','trunk / neck / head'],['tLat','U','trunk / neck / head']],s:[['pelvis',.8,-13],['lumbar',.5,-15],['thorax',.7,-17],['neck',1,-8]],b:[['pelvis',.9,4],['lumbar',.5,5],['thorax',.6,5],['neck',1,4]]},
+intsp:{n:'Interspinales',ch:'trunk',ax:1,deep:1,wd:5,w:'Tiny muscles between neighboring spinous processes.',tip:'Between spinous processes, on the back midline, so they extend.',
+ acts:[['tExt','U','trunk & neck']],s:[['lumbar',.1,-23],['lumbar',.95,-23]],b:[['lumbar',.1,2],['lumbar',.95,2]]},
+inttr:{n:'Intertransversarii',ch:'trunk',ax:1,deep:1,wd:5,w:'Tiny muscles between neighboring transverse processes.',tip:'Between transverse processes, out to the side, so they side-bend.',
+ acts:[['tLat','U','trunk & neck']],s:[['lumbar',.1,-12],['lumbar',.95,-12]],b:[['lumbar',.1,10],['lumbar',.95,10]]},
+ql:{n:'Quadratus lumborum',ch:'trunk',ax:1,deep:1,wd:11,w:'Deep in the low back at the side of the waist. Posterior iliac crest → 12th rib and transverse processes of L1–L4.',tip:'The "hip hiker": with the trunk fixed it lifts the pelvis on its side.',
+ acts:[['tLat','','trunk'],['tExt','','Assist',1]],s:[['pelvis',1,-8],['lumbar',.95,-8]],b:[['pelvis',1,23],['lumbar',.5,15],['thorax',.05,13]]},
+iliopsoas:{n:'Iliopsoas',ch:'hip',deep:1,wd:10,w:'Psoas major (from the lumbar vertebrae) plus iliacus (from the iliac fossa) → lesser trochanter of the femur.',tip:'The strongest hip flexor.',
+ acts:[['hFlex'],['hER']],s:[['lumbar',.5,0],['pelvis',.2,14],['thigh',.12,-2]],f:[['lumbar',.5,5],['pelvis',.3,14],['thighR',.1,-4]]},
+sartorius:{n:'Sartorius',ch:'hip',wd:7,w:'Longest muscle in the body, a strap crossing the front of the thigh. ASIS → medial proximal tibia (pes anserinus).',tip:'The "tailor\'s muscle": sitting cross-legged uses all four actions (hip flexion, abduction, external rotation + knee flexion).',
+ acts:[['hFlex'],['hAbd'],['hER'],['kFlex']],s:[['pelvis',.5,17],['thigh',.5,4],['shank',.1,-2]],f:[['pelvis',.5,26],['thighR',.5,-4],['shankR',.1,-8]]},
+rf:{n:'Rectus femoris',ch:'hip',wd:11,w:'The only quadriceps muscle that crosses the hip. AIIS → patella and tibial tuberosity (through the patellar tendon).',tip:'It kicks a ball: flexes the hip and extends the knee.',
+ acts:[['hFlex'],['kExt']],s:[['pelvis',.35,16],['thigh',.5,15],['thigh',1,14],['shank',.08,12]],f:[['pelvis',.3,20],['thighR',.5,0],['thighR',1,0]]},
+pectineus:{n:'Pectineus',ch:'hip',wd:8,w:'Short muscle high in the groin. Superior pubic ramus → pectineal line of the femur.',
+ acts:[['hFlex'],['hAdd'],['hIR']],s:[['pelvis',0,12],['thigh',.2,0]],f:[['pelvis',-.05,6],['thighR',.2,-6]]},
+adductors:{n:'Adductors',ch:'hip',wd:13,w:'Adductor magnus, longus and brevis. Pubis (and ischial tuberosity for magnus) → linea aspera of the femur.',tip:'The inner thigh group.',
+ acts:[['hAdd'],['hIR']],s:[['pelvis',-.2,6],['thigh',.6,-2]],f:[['pelvis',-.2,5],['thighR',.4,-10],['thighR',.85,-8]]},
+gracilis:{n:'Gracilis',ch:'hip',wd:6,w:'Thin strap down the inner thigh, the only adductor that crosses the knee. Inferior pubic ramus → medial proximal tibia (pes anserinus).',tip:'Pes anserinus = "Say Grace before Tea": Sartorius, Gracilis, semiTendinosus.',
+ acts:[['hAdd'],['hIR'],['kFlex','','Checked on the hip chart; listed as "assist" on the knee chart']],s:[['pelvis',-.25,4],['thigh',.5,-6],['shank',.1,-2]],f:[['pelvis',-.25,3],['thighR',.6,-14],['shankR',.1,-9]]},
+gmax:{n:'Gluteus maximus',ch:'hip',wd:20,w:'The big superficial buttock muscle. Posterior ilium, sacrum and coccyx → IT band and gluteal tuberosity of the femur.',tip:'Powers standing up from a chair and climbing stairs.',
+ acts:[['hExt','','& hyperextension'],['hAbd'],['hER']],s:[['pelvis',.7,-18],['pelvis',0,-22],['thigh',.25,-8]],b:[['pelvis',.6,4],['pelvis',.1,18],['thighR',.2,10]]},
+deeprot:{n:'Deep rotators',ch:'hip',deep:1,wd:9,w:'Six small muscles under gluteus maximus (piriformis, gemelli, obturators, quadratus femoris). Sacrum and ischium → greater trochanter region.',tip:'"Piece Goods Often Go On Quilts": Piriformis, Gemellus sup., Obturator int., Gemellus inf., Obturator ext., Quadratus femoris.',
+ acts:[['hER']],s:[['pelvis',.2,-16],['thigh',.03,-4]],b:[['pelvis',.1,3],['thighR',0,10]]},
+semis:{n:'Hamstrings: semitendinosus & semimembranosus',ch:'hip',wd:10,w:'The two medial hamstrings. Ischial tuberosity → medial tibia (semitendinosus at the pes anserinus, semimembranosus on the posterior medial condyle).',
+ acts:[['hExt'],['kFlex']],s:[['pelvis',-.25,-12],['thigh',.5,-15],['shank',.1,-8]],b:[['pelvis',-.3,10],['thighR',.5,-8],['shankR',.1,-8]]},
+bf:{n:'Hamstrings: biceps femoris',ch:'hip',wd:10,w:'The lateral hamstring. Long head from the ischial tuberosity, short head from the linea aspera → head of the fibula.',
+ acts:[['hExt'],['kFlex']],s:[['pelvis',-.25,-14],['thigh',.5,-13],['shank',.08,-4]],b:[['pelvis',-.3,12],['thighR',.5,6],['shankR',.08,10]]},
+gmed:{n:'Gluteus medius',ch:'hip',wd:17,w:'Fan on the outer hip, partly under gluteus maximus. Outer ilium → greater trochanter.',tip:'Keeps the pelvis level when you stand on one leg. Weakness gives a Trendelenburg gait.',
+ acts:[['hAbd']],s:[['pelvis',.9,-4],['thigh',.02,-4]],f:[['pelvis',.95,24],['thighR',0,13]],b:[['pelvis',.95,22],['thighR',0,12]]},
+gmin:{n:'Gluteus minimus',ch:'hip',deep:1,wd:11,w:'Smallest and deepest gluteal, under gluteus medius. Outer ilium → front of the greater trochanter.',
+ acts:[['hAbd']],s:[['pelvis',.6,2],['thigh',.02,-2]],b:[['pelvis',.6,21],['thighR',0,11]],f:[['pelvis',.6,23],['thighR',0,12]]},
+tfl:{n:'Tensor fascia latae',ch:'hip',wd:8,w:'Small muscle at the front-outer hip that tightens the IT band. ASIS and anterior iliac crest → IT band → lateral tibia.',tip:'Put your hand in your front pocket. TFL is under your palm.',
+ acts:[['hFlex'],['hAbd'],['hIR']],s:[['pelvis',.5,14],['thigh',.25,10],['thigh',.9,6]],f:[['pelvis',.5,27],['thighR',.2,13],['thighR',.95,12]]},
+vasti:{n:'Quads: vastus medialis, intermedius, lateralis',ch:'knee',wd:22,w:'The three one-joint quadriceps muscles wrapping the femur. Femoral shaft → patella → tibial tuberosity.',tip:'They cross only the knee, so they only act on the knee.',
+ acts:[['kExt','','The uploaded answer key has this check under "Knee flexion". The vasti extend the knee, so it is shown as extension here. Confirm with your instructor.']],s:[['thigh',.2,8],['thigh',.6,14],['thigh',1,14],['shank',.08,12]],f:[['thighR',.2,0],['thighR',.97,0]]},
+popliteus:{n:'Popliteus',ch:'knee',deep:1,wd:7,w:'Small diagonal muscle behind the knee. Lateral femoral condyle → posterior proximal tibia.',tip:'The "key that unlocks the knee": it starts knee flexion from full extension.',
+ acts:[['kFlex','','Initiates',1]],s:[['thigh',.97,-4],['shank',.18,-9]],b:[['thighR',.97,8],['shankR',.18,-6]]},
+gastroc:{n:'Gastrocnemius',ch:'ankle',wd:15,w:'The two-headed superficial calf muscle. Medial and lateral femoral condyles → calcaneus through the Achilles tendon.',tip:'Crosses the knee AND the ankle, so it acts on both.',
+ acts:[['kFlex'],['PF']],s:[['thigh',.92,-10],['shank',.35,-17],['foot',-.28,-2]],b:[['thighR',.93,0],['shankR',.35,0],['shankR',1,0]]},
+soleus:{n:'Soleus',ch:'ankle',deep:1,wd:12,w:'Flat calf muscle under gastrocnemius. Posterior tibia and fibula → calcaneus through the Achilles tendon.',tip:'Does not cross the knee, so plantarflexion only.',
+ acts:[['PF']],s:[['shank',.15,-9],['shank',.5,-13],['foot',-.28,-2]],b:[['shankR',.15,2],['shankR',.6,0],['shankR',1,0]]},
+plantaris:{n:'Plantaris',ch:'ankle',wd:4,w:'Tiny muscle belly behind the knee with a very long, thin tendon. Lateral supracondylar ridge of the femur → calcaneus.',
+ acts:[['PF'],['kFlex','','Weak assist',1]],s:[['thigh',.94,-8],['shank',.5,-10],['foot',-.28,0]],b:[['thighR',.94,6],['shankR',.5,-3],['shankR',1,-3]]},
+tibPost:{n:'Tibialis posterior',ch:'ankle',deep:1,wd:7,w:'Deepest calf muscle. Posterior tibia, fibula and interosseous membrane → passes behind the medial malleolus to the navicular and plantar foot.',tip:'"Tom, Dick and Harry" pass behind the medial malleolus: Tibialis posterior, flexor Digitorum longus, flexor Hallucis longus.',
+ acts:[['PF'],['inv']],s:[['shank',.25,-4],['shank',.97,-5],['foot',.3,-8]],f:[['shankR',.3,-4],['shankR',1,-9]],b:[['shankR',.2,0],['shankR',1,-8]]},
+fdl:{n:'Flexor digitorum longus',ch:'ankle',deep:1,wd:6,w:'Deep calf. Posterior tibia → behind the medial malleolus → distal phalanges of D2–D5.',
+ acts:[['toeFlex'],['PF','','weak',1],['inv','','weak',1]],s:[['shank',.35,-6],['shank',1,-6],['foot',.5,-10],['toes',.8,-5]],f:[['shankR',.35,-7],['shankR',1,-9]]},
+fhl:{n:'Flexor hallucis longus',ch:'ankle',deep:1,wd:6,w:'Deep calf. Posterior fibula → behind the medial malleolus → distal phalanx of the big toe.',tip:'Hallucis = big toe. It gives the push-off in walking.',
+ acts:[['halFlex'],['PF','','weak',1],['inv','','weak',1]],s:[['shank',.4,-8],['shank',1,-7],['foot',.5,-11],['hallux',.9,-5]],f:[['shankR',.4,2],['shankR',1,-8]]},
+tibAnt:{n:'Tibialis anterior',ch:'ankle',wd:9,w:'The muscle just lateral to the shin bone. Lateral tibia → medial cuneiform and base of the 1st metatarsal.',tip:'Sore after fast walking? That is this one ("shin splints" muscle).',
+ acts:[['DF'],['inv']],s:[['shank',.1,9],['shank',.9,8],['foot',.4,2]],f:[['shankR',.1,5],['shankR',.9,0],['shankR',1.02,-5]]},
+ehl:{n:'Extensor hallucis longus',ch:'ankle',wd:6,w:'Front of the leg between tibialis anterior and EDL. Anterior fibula → distal phalanx of the big toe.',
+ acts:[['DF'],['inv'],['halExt','','IP & MTP']],s:[['shank',.4,7],['shank',1,8],['foot',.6,5],['hallux',.9,4]],f:[['shankR',.4,3],['shankR',1.02,-2]]},
+edl:{n:'Extensor digitorum longus',ch:'ankle',wd:6,w:'Front-outer leg. Lateral tibial condyle and anterior fibula → middle and distal phalanges of D2–D5.',
+ acts:[['DF'],['ev'],['toeExt']],s:[['shank',.2,8],['shank',1,9],['foot',.6,6],['toes',.9,4]],f:[['shankR',.2,9],['shankR',1.02,4]]},
+fibL:{n:'Fibularis longus',ch:'ankle',wd:7,w:'Outer leg. Head and upper fibula → behind the lateral malleolus, under the foot → medial cuneiform and base of the 1st metatarsal.',tip:'Fibularis (peroneus) muscles sit on the fibula side, so they evert.',
+ acts:[['ev'],['PF','','Assist',1]],s:[['shank',.1,-2],['shank',.95,-5],['foot',.2,-9],['foot',.6,-10]],f:[['shankR',.08,11],['shankR',1,9]],b:[['shankR',.08,11],['shankR',1,9]]},
+fibB:{n:'Fibularis brevis',ch:'ankle',wd:6,w:'Outer leg under fibularis longus. Lower lateral fibula → behind the lateral malleolus → base of the 5th metatarsal.',
+ acts:[['ev'],['PF','','Assist',1]],s:[['shank',.45,-2],['shank',.97,-5],['foot',.45,-4]],f:[['shankR',.5,10],['shankR',1.03,10]],b:[['shankR',.5,10],['shankR',1.03,10]]},
+abdH:{n:'Abductor hallucis',ch:'foot',ly:1,w:'Along the medial border of the sole. Calcaneus → medial base of the proximal phalanx of the big toe.',
+ acts:[['iAbd','','MTP D1',0,{dig:D1}],['iFlex','','MTP D1',0,{dig:D1,pz:{mtp:[0,35],ip:[0,0]}}]]},
+fdb:{n:'Flexor digitorum brevis',ch:'foot',ly:1,w:'Center of the sole, just under the plantar fascia. Calcaneus → middle phalanges of D2–D5.',tip:'Brevis = short = lives in the foot. Longus = long = lives in the leg.',
+ acts:[['iFlex','','D2–D5',0,{dig:D25}]]},
+adm:{n:'Abductor digiti minimi',ch:'foot',ly:1,w:'Along the lateral border of the sole. Calcaneus → lateral base of the proximal phalanx of the little toe.',
+ acts:[['iAbd','','D5',0,{dig:D5}],['iFlex','','D5',0,{dig:D5}]]},
+qp:{n:'Quadratus plantae',ch:'foot',ly:2,w:'Square muscle from the calcaneus to the tendon of flexor digitorum longus. It straightens the diagonal pull of that tendon.',
+ acts:[['iFlex','','Assists flexion D2–D5',1,{dig:D25}]]},
+lumb:{n:'Lumbricals',ch:'foot',ly:2,w:'Four small worm-like muscles. FDL tendons → extensor expansions of D2–D5.',tip:'Same job as in the hand: flex the MTPs while extending the IPs.',
+ acts:[['iFlex','','MTPs',0,{dig:D25,pz:{mtp:[0,40],ip:[25,0]}}],['iExt','','PIP / DIPs',0,{dig:D25,pz:{mtp:[0,0],ip:[38,0]}}]]},
+fhb:{n:'Flexor hallucis brevis',ch:'foot',ly:3,w:'Under the 1st metatarsal. Cuboid and lateral cuneiform → base of the proximal phalanx of the big toe (its two tendons hold the sesamoids).',
+ acts:[['iFlex','','D1',0,{dig:D1}]]},
+addH:{n:'Adductor hallucis',ch:'foot',ly:3,w:'Two heads. Oblique head from the bases of metatarsals 2–4, transverse head from the MTP ligaments → lateral base of the proximal phalanx of the big toe.',
+ acts:[['iAdd','','MTP D1',0,{dig:D1}]]},
+fdm:{n:'Flexor digiti minimi',ch:'foot',ly:3,w:'Under the 5th metatarsal. Base of the 5th metatarsal → base of the proximal phalanx of the little toe.',
+ acts:[['iFlex','','D5',0,{dig:D5}]]},
+dint:{n:'Dorsal interossei',ch:'foot',ly:4,w:'Four two-headed muscles between the metatarsals → proximal phalanges of D2–D4.',tip:'DAB: Dorsal ABduct.',
+ acts:[['iAbd','','D2–D4',0,{dig:D24}]]},
+pint:{n:'Plantar interossei',ch:'foot',ly:4,w:'Three muscles on metatarsals 3–5 → medial bases of the proximal phalanges of D3–D5.',tip:'PAD: Plantar ADduct.',
+ acts:[['iAdd','','D3–D5',0,{dig:D35}]]},
+edb:{n:'Extensor digitorum brevis',ch:'foot',ly:'D',w:'On top of the foot. Dorsal calcaneus → joins the long extensor tendons to D2–D4.',
+ acts:[['iExt','','D2–D4',0,{dig:D24}]]},
+ehb:{n:'Extensor hallucis brevis',ch:'foot',ly:'D',w:'On top of the foot. Dorsal calcaneus → proximal phalanx of the big toe.',
+ acts:[['iExt','','D1',0,{dig:D1}]]},
+antTilt:{n:'Anterior tilt',concept:1,w:'The top of the pelvis tips forward (ASIS moves forward and down).',rel:['Extension','Flexion'],acts:[['antTilt']]},
+postTilt:{n:'Posterior tilt',concept:1,w:'The top of the pelvis tips backward (ASIS moves up and back).',rel:['Flexion','Extension'],acts:[['postTilt']]},
+latTilt:{n:'Lateral tilt',concept:1,w:'One side of the pelvis rises while the other drops, as when standing on one leg.',rel:['Lateral flexion on weight bearing side','ADDuction on weight bearing side; ABduction on non-weight bearing side'],acts:[['latTilt']]},
+rotF:{n:'Rotation forward',concept:1,w:'One side of the pelvis swings forward, as when that leg steps ahead in walking.',rel:['Rotation','External rotation on forward LE; internal rotation on back LE'],acts:[['rotF']]},
+rotB:{n:'Rotation backward',concept:1,w:'One side of the pelvis swings backward, as when that leg trails behind in walking.',rel:['Rotation','External rotation on forward LE; internal rotation on back LE'],acts:[['rotB']]}
+};
+for(const k in M)M[k].id=k;
+const GROUPS=[
+['Jaw (TMJ)','tmj',[['',['temporalis','masseter','medPt','latPt']]]],
+['Breathing','resp',[['',['diaphragm','extIC','intIC']]]],
+['Anterior neck','aneck',[['',['scm','scalene','prevert']]]],
+['Posterior neck','pneck',[['',['splCap','splCerv','subocc']]]],
+['Anterior trunk','atrunk',[['',['ra','eo','io','ta']]]],
+['Posterior & lateral trunk','ptrunk',[['Posterior trunk (and neck)',['es','ts','intsp','inttr']],['Lateral trunk',['ql']]]],
+['Pelvic girdle links','pelvis',[['How the pelvis, spine and hip move together',['antTilt','postTilt','latTilt','rotF','rotB']]]],
+['Hip','hip',[['',['iliopsoas','sartorius','rf','pectineus','adductors','gracilis','gmax','deeprot','semis','bf','gmed','gmin','tfl']]]],
+['Knee','knee',[['',['rf','vasti','semis','bf','sartorius','gracilis','gastroc','popliteus']]]],
+['Ankle & long toe muscles','ankle',[['',['gastroc','soleus','plantaris','tibPost','fdl','fhl','tibAnt','ehl','edl','fibL','fibB']]]],
+['Intrinsic foot','foot',[['Plantar · first layer',['abdH','fdb','adm']],['Plantar · second layer',['qp','lumb']],['Plantar · third layer',['fhb','addH','fdm']],['Fourth layer',['dint','pint']],['Dorsal surface',['edb','ehb']]]]
+];
+const gIds=g=>g[2].flatMap(s=>s[1]);
+const ALLM=Object.values(M).filter(m=>!m.concept);
+/* ---------- state ---------- */
+const st={tab:'explore',sel:'iliopsoas',grp:'hip',ai:0,auto:true,mv:'hFlex',viewO:'',ly:{skin:true,mus:true,bone:true},speed:1,clock:0,q:null,score:0,asked:0,streak:0,scope:'all',learned:new Set()};
+try{JSON.parse(localStorage.getItem('moverBuddyLearned')||'[]').forEach(x=>M[x]&&st.learned.add(x))}catch(e){}
+const save=()=>{try{localStorage.setItem('moverBuddyLearned',JSON.stringify([...st.learned]))}catch(e){}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* ---------- rig ---------- */
+const R=Math.PI/180,dir=a=>[Math.sin(a*R),Math.cos(a*R)];
+const Z={pelvisTilt:0,pelvisLat:0,trunkFlex:0,trunkLat:0,trunkRot:0,neckFlex:0,neckLat:0,neckRot:0,jawOpen:0,jawPro:0,jawLat:0,breath:0,compress:0,hipFlex:0,hipFlexL:0,kneeFlex:0,ankle:0,toeFlex:0,halFlex:0,hipAbd:0,hipRot:0,inv:0,ground:0};
+function build(view,p){
+  const S={},side=view==='side';
+  const mk=(nm,P,a,len,ax)=>{const u=dir(a);return S[nm]={P,u,n:ax?[-u[1],u[0]]:[u[1],-u[0]],len,a}};
+  const P=(s,t,o=0,sd=1)=>{const g=S[s]||S[s+(sd>0?'R':'L')];return[g.P[0]+g.u[0]*t*g.len+g.n[0]*o*sd,g.P[1]+g.u[1]*t*g.len+g.n[1]*o*sd]};
+  if(side){
+    mk('pelvis',[0,0],180-p.pelvisTilt,30,1);
+    mk('lumbar',P('pelvis',1),180-p.trunkFlex*.5,44,1);
+    mk('thorax',P('lumbar',1),180-p.trunkFlex,62,1);
+    mk('neck',P('thorax',1),180-p.trunkFlex-p.neckFlex*.5,22,1);
+    const ha=180-p.trunkFlex-p.neckFlex;mk('head',P('neck',1),ha,34,1);
+    mk('jaw',P('head',.76,2+p.jawPro*6),40.6+(ha-180)-p.jawOpen*20,37,0);
+    mk('thigh',[0,0],p.hipFlex,92,0);
+    const sa=p.hipFlex-p.kneeFlex;mk('shank',P('thigh',1),sa,86,0);
+    const fa=sa+90+p.ankle;mk('foot',P('shank',1),fa,46,0);
+    mk('toes',P('foot',1),fa-p.toeFlex,16,0);mk('hallux',P('foot',1),fa-p.halFlex,17,0);
+    mk('thighL',[0,0],p.hipFlexL,92,0);mk('shankL',P('thighL',1),p.hipFlexL,86,0);mk('footL',P('shankL',1),p.hipFlexL+90,46,0);
+  }else{
+    mk('pelvis',[0,0],180-p.pelvisLat,30,1);
+    mk('lumbar',P('pelvis',1),180-p.trunkLat*.5,44,1);
+    mk('thorax',P('lumbar',1),180-p.trunkLat,62,1);
+    mk('neck',P('thorax',1),180-p.trunkLat-p.neckLat*.5,22,1);
+    const ha=180-p.trunkLat-p.neckLat;mk('head',P('neck',1),ha,34,1);
+    mk('jaw',P('head',.76,p.jawLat*6),ha-180,30+p.jawOpen*8,0);
+    mk('thighR',P('pelvis',0,18),p.hipAbd,92,0);mk('shankR',P('thighR',1),p.hipAbd,86,0);
+    mk('thighL',P('pelvis',0,-18),0,92,0);mk('shankL',P('thighL',1),0,86,0);
+    for(const sd of[1,-1]){const k=sd>0?'R':'L',sh=S['shank'+k],rot=(sd>0?p.hipRot*42:0)+12;
+      let v=[sh.n[0]*sd*Math.sin(rot*R)*24+sh.u[0]*7,sh.n[1]*sd*Math.sin(rot*R)*24+sh.u[1]*7];
+      if(sd>0&&p.inv){const c=Math.cos(p.inv*R),s=Math.sin(p.inv*R);v=[v[0]*c-v[1]*s,v[0]*s+v[1]*c]}
+      S['ft'+k]=[P('shank'+k,1),v]}
+    if(p.ground){const dy=178-Math.max(P('shankR',1)[1],P('shankL',1)[1]);for(const k in S){if(S[k].P)S[k].P=[S[k].P[0],S[k].P[1]+dy];else S[k][0]=[S[k][0][0],S[k][0][1]+dy]}}
+  }
+  return{S,P,sx:view==='front'?-1:1};
+}
+function drawBody(view,p,act,ctx,e,opt){
+  const B=build(view,p),P=B.P,S=B.S,sx=B.sx,o=[],side=view==='side',front=view==='front';
+  const xy=q=>(q[0]*sx).toFixed(1)+' '+q[1].toFixed(1);
+  const pl=(pts,c,w,ex='')=>o.push(`<path d="M${pts.map(xy).join('L')}" class="${c}" stroke-width="${w}" ${ex}/>`);
+  const ln=(a,b,c,w,ex)=>pl([a,b],c,w,ex);
+  const ci=(q,r,c,ex='')=>o.push(`<circle cx="${(q[0]*sx).toFixed(1)}" cy="${q[1].toFixed(1)}" r="${r}" class="${c}" ${ex}/>`);
+  const el=(q,rx,ry,c)=>o.push(`<ellipse cx="${(q[0]*sx).toFixed(1)}" cy="${q[1].toFixed(1)}" rx="${rx}" ry="${Math.max(.4,ry).toFixed(1)}" class="${c}"/>`);
+  const hc=P('head',1),H=S.head,hp=(ang,r)=>[hc[0]+(H.n[0]*Math.cos(ang*R)+H.u[0]*Math.sin(ang*R))*r,hc[1]+(H.n[1]*Math.cos(ang*R)+H.u[1]*Math.sin(ang*R))*r];
+  const arc=(a0,a1,r)=>{const q=[];for(let a=a0;a<=a1;a+=10)q.push(hp(a,r));return q};
+  let face=null;const cr=Math.cos(p.trunkRot*38*R),sr=Math.sin(p.trunkRot*38*R),blink=opt.blink?0.12:1;
+  o.push(`<ellipse cx="${side?12:0}" cy="192" rx="${side?62:78}" ry="7" class="f-shadow"/>`);
+  /* skin */
+  if(opt.skin){
+    o.push(`<g opacity="${opt.skinA}">`);
+    if(side){
+      const sh=P('thorax',.9,-3);ln(sh,[sh[0]-18,sh[1]+72],'s-skd',15);
+      ln(P('thighL',0),P('thighL',1),'s-skd',30);ln(P('shankL',0),P('shankL',1),'s-skd',24);ln(P('footL',-.26,-3),P('footL',1.3,-3),'s-skd',17);
+      pl([P('pelvis',-.2),P('lumbar',0),P('thorax',0),P('thorax',.86)],'s-shirt',50);
+      pl([P('pelvis',-.3),P('pelvis',.75)],'s-shorts',52);
+      ln(P('neck',-.2),P('neck',1.2),'s-sk',19);ln(P('jaw',.3),P('jaw',.97),'s-sk',19);
+      ci(hp(175,37),6,'f-skd');ci(hc,40,'f-sk');ci(hp(-6,41),5,'f-sk');
+      face=()=>{pl(arc(62,215,36),'s-hair',12);ln(hp(88,40),hp(70,52),'s-hair',6);
+      el(hp(8,25),4.2,5.5*blink,'f-face');ci(hp(13,26.5),1.4,'f-white');ci(hp(-22,27),6,'f-blush');
+      const U=P('head',.38,34),Mc=P('head',.36,21),L=P('jaw',.83,15.8);
+      o.push(`<path d="M${xy(Mc)}L${xy(U)}L${xy(L)}Z" class="f-mouth"/>`);ln(Mc,U,'s-face',1.6)};
+      ln(P('thigh',0),P('thigh',1),'s-sk',32);ln(P('thigh',0),P('thigh',.32),'s-shorts',35);ln(P('shank',0),P('shank',1),'s-sk',26);
+      ln(P('foot',-.26,-3),P('foot',1,-3),'s-sk',18);ln(P('toes',0,-3),P('toes',1,-3),'s-sk',12);ln(P('hallux',0,-3),P('hallux',1,-3),'s-skd',13);
+    }else{
+      for(const k of['L','R']){ln(P('thigh'+k,0),P('thigh'+k,1),'s-sk',32);ln(P('shank'+k,0),P('shank'+k,1),'s-sk',26);
+        const f=S['ft'+k];ln(f[0],[f[0][0]+f[1][0],f[0][1]+f[1][1]],'s-sk',16);ln(P('thigh'+k,0),P('thigh'+k,.3),'s-shorts',35)}
+      for(const sd of[1,-1]){const s=P('thorax',.9,36*cr*sd);ln(s,[s[0]+5*sd,s[1]+78],'s-sk',15)}
+      ln(P('lumbar',0),P('lumbar',1),'s-shirt',62*(1-.16*p.compress));
+      ln(P('thorax',0),P('thorax',.86),'s-shirt',66*(.78+.22*cr)*(1+.07*p.breath));
+      pl([P('pelvis',-.3),P('pelvis',.8)],'s-shorts',66);
+      ln(P('neck',-.2),P('neck',1.2),'s-sk',19);
+      if(front){const hq=P('thorax',.55,sr*20);o.push(`<path d="M${xy([hq[0],hq[1]+7])}C${xy([hq[0]-13,hq[1]-3])} ${xy([hq[0]-5,hq[1]-11])} ${xy([hq[0],hq[1]-4])}C${xy([hq[0]+5,hq[1]-11])} ${xy([hq[0]+13,hq[1]-3])} ${xy([hq[0],hq[1]+7])}Z" class="f-heart"/>`)}
+      const shf=Math.sin(p.neckRot*36*R)*22+sr*9;
+      ci(P('head',1,40),6,'f-skd');ci(P('head',1,-40),6,'f-skd');
+      if(front){
+        el(P('jaw',.75),22,14,'f-sk');ci(hc,40,'f-sk');face=()=>{pl(arc(18,162,36),'s-hair',12);ln(hp(95,40),hp(80,53),'s-hair',6);
+        for(const sd of[1,-1]){el(P('head',1.1,14*sd+shf),4.6,6*blink,'f-face');ci(P('head',1.17,14*sd+shf-1.5),1.5,'f-white');ci(P('head',.84,25*sd+shf*.8),6,'f-blush')}
+        const mq=P('jaw',.5,shf*.7);
+        if(p.jawOpen>.08)el(mq,7,1+p.jawOpen*7,'f-mouth');
+        else o.push(`<path d="M${xy([mq[0]-8,mq[1]-2])}Q${xy([mq[0],mq[1]+6])} ${xy([mq[0]+8,mq[1]-2])}" class="s-face" stroke-width="2.4"/>`)};
+      }else{ci(hc,40,'f-hair');el(P('head',.3),17,9,'f-sk');if(Math.abs(p.neckRot)>.1){ci(P('head',.95,Math.sign(p.neckRot)*(34+8*Math.abs(p.neckRot))),5,'f-sk')}}
+    }
+    o.push('</g>');
+  }
+  /* bones */
+  const bone=(a,b,w=8)=>{ln(a,b,'s-bo',w+2.5);ln(a,b,'s-bi',w-.5)};
+  const poly=(pts)=>o.push(`<path d="M${pts.map(xy).join('L')}Z" class="f-bone"/>`);
+  const ribT=i=>.15+.15*i+.03*p.breath,ribW=[29,32,32,30,26].map(w=>w*(1+.13*p.breath)*(side?1:(.8+.2*cr)));
+  if(opt.bone){
+    const dash='style="stroke-linecap:butt" stroke-dasharray="5 3.5"';
+    if(side){
+      pl([P('pelvis',.7,-12),P('lumbar',.5,-13),P('thorax',.5,-15),P('neck',.5,-5),P('head',.45,-5)],'s-bo',10,dash);pl([P('pelvis',.7,-12),P('lumbar',.5,-13),P('thorax',.5,-15),P('neck',.5,-5),P('head',.45,-5)],'s-bi',7,dash);
+      for(let i=0;i<5;i++){const t=.22+.14*i;pl([P('thorax',t,-14),P('thorax',t-.05,8),P('thorax',t-.11+.05*p.breath,20+3*p.breath)],'s-rib',2.6)}
+      poly([P('pelvis',1,-12),P('pelvis',.92,15),P('pelvis',.3,16),P('pelvis',-.2,11),P('pelvis',-.38,-10),P('pelvis',.5,-19)]);ci(P('pelvis',.92,15),3,'f-att');
+      ci(hc,33,'f-bone',opt.skin?'opacity=".5"':'');if(!opt.skin)el(hp(8,24),6,7,'f-face');pl([P('jaw',0),P('jaw',.45,-11),P('jaw',1,0)],'s-bo',9);pl([P('jaw',0),P('jaw',.45,-11),P('jaw',1,0)],'s-bi',6);ci(P('jaw',0),3.4,'f-bone');
+      bone(P('thigh',0),P('thigh',1));bone(P('shank',0),P('shank',1));ci(P('thigh',1,13),5,'f-bone');
+      bone(P('foot',-.26,-4),P('foot',0),6);bone(P('foot',0),P('foot',1,-3),6);bone(P('toes',0,-3),P('toes',1,-3),4);bone(P('hallux',0,-3),P('hallux',1,-3),4.5);
+      ci(P('thigh',0),5,'f-bone');ci(P('thigh',1),5,'f-bone');ci(P('shank',1),4.5,'f-bone');
+    }else{
+      const sp=[P('pelvis',.5),P('lumbar',.5),P('thorax',.5),P('neck',.5),P('head',.4)];pl(sp,'s-bo',10,dash);pl(sp,'s-bi',7,dash);
+      for(let i=0;i<5;i++)for(const sd of[1,-1]){const t=ribT(i),w=ribW[i];o.push(`<path d="M${xy(P('thorax',t+.05,3*sd))}Q${xy(P('thorax',t+.1,w*.75*sd))} ${xy(P('thorax',t,w*sd))}" class="s-rib" stroke-width="2.6"/>`)}
+      for(const sd of[1,-1])bone(P('thorax',.97,4*sd),P('thorax',.92,34*cr*sd),4);
+      poly([P('pelvis',1,30),P('pelvis',.1,25),P('pelvis',-.32,9),P('pelvis',-.32,-9),P('pelvis',.1,-25),P('pelvis',1,-30),P('pelvis',.55,-9),P('pelvis',.55,9)]);
+      ci(hc,33,'f-bone',opt.skin?'opacity=".5"':'');if(front&&!opt.skin){for(const sd of[1,-1])el(P('head',1.1,13*sd),6,7,'f-face')}
+      const jw=[P('jaw',0,27),P('jaw',.6,23),P('jaw',1,9),P('jaw',1,-9),P('jaw',.6,-23),P('jaw',0,-27)];pl(jw,'s-bo',8);pl(jw,'s-bi',5);
+      for(const k of['L','R']){bone(P('thigh'+k,0),P('thigh'+k,1));bone(P('shank'+k,0),P('shank'+k,1));const f=S['ft'+k];bone(f[0],[f[0][0]+f[1][0],f[0][1]+f[1][1]],5);
+        ci(P('thigh'+k,0),5,'f-bone');ci(P('thigh'+k,1),5,'f-bone');
+        if(front)ci(P('thigh'+k,1,k==='R'?p.hipRot*9:0,k==='R'?1:-1),4.5,'f-att')}
+    }
+  }
+  if(face)face();
+  /* muscles */
+  const special=(m,on)=>{const c=on?'s-ma':'s-mc',w=on?3.4+1.2*e:2.4;
+    if(m.sp==='dia'){const d=`M${xy(P('thorax',.1,-ribW[0]))}Q${xy(P('thorax',.62-.3*p.breath,0))} ${xy(P('thorax',.1,ribW[0]))}`;if(on)o.push(`<path d="${d}" class="s-mo" stroke-width="9"/>`);o.push(`<path d="${d}" class="${c}" stroke-width="${on?6:4}"/>`)}
+    else for(let i=0;i<4;i++)for(const sd of[1,-1])for(let j=0;j<3;j++){const a=.5+.2*j,b=m.sp==='eic'?-.14:.14;ln(P('thorax',ribT(i+1)-.02,ribW[i+1]*(a-b/2)*sd),P('thorax',ribT(i)+.03,ribW[i]*(a+b/2)*sd),c,w)}};
+  const mus=(m,mode,on)=>{
+    if(m.sp){if(!side)special(m,on);return}
+    const def=side?m.s:front?m.f:m.b;if(!def)return;
+    const sides=side?[1]:(m.ax&&mode!=='U'?[1,-1]:[1]),w=m.wd||9;
+    for(const sd of sides){const pts=def.map(d=>P(d[0],d[1],d[2],sd));
+      if(on){pl(pts,'s-mo',w+3.2+2*e);pl(pts,'s-ma',w+2*e,m.deep?'opacity=".92"':'');ci(pts[0],3,'f-att');ci(pts[pts.length-1],3,'f-att')}
+      else pl(pts,'s-mc',w*.8,'opacity=".7"')}
+  };
+  if(opt.mus)for(const m of ctx)if(!act.some(a=>a.m===m))mus(m,'B',false);
+  for(const a of act)mus(a.m,a.mode,true);
+  if(!side){o.push(`<text x="${74*sx}" y="207" font-size="11" text-anchor="middle">R</text><text x="${-74*sx}" y="207" font-size="11" text-anchor="middle">L</text>`)}
+  return o.join('');
+}
+/* ---------- foot map (plantar / dorsal) ---------- */
+const HX=[34,16,0,-15,-29],HY=[-45,-52,-46,-37,-26],TL=[40,34,31,27,22],TW=[19,12.5,12,11.5,11],TB=[8,2,-2,-7,-12],TD=[1,.6,-1,-1,-1];
+const PLAN={
+abdH:[[[22,128],[36,40],[38,-38],['T',0,.2]]],
+fdb:[1,2,3,4].map(i=>[[0,128],[2,55],[HX[i]*.9,HY[i]+22],['T',i,.6]]),
+adm:[[[-20,128],[-35,50],[-34,-12],['T',4,.2]]],
+qp:[[[6,120],[4,62]]],
+lumb:[1,2,3,4].map(i=>[[HX[i]*.75+6,22],[HX[i]+6,HY[i]+6],['T',i,.3]]),
+fhb:[[[14,42],[31,-34],['T',0,.2]]],
+addH:[[[-2,42],[26,-36],['T',0,.2]],[[-27,-20],[8,-40],[27,-42]]],
+fdm:[[[-26,32],[-31,-16],['T',4,.2]]],
+dint:[[0,1],[1,1],[2,2],[3,3]].map(([i,d])=>[[(HX[i]+HX[i+1])/2*.8,38],[(HX[i]+HX[i+1])/2,(HY[i]+HY[i+1])/2+8],['T',d,.2]]),
+pint:[2,3,4].map(i=>[[HX[i]*.8+5,38],[HX[i]+5,HY[i]+9],['T',i,.2]]),
+edb:[1,2,3].map(i=>[[-14,96],[HX[i],HY[i]+24],['T',i,.5]]),
+ehb:[[[-10,96],[22,0],['T',0,.4]]]};
+const PW={qp:19,abdH:9,adm:9,fhb:9,addH:8,fdm:8,fdb:6,lumb:4,dint:5,pint:4.5,edb:4.5,ehb:6};
+function drawFoot(act,ctx,e,opt,k,ex){
+  const dorsal=act.length?act.every(a=>a.m.ly==='D'):false,mx=dorsal?-1:1,ox=-48,o=[];
+  const sp=[0,0,0,0,0];let mtp=0,ip=0,lab='';
+  for(const a of act){const x=a.ex||{},dg=x.dig||[];
+    if(k==='iAbd')dg.forEach(i=>sp[i]=e);if(k==='iAdd')dg.forEach(i=>sp[i]=.9-1.3*e);}
+  const x0=(ex||(act[0]&&act[0].ex)||{});
+  if(k==='iFlex'||k==='iExt'){const pz=x0.pz||(k==='iFlex'?{mtp:[0,36],ip:[0,26]}:{mtp:[0,-38],ip:[0,0]});mtp=pz.mtp[0]+(pz.mtp[1]-pz.mtp[0])*e;ip=pz.ip[0]+(pz.ip[1]-pz.ip[0])*e}
+  const X=x=>(ox+mx*x).toFixed(1),ang=i=>(TB[i]+TD[i]*sp[i]*15)*R;
+  const T=(i,t)=>[HX[i]+Math.sin(ang(i))*TL[i]*t,HY[i]-Math.cos(ang(i))*TL[i]*t];
+  const pt=q=>q[0]==='T'?T(q[1],q[2]):q,xy=q=>{q=pt(q);return X(q[0])+' '+q[1].toFixed(1)};
+  const pl=(pts,c,w,exa='')=>o.push(`<path d="M${pts.map(xy).join('L')}" class="${c}" stroke-width="${w}" ${exa}/>`);
+  if(opt.skin){o.push(`<g opacity="${opt.skinA}">`);
+    for(let i=0;i<5;i++)pl([[0,132],[HX[i],HY[i]]],'s-sk',31);
+    o.push(`<circle cx="${X(0)}" cy="134" r="30" class="f-sk"/>`);
+    for(let i=0;i<5;i++){pl([T(i,0),T(i,1)],i?'s-sk':'s-skd',TW[i]);if(dorsal)pl([T(i,.8),T(i,1)],'s-bi',TW[i]*.55,'opacity=".7"')}
+    o.push('</g>')}
+  if(opt.bone){o.push(`<ellipse cx="${X(-2)}" cy="128" rx="15" ry="23" class="f-bone"/><ellipse cx="${X(2)}" cy="78" rx="21" ry="17" class="f-bone"/>`);
+    for(let i=0;i<5;i++){pl([[HX[i]*.5+1,52],[HX[i],HY[i]]],'s-bo',7.5);pl([[HX[i]*.5+1,52],[HX[i],HY[i]]],'s-bi',5);pl([T(i,.08),T(i,.5)],'s-bo',6);pl([T(i,.08),T(i,.5)],'s-bi',3.8);pl([T(i,.6),T(i,.95)],'s-bo',5.5);pl([T(i,.6),T(i,.95)],'s-bi',3.4)}}
+  const mus=(m,on)=>{const d=PLAN[m.id];if(!d||(m.ly==='D')!==dorsal)return;const w=PW[m.id]||7;
+    for(const pts of d){if(on){pl(pts,'s-mo',w+3+1.5*e);pl(pts,'s-ma',w+1.5*e)}else pl(pts,'s-mc',w*.85,'opacity=".75"')}};
+  if(opt.mus)for(const m of ctx)if(!act.some(a=>a.m===m))mus(m,false);
+  for(const a of act)mus(a.m,true);
+  o.push(`<text x="${ox}" y="182" font-size="10" text-anchor="middle">${dorsal?'Top of right foot (dorsal)':'Sole of right foot (plantar)'} · 2nd toe is the midline</text>`);
+  o.push(`<text x="${X(52)}" y="-70" font-size="9" text-anchor="middle">big toe</text>`);
+  /* side inset */
+  const ix=82,iy=100;o.push(`<rect x="${ix-48}" y="${iy-62}" width="100" height="96" rx="10" fill="none" class="s-rib" stroke-width="1" stroke="currentColor" opacity=".35"/>`);
+  o.push(`<g opacity="${Math.max(opt.skinA,.55)}"><path d="M${ix-22} ${iy-12}L${ix-22} ${iy-50}" class="s-sk" stroke-width="15"/><path d="M${ix-30} ${iy-2}L${ix+12} ${iy-2}" class="s-sk" stroke-width="15"/>`);
+  const a1=mtp*R,a2=(mtp+ip)*R,b=[ix+13,iy-2],c=[b[0]+Math.cos(a1)*14,b[1]+Math.sin(a1)*14],d=[c[0]+Math.cos(a2)*12,c[1]+Math.sin(a2)*12];
+  o.push(`<path d="M${b[0]} ${b[1]}L${c[0].toFixed(1)} ${c[1].toFixed(1)}L${d[0].toFixed(1)} ${d[1].toFixed(1)}" class="${(k==='iFlex'||k==='iExt')?'s-skd':'s-sk'}" stroke-width="10"/></g>`);
+  if(k==='iFlex'||k==='iExt'){lab=(act.length===1&&act[0].note)||'';o.push(`<circle cx="${b[0]}" cy="${b[1]}" r="2.6" class="f-att"/><circle cx="${c[0].toFixed(1)}" cy="${c[1].toFixed(1)}" r="2.2" class="f-att"/>`)}
+  o.push(`<text x="${ix+2}" y="${iy+26}" font-size="9" text-anchor="middle">Side view${lab?' · '+esc(lab):''}</text>`);
+  return o.join('');
+}
+/* ---------- what to show ---------- */
+const CAM={body:[0,-22,470],head:[4,-197,178],neck:[4,-165,240],torso:[0,-92,250],pelvis:[4,-10,310],leg:[0,-22,470],foot:[26,150,160],footF:[46,150,170],map:[0,42,300]};
+const cam=[0,-22,470];
+const moversOf=k=>ALLM.filter(m=>m.acts.some(a=>a[0]===k)).map(m=>{const a=m.acts.find(a=>a[0]===k);return{m,mode:a[1]||'B',note:a[2],weak:a[3],ex:a[4]}});
+function curAct(){const m=M[st.sel];if(!m)return null;return m.acts[st.ai%m.acts.length]}
+function show(){
+  let k=null,act=[],ctx=[],cap='',sub='',ex=null,still=false;
+  if(st.tab==='quiz'&&st.q){const q=st.q;
+    if(q.type==='A'){const m=q.m;if(!q.checked){still=true;k=m.acts[0][0];act=[{m,mode:'B',ex:m.acts[0][4]}];cap='Which actions?';}
+      else{const a=m.acts[st.ai%m.acts.length];k=a[0];act=[{m,mode:a[1]||'B',note:a[2],ex:a[4]}];cap=MV[k].l;sub=m.n}}
+    else{k=q.k;act=q.checked?moversOf(k):[];cap=MV[k].l;sub=q.checked?'Prime movers highlighted':'Who does this?'}
+  }else if(st.tab==='move'){k=st.mv;act=moversOf(k);cap=MV[k].l;sub=act.length+' muscle'+(act.length===1?'':'s')+' on your charts'}
+  else{const m=M[st.sel],a=curAct();if(m&&a){k=a[0];if(!m.concept){act=[{m,mode:a[1]||'B',note:a[2],ex:a[4]}];const g=GROUPS.find(g=>g[1]===st.grp);ctx=g?gIds(g).map(i=>M[i]):[];if(m.ly)ctx=ctx.filter(x=>x.ly===m.ly)}
+      cap=MV[k].l;sub=[MODE[a[1]]&&m.ax?MODE[a[1]]:'',a[2]&&a[2].length<34?a[2]:''].filter(Boolean).join(' · ');ex=a[4]}}
+  return{k,act,ctx,cap,sub,ex,still};
+}
+function pickView(mv,act){
+  if(st.viewO)return st.viewO;
+  if(mv.pl==='s')return'side';
+  let f=0,b=0;for(const a of act){if(a.m.sp||a.m.f)f++;else if(a.m.b)b++}
+  return b>f?'back':'front';
+}
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+const T=3.6;let lastAi=-1,lastCap='',lastTs=0;
+const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function frame(ts){
+  const dt=Math.min(.1,(ts-lastTs)/1000||0);lastTs=ts;st.clock+=dt*st.speed;
+  const m=M[st.sel];
+  if(st.auto&&(st.tab==='explore'||(st.tab==='quiz'&&st.q&&st.q.type==='A'&&st.q.checked))){const mm=st.tab==='quiz'?st.q.m:m;const n=mm.acts.length;st.ai=Math.floor(st.clock/T)%n}
+  const sh=show(),mv=MV[sh.k];
+  const ph=(st.clock/T)%1;let e=ph<.12?0:ph<.5?ease((ph-.12)/.38):ph<.8?1:1-ease((ph-.8)/.2);
+  if(sh.still)e=0;
+  const opt={skin:st.ly.skin,mus:st.ly.mus,bone:st.ly.bone||(m&&m.concept&&st.tab==='explore'),skinA:(st.ly.mus||st.ly.bone||sh.act.length)?(st.ly.bone||st.ly.mus?.6:.85):1,blink:(ts%4200)<130};
+  let html,fo;
+  if(mv.foot){html=drawFoot(sh.act,sh.ctx,e,opt,sh.still?'':sh.k,sh.ex);fo='map'}
+  else{const p=Object.assign({},Z);if(!sh.still){for(const key in Z){const a=mv.a[key]||0,b=mv.b[key]||0;p[key]=a+(b-a)*e}}
+    if(!reduce&&!mv.b.breath&&!mv.a.breath)p.breath=.12+.12*Math.sin(ts/900);
+    const view=pickView(mv,sh.act);html=drawBody(view,p,sh.act,sh.ctx,e,opt);fo=mv.fo;
+    if((mv.pl==='s')!==(view==='side')&&st.viewO)sh.sub='Best seen from the '+(mv.pl==='s'?'side':'front or back')+'. Tap Auto.';
+    cam._sx=view==='front'?-1:1}
+  const tg=CAM[fo]||CAM.body,tx=fo==='map'?0:tg[0]*(cam._sx||1);
+  cam[0]+=(tx-cam[0])*.12;cam[1]+=(tg[1]-cam[1])*.12;cam[2]+=(tg[2]-cam[2])*.12;
+  const svg=$('stg'),h=cam[2],w=h*.8;svg.setAttribute('viewBox',`${(cam[0]-w/2).toFixed(1)} ${(cam[1]-h/2).toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`);
+  svg.innerHTML=html;
+  const c=sh.cap+'|'+sh.sub;if(c!==lastCap){lastCap=c;$('cap').innerHTML=`<b>${esc(sh.cap)}</b>${sh.sub?`<span>${esc(sh.sub)}</span>`:''}`}
+  if(st.ai!==lastAi){lastAi=st.ai;document.querySelectorAll('.act').forEach((b,i)=>b.classList.toggle('on',i===st.ai))}
+  requestAnimationFrame(frame);
+}
+/* ---------- UI ---------- */
+function renderProg(){const n=ALLM.length,d=[...st.learned].filter(x=>M[x]&&!M[x].concept).length;$('progT').textContent=`${d} / ${n} learned`;$('progB').style.width=(100*d/n)+'%'}
+function renderPick(){
+  const el=$('pick');let h='';
+  if(st.tab==='explore'){
+    h+=`<input type="search" id="search" placeholder="Search muscles…" aria-label="Search muscles">`;
+    for(const g of GROUPS){const ids=[...new Set(gIds(g))],dn=ids.filter(i=>st.learned.has(i)).length;
+      h+=`<div class="grp" data-g="${g[1]}"><h3>${esc(g[0])}${g[1]==='pelvis'?'':`<small>${dn}/${ids.length} ★</small>`}</h3>`;
+      for(const s of g[2]){if(s[0])h+=`<div class="sub">${esc(s[0])}</div>`;h+='<div class="chips">'+s[1].map(i=>`<button class="chip${st.sel===i&&st.grp===g[1]?' on':''}${st.learned.has(i)?' done':''}" data-m="${i}" data-g="${g[1]}">${esc(M[i].n)}</button>`).join('')+'</div>'}
+      h+='</div>'}
+  }else if(st.tab==='move'){
+    h+='<p class="note" style="margin:0">Pick a movement to see every prime mover your charts list for it.</p>';
+    for(const g of MVG)h+=`<div class="grp"><h3>${esc(g[0])}</h3><div class="chips">`+g[1].map(k=>`<button class="chip${st.mv===k?' on':''}" data-k="${k}">${esc(MV[k].l)}</button>`).join('')+'</div></div>';
+  }else h+=quizHTML();
+  el.innerHTML=h;
+}
+function renderInfo(){
+  const el=$('info');let h='';
+  if(st.tab==='quiz'){const q=st.q;
+    if(!q||!q.checked){el.innerHTML='<h2>Quiz time</h2><p>Answer the question on the left. The muscle card and the movement replay show up here after you check your answer.</p><p class="note">Actions marked weak or assist on your charts are never counted against you.</p>';return}
+    if(q.type==='A'){el.innerHTML=cardHTML(q.m,false);return}
+    h=`<h2>${esc(MV[q.k].l)}</h2><p>${esc(MV[q.k].d)}</p><h4>Prime movers on your charts</h4>`+moverList(q.k);el.innerHTML=h;return}
+  if(st.tab==='move'){const mv=MV[st.mv];
+    el.innerHTML=`<h2>${esc(mv.l)}</h2><p>${esc(mv.d)}</p><h4>Who does it (from your charts)</h4>`+moverList(st.mv)+'<p class="note">Tap a muscle to open its card.</p>';return}
+  el.innerHTML=cardHTML(M[st.sel],true);
+}
+function moverList(k){return'<div class="acts">'+moversOf(k).map(a=>`<button class="act${a.weak?' weak':''}" data-go="${a.m.id}"><span class="pl">→</span><span><b>${esc(a.m.n)}</b><small>${esc([a.m.ax&&MODE[a.mode]||'',a.note&&a.note.length<60?a.note:''].filter(Boolean).join(' · '))}</small></span></button>`).join('')+'</div>'}
+function cardHTML(m,full){
+  let h=`<h2>${esc(m.n)}</h2><div class="badges">`;
+  const gs=GROUPS.filter(g=>gIds(g).includes(m.id)).map(g=>g[0]);h+=gs.map(g=>`<span class="badge">${esc(g)}</span>`).join('');
+  if(m.deep)h+='<span class="badge">Deep layer</span>';if(m.ly)h+=`<span class="badge">${m.ly==='D'?'Dorsal surface':'Layer '+m.ly}</span>`;
+  h+='</div>';
+  h+=`<h4>${m.concept?'What happens':'Where it lives'}</h4><p>${esc(m.w)}</p>`;
+  if(m.concept){h+=`<h4>What moves with it (from your chart)</h4><table class="rel"><tr><th>Pelvic girdle</th><td>${esc(m.n)}</td></tr><tr><th>Vertebral column</th><td>${esc(m.rel[0])}</td></tr><tr><th>Hip</th><td>${esc(m.rel[1])}</td></tr></table><p class="note">Bones are switched on so you can watch the pelvis. Flex shows the pelvis moving while the trunk stays upright, which is why the spine and hips have to move too.</p>`;return h}
+  h+='<h4>Actions on your chart</h4><div class="acts">'+m.acts.map((a,i)=>`<button class="act${a[3]?' weak':''}${i===st.ai?' on':''}" data-ai="${i}"><span class="pl">▶</span><span><b>${esc(MV[a[0]].l)}</b><small>${esc([m.ax&&MODE[a[1]]||'',a[2]||''].filter(Boolean).join(' · '))}</small></span></button>`).join('')+'</div>';
+  if(m.acts.length>1)h+=`<p class="note">Playing each action in turn. Tap one to loop it.</p>`;
+  const a=m.acts[st.ai%m.acts.length];h+=`<p class="note" id="mvd">${esc(MV[a[0]].d)}</p>`;
+  if(m.tip)h+=`<div class="tip"><b>Memory hook:</b> ${esc(m.tip)}</div>`;
+  if(full)h+=`<button class="btn star" id="starBtn" aria-pressed="${st.learned.has(m.id)}">${st.learned.has(m.id)?'★ Learned':'☆ Mark as learned'}</button>`;
+  return h;
+}
+function select(id,grp){st.sel=id;if(grp)st.grp=grp;st.ai=0;st.auto=true;st.clock=0;st.viewO='';syncSeg();lastAi=-1;renderPick();renderInfo();if(window.innerWidth<=700)document.querySelector('.stagecol').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'})}
+function syncSeg(){document.querySelectorAll('#views button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===st.viewO)));
+  document.querySelectorAll('#layers button').forEach(b=>b.setAttribute('aria-pressed',String(st.ly[b.dataset.l])));
+  document.querySelectorAll('#speeds button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.s===st.speed)))}
+/* ---------- quiz ---------- */
+const rnd=a=>a[Math.floor(Math.random()*a.length)],shuf=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+function pool(){if(st.scope==='all')return ALLM;const g=GROUPS.find(g=>g[1]===st.scope);return[...new Set(gIds(g))].map(i=>M[i])}
+function newQ(){
+  const P=pool(),type=Math.random()<.5?'A':'B';st.ai=0;st.auto=true;st.clock=0;st.viewO='';syncSeg();
+  if(type==='A'){const m=rnd(P.filter(m=>m.acts.some(a=>!a[3]&&CH[m.ch].includes(a[0]))));
+    st.q={type,m,opts:CH[m.ch],picked:new Set(),checked:false}}
+  else{const pairs=[];for(const m of P)for(const a of m.acts)if(!a[3]&&CH[m.ch].includes(a[0]))pairs.push([m,a[0]]);
+    const [m,k]=rnd(pairs);let wrong=P.filter(x=>!x.acts.some(a=>a[0]===k)&&CH[x.ch].includes(k));
+    if(wrong.length<3)wrong=ALLM.filter(x=>!x.acts.some(a=>a[0]===k)&&x.ch===m.ch);
+    if(wrong.length<3)wrong=ALLM.filter(x=>!x.acts.some(a=>a[0]===k));
+    st.q={type,k,m,opts:shuf([m,...shuf(wrong).slice(0,3)]),picked:null,checked:false}}
+  renderPick();renderInfo();
+}
+function quizHTML(){
+  const q=st.q;let h='<div class="quiz"><label class="sub" for="scope" style="margin:0">Quiz me on</label><select id="scope"><option value="all">Everything</option>'+GROUPS.filter(g=>g[1]!=='pelvis').map(g=>`<option value="${g[1]}"${st.scope===g[1]?' selected':''}>${esc(g[0])}</option>`).join('')+'</select>';
+  h+=`<div class="score"><span>Score ${st.score} / ${st.asked}</span><span>Streak ${st.streak}</span></div>`;
+  if(!q)return h+'</div>';
+  if(q.type==='A'){h+=`<p class="qq">What does <span style="color:var(--coral)">${esc(q.m.n)}</span> do? Tick every action your chart checks.</p><div class="opts">`;
+    const req=new Set(q.m.acts.filter(a=>!a[3]).map(a=>a[0])),weak=new Set(q.m.acts.filter(a=>a[3]).map(a=>a[0]));
+    h+=q.opts.map(k=>{let c='';if(q.checked){const on=q.picked.has(k);c=req.has(k)?(on?' right':' missed'):weak.has(k)?(on?' right':''):(on?' wrong':'')}
+      return`<button class="opt${c}" data-o="${k}" aria-pressed="${q.picked.has(k)}"${q.checked?' disabled':''}>${esc(MV[k].l)}${q.checked&&weak.has(k)?' (weak / assist)':''}</button>`}).join('')+'</div>';
+    h+=q.checked?`<p class="fb ${q.ok?'good':'no'}">${q.ok?'Nailed it!':'Not quite. Watch Flex replay the right actions.'}</p><button class="btn" id="nextQ">Next question</button>`:'<button class="btn" id="checkQ">Check answer</button>';
+  }else{h+=`<p class="qq">Flex is showing <span style="color:var(--coral)">${esc(MV[q.k].l)}</span>. Which of these is a prime mover?</p><div class="opts">`;
+    h+=q.opts.map(m=>{let c='';if(q.checked){c=m===q.m?' right':(q.picked===m.id?' wrong':'')}return`<button class="opt${c}" data-om="${m.id}"${q.checked?' disabled':''}>${esc(m.n)}</button>`}).join('')+'</div>';
+    if(q.checked)h+=`<p class="fb ${q.ok?'good':'no'}">${q.ok?'Yes!':'It was '+esc(q.m.n)+'.'}</p><button class="btn" id="nextQ">Next question</button>`}
+  return h+'</div>';
+}
+function grade(ok){st.q.checked=true;st.q.ok=ok;st.asked++;if(ok){st.score++;st.streak++}else st.streak=0;st.clock=0;st.ai=0;lastAi=-1;renderPick();renderInfo()}
+/* ---------- events ---------- */
+document.querySelector('.tabs').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;st.tab=b.dataset.tab;
+  document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));
+  st.clock=0;st.ai=0;st.auto=true;st.viewO='';syncSeg();lastAi=-1;if(st.tab==='quiz'&&!st.q){newQ();return}renderPick();renderInfo()});
+$('pick').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;
+  if(b.dataset.m)select(b.dataset.m,b.dataset.g);
+  else if(b.dataset.k){st.mv=b.dataset.k;st.clock=0;st.viewO='';syncSeg();renderPick();renderInfo()}
+  else if(b.dataset.o){const q=st.q;q.picked.has(b.dataset.o)?q.picked.delete(b.dataset.o):q.picked.add(b.dataset.o);b.setAttribute('aria-pressed',String(q.picked.has(b.dataset.o)))}
+  else if(b.dataset.om){st.q.picked=b.dataset.om;grade(b.dataset.om===st.q.m.id||M[b.dataset.om].acts.some(a=>a[0]===st.q.k))}
+  else if(b.id==='checkQ'){const q=st.q,req=q.m.acts.filter(a=>!a[3]&&q.opts.includes(a[0])).map(a=>a[0]),all=new Set(q.m.acts.map(a=>a[0]));
+    grade(req.every(k=>q.picked.has(k))&&[...q.picked].every(k=>all.has(k)))}
+  else if(b.id==='nextQ')newQ()});
+$('pick').addEventListener('input',ev=>{if(ev.target.id==='search'){const v=ev.target.value.trim().toLowerCase();
+  document.querySelectorAll('#pick .chip').forEach(c=>c.hidden=!!v&&!c.textContent.toLowerCase().includes(v));
+  document.querySelectorAll('#pick .grp').forEach(g=>g.hidden=![...g.querySelectorAll('.chip')].some(c=>!c.hidden))}});
+$('pick').addEventListener('change',ev=>{if(ev.target.id==='scope'){st.scope=ev.target.value;newQ()}});
+$('info').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;
+  if(b.dataset.ai){st.ai=+b.dataset.ai;st.auto=false;st.clock=0;lastAi=-1;const m=st.tab==='quiz'?st.q.m:M[st.sel],d=$('mvd');if(d)d.textContent=MV[m.acts[st.ai][0]].d}
+  else if(b.dataset.go){const id=b.dataset.go,g=GROUPS.find(g=>gIds(g).includes(id));st.tab='explore';document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',String(x.dataset.tab==='explore')));select(id,g[1])}
+  else if(b.id==='starBtn'){st.learned.has(st.sel)?st.learned.delete(st.sel):st.learned.add(st.sel);save();renderProg();renderPick();renderInfo()}});
+$('layers').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;st.ly[b.dataset.l]=!st.ly[b.dataset.l];syncSeg()});
+$('views').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;st.viewO=b.dataset.v;syncSeg()});
+$('speeds').addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;st.speed=+b.dataset.s;syncSeg()});
+renderProg();renderPick();renderInfo();requestAnimationFrame(frame);
+</script>
+<!--/BODY-->
+</body>
+</html>
