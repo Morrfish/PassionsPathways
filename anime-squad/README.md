@@ -18,8 +18,21 @@ A Claude API key from [console.anthropic.com](https://console.anthropic.com/sett
 **Settings**. It is saved only on your device and sent only to Anthropic. Anthropic bills the key for
 what the bots use. In Settings you can switch the "brain" to a cheaper model.
 
-Everything else (bots, chats, tasks, notes) stays on the device. Use **Settings → Backup** to move it
-between your phone and computer.
+## Pictures
+Tap **📷 Add picture** when picking a job, or **⋯ → Change picture** in a chat, to give a character any
+picture (one you made, fan art, a screenshot). It's cropped to a square and every bot with that
+character uses it. Characters without a picture show their emoji.
+
+## Syncing your phone and computer
+**Settings → Sync phone & computer** keeps bots, chats, tasks, notes, characters and pictures the same
+on every device. It stores them in a secret gist in your own GitHub account:
+1. Open the link in Settings (it opens GitHub's "new token" page with only the **gist** permission picked)
+   and tap **Generate token**.
+2. Paste the key into the app and tap **Connect**. Do the same on the other device with the **same key**.
+
+Changes show up on the other device in about 20 seconds, or right away with the 🔄 button. If both
+devices change different things, both changes are kept; if they change the same thing, the newest wins.
+The Claude API key is never synced. **Settings → Backup** still works for a one-time copy.
 
 ## Getting the apps
 Every push that changes `anime-squad/` runs the **Anime Squad apps** GitHub Action. Open the run
@@ -37,8 +50,8 @@ page in the repo's **Actions** tab and download:
 ```bash
 npm install
 npm run build          # builds www/
-npm test               # builds, then runs tests/e2e.mjs in Chromium against a fake Claude API
+npm test               # builds, then runs the browser tests (fake Claude API, fake GitHub for sync)
 cd desktop && npm install && npm start   # run the desktop app
 ```
 Folders: `src/` app source, `assets/` icon and splash for Android, `desktop/` Electron shell,
-`tests/` browser test. `www/` and `android/` are generated.
+`tests/` browser tests. `www/` and `android/` are generated.

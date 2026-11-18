@@ -6,6 +6,7 @@ import { MODELS, CONTEXT_MARK, buildSystemPrompt, userMessage, runTurn, generate
 import { toolLabel } from './tools.js';
 import { esc, renderMarkdown } from './markdown.js';
 import { loadPics, getPic, setPic, deletePic, fileToSquarePic } from './pics.js';
+import { startSync, syncNow, syncOn, syncRunning, connect, disconnect, TOKEN_URL } from './sync.js';
 
 const root = document.getElementById('app');
 const S = getState;
@@ -74,7 +75,15 @@ function render() {
   const screens = { squad, pickCharacter, pickJob, confirmBot, chat, tasks, notes, note, settings };
   const html = (screens[v.name] ?? squad)(v);
   const showTabs = ['squad', 'tasks', 'notes', 'settings'].includes(v.name);
+  // Keep anything you were typing (a sync can redraw the screen while you type).
+  const typed = [...root.querySelectorAll('input[id]:not([type=checkbox]):not([type=file]), textarea[id], select[id]')].map((el) => [el.id, el.value]);
+  const focused = document.activeElement?.id;
   root.innerHTML = html + (showTabs ? tabsHtml(v.name) : '') + (sheet ? sheetHtml() : '');
+  for (const [id, value] of typed) {
+    const el = document.getElementById(id);
+    if (el && el.value !== value) el.value = value;
+  }
+  if (focused) document.getElementById(focused)?.focus();
   afterRender(v);
 }
 
@@ -105,7 +114,8 @@ function squad() {
       ${avatar(c)}<div class="name">${esc(botName(b))}</div><div class="job">${esc(botJobLabel(b))}</div>
       <div class="last">${esc(lastLine(b.id))}</div></button>`;
   }).join('');
-  return `${topbar('<span class="logo">Anime Squad</span>', { sub: `${s.bots.length} bot${s.bots.length === 1 ? '' : 's'} in your squad` })}
+  const syncBtn = syncOn() ? `<button class="icon-btn" data-act="sync-now" aria-label="Sync now" title="Sync now"><span class="sync-icon ${syncRunning() ? 'spin' : ''}">🔄</span></button>` : '';
+  return `${topbar('<span class="logo">Anime Squad</span>', { sub: `${s.bots.length} bot${s.bots.length === 1 ? '' : 's'} in your squad`, right: syncBtn })}
   <main>${keyCard}
     <div class="grid">
       <button class="bot-card new-card" data-act="new-bot"><div class="plus">＋</div>New bot</button>
@@ -376,6 +386,9 @@ function settings() {
       <button class="btn primary block" data-act="save-settings">Save settings</button>
     </div>
 
+    <div class="section-title">📡 Sync phone & computer</div>
+    <div class="card">${syncCard()}</div>
+
     <div class="section-title">⭐ Characters you added (${custom.length})</div>
     ${custom.length ? custom.map((c) => `<div class="item">${avatar(c, 'sm')}<div class="main"><div class="t">${esc(c.name)}</div><div class="meta">${esc(c.anime)}</div></div>
       <button class="x" data-act="edit-character" data-id="${c.id}" aria-label="Edit">✏️</button>
@@ -385,6 +398,38 @@ function settings() {
     <div class="row"><button class="btn" data-act="export">Copy backup</button><button class="btn" data-act="import">Restore backup</button></div>
     <p class="hint">Moves your bots, chats, tasks and notes between your phone and computer. Your API key is not included.</p>
   </main>`;
+}
+
+function syncStatusText() {
+  const st = S().sync;
+  if (!syncOn()) return '';
+  if (syncRunning()) return '🔄 Syncing…';
+  if (st.lastError) return `⚠️ ${st.lastError}`;
+  if (!st.lastSync) return 'Waiting to sync…';
+  const secs = Math.round((Date.now() - st.lastSync) / 1000);
+  return `✅ Synced ${secs < 60 ? 'just now' : secs < 3600 ? `${Math.round(secs / 60)} min ago` : new Date(st.lastSync).toLocaleString()}`;
+}
+
+function syncCard() {
+  if (syncOn()) {
+    return `<div class="sync-status">${esc(syncStatusText())}</div>
+      <p class="hint">Bots, chats, tasks, notes, characters and pictures update on every device that uses the same sync key. Your Claude API key stays on each device.</p>
+      <div class="row"><button class="btn primary" data-act="sync-now">🔄 Sync now</button><button class="btn" data-act="sync-off">Turn off on this device</button></div>`;
+  }
+  return `<p style="margin-top:0">Use the same bots, chats, tasks and notes on your phone and computer. Changes show up on the other device in about 20 seconds.</p>
+    <ol class="hint" style="padding-left:18px;line-height:1.6">
+      <li>Open <a href="${TOKEN_URL}" target="_blank" rel="noopener">this GitHub page</a> (sign in if asked). It's already set up: just scroll down and tap <b>Generate token</b>.</li>
+      <li>Copy the key it shows (starts with <code>ghp_</code>) and paste it below. Save it somewhere safe, like a note, because GitHub only shows it once.</li>
+      <li>Do the same on your other device with the <b>same key</b>.</li></ol>
+    <div class="row"><input class="input" id="sync-token" type="password" placeholder="ghp_…" autocomplete="off">
+    <button class="btn primary" data-act="sync-connect">Connect</button></div>
+    ${S().sync.lastError ? `<div class="notice err">${esc(S().sync.lastError)}</div>` : ''}
+    <p class="hint">Your data is kept in a secret gist in your own GitHub account. Only someone with the link or your key can see it.</p>`;
+}
+
+function updateSyncStatus() {
+  root.querySelectorAll('.sync-status').forEach((el) => { el.textContent = syncStatusText(); });
+  root.querySelectorAll('.sync-icon').forEach((el) => el.classList.toggle('spin', syncRunning()));
 }
 
 // ---------- sheets ----------
@@ -603,6 +648,25 @@ async function act(a, d) {
       return render();
     }
 
+    // sync
+    case 'sync-now': syncNow(); return;
+    case 'sync-connect': {
+      const input = document.getElementById('sync-token');
+      const btn = root.querySelector('[data-act="sync-connect"]');
+      if (btn) { btn.disabled = true; btn.textContent = 'Connecting…'; }
+      try {
+        await connect(input?.value ?? '');
+        alert('Sync is on! Now connect your other device with the same key.');
+      } catch (err) {
+        s.sync.lastError = err.message || String(err);
+      }
+      return render();
+    }
+    case 'sync-off':
+      if (!confirm('Turn off sync on this device? Your data stays here; it just stops updating.')) return;
+      disconnect();
+      return render();
+
     // pictures
     case 'picture': sheet = { kind: 'picture', charId: d.id }; return render();
     case 'remove-picture':
@@ -669,6 +733,7 @@ async function act(a, d) {
       const text = input?.value.trim();
       if (!text) return;
       s.tasks.push({ id: uid('t'), text, due: '', done: false, botId: null, created: Date.now() });
+      input.value = '';
       save(); render(); document.getElementById('new-task')?.focus(); return;
     }
     case 'toggle-task': { const t = s.tasks.find((x) => x.id === d.id); if (t) t.done = !t.done; save(); return render(); }
@@ -713,4 +778,14 @@ CapApp.addListener('backButton', () => {
   if (!back()) CapApp.exitApp();
 }).catch(() => { /* not running as a phone app */ });
 
-loadPics().finally(render);
+CapApp.addListener('resume', () => syncNow()).catch(() => {});
+
+loadPics().finally(() => {
+  render();
+  startSync({
+    busyCheck: () => !!busy,
+    changed: () => { if (!sheet) render(); },
+    status: updateSyncStatus,
+  });
+  setInterval(updateSyncStatus, 15000);
+});

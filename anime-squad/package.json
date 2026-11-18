@@ -5,7 +5,7 @@
   "description": "Anime Squad: make anime-character bots you can talk to and give jobs.",
   "scripts": {
     "build": "node build.mjs",
-    "test": "node build.mjs && node tests/e2e.mjs"
+    "test": "node build.mjs && node tests/e2e.mjs && node tests/e2e-sync.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.10.0",

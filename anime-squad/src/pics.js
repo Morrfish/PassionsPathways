@@ -1,5 +1,7 @@
 // Character pictures, saved on this device in IndexedDB (separate from chats, so they
 // don't fill up the main storage). Kept in memory once loaded so screens draw instantly.
+import { markPic } from './store.js';
+
 const DB = 'anime-squad-pics';
 const STORE = 'pics';
 const pics = new Map(); // characterId -> data URL
@@ -41,14 +43,27 @@ export async function loadPics() {
 
 export const getPic = (id) => pics.get(id);
 
-export async function setPic(id, dataUrl) {
+export const picIds = () => [...pics.keys()];
+
+// Raw versions are used by sync (they don't count as a new change).
+export async function setPicRaw(id, dataUrl) {
   await tx('readwrite', (store) => store.put(dataUrl, id));
   pics.set(id, dataUrl);
 }
 
-export async function deletePic(id) {
+export async function deletePicRaw(id) {
   await tx('readwrite', (store) => store.delete(id));
   pics.delete(id);
+}
+
+export async function setPic(id, dataUrl) {
+  await setPicRaw(id, dataUrl);
+  markPic(id);
+}
+
+export async function deletePic(id) {
+  await deletePicRaw(id);
+  markPic(id, true);
 }
 
 // Turns any picture file into a small square JPEG (keeps the top-center, where faces usually are).

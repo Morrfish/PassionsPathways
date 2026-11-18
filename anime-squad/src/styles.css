@@ -203,3 +203,7 @@ label.field > span { display: block; font-weight: 700; margin-bottom: 6px; }
 @media (min-width: 700px) {
   main { padding-left: 24px; padding-right: 24px; }
 }
+.sync-status { font-weight: 800; margin-bottom: 4px; }
+.sync-icon { display: inline-block; }
+.sync-icon.spin { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
