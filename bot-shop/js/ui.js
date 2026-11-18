@@ -125,7 +125,7 @@ function showHome() {
   const sect = (kind, title, sub, group) => { const list = BUILTIN.filter(c => group ? c.group === group : c.kind === kind && !c.group && !c.boss).sort((a, b) => (a.stars || 1) - (b.stars || 1)); const sec = SECTIONS.find(x => x.id === (group || kind)), got = Wallet.get().sec[sec.id]; return `<div class="sect"><h2><span class="tag ${kind}">${group === 'gizmo' ? 'contraption' : kind}</span>${title}<small>${sub} ${list.filter(c => bestOf(c.id)).length} of ${list.length} beaten. ${got ? '✔ Bonus earned.' : `Finish them all for a <b style="color:var(--y)">$${sec.bonus}</b> bonus.`}</small></h2><div class="cards">${list.map(c => card(c)).join('')}</div></div>`; };
   $('#home').innerHTML = `<div class="stripe"></div><div class="wrap">
     <div class="hero"><div><h1>Bot <span>Assembly</span> Shop</h1><p>Build a robot from parts. Then drive it through the course. If it gets stuck, go back to the shop and engineer a better one. <b>${beaten} of ${BUILTIN.length}</b> levels beaten. 🥇 <b>${goldCount(Store.get('best', {}))}</b> gold medals: every ${GOLD_SET} golds pays <b style="color:var(--y)">$${GOLD_BONUS}</b>.</p></div>
-      <div class="acts"><span class="me">👤 <b>${esc((Players.all()[Store.user] || {}).name || '')}</b></span><span class="coins" title="Your coins">🪙 $${Wallet.get().coins}</span><button data-h="out">Switch player</button><button data-h="store" class="primary">🛒 Store</button><button data-h="how">❓ How to play</button><button data-h="log">📓 Engineer's notebook</button><button data-h="paint">🎨 My bot</button><button data-h="set">⚙️ Settings</button></div></div>
+      <div class="acts"><span class="me">👤 <b>${esc((Players.all()[Store.user] || {}).name || '')}</b></span><span class="coins" title="Your coins">🪙 $${Wallet.get().coins}</span><button data-h="out">Switch player</button><button data-h="tasks" class="primary">📋 Assignments</button><button data-h="store" class="primary">🛒 Store</button><button data-h="how">❓ How to play</button><button data-h="log">📓 Engineer's notebook</button><button data-h="paint">🎨 My bot</button><button data-h="set">⚙️ Settings</button></div></div>
     ${sect('speed', 'Speed courses', 'Fastest time wins.')}
     ${sect('strength', 'Strength courses', 'Climb, push and break through.')}
     ${sect('crazy', 'Crazy courses', 'Expect anything.')}
@@ -135,6 +135,7 @@ function showHome() {
     ${sect('portal', 'Portal courses', 'Purple ring in, orange ring out.', 'portal')}
     ${sect('maze', 'Mazes', 'Dark, many floors, and a battery that never stops draining.', 'maze')}
     <div class="sect"><h2><span class="tag boss">legendary</span>The final five<small>Long, mean, and short on checkpoints. ${Wallet.get().sec.boss ? '✔ Bonus earned.' : 'Finish them all for a <b style="color:var(--y)">$800</b> bonus.'}</small></h2><div class="cards">${BUILTIN.filter(c => c.boss).map(c => card(c)).join('')}</div></div>
+    ${tasksHTML()}
     <div class="sect"><h2>🛠️ My courses<small>Build your own and dare a friend to beat it.</small></h2><div class="cards">
       <div class="card new" data-h="new" tabindex="0" role="button"><div style="font-size:34px">＋</div>Build a course</div>
       <div class="card new" data-h="import" tabindex="0" role="button"><div style="font-size:34px">📥</div>Load a course code</div>
@@ -175,9 +176,11 @@ function settings() {
 }
 $('#home').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('card')) { e.preventDefault(); e.target.click(); } });
 $('#home').addEventListener('click', e => {
+  const tk = e.target.closest('[data-task]'), ts = e.target.closest('[data-tsave]'); if (tk) return startTask(tk.dataset.task); if (ts) return saveTaskFile(ts.dataset.tsave);
   const h = e.target.closest('[data-h]'), cardEl = e.target.closest('.card[data-id]'), cb = e.target.closest('[data-c]');
   if (h) {
     const a = h.dataset.h;
+    if (a === 'tasks') { $('#tasks').scrollIntoView({ behavior: 'smooth', block: 'start' }); const f = $('#tasks button'); if (f) f.focus({ preventScroll: true }); return; }
     if (a === 'new') openEditor(starterCourse());
     else if (a === 'import') importDialog();
     else if (a === 'how') howTo(); else if (a === 'log') notebook(); else if (a === 'set') settings(); else if (a === 'paint') paintDialog(); else if (a === 'out') signOut(); else if (a === 'store') storeDialog();
@@ -252,13 +255,48 @@ function shareDialog(c) {
   $('#cpLink').onclick = () => copy(link, 'Link'); $('#cpCode').onclick = () => copy(code, 'Code');
 }
 function importCourse(code) {
-  const c = codeToCourse(code);
+  const c = codeToCourse(code); delete c.task; delete c.vsig;
   if (loadMyCourses().some(m => m.id === c.id) || BUILTIN.some(b => b.id === c.id)) c.id = newCourse(1).id;
   saveMyCourse(c); return c;
 }
 function importDialog() {
-  modal(`<h2>Load a course code</h2><p>Paste a code that starts with <b>BOT1.</b></p><textarea id="impTxt" data-focus aria-label="Paste course code"></textarea><div class="acts"><button class="primary" id="impGo">Load course</button><button data-m="x">Cancel</button></div>`);
+  modal(`<h2>Load a course code</h2><p>Paste a code that starts with <b>BOT1.</b></p><textarea id="impTxt" data-focus aria-label="Paste course code"></textarea><p>Or pick a saved course file: <input type="file" id="impFile" accept=".txt,text/plain" aria-label="Course file"></p><div class="acts"><button class="primary" id="impGo">Load course</button><button data-m="x">Cancel</button></div>`);
+  $('#impFile').onchange = e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { $('#impTxt').value = (String(r.result).match(/BOT1\.[A-Za-z0-9_\-]+/) || [''])[0]; if (!$('#impTxt').value) toast('That file has no course in it.'); else $('#impGo').click(); }; r.readAsText(f); };
   $('#impGo').onclick = () => { try { const c = importCourse($('#impTxt').value); closeModal(); showHome(); toast(`Loaded “${c.name}”`); } catch (e) { toast('That code did not work. Check you copied all of it.'); } };
+}
+
+/* ================= Course assignments ================= */
+const myName = () => (Players.all()[Store.user] || {}).name || 'Player';
+const taskCourse = id => loadMyCourses().find(c => c.task === id) || null;
+function startTask(id) {
+  const t = TASKS.find(k => k.id === id); let c = taskCourse(id);
+  if (!c) { c = newCourse(t.len + 20); c.author = myName(); c.name = t.name; c.kind = t.kind; c.task = t.id; c.desc = t.text; for (let x = 0; x < c.w; x++) for (let y = 0; y < 10; y++) tset(c, x, y, tcode(1, DIRT)); c.objs.push({ t: 'start', x: 5.5, y: 10 }, { t: 'finish', x: c.w - 6.5, y: 10 }); saveMyCourse(c); }
+  openEditor(c); taskDialog(c);
+}
+const taskListHTML = c => `<ul class="tl">${taskCheck(c).map(k => `<li class="${k.ok ? 'ok' : ''}">${k.ok ? '✅' : '⬜'} ${k.label}${k.have != null && !k.ok ? ` <i>(you have ${k.have})</i>` : ''}</li>`).join('')}</ul>`;
+function taskDialog(c) {
+  const t = taskOf(c); if (!t) return; const done = taskDone(c);
+  modal(`<h2>📋 ${esc(t.name)}</h2><p>${t.text}</p>${taskListHTML(c)}<p style="font-size:13px">The pieces on this list are <b>free</b> while you build this course. When every box is ticked, go to the home screen and press <b>💾 Save file</b>, then put the file in the class Google Drive folder.</p>
+    <div class="acts"><button class="primary" data-m="x" data-focus>${done ? 'All done!' : 'Keep building'}</button></div>`);
+}
+/* the file a student hands in: named after the course and their sign-in name */
+function saveTaskFile(id) {
+  const c = taskCourse(id), t = TASKS.find(k => k.id === id); if (!c || !taskDone(c)) return toast('Tick every box on the list first.');
+  const who = myName(), safe = s => s.replace(/[\\/:*?"<>|]+/g, ' ').trim(), file = `${safe(t.name)} - ${safe(who)}.txt`;
+  const txt = `Bot Assembly Shop course\r\nCourse: ${t.name}\r\nBuilt by: ${who}\r\nBuilder's time: ${fmtT(c.par)}s\r\n\r\nTo play it: open Bot Assembly Shop, choose "Load a course code", then pick this file or paste the line below.\r\n\r\n${courseToCode(c)}\r\n`;
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' })); a.download = file; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+  const w = Wallet.get(); w.turned = w.turned || {}; w.turned[id] = Date.now(); Wallet.save(w);
+  modal(`<h2>💾 Saved!</h2><p>Your file is called</p><p style="font-size:18px;color:var(--ink)"><b>${esc(file)}</b></p><p>Look in this computer's <b>Downloads</b> folder. Now open the class <b>Google Drive</b> folder and drag the file in.</p><div class="acts"><button class="primary" data-m="x" data-focus>OK</button></div>`);
+  showHome();
+}
+function tasksHTML() {
+  const w = Wallet.get(), turned = w.turned || {};
+  return `<div class="sect" id="tasks"><h2>📋 Course assignments<small>Build these five courses. The pieces each one needs are free while you build it. Finish the list, save the file, then add it to the class Google Drive.</small></h2><div class="cards tasks">${TASKS.map((t, i) => {
+    const c = taskCourse(t.id), list = c ? taskCheck(c) : [], ok = list.filter(k => k.ok).length, done = c && taskDone(c);
+    return `<div class="card task${done ? ' done' : ''}"><div class="body"><h3>${i + 1}. ${esc(t.name)}</h3><p>${t.text}</p>
+      <ul class="tl"><li>At least ${t.len} m long</li>${t.need.map(n => `<li>${n.tile ? `${n.label}: ${n.n}+ squares` : n.any ? `${n.label} (any)` : `${OBJ[n.t].icon} ${OBJ[n.t].name}${n.n > 1 ? ' × ' + n.n : ''}`}</li>`).join('')}<li>Beat it yourself</li></ul>
+      <div class="meta"><span>${!c ? 'Not started' : done ? '✅ Ready to save' : `${ok} of ${list.length} done`}</span><span>${turned[t.id] ? '💾 File saved' : ''}</span></div>
+      <div class="row"><button class="small${done ? '' : ' primary'}" data-task="${t.id}">${c ? '✏️ Keep building' : '▶ Start building'}</button><button class="small${done ? ' primary' : ''}" data-tsave="${t.id}" ${done ? '' : 'disabled title="Tick every box first"'}>💾 Save file</button></div></div></div>`; }).join('')}</div></div>`;
 }
 
 /* ================= Shop (garage) ================= */
@@ -524,6 +562,7 @@ function showResult() {
       Wallet.save(w); extra += `<p style="font-size:13px">You have $${w.coins}. Spend it in the Store.</p>`;
     }
     if (!c.builtin) { const mine = loadMyCourses().find(m => m.id === c.id); if (mine && App.from === 'editor' && (!c.par || d.time < c.par)) { c.par = +d.time.toFixed(2); saveMyCourse(c); extra += '<p>✔ Course verified! Your time is now the time to beat.</p>'; const w = Wallet.get(); if (!w.made[c.id]) { w.made[c.id] = 1; w.coins += 40; Wallet.save(w); extra += '<p class="pay">🪙 +$40 for building a course that can be beaten</p>'; } } }
+    if (!c.builtin && App.from === 'editor' && taskOf(c)) { c.vsig = courseSig(c); saveMyCourse(c); extra += taskDone(c) ? '<p class="pay">📋 Assignment complete! Go to the home screen and press 💾 Save file.</p>' : '<p>📋 Test passed. Check the Assignment list for what is still missing.</p>'; }
     extra = `<div class="res"><div class="big">${MEDAL_ICON[medal]}</div><div><div class="tm">${fmtT(d.time)}s</div>${G.penalties ? `<div style="color:var(--o);font-size:13px">includes +${G.penalties}s for ${G.resets} reset${G.resets > 1 ? 's' : ''}</div>` : ''}</div></div>` + extra;
   }
   const nx = c.builtin && App.from !== 'editor' ? nextCourse(c) : null, acts2 = nx ? acts.replace('<div class="acts"><button class="primary" data-m="shop" data-focus>', `<div class="acts"><button class="primary" data-m="next" data-focus title="${esc(nx.name)}">Next course ▶</button><button data-m="shop">`) : acts;
@@ -591,8 +630,9 @@ function openEditor(course) {
     <label style="font-size:13px;color:var(--dim)">Budget $ <input type="number" id="eBudget" min="200" max="9999" step="50" value="${course.budget}"></label>
     <span style="font-size:13px;color:var(--dim)">Length <button class="small" data-e="shorter" aria-label="Shorter course">−</button> <b id="eLen">${course.w}</b> m <button class="small" data-e="longer" aria-label="Longer course">＋</button></span>
     <select id="eSky" aria-label="Scenery"><option value="">Scenery: auto</option>${SKIES.map(k => `<option value="${k}" ${course.sky === k ? 'selected' : ''}>${SKY_NAMES[k]}</option>`).join('')}</select>
-    <div class="sp"></div><button data-e="rules">📜 Rules</button><button data-e="paint">🎨 My bot</button><button data-e="undo" title="Ctrl+Z">↶ Undo</button><button data-e="share">🔗 Share</button><button class="go" style="font-size:15px;padding:8px 16px" data-e="test">▶ Test it</button>`;
+    <div class="sp"></div>${taskOf(course) ? '<button data-e="task" id="eTask" class="primary">📋 Assignment</button>' : ''}<button data-e="rules">📜 Rules</button><button data-e="paint">🎨 My bot</button><button data-e="undo" title="Ctrl+Z">↶ Undo</button><button data-e="share">🔗 Share</button><button class="go" style="font-size:15px;padding:8px 16px" data-e="test">▶ Test it</button>`;
   $('#eName').oninput = e => { course.name = e.target.value || 'My Course'; };
+  if (taskOf(course)) { $('#eName').readOnly = true; $('#eName').title = 'An assignment keeps its name'; taskChip(); }
   $('#eKind').onchange = e => { course.kind = e.target.value; Ed.dirty = true; };
   $('#eSky').onchange = e => { course.sky = e.target.value; Ed.dirty = true; };
   $('#eBudget').onchange = e => { course.budget = clamp(+e.target.value || 1000, 200, 9999); e.target.value = course.budget; };
@@ -601,13 +641,16 @@ function openEditor(course) {
 /* The top bar wraps on narrow screens: keep the palette just below it, never over it */
 function fitEditor() { const h = $('#edTop').offsetHeight; if (h) $('#edPal').style.top = h + 'px'; }
 addEventListener('resize', () => { if (App.mode === 'editor') fitEditor(); });
+const objFree = k => Wallet.owns('obj:' + k) || taskFree(Ed.course, k);
+function taskChip() { const b = $('#eTask'); if (!b || !Ed.course) return; const l = taskCheck(Ed.course), n = l.filter(k => k.ok).length; b.textContent = `📋 Assignment ${n}/${l.length}${n === l.length ? ' ✅' : ''}`; }
+setInterval(() => { if (App.mode === 'editor') taskChip(); }, 1000);
 function drawPalette() {
   const t = Ed.tool, on = c => c ? ' on' : '';
   $('#edPal').innerHTML = `<h4>Ground</h4><div class="tg">${[1, 2, 3, 8, 4, 5, 6, 7].map(s => `<button class="tool${on(t.k === 'tile' && t.shape === s)}" data-tool="tile" data-shape="${s}" title="${SHAPE_NAMES[s]}" aria-label="${SHAPE_NAMES[s]}">${shapeSvg(s)}</button>`).join('')}</div>
    <h4>Surface</h4><div class="tg">${[['Dirt', DIRT, '🟫'], ['Ice', ICE, '🧊'], ['Mud', MUD, '🟤'], ['Bouncy rubber', RUBBER, '🩷'], ['Soft sand', SAND, '🏖️']].map(m => `<button class="tool${on(Ed.mat === m[1])}" data-mat="${m[1]}" title="${m[0]}" aria-label="${m[0]} surface">${m[2]}</button>`).join('')}</div>
    <h4>Hazards & tools</h4><div class="tg"><button class="tool wide${on(t.k === 'water')}" data-tool="water">🌊 Water</button><button class="tool wide${on(t.k === 'lava')}" data-tool="lava">🌋 Lava</button>
      <button class="tool wide${on(t.k === 'erase')}" data-tool="erase">🧽 Erase</button><button class="tool wide${on(t.k === 'hand')}" data-tool="hand">✋ Move view</button></div>
-   <h4>Things <span style="color:var(--dim);text-transform:none;letter-spacing:0">🪙 $${Wallet.get().coins}</span></h4><div class="ol">${Object.keys(OBJ).sort((a, b) => (Wallet.owns('obj:' + a) ? 0 : 1) - (Wallet.owns('obj:' + b) ? 0 : 1)).map(k => `<button class="tool${on(t.k === 'obj' && t.t === k)}${Wallet.owns('obj:' + k) ? '' : ' locked'}" data-tool="obj" data-t="${k}" title="${OBJ[k].tip}">${OBJ[k].icon} ${OBJ[k].name}${Wallet.owns('obj:' + k) ? '' : `<span class="lk">🔒$${PRICE['obj:' + k]}</span>`}</button>`).join('')}</div>`;
+   <h4>Things <span style="color:var(--dim);text-transform:none;letter-spacing:0">🪙 $${Wallet.get().coins}</span></h4><div class="ol">${Object.keys(OBJ).sort((a, b) => (taskFree(Ed.course, a) ? -1 : objFree(a) ? 0 : 1) - (taskFree(Ed.course, b) ? -1 : objFree(b) ? 0 : 1)).map(k => `<button class="tool${on(t.k === 'obj' && t.t === k)}${objFree(k) ? '' : ' locked'}${taskFree(Ed.course, k) ? ' need' : ''}" data-tool="obj" data-t="${k}" title="${OBJ[k].tip}">${OBJ[k].icon} ${OBJ[k].name}${taskFree(Ed.course, k) ? '<span class="lk">📋</span>' : objFree(k) ? '' : `<span class="lk">🔒$${PRICE['obj:' + k]}</span>`}</button>`).join('')}</div>`;
   edTip();
 }
 function edTip() {
@@ -621,7 +664,7 @@ $('#edPal').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.mat != null) { Ed.mat = +b.dataset.mat; if (Ed.tool.k !== 'tile') Ed.tool = { k: 'tile', shape: 1 }; }
   else if (b.dataset.tool === 'tile') Ed.tool = { k: 'tile', shape: +b.dataset.shape };
-  else if (b.dataset.tool === 'obj') { const k = b.dataset.t; return unlock('obj:' + k, 'the ' + OBJ[k].name, () => { Ed.tool = { k: 'obj', t: k }; Ed.pend = null; drawPalette(); }); }
+  else if (b.dataset.tool === 'obj') { const k = b.dataset.t; if (taskFree(Ed.course, k)) { Ed.tool = { k: 'obj', t: k }; Ed.pend = null; return drawPalette(); } return unlock('obj:' + k, 'the ' + OBJ[k].name, () => { Ed.tool = { k: 'obj', t: k }; Ed.pend = null; drawPalette(); }); }
   else Ed.tool = { k: b.dataset.tool };
   Ed.pend = null; drawPalette();
 });
@@ -631,6 +674,7 @@ $('#edTop').addEventListener('click', e => {
   else if (a === 'undo') edUndo();
   else if (a === 'paint') paintDialog();
   else if (a === 'rules') rulesDialog(c);
+  else if (a === 'task') taskDialog(c);
   else if (a === 'share') { saveMyCourse(c); shareDialog(c); }
   else if (a === 'longer' || a === 'shorter') {
     const w = clamp(c.w + (a === 'longer' ? 20 : -20), 40, 400); if (w === c.w) return; edSnap();
