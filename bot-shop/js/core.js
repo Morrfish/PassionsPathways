@@ -1,6 +1,6 @@
 /* Bot Assembly Shop — core data: parts, bot math, tiles, courses, storage */
 'use strict';
-const VERSION = '2.6';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
+const VERSION = '2.7';   // shown on the sign-in and home screens; keep in step with ?v= in index.html
 const pl = planck, V = pl.Vec2;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -264,12 +264,13 @@ function buildOutline(c) {
 function packCourse(c) {
   const t = c.tiles, out = [];
   for (let i = 0; i < t.length;) { let j = i; while (j < t.length && t[j] === t[i]) j++; out.push(t[i].toString(36) + (j - i > 1 ? '*' + (j - i).toString(36) : '')); i = j; }
-  return { v: 1, id: c.id, name: c.name, kind: c.kind, budget: c.budget, w: c.w, h: c.h, par: c.par, desc: c.desc || '', author: c.author || '', sky: c.sky || '', rules: c.rules || null, objs: c.objs, t: out.join(',') };
+  return { v: 1, id: c.id, name: c.name, kind: c.kind, budget: c.budget, w: c.w, h: c.h, par: c.par, desc: c.desc || '', author: c.author || '', sky: c.sky || '', rules: c.rules || null, task: c.task || '', vsig: c.vsig || '', objs: c.objs, t: out.join(',') };
 }
 function unpackCourse(o) {
   if (!o || !o.w || !o.h || o.w > 600 || o.h !== COURSE_H) throw new Error('bad course');
   const c = newCourse(o.w);
   Object.assign(c, { id: o.id || c.id, name: String(o.name || 'Course').slice(0, 40), kind: ['speed', 'strength', 'crazy'].includes(o.kind) ? o.kind : 'crazy', budget: clamp(+o.budget || 1000, 200, 9999), par: o.par || null, desc: String(o.desc || '').slice(0, 200), author: String(o.author || '').slice(0, 30), sky: SKIES.includes(o.sky) ? o.sky : '' });
+  if (typeof TASKS !== 'undefined' && TASKS.some(t => t.id === o.task)) { c.task = o.task; c.vsig = String(o.vsig || '').slice(0, 20); }
   if (o.rules && typeof o.rules === 'object') { const r = {}; if (+o.rules.slots > 0) r.slots = clamp(+o.rules.slots | 0, 1, 7); if (+o.rules.energy > 0) r.energy = clamp(+o.rules.energy, 10, 900); if (+o.rules.drain > 0) r.drain = clamp(+o.rules.drain, 0.1, 5); if (o.rules.dark) r.dark = true; if (Object.keys(r).length) c.rules = r; }
   let i = 0;
   for (const run of String(o.t || '').split(',')) { if (!run) continue; const [v, n] = run.split('*'); const val = parseInt(v, 36), cnt = n ? parseInt(n, 36) : 1; for (let k = 0; k < cnt && i < c.tiles.length; k++) c.tiles[i++] = val; }
@@ -531,6 +532,49 @@ const NEWS = 1, NEWS_COINS = 3000;
 const GOLD_SET = 20, GOLD_BONUS = 2000;
 const goldCount = best => builtinIds().filter(id => best[id] && best[id].medal === 'gold').length;
 const fastPay = (oldT, newT) => clamp(Math.round((oldT - newT) / oldT * 300 / 5) * 5, 5, 50);
+
+/* ---------------- Course assignments ----------------
+   Five courses every student builds. Each lists what it must contain; those pieces are free in that course.
+   need entries: { t, n } a piece n times · { any: [...], n, label } any of several · { tile: WATER, n, label } painted tiles */
+const TASK_ANIMALS = ['frog', 'rabbit', 'chicken', 'tortoise', 'cat', 'mouse', 'dog', 'elephant'];
+const TASKS = [
+  { id: 'a1', name: 'Speed Dash', kind: 'speed', len: 120, text: 'A fast course. Use boost pads and a spring so a quick bot can fly through it.',
+    need: [{ t: 'boost', n: 2 }, { t: 'spring', n: 1 }, { t: 'checkpoint', n: 1 }] },
+  { id: 'a2', name: 'Muscle Mountain', kind: 'strength', len: 120, text: 'A course for strong bots. Put a wood wall and a rock in the way, and a gate that only a weight plate will open.',
+    need: [{ t: 'woodwall', n: 1 }, { t: 'stone', n: 1 }, { t: 'plate', n: 1 }, { t: 'gate', n: 1 }, { t: 'checkpoint', n: 1 }] },
+  { id: 'a3', name: 'Chain Reaction', kind: 'crazy', len: 100, text: 'A contraption. An alarm clock scares an animal, the animal presses a button, and the button opens the gate.',
+    need: [{ t: 'alarm', n: 1 }, { any: TASK_ANIMALS, n: 1, label: 'An animal' }, { t: 'button', n: 1 }, { t: 'gate', n: 1 }, { t: 'checkpoint', n: 1 }] },
+  { id: 'a4', name: 'Water World', kind: 'crazy', len: 140, text: 'Lakes and ponds. Paint water, add a moving platform to ride across one, and make the bot find a way over the rest.',
+    need: [{ tile: 'water', n: 20, label: 'Water' }, { t: 'ferry', n: 1 }, { t: 'checkpoint', n: 2 }] },
+  { id: 'a5', name: 'Portal Tower', kind: 'crazy', len: 160, text: 'A tall, tricky course. Use teleporters and an elevator to climb, and guard the way with a laser.',
+    need: [{ t: 'tele', n: 2 }, { t: 'lift', n: 1 }, { t: 'laser', n: 1 }, { t: 'checkpoint', n: 2 }] },
+];
+const taskOf = c => (c && c.task && TASKS.find(t => t.id === c.task)) || null;
+/* pieces that cost nothing while building that assignment */
+const taskFree = (c, k) => { const t = taskOf(c); return !!t && t.need.some(n => n.t === k || (n.any && n.any.includes(k))); };
+/* a fingerprint of the course layout: a test run only proves the course as it was when it was driven */
+function courseSig(c) {
+  let h = 2166136261; const mix = v => { h ^= v; h = Math.imul(h, 16777619); };
+  for (let i = 0; i < c.tiles.length; i++) mix(c.tiles[i]);
+  for (const o of c.objs) { for (const ch of o.t) mix(ch.charCodeAt(0)); mix(Math.round(o.x * 10)); mix(Math.round(o.y * 10)); if (o.x2 != null) { mix(Math.round(o.x2 * 10)); mix(Math.round(o.y2 * 10)); } }
+  return (h >>> 0).toString(36) + '.' + c.w;
+}
+/* the checklist: [{ label, ok, have }] */
+function taskCheck(c) {
+  const t = taskOf(c); if (!t) return [];
+  const st = c.objs.find(o => o.t === 'start'), fi = c.objs.find(o => o.t === 'finish'), cnt = k => c.objs.filter(o => o.t === k).length, out = [];
+  const dist = st && fi ? Math.round(fi.x - st.x) : 0;
+  out.push({ label: 'A Start and a Finish', ok: !!(st && fi) });
+  out.push({ label: `At least ${t.len} m from Start to Finish`, ok: dist >= t.len, have: dist + ' m' });
+  for (const n of t.need) {
+    if (n.tile) { let w = 0; for (let i = 0; i < c.tiles.length; i++) if (c.tiles[i] === WATER) w++; out.push({ label: `${n.label}: at least ${n.n} squares`, ok: w >= n.n, have: w }); }
+    else if (n.any) { const have = n.any.reduce((s, k) => s + cnt(k), 0); out.push({ label: `${n.label} (${n.any.map(k => OBJ[k].icon).join(' ')})`, ok: have >= n.n, have }); }
+    else { const have = cnt(n.t); out.push({ label: `${OBJ[n.t].icon} ${OBJ[n.t].name}${n.n > 1 ? ' × ' + n.n : ''}`, ok: have >= n.n, have }); }
+  }
+  out.push({ label: 'You beat it yourself (▶ Test it) after your last change', ok: !!c.par && c.vsig === courseSig(c), proof: true });
+  return out;
+}
+const taskDone = c => { const l = taskCheck(c); return l.length > 0 && l.every(k => k.ok); };
 
 /* ---------------- Storage ---------------- */
 /* Each player's bot, medals, notebook and courses are saved under their own name */
