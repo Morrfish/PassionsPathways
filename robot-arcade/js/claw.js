@@ -79,6 +79,12 @@ up
   [[0, .47, 1, .06], [0, -.47, 1, .06], [.47, 0, .06, 1], [-.47, 0, .06, 1]].forEach(([dx, dz, w, d]) => {
     const rim = RA.box(w, 0.35, d, M.yellow); rim.position.set(wx(0) + dx, 0.17, wz(0) + dz); scene.add(rim);
   });
+  // clear walls on the pile side of the chute, so toys don't spill in by themselves
+  [[0.49, 0, 0.04, 1.0], [0, -0.49, 1.0, 0.04]].forEach(([dx, dz, w, d]) => {
+    const wall = new THREE.Mesh(new THREE.BoxGeometry(w, 1.25, d), new THREE.MeshPhysicalMaterial({ color: 0xd6f1ff, transparent: true, opacity: .28, roughness: .05, depthWrite: false }));
+    wall.position.set(wx(0) + dx, 0.62, wz(0) + dz); wall.renderOrder = 4; scene.add(wall);
+    const lip = RA.box(w + 0.02, 0.06, d + 0.02, M.yellow); lip.position.set(wx(0) + dx, 1.25, wz(0) + dz); scene.add(lip);
+  });
   const chuteLbl = RA.groundLabel('CHUTE', 0.32, { color: '#ffd23f', font: 'bold 70px system-ui' }); chuteLbl.position.set(wx(0), 0.36, wz(0) + 0.3); scene.add(chuteLbl);
   // cabinet base
   const base = RA.box(W + 0.6, 2.6, D + 0.6, M.pink); base.position.set(0, -1.4, 0); scene.add(base);
@@ -132,28 +138,100 @@ up
   }
   function setOpen(k) { prongs.forEach(p => { p.rotation.z = RA.lerp(-0.2, 0.75, k); }); }
 
-  /* ---------------- prizes ---------------- */
-  const haloTex = (() => {
-    const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d');
-    const gr = g.createRadialGradient(64, 64, 4, 64, 64, 64); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
-    g.fillStyle = gr; g.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c);
-  })();
-  function makeItem(p) {
-    const g = new THREE.Group();
-    const col = new THREE.Color(RI[p.rarity].color);
+  /* ---------------- prizes: 3D toys made from each emoji, piled up ---------------- */
+  const PR = 0.34;          // how big a toy is when packing the pile
+  const PILE_MAX = 1.85;    // the pile never gets taller than this
+  const VG = 20, VS = 4;    // voxel grid size, canvas pixels per voxel
+  const voxGeo = new THREE.BoxGeometry(1, 1, 1);
+  const voxCache = {};
+  function voxelData(emoji) {
+    if (voxCache[emoji]) return voxCache[emoji];
+    const n = VG * VS, c = document.createElement('canvas'); c.width = c.height = n;
+    const g = c.getContext('2d', { willReadFrequently: true });
+    g.font = (n * 0.86) + 'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+    g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(emoji, n / 2, n / 2 + n * 0.06);
+    const px = g.getImageData(0, 0, n, n).data;
+    const cells = [];
+    const solid = [];
+    for (let y = 0; y < VG; y++) for (let x = 0; x < VG; x++) {
+      let r = 0, gg = 0, b = 0, a = 0;
+      for (let yy = 0; yy < VS; yy++) for (let xx = 0; xx < VS; xx++) {
+        const k = ((y * VS + yy) * n + x * VS + xx) * 4, al = px[k + 3] / 255;
+        r += px[k] * al; gg += px[k + 1] * al; b += px[k + 2] * al; a += al;
+      }
+      const on = a / (VS * VS) > 0.45;
+      solid[y * VG + x] = on;
+      if (on) cells.push({ x, y, col: new THREE.Color(r / a / 255, gg / a / 255, b / a / 255).convertSRGBToLinear() });
+    }
+    // distance to the edge makes the middle thicker, like a stuffed toy
+    const dist = solid.map(v => v ? 99 : 0);
+    for (let pass = 0; pass < 5; pass++) for (let y = 0; y < VG; y++) for (let x = 0; x < VG; x++) {
+      const k = y * VG + x; if (!solid[k]) continue;
+      const nb = (xx, yy) => (xx < 0 || yy < 0 || xx >= VG || yy >= VG) ? 0 : dist[yy * VG + xx];
+      dist[k] = Math.min(dist[k], nb(x - 1, y) + 1, nb(x + 1, y) + 1, nb(x, y - 1) + 1, nb(x, y + 1) + 1);
+    }
+    cells.forEach(cl => { cl.d = Math.min(4, dist[cl.y * VG + cl.x]); });
+    return (voxCache[emoji] = cells);
+  }
+  function makeToy(p) {
+    const vox = 0.04, cells = voxelData(p.emoji);
     const big = p.rarity === 'legendary' || p.rarity === 'epic';
-    const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: haloTex, color: col, transparent: true, opacity: big ? .95 : .55, depthWrite: false }));
-    halo.scale.setScalar(big ? 1.35 : 1.0); g.add(halo);
-    const em = RA.emojiSprite(p.emoji, 0.78); em.position.y = 0.02; g.add(em);
-    const puck = RA.cyl(0.36, 0.38, 0.07, RA.mat(col, { emissive: col.clone().multiplyScalar(.25) }), 24); puck.position.y = -0.36; g.add(puck);
-    g.userData = { prize: p, halo, em, spin: big };
-    [halo, em, puck].forEach(o => o.userData.item = g);
+    const rc = new THREE.Color(RI[p.rarity].color);
+    const mat = new THREE.MeshStandardMaterial({ roughness: 0.75, metalness: big ? 0.25 : 0.05, emissive: big ? rc : 0x000000, emissiveIntensity: 0.15 });
+    let mesh;
+    if (cells.length < 25) { // no emoji font on this computer: make a plain plush ball
+      mesh = new THREE.Mesh(new THREE.SphereGeometry(0.32, 18, 14), RA.mat(rc));
+    } else {
+      mesh = new THREE.InstancedMesh(voxGeo, mat, cells.length);
+      const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), pos = new THREE.Vector3(), sc = new THREE.Vector3();
+      cells.forEach((cl, i) => {
+        const depth = vox * (1.6 + 1.5 * cl.d);
+        pos.set((cl.x - VG / 2 + 0.5) * vox, (VG / 2 - cl.y - 0.5) * vox, 0);
+        sc.set(vox * 1.02, vox * 1.02, depth);
+        m4.compose(pos, q, sc); mesh.setMatrixAt(i, m4); mesh.setColorAt(i, cl.col);
+      });
+      mesh.instanceMatrix.needsUpdate = true; if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+    }
+    mesh.castShadow = true; mesh.receiveShadow = true;
+    const g = new THREE.Group(); g.add(mesh);
+    // tumbled into the machine: some lie face up, some lean against their neighbors
+    if (Math.random() < 0.55) mesh.rotation.set(-Math.PI / 2 + (Math.random() - .5) * 0.9, 0, (Math.random() - .5) * 0.9);
+    else mesh.rotation.set((Math.random() - .5) * 0.8, (Math.random() - .5) * 1.4, (Math.random() - .5) * 0.9);
+    mesh.rotation.y += Math.random() * Math.PI * 2 * (mesh.rotation.x < -1 ? 1 : 0);
+    g.userData = { prize: p, mesh, mat, big, phase: Math.random() * 6 };
+    mesh.userData.item = g;
     return g;
   }
-  let items = []; // {g, prize, c, r}
-  function weightedPick(exclude) {
-    const pool = PRIZES.filter(p => !exclude.has(p.name));
-    const list = pool.length ? pool : PRIZES;
+  let items = []; // {g, prize, x, y, z}
+  function restY(x, z, others) {
+    let y = PR;
+    for (const o of others) {
+      const d = Math.hypot(o.x - x, o.z - z);
+      if (d < 2 * PR) y = Math.max(y, o.y + Math.sqrt(4 * PR * PR - d * d) * 0.82);
+    }
+    return y;
+  }
+  const inChute = (x, z) => x < wx(0) + 0.5 + PR * 0.7 && z > wz(0) - 0.5 - PR * 0.7;
+  const XMIN = -W / 2 + PR * 0.85, XMAX = W / 2 - PR * 0.85, ZMIN = -D / 2 + PR * 0.85, ZMAX = D / 2 - PR * 0.85;
+  const clampX = x => Math.max(XMIN, Math.min(XMAX, x)), clampZ = z => Math.max(ZMIN, Math.min(ZMAX, z));
+  // drop a toy at (x,z) and let it roll a little downhill, like it would in a real machine
+  function settleSpot(x, z, others) {
+    let best = { x, z, y: restY(x, z, others) };
+    for (let it = 0; it < 7; it++) {
+      let moved = false;
+      for (let k = 0; k < 8; k++) {
+        const a = k / 8 * Math.PI * 2, nx = clampX(best.x + Math.cos(a) * 0.12), nz = clampZ(best.z + Math.sin(a) * 0.12);
+        if (inChute(nx, nz)) continue;
+        const ny = restY(nx, nz, others);
+        if (ny < best.y - 0.01) { best = { x: nx, z: nz, y: ny }; moved = true; }
+      }
+      if (!moved) break;
+    }
+    return best;
+  }
+  function weightedPick(counts) {
+    const cap = { legendary: 2, epic: 4 };
+    const list = PRIZES.filter(p => !cap[p.rarity] || (counts[p.rarity] || 0) < cap[p.rarity]);
     const tot = list.reduce((s, p) => s + (window.PRIZE_WEIGHTS[p.rarity] || 1), 0);
     let x = Math.random() * tot;
     for (const p of list) { x -= window.PRIZE_WEIGHTS[p.rarity] || 1; if (x <= 0) return p; }
@@ -161,49 +239,83 @@ up
   }
   function fill() {
     items.forEach(it => scene.remove(it.g)); items = [];
-    const cells = [];
-    for (let c = 0; c < COLS; c++) for (let r = 0; r < ROWS; r++) if (!isChute(c, r)) cells.push({ c, r });
-    cells.sort(() => Math.random() - 0.5);
-    const used = new Set();
-    const n = 17;
-    const picks = [];
-    for (let i = 0; i < n; i++) { const p = weightedPick(used); used.add(p.name); picks.push(p); }
-    // rare stuff hides far from the chute
+    const counts = {}, picks = [];
+    for (let i = 0; i < 125; i++) { const p = weightedPick(counts); counts[p.rarity] = (counts[p.rarity] || 0) + 1; picks.push(p); }
+    // ordinary stuff goes in first; the rare stuff lands on top, far from the chute
     const order = { legendary: 0, epic: 1, rare: 2, uncommon: 3, common: 4 };
-    picks.sort((a, b) => order[a.rarity] - order[b.rarity]);
-    const far = cells.slice().sort((a, b) => (b.c + b.r) - (a.c + a.r) + (Math.random() - .5) * 2.5);
-    const taken = new Set();
-    picks.forEach(p => {
-      const src = order[p.rarity] <= 1 ? far : cells;
-      const cell = src.find(k => !taken.has(k.c + ',' + k.r));
-      taken.add(cell.c + ',' + cell.r);
-      addItem(p, cell.c, cell.r);
-    });
+    picks.sort((a, b) => order[b.rarity] - order[a.rarity] + (Math.random() - .5) * 1.5);
+    let tries = 0;
+    for (const p of picks) {
+      for (let t = 0; t < 30; t++, tries++) {
+        let x = XMIN + Math.random() * (XMAX - XMIN), z = ZMIN + Math.random() * (ZMAX - ZMIN);
+        if (order[p.rarity] <= 1) { x = RA.lerp(0.2, XMAX, Math.random()); z = RA.lerp(ZMIN, 0.6, Math.random()); }
+        if (inChute(x, z)) continue;
+        const s = settleSpot(x, z, items);
+        if (s.y > PILE_MAX) continue;
+        addItem(p, s.x, s.y, s.z);
+        break;
+      }
+    }
   }
-  function addItem(p, c, r) {
-    const g = makeItem(p); g.position.set(wx(c), 0.42, wz(r)); scene.add(g);
-    const it = { g, prize: p, c, r }; items.push(it); return it;
+  function addItem(p, x, y, z) {
+    const g = makeToy(p); g.position.set(x, y, z); scene.add(g);
+    const it = { g, prize: p, x, y, z }; items.push(it); return it;
   }
-  const itemAt = (c, r) => items.find(it => it.c === c && it.r === r && it !== held);
-  stage.frame.push((dt, t) => items.forEach((it, i) => {
+  // the top toy the claw can reach at its spot
+  function topUnderClaw() {
+    const x = wx(S.c), z = wz(S.r);
+    let top = null;
+    for (const it of items) {
+      if (it === held) continue;
+      if (Math.hypot(it.x - x, it.z - z) < 0.5 && (!top || it.y > top.y)) top = it;
+    }
+    return top;
+  }
+  function pileTopAt(x, z) {
+    let y = 0;
+    for (const it of items) if (it !== held && Math.hypot(it.x - x, it.z - z) < 0.45) y = Math.max(y, it.y + PR * 0.8);
+    return y;
+  }
+  // after a toy is taken out, everything that was leaning on it falls down
+  async function settlePile() {
+    const sorted = items.filter(i => i !== held).sort((a, b) => a.y - b.y);
+    const done = [], falls = [];
+    for (const it of sorted) {
+      const ny = restY(it.x, it.z, done);
+      if (ny < it.y - 0.02) {
+        const y0 = it.y; it.y = ny;
+        falls.push(RA.tween(260 + (y0 - ny) * 300, k => { it.g.position.y = RA.lerp(y0, ny, k); }, RA.ease.in));
+      }
+      done.push(it);
+    }
+    if (falls.length) { await Promise.all(falls); RA.sfx.step(); }
+  }
+  stage.frame.push((dt, t) => items.forEach(it => {
     const u = it.g.userData;
-    u.em.position.y = 0.02 + Math.sin(t * 2 + i) * 0.025;
-    if (u.spin) u.halo.material.rotation = t * 0.8;
-    if (u.spin) u.halo.scale.setScalar(1.25 + Math.sin(t * 3 + i) * 0.12);
+    if (u.big && u.mat) u.mat.emissiveIntensity = 0.15 + 0.2 * (0.5 + 0.5 * Math.sin(t * 3 + u.phase));
   }));
 
   /* ---------------- claw state ---------------- */
   const S = { c: 0, r: 0, y: TOP_Y, open: 0, isDown: false, isOpen: false };
   let held = null;
+  // aiming laser: shows where the claw will land
+  const laser = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 1, 6), new THREE.MeshBasicMaterial({ color: 0xff2a5c, transparent: true, opacity: 0.75 }));
+  const dot = new THREE.Mesh(new THREE.CircleGeometry(0.09, 16), new THREE.MeshBasicMaterial({ color: 0xff2a5c, transparent: true, opacity: 0.9, depthWrite: false }));
+  dot.rotation.x = -Math.PI / 2; scene.add(laser); scene.add(dot);
   function place() {
     const x = wx(S.c), z = wz(S.r);
-    claw.position.set(x, S.y - 0.0, z);
+    claw.position.set(x, S.y, z);
     bridge.position.x = x;
     carriage.position.set(x, H - 0.2, z);
     const topY = H - 0.3, botY = S.y + 0.82;
     cable.scale.y = Math.max(0.01, topY - botY); cable.position.set(x, (topY + botY) / 2, z);
     setOpen(S.open);
-    if (held) held.g.position.set(x, S.y + 0.02, z);
+    if (held) { held.x = x; held.z = z; held.y = S.y - 0.05; held.g.position.set(x, held.y, z); }
+    const ground = isChute(Math.round(S.c), Math.round(S.r)) ? -0.2 : pileTopAt(x, z) + 0.02;
+    const from = S.y - (held ? 0.4 : 0.1);
+    laser.visible = dot.visible = from - ground > 0.2;
+    laser.scale.y = Math.max(0.01, from - ground); laser.position.set(x, (from + ground) / 2, z);
+    dot.position.set(x, ground, z);
   }
   function hud() {
     sh.setHud([
@@ -212,7 +324,11 @@ up
     ]);
   }
   function resetClaw() {
-    if (held) { const it = held; held = null; it.g.position.set(wx(it.c), 0.42, wz(it.r)); }
+    if (held) {
+      const it = held; held = null;
+      const s = settleSpot(it.x, it.z, items.filter(o => o !== it));
+      Object.assign(it, s); it.g.position.set(s.x, s.y, s.z);
+    }
     Object.assign(S, { c: 0, r: 0, y: TOP_Y, open: 0, isDown: false, isOpen: false });
     place(); hud(); stage.want('front');
   }
@@ -227,7 +343,6 @@ up
     for (let i = 0; i < n; i++) {
       const nc = S.c + dc, nr = S.r + dr;
       if (nc < 0 || nc >= COLS || nr < 0 || nr >= ROWS) {
-        // bonk animation
         const c0 = S.c, r0 = S.r;
         await RA.tween(140, k => { S.c = c0 + dc * 0.18 * k; S.r = r0 + dr * 0.18 * k; place(); });
         await RA.tween(160, k => { S.c = c0 + dc * 0.18 * (1 - k); S.r = r0 + dr * 0.18 * (1 - k); place(); });
@@ -244,23 +359,27 @@ up
     if (S.isDown) { sh.log('The claw is already down.', 'warn'); return; }
     stage.want('front');
     RA.sfx.whirr();
-    const it = itemAt(S.c, S.r);
-    let bottom = DOWN_Y;
-    if (isChute(S.c, S.r)) bottom = 0.75;
-    else if (it && !S.isOpen) bottom = 0.95; // closed claw just bumps on top of the prize
-    if (held) bottom = Math.max(bottom, it ? 1.25 : 0.95);
+    const top = topUnderClaw();
+    let bottom;
+    if (isChute(S.c, S.r)) bottom = held ? 1.35 : 0.95;
+    else if (held) bottom = Math.max(0.75, pileTopAt(wx(S.c), wz(S.r)) + 0.45);
+    else if (!top) bottom = DOWN_Y - 0.1;
+    else if (S.isOpen) bottom = top.y + 0.08;          // open claw wraps around the top toy
+    else bottom = top.y + PR + 0.3;                    // closed claw just bumps on top of it
     const y0 = S.y;
-    await RA.tween(900, k => { S.y = RA.lerp(y0, bottom, k); place(); });
+    await RA.tween(400 + (y0 - bottom) * 160, k => { S.y = RA.lerp(y0, bottom, k); place(); });
     S.isDown = true; hud();
-    if (it && !S.isOpen && !held) sh.log('Bump! The claw came down closed on top of the ' + it.prize.name + '. Open it first next time.', 'warn');
+    if (top && !S.isOpen && !held && !isChute(S.c, S.r)) sh.log('Bump! The claw came down closed on top of the ' + top.prize.name + '. Open it first next time.', 'warn');
   }
   async function up() {
     if (!S.isDown) { sh.log('The claw is already up.', 'info'); return; }
     stage.want('front');
     RA.sfx.whirr();
     const y0 = S.y;
-    await RA.tween(800, k => { S.y = RA.lerp(y0, TOP_Y, k); place(); });
+    const wasGrab = !!held;
+    await RA.tween(400 + (TOP_Y - y0) * 140, k => { S.y = RA.lerp(y0, TOP_Y, k); place(); });
     S.isDown = false; hud();
+    if (wasGrab) await settlePile();
   }
   async function openClaw() {
     stage.want('front');
@@ -273,16 +392,17 @@ up
   }
   async function closeClaw() {
     stage.want('front');
-    const it = S.isDown && S.isOpen && !held ? itemAt(S.c, S.r) : null;
     if (!S.isOpen) { sh.log('The claw is already closed.', 'info'); return; }
+    const top = S.isDown && !held && !isChute(S.c, S.r) ? topUnderClaw() : null;
+    const it = top && S.y <= top.y + 0.2 ? top : null;
     RA.sfx.grab();
-    await RA.tween(420, k => { S.open = 1 - k * (it ? 0.8 : 1); place(); });
+    await RA.tween(420, k => { S.open = 1 - k * (it ? 0.75 : 1); place(); });
     S.isOpen = false;
     if (it) {
       held = it; place();
       sh.log('Got it! Holding: ' + it.prize.emoji + ' ' + it.prize.name + '. Now bring it to the chute.', 'ok');
     } else if (S.isDown) {
-      sh.log(isChute(S.c, S.r) ? 'Nothing to grab in the chute.' : 'The claw grabbed… air. No prize in this space.', 'warn');
+      sh.log(isChute(S.c, S.r) ? 'Nothing to grab in the chute.' : 'The claw grabbed… air. Nothing here to grab.', 'warn');
     }
     hud();
   }
@@ -290,23 +410,17 @@ up
     const it = held; held = null;
     const x = wx(S.c), z = wz(S.r), y0 = it.g.position.y;
     if (isChute(S.c, S.r)) {
-      await RA.tween(650, k => { it.g.position.set(x, RA.lerp(y0, -1.9, k), z); }, RA.ease.in);
+      await RA.tween(650, k => { it.g.position.set(x, RA.lerp(y0, -1.9, k), z); it.g.rotation.x = k * 2; }, RA.ease.in);
       items = items.filter(o => o !== it); scene.remove(it.g);
       await win(it.prize);
       return;
     }
-    // falls back into the machine
-    let spot = { c: S.c, r: S.r };
-    if (itemAt(S.c, S.r)) {
-      const near = [];
-      for (let c = 0; c < COLS; c++) for (let r = 0; r < ROWS; r++) if (!isChute(c, r) && !itemAt(c, r)) near.push({ c, r, d: Math.abs(c - S.c) + Math.abs(r - S.r) });
-      near.sort((a, b) => a.d - b.d); spot = near[0] || { c: it.c, r: it.r };
-    }
-    const tx = wx(spot.c), tz = wz(spot.r);
-    await RA.tween(500, k => { it.g.position.set(RA.lerp(x, tx, k), RA.lerp(y0, 0.42, k), RA.lerp(z, tz, k)); }, RA.ease.in);
+    // falls back onto the pile
+    const s = settleSpot(clampX(x + (Math.random() - .5) * 0.2), clampZ(z + (Math.random() - .5) * 0.2), items.filter(o => o !== it));
+    await RA.tween(300 + Math.max(0, y0 - s.y) * 150, k => { it.g.position.set(RA.lerp(x, s.x, k), RA.lerp(y0, s.y, k), RA.lerp(z, s.z, k)); }, RA.ease.in);
+    Object.assign(it, s);
     RA.sfx.step();
-    it.c = spot.c; it.r = spot.r;
-    sh.log('Plop. The ' + it.prize.name + ' fell back into the machine. Open the claw over the chute to win it.', 'warn');
+    sh.log('Plop. The ' + it.prize.name + ' fell back onto the pile. Open the claw over the chute to win it.', 'warn');
   }
 
   /* ---------------- shelf (collection) ---------------- */
@@ -403,5 +517,5 @@ up
   }, { noRepeat: false });
 
   fill(); resetClaw(); renderMission();
-  RA.debug = { items: () => items.map(i => ({ name: i.prize.name, c: i.c, r: i.r })) };
+  RA.debug = { items: () => items.map(i => ({ name: i.prize.name, c: Math.round(i.x - wx(0)), r: Math.round(wz(0) - i.z), y: i.y })) };
 })();
