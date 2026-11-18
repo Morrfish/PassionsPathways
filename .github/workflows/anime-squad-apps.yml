@@ -39,7 +39,7 @@ jobs:
         working-directory: anime-squad
         run: |
           npx cap add android
-          npx --yes @capacitor/assets@4.0.0 generate --android --iconBackgroundColor '#120b24' --splashBackgroundColor '#120b24'
+          npx --yes @capacitor/assets@4.0.0 generate --android --iconBackgroundColor '#0b0a24' --splashBackgroundColor '#0b0a24'
           npx cap sync android
       - name: Build the APK
         working-directory: anime-squad/android
