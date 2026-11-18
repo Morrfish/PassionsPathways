@@ -80,6 +80,42 @@
       solution: 'rotate left 45\ntrolley out 4\nlower 9\nhook\nraise 3\nrotate left 45\ntrolley in 1\nlower 1\nunhook\nrotate left 45\ntrolley in 3\nlower 2\nhook\nraise 2\nrotate left 45\ntrolley out 2\nlower 1\nunhook\nrotate left 45\ntrolley out 2\nlower 1\nhook\nraise 6\nrotate left 90\ntrolley in 3\nlower 1\nunhook'
     },
     {
+      title: 'Unload the Truck', par: 8,
+      story: 'A delivery just showed up. Take the crate off the truck and set it on the pad. Careful, there is a tree in the way!',
+      tip: 'The crate sits ON the truck bed, so its top is at level 2. The tree is 3 levels tall, so the bottom of the crate must be higher than 3 when you swing past it.',
+      loads: [['crate', 'crate', 90, 4]],
+      structs: [{ type: 'truck', at: [90, 4] }, { type: 'tree', at: [180, 4] }, { type: 'pad', at: [270, 4] }],
+      goals: [{ load: 'crate', at: [270, 4], level: 0, text: 'Crate on the green pad' }],
+      solution: 'rotate left 90\ntrolley out 2\nlower 8\nhook\nraise 3\nrotate left 180\nlower 4\nunhook'
+    },
+    {
+      title: 'Skyscraper Topper', par: 7,
+      story: 'The skyscraper is 7 levels tall and needs one last steel beam on the very top.',
+      tip: 'To sit on a 7-level roof, the beam\'s bottom must be at 7, so the hook is at 8. Lift it high enough to clear the roof edge first.',
+      loads: [['beam', 'beam', 0, 5]],
+      structs: [{ type: 'building', at: [180, 5], top: 7 }, { type: 'building', at: [90, 5], top: 5 }],
+      goals: [{ load: 'beam', at: [180, 5], level: 7, text: 'Beam on top of the skyscraper' }],
+      solution: 'trolley out 3\nlower 9\nhook\nraise 8\nrotate left 180\nlower 1\nunhook'
+    },
+    {
+      title: 'Kitty Rescue', par: 9,
+      story: 'Someone left the office kitty (safe in her carrier) on top of a 6-level building! Bring her down to the truck.',
+      tip: 'The carrier sits on a 6-level roof, so the hook meets its top at level 7. Raise it a little before you swing, or it scrapes the roof.',
+      loads: [['kitty', 'kitty', 225, 3]],
+      structs: [{ type: 'building', at: [225, 3], top: 6 }, { type: 'truck', at: [0, 5] }],
+      goals: [{ load: 'kitty', at: [0, 5], level: 1, text: 'Kitty safe on the truck' }],
+      solution: 'rotate right 135\ntrolley out 1\nlower 3\nhook\nraise 1\nrotate left 135\ntrolley out 2\nlower 6\nunhook'
+    },
+    {
+      title: 'Swap Shop', par: 20,
+      story: 'The crate and the block are on the wrong pads! Swap them. Only one thing fits on a pad, so use the empty middle pad to help.',
+      tip: 'Move the crate to the middle pad. Then move the block to where the crate was. Then move the crate to where the block was. Raise loads above anything you swing over!',
+      loads: [['crate', 'crate', 45, 4], ['block', 'block', 135, 4]],
+      structs: [{ type: 'pad', at: [45, 4] }, { type: 'pad', at: [90, 4] }, { type: 'pad', at: [135, 4] }],
+      goals: [{ load: 'crate', at: [135, 4], level: 0, text: 'Crate on the left pad' }, { load: 'block', at: [45, 4], level: 0, text: 'Block on the right pad' }],
+      solution: 'trolley out 2\nrotate left 45\nlower 9\nhook\nraise 1\nrotate left 45\nlower 1\nunhook\nrotate left 45\nhook\nraise 2\nrotate right 90\nlower 2\nunhook\nrotate left 45\nhook\nraise 1\nrotate left 45\nlower 1\nunhook'
+    },
+    {
       title: 'Free Build', par: 0, sandbox: true,
       story: 'No rules, no boss. Stack, sort and build whatever you want. Can you make a tower 5 tall?',
       tip: 'Every load is 1 level tall. Loads have to be set down gently: lower until the bottom touches, then unhook.',
@@ -291,6 +327,7 @@ hook
     if (kind === 'ac') { em = '❄️'; const b = RA.box(0.95, 0.85, 0.85, M.white); b.position.y = 0.43; g.add(b); const f = RA.cyl(0.3, 0.3, 0.05, M.dark, 20); f.position.y = 0.88; g.add(f); }
     if (kind === 'pipes') { em = '🔧'; [[-.22, .22], [.22, .22], [0, .6]].forEach(([x, y]) => { const p = RA.cyl(.2, .2, 1.15, M.blue, 16); p.rotation.x = Math.PI / 2; p.position.set(x, y, 0); g.add(p); }); }
     if (kind === 'toolbox') { em = '🧰'; const b = RA.box(0.85, 0.6, 0.5, M.red); b.position.y = 0.3; g.add(b); const h = RA.box(0.5, 0.25, 0.08, M.dark); h.position.y = 0.72; g.add(h); }
+    if (kind === 'kitty') { em = '🐱'; const b = RA.box(0.9, 0.7, 0.7, RA.mat(0xff7eb6)); b.position.y = 0.35; g.add(b); const d = RA.box(0.05, 0.45, 0.45, M.dark); d.position.set(0.46, 0.35, 0); g.add(d); const h = RA.box(0.4, 0.2, 0.08, M.dark); h.position.y = 0.8; g.add(h); }
     if (kind === 'bricks') { em = '🧱'; const p = RA.box(0.95, 0.15, 0.95, M.wood); p.position.y = 0.08; g.add(p); const b = RA.box(0.85, 0.7, 0.85, M.brick); b.position.y = 0.52; g.add(b); }
     // lifting ring on top
     const ring = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.025, 6, 12), M.steel); ring.position.y = 0.95; g.add(ring);
@@ -299,7 +336,7 @@ hook
     g.userData.emoji = em;
     return g;
   }
-  const NAMES = { beam: 'steel beam', crate: 'crate', block: 'concrete block', ac: 'AC unit', pipes: 'pipes', toolbox: 'toolbox', bricks: 'bricks' };
+  const NAMES = { beam: 'steel beam', crate: 'crate', block: 'concrete block', ac: 'AC unit', pipes: 'pipes', toolbox: 'toolbox', bricks: 'bricks', kitty: 'kitty carrier' };
 
   // what is under a point? returns {top, name}
   function surfAt(x, z, ignore) {
