@@ -45,7 +45,9 @@ up
       '<code>back</code> = away from you, <code>front</code> = toward you.',
       'Open the claw <b>before</b> it goes down, close it at the bottom.',
       'Come home with the <b>same steps, opposite way</b>, then <code>open</code>.',
-      'Tap a prize in the machine to see what it is.',
+      'Tap a prize to see what it is and <b>exactly where</b> it is (like right 2.3, back 1.8).',
+      'The claw only holds a prize if it lands close to its middle. Aim with decimals!',
+      'When a prize is pulled out, the pile shifts. Tap again before your next try.',
       'Decimals work too: <code>right 1.5</code> stops between two spaces, right over a prize lying there.',
       '<kbd>Ctrl</kbd>+<kbd>Enter</kbd> runs your program.'
     ]
@@ -265,12 +267,14 @@ up
     const it = { g, prize: p, x, y, z }; items.push(it); return it;
   }
   // the top toy the claw can reach at its spot
+  const GRAB_R = 0.45;  // the claw can reach toys this close to its middle...
+  const GRIP_R = 0.25;  // ...but only holds on if it is this close to the toy's middle
   function topUnderClaw() {
     const x = wx(S.c), z = wz(S.r);
     let top = null;
     for (const it of items) {
       if (it === held) continue;
-      if (Math.hypot(it.x - x, it.z - z) < 0.5 && (!top || it.y > top.y)) top = it;
+      if (Math.hypot(it.x - x, it.z - z) < GRAB_R && (!top || it.y > top.y)) top = it;
     }
     return top;
   }
@@ -280,18 +284,45 @@ up
     return y;
   }
   // after a toy is taken out, everything that was leaning on it falls down
-  async function settlePile() {
-    const sorted = items.filter(i => i !== held).sort((a, b) => a.y - b.y);
-    const done = [], falls = [];
+  // after a toy is yanked out, the pile reacts: nearby toys get jolted sideways,
+  // then everything falls and rolls downhill into the gap (gravity)
+  async function settlePile(hx, hz) {
+    const rest = items.filter(i => i !== held);
+    const start = new Map(rest.map(it => [it, { x: it.x, y: it.y, z: it.z }]));
+    const JOLT = 1.2, ROLL = 1.9;
+    rest.forEach(it => {
+      const d = Math.hypot(it.x - hx, it.z - hz);
+      if (d > JOLT) return;
+      const a = Math.random() * Math.PI * 2, push = (JOLT - d) * 0.3 * (0.6 + Math.random() * 0.8);
+      it.x = clampX(it.x + Math.cos(a) * push); it.z = clampZ(it.z + Math.sin(a) * push);
+    });
+    const sorted = rest.slice().sort((a, b) => a.y - b.y);
+    const done = [];
     for (const it of sorted) {
-      const ny = restY(it.x, it.z, done);
-      if (ny < it.y - 0.02) {
-        const y0 = it.y; it.y = ny;
-        falls.push(RA.tween(260 + (y0 - ny) * 300, k => { it.g.position.y = RA.lerp(y0, ny, k); }, RA.ease.in));
-      }
+      let p;
+      if (Math.hypot(it.x - hx, it.z - hz) < ROLL) p = settleSpot(it.x, it.z, done);   // rolls downhill into the gap
+      else p = { x: it.x, z: it.z, y: Math.min(it.y, restY(it.x, it.z, done)) };       // far away: only falls straight down
+      if (inChute(p.x, p.z)) p = settleSpot(p.x, p.z, done);
+      it.x = p.x; it.y = p.y; it.z = p.z;
       done.push(it);
     }
-    if (falls.length) { await Promise.all(falls); RA.sfx.step(); }
+    const moves = [];
+    rest.forEach(it => {
+      const s0 = start.get(it);
+      const dist = Math.hypot(it.x - s0.x, it.y - s0.y, it.z - s0.z);
+      if (dist < 0.01) return;
+      const spin = (Math.random() - .5) * dist * 2;
+      const r0 = it.g.rotation.y;
+      moves.push(RA.tween(280 + dist * 380, k => {
+        it.g.position.set(RA.lerp(s0.x, it.x, k), RA.lerp(s0.y, it.y, k), RA.lerp(s0.z, it.z, k));
+        it.g.rotation.y = r0 + spin * k;
+      }, RA.ease.in));
+    });
+    if (moves.length) {
+      RA.beep(140, 220, 'triangle', 0.05, 70);
+      await Promise.all(moves);
+      sh.log('The pile shifted! ' + moves.length + ' prize' + (moves.length === 1 ? '' : 's') + ' tumbled into new spots.', 'info');
+    }
   }
   stage.frame.push((dt, t) => items.forEach(it => {
     const u = it.g.userData;
@@ -329,13 +360,13 @@ up
   // where every toy was when the last program started (Reset puts them back there)
   let snapshot = new Map();
   function takeSnapshot() {
-    snapshot = new Map(items.map(it => [it, { x: it.x, y: it.y, z: it.z, rx: it.g.rotation.x }]));
+    snapshot = new Map(items.map(it => [it, { x: it.x, y: it.y, z: it.z, rx: it.g.rotation.x, ry: it.g.rotation.y }]));
   }
   function resetClaw() {
     held = null;
     items.forEach(it => {
       const s = snapshot.get(it);
-      if (s) { it.x = s.x; it.y = s.y; it.z = s.z; it.g.rotation.x = s.rx; }
+      if (s) { it.x = s.x; it.y = s.y; it.z = s.z; it.g.rotation.x = s.rx; it.g.rotation.y = s.ry; }
       else Object.assign(it, settleSpot(it.x, it.z, items.filter(o => o !== it)));
       it.g.position.set(it.x, it.y, it.z);
     });
@@ -383,7 +414,7 @@ up
     let bottom;
     if (overChute()) bottom = held ? 1.35 : 0.95;
     else if (held) bottom = Math.max(0.75, pileTopAt(wx(S.c), wz(S.r)) + 0.45);
-    else if (!top) bottom = DOWN_Y - 0.1;
+    else if (!top) bottom = Math.max(DOWN_Y - 0.1, pileTopAt(wx(S.c), wz(S.r)) + 0.15); // lands on the pile, nothing to grab
     else if (S.isOpen) bottom = top.y + 0.08;          // open claw wraps around the top toy
     else bottom = top.y + PR + 0.3;                    // closed claw just bumps on top of it
     const y0 = S.y;
@@ -396,10 +427,30 @@ up
     stage.want('front');
     RA.sfx.whirr();
     const y0 = S.y;
-    const wasGrab = !!held;
-    await RA.tween(400 + (TOP_Y - y0) * 140, k => { S.y = RA.lerp(y0, TOP_Y, k); place(); });
+    const grabbed = held;
+    if (grabbed && grabbed.slip) {
+      // a toy held by the edge slips out partway up and tumbles back onto the pile
+      const mid = RA.lerp(y0, TOP_Y, 0.45);
+      await RA.tween(250 + (mid - y0) * 140, k => { S.y = RA.lerp(y0, mid, k); place(); });
+      held = null; grabbed.slip = false;
+      const others = items.filter(o => o !== grabbed);
+      const a = Math.random() * Math.PI * 2;
+      const s = settleSpot(clampX(grabbed.x + Math.cos(a) * 0.5), clampZ(grabbed.z + Math.sin(a) * 0.5), others);
+      const p0 = { x: grabbed.x, y: grabbed.y, z: grabbed.z };
+      RA.sfx.bad();
+      await RA.tween(300 + Math.max(0, p0.y - s.y) * 160, k => { grabbed.g.position.set(RA.lerp(p0.x, s.x, k), RA.lerp(p0.y, s.y, k), RA.lerp(p0.z, s.z, k)); }, RA.ease.in);
+      Object.assign(grabbed, s);
+      sh.log('It slipped! The claw was ' + grabbed.off + ' off the middle of the ' + grabbed.prize.name + '. Tap a prize to see exactly where it is.', 'warn');
+      const y1 = S.y;
+      await Promise.all([
+        RA.tween(300 + (TOP_Y - y1) * 140, k => { S.y = RA.lerp(y1, TOP_Y, k); place(); }),
+        settlePile(grabbed.fromX, grabbed.fromZ)
+      ]);
+    } else {
+      await RA.tween(400 + (TOP_Y - y0) * 140, k => { S.y = RA.lerp(y0, TOP_Y, k); place(); });
+      if (grabbed) await settlePile(grabbed.fromX, grabbed.fromZ);
+    }
     S.isDown = false; hud();
-    if (wasGrab) await settlePile();
   }
   async function openClaw() {
     stage.want('front');
@@ -419,8 +470,12 @@ up
     await RA.tween(420, k => { S.open = 1 - k * (it ? 0.75 : 1); place(); });
     S.isOpen = false;
     if (it) {
+      it.fromX = it.x; it.fromZ = it.z;
+      it.off = r2(Math.hypot(it.x - wx(S.c), it.z - wz(S.r)));
+      it.slip = it.off > GRIP_R;
       held = it; place();
-      sh.log('Got it! Holding: ' + it.prize.emoji + ' ' + it.prize.name + '. Now bring it to the chute.', 'ok');
+      if (it.slip) sh.log('The claw caught the ' + it.prize.name + ' by the edge… hang on…', 'warn');
+      else sh.log('Got it! Holding: ' + it.prize.emoji + ' ' + it.prize.name + '. Now bring it to the chute.', 'ok');
     } else if (S.isDown) {
       sh.log(overChute() ? 'Nothing to grab in the chute.' : 'The claw grabbed… air. Nothing here to grab.', 'warn');
     }
@@ -432,6 +487,7 @@ up
     if (overChute()) {
       await RA.tween(650, k => { it.g.position.set(x, RA.lerp(y0, -1.9, k), z); it.g.rotation.x = k * 2; }, RA.ease.in);
       items = items.filter(o => o !== it); scene.remove(it.g);
+      takeSnapshot(); // the shifted pile is the new normal, Reset will not undo it
       await win(it.prize);
       return;
     }
@@ -509,7 +565,9 @@ up
     if (!hit) return;
     const g = hit.userData.item; const p = g && g.userData.prize;
     if (!p) return;
-    sh.toast(`${p.emoji} <b>${RA.esc(p.name)}</b> <span style="color:${RI[p.rarity].color}">&middot; ${RI[p.rarity].label}</span>`);
+    const it = items.find(i => i.g === g);
+    const where = it ? `<br><span style="font-family:var(--mono);color:var(--y)">right ${(it.x - wx(0)).toFixed(1)}, back ${(wz(0) - it.z).toFixed(1)}</span>` : '';
+    sh.toast(`${p.emoji} <b>${RA.esc(p.name)}</b> <span style="color:${RI[p.rarity].color}">&middot; ${RI[p.rarity].label}</span>${where}`, 3500);
   });
 
   /* ---------------- wire up ---------------- */
@@ -537,5 +595,5 @@ up
   }, { noRepeat: false });
 
   fill(); takeSnapshot(); resetClaw(); renderMission();
-  RA.debug = { items: () => items.map(i => ({ name: i.prize.name, c: Math.round(i.x - wx(0)), r: Math.round(wz(0) - i.z), y: i.y })) };
+  RA.debug = { items: () => items.map(i => ({ name: i.prize.name, c: Math.round(i.x - wx(0)), r: Math.round(wz(0) - i.z), y: i.y, rx: i.x - wx(0), rz: wz(0) - i.z })) };
 })();
