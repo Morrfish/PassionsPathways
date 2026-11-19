@@ -6,7 +6,7 @@ The camera starts in front and, in **Auto**, swings to a top view while the mach
 
 - **Code Claw** (`claw.html`): program a claw machine. `left/right/back/front N`, `down`, `up`, `open`, `close`.
   Grab a prize and retrace the steps to the chute. Prizes are common to legendary (funny, food, brain rot...)
-  and go on a Prize Shelf. Each emoji is turned into a 3D voxel toy, and about 125 of them are piled into the machine; the claw grabs the top toy where it lands and the pile settles afterward. A red aiming laser shows where the claw will drop. **Edit the prize list in `js/prizes.js`.**
+  and go on a Prize Shelf. Each emoji is turned into a 3D voxel toy, and about 125 of them are piled into the machine; the claw grabs the top toy where it lands, but only holds it if it landed within 0.25 of the toy's middle (otherwise the toy slips out). When a toy is pulled out, nearby toys get jolted and roll into the gap, so the same program will not keep working. Tapping a toy shows its exact position (e.g. right 2.3, back 1.8) so students can aim with decimals. A red aiming laser shows where the claw will drop. **Edit the prize list in `js/prizes.js`.**
 - **Crane Crew** (`crane.html`): a construction tower crane. `rotate left/right DEG`, `trolley out/in N`,
   `lower/raise N`, `hook`, `unhook`. Ten missions (beam to pad, crate to truck, AC to roof, stack 3 blocks, three jobs at once,
   unload the truck, skyscraper topper, kitty rescue, swap shop, free build). Loads must clear anything in the way and be set down gently.
