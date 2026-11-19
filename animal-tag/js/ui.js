@@ -1,130 +1,171 @@
-// Wild Tag: menus, shop, HUD.
+// Wild Tag: title screen, shop pages, HUD.
 'use strict';
 
 const $ = (id) => document.getElementById(id);
+const GEM = '<img src="ui/icon-gems.png" alt="gems">';
+const MODE_IMG = { infection: 'ui/mode-infection.png', classic: 'ui/mode-classic.png', freeze: 'ui/mode-freeze.png' };
+const PAGES = {
+  solo: { title: 'Play Solo', fn: 'paneSolo', preview: false },
+  host: { title: 'Host a Game', fn: 'paneHost', preview: false },
+  join: { title: 'Join a Game', fn: 'paneJoin', preview: false },
+  animals: { title: 'Animals', fn: 'paneAnimals', preview: true },
+  wardrobe: { title: 'Patterns & Colors', fn: 'panePatterns', preview: true },
+  wear: { title: 'Wearables', fn: 'paneWear', preview: true },
+  perks: { title: 'Bonus Abilities', fn: 'panePerks', preview: true },
+  how: { title: 'How to Play', fn: 'paneHow', preview: false },
+  settings: { title: 'Settings', fn: 'paneSettings', preview: false },
+};
+
 const UI = {
-  tab: 'play', viewAnimal: null, flashT: 0, netStatus: '', netErr: false,
+  page: null, viewAnimal: null, flashT: 0, netStatus: '', netErr: false,
 
   init() {
     if (isTouch()) document.body.classList.add('touch');
     $('nameIn').value = Save.name;
-    $('nameIn').addEventListener('change', () => { Save.name = ($('nameIn').value.trim() || 'Player').slice(0, 16); persist(); refreshLocalLook(); const c = local(); if (c) { c.name = Save.name; c.setAnimal(c.animal, c.look); } });
-    $('tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; UI.tab = b.dataset.t; UI.viewAnimal = null; UI.render(); });
+    $('nameIn').addEventListener('change', () => { Save.name = ($('nameIn').value.trim() || 'Player').slice(0, 16); persist(); const c = local(); if (c) { c.name = Save.name; c.setAnimal(c.animal, c.look); } refreshLocalLook(); });
+    document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => UI.go(b.dataset.go)));
+    $('sheetClose').onclick = () => UI.go(null);
+    $('resumeBtn').onclick = () => UI.closeMenu();
     $('menuBtn').addEventListener('click', () => UI.openMenu());
-    $('hostStart').addEventListener('click', () => { if (Net.isHost && (G.phase === 'lobby')) startRound(); });
-    addEventListener('keydown', e => { if (e.code === 'Escape' && $('menu').classList.contains('hide') === false && G.started) UI.closeMenu(); });
-    Net.onStatus = (s, err) => { UI.netStatus = err || { connecting: 'Connecting…', hosting: 'Room is open!', joined: 'Joined the room!', offline: '' }[s] || ''; UI.netErr = s === 'error'; if (UI.tab === 'play') UI.render(); };
-    // daily gems
+    $('hostStart').addEventListener('click', () => { if (Net.isHost && G.phase === 'lobby') startRound(); });
+    addEventListener('keydown', e => {
+      if (e.code !== 'Escape' || $('menu').classList.contains('hide')) return;
+      if (UI.page) UI.go(null); else if (G.started) UI.closeMenu();
+    });
+    Net.onStatus = (s, err) => { UI.netStatus = err || { connecting: 'Connecting…', hosting: 'Room is open!', joined: 'Joined the room!', offline: '' }[s] || ''; UI.netErr = s === 'error'; if (UI.page === 'host' || UI.page === 'join') UI.render(); };
     const today = new Date().toISOString().slice(0, 10);
-    if (Save.lastDaily !== today) { Save.lastDaily = today; Save.gems += REWARDS.daily; persist(); setTimeout(() => toast(`🎁 Daily bonus: +${REWARDS.daily} gems!`), 600); }
+    if (Save.lastDaily !== today) { Save.lastDaily = today; Save.gems += REWARDS.daily; persist(); setTimeout(() => toast(`🎁 Daily bonus: +${REWARDS.daily} gems!`), 900); }
     Preview.init();
-    UI.render();
+    // title screen: a few animals roam around while you pick
+    if (!Net.online) { clearBots(); addBots(6); G.demo = true; titleSpot(); }
+    $('loading').classList.add('hide');
+    UI.openMenu();
   },
 
+  go(page) { UI.page = page; UI.viewAnimal = null; UI.render(); },
+
   openMenu() {
-    G.paused = true; $('menu').classList.remove('hide'); $('hud').classList.add('hide');
+    G.paused = true; $('menu').classList.remove('hide'); $('hud').classList.add('hide'); document.body.classList.remove('playing');
     if (document.pointerLockElement) document.exitPointerLock();
     UI.render();
   },
   closeMenu() {
-    G.paused = false; G.started = true; $('menu').classList.add('hide'); $('hud').classList.remove('hide');
+    G.paused = false; G.started = true; G.demo = false; UI.page = null;
+    $('menu').classList.add('hide'); $('hud').classList.remove('hide'); document.body.classList.add('playing');
     const cv = renderer.domElement; if (!isTouch() && cv.requestPointerLock) { try { cv.requestPointerLock(); } catch (e) { } }
     refreshLocalLook();
   },
+  menuOpen() { return !$('menu').classList.contains('hide'); },
 
   render() {
-    document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === UI.tab));
-    $('mGems').textContent = '💎 ' + Save.gems;
-    const p = $('pane');
-    const f = { play: UI.paneplay, animals: UI.paneAnimals, wardrobe: UI.panePatterns, wear: UI.paneWear, perks: UI.panePerks, how: UI.paneHow }[UI.tab];
-    p.innerHTML = ''; f.call(UI, p);
-    UI.sideInfo();
-    Preview.show(UI.viewAnimal || Save.sel.animal);
+    document.querySelectorAll('.tile').forEach(b => b.classList.toggle('on', b.dataset.go === UI.page));
+    $('mGems').querySelector('span').textContent = Save.gems;
+    const inGame = G.started && (Net.online || G.phase !== 'lobby');
+    $('resumeBtn').classList.toggle('hide', !inGame);
+    const sheet = $('sheet');
+    if (!UI.page) { sheet.classList.add('hide'); return; }
+    const pg = PAGES[UI.page];
+    sheet.classList.remove('hide');
+    $('sheetTitle').textContent = pg.title;
+    $('pside').classList.toggle('hide', !pg.preview);
+    const p = $('pane'); p.innerHTML = ''; UI[pg.fn](p);
+    if (pg.preview) { UI.sideInfo(); Preview.show(UI.viewAnimal || Save.sel.animal); }
   },
 
   sideInfo() {
     const a = CREATURE[UI.viewAnimal || Save.sel.animal];
-    const bar = (label, v, max) => `<div class="stat"><span style="width:52px">${label}</span><div class="bar"><i style="width:${Math.min(100, v / max * 100)}%"></i></div></div>`;
+    const bar = (label, v, max) => `<div class="stat"><span style="width:50px">${label}</span><div class="b"><i style="width:${Math.min(100, v / max * 100)}%"></i></div></div>`;
     const perks = Save.sel.perks.map(id => PERK[id].emoji + ' ' + PERK[id].name).join(', ') || 'none';
-    $('selinfo').innerHTML = `<h3>${a.emoji} ${a.name}${a.mythic ? ' <span style="color:#ff8ff0;font-size:13px">MYTHICAL</span>' : ''}</h3>
-      <div style="font-weight:800;color:var(--y)">✨ ${a.ab.name}</div><div style="font-size:13px;color:var(--dim);margin-bottom:8px">${a.ab.desc} <i>(${a.ab.cd}s)</i></div>
+    $('selinfo').innerHTML = `<h3>${a.emoji} ${a.name}${a.mythic ? ' <span style="color:#a03a6a;font-size:13px">MYTHICAL</span>' : ''}</h3>
+      <div style="font-weight:700;color:#b5651d">✨ ${a.ab.name}</div><div style="font-size:13px;margin-bottom:6px">${a.ab.desc} <i>(${a.ab.cd}s)</i></div>
       ${bar('Speed', a.spd - 6, 5.5)}${bar('Jump', a.jmp - 7, 6.5)}${bar('Climb', a.climb, 2.2)}${bar('Size', a.size, 1.4)}
-      <div style="font-size:12px;color:var(--dim);margin-top:8px">Bonus abilities: ${perks}</div>
-      <div style="font-size:12px;color:var(--dim)">🏆 ${Save.stats.wins} wins · 👉 ${Save.stats.tags} tags · 🎮 ${Save.stats.rounds} rounds</div>`;
+      <div style="font-size:12px;margin-top:6px">Bonus abilities: ${perks}</div>
+      <div style="font-size:12px">🏆 ${Save.stats.wins} wins · 👉 ${Save.stats.tags} tags · 🎮 ${Save.stats.rounds} rounds</div>`;
   },
 
+  modePicker() {
+    return `<div class="modes">${Object.entries(MODES).map(([id, m]) => `<button class="mode ${Save.settings.mode === id ? 'sel' : ''}" data-mode="${id}"><img src="${MODE_IMG[id]}" alt="${m.name}"><p>${m.desc}</p></button>`).join('')}</div>`;
+  },
+  hookModes(p) { p.querySelectorAll('.mode').forEach(el => el.onclick = () => { Save.settings.mode = el.dataset.mode; persist(); UI.render(); }); },
+
   // ---------- PLAY ----------
-  paneplay(p) {
+  paneSolo(p) {
     const s = Save.settings;
-    const inRound = G.started && (G.phase !== 'lobby' || Net.online);
-    p.innerHTML = `
-      <h2 class="sec">Game mode</h2>
-      <div class="modes">${Object.entries(MODES).map(([id, m]) => `<div class="mode ${s.mode === id ? 'sel' : ''}" data-mode="${id}"><b>${{ infection: '🔥', classic: '👉', freeze: '❄️' }[id]} ${m.name}</b><p>${m.desc}</p></div>`).join('')}</div>
-      <h2 class="sec">Solo (you vs. bots)</h2>
-      <div class="row">
-        <label>Bots <select id="botsSel">${[3, 5, 7, 9, 11, 15].map(n => `<option ${n === s.bots ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
-        <label>Bot skill <select id="diffSel">${['easy', 'normal', 'hard'].map(n => `<option ${n === s.diff ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
-      </div>
-      <div class="row">
-        ${inRound ? '<button class="btn green" id="resume">▶ Resume</button>' : ''}
-        <button class="btn ${inRound ? 'alt' : ''}" id="solo">${inRound && !Net.online ? '🔄 New Solo Game' : '▶ Play Solo'}</button>
-      </div>
-      <h2 class="sec">Online with friends</h2>
-      <div class="box" id="netbox"></div>
-      <h2 class="sec">Settings</h2>
-      <div class="row">
-        <label>Mouse/touch look speed <input type="range" id="sens" min="0.3" max="2.5" step="0.1" value="${s.sens}"></label>
-        <label><input type="checkbox" id="snd" ${s.sound ? 'checked' : ''}> Sound</label>
-      </div>`;
-    p.querySelectorAll('.mode').forEach(el => el.onclick = () => { s.mode = el.dataset.mode; persist(); UI.render(); });
+    p.innerHTML = `<h2 class="sec">Pick a mode</h2>${UI.modePicker()}
+      <h2 class="sec">Bots</h2>
+      <div class="row"><label>How many <select id="botsSel">${[3, 5, 7, 9, 11, 15].map(n => `<option ${n === s.bots ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
+      <label>Skill <select id="diffSel">${['easy', 'normal', 'hard'].map(n => `<option ${n === s.diff ? 'selected' : ''}>${n}</option>`).join('')}</select></label></div>
+      <div class="row" style="margin-top:16px"><button class="btn green big" id="startSolo">▶ START</button>
+      ${Net.online ? '<span class="status">This leaves your online room.</span>' : ''}</div>`;
+    UI.hookModes(p);
     $('botsSel').onchange = e => { s.bots = +e.target.value; persist(); };
     $('diffSel').onchange = e => { s.diff = e.target.value; persist(); };
-    $('sens').oninput = e => { s.sens = +e.target.value; persist(); };
-    $('snd').onchange = e => { s.sound = e.target.checked; persist(); };
-    $('solo').onclick = () => { startSolo(); UI.closeMenu(); };
-    if ($('resume')) $('resume').onclick = () => UI.closeMenu();
-
-    const nb = $('netbox');
+    $('startSolo').onclick = () => { startSolo(); UI.closeMenu(); };
+  },
+  paneHost(p) {
+    const s = Save.settings;
     if (Net.online && Net.isHost) {
-      nb.innerHTML = `<div>Your room code:</div><div class="code">${Net.code}</div>
-        <div class="status">Friends open Wild Tag, choose <b>Join</b> and type this code. ${Net.count()} friend(s) connected. The mode you pick above is used.</div>
-        <div class="row"><label>Bots in room <select id="rbots">${[0, 2, 4, 6, 8].map(n => `<option ${n === s.roomBots ? 'selected' : ''}>${n}</option>`).join('')}</select></label>
-        <button class="btn green" id="goRoom">▶ Go to room</button><button class="btn alt" id="leave">Leave room</button></div>`;
+      p.innerHTML = `<div class="box" style="text-align:center"><div style="font-weight:600">Your room code</div><div class="code">${Net.code}</div>
+        <div class="status">Friends open Wild Tag, press <b>Join Game</b> and type this code. ${Net.count()} friend(s) connected.</div></div>
+        <h2 class="sec">Mode</h2>${UI.modePicker()}
+        <div class="row"><label>Bots in the room <select id="rbots">${[0, 2, 4, 6, 8].map(n => `<option ${n === s.roomBots ? 'selected' : ''}>${n}</option>`).join('')}</select></label></div>
+        <div class="row"><button class="btn green big" id="goRoom">▶ GO TO ROOM</button><button class="btn alt" id="leave">Close room</button></div>
+        <div class="status">In the room, press <b>Start Round</b> when everyone is in.</div>`;
+      UI.hookModes(p);
       $('rbots').onchange = e => { s.roomBots = +e.target.value; persist(); clearBots(); addBots(s.roomBots); broadcastRoster(); };
       $('goRoom').onclick = () => UI.closeMenu();
       $('leave').onclick = () => { leaveRoom(); UI.render(); };
-    } else if (Net.online) {
-      nb.innerHTML = `<div>In room <span class="code" style="font-size:22px">${Net.code}</span></div><div class="status">The host starts each round.</div>
-        <div class="row"><button class="btn green" id="goRoom">▶ Go to room</button><button class="btn alt" id="leave">Leave room</button></div>`;
+      return;
+    }
+    p.innerHTML = `<h2 class="sec">Pick a mode</h2>${UI.modePicker()}
+      <div class="row" style="margin-top:14px"><button class="btn big" id="host">🏠 OPEN A ROOM</button></div>
+      <div class="status ${UI.netErr ? 'err' : ''}">${UI.netStatus || 'You get a code to share. Friends on other computers join with it. Needs internet.'}</div>`;
+    UI.hookModes(p);
+    $('host').onclick = () => { UI.netStatus = 'Connecting…'; UI.netErr = false; UI.render(); G.demo = false; hostRoom(() => { UI.netStatus = ''; UI.render(); }); };
+  },
+  paneJoin(p) {
+    if (Net.online && !Net.isHost) {
+      p.innerHTML = `<div class="box" style="text-align:center">In room <div class="code">${Net.code}</div><div class="status">The host starts each round.</div></div>
+        <div class="row"><button class="btn green big" id="goRoom">▶ GO TO ROOM</button><button class="btn alt" id="leave">Leave room</button></div>`;
       $('goRoom').onclick = () => UI.closeMenu();
       $('leave').onclick = () => { leaveRoom(); UI.render(); };
-    } else {
-      nb.innerHTML = `<div class="row"><button class="btn blue" id="host">🏠 Host a room</button>
-        <span style="color:var(--dim)">or</span> <input type="text" id="code" placeholder="ROOM CODE" maxlength="5" style="width:140px;text-transform:uppercase;letter-spacing:3px"> <button class="btn alt" id="join">Join</button></div>
-        <div class="status ${UI.netErr ? 'err' : ''}">${UI.netStatus || 'Play together on different computers. One person hosts, everyone else joins with the code. Needs internet.'}</div>`;
-      $('host').onclick = () => hostRoom(() => { UI.netStatus = ''; UI.render(); });
-      $('join').onclick = () => { const c = $('code').value.trim(); if (c.length < 5) { UI.netStatus = 'Type the 5-letter code.'; UI.netErr = true; UI.render(); return; } joinRoom(c, () => { UI.closeMenu(); }); };
+      return;
     }
+    p.innerHTML = `<h2 class="sec">Type the room code</h2>
+      <div class="row"><input type="text" id="code" placeholder="CODE" maxlength="5" style="width:200px;font-size:30px;text-transform:uppercase;letter-spacing:6px;text-align:center">
+      <button class="btn green big" id="join">JOIN</button></div>
+      <div class="status ${UI.netErr ? 'err' : ''}">${UI.netStatus || 'Ask the host for their 5-letter code.'}</div>`;
+    $('code').focus();
+    const go = () => { const c = $('code').value.trim(); if (c.length < 5) { UI.netStatus = 'Type all 5 letters of the code.'; UI.netErr = true; UI.render(); return; } UI.netStatus = 'Connecting…'; UI.netErr = false; G.demo = false; joinRoom(c, () => UI.closeMenu()); };
+    $('join').onclick = go; $('code').onkeydown = e => { if (e.key === 'Enter') go(); };
+  },
+  paneSettings(p) {
+    const s = Save.settings;
+    p.innerHTML = `<div class="row"><label>Look speed (mouse / touch) <input type="range" id="sens" min="0.3" max="2.5" step="0.1" value="${s.sens}"></label></div>
+      <div class="row"><label><input type="checkbox" id="snd" ${s.sound ? 'checked' : ''}> Sound</label></div>
+      <div class="status">Your gems and unlocks are saved in this browser.</div>`;
+    $('sens').oninput = e => { s.sens = +e.target.value; persist(); };
+    $('snd').onchange = e => { s.sound = e.target.checked; persist(); };
   },
 
   // ---------- ANIMALS ----------
   paneAnimals(p) {
     const card = (a) => {
-      const owned = Save.owned.animals.includes(a.id), sel = Save.sel.animal === a.id;
+      const owned = Save.owned.animals.includes(a.id), sel = Save.sel.animal === a.id, view = UI.viewAnimal === a.id;
       const reqOk = UI.reqMet(a);
-      return `<div class="card ${sel ? 'sel' : ''} ${owned ? '' : 'locked'} ${a.mythic ? 'mythic' : ''}" data-a="${a.id}">
-        <div class="em">${owned ? a.emoji : (a.mythic && !reqOk ? '🔒' : a.emoji)}</div><div class="nm">${a.name}</div>
+      return `<div class="card ${sel || view ? 'sel' : ''} ${owned ? '' : 'locked'} ${a.mythic ? 'mythic' : ''}" data-a="${a.id}">
+        <div class="em">${owned || !a.mythic || reqOk ? a.emoji : '🔒'}</div><div class="nm">${a.name}</div>
         <div class="ab">✨ ${a.ab.name}</div>
-        ${owned ? `<div class="own">${sel ? '✔ PLAYING' : 'OWNED'}</div>` : `<div class="pr">💎 ${a.price}</div>${a.mythic ? `<div class="req">${UI.reqText(a)}</div>` : ''}`}
+        ${owned ? `<div class="own">${sel ? '✔ PLAYING' : 'OWNED'}</div>` : `<div class="pr">${GEM}${a.price}</div>${a.mythic ? `<div class="req">${UI.reqText(a)}</div>` : ''}`}
       </div>`;
     };
-    p.innerHTML = `<h2 class="sec">Animals <span style="font-size:14px;color:var(--dim)">(${ANIMALS.length}) — click to view, click again to play or buy</span></h2>
+    p.innerHTML = `<h2 class="sec">Animals <small>(${ANIMALS.length}) tap to look, tap again to play or unlock</small></h2>
       <div class="grid">${ANIMALS.map(card).join('')}</div>
-      <h2 class="sec">✨ Mythical Creatures <span style="font-size:14px;color:var(--dim)">(${MYTHICS.length}) — reach the goal, then buy with gems</span></h2>
+      <h2 class="sec">✨ Mythical Creatures <small>(${MYTHICS.length}) reach the goal, then unlock with gems</small></h2>
       <div class="grid">${MYTHICS.map(card).join('')}</div>`;
     p.querySelectorAll('.card').forEach(el => el.onclick = () => {
       const a = CREATURE[el.dataset.a];
-      if (UI.viewAnimal !== a.id && Save.sel.animal !== a.id) { UI.viewAnimal = a.id; UI.render(); UI.showBuyBar(a); return; }
+      if (UI.viewAnimal !== a.id && Save.sel.animal !== a.id) { UI.viewAnimal = a.id; UI.render(); return; }
       UI.choose(a);
     });
     if (UI.viewAnimal) UI.showBuyBar(CREATURE[UI.viewAnimal]);
@@ -134,8 +175,8 @@ const UI = {
     const box = document.createElement('div'); box.className = 'box';
     box.style.cssText = 'position:sticky;bottom:0;display:flex;gap:12px;align-items:center;flex-wrap:wrap';
     const can = Save.gems >= a.price && UI.reqMet(a);
-    box.innerHTML = owned ? `<b>${a.emoji} ${a.name}</b><button class="btn green" id="pick">Play as ${a.name}</button>`
-      : `<b>${a.emoji} ${a.name}</b> <span class="pr" style="color:var(--y);font-weight:900">💎 ${a.price}</span> ${a.mythic ? `<span class="req" style="color:#ffb3d0">${UI.reqText(a)}</span>` : ''}
+    box.innerHTML = owned ? `<b style="font-size:20px">${a.emoji} ${a.name}</b><button class="btn green" id="pick">Play as ${a.name}</button>`
+      : `<b style="font-size:20px">${a.emoji} ${a.name}</b> <span class="card" style="padding:2px 10px;cursor:default"><span class="pr">${GEM}${a.price}</span></span> ${a.mythic ? `<span class="req" style="color:#a03a6a;font-weight:600">${UI.reqText(a)}</span>` : ''}
          <button class="btn" id="pick" ${can ? '' : 'disabled'}>${can ? 'Unlock' : !UI.reqMet(a) ? 'Goal not reached' : 'Not enough gems'}</button>`;
     $('pane').appendChild(box);
     $('pick').onclick = () => UI.choose(a);
@@ -153,14 +194,18 @@ const UI = {
     const [k, v] = Object.entries(a.need)[0], have = Math.min(v, Save.stats[k] || 0);
     return `${UI.reqMet(a) ? '✔' : '🎯'} ${{ wins: 'Win', tags: 'Tag', rounds: 'Play' }[k]} ${v} ${k === 'rounds' ? 'rounds' : k} (${have}/${v})`;
   },
+  buy(item, list) {
+    if (Save.gems < item.price) { toast('Not enough gems. Win some rounds!'); return false; }
+    Save.gems -= item.price; list.push(item.id); beep('buy'); toast('Bought ' + item.name + '!'); return true;
+  },
 
   // ---------- PATTERNS & COLORS ----------
   panePatterns(p) {
     const aid = Save.sel.animal, a = CREATURE[aid], look = myLook(aid);
     p.innerHTML = `<h2 class="sec">Colors for your ${a.name}</h2>
-      <div class="row"><b style="width:90px">Main</b><div class="colors" id="c1"></div></div>
-      <div class="row"><b style="width:90px">Pattern</b><div class="colors" id="c2"></div></div>
-      <div class="row"><button class="btn alt" id="resetC">Reset to ${a.name} colors</button></div>
+      <div class="row"><b style="width:80px">Main</b><div class="colors" id="c1"></div></div>
+      <div class="row"><b style="width:80px">Accent</b><div class="colors" id="c2"></div></div>
+      <div class="row"><button class="btn alt" id="resetC">Back to ${a.name} colors</button></div>
       <h2 class="sec">Patterns</h2><div class="grid" id="pats"></div>`;
     const sw = (el, key) => { el.innerHTML = COLORS.map(c => `<button style="background:${c}" class="${look[key] === c ? 'on' : ''}" data-c="${c}"></button>`).join(''); el.onclick = e => { const c = e.target.dataset.c; if (!c) return; Save.sel.looks[aid] = Object.assign({}, Save.sel.looks[aid], { [key]: c }); persist(); refreshLocalLook(); UI.render(); }; };
     sw($('c1'), 'c1'); sw($('c2'), 'c2');
@@ -169,10 +214,9 @@ const UI = {
     PATTERNS.forEach(pt => {
       const owned = Save.owned.patterns.includes(pt.id), on = look.pattern === pt.id;
       const d = document.createElement('div'); d.className = 'card' + (on ? ' sel' : '') + (owned ? '' : ' locked');
-      const tex = patternTexture(pt.id, look.c1, look.c2);
-      d.innerHTML = `<div class="swatch" style="background-image:url(${tex.image.toDataURL()})"></div><div class="nm">${pt.name}</div>${owned ? `<div class="own">${on ? '✔ WEARING' : 'OWNED'}</div>` : `<div class="pr">💎 ${pt.price}</div>`}`;
+      d.innerHTML = `<div class="swatch" style="background-image:url(${patternTexture(pt.id, look.c1, look.c2).image.toDataURL()})"></div><div class="nm">${pt.name}</div>${owned ? `<div class="own">${on ? '✔ WEARING' : 'OWNED'}</div>` : `<div class="pr">${GEM}${pt.price}</div>`}`;
       d.onclick = () => {
-        if (!owned) { if (Save.gems < pt.price) { toast('Not enough gems — win some rounds!'); return; } Save.gems -= pt.price; Save.owned.patterns.push(pt.id); beep('buy'); toast('Bought ' + pt.name + '!'); }
+        if (!owned && !UI.buy(pt, Save.owned.patterns)) return;
         Save.sel.looks[aid] = Object.assign({}, Save.sel.looks[aid], { pattern: pt.id }); persist(); refreshLocalLook(); UI.render();
       };
       g.appendChild(d);
@@ -190,9 +234,9 @@ const UI = {
       WEARABLES.filter(w => w.slot === slot).forEach(w => {
         const owned = Save.owned.wear.includes(w.id), on = Save.sel.wear[slot] === w.id;
         const d = document.createElement('div'); d.className = 'card' + (on ? ' sel' : '') + (owned ? '' : ' locked');
-        d.innerHTML = `<div class="em">${w.emoji}</div><div class="nm">${w.name}</div>${owned ? `<div class="own">${on ? '✔ WEARING' : 'OWNED'}</div>` : `<div class="pr">💎 ${w.price}</div>`}`;
+        d.innerHTML = `<div class="em">${w.emoji}</div><div class="nm">${w.name}</div>${owned ? `<div class="own">${on ? '✔ WEARING' : 'OWNED'}</div>` : `<div class="pr">${GEM}${w.price}</div>`}`;
         d.onclick = () => {
-          if (!owned) { if (Save.gems < w.price) { toast('Not enough gems — win some rounds!'); return; } Save.gems -= w.price; Save.owned.wear.push(w.id); beep('buy'); toast('Bought ' + w.name + '!'); }
+          if (!owned && !UI.buy(w, Save.owned.wear)) return;
           Save.sel.wear[slot] = w.id; persist(); refreshLocalLook(); UI.render();
         };
         g.appendChild(d);
@@ -202,14 +246,14 @@ const UI = {
 
   // ---------- PERKS ----------
   panePerks(p) {
-    p.innerHTML = `<h2 class="sec">Bonus abilities <span style="font-size:14px;color:var(--dim)">— work with any animal. Equip up to 2.</span></h2><div class="grid" id="perkg"></div>`;
+    p.innerHTML = `<h2 class="sec">Bonus abilities <small>work with any animal, equip up to 2</small></h2><div class="grid" id="perkg"></div>`;
     const g = $('perkg');
     PERKS.forEach(k => {
       const owned = Save.owned.perks.includes(k.id), on = Save.sel.perks.includes(k.id);
       const d = document.createElement('div'); d.className = 'card' + (on ? ' sel' : '') + (owned ? '' : ' locked');
-      d.innerHTML = `<div class="em">${k.emoji}</div><div class="nm">${k.name}</div><div class="ab">${k.desc}</div>${owned ? `<div class="own">${on ? '✔ EQUIPPED' : 'OWNED — click to equip'}</div>` : `<div class="pr">💎 ${k.price}</div>`}`;
+      d.innerHTML = `<div class="em">${k.emoji}</div><div class="nm">${k.name}</div><div class="ab">${k.desc}</div>${owned ? `<div class="own">${on ? '✔ EQUIPPED' : 'OWNED (tap to equip)'}</div>` : `<div class="pr">${GEM}${k.price}</div>`}`;
       d.onclick = () => {
-        if (!owned) { if (Save.gems < k.price) { toast('Not enough gems — win some rounds!'); return; } Save.gems -= k.price; Save.owned.perks.push(k.id); beep('buy'); toast('Bought ' + k.name + '!'); }
+        if (!owned && !UI.buy(k, Save.owned.perks)) return;
         if (Save.sel.perks.includes(k.id)) Save.sel.perks = Save.sel.perks.filter(x => x !== k.id);
         else { Save.sel.perks.push(k.id); if (Save.sel.perks.length > 2) Save.sel.perks.shift(); }
         persist(); refreshLocalLook(); UI.render();
@@ -219,86 +263,92 @@ const UI = {
   },
 
   paneHow(p) {
-    p.innerHTML = `<h2 class="sec">How to play</h2><ul class="how">
-      <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> run · move the <b>mouse</b> to look around (click the game first) · scroll to zoom</li>
-      <li><kbd>Space</kbd> jump. <b>Jump while touching a wall or tree to push off it</b> — chain wall jumps to climb!</li>
-      <li><kbd>E</kbd> or right-click: use your animal's special ability. <kbd>C</kbd> fly down. <kbd>Tab</kbd> scoreboard. <kbd>Esc</kbd> menu.</li>
-      <li>On a tablet: drag the left side to move, drag the right side to look, and use the JUMP and ✨ buttons.</li>
+    p.innerHTML = `<h2 class="sec">Controls</h2><ul class="how">
+      <li><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> run · move the <b>mouse</b> to look (click the game first) · scroll to zoom</li>
+      <li><kbd>Space</kbd> jump. <b>Jump while touching a wall or tree to push off it</b>, and chain wall jumps to climb!</li>
+      <li><kbd>E</kbd> or right-click: your animal's ability. <kbd>C</kbd> fly down. <kbd>Tab</kbd> full scoreboard. <kbd>Esc</kbd> menu.</li>
+      <li>On a tablet: drag the left side to move, drag the right side to look, and use the JUMP and ABILITY buttons.</li>
       <li>Red mushrooms are bounce pads. Climb the Great Tree, the treehouses and the cliff to get away.</li>
-      <li>Animals that are <b style="color:#ff6a5a">IT glow red</b> with a ring over their head. The radar (bottom right) shows them as red dots.</li></ul>
-      <h2 class="sec">Modes</h2><ul class="how">${Object.values(MODES).map(m => `<li><b>${m.name}:</b> ${m.desc}</li>`).join('')}</ul>
-      <h2 class="sec">Gems 💎</h2><ul class="how">
-      <li>Every round: +${REWARDS.play}. On the winning side: +${REWARDS.win}. Each tag: +${REWARDS.tag}. Survive to the end: +${REWARDS.surviveBonus}. Daily bonus: +${REWARDS.daily}.</li>
-      <li>Spend gems on animals, patterns, wearables and bonus abilities. Mythical creatures also need a goal (wins, tags or rounds played).</li>
-      <li>Your gems and unlocks are saved in this browser.</li></ul>`;
+      <li>Animals that are <b style="color:#c0402a">IT glow red</b> with a ring over their head. The map (top right) shows them as red dots.</li></ul>
+      <h2 class="sec">Modes</h2>${UI.modePicker().replace(/<button class="mode[^"]*"/g, '<div class="mode"').replace(/<\/button>/g, '</div>')}
+      <h2 class="sec">Gems</h2><ul class="how">
+      <li>Every round: +${REWARDS.play}. Winning side: +${REWARDS.win}. Each tag: +${REWARDS.tag}. Survive to the end: +${REWARDS.surviveBonus}. Daily bonus: +${REWARDS.daily}.</li>
+      <li>Spend gems on animals, patterns, wearables and bonus abilities. Mythical creatures also need a goal first.</li></ul>`;
   },
 
   // ---------- HUD ----------
   hud(dt) {
     if ($('hud').classList.contains('hide')) return;
     const me = local(); if (!me) return;
-    $('modeName').textContent = (Net.online ? '🌐 ' + Net.code + ' · ' : '') + MODES[G.mode].name;
     const t = Math.max(0, Math.ceil(G.timer));
-    $('timer').textContent = G.phase === 'play' ? `${t / 60 | 0}:${String(t % 60).padStart(2, '0')}` : G.phase === 'countdown' ? 'Get ready' : G.phase === 'end' ? 'Round over' : 'Lobby';
-    const all = [...G.critters.values()], runners = all.filter(c => !c.it && !c.frozen).length;
-    $('alive').textContent = G.mode === 'classic' ? `👥 ${all.length}` : `🏃 ${runners} / ${all.length}`;
+    $('time').textContent = G.phase === 'play' ? `${String(t / 60 | 0).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}` : G.phase === 'countdown' ? 'READY' : G.phase === 'end' ? 'DONE' : 'LOBBY';
+    const mb = $('modeBadge'); if (mb.dataset.m !== G.mode) { mb.dataset.m = G.mode; mb.src = MODE_IMG[G.mode]; }
     const role = $('role');
-    if (G.phase !== 'play') { role.className = 'lobby'; role.textContent = G.phase === 'lobby' ? (Net.online ? (Net.isHost ? 'Lobby — press Start when everyone is in' : 'Lobby — waiting for the host') : 'Free roam') : G.phase === 'countdown' ? 'Scatter!' : '—'; }
-    else if (me.frozen) { role.className = 'frozen'; role.textContent = '❄️ FROZEN — wait for a friend'; }
-    else if (me.it) { role.className = 'it'; role.textContent = G.mode === 'freeze' ? '❄️ TAGGER — freeze them!' : '🔥 YOU ARE IT — tag someone!'; }
-    else { role.className = 'run'; role.textContent = G.mode === 'freeze' ? '🏃 RUN — unfreeze friends!' : '🏃 RUN!'; }
+    if (G.phase !== 'play') { role.className = 'lobby'; role.textContent = G.phase === 'lobby' ? (Net.online ? (Net.isHost ? '🌐 Room ' + Net.code + ': press Start when everyone is in' : '🌐 Room ' + Net.code + ': waiting for the host') : 'Free roam') : G.phase === 'countdown' ? 'Scatter!' : 'Round over'; }
+    else if (me.frozen) { role.className = 'frozen'; role.textContent = '❄️ FROZEN! Wait for a friend'; }
+    else if (me.it) { role.className = 'it'; role.textContent = G.mode === 'freeze' ? '🐾 TAGGER: FREEZE THEM!' : '🐾 YOU ARE IT'; }
+    else { role.className = 'run'; role.textContent = G.mode === 'freeze' ? '🏃 RUN! Unfreeze friends' : '🏃 RUN!'; }
     $('hostStart').classList.toggle('hide', !(Net.online && Net.isHost && G.phase === 'lobby'));
-    $('gems').textContent = '💎 ' + Save.gems;
+    $('gems').querySelector('span').textContent = Save.gems;
     $('big').textContent = G.phase === 'countdown' ? Math.ceil(G.timer) : '';
     if (G.phase === 'countdown' && Math.ceil(G.timer) !== UI._lastCount) { UI._lastCount = Math.ceil(G.timer); beep('tick'); }
     $('feed').innerHTML = G.feed.map(f => `<div style="opacity:${Math.min(1, f.t)}">${escapeHtml(f.text)}</div>`).join('');
+    // ability panel
     const ab = me.def.ab, maxCd = ab.cd * (me.has('quickcharge') ? 0.7 : 1);
-    $('abEm').textContent = me.def.emoji; $('abName').textContent = ab.name; $('abKey').textContent = isTouch() ? 'Tap ✨' : 'Press E';
-    $('abFill').style.height = (me.cd / maxCd * 100) + '%'; $('abCd').textContent = me.cd > 0 ? Math.ceil(me.cd) : '';
-    $('abIcon').classList.toggle('ready', me.cd <= 0);
+    if (UI._abFor !== me.animal + me.perks.join()) {
+      UI._abFor = me.animal + me.perks.join();
+      $('abEm').textContent = me.def.emoji; $('abTag').textContent = me.def.name.toUpperCase() + ' ABILITY'; $('abName').textContent = ab.name;
+      $('abKey').textContent = isTouch() ? 'Tap ABILITY' : 'Press E';
+      $('perks').innerHTML = me.perks.map(id => `<div title="${PERK[id].name}">${PERK[id].emoji}</div>`).join('');
+    }
+    const cd = $('abCd'); cd.style.setProperty('--p', (me.cd / maxCd * 100).toFixed(1)); cd.querySelector('span').textContent = me.cd > 0 ? Math.ceil(me.cd) + 's' : 'GO';
+    cd.classList.toggle('ready', me.cd <= 0);
     if (UI.flashT > 0) { UI.flashT -= dt; if (UI.flashT <= 0) $('flash').style.opacity = 0; }
     $('blind').style.opacity = me.fx.blind > 0 ? 1 : 0;
+    UI.board(me);
     UI.radar(me);
     if (!$('score').classList.contains('hide')) UI.score(true);
+  },
+  board(me) {
+    if (G.t - (UI._bt || -9) < 0.3) return; UI._bt = G.t;   // refresh a few times a second
+    const list = [...G.critters.values()].sort((a, b) => b.tags - a.tags || (a.it - b.it));
+    let top = list.slice(0, 5); if (!top.includes(me)) top = top.slice(0, 4).concat(me);
+    $('board').innerHTML = `<div class="head">🌿 WILD TAG</div>` + top.map(c => `<div class="row ${c === me ? 'me' : ''} ${c.it ? 'it' : ''}"><span class="n">${list.indexOf(c) === 0 && c.tags > 0 ? '👑' : list.indexOf(c) + 1}</span><span class="nm">${escapeHtml(c.name)}${c === me ? ' (You)' : ''}</span><span class="t">${c.tags} tag${c.tags === 1 ? '' : 's'}</span></div>`).join('');
   },
   radar(me) {
     const cv = $('radar'), g = cv.getContext('2d'), W = cv.width, R = W / 2, range = 45;
     g.clearRect(0, 0, W, W);
-    g.strokeStyle = 'rgba(255,255,255,.15)'; g.beginPath(); g.arc(R, R, R * 0.5, 0, 7); g.stroke();
-    const yaw = G.camYaw;
+    g.strokeStyle = 'rgba(255,244,220,.25)'; g.lineWidth = 2; g.beginPath(); g.arc(R, R, R * 0.5, 0, 7); g.stroke();
+    const yaw = G.camYaw, fx = Math.sin(yaw), fz = Math.cos(yaw), rx = -Math.cos(yaw), rz = Math.sin(yaw);
     for (const c of G.critters.values()) {
-      if (c === me) continue;
-      if (c.fx.burrow > 0 || (c.vf && (c.vf.invis || c.vf.burrow))) continue;
+      if (c === me || (c.vf && (c.vf.invis || c.vf.burrow))) continue;
       const dx = c.pos.x - me.pos.x, dz = c.pos.z - me.pos.z;
-      // rotate so "forward" (camera direction) is up
-      const fx = Math.sin(yaw), fz = Math.cos(yaw), rx = -Math.cos(yaw), rz = Math.sin(yaw);
       let px = (dx * rx + dz * rz) / range * R, py = -(dx * fx + dz * fz) / range * R;
-      const l = Math.hypot(px, py); if (l > R - 5) { px *= (R - 5) / l; py *= (R - 5) / l; }
-      g.fillStyle = c.it ? '#ff3b2f' : c.frozen ? '#7fd8ff' : '#ffffff';
-      g.beginPath(); g.arc(R + px, R + py, c.it ? 5 : 3.5, 0, 7); g.fill();
+      const l = Math.hypot(px, py); if (l > R - 8) { px *= (R - 8) / l; py *= (R - 8) / l; }
+      g.fillStyle = c.it ? '#e8452f' : c.frozen ? '#9fe3ff' : '#fff4dc'; g.strokeStyle = '#173d24'; g.lineWidth = 2;
+      g.beginPath(); g.arc(R + px, R + py, c.it ? 7 : 4.5, 0, 7); g.fill(); g.stroke();
     }
-    g.fillStyle = me.it ? '#ff3b2f' : '#ffd23f'; g.beginPath(); g.moveTo(R, R - 7); g.lineTo(R - 5, R + 5); g.lineTo(R + 5, R + 5); g.fill();
+    g.fillStyle = '#ffc531'; g.strokeStyle = '#173d24'; g.beginPath(); g.moveTo(R, R - 10); g.lineTo(R - 7, R + 7); g.lineTo(R + 7, R + 7); g.closePath(); g.fill(); g.stroke();
   },
   flash(text) { $('flash').textContent = text; $('flash').style.opacity = 1; UI.flashT = 2.2; },
   score(show) {
     const el = $('score'); el.classList.toggle('hide', !show); if (!show) return;
     const list = [...G.critters.values()].sort((a, b) => b.tags - a.tags);
-    el.innerHTML = `<b>${MODES[G.mode].name}</b><table>${list.map(c => `<tr class="${c.it ? 'it' : ''} ${c.kind === 'local' ? 'me' : ''}"><td>${c.def.emoji}</td><td>${escapeHtml(c.name)}${c.kind === 'bot' ? ' <small style="color:var(--dim)">bot</small>' : ''}</td><td>${c.it ? '🔥 IT' : c.frozen ? '❄️' : '🏃'}</td><td>👉 ${c.tags}</td></tr>`).join('')}</table>`;
+    el.innerHTML = `<b style="font-size:22px">${MODES[G.mode].name}</b><table>${list.map(c => `<tr class="${c.it ? 'it' : ''} ${c.kind === 'local' ? 'me' : ''}"><td>${c.def.emoji}</td><td>${escapeHtml(c.name)}${c.kind === 'bot' ? ' <small style="opacity:.7">bot</small>' : ''}</td><td>${c.it ? '🔥 IT' : c.frozen ? '❄️' : '🏃'}</td><td>👉 ${c.tags}</td></tr>`).join('')}</table>`;
   },
   results(res, myId, won, gems, tags) {
     const el = $('results'); el.classList.remove('hide');
     const mvp = res.mvp && res.names[res.mvp];
-    el.innerHTML = `<h2>${won ? '🏆 You win!' : '😅 Not this time'}</h2><div class="sub">${escapeHtml(res.title)}</div>
-      <div class="gain">+${gems} 💎</div><div class="sub">You tagged ${tags} · ${mvp ? 'Top tagger: ' + escapeHtml(mvp) + ' (' + res.tags[res.mvp] + ')' : ''}</div>
-      <div class="sub" style="margin-top:10px">Next round starts soon…</div>`;
-    if (document.pointerLockElement && false) document.exitPointerLock();
+    el.innerHTML = `<img src="ui/medal.png" alt=""><h2>${won ? 'You win!' : 'Not this time!'}</h2><div class="status" style="font-size:17px">${escapeHtml(res.title)}</div>
+      <div class="gain">+${gems} ${GEM}</div><div class="status">You tagged ${tags}${mvp ? ' · Top tagger: ' + escapeHtml(mvp) + ' (' + res.tags[res.mvp] + ')' : ''}</div>
+      <div class="status" style="margin-top:8px">Next round starts soon…</div>`;
   },
   hideResults() { $('results').classList.add('hide'); },
 };
 function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 function toast(text) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = text; document.body.appendChild(t); setTimeout(() => t.style.opacity = 0, 1800); setTimeout(() => t.remove(), 2300); }
 
-// ---------- 3D preview in the menu ----------
+// ---------- 3D preview in the shop ----------
 const Preview = {
   init() {
     const cv = $('preview');
@@ -308,12 +358,12 @@ const Preview = {
     this.s.add(new THREE.HemisphereLight('#ffffff', '#445', 0.9));
     const d = new THREE.DirectionalLight('#fff', 0.9); d.position.set(3, 5, 4); this.s.add(d);
     this.cam = new THREE.PerspectiveCamera(35, 1, 0.1, 50);
-    const base = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.8, 0.2, 32), new THREE.MeshStandardMaterial({ color: '#2e416e' })); base.position.y = -0.1; this.s.add(base);
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.8, 0.2, 32), new THREE.MeshStandardMaterial({ color: '#7a4a25' })); base.position.y = -0.1; this.s.add(base);
     this.key = ''; this.t = 0;
     const tick = () => {
       requestAnimationFrame(tick);
-      if ($('menu').classList.contains('hide')) return;
-      const w = cv.clientWidth, h = cv.clientHeight; if (cv.width !== w * this.r.getPixelRatio() || cv.height !== h * this.r.getPixelRatio()) { this.r.setSize(w, h, false); this.cam.aspect = w / h; this.cam.updateProjectionMatrix(); }
+      if (!UI.menuOpen() || $('sheet').classList.contains('hide') || $('pside').classList.contains('hide')) return;
+      const w = cv.clientWidth, h = cv.clientHeight; if (cv.width !== Math.round(w * this.r.getPixelRatio()) || cv.height !== Math.round(h * this.r.getPixelRatio())) { this.r.setSize(w, h, false); this.cam.aspect = w / h; this.cam.updateProjectionMatrix(); }
       this.t += 0.016;
       if (this.m) { this.m.rotation.y = this.t * 0.8; animateCreature(this.m.children[0], this.t, 0.3, false, false, this.def); }
       this.r.render(this.s, this.cam);
@@ -325,9 +375,28 @@ const Preview = {
     const key = id + JSON.stringify(look); if (key === this.key) return; this.key = key;
     if (this.m) this.s.remove(this.m);
     this.def = def; this.m = new THREE.Group(); const c = buildCreature(def, look); this.m.add(c); this.s.add(this.m);
-    const h = 2.2 * def.size;
-    this.cam.position.set(0, h * 0.75, h * 2.1 + 1.5); this.cam.lookAt(0, h * 0.45, 0);
+    const box = new THREE.Box3().setFromObject(c), h = box.max.y, len = Math.max(box.max.x - box.min.x, box.max.z - box.min.z);
+    const dist = Math.max(h * 2.1, len * 1.5) + 1;
+    this.cam.position.set(0, h * 0.75, dist); this.cam.lookAt(0, h * 0.45, 0);
   },
 };
 
-loadModels(() => { initGame(); UI.init(); });
+// loading bar while the 3D models download, then start
+(function boot() {
+  let p = 10; const bar = $('loadBar'); const tick = setInterval(() => { p = Math.min(90, p + 7); bar.style.width = p + '%'; }, 120);
+  loadModels(() => { clearInterval(tick); bar.style.width = '100%'; initGame(); UI.init(); });
+})();
+
+// a clear spot for the title screen: the animal faces outward, the camera looks back at it and the Great Tree
+function titleSpot() {
+  const me = local(); if (!me) return;
+  let best = null, bestD = -1;
+  for (let a = 0; a < Math.PI * 2; a += Math.PI / 24) for (const r of [17, 20, 23]) {
+    const x = Math.sin(a) * r, z = Math.cos(a) * r; let d = 99;
+    for (const b of World.boxes) { if (b.max.x - b.min.x > 50) continue; const dx = Math.max(b.min.x - x, 0, x - b.max.x), dz = Math.max(b.min.z - z, 0, z - b.max.z); d = Math.min(d, Math.hypot(dx, dz)); }
+    for (const c of World.cyls) if (Math.hypot(c.x, c.z) > 4) d = Math.min(d, Math.hypot(c.x - x, c.z - z) - c.r);
+    if (d > bestD) { bestD = d; best = { x, z, a }; }
+  }
+  me.pos.set(best.x, 0, best.z); me.vel.set(0, 0, 0); me.ry = best.a;
+  G.titleYaw = best.a + Math.PI;
+}

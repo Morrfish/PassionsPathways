@@ -45,7 +45,7 @@ function initGame() {
   scene.add(sun); scene.add(sun.target);
   buildWorld(scene);
   clock = new THREE.Clock();
-  addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); });
+  addEventListener('resize', () => { renderer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; G._shift = null; camera.clearViewOffset(); camera.updateProjectionMatrix(); });
   setupInput();
   spawnLocal();
   requestAnimationFrame(loop);
@@ -723,7 +723,7 @@ function loop() {
   G.t = (G.t || 0) + dt;
   const host = !Net.online || Net.isHost;
   const solo = !Net.online;
-  const frozenTime = G.paused && solo;
+  const frozenTime = G.paused && solo && !G.demo;
   const me = local();
 
   if (!frozenTime) {
@@ -758,6 +758,13 @@ function loop() {
   for (const c of G.critters.values()) drawCritter(c);
   updateVfx(dt);
   for (const f of G.feed) f.t -= dt; G.feed = G.feed.filter(f => f.t > 0);
+
+  // title screen: slowly circle the player's animal, and shift the view right of the side panel
+  const title = G.paused && !G.started && typeof UI !== 'undefined' && UI.menuOpen();
+  if (title) { G.titleT = (G.titleT || 0) + dt; G.camYaw = (G.titleYaw || 0) + Math.sin(G.titleT * 0.25) * 0.6; G.camPitch = 0.22; G.camDist = 6.5; if (me) me.ry = (G.titleYaw || 0) + Math.PI + Math.sin(G.titleT * 0.25) * 0.3; }
+  const sideEl = document.querySelector('.side');
+  const shift = title && innerWidth > 600 && sideEl ? -Math.round(sideEl.offsetWidth / 2) : 0;
+  if (shift !== G._shift) { G._shift = shift; if (shift) camera.setViewOffset(innerWidth, innerHeight, shift, 0, innerWidth, innerHeight); else camera.clearViewOffset(); }
 
   // camera
   if (me) {
