@@ -99,7 +99,7 @@ function shade(hex, amt) {
 
 // ---------- Meshy models (.glb + color mask in models/, made by blender/prepare_meshy.py) ----------
 // Animals listed here use their model; the rest are built from shapes below.
-const MODEL_IDS = ['gorilla', 'dragon'];
+const MODEL_IDS = ['gorilla', 'dragon', 'fox', 'frog', 'griffin'];
 const MODELS = {};
 function loadModels(done) {
   if (!window.GLTFLoader || !MODEL_IDS.length) return done();
