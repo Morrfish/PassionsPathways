@@ -99,7 +99,7 @@ function shade(hex, amt) {
 
 // ---------- Meshy models (.glb + color mask in models/, made by blender/prepare_meshy.py) ----------
 // Animals listed here use their model; the rest are built from shapes below.
-const MODEL_IDS = ['gorilla', 'dragon', 'fox', 'frog', 'griffin'];
+const MODEL_IDS = ['gorilla', 'dragon', 'fox', 'frog', 'griffin', 'bat', 'chameleon', 'cheetah', 'eagle', 'elephant'];
 const MODELS = {};
 function loadModels(done) {
   if (!window.GLTFLoader || !MODEL_IDS.length) return done();
@@ -176,6 +176,8 @@ function buildFromModel(def, look) {
   prep('WingL', rig.wings, { side: 1 }); prep('WingR', rig.wings, { side: -1 });
   prep('Tail', rig.tails, { k: 1 }); prep('Tail2', rig.tails, { k: 1.6 });
   rig.head = prep('Head');
+  rig.ears = [prep('EarL', null, { side: 1 }), prep('EarR', null, { side: -1 })].filter(Boolean);
+  rig.trunkB = prep('Trunk');
   rig.anchors = { hat: node('Hat'), face: node('Face'), neck: node('Neck'), back: node('Back') };
   // wearable points come out of Blender turned with their bone: line them up with the model again
   for (const k in rig.anchors) { const a = rig.anchors[k]; if (a) { a.quaternion.copy(a.parent.getWorldQuaternion(new THREE.Quaternion()).invert()); a.scale.setScalar(1); } }
@@ -365,6 +367,8 @@ function animateCreature(root, t, move, air, flying, def) {
     rig.wings.forEach(w => boneRot(w, 'z', w.userData.side * flap));
     rig.tails.forEach(tl => boneRot(tl, 'y', Math.sin(t * 4 - tl.userData.k) * 0.25 * tl.userData.k));
     if (rig.head) boneRot(rig.head, 'x', Math.sin(t * 2.2) * 0.05);
+    rig.ears.forEach(e => boneRot(e, 'y', e.userData.side * (0.12 + Math.sin(t * 3) * 0.18)));
+    if (rig.trunkB) boneRot(rig.trunkB, 'x', Math.sin(t * 2.5) * 0.15 - move * 0.2, 'y', Math.sin(t * 1.7) * 0.15);
     if (rig.aura) rig.aura.rotation.z = t;
     if (rig.spin) rig.spin.rotation.y = t * 12;
     if (rig.cape) rig.cape.rotation.x = 0.35 + move * 0.6 + Math.sin(t * 8) * 0.08;
