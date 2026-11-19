@@ -5,7 +5,7 @@
 const ANIMALS = [
   // ---- free starters ----
   { id:'gorilla', name:'Gorilla', emoji:'🦍', price:0, spd:9, jmp:10, size:1.15, climb:1.4, shape:'ape',
-    c1:'#3a3a3f', c2:'#7a6a60', parts:['ears_round','arms_long'],
+    c1:'#3d3a3e', c2:'#c8956a', parts:['ears_round','arms_long'],
     ab:{ id:'roar', name:'Chest Pound', cd:12, dur:1.6, r:8, desc:'Pound your chest: stuns everyone close to you.' } },
   { id:'monkey', name:'Monkey', emoji:'🐒', price:0, spd:9.5, jmp:11, size:0.9, climb:1.8, shape:'ape',
     c1:'#8a5a2b', c2:'#e8c79a', parts:['ears_round','tail_curly','arms_long'],
@@ -77,7 +77,7 @@ const ANIMALS = [
 // Mythical creatures: cost gems AND need a goal reached first.
 const MYTHICS = [
   { id:'dragon', name:'Dragon', emoji:'🐉', price:2500, need:{wins:10}, spd:10.5, jmp:11, size:1.3, climb:1.4, shape:'quad', glow:'#ff5a1f',
-    c1:'#2f8f4a', c2:'#f0c040', parts:['horns','wings_bat','tail_long','spikes_back','snout_long'],
+    c1:'#2f9a4c', c2:'#eedba6', parts:['horns','wings_bat','tail_long','spikes_back','snout_long'],
     ab:{ id:'firetrail', name:'Fire Dash', cd:10, dur:1.2, r:3, desc:'Blast forward leaving flames that stun anyone who touches them.' } },
   { id:'phoenix', name:'Phoenix', emoji:'🔥', price:2500, need:{rounds:25}, spd:10, jmp:11, size:0.95, climb:1.2, shape:'bird', glow:'#ffb020',
     c1:'#ff5a1f', c2:'#ffd23f', parts:['beak','wings_bird','crest','flames'],

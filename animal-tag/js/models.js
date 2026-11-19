@@ -97,6 +97,47 @@ function shade(hex, amt) {
   return '#' + c.getHexString();
 }
 
+// ---------- Blender models (.glb in models/) ----------
+// Animals listed here load models/<id>.glb; the rest are built from shapes below.
+// Empty until the Meshy models are converted (see blender/build_models.py for the naming rules).
+const MODEL_IDS = [];
+const MODELS = {};
+function loadModels(done) {
+  if (!window.GLTFLoader || !MODEL_IDS.length) return done();
+  const loader = new GLTFLoader(); let left = MODEL_IDS.length;
+  const fin = () => { if (--left === 0) done(); };
+  MODEL_IDS.forEach(id => loader.load('models/' + id + '.glb', g => { MODELS[id] = g.scene; fin(); }, undefined, e => { console.warn('Model ' + id + ' did not load, using the built-in shape version.', e); fin(); }));
+}
+
+function buildFromModel(def, mats) {
+  const { bodyMat, accMat } = mats;
+  const wingMat = new THREE.MeshStandardMaterial({ color: shade(mats.c1, 0.35), roughness: 0.8 });
+  const body = MODELS[def.id].clone(true);
+  const fixedMats = {};
+  body.traverse(n => {
+    if (!n.isMesh) return;
+    n.castShadow = true;
+    const name = n.material.name;
+    if (name === 'Body') n.material = bodyMat;
+    else if (name === 'Accent') n.material = accMat;
+    else if (name === 'Wing') n.material = wingMat;
+    else n.material = fixedMats[name] = fixedMats[name] || n.material.clone();
+  });
+  const rig = { legs: [], arms: [], wings: [], tails: [], body, mats: [bodyMat, accMat, wingMat], bodyMat, glb: true };
+  const node = (n) => body.getObjectByName(n);
+  const keep = (n, list, extra) => { const o = node(n); if (o) { o.userData.rest = o.rotation.clone(); Object.assign(o.userData, extra || {}); list.push(o); } return o; };
+  keep('LegL', rig.legs, { phase: 1 }); keep('LegR', rig.legs, { phase: -1 });
+  keep('LegFL', rig.legs, { phase: 1 }); keep('LegFR', rig.legs, { phase: -1 }); keep('LegBL', rig.legs, { phase: -1 }); keep('LegBR', rig.legs, { phase: 1 });
+  keep('ArmL', rig.arms, { phase: -1 }); keep('ArmR', rig.arms, { phase: 1 });
+  ['WingL', 'WingR'].forEach(n => keep(n, rig.wings, { side: n === 'WingL' ? 1 : -1 }));
+  keep('Tail', rig.tails);
+  rig.head = node('Head'); if (rig.head) rig.head.userData.rest = rig.head.rotation.clone();
+  rig.anchors = { hat: node('Hat'), face: node('Face'), neck: node('Neck'), back: node('Back') };
+  rig.headR = (rig.head && rig.head.userData.headR) || 0.3;
+  rig.eyeX = (rig.head && rig.head.userData.eyeX) || 0.1;
+  return rig;
+}
+
 // Builds a creature mesh. Origin at the feet, facing +Z. Returns a Group with userData.rig for animation.
 function buildCreature(def, look) {
   look = look || {};
@@ -114,6 +155,19 @@ function buildCreature(def, look) {
   const mats = [bodyMat, accMat, darkMat];
 
   const root = new THREE.Group();
+  if (MODELS[def.id]) {
+    const rig = buildFromModel(def, { bodyMat, accMat, c1 });
+    root.add(rig.body);
+    addWearables(rig, look.wear || {}, rig.head, rig.headR, def.shape, def, rig.anchors, rig.eyeX);
+    if (def.glow) {
+      const aura = new THREE.Mesh(new THREE.RingGeometry(0.7, 0.95, 32), new THREE.MeshBasicMaterial({ color: def.glow, transparent: true, opacity: .55, side: THREE.DoubleSide }));
+      aura.rotation.x = -Math.PI / 2; aura.position.y = 0.05; root.add(aura); rig.aura = aura;
+      const pl = new THREE.PointLight(def.glow, 0.8, 5); pl.position.y = 1.2; root.add(pl);
+    }
+    root.scale.setScalar(def.size);
+    root.userData.rig = rig;
+    return root;
+  }
   const body = new THREE.Group(); root.add(body);        // everything that tilts/bobs
   const rig = { legs: [], arms: [], wings: [], tails: [], body, mats, bodyMat };
   const S = (r, w = 14, h = 10) => new THREE.SphereGeometry(r, w, h);
@@ -252,6 +306,20 @@ function buildCreature(def, look) {
 function animateCreature(root, t, move, air, flying, def) {
   const rig = root.userData.rig; if (!rig) return;
   const sw = Math.sin(t * 12) * 0.9 * move;
+  if (rig.glb) {
+    const r = (o) => o.userData.rest;
+    rig.legs.forEach(l => { l.rotation.x = r(l).x + (air ? -0.35 : sw * 0.6 * l.userData.phase); });
+    rig.arms.forEach(a => { a.rotation.x = r(a).x + (air ? -2.3 + Math.sin(t * 10 + a.userData.phase) * 0.35 : sw * 0.55 * a.userData.phase); a.rotation.z = r(a).z + (air ? -a.userData.phase * 0.45 : 0); });
+    const flap = flying ? Math.sin(t * 12) * 0.75 : air ? Math.sin(t * 8) * 0.45 : Math.sin(t * 2) * 0.06;
+    rig.wings.forEach(w => { w.rotation.z = r(w).z + w.userData.side * flap; });
+    rig.tails.forEach(tl => { tl.rotation.y = r(tl).y + Math.sin(t * 4) * 0.3; });
+    if (rig.head) rig.head.rotation.x = rig.head.userData.rest.x + Math.sin(t * 2.2) * 0.05;
+    if (rig.aura) rig.aura.rotation.z = t;
+    if (rig.spin) rig.spin.rotation.y = t * 12;
+    if (rig.cape) rig.cape.rotation.x = 0.35 + move * 0.6 + Math.sin(t * 8) * 0.08;
+    rig.body.position.y = move > 0.1 && !air ? Math.abs(Math.sin(t * 12)) * 0.05 : 0;
+    return;
+  }
   rig.legs.forEach((l, i) => { l.rotation.x = air ? (i % 2 ? 0.5 : -0.5) : (i % 2 ? sw : -sw) * (i >= 2 && def.shape === 'quad' ? -1 : 1); });
   if (def.shape === 'ape') rig.arms.forEach((a, i) => { a.rotation.x = air ? -2.4 + Math.sin(t * 10 + i) * 0.4 : -0.35 + (i ? -sw : sw) * 0.9; a.rotation.z = (i ? 1 : -1) * (air ? 0.6 : 0.15); });
   else rig.arms.forEach((a, i) => { a.rotation.x = -0.6 + (i ? sw : -sw) * 0.3; });
@@ -267,7 +335,7 @@ function animateCreature(root, t, move, air, flying, def) {
 }
 
 // Puts wearables on an animal. Hat/face go on the head; neck/back go on the body.
-function addWearables(rig, wear, head, headR, shape, def) {
+function addWearables(rig, wear, head, headR, shape, def, anchors, eyeXOverride) {
   const body = rig.body;
   const M = (c, o) => new THREE.MeshStandardMaterial(Object.assign({ color: c, roughness: 0.6 }, o || {}));
   const add = (geo, mat, x, y, z, parent) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; parent.add(m); return m; };
@@ -279,7 +347,8 @@ function addWearables(rig, wear, head, headR, shape, def) {
   const neck = { quad: [0, 1.0, 0.55], ape: [0, 1.38, 0.12], biped: [0, 1.38, 0.15], bird: [0, 1.12, 0.1], blob: [0, 0.4, 0.4], spider: [0, 0.65, 0.15] }[shape];
   const back = { quad: [0, 1.15, -0.2], ape: [0, 1.15, -0.4], biped: [0, 1.15, -0.4], bird: [0, 0.95, -0.42], blob: [0, 0.9, -0.3], spider: [0, 1.0, -0.4] }[shape];
 
-  const hat = new THREE.Group(); hat.position.set(0, topY, 0); head.add(hat);
+  anchors = anchors || {};
+  const hat = new THREE.Group(); if (anchors.hat) anchors.hat.add(hat); else { hat.position.set(0, topY, 0); head.add(hat); }
   switch (wear.hat) {
     case 'cap': add(new THREE.SphereGeometry(R * 0.85, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), M('#e8423a'), 0, -0.05, 0, hat); add(new THREE.BoxGeometry(R * 1.2, 0.03, R * 0.8), M('#e8423a'), 0, 0, R * 0.8, hat); break;
     case 'beanie': add(new THREE.SphereGeometry(R * 0.88, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), M('#3a7bd5'), 0, -0.08, 0, hat); add(new THREE.TorusGeometry(R * 0.82, 0.06, 6, 20), M('#2a5ab0'), 0, -0.06, 0, hat).rotation.x = Math.PI / 2; add(new THREE.SphereGeometry(0.1, 8, 6), M('#fff'), 0, R * 0.85, 0, hat); break;
@@ -297,8 +366,9 @@ function addWearables(rig, wear, head, headR, shape, def) {
     case 'headphones': { const band = add(new THREE.TorusGeometry(R * 0.95, 0.04, 6, 20, Math.PI), M('#222'), 0, -R * 0.3, 0, hat); band.rotation.y = Math.PI / 2; band.rotation.z = 0; [-1, 1].forEach(s => add(new THREE.CylinderGeometry(0.15, 0.15, 0.1, 14), M('#ff4fa3'), s * R * 0.98, -R * 0.35, 0, hat).rotation.z = Math.PI / 2); break; }
   }
 
-  const face = new THREE.Group(); face.position.set(0, hasTopEyes ? (shape === 'blob' ? 0.47 : 0.3) : eyeY, hasTopEyes ? 0.25 : faceZ + 0.04); head.add(face);
-  const ex = hasTopEyes ? 0.26 : R * 0.42;
+  const face = new THREE.Group();
+  if (anchors.face) anchors.face.add(face); else { face.position.set(0, hasTopEyes ? (shape === 'blob' ? 0.47 : 0.3) : eyeY, hasTopEyes ? 0.25 : faceZ + 0.04); head.add(face); }
+  const ex = eyeXOverride || (hasTopEyes ? 0.26 : R * 0.42);
   const lens = (mat, r) => [-1, 1].forEach(s => add(new THREE.CylinderGeometry(r, r, 0.03, 16), mat, s * ex, 0, 0.02, face).rotation.x = Math.PI / 2);
   const bridge = (mat) => add(new THREE.BoxGeometry(ex * 0.9, 0.025, 0.025), mat, 0, 0.02, 0.03, face);
   switch (wear.face) {
@@ -312,7 +382,7 @@ function addWearables(rig, wear, head, headR, shape, def) {
     case 'mustache': [-1, 1].forEach(s => { const m = add(new THREE.CapsuleGeometry(0.04, R * 0.35, 4, 6), M('#3a2410'), s * R * 0.2, -R * 0.42, 0.06 + R * 0.1, face); m.rotation.z = Math.PI / 2 + s * 0.3; }); break;
   }
 
-  const nk = new THREE.Group(); nk.position.set(neck[0], neck[1], neck[2]); body.add(nk);
+  const nk = new THREE.Group(); if (anchors.neck) anchors.neck.add(nk); else { nk.position.set(neck[0], neck[1], neck[2]); body.add(nk); }
   switch (wear.neck) {
     case 'bowtie': [-1, 1].forEach(s => add(new THREE.ConeGeometry(0.1, 0.18, 4), M('#c33a3a'), s * 0.09, 0, 0.12, nk).rotation.z = s * Math.PI / 2); add(new THREE.SphereGeometry(0.05, 8, 6), M('#c33a3a'), 0, 0, 0.12, nk); break;
     case 'scarf': add(new THREE.TorusGeometry(0.3, 0.08, 8, 20), M('#e8423a'), 0, 0, 0, nk).rotation.x = Math.PI / 2; add(new THREE.BoxGeometry(0.14, 0.4, 0.06), M('#e8423a'), 0.12, -0.2, 0.28, nk); break;
@@ -321,7 +391,7 @@ function addWearables(rig, wear, head, headR, shape, def) {
     case 'medal': add(new THREE.TorusGeometry(0.28, 0.02, 6, 24), M('#3a7bd5'), 0, 0, 0.02, nk).rotation.x = Math.PI / 2.4; add(new THREE.CylinderGeometry(0.11, 0.11, 0.03, 16), M('#ffd23f', { metalness: .9, roughness: .2, emissive: '#7a5a00', emissiveIntensity: .4 }), 0, -0.2, 0.3, nk).rotation.x = Math.PI / 2; break;
   }
 
-  const bk = new THREE.Group(); bk.position.set(back[0], back[1], back[2]); body.add(bk);
+  const bk = new THREE.Group(); if (anchors.back) anchors.back.add(bk); else { bk.position.set(back[0], back[1], back[2]); body.add(bk); }
   switch (wear.back) {
     case 'cape': { const c = add(new THREE.BoxGeometry(0.7, 0.9, 0.03), M('#c33a3a', { side: THREE.DoubleSide }), 0, -0.3, -0.05, bk); c.rotation.x = 0.35; rig.cape = c; break; }
     case 'backpack': add(new THREE.BoxGeometry(0.45, 0.5, 0.25), M('#ff9a3c'), 0, 0, -0.08, bk); add(new THREE.BoxGeometry(0.35, 0.2, 0.08), M('#e07a20'), 0, -0.1, -0.24, bk); break;
