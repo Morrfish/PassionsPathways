@@ -36,6 +36,7 @@ const UI = {
     const today = new Date().toISOString().slice(0, 10);
     if (Save.lastDaily !== today) { Save.lastDaily = today; Save.gems += REWARDS.daily; persist(); setTimeout(() => toast(`🎁 Daily bonus: +${REWARDS.daily} gems!`), 900); }
     Preview.init();
+    if (TEST_MODE) setTimeout(() => toast('🧪 Test mode: everything unlocked, nothing is saved'), 1500);
     // title screen: a few animals roam around while you pick
     if (!Net.online) { clearBots(); addBots(6); G.demo = true; titleSpot(); }
     $('loading').classList.add('hide');
@@ -154,7 +155,7 @@ const UI = {
       const owned = Save.owned.animals.includes(a.id), sel = Save.sel.animal === a.id, view = UI.viewAnimal === a.id;
       const reqOk = UI.reqMet(a);
       return `<div class="card ${sel || view ? 'sel' : ''} ${owned ? '' : 'locked'} ${a.mythic ? 'mythic' : ''}" data-a="${a.id}">
-        <div class="em">${owned || !a.mythic || reqOk ? a.emoji : '🔒'}</div><div class="nm">${a.name}</div>
+        ${hasModel(a.id) ? '<span class="b3d">3D</span>' : ''}<div class="em">${owned || !a.mythic || reqOk ? a.emoji : '🔒'}</div><div class="nm">${a.name}</div>
         <div class="ab">✨ ${a.ab.name}</div>
         ${owned ? `<div class="own">${sel ? '✔ PLAYING' : 'OWNED'}</div>` : `<div class="pr">${GEM}${a.price}</div>${a.mythic ? `<div class="req">${UI.reqText(a)}</div>` : ''}`}
       </div>`;
