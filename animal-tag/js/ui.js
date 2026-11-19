@@ -330,5 +330,4 @@ const Preview = {
   },
 };
 
-initGame();
-UI.init();
+loadModels(() => { initGame(); UI.init(); });

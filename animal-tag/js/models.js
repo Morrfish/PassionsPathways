@@ -97,6 +97,99 @@ function shade(hex, amt) {
   return '#' + c.getHexString();
 }
 
+// ---------- Meshy models (.glb + color mask in models/, made by blender/prepare_meshy.py) ----------
+// Animals listed here use their model; the rest are built from shapes below.
+const MODEL_IDS = ['gorilla', 'dragon'];
+const MODELS = {};
+function loadModels(done) {
+  if (!window.GLTFLoader || !MODEL_IDS.length) return done();
+  const loader = new GLTFLoader(), tl = new THREE.TextureLoader();
+  let left = MODEL_IDS.length * 2;
+  const fin = () => { if (--left === 0) done(); };
+  MODEL_IDS.forEach(id => {
+    MODELS[id] = {};
+    loader.load('models/' + id + '.glb', g => { MODELS[id].scene = g.scene; fin(); }, undefined, e => { console.warn('Model ' + id + ' did not load, using the built-in shape version.', e); fin(); });
+    tl.load('models/' + id + '_mask.png', t => { t.flipY = false; MODELS[id].mask = t; fin(); }, undefined, () => fin());
+  });
+}
+function hasModel(id) { return !!(MODELS[id] && MODELS[id].scene); }
+
+// copy of a model that has a skeleton (each copy needs its own bones)
+function cloneSkinned(source) {
+  const srcOf = new Map(), copyOf = new Map(), copy = source.clone();
+  (function walk(a, b) { srcOf.set(b, a); copyOf.set(a, b); for (let i = 0; i < a.children.length; i++) walk(a.children[i], b.children[i]); })(source, copy);
+  copy.traverse(n => {
+    if (!n.isSkinnedMesh) return;
+    const sm = srcOf.get(n);
+    n.skeleton = sm.skeleton.clone(); n.bindMatrix.copy(sm.bindMatrix);
+    n.skeleton.bones = sm.skeleton.bones.map(b => copyOf.get(b));
+    n.bind(n.skeleton, n.bindMatrix);
+  });
+  return copy;
+}
+
+// The model keeps its painted look unless the player picked other colors or a pattern.
+// Then the mask says where to repaint: red = main color/pattern, green = accent color.
+// The painted light and dark shading is kept by scaling with the original brightness.
+function modelMaterial(orig, src, info, look, def) {
+  const m = orig.clone(); m.roughness = 0.85; m.metalness = 0;
+  if (m.map) m.map.encoding = THREE.LinearEncoding;   // the game shows colors as-is (no color conversion)
+  const pid = look.pattern || def.defPattern || 'solid', c1 = look.c1 || def.c1, c2 = look.c2 || def.c2;
+  const changed = pid !== (def.defPattern || 'solid') || c1 !== def.c1 || c2 !== def.c2;
+  if (!changed || !src.mask) return m;
+  const u = { maskMap: { value: src.mask }, patMap: { value: patternTexture(pid, c1, c2) }, accCol: { value: new THREE.Color(c2) },
+    bodyLum: { value: info.bodyLum || 0.4 }, accLum: { value: info.accLum || 0.7 } };
+  m.onBeforeCompile = sh => {
+    Object.assign(sh.uniforms, u);
+    sh.vertexShader = 'varying vec3 vObjPos;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvObjPos = position;');
+    sh.fragmentShader = 'uniform sampler2D maskMap; uniform sampler2D patMap; uniform vec3 accCol; uniform float bodyLum; uniform float accLum; varying vec3 vObjPos;\n' +
+      sh.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
+      { vec4 mk = texture2D(maskMap, vUv); float l = dot(sampledDiffuseColor.rgb, vec3(0.299, 0.587, 0.114));
+        vec2 pu = vec2((atan(vObjPos.x, vObjPos.z) / 6.2832 + 0.5) * 2.0, vObjPos.y * 0.9);
+        vec3 pc = texture2D(patMap, pu).rgb;
+        diffuseColor.rgb = mix(diffuseColor.rgb, pc * clamp(l / bodyLum, 0.35, 1.8), mk.r);
+        diffuseColor.rgb = mix(diffuseColor.rgb, accCol * clamp(l / accLum, 0.35, 1.3), mk.g); }`);
+  };
+  m.customProgramCacheKey = () => 'wildtag-recolor';
+  return m;
+}
+
+function buildFromModel(def, look) {
+  const src = MODELS[def.id], body = cloneSkinned(src.scene);
+  let info = {}; body.traverse(n => { if (n.userData && n.userData.headR) info = n.userData; });
+  const mats = [];
+  body.traverse(n => { if (n.isMesh) { n.castShadow = true; n.frustumCulled = false; n.material = modelMaterial(n.material, src, info, look, def); mats.push(n.material); } });
+  body.updateMatrixWorld(true);
+  const rig = { legs: [], arms: [], wings: [], tails: [], body, mats, bodyMat: mats[0], glb: true };
+  const node = (n) => body.getObjectByName(n);
+  // for each bone, remember its rest pose and the model's x/y/z axes as seen from the bone
+  const prep = (n, list, extra) => {
+    const b = node(n); if (!b) return null;
+    const inv = b.getWorldQuaternion(new THREE.Quaternion()).invert();
+    b.userData.rest = b.quaternion.clone();
+    b.userData.ax = { x: new THREE.Vector3(1, 0, 0).applyQuaternion(inv), y: new THREE.Vector3(0, 1, 0).applyQuaternion(inv), z: new THREE.Vector3(0, 0, 1).applyQuaternion(inv) };
+    Object.assign(b.userData, extra || {}); if (list) list.push(b); return b;
+  };
+  prep('LegL', rig.legs, { phase: 1 }); prep('LegR', rig.legs, { phase: -1 });
+  prep('LegFL', rig.legs, { phase: 1 }); prep('LegFR', rig.legs, { phase: -1 }); prep('LegBL', rig.legs, { phase: -1 }); prep('LegBR', rig.legs, { phase: 1 });
+  prep('ArmL', rig.arms, { phase: -1 }); prep('ArmR', rig.arms, { phase: 1 });
+  prep('WingL', rig.wings, { side: 1 }); prep('WingR', rig.wings, { side: -1 });
+  prep('Tail', rig.tails, { k: 1 }); prep('Tail2', rig.tails, { k: 1.6 });
+  rig.head = prep('Head');
+  rig.anchors = { hat: node('Hat'), face: node('Face'), neck: node('Neck'), back: node('Back') };
+  // wearable points come out of Blender turned with their bone: line them up with the model again
+  for (const k in rig.anchors) { const a = rig.anchors[k]; if (a) { a.quaternion.copy(a.parent.getWorldQuaternion(new THREE.Quaternion()).invert()); a.scale.setScalar(1); } }
+  rig.headR = info.headR || 0.3; rig.eyeX = info.eyeX || 0.1;
+  return rig;
+}
+const _bq = new THREE.Quaternion(), _bq2 = new THREE.Quaternion();
+// turn a bone from its rest pose around the model's axis (x = nod/swing, y = turn, z = flap)
+function boneRot(b, ax, a, ax2, a2) {
+  b.quaternion.copy(b.userData.rest);
+  if (a) b.quaternion.multiply(_bq.setFromAxisAngle(b.userData.ax[ax], a));
+  if (a2) b.quaternion.multiply(_bq2.setFromAxisAngle(b.userData.ax[ax2], a2));
+}
+
 // Builds a creature mesh. Origin at the feet, facing +Z. Returns a Group with userData.rig for animation.
 function buildCreature(def, look) {
   look = look || {};
@@ -114,6 +207,19 @@ function buildCreature(def, look) {
   const mats = [bodyMat, accMat, darkMat];
 
   const root = new THREE.Group();
+  if (hasModel(def.id)) {
+    const rig = buildFromModel(def, look);
+    root.add(rig.body);
+    addWearables(rig, look.wear || {}, rig.head, rig.headR, def.shape, def, rig.anchors, rig.eyeX);
+    if (def.glow) {
+      const aura = new THREE.Mesh(new THREE.RingGeometry(0.7, 0.95, 32), new THREE.MeshBasicMaterial({ color: def.glow, transparent: true, opacity: .55, side: THREE.DoubleSide }));
+      aura.rotation.x = -Math.PI / 2; aura.position.y = 0.05; root.add(aura); rig.aura = aura;
+      const pl = new THREE.PointLight(def.glow, 0.8, 5); pl.position.y = 1.2; root.add(pl);
+    }
+    root.scale.setScalar(def.size);
+    root.userData.rig = rig;
+    return root;
+  }
   const body = new THREE.Group(); root.add(body);        // everything that tilts/bobs
   const rig = { legs: [], arms: [], wings: [], tails: [], body, mats, bodyMat };
   const S = (r, w = 14, h = 10) => new THREE.SphereGeometry(r, w, h);
@@ -252,6 +358,19 @@ function buildCreature(def, look) {
 function animateCreature(root, t, move, air, flying, def) {
   const rig = root.userData.rig; if (!rig) return;
   const sw = Math.sin(t * 12) * 0.9 * move;
+  if (rig.glb) {
+    rig.legs.forEach(l => boneRot(l, 'x', air ? -0.3 * l.userData.phase : sw * 0.55 * l.userData.phase));
+    rig.arms.forEach(a => air ? boneRot(a, 'x', -0.35 + Math.sin(t * 10 + a.userData.phase) * 0.1) : boneRot(a, 'x', sw * 0.35 * a.userData.phase));
+    const flap = flying ? Math.sin(t * 12) * 0.7 : air ? Math.sin(t * 8) * 0.4 : Math.sin(t * 2) * 0.05;
+    rig.wings.forEach(w => boneRot(w, 'z', w.userData.side * flap));
+    rig.tails.forEach(tl => boneRot(tl, 'y', Math.sin(t * 4 - tl.userData.k) * 0.25 * tl.userData.k));
+    if (rig.head) boneRot(rig.head, 'x', Math.sin(t * 2.2) * 0.05);
+    if (rig.aura) rig.aura.rotation.z = t;
+    if (rig.spin) rig.spin.rotation.y = t * 12;
+    if (rig.cape) rig.cape.rotation.x = 0.35 + move * 0.6 + Math.sin(t * 8) * 0.08;
+    rig.body.position.y = move > 0.1 && !air ? Math.abs(Math.sin(t * 12)) * 0.05 : 0;
+    return;
+  }
   rig.legs.forEach((l, i) => { l.rotation.x = air ? (i % 2 ? 0.5 : -0.5) : (i % 2 ? sw : -sw) * (i >= 2 && def.shape === 'quad' ? -1 : 1); });
   if (def.shape === 'ape') rig.arms.forEach((a, i) => { a.rotation.x = air ? -2.4 + Math.sin(t * 10 + i) * 0.4 : -0.35 + (i ? -sw : sw) * 0.9; a.rotation.z = (i ? 1 : -1) * (air ? 0.6 : 0.15); });
   else rig.arms.forEach((a, i) => { a.rotation.x = -0.6 + (i ? sw : -sw) * 0.3; });
@@ -267,7 +386,7 @@ function animateCreature(root, t, move, air, flying, def) {
 }
 
 // Puts wearables on an animal. Hat/face go on the head; neck/back go on the body.
-function addWearables(rig, wear, head, headR, shape, def) {
+function addWearables(rig, wear, head, headR, shape, def, anchors, eyeXOverride) {
   const body = rig.body;
   const M = (c, o) => new THREE.MeshStandardMaterial(Object.assign({ color: c, roughness: 0.6 }, o || {}));
   const add = (geo, mat, x, y, z, parent) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.castShadow = true; parent.add(m); return m; };
@@ -279,7 +398,8 @@ function addWearables(rig, wear, head, headR, shape, def) {
   const neck = { quad: [0, 1.0, 0.55], ape: [0, 1.38, 0.12], biped: [0, 1.38, 0.15], bird: [0, 1.12, 0.1], blob: [0, 0.4, 0.4], spider: [0, 0.65, 0.15] }[shape];
   const back = { quad: [0, 1.15, -0.2], ape: [0, 1.15, -0.4], biped: [0, 1.15, -0.4], bird: [0, 0.95, -0.42], blob: [0, 0.9, -0.3], spider: [0, 1.0, -0.4] }[shape];
 
-  const hat = new THREE.Group(); hat.position.set(0, topY, 0); head.add(hat);
+  anchors = anchors || {};
+  const hat = new THREE.Group(); if (anchors.hat) anchors.hat.add(hat); else { hat.position.set(0, topY, 0); head.add(hat); }
   switch (wear.hat) {
     case 'cap': add(new THREE.SphereGeometry(R * 0.85, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), M('#e8423a'), 0, -0.05, 0, hat); add(new THREE.BoxGeometry(R * 1.2, 0.03, R * 0.8), M('#e8423a'), 0, 0, R * 0.8, hat); break;
     case 'beanie': add(new THREE.SphereGeometry(R * 0.88, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), M('#3a7bd5'), 0, -0.08, 0, hat); add(new THREE.TorusGeometry(R * 0.82, 0.06, 6, 20), M('#2a5ab0'), 0, -0.06, 0, hat).rotation.x = Math.PI / 2; add(new THREE.SphereGeometry(0.1, 8, 6), M('#fff'), 0, R * 0.85, 0, hat); break;
@@ -297,8 +417,9 @@ function addWearables(rig, wear, head, headR, shape, def) {
     case 'headphones': { const band = add(new THREE.TorusGeometry(R * 0.95, 0.04, 6, 20, Math.PI), M('#222'), 0, -R * 0.3, 0, hat); band.rotation.y = Math.PI / 2; band.rotation.z = 0; [-1, 1].forEach(s => add(new THREE.CylinderGeometry(0.15, 0.15, 0.1, 14), M('#ff4fa3'), s * R * 0.98, -R * 0.35, 0, hat).rotation.z = Math.PI / 2); break; }
   }
 
-  const face = new THREE.Group(); face.position.set(0, hasTopEyes ? (shape === 'blob' ? 0.47 : 0.3) : eyeY, hasTopEyes ? 0.25 : faceZ + 0.04); head.add(face);
-  const ex = hasTopEyes ? 0.26 : R * 0.42;
+  const face = new THREE.Group();
+  if (anchors.face) anchors.face.add(face); else { face.position.set(0, hasTopEyes ? (shape === 'blob' ? 0.47 : 0.3) : eyeY, hasTopEyes ? 0.25 : faceZ + 0.04); head.add(face); }
+  const ex = eyeXOverride || (hasTopEyes ? 0.26 : R * 0.42);
   const lens = (mat, r) => [-1, 1].forEach(s => add(new THREE.CylinderGeometry(r, r, 0.03, 16), mat, s * ex, 0, 0.02, face).rotation.x = Math.PI / 2);
   const bridge = (mat) => add(new THREE.BoxGeometry(ex * 0.9, 0.025, 0.025), mat, 0, 0.02, 0.03, face);
   switch (wear.face) {
@@ -312,7 +433,7 @@ function addWearables(rig, wear, head, headR, shape, def) {
     case 'mustache': [-1, 1].forEach(s => { const m = add(new THREE.CapsuleGeometry(0.04, R * 0.35, 4, 6), M('#3a2410'), s * R * 0.2, -R * 0.42, 0.06 + R * 0.1, face); m.rotation.z = Math.PI / 2 + s * 0.3; }); break;
   }
 
-  const nk = new THREE.Group(); nk.position.set(neck[0], neck[1], neck[2]); body.add(nk);
+  const nk = new THREE.Group(); if (anchors.neck) anchors.neck.add(nk); else { nk.position.set(neck[0], neck[1], neck[2]); body.add(nk); }
   switch (wear.neck) {
     case 'bowtie': [-1, 1].forEach(s => add(new THREE.ConeGeometry(0.1, 0.18, 4), M('#c33a3a'), s * 0.09, 0, 0.12, nk).rotation.z = s * Math.PI / 2); add(new THREE.SphereGeometry(0.05, 8, 6), M('#c33a3a'), 0, 0, 0.12, nk); break;
     case 'scarf': add(new THREE.TorusGeometry(0.3, 0.08, 8, 20), M('#e8423a'), 0, 0, 0, nk).rotation.x = Math.PI / 2; add(new THREE.BoxGeometry(0.14, 0.4, 0.06), M('#e8423a'), 0.12, -0.2, 0.28, nk); break;
@@ -321,7 +442,7 @@ function addWearables(rig, wear, head, headR, shape, def) {
     case 'medal': add(new THREE.TorusGeometry(0.28, 0.02, 6, 24), M('#3a7bd5'), 0, 0, 0.02, nk).rotation.x = Math.PI / 2.4; add(new THREE.CylinderGeometry(0.11, 0.11, 0.03, 16), M('#ffd23f', { metalness: .9, roughness: .2, emissive: '#7a5a00', emissiveIntensity: .4 }), 0, -0.2, 0.3, nk).rotation.x = Math.PI / 2; break;
   }
 
-  const bk = new THREE.Group(); bk.position.set(back[0], back[1], back[2]); body.add(bk);
+  const bk = new THREE.Group(); if (anchors.back) anchors.back.add(bk); else { bk.position.set(back[0], back[1], back[2]); body.add(bk); }
   switch (wear.back) {
     case 'cape': { const c = add(new THREE.BoxGeometry(0.7, 0.9, 0.03), M('#c33a3a', { side: THREE.DoubleSide }), 0, -0.3, -0.05, bk); c.rotation.x = 0.35; rig.cape = c; break; }
     case 'backpack': add(new THREE.BoxGeometry(0.45, 0.5, 0.25), M('#ff9a3c'), 0, 0, -0.08, bk); add(new THREE.BoxGeometry(0.35, 0.2, 0.08), M('#e07a20'), 0, -0.1, -0.24, bk); break;
