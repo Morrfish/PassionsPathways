@@ -25,6 +25,9 @@ Animals listed in `MODEL_IDS` (`js/models.js`) use a Meshy model; the rest are b
 2. Add the animal to `ANIMALS` in `blender/prepare_meshy.py`: its height, the joint positions and which part of the body each bone moves, the wearable points, and its main / accent colors.
 3. Run `blender -b --factory-startup --python animal-tag/blender/prepare_meshy.py -- <animal id>`. It writes `models/<id>.glb` (about 1 MB, with a skeleton) and `models/<id>_mask.png` (where the game repaints patterns and colors).
 4. Add the id to `MODEL_IDS`.
+5. Raise the build number in `index.html` (`window.WT_BUILD` and every `?v=`) so browsers fetch the new files instead of old saved copies.
+
+**Test mode:** open the game with `?test` at the end of the link (for example `.../animal-tag/?test`) to unlock every animal, pattern, wearable and bonus ability for that visit. Nothing is saved, so real progress is untouched.
 
 Files: `js/data.js` (all content), `js/models.js` (loads the Meshy models, builds the other animals from 3D shapes, patterns, wearables), `js/GLTFLoader.js` (three.js model loader), `blender/prepare_meshy.py` (Meshy model to game model), `js/world.js` (map + collision), `js/game.js` (movement, abilities, tagging, bots, rounds, network sync), `js/net.js` (rooms), `js/ui.js` (menus, shop, HUD).
 3D by [three.js](https://threejs.org) r149 (MIT, `js/three.LICENSE.txt`).

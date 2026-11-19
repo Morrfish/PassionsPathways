@@ -14,7 +14,13 @@ const Save = (() => {
   ANIMALS.forEach(a => { if (a.price === 0 && !s.owned.animals.includes(a.id)) s.owned.animals.push(a.id); });
   return s;
 })();
-function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(Save)); } catch (e) { } }
+// Test mode: open the game with ?test in the link to unlock everything for that visit. Nothing is saved.
+const TEST_MODE = /[?&#]test\b/i.test(location.search + location.hash);
+if (TEST_MODE) {
+  Save.owned = { animals: ALL_CREATURES.map(a => a.id), patterns: PATTERNS.map(p => p.id), perks: PERKS.map(p => p.id), wear: WEARABLES.map(w => w.id) };
+  Save.gems = 99999; Save.stats = { wins: 999, tags: 999, rounds: 999 };
+}
+function persist() { if (TEST_MODE) return; try { localStorage.setItem(SAVE_KEY, JSON.stringify(Save)); } catch (e) { } }
 function myLook(animalId) {
   const a = CREATURE[animalId], l = Save.sel.looks[animalId] || {};
   return { pattern: l.pattern || a.defPattern || 'solid', c1: l.c1 || a.c1, c2: l.c2 || a.c2, wear: Object.assign({}, Save.sel.wear) };

@@ -108,8 +108,8 @@ function loadModels(done) {
   const fin = () => { if (--left === 0) done(); };
   MODEL_IDS.forEach(id => {
     MODELS[id] = {};
-    loader.load('models/' + id + '.glb', g => { MODELS[id].scene = g.scene; fin(); }, undefined, e => { console.warn('Model ' + id + ' did not load, using the built-in shape version.', e); fin(); });
-    tl.load('models/' + id + '_mask.png', t => { t.flipY = false; MODELS[id].mask = t; fin(); }, undefined, () => fin());
+    loader.load('models/' + id + '.glb?v=' + (window.WT_BUILD || 1), g => { MODELS[id].scene = g.scene; fin(); }, undefined, e => { console.warn('Model ' + id + ' did not load, using the built-in shape version.', e); fin(); });
+    tl.load('models/' + id + '_mask.png?v=' + (window.WT_BUILD || 1), t => { t.flipY = false; MODELS[id].mask = t; fin(); }, undefined, () => fin());
   });
 }
 function hasModel(id) { return !!(MODELS[id] && MODELS[id].scene); }
