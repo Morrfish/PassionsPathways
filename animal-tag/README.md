@@ -19,5 +19,12 @@ A third-person animal tag game in the browser. Open `index.html` (it has to be s
 - **Solo**: 3 to 15 bots (easy, normal or hard). The bots chase, flee, climb and use their abilities.
 - **Online**: one player hosts and gets a 5-letter room code; friends join with it. Connections are peer-to-peer through [PeerJS](https://peerjs.com) (MIT, `js/peerjs.min.js`) and its free public matchmaking server (`0.peerjs.com`). School networks that block WebRTC or that server will show a message; solo still works. The host's browser runs the round and the bots, so the host should keep the tab in front.
 
-Files: `js/data.js` (all content), `js/models.js` (animals, patterns, wearables built from 3D shapes), `js/world.js` (map + collision), `js/game.js` (movement, abilities, tagging, bots, rounds, network sync), `js/net.js` (rooms), `js/ui.js` (menus, shop, HUD).
+## 3D models from Meshy
+Animals listed in `MODEL_IDS` (`js/models.js`) use a Meshy model; the rest are built from simple shapes until their model arrives.
+1. Make the model in Meshy from the reference images (Image to 3D, about 15k triangles, 1K–2K texture) and upload it as `reference/meshy/<animal id>.glb`, e.g. `gorilla.glb`.
+2. Add the animal to `ANIMALS` in `blender/prepare_meshy.py`: its height, the joint positions and which part of the body each bone moves, the wearable points, and its main / accent colors.
+3. Run `blender -b --factory-startup --python animal-tag/blender/prepare_meshy.py -- <animal id>`. It writes `models/<id>.glb` (about 1 MB, with a skeleton) and `models/<id>_mask.png` (where the game repaints patterns and colors).
+4. Add the id to `MODEL_IDS`.
+
+Files: `js/data.js` (all content), `js/models.js` (loads the Meshy models, builds the other animals from 3D shapes, patterns, wearables), `js/GLTFLoader.js` (three.js model loader), `blender/prepare_meshy.py` (Meshy model to game model), `js/world.js` (map + collision), `js/game.js` (movement, abilities, tagging, bots, rounds, network sync), `js/net.js` (rooms), `js/ui.js` (menus, shop, HUD).
 3D by [three.js](https://threejs.org) r149 (MIT, `js/three.LICENSE.txt`).

@@ -97,45 +97,97 @@ function shade(hex, amt) {
   return '#' + c.getHexString();
 }
 
-// ---------- Blender models (.glb in models/) ----------
-// Animals listed here load models/<id>.glb; the rest are built from shapes below.
-// Empty until the Meshy models are converted (see blender/build_models.py for the naming rules).
-const MODEL_IDS = [];
+// ---------- Meshy models (.glb + color mask in models/, made by blender/prepare_meshy.py) ----------
+// Animals listed here use their model; the rest are built from shapes below.
+const MODEL_IDS = ['gorilla', 'dragon'];
 const MODELS = {};
 function loadModels(done) {
   if (!window.GLTFLoader || !MODEL_IDS.length) return done();
-  const loader = new GLTFLoader(); let left = MODEL_IDS.length;
+  const loader = new GLTFLoader(), tl = new THREE.TextureLoader();
+  let left = MODEL_IDS.length * 2;
   const fin = () => { if (--left === 0) done(); };
-  MODEL_IDS.forEach(id => loader.load('models/' + id + '.glb', g => { MODELS[id] = g.scene; fin(); }, undefined, e => { console.warn('Model ' + id + ' did not load, using the built-in shape version.', e); fin(); }));
+  MODEL_IDS.forEach(id => {
+    MODELS[id] = {};
+    loader.load('models/' + id + '.glb', g => { MODELS[id].scene = g.scene; fin(); }, undefined, e => { console.warn('Model ' + id + ' did not load, using the built-in shape version.', e); fin(); });
+    tl.load('models/' + id + '_mask.png', t => { t.flipY = false; MODELS[id].mask = t; fin(); }, undefined, () => fin());
+  });
+}
+function hasModel(id) { return !!(MODELS[id] && MODELS[id].scene); }
+
+// copy of a model that has a skeleton (each copy needs its own bones)
+function cloneSkinned(source) {
+  const srcOf = new Map(), copyOf = new Map(), copy = source.clone();
+  (function walk(a, b) { srcOf.set(b, a); copyOf.set(a, b); for (let i = 0; i < a.children.length; i++) walk(a.children[i], b.children[i]); })(source, copy);
+  copy.traverse(n => {
+    if (!n.isSkinnedMesh) return;
+    const sm = srcOf.get(n);
+    n.skeleton = sm.skeleton.clone(); n.bindMatrix.copy(sm.bindMatrix);
+    n.skeleton.bones = sm.skeleton.bones.map(b => copyOf.get(b));
+    n.bind(n.skeleton, n.bindMatrix);
+  });
+  return copy;
 }
 
-function buildFromModel(def, mats) {
-  const { bodyMat, accMat } = mats;
-  const wingMat = new THREE.MeshStandardMaterial({ color: shade(mats.c1, 0.35), roughness: 0.8 });
-  const body = MODELS[def.id].clone(true);
-  const fixedMats = {};
-  body.traverse(n => {
-    if (!n.isMesh) return;
-    n.castShadow = true;
-    const name = n.material.name;
-    if (name === 'Body') n.material = bodyMat;
-    else if (name === 'Accent') n.material = accMat;
-    else if (name === 'Wing') n.material = wingMat;
-    else n.material = fixedMats[name] = fixedMats[name] || n.material.clone();
-  });
-  const rig = { legs: [], arms: [], wings: [], tails: [], body, mats: [bodyMat, accMat, wingMat], bodyMat, glb: true };
+// The model keeps its painted look unless the player picked other colors or a pattern.
+// Then the mask says where to repaint: red = main color/pattern, green = accent color.
+// The painted light and dark shading is kept by scaling with the original brightness.
+function modelMaterial(orig, src, info, look, def) {
+  const m = orig.clone(); m.roughness = 0.85; m.metalness = 0;
+  if (m.map) m.map.encoding = THREE.LinearEncoding;   // the game shows colors as-is (no color conversion)
+  const pid = look.pattern || def.defPattern || 'solid', c1 = look.c1 || def.c1, c2 = look.c2 || def.c2;
+  const changed = pid !== (def.defPattern || 'solid') || c1 !== def.c1 || c2 !== def.c2;
+  if (!changed || !src.mask) return m;
+  const u = { maskMap: { value: src.mask }, patMap: { value: patternTexture(pid, c1, c2) }, accCol: { value: new THREE.Color(c2) },
+    bodyLum: { value: info.bodyLum || 0.4 }, accLum: { value: info.accLum || 0.7 } };
+  m.onBeforeCompile = sh => {
+    Object.assign(sh.uniforms, u);
+    sh.vertexShader = 'varying vec3 vObjPos;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvObjPos = position;');
+    sh.fragmentShader = 'uniform sampler2D maskMap; uniform sampler2D patMap; uniform vec3 accCol; uniform float bodyLum; uniform float accLum; varying vec3 vObjPos;\n' +
+      sh.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
+      { vec4 mk = texture2D(maskMap, vUv); float l = dot(sampledDiffuseColor.rgb, vec3(0.299, 0.587, 0.114));
+        vec2 pu = vec2((atan(vObjPos.x, vObjPos.z) / 6.2832 + 0.5) * 2.0, vObjPos.y * 0.9);
+        vec3 pc = texture2D(patMap, pu).rgb;
+        diffuseColor.rgb = mix(diffuseColor.rgb, pc * clamp(l / bodyLum, 0.35, 1.8), mk.r);
+        diffuseColor.rgb = mix(diffuseColor.rgb, accCol * clamp(l / accLum, 0.35, 1.3), mk.g); }`);
+  };
+  m.customProgramCacheKey = () => 'wildtag-recolor';
+  return m;
+}
+
+function buildFromModel(def, look) {
+  const src = MODELS[def.id], body = cloneSkinned(src.scene);
+  let info = {}; body.traverse(n => { if (n.userData && n.userData.headR) info = n.userData; });
+  const mats = [];
+  body.traverse(n => { if (n.isMesh) { n.castShadow = true; n.frustumCulled = false; n.material = modelMaterial(n.material, src, info, look, def); mats.push(n.material); } });
+  body.updateMatrixWorld(true);
+  const rig = { legs: [], arms: [], wings: [], tails: [], body, mats, bodyMat: mats[0], glb: true };
   const node = (n) => body.getObjectByName(n);
-  const keep = (n, list, extra) => { const o = node(n); if (o) { o.userData.rest = o.rotation.clone(); Object.assign(o.userData, extra || {}); list.push(o); } return o; };
-  keep('LegL', rig.legs, { phase: 1 }); keep('LegR', rig.legs, { phase: -1 });
-  keep('LegFL', rig.legs, { phase: 1 }); keep('LegFR', rig.legs, { phase: -1 }); keep('LegBL', rig.legs, { phase: -1 }); keep('LegBR', rig.legs, { phase: 1 });
-  keep('ArmL', rig.arms, { phase: -1 }); keep('ArmR', rig.arms, { phase: 1 });
-  ['WingL', 'WingR'].forEach(n => keep(n, rig.wings, { side: n === 'WingL' ? 1 : -1 }));
-  keep('Tail', rig.tails);
-  rig.head = node('Head'); if (rig.head) rig.head.userData.rest = rig.head.rotation.clone();
+  // for each bone, remember its rest pose and the model's x/y/z axes as seen from the bone
+  const prep = (n, list, extra) => {
+    const b = node(n); if (!b) return null;
+    const inv = b.getWorldQuaternion(new THREE.Quaternion()).invert();
+    b.userData.rest = b.quaternion.clone();
+    b.userData.ax = { x: new THREE.Vector3(1, 0, 0).applyQuaternion(inv), y: new THREE.Vector3(0, 1, 0).applyQuaternion(inv), z: new THREE.Vector3(0, 0, 1).applyQuaternion(inv) };
+    Object.assign(b.userData, extra || {}); if (list) list.push(b); return b;
+  };
+  prep('LegL', rig.legs, { phase: 1 }); prep('LegR', rig.legs, { phase: -1 });
+  prep('LegFL', rig.legs, { phase: 1 }); prep('LegFR', rig.legs, { phase: -1 }); prep('LegBL', rig.legs, { phase: -1 }); prep('LegBR', rig.legs, { phase: 1 });
+  prep('ArmL', rig.arms, { phase: -1 }); prep('ArmR', rig.arms, { phase: 1 });
+  prep('WingL', rig.wings, { side: 1 }); prep('WingR', rig.wings, { side: -1 });
+  prep('Tail', rig.tails, { k: 1 }); prep('Tail2', rig.tails, { k: 1.6 });
+  rig.head = prep('Head');
   rig.anchors = { hat: node('Hat'), face: node('Face'), neck: node('Neck'), back: node('Back') };
-  rig.headR = (rig.head && rig.head.userData.headR) || 0.3;
-  rig.eyeX = (rig.head && rig.head.userData.eyeX) || 0.1;
+  // wearable points come out of Blender turned with their bone: line them up with the model again
+  for (const k in rig.anchors) { const a = rig.anchors[k]; if (a) { a.quaternion.copy(a.parent.getWorldQuaternion(new THREE.Quaternion()).invert()); a.scale.setScalar(1); } }
+  rig.headR = info.headR || 0.3; rig.eyeX = info.eyeX || 0.1;
   return rig;
+}
+const _bq = new THREE.Quaternion(), _bq2 = new THREE.Quaternion();
+// turn a bone from its rest pose around the model's axis (x = nod/swing, y = turn, z = flap)
+function boneRot(b, ax, a, ax2, a2) {
+  b.quaternion.copy(b.userData.rest);
+  if (a) b.quaternion.multiply(_bq.setFromAxisAngle(b.userData.ax[ax], a));
+  if (a2) b.quaternion.multiply(_bq2.setFromAxisAngle(b.userData.ax[ax2], a2));
 }
 
 // Builds a creature mesh. Origin at the feet, facing +Z. Returns a Group with userData.rig for animation.
@@ -155,8 +207,8 @@ function buildCreature(def, look) {
   const mats = [bodyMat, accMat, darkMat];
 
   const root = new THREE.Group();
-  if (MODELS[def.id]) {
-    const rig = buildFromModel(def, { bodyMat, accMat, c1 });
+  if (hasModel(def.id)) {
+    const rig = buildFromModel(def, look);
     root.add(rig.body);
     addWearables(rig, look.wear || {}, rig.head, rig.headR, def.shape, def, rig.anchors, rig.eyeX);
     if (def.glow) {
@@ -307,13 +359,12 @@ function animateCreature(root, t, move, air, flying, def) {
   const rig = root.userData.rig; if (!rig) return;
   const sw = Math.sin(t * 12) * 0.9 * move;
   if (rig.glb) {
-    const r = (o) => o.userData.rest;
-    rig.legs.forEach(l => { l.rotation.x = r(l).x + (air ? -0.35 : sw * 0.6 * l.userData.phase); });
-    rig.arms.forEach(a => { a.rotation.x = r(a).x + (air ? -2.3 + Math.sin(t * 10 + a.userData.phase) * 0.35 : sw * 0.55 * a.userData.phase); a.rotation.z = r(a).z + (air ? -a.userData.phase * 0.45 : 0); });
-    const flap = flying ? Math.sin(t * 12) * 0.75 : air ? Math.sin(t * 8) * 0.45 : Math.sin(t * 2) * 0.06;
-    rig.wings.forEach(w => { w.rotation.z = r(w).z + w.userData.side * flap; });
-    rig.tails.forEach(tl => { tl.rotation.y = r(tl).y + Math.sin(t * 4) * 0.3; });
-    if (rig.head) rig.head.rotation.x = rig.head.userData.rest.x + Math.sin(t * 2.2) * 0.05;
+    rig.legs.forEach(l => boneRot(l, 'x', air ? -0.3 * l.userData.phase : sw * 0.55 * l.userData.phase));
+    rig.arms.forEach(a => air ? boneRot(a, 'x', -0.35 + Math.sin(t * 10 + a.userData.phase) * 0.1) : boneRot(a, 'x', sw * 0.35 * a.userData.phase));
+    const flap = flying ? Math.sin(t * 12) * 0.7 : air ? Math.sin(t * 8) * 0.4 : Math.sin(t * 2) * 0.05;
+    rig.wings.forEach(w => boneRot(w, 'z', w.userData.side * flap));
+    rig.tails.forEach(tl => boneRot(tl, 'y', Math.sin(t * 4 - tl.userData.k) * 0.25 * tl.userData.k));
+    if (rig.head) boneRot(rig.head, 'x', Math.sin(t * 2.2) * 0.05);
     if (rig.aura) rig.aura.rotation.z = t;
     if (rig.spin) rig.spin.rotation.y = t * 12;
     if (rig.cape) rig.cape.rotation.x = 0.35 + move * 0.6 + Math.sin(t * 8) * 0.08;

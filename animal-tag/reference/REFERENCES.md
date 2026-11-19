@@ -58,3 +58,9 @@ These images are used to build the 3D models in Blender. Put the files in this f
 The style guide plus the Gorilla and the Dragon. Those two get modeled and put in the game first so the look can be checked. Once it's right, send the rest in batches.
 
 Any "more stuff" (new animals, maps, modes and so on) can come as a plain text list along with the images.
+
+## Making the 3D models in Meshy
+- **Image to 3D** with the multi-view option: upload the front, side and back images together.
+- **Topology:** Triangle. **Polycount:** about 15,000. **Texture:** on, 1K or 2K (not 4K). PBR maps and auto-rigging are not needed.
+- Keep the model **in one piece** (no split into parts).
+- Download as **.glb**, name it after the animal in lowercase (`gorilla.glb`, `dragon.glb`, `flying_squirrel.glb`), and upload it to `animal-tag/reference/meshy/`. GitHub's upload page takes files up to 25 MB.
