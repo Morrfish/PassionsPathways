@@ -6,3 +6,4 @@
 - [Album Studio](album-studio/) — plan an album: theme, song lyrics and style tags for Suno, cover prompt and tracklist.
 - [Pathway CAD](cad-studio/): a student 3D part modeler (sketch, extrude, revolve, holes, fillets, patterns) that exports STL for 3D printing. Also builds as a Windows app.
 - [Anime Squad](anime-squad/): make anime-character bots, give them jobs and talk to them. Builds as an Android app and a Windows app.
+- [Wild Tag](animal-tag/): a third-person animal tag game. 22 animals and 10 mythical creatures, each with its own ability; gems to buy patterns, wearables and bonus abilities; play solo against bots or online with friends.

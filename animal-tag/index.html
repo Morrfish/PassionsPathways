@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Wild Tag</title>
+<meta name="description" content="A third-person animal tag game: 22 animals and 10 mythical creatures, each with its own ability. Play solo against bots or online with friends.">
+<style>
+:root{--bg:#0f1830;--panel:#17233f;--panel2:#1f2e52;--line:#2e416e;--txt:#f4f7ff;--dim:#a9b6d8;--y:#ffd23f;--g:#5cd65c;--r:#ff4f4f;--b:#3ab0ff;--p:#c48aff}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--txt);user-select:none;-webkit-user-select:none;touch-action:none}
+#game canvas{display:block}
+button{font:inherit;cursor:pointer}
+.hide{display:none!important}
+
+/* ---------- HUD ---------- */
+#hud{position:fixed;inset:0;pointer-events:none}
+#topbar{position:absolute;top:10px;left:50%;transform:translateX(-50%);display:flex;gap:8px;align-items:center}
+.pill{background:rgba(10,16,34,.72);border:2px solid rgba(255,255,255,.15);border-radius:99px;padding:6px 14px;font-weight:800;font-size:16px;white-space:nowrap}
+#timer{font-variant-numeric:tabular-nums;min-width:74px;text-align:center}
+#role{position:absolute;top:58px;left:50%;transform:translateX(-50%);font-weight:900;font-size:20px;padding:6px 18px;border-radius:99px;letter-spacing:.5px}
+#role.it{background:#ff3b2f;color:#fff;box-shadow:0 0 22px #ff3b2f}
+#role.run{background:#2fbf71;color:#05210f}
+#role.frozen{background:#7fd8ff;color:#06263a}
+#role.lobby{background:rgba(10,16,34,.72);color:var(--dim);font-size:15px}
+#gems{position:absolute;top:10px;right:12px}
+#menuBtn{position:absolute;top:10px;left:12px;pointer-events:auto;background:rgba(10,16,34,.72);color:#fff;border:2px solid rgba(255,255,255,.2);border-radius:12px;padding:6px 12px;font-weight:800}
+#hostStart{position:absolute;top:104px;left:50%;transform:translateX(-50%);pointer-events:auto;background:var(--g);color:#06210b;border:0;border-radius:12px;padding:10px 20px;font-weight:900;font-size:17px}
+#feed{position:absolute;left:12px;bottom:150px;display:flex;flex-direction:column-reverse;gap:4px;max-width:46vw}
+#feed div{background:rgba(10,16,34,.65);border-radius:10px;padding:4px 10px;font-size:14px;font-weight:700}
+#abil{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;background:rgba(10,16,34,.72);border:2px solid rgba(255,255,255,.15);border-radius:18px;padding:8px 14px 8px 8px}
+#abIcon{width:54px;height:54px;border-radius:14px;background:var(--panel2);display:flex;align-items:center;justify-content:center;font-size:30px;position:relative;overflow:hidden}
+#abFill{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);height:0}
+#abCd{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;text-shadow:0 1px 3px #000}
+#abName{font-weight:800}
+#abKey{font-size:12px;color:var(--dim)}
+#abIcon.ready{box-shadow:0 0 0 3px var(--y),0 0 18px var(--y)}
+#radar{position:absolute;right:12px;bottom:18px;width:130px;height:130px;border-radius:50%;background:rgba(10,16,34,.6);border:2px solid rgba(255,255,255,.2)}
+#flash{position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);font-size:clamp(22px,4vw,40px);font-weight:900;text-align:center;text-shadow:0 3px 0 rgba(0,0,0,.4),0 0 20px rgba(0,0,0,.4);transition:opacity .3s;opacity:0;width:90vw}
+#big{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);font-size:clamp(60px,12vw,140px);font-weight:900;color:var(--y);text-shadow:0 6px 0 rgba(0,0,0,.35)}
+#blind{position:fixed;inset:0;background:radial-gradient(circle,rgba(20,8,30,.75) 0,rgba(20,8,30,.97) 60%);opacity:0;transition:opacity .25s;pointer-events:none}
+#score{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,16,34,.92);border:2px solid var(--line);border-radius:18px;padding:14px 18px;min-width:min(420px,92vw)}
+#score table{width:100%;border-collapse:collapse}
+#score td{padding:4px 8px;font-weight:700}
+#score tr.it td{color:#ff7a6a}
+#score tr.me td{background:rgba(255,210,63,.12)}
+#results{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,16,34,.94);border:3px solid var(--y);border-radius:22px;padding:20px 26px;text-align:center;min-width:min(440px,92vw);pointer-events:auto}
+#results h2{margin:0 0 4px;font-size:30px}
+#results .gain{font-size:26px;font-weight:900;color:var(--y);margin:10px 0}
+#results .sub{color:var(--dim)}
+#crosshint{position:absolute;bottom:92px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--dim);background:rgba(10,16,34,.5);padding:3px 10px;border-radius:99px}
+
+/* touch */
+#stick{position:fixed;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.3);opacity:0;pointer-events:none}
+#stick.on{opacity:1}
+#knob{position:absolute;left:35px;top:35px;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.5)}
+.tbtn{position:fixed;border-radius:50%;background:rgba(255,255,255,.18);border:3px solid rgba(255,255,255,.4);color:#fff;font-weight:900;display:none;align-items:center;justify-content:center;pointer-events:auto}
+#tjump{right:24px;bottom:160px;width:84px;height:84px;font-size:16px}
+#tab{right:120px;bottom:110px;width:74px;height:74px;font-size:28px}
+body.touch .tbtn{display:flex}
+body.touch #radar{bottom:auto;top:110px;width:100px;height:100px}
+body.touch #crosshint{display:none}
+
+/* ---------- MENU ---------- */
+.menu{position:fixed;inset:0;background:radial-gradient(circle at 30% 0,#24407a 0,#0f1830 60%);display:flex;flex-direction:column;overflow:hidden;pointer-events:auto;touch-action:pan-y}
+.mhead{display:flex;align-items:center;gap:14px;padding:12px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.logo{font-size:30px;font-weight:900;letter-spacing:-.5px}
+.logo span{background:linear-gradient(90deg,#ffd23f,#ff8a3c,#ff4fa3);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mhead .grow{flex:1}
+.mhead input{background:var(--panel2);border:2px solid var(--line);color:#fff;border-radius:10px;padding:7px 10px;font-weight:700;width:150px}
+.tabs{display:flex;gap:6px;padding:10px 18px 0;flex-wrap:wrap}
+.tabs button{background:var(--panel);border:2px solid var(--line);color:var(--dim);border-radius:12px 12px 0 0;padding:9px 16px;font-weight:800;border-bottom:0}
+.tabs button.on{background:var(--panel2);color:#fff;border-color:var(--y)}
+.mbody{flex:1;display:flex;gap:16px;padding:0 18px 18px;min-height:0}
+.pane{flex:1;background:var(--panel2);border:2px solid var(--line);border-radius:0 16px 16px 16px;padding:16px;overflow:auto;min-width:0}
+.side{width:300px;display:flex;flex-direction:column;gap:10px}
+#preview{width:300px;height:300px;border-radius:16px;background:radial-gradient(circle,#2c4a85,#14203d);border:2px solid var(--line)}
+.selinfo{background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:12px}
+.selinfo h3{margin:0 0 4px}
+.stat{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim)}
+.stat .bar{flex:1;height:7px;background:#0b1226;border-radius:9px;overflow:hidden}
+.stat .bar i{display:block;height:100%;background:var(--b)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.card{background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:10px;text-align:center;cursor:pointer;position:relative;transition:transform .1s}
+.card:hover{transform:translateY(-2px);border-color:#4b64a0}
+.card.sel{border-color:var(--y);box-shadow:0 0 0 2px var(--y)}
+.card.locked{opacity:.75}
+.card .em{font-size:38px;line-height:1.2}
+.card .nm{font-weight:800}
+.card .ab{font-size:12px;color:var(--dim);min-height:30px}
+.card .pr{font-weight:800;color:var(--y);font-size:14px}
+.card .own{font-size:12px;color:var(--g);font-weight:800}
+.card.mythic{background:linear-gradient(160deg,#2a1f4f,#1b2140);border-color:#6b4ab0}
+.card .req{font-size:11px;color:#ffb3d0}
+.swatch{width:100%;height:46px;border-radius:10px;margin-bottom:6px;background-size:cover}
+h2.sec{margin:16px 0 10px;font-size:20px}
+h2.sec:first-child{margin-top:0}
+.colors{display:flex;flex-wrap:wrap;gap:6px}
+.colors button{width:30px;height:30px;border-radius:50%;border:3px solid transparent}
+.colors button.on{border-color:#fff}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.btn{background:var(--y);color:#241a00;border:0;border-radius:12px;padding:12px 20px;font-weight:900;font-size:17px}
+.btn.alt{background:var(--panel);color:#fff;border:2px solid var(--line)}
+.btn.green{background:var(--g);color:#05210f}
+.btn.blue{background:var(--b);color:#03182a}
+.btn:disabled{opacity:.45;cursor:default}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.mode{background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:12px;cursor:pointer}
+.mode.sel{border-color:var(--y);box-shadow:0 0 0 2px var(--y)}
+.mode b{font-size:18px}
+.mode p{margin:4px 0 0;color:var(--dim);font-size:13px}
+select,.mbody input[type=text]{background:var(--panel);color:#fff;border:2px solid var(--line);border-radius:10px;padding:8px 10px;font-weight:700;font:inherit}
+.box{background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:14px;margin-top:12px}
+.code{font-size:34px;font-weight:900;letter-spacing:6px;color:var(--y)}
+.status{color:var(--dim);font-size:14px;margin-top:6px}
+.status.err{color:#ff8a8a}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--y);color:#241a00;font-weight:900;padding:10px 18px;border-radius:12px;z-index:50;transition:opacity .4s}
+.how li{margin:6px 0;color:#dfe6ff}
+kbd{background:#0b1226;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-family:inherit;font-weight:800}
+@media (max-width:820px){.mbody{flex-direction:column-reverse;overflow:auto}.side{width:100%;flex-direction:row}#preview{width:150px;height:150px;flex:none}.selinfo{flex:1}.pane{overflow:visible}.menu{overflow:auto}}
+</style>
+</head>
+<body>
+<div id="game"></div>
+
+<div id="hud" class="hide">
+  <button id="menuBtn">☰ Menu</button>
+  <div id="topbar"><div class="pill" id="modeName">Infection</div><div class="pill" id="timer">0:00</div><div class="pill" id="alive">👥 0</div></div>
+  <div id="role" class="lobby">Free roam</div>
+  <button id="hostStart" class="hide">▶ Start Round</button>
+  <div class="pill" id="gems">💎 0</div>
+  <div id="feed"></div>
+  <div id="abil"><div id="abIcon"><span id="abEm">🦍</span><div id="abFill"></div><div id="abCd"></div></div><div><div id="abName">Ability</div><div id="abKey">Press E</div></div></div>
+  <div id="crosshint">WASD move · Space jump (jump into walls to push off!) · E ability · Tab scores · Esc menu</div>
+  <canvas id="radar" width="130" height="130"></canvas>
+  <div id="flash"></div>
+  <div id="big"></div>
+  <div id="score" class="hide"></div>
+  <div id="results" class="hide"></div>
+</div>
+<div id="blind"></div>
+<div id="stick"><div id="knob"></div></div>
+<button class="tbtn" id="tjump">JUMP</button>
+<button class="tbtn" id="tab">✨</button>
+
+<div class="menu" id="menu">
+  <div class="mhead">
+    <div class="logo">🐾 <span>Wild Tag</span></div>
+    <div class="grow"></div>
+    <label style="font-weight:700;color:var(--dim)">Name <input id="nameIn" maxlength="16"></label>
+    <div class="pill" id="mGems">💎 0</div>
+  </div>
+  <div class="tabs" id="tabs">
+    <button data-t="play" class="on">▶ Play</button>
+    <button data-t="animals">🐾 Animals</button>
+    <button data-t="wardrobe">🎨 Patterns</button>
+    <button data-t="wear">🎩 Wearables</button>
+    <button data-t="perks">⚡ Abilities</button>
+    <button data-t="how">❓ How to Play</button>
+  </div>
+  <div class="mbody">
+    <div class="pane" id="pane"></div>
+    <div class="side">
+      <canvas id="preview" width="300" height="300"></canvas>
+      <div class="selinfo" id="selinfo"></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/three.min.js"></script>
+<script src="js/peerjs.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/models.js"></script>
+<script src="js/world.js"></script>
+<script src="js/net.js"></script>
+<script src="js/game.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
