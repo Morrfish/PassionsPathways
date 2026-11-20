@@ -202,6 +202,45 @@ select, input[type=number] { font: inherit; padding: 6px 8px; border-radius: 8px
 .modal .qcard { max-width: 640px; width: 100%; max-height: 90vh; overflow-y: auto; }
 .empty { color: var(--muted); padding: 24px; text-align: center; border: 1px dashed var(--border); border-radius: var(--radius); }
 
+
+/* question types */
+.hint { color: var(--muted); font-size: .88rem; margin: 0 0 8px; }
+.choice .box { display: inline-grid; place-items: center; width: 1.2em; height: 1.2em; border: 2px solid var(--muted); border-radius: 4px; font-size: .8rem; line-height: 1; }
+.choice.picked .box { border-color: var(--accent); background: var(--accent); color: var(--accent-ink); }
+.choice.missed { border-color: var(--good); border-style: dashed; }
+.choice.missed::after { content: "missed"; margin-left: auto; font-size: .75rem; color: var(--good); font-weight: 700; }
+.short-in { width: 100%; font: inherit; padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); resize: vertical; }
+.short-in:focus { outline: none; border-color: var(--accent); }
+.model { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-top: 6px; white-space: pre-wrap; }
+.model p { margin: 4px 0 0; }
+.model ul { margin: 4px 0 0; padding-left: 20px; white-space: normal; }
+.model.mine { background: var(--surface-2); }
+.points { display: grid; gap: 4px; }
+.points label { display: flex; gap: 8px; align-items: flex-start; cursor: pointer; }
+.points input { margin-top: 5px; }
+
+/* muscle finder */
+.mfilters { display: grid; gap: 12px; margin-bottom: 8px; }
+.mfilters input[type=search] { font: inherit; padding: 9px 12px; border-radius: 9px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); width: 100%; }
+.mselects { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+.mselects label { display: grid; gap: 3px; font-size: .82rem; color: var(--muted); font-weight: 600; }
+.mselects select { width: 100%; min-width: 0; }
+.mchecks { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; font-size: .9rem; }
+.mchecks label { display: flex; gap: 6px; align-items: center; }
+.mcard { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin: 6px 0; }
+.mcard summary { cursor: pointer; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; list-style: none; }
+.mcard summary::-webkit-details-marker { display: none; }
+.mcard summary::before { content: "▸"; color: var(--muted); }
+.mcard[open] summary::before { content: "▾"; }
+.mcard .mnerve { margin-left: auto; color: var(--muted); font-size: .88rem; }
+.mcard[open] { border-color: var(--accent); }
+.mcard dl { display: grid; grid-template-columns: 110px 1fr; gap: 6px 12px; margin: 0; padding: 4px 16px 8px; font-size: .93rem; }
+.mcard dt { font-weight: 700; color: var(--muted); }
+.mcard dd { margin: 0; }
+.mcard dd ul { margin: 0; padding-left: 18px; }
+.mcard > a { display: inline-block; margin: 0 16px 12px; font-size: .9rem; }
+@media (max-width: 560px) { .mcard dl { grid-template-columns: 1fr; } .mcard dt { margin-top: 4px; } .mcard .mnerve { margin-left: 0; width: 100%; } }
+
 @media (max-width: 900px) {
   .layout { grid-template-columns: 1fr; }
   #tocToggle { display: grid; }

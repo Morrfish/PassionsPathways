@@ -1,0 +1,303 @@
+{
+ "questions": [
+  {
+   "type": "multi",
+   "q": "Which muscles are innervated by the musculocutaneous nerve? (select all that apply)",
+   "choices": [
+    "Coracobrachialis",
+    "Biceps brachii",
+    "Brachioradialis",
+    "Triceps brachii",
+    "Brachialis",
+    "Supinator"
+   ],
+   "answers": [
+    0,
+    1,
+    4
+   ],
+   "explain": "Musculocutaneous (C5-6) supplies biceps, brachialis and coracobrachialis; triceps, brachioradialis and supinator are radial nerve muscles.",
+   "section": "u3-s8",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which motions together stretch the biceps brachii? (select all that apply)",
+   "choices": [
+    "Shoulder extension",
+    "Forearm pronation",
+    "Elbow extension",
+    "Shoulder flexion",
+    "Forearm supination"
+   ],
+   "answers": [
+    0,
+    1,
+    2
+   ],
+   "explain": "Stretch a muscle through the motions it is antagonist to at every joint it crosses: shoulder extension, elbow extension and pronation for the biceps.",
+   "section": "u3-s2",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which signs indicate an UPPER motor neuron lesion? (select all that apply)",
+   "choices": [
+    "Clonus",
+    "Flaccidity",
+    "Fasciculations",
+    "Positive Babinski sign",
+    "Spasticity",
+    "Hyperreflexia"
+   ],
+   "answers": [
+    0,
+    3,
+    4,
+    5
+   ],
+   "explain": "UMN lesions produce spasticity, hyperreflexia, clonus and a positive Babinski with little atrophy; fasciculations and flaccidity are LMN signs.",
+   "section": "u3-s5",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which statements describe AFFERENT neurons? (select all that apply)",
+   "choices": [
+    "They are sensory neurons",
+    "They carry impulses toward the CNS",
+    "Their cell bodies sit in the dorsal root ganglion",
+    "Their cell bodies are in the anterior horn",
+    "They exit the cord through the ventral root",
+    "They carry impulses to muscles"
+   ],
+   "answers": [
+    0,
+    1,
+    2
+   ],
+   "explain": "Afferent (sensory) neurons bring information to the CNS via the dorsal root; efferent (motor) neurons start in the anterior horn and exit ventrally.",
+   "section": "u3-s3",
+   "difficulty": 1
+  },
+  {
+   "type": "multi",
+   "q": "Which cranial nerves control eye movement? (select all that apply)",
+   "choices": [
+    "Oculomotor (III)",
+    "Abducens (VI)",
+    "Facial (VII)",
+    "Trochlear (IV)",
+    "Optic (II)",
+    "Trigeminal (V)"
+   ],
+   "answers": [
+    0,
+    1,
+    3
+   ],
+   "explain": "CN III, IV and VI move the eyes; CN II carries vision but does not move the eye.",
+   "section": "u3-s7",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which cranial nerves carry taste from the tongue? (select all that apply)",
+   "choices": [
+    "Trigeminal (V)",
+    "Olfactory (I)",
+    "Hypoglossal (XII)",
+    "Facial (VII)",
+    "Glossopharyngeal (IX)"
+   ],
+   "answers": [
+    3,
+    4
+   ],
+   "explain": "Facial carries taste from the anterior 2/3 and glossopharyngeal the posterior 1/3; hypoglossal moves the tongue.",
+   "section": "u3-s7",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which are terminal nerves of the brachial plexus? (select all that apply)",
+   "choices": [
+    "Obturator",
+    "Femoral",
+    "Median",
+    "Ulnar",
+    "Axillary",
+    "Radial"
+   ],
+   "answers": [
+    2,
+    3,
+    4,
+    5
+   ],
+   "explain": "The brachial plexus (C5-T1) gives the axillary, musculocutaneous, radial, median and ulnar nerves; femoral and obturator come from the lumbosacral plexus.",
+   "section": "u3-s8",
+   "difficulty": 1
+  },
+  {
+   "type": "multi",
+   "q": "Which functions are associated with the parietal lobe? (select all that apply)",
+   "choices": [
+    "Touch and pressure",
+    "Vision",
+    "Perceiving texture, weight, size and shape",
+    "Personality",
+    "Expressive speech"
+   ],
+   "answers": [
+    0,
+    2
+   ],
+   "explain": "The parietal lobe processes touch, pressure and fine sensation (and reading). Personality and expressive speech are frontal; vision is occipital.",
+   "section": "u3-s4",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which findings suggest median nerve involvement? (select all that apply)",
+   "choices": [
+    "Wrist drop",
+    "Ape hand deformity",
+    "Loss of thumb opposition",
+    "Weak forearm pronation",
+    "Numbness of the palmar thumb and index finger",
+    "Claw hand"
+   ],
+   "answers": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "explain": "The median nerve supplies pronation, opposition and palmar radial-digit sensation; wrist drop is radial and claw hand is ulnar.",
+   "section": "u3-s9",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "In which activities is the named muscle contracting ECCENTRICALLY? (select all that apply)",
+   "choices": [
+    "Biceps while holding a cup still at chest height",
+    "Quadriceps while slowly sitting down into a chair",
+    "Biceps while slowly lowering a cup to the table",
+    "Quadriceps while standing up from a chair",
+    "Biceps while curling a dumbbell up",
+    "Quadriceps while walking down stairs with control"
+   ],
+   "answers": [
+    1,
+    2,
+    5
+   ],
+   "explain": "Eccentric contractions lengthen under control while lowering into gravity; lifting is concentric and holding still is isometric.",
+   "section": "u3-s1",
+   "difficulty": 3
+  },
+  {
+   "type": "multi",
+   "q": "Which help move lymph through the lymphatic system? (select all that apply)",
+   "choices": [
+    "The heart pumping lymph in a closed loop",
+    "Skeletal muscle pumping",
+    "Diaphragmatic breathing",
+    "Smooth muscle contraction of vessel walls",
+    "Osteoclast activity"
+   ],
+   "answers": [
+    1,
+    2,
+    3
+   ],
+   "explain": "Lymph is moved by the muscle pump, breathing and vessel smooth muscle; it is a one-way route back to the veins, not a loop.",
+   "section": "u3-s10",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which muscles are innervated by the common peroneal (fibular) nerve? (select all that apply)",
+   "choices": [
+    "Gastrocnemius",
+    "Soleus",
+    "Tibialis anterior",
+    "Quadriceps",
+    "Fibularis (peroneus) longus"
+   ],
+   "answers": [
+    2,
+    4
+   ],
+   "explain": "The common peroneal nerve supplies dorsiflexors, toe extensors and evertors; gastrocnemius and soleus are tibial and the quadriceps is femoral.",
+   "section": "u3-s8",
+   "difficulty": 3
+  },
+  {
+   "type": "short",
+   "q": "List 3 muscles from the muscle movement chart, the prime movement each produces, and how to stretch each.",
+   "model": "Biceps brachii: elbow flexion and forearm supination; stretch with shoulder extension + elbow extension + forearm pronation. Triceps brachii: elbow extension; stretch with shoulder flexion + elbow flexion. Gastrocnemius: ankle plantarflexion (assists knee flexion); stretch with ankle dorsiflexion with the knee extended. (Soleus: plantarflexion; stretch with dorsiflexion and the knee flexed. Supinator: supination; stretch with pronation, elbow extended.)",
+   "points": [
+    "Three correct muscles",
+    "Correct prime movement for each with the joint named",
+    "Stretch uses the opposite motions",
+    "Two-joint muscles stretched at both joints"
+   ],
+   "section": "u3-s2",
+   "difficulty": 2
+  },
+  {
+   "type": "short",
+   "q": "A client lifts a cup of water to the mouth, holds it there to sip, then slowly lowers it to the table. For each phase, name the elbow motion, the muscle working, and the contraction type.",
+   "model": "Lifting: elbow flexion, biceps brachii (with brachialis) contracting concentrically. Holding: no elbow motion, biceps contracting isometrically to hold the position. Lowering: elbow extension, but the biceps controls it with an eccentric contraction as the cup lowers into gravity; the triceps is not the main worker in this phase.",
+   "points": [
+    "Lift = elbow flexion, concentric biceps",
+    "Hold = isometric",
+    "Lower = elbow extension",
+    "Lowering controlled by biceps eccentrically, not triceps"
+   ],
+   "section": "u3-s1",
+   "difficulty": 3
+  },
+  {
+   "type": "short",
+   "q": "Compare upper motor neuron and lower motor neuron lesions: where each is located and three signs of each.",
+   "model": "An upper motor neuron runs from the brain down to the anterior horn of the spinal cord; a UMN lesion causes spasticity, hyperreflexia, clonus and a positive Babinski with little atrophy. A lower motor neuron is at or distal to the anterior horn; an LMN lesion causes flaccidity, hyporeflexia or areflexia, atrophy and fasciculations.",
+   "points": [
+    "UMN = brain to anterior horn",
+    "UMN signs: spasticity, hyperreflexia, clonus/Babinski",
+    "LMN = anterior horn and distal",
+    "LMN signs: flaccidity, hyporeflexia, atrophy, fasciculations"
+   ],
+   "section": "u3-s5",
+   "difficulty": 2
+  },
+  {
+   "type": "short",
+   "q": "Define a dermatome, give the dermatome for three body landmarks, and explain how dermatomes are used clinically.",
+   "model": "A dermatome is an area of skin supplied by the sensory fibers of a single spinal nerve. Examples: C6 lateral forearm and thumb; C7 middle finger; C8 little finger; T4 nipple line; T10 umbilicus; L1 groin; L5 dorsum of foot; S1 lateral foot. Testing sensation by dermatome helps locate a spinal cord injury level and points to safety risks, such as a wheelchair user who cannot feel a hot plate on the thigh (L1-L2 loss).",
+   "points": [
+    "Skin area supplied by one spinal nerve",
+    "Three correct landmark-level pairs",
+    "Used to locate SCI level",
+    "Safety/sensation-loss implications"
+   ],
+   "section": "u3-s6",
+   "difficulty": 2
+  },
+  {
+   "type": "short",
+   "q": "Compare radial, median and ulnar nerve injuries: for each, name the classic deformity or syndrome, a common site of compression, and the main functional loss.",
+   "model": "Radial: wrist drop (Saturday night palsy), compressed at the spiral groove of the humerus; loss of wrist, finger and thumb extension. Median: ape hand / carpal tunnel syndrome, compressed at the wrist; loss of thumb opposition, weak pronation and radial-side grasp. Ulnar: claw hand / cubital tunnel syndrome, compressed at the elbow; weakness of hand intrinsics and hook grasp of digits 4-5.",
+   "points": [
+    "Radial = wrist drop, spiral groove, loss of extension",
+    "Median = ape hand/carpal tunnel, wrist, loss of opposition",
+    "Ulnar = claw hand/cubital tunnel, elbow, intrinsic weakness"
+   ],
+   "section": "u3-s9",
+   "difficulty": 3
+  }
+ ]
+}

@@ -1,0 +1,308 @@
+{
+ "questions": [
+  {
+   "type": "multi",
+   "q": "Which bones belong to the axial skeleton? (select all that apply)",
+   "choices": [
+    "Ilium",
+    "Sacrum",
+    "Clavicle",
+    "Sternum",
+    "Ribs",
+    "Scapula"
+   ],
+   "answers": [
+    1,
+    3,
+    4
+   ],
+   "explain": "The axial skeleton is the skull, vertebral column (including sacrum and coccyx), ribs and sternum; the girdles belong to the appendicular skeleton.",
+   "section": "u2-s1",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which carpals are in the DISTAL row? (select all that apply)",
+   "choices": [
+    "Hamate",
+    "Trapezoid",
+    "Scaphoid",
+    "Trapezium",
+    "Capitate",
+    "Lunate"
+   ],
+   "answers": [
+    0,
+    1,
+    3,
+    4
+   ],
+   "explain": "The distal row, lateral to medial, is trapezium, trapezoid, capitate, hamate; scaphoid and lunate are in the proximal row.",
+   "section": "u2-s9",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which are classified as short bones? (select all that apply)",
+   "choices": [
+    "Patella",
+    "Vertebrae",
+    "Carpals",
+    "Tarsals",
+    "Metacarpals"
+   ],
+   "answers": [
+    2,
+    3
+   ],
+   "explain": "Short bones (carpals, tarsals) are about equal in all dimensions. The patella is sesamoid, vertebrae are irregular and metacarpals are long bones.",
+   "section": "u2-s3",
+   "difficulty": 1
+  },
+  {
+   "type": "multi",
+   "q": "Which are classified as flat bones? (select all that apply)",
+   "choices": [
+    "Ilium",
+    "Sternum",
+    "Vertebra",
+    "Femur",
+    "Capitate",
+    "Scapula"
+   ],
+   "answers": [
+    0,
+    1,
+    5
+   ],
+   "explain": "Flat bones are broad and thin with compact bone around cancellous bone, such as the scapula, sternum, ilium, ribs and skull bones.",
+   "section": "u2-s3",
+   "difficulty": 1
+  },
+  {
+   "type": "multi",
+   "q": "Which bony landmarks are projections where tendons and ligaments attach? (select all that apply)",
+   "choices": [
+    "Tuberosity",
+    "Foramen",
+    "Crest",
+    "Facet",
+    "Fossa",
+    "Trochanter"
+   ],
+   "answers": [
+    0,
+    2,
+    5
+   ],
+   "explain": "Tuberosities, trochanters and crests are attachment sites. A fossa and foramen are depressions/openings; a facet is an articular surface.",
+   "section": "u2-s4",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which joints are biaxial? (select all that apply)",
+   "choices": [
+    "Hip",
+    "Elbow (humeroulnar)",
+    "Wrist (radiocarpal)",
+    "Intercarpal",
+    "Thumb CMC",
+    "Atlantoaxial"
+   ],
+   "answers": [
+    2,
+    4
+   ],
+   "explain": "The wrist is ellipsoid and the thumb CMC is saddle, both biaxial. The elbow and atlantoaxial are uniaxial, the hip triaxial and intercarpals non-axial.",
+   "section": "u2-s6",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which structures are made of fibrocartilage? (select all that apply)",
+   "choices": [
+    "Intervertebral discs",
+    "Glenoid labrum",
+    "Triangular fibrocartilage disc at the wrist",
+    "Knee menisci",
+    "Articular surface of the femoral head",
+    "External ear"
+   ],
+   "answers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "explain": "Fibrocartilage absorbs shock, deepens sockets and fills gaps. The ear is elastic cartilage and articular surfaces are hyaline.",
+   "section": "u2-s7",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which joints are pivot joints? (select all that apply)",
+   "choices": [
+    "Intercarpal joints",
+    "Atlantoaxial joint (C1 on C2)",
+    "Proximal radioulnar joint",
+    "Distal radioulnar joint",
+    "Finger MCP joints",
+    "Knee"
+   ],
+   "answers": [
+    1,
+    2,
+    3
+   ],
+   "explain": "Pivot joints are uniaxial and allow rotation, as at C1 on C2 and the radioulnar joints.",
+   "section": "u2-s6",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which statements about hyaline (articular) cartilage are true? (select all that apply)",
+   "choices": [
+    "It repairs itself quickly after damage",
+    "It has no blood supply of its own",
+    "It covers bone ends in synovial joints",
+    "It gives the external ear its shape",
+    "It is nourished by synovial fluid"
+   ],
+   "answers": [
+    1,
+    2,
+    4
+   ],
+   "explain": "Hyaline cartilage is avascular and fed by synovial fluid, so it cannot repair itself; elastic cartilage shapes the ear.",
+   "section": "u2-s7",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which statements about ligaments are true? (select all that apply)",
+   "choices": [
+    "They reinforce the outer fibrous layer of the joint capsule",
+    "An injury to a ligament is a strain",
+    "They connect muscle to bone",
+    "They are flexible but not elastic",
+    "An injury to a ligament is a sprain",
+    "They connect bone to bone"
+   ],
+   "answers": [
+    0,
+    3,
+    4,
+    5
+   ],
+   "explain": "Ligaments join bone to bone, bend but do not stretch, reinforce the capsule, and are sprained. Tendons join muscle to bone and are strained.",
+   "section": "u2-s7",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which statements about Osgood-Schlatter disease are correct? (select all that apply)",
+   "choices": [
+    "It is a bacterial bone infection",
+    "It is related to the pull of the patellar tendon",
+    "It is avascular necrosis of the femoral head",
+    "It is an overuse condition of growing children and adolescents",
+    "It causes inflammation at the tibial tuberosity"
+   ],
+   "answers": [
+    1,
+    3,
+    4
+   ],
+   "explain": "Osgood-Schlatter is traction inflammation at the tibial tuberosity growth plate; avascular necrosis of the femoral head is Legg-Calve-Perthes.",
+   "section": "u2-s8",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "A client's goniometry results are listed below. Which values show a LIMITATION compared with normal ROM? (select all that apply)",
+   "choices": [
+    "Hip external rotation 0-45 degrees",
+    "Elbow flexion 0-150 degrees",
+    "Wrist extension 0-40 degrees",
+    "Knee flexion 0-110 degrees",
+    "Ankle plantar flexion 0-50 degrees",
+    "Shoulder abduction 0-150 degrees"
+   ],
+   "answers": [
+    2,
+    3,
+    5
+   ],
+   "explain": "Normals are shoulder abduction 0-180, knee flexion 0-135 and wrist extension 0-70; the other values match normal ranges.",
+   "section": "u2-s10",
+   "difficulty": 3
+  },
+  {
+   "type": "short",
+   "q": "List the three structural types of joints. For each, give its functional name, how much motion and stability it allows, and one example.",
+   "model": "Fibrous (synarthrodial): no joint cavity, little or no motion and extreme stability, e.g., skull sutures. Cartilaginous (amphiarthrodial): bones joined by cartilage, slight motion and great stability, e.g., intervertebral joints or pubic symphysis. Synovial (diarthrodial): joint cavity enclosed in a capsule, the most motion and the least stability, e.g., shoulder, hip or knee.",
+   "points": [
+    "Fibrous = synarthrodial, little/no motion",
+    "Cartilaginous = amphiarthrodial, slight motion",
+    "Synovial = diarthrodial, most motion, least stability",
+    "Correct example for each"
+   ],
+   "section": "u2-s5",
+   "difficulty": 2
+  },
+  {
+   "type": "short",
+   "q": "Compare osteoblasts and osteoclasts, and explain how an imbalance between them leads to osteoporosis.",
+   "model": "Bone is constantly remodeled (dynamic equilibrium). Osteoblasts build new bone and repair and remodel it; osteoclasts resorb, or break down, old bone. When osteoclast resorption outpaces osteoblast formation, bone mass and density are lost, bones become brittle and fracture easily, which is osteoporosis.",
+   "points": [
+    "Osteoblasts build bone",
+    "Osteoclasts break down/resorb bone",
+    "Constant remodeling (dynamic equilibrium)",
+    "Osteoclast activity exceeding osteoblast activity = bone loss/osteoporosis"
+   ],
+   "section": "u2-s2",
+   "difficulty": 2
+  },
+  {
+   "type": "short",
+   "q": "Name and describe five parts of a long bone.",
+   "model": "Diaphysis: the tubular shaft. Epiphysis: each proximal and distal end. Metaphysis: the flared region between the shaft and the end. Epiphyseal (growth) plate: cartilage plate where a growing bone lengthens. Medullary cavity: central canal of the shaft holding marrow. Periosteum: outer covering rich in nerves and blood vessels.",
+   "points": [
+    "Diaphysis = shaft",
+    "Epiphysis = ends",
+    "Epiphyseal plate = growth",
+    "Medullary cavity = marrow",
+    "Periosteum = outer covering"
+   ],
+   "section": "u2-s3",
+   "difficulty": 2
+  },
+  {
+   "type": "short",
+   "q": "Classify each joint by synovial joint type and number of axes, and name one motion it allows: glenohumeral, humeroulnar (elbow), radiocarpal (wrist), thumb CMC.",
+   "model": "Glenohumeral: ball and socket, triaxial; flexion/extension, abduction/adduction and rotation. Humeroulnar: hinge, uniaxial; flexion and extension. Radiocarpal: ellipsoid (condyloid), biaxial; flexion/extension and radial/ulnar deviation. Thumb CMC: saddle, biaxial; flexion/extension and abduction/adduction, plus accessory rotation for opposition.",
+   "points": [
+    "Glenohumeral = ball and socket, triaxial",
+    "Elbow = hinge, uniaxial",
+    "Wrist = ellipsoid, biaxial",
+    "Thumb CMC = saddle, biaxial"
+   ],
+   "section": "u2-s6",
+   "difficulty": 3
+  },
+  {
+   "type": "short",
+   "q": "Define goniometry. A client's elbow flexion measures 0-110 degrees. State the normal value and explain how this limitation could affect daily occupations.",
+   "model": "Goniometry is measurement of joint angles (ROM) with a goniometer, compared with normal ranges to find limitations. Normal elbow flexion is 0-150 degrees, so 0-110 is limited by about 40 degrees. The client may have trouble bringing the hand to the mouth or face for eating, drinking, brushing teeth, shaving or combing hair, and may compensate with neck flexion or adaptive equipment such as long-handled utensils.",
+   "points": [
+    "Goniometry = measuring joint angles/ROM",
+    "Normal elbow flexion 0-150",
+    "Limitation of about 40 degrees",
+    "Hand-to-mouth/face ADLs affected"
+   ],
+   "section": "u2-s10",
+   "difficulty": 2
+  }
+ ]
+}

@@ -1,0 +1,907 @@
+{
+ "id": "u7",
+ "title": "Ankle & Foot",
+ "summary": "This unit covers the bones and regions of the ankle and foot (hindfoot, midfoot, forefoot), their joints, ligaments, motions, normal ROM and arches. It covers the leg and foot muscles by compartment, prime movers, 1-joint vs 2-joint muscles, contraction types and the ankle's role in gait. It ends with common pathologies, including ankle sprains, Achilles injuries, plantar fasciitis, gout, bunions, ankle fractures and the diabetic foot, with OT precautions.",
+ "sources": [
+  "Standard anatomy references (not in the course files)"
+ ],
+ "sections": [
+  {
+   "id": "u7-s1",
+   "heading": "Bones and Regions: Hindfoot, Midfoot, Forefoot",
+   "body": [
+    "The ankle is where the leg (tibia and fibula) meets the foot. The foot has <b>26 bones</b>: <b>7 tarsals</b>, <b>5 metatarsals</b> and <b>14 phalanges</b> (2 in the great toe, 3 in each lesser toe), plus two small sesamoid bones under the head of the 1st metatarsal.",
+    "The leg bones: the <b>tibia</b> is the large, weight-bearing bone on the medial side; its distal bump is the <b>medial malleolus</b>. The <b>fibula</b> is the thin lateral bone; its distal end is the <b>lateral malleolus</b>, which reaches farther down than the medial malleolus. That longer lateral side blocks eversion, which is one reason <b>inversion</b> sprains are much more common.",
+    "<table><thead><tr><th>Region</th><th>Bones</th><th>Key points</th></tr></thead><tbody><tr><td><b>Hindfoot</b> (rearfoot)</td><td>Talus, calcaneus</td><td>Talus sits in the ankle mortise and transfers body weight from the tibia to the foot; it has <b>no muscle attachments</b>. Calcaneus is the heel bone and largest tarsal; the Achilles tendon inserts on its posterior tuberosity.</td></tr><tr><td><b>Midfoot</b></td><td>Navicular, cuboid, 3 cuneiforms (medial, intermediate, lateral)</td><td>Navicular is on the medial side (its tuberosity is a tibialis posterior attachment); cuboid is lateral; the cuneiforms line up with metatarsals 1-3. Forms the arches and allows small gliding motions.</td></tr><tr><td><b>Forefoot</b></td><td>5 metatarsals, 14 phalanges</td><td>Metatarsals numbered 1 (great toe) to 5 (little toe). The base of the 5th metatarsal has a tuberosity where fibularis brevis inserts. The great toe is the <b>hallux</b>.</td></tr></tbody></table>",
+    "The boundary between hindfoot and midfoot is the <b>transverse tarsal (Chopart) joint</b>; the boundary between midfoot and forefoot is the <b>tarsometatarsal (Lisfranc) joint</b>.",
+    "Memory tip for the tarsals: <i>\"Tiger Cubs Need MILC\"</i> = Talus, Calcaneus, Navicular, Medial, Intermediate and Lateral cuneiforms, Cuboid."
+   ]
+  },
+  {
+   "id": "u7-s2",
+   "heading": "Joints of the Ankle and Foot",
+   "body": [
+    "Most joints here are <b>synovial</b>. The distal tibiofibular joint is the exception: it is a fibrous joint (syndesmosis) that holds the tibia and fibula together to form the ankle mortise.",
+    "<table><thead><tr><th>Joint</th><th>Bones</th><th>Type</th><th>Axes</th><th>Motions</th></tr></thead><tbody><tr><td><b>Talocrural</b> (true ankle joint)</td><td>Distal tibia and fibula (mortise) with the talus</td><td>Synovial <b>hinge</b></td><td>Uniaxial</td><td>Dorsiflexion and plantarflexion</td></tr><tr><td><b>Subtalar</b> (talocalcaneal)</td><td>Talus and calcaneus</td><td>Synovial plane (gliding); acts as a uniaxial joint on an oblique axis</td><td>Uniaxial (functionally)</td><td><b>Inversion and eversion</b> (part of supination/pronation)</td></tr><tr><td><b>Transverse tarsal</b> (midtarsal, Chopart)</td><td>Talonavicular + calcaneocuboid joints</td><td>Synovial; together act as a plane/gliding joint</td><td>Small multiaxial gliding</td><td>Adds to inversion/eversion; lets the forefoot adapt to uneven ground</td></tr><tr><td><b>Tarsometatarsal</b> (Lisfranc)</td><td>Cuneiforms and cuboid with metatarsal bases</td><td>Synovial plane (gliding)</td><td>Nonaxial</td><td>Small gliding; helps shape the foot to the ground</td></tr><tr><td><b>Metatarsophalangeal (MTP)</b></td><td>Metatarsal heads with proximal phalanges</td><td>Synovial <b>condyloid</b></td><td>Biaxial</td><td>Flexion/extension, abduction/adduction</td></tr><tr><td><b>Interphalangeal (IP)</b>: PIP, DIP; hallux has one IP</td><td>Phalanges</td><td>Synovial <b>hinge</b></td><td>Uniaxial</td><td>Flexion and extension</td></tr><tr><td>Distal tibiofibular</td><td>Distal tibia and fibula</td><td>Fibrous (syndesmosis)</td><td>None</td><td>Very slight give; stabilizes the mortise</td></tr></tbody></table>",
+    "The talus is wider in front than in back. In <b>dorsiflexion</b> the wide part wedges into the mortise, so the ankle is most stable (close-packed). In <b>plantarflexion</b> the narrow part sits in the mortise, so the ankle is looser and easier to sprain.",
+    "Pattern to notice: the foot copies the hand. MTP joints are condyloid like the MCP joints, and IP joints are hinges like the finger IP joints. Abduction/adduction of the toes is described relative to the <b>2nd toe</b> (in the hand it is the 3rd finger)."
+   ]
+  },
+  {
+   "id": "u7-s3",
+   "heading": "Ligaments of the Ankle and Foot",
+   "body": [
+    "Ligaments connect bone to bone and limit motion. The ankle has a strong medial ligament complex and three separate lateral ligaments.",
+    "<b>Medial side: deltoid ligament.</b> A strong, fan-shaped ligament from the medial malleolus to the talus, navicular and calcaneus. Its four parts are the anterior tibiotalar, tibionavicular, tibiocalcaneal and posterior tibiotalar ligaments. It resists <b>eversion</b>. Because it is so strong, a hard eversion force often breaks off the medial malleolus (avulsion) instead of tearing the ligament.",
+    "<b>Lateral side: three ligaments that resist inversion.</b><ul><li><b>Anterior talofibular (ATFL)</b>: lateral malleolus to the talus. Weakest and the <b>most commonly sprained</b> ligament in the body, especially with inversion plus plantarflexion. Also limits the talus from sliding forward.</li><li><b>Calcaneofibular (CFL)</b>: lateral malleolus down to the calcaneus. Second to be injured. It crosses both the talocrural and subtalar joints.</li><li><b>Posterior talofibular (PTFL)</b>: lateral malleolus to the back of the talus. Strongest of the three and rarely torn.</li></ul>",
+    "<b>Spring ligament (plantar calcaneonavicular)</b>: from the sustentaculum tali of the calcaneus to the navicular. It cradles the head of the talus and supports the <b>medial longitudinal arch</b>.",
+    "<b>Plantar fascia (plantar aponeurosis)</b>: a thick band of connective tissue from the calcaneal tuberosity to the bases of the toes. It supports the longitudinal arch. When the toes extend during push-off it tightens and raises the arch (the <b>windlass mechanism</b>).",
+    "<table><thead><tr><th>Ligament</th><th>Joint(s) it supports</th><th>Main job</th></tr></thead><tbody><tr><td>Deltoid (medial collateral)</td><td>Talocrural and subtalar (and talonavicular)</td><td>Resists eversion; medial stability</td></tr><tr><td>Anterior talofibular (ATFL)</td><td>Talocrural</td><td>Resists inversion in plantarflexion; resists anterior talar glide</td></tr><tr><td>Calcaneofibular (CFL)</td><td>Talocrural and subtalar</td><td>Resists inversion</td></tr><tr><td>Posterior talofibular (PTFL)</td><td>Talocrural</td><td>Resists posterior talar glide; strongest lateral ligament</td></tr><tr><td>Anterior/posterior inferior tibiofibular</td><td>Distal tibiofibular (syndesmosis)</td><td>Holds tibia and fibula together; injured in a \"high ankle sprain\"</td></tr><tr><td>Interosseous talocalcaneal</td><td>Subtalar</td><td>Binds talus to calcaneus</td></tr><tr><td>Spring (plantar calcaneonavicular)</td><td>Talonavicular part of the transverse tarsal joint</td><td>Supports talar head and medial longitudinal arch</td></tr><tr><td>Long and short plantar ligaments</td><td>Calcaneocuboid part of the transverse tarsal joint (long plantar continues to the metatarsal bases)</td><td>Support the lateral longitudinal arch</td></tr><tr><td>Lisfranc ligament</td><td>Tarsometatarsal (medial cuneiform to 2nd metatarsal base)</td><td>Stabilizes the midfoot-forefoot junction</td></tr><tr><td>Plantar fascia</td><td>Spans the whole plantar foot, calcaneus to toes (MTP region)</td><td>Supports arches; windlass mechanism</td></tr><tr><td>Collateral ligaments and plantar plates</td><td>MTP and IP joints</td><td>Side-to-side stability; limit hyperextension</td></tr></tbody></table>",
+    "Name tip: most ligament names list the two bones they connect. <i>Talo-fibular</i> = talus to fibula; <i>calcaneo-fibular</i> = calcaneus to fibula; <i>calcaneo-navicular</i> = calcaneus to navicular. If you can name the bones, you can usually name the joint."
+   ]
+  },
+  {
+   "id": "u7-s4",
+   "heading": "Motions and Normal ROM",
+   "body": [
+    "<ul><li><b>Dorsiflexion</b>: top of the foot moves up toward the shin (talocrural).</li><li><b>Plantarflexion</b>: foot points down, as in standing on tiptoe (talocrural).</li><li><b>Inversion</b>: sole turns inward toward midline (mainly subtalar and transverse tarsal).</li><li><b>Eversion</b>: sole turns outward (mainly subtalar and transverse tarsal).</li><li><b>Supination</b>: a combined, triplanar motion = inversion + plantarflexion + adduction. Makes the foot a <b>rigid lever</b> for push-off.</li><li><b>Pronation</b>: combined motion = eversion + dorsiflexion + abduction. Makes the foot <b>flexible</b> to absorb shock and adapt to the ground.</li><li>Toes: flexion, extension, abduction, adduction (relative to the 2nd toe).</li></ul>",
+    "In everyday language, inversion/supination and eversion/pronation are often used as near-synonyms; on exams, remember that supination and pronation are the <b>combined</b> motions.",
+    "<table><thead><tr><th>Motion</th><th>Normal ROM (AAOS)</th><th>Main joint</th></tr></thead><tbody><tr><td>Dorsiflexion</td><td>0-20°</td><td>Talocrural</td></tr><tr><td>Plantarflexion</td><td>0-50°</td><td>Talocrural</td></tr><tr><td>Inversion</td><td>0-35°</td><td>Subtalar + transverse tarsal</td></tr><tr><td>Eversion</td><td>0-15°</td><td>Subtalar + transverse tarsal</td></tr><tr><td>1st MTP flexion</td><td>0-45°</td><td>MTP</td></tr><tr><td>1st MTP extension</td><td>0-70°</td><td>MTP</td></tr><tr><td>Hallux IP flexion</td><td>0-90°</td><td>IP</td></tr></tbody></table>",
+    "Published norms differ a little between sources (for example, some list eversion as 0-20°); use the values your instructor gives. <b>Functional ROM</b> for normal walking is about 10° of dorsiflexion and 20° of plantarflexion. Stairs need more dorsiflexion, and the great toe needs good MTP extension for push-off.",
+    "Goniometry notes: for ankle DF/PF the axis is the lateral malleolus, the stationary arm follows the fibula toward the fibular head, and the moving arm is parallel to the 5th metatarsal. Measure dorsiflexion with the knee flexed and with it extended: if DF is less with the knee straight, the <b>gastrocnemius</b> is tight."
+   ]
+  },
+  {
+   "id": "u7-s5",
+   "heading": "Arches of the Foot",
+   "body": [
+    "The arches let the foot be both a shock absorber and a stiff lever. They spread body weight between the heel and the metatarsal heads and protect the nerves and vessels on the sole.",
+    "<table><thead><tr><th>Arch</th><th>Bones</th><th>Keystone</th><th>Main supports</th></tr></thead><tbody><tr><td><b>Medial longitudinal</b> (highest, most important)</td><td>Calcaneus, talus, navicular, 3 cuneiforms, metatarsals 1-3</td><td>Head of the talus</td><td>Spring ligament, plantar fascia, tibialis posterior, FHL, FDL, intrinsic muscles</td></tr><tr><td><b>Lateral longitudinal</b> (low, contacts ground)</td><td>Calcaneus, cuboid, metatarsals 4-5</td><td>Cuboid</td><td>Long and short plantar ligaments, plantar fascia, fibularis longus</td></tr><tr><td><b>Transverse</b> (side to side)</td><td>Cuneiforms, cuboid, bases of metatarsals</td><td>Intermediate (middle) cuneiform</td><td>Fibularis longus and tibialis posterior (a \"stirrup\" under the foot), intrinsic muscles</td></tr></tbody></table>",
+    "<b>Pes planus</b> (flat foot): low or collapsed medial arch, often with excessive pronation. It can come from a tibialis posterior tendon problem. <b>Pes cavus</b>: an abnormally high arch; the foot is rigid and absorbs shock poorly, and it is often seen with neurological conditions.",
+    "OT relevance: arch problems change how weight is spread across the foot, raise the risk of skin breakdown in people with poor sensation, and can affect balance and how long a person can stand during ADLs. Orthotics and supportive footwear are common solutions."
+   ]
+  },
+  {
+   "id": "u7-s6",
+   "heading": "Muscles of the Leg and Foot",
+   "body": [
+    "The lower leg muscles sit in compartments. Each compartment has a shared job and a shared nerve, which makes them easier to learn:<ul><li><b>Anterior compartment</b>: dorsiflexors and toe extensors; <b>deep fibular (peroneal) nerve</b>.</li><li><b>Lateral compartment</b>: evertors; <b>superficial fibular nerve</b>.</li><li><b>Posterior compartment (superficial)</b>: calf muscles, plantarflexors; <b>tibial nerve</b>.</li><li><b>Posterior compartment (deep)</b>: plantarflexors, invertors and toe flexors; <b>tibial nerve</b>.</li></ul>",
+    "<table><thead><tr><th>Muscle</th><th>Origin</th><th>Insertion</th><th>Action</th><th>Innervation</th></tr></thead><tbody><tr><td><b>Gastrocnemius</b> (2-joint)</td><td>Medial and lateral femoral condyles</td><td>Calcaneal tuberosity via Achilles tendon</td><td>Ankle plantarflexion; knee flexion</td><td>Tibial n. (S1-S2)</td></tr><tr><td><b>Soleus</b> (1-joint)</td><td>Posterior proximal tibia (soleal line) and posterior head/upper fibula</td><td>Calcaneal tuberosity via Achilles tendon</td><td>Ankle plantarflexion; key postural muscle in standing</td><td>Tibial n. (S1-S2)</td></tr><tr><td><b>Plantaris</b> (2-joint)</td><td>Lateral supracondylar line of femur</td><td>Calcaneus (with or beside the Achilles tendon)</td><td>Weak plantarflexion and knee flexion</td><td>Tibial n.</td></tr><tr><td><b>Tibialis anterior</b></td><td>Lateral condyle and upper lateral tibia, interosseous membrane</td><td>Medial cuneiform and base of 1st metatarsal</td><td>Dorsiflexion; inversion</td><td>Deep fibular n. (L4-L5)</td></tr><tr><td><b>Extensor hallucis longus (EHL)</b></td><td>Middle anterior fibula, interosseous membrane</td><td>Base of distal phalanx of great toe</td><td>Extends great toe; assists dorsiflexion</td><td>Deep fibular n. (L5)</td></tr><tr><td><b>Extensor digitorum longus (EDL)</b></td><td>Lateral condyle of tibia, upper anterior fibula, interosseous membrane</td><td>Middle and distal phalanges of toes 2-5</td><td>Extends toes 2-5; dorsiflexion; eversion</td><td>Deep fibular n. (L5-S1)</td></tr><tr><td><b>Fibularis (peroneus) tertius</b></td><td>Lower anterior fibula</td><td>Dorsal base of 5th metatarsal</td><td>Dorsiflexion; eversion</td><td>Deep fibular n.</td></tr><tr><td><b>Fibularis (peroneus) longus</b></td><td>Head and upper lateral fibula</td><td>Plantar side of medial cuneiform and base of 1st metatarsal (tendon runs under the foot)</td><td>Eversion; assists plantarflexion; supports transverse and lateral arches</td><td>Superficial fibular n. (L5-S1)</td></tr><tr><td><b>Fibularis (peroneus) brevis</b></td><td>Lower lateral fibula</td><td>Tuberosity of base of 5th metatarsal</td><td>Eversion; assists plantarflexion</td><td>Superficial fibular n. (L5-S1)</td></tr><tr><td><b>Tibialis posterior</b></td><td>Posterior tibia, fibula and interosseous membrane</td><td>Navicular tuberosity, plus cuneiforms, cuboid and bases of metatarsals 2-4</td><td>Inversion; plantarflexion; main dynamic support of the medial arch</td><td>Tibial n. (L4-L5)</td></tr><tr><td><b>Flexor digitorum longus (FDL)</b></td><td>Middle posterior tibia</td><td>Bases of distal phalanges of toes 2-5</td><td>Flexes toes 2-5; assists plantarflexion and inversion</td><td>Tibial n.</td></tr><tr><td><b>Flexor hallucis longus (FHL)</b></td><td>Lower posterior fibula</td><td>Base of distal phalanx of great toe</td><td>Flexes great toe (push-off); assists plantarflexion and inversion</td><td>Tibial n.</td></tr></tbody></table>",
+    "<b>Triceps surae</b> = gastrocnemius + soleus, sharing the <b>Achilles (calcaneal) tendon</b>, the strongest tendon in the body.",
+    "Behind the medial malleolus (tarsal tunnel), the order front to back is <b>T</b>ibialis posterior, flexor <b>D</b>igitorum longus, posterior tibial <b>A</b>rtery, <b>V</b>ein and <b>N</b>erve, flexor <b>H</b>allucis longus: <i>\"Tom, Dick And Very Nervous Harry.\"</i> Tendons that pass <b>behind the medial malleolus invert and plantarflex</b>; tendons behind the <b>lateral</b> malleolus (fibularis longus and brevis) <b>evert</b>.",
+    "<b>Intrinsic muscles</b> start and end within the foot. On the dorsum, the extensor digitorum brevis (and extensor hallucis brevis) help extend the toes (deep fibular n.). On the sole there are four layers, including abductor hallucis, flexor digitorum brevis, abductor digiti minimi, quadratus plantae, lumbricals, flexor hallucis brevis, adductor hallucis and the interossei (plantar interossei ADduct, dorsal interossei ABduct: <i>PAD and DAB</i>, around the 2nd toe). They are supplied by the medial and lateral plantar nerves (branches of the tibial nerve) and support the arches and balance."
+   ]
+  },
+  {
+   "id": "u7-s7",
+   "heading": "Prime Movers, 1-Joint vs 2-Joint Muscles, and Exercise",
+   "body": [
+    "<table><thead><tr><th>Motion</th><th>Prime mover(s)</th><th>Assistants</th></tr></thead><tbody><tr><td>Plantarflexion</td><td>Gastrocnemius and soleus</td><td>Tibialis posterior, fibularis longus and brevis, FHL, FDL, plantaris</td></tr><tr><td>Dorsiflexion</td><td>Tibialis anterior</td><td>EHL, EDL, fibularis tertius</td></tr><tr><td>Inversion</td><td>Tibialis posterior and tibialis anterior</td><td>FHL, FDL</td></tr><tr><td>Eversion</td><td>Fibularis longus and fibularis brevis</td><td>Fibularis tertius, EDL</td></tr><tr><td>Great toe flexion / extension</td><td>FHL / EHL</td><td>Flexor / extensor hallucis brevis</td></tr><tr><td>Toes 2-5 flexion / extension</td><td>FDL / EDL</td><td>FDB, quadratus plantae / EDB</td></tr></tbody></table>",
+    "<b>1-joint vs 2-joint.</b> A 1-joint muscle crosses one joint; a 2-joint muscle crosses two and acts on both. The <b>gastrocnemius</b> (and the small plantaris) cross the <b>knee and ankle</b>, so they are 2-joint. The <b>soleus</b> crosses only the ankle, so it is 1-joint. (The long toe flexors and extensors technically cross the ankle and several toe joints, so they are multi-joint.)",
+    "Why it matters:<ul><li><b>Stretching</b>: to stretch the gastrocnemius, dorsiflex the ankle with the <b>knee straight</b> (both joints stretched at once). To focus on the soleus, dorsiflex with the <b>knee bent</b>, which slackens the gastrocnemius.</li><li><b>Strengthening</b>: a standing heel raise with knees straight works both gastrocnemius and soleus. A <b>seated</b> heel raise with knees bent puts the gastrocnemius in <b>active insufficiency</b> (too short to produce much force), so the soleus does most of the work.</li><li>Active insufficiency: a 2-joint muscle cannot shorten enough to produce full motion at both joints at once (e.g., weak plantarflexion with the knee fully flexed). Passive insufficiency: it cannot stretch enough to allow full motion at both joints at once (e.g., less dorsiflexion with the knee extended).</li></ul>",
+    "<b>Contraction types</b>:<ul><li><b>Concentric</b> (muscle shortens): plantarflexors rising onto tiptoes; tibialis anterior lifting the foot during swing.</li><li><b>Eccentric</b> (muscle lengthens under control): plantarflexors lowering the heels slowly from tiptoe or walking down stairs; tibialis anterior lowering the foot to the floor just after heel strike.</li><li><b>Isometric</b> (no change in length): pushing the foot against a wall or your hand without moving; calf muscles holding a still standing posture.</li></ul>",
+    "Common exercises: towel scrunches and marble pick-ups (toe flexors, intrinsics), ankle alphabet (AROM), resistance band DF/PF/inversion/eversion, heel raises, calf stretch at the wall, single-leg balance for proprioception after sprain."
+   ]
+  },
+  {
+   "id": "u7-s8",
+   "heading": "Gait Basics and the Ankle",
+   "body": [
+    "A gait cycle runs from heel strike of one foot to the next heel strike of the same foot. <b>Stance phase</b> (foot on the ground) is about <b>60%</b>; <b>swing phase</b> (foot in the air) is about <b>40%</b>.",
+    "<table><thead><tr><th>Gait event</th><th>Ankle position</th><th>Key muscle action</th></tr></thead><tbody><tr><td>Initial contact (heel strike)</td><td>Neutral, heel touches first</td><td>Tibialis anterior holds the foot up</td></tr><tr><td>Loading response (foot flat)</td><td>Plantarflexes to bring the foot flat; foot pronates to absorb shock</td><td>Tibialis anterior works <b>eccentrically</b> so the foot does not slap</td></tr><tr><td>Midstance</td><td>Moves into dorsiflexion as the tibia rolls over the foot</td><td>Soleus and gastrocnemius work <b>eccentrically</b> to control the tibia</td></tr><tr><td>Terminal stance (heel off) to pre-swing (toe off)</td><td>Plantarflexes; toes extend at MTPs; foot supinates into a rigid lever</td><td>Gastrocnemius and soleus work <b>concentrically</b> for push-off; plantar fascia tightens (windlass)</td></tr><tr><td>Swing</td><td>Dorsiflexes to neutral so the toes clear the floor</td><td>Tibialis anterior and toe extensors work <b>concentrically</b></td></tr></tbody></table>",
+    "<b>Gait problems linked to the ankle</b>:<ul><li><b>Foot drop</b>: weak dorsiflexors (often from common or deep fibular nerve injury, stroke, or nerve damage near the fibular head). Causes foot slap at heel strike and toe drag in swing. The person may use a <b>steppage gait</b> (lifting the knee high). An <b>ankle-foot orthosis (AFO)</b> is a common fix.</li><li>Weak plantarflexors: poor push-off, shorter step length, trouble with stairs and rising onto toes.</li><li>Tight heel cords (limited DF): early heel rise, toe walking, or the knee snapping back into hyperextension.</li></ul>",
+    "OT relevance: OTs look at gait during functional mobility in ADLs (walking to the bathroom, carrying items in the kitchen) and address fall risk, footwear, home safety and the safe use of walkers, canes and orthoses."
+   ]
+  },
+  {
+   "id": "u7-s9",
+   "heading": "Pathologies and OT Precautions",
+   "body": [
+    "<b>Lateral ankle sprain.</b> Usually caused by <b>inversion with plantarflexion</b> (rolling the ankle). The ATFL tears first, then the CFL. Graded I (stretch), II (partial tear), III (complete tear). Early care: protect, rest, ice, compression, elevation. A <b>high ankle sprain</b> (syndesmosis, from forced external rotation/dorsiflexion) heals more slowly. OT relevance: balance and proprioception training, fall prevention, ADL modifications while weight bearing is limited.",
+    "<b>Achilles tendinitis / tendinopathy.</b> Overuse pain and thickening of the Achilles tendon, often from sudden increases in activity or tight calves. Treated with load management, eccentric heel-drop exercises (as directed by the therapy plan), and calf stretching.",
+    "<b>Achilles tendon rupture.</b> Sudden \"pop\" or feeling of being kicked in the heel, often during a quick push-off. Positive <b>Thompson test</b>: squeezing the calf does not cause plantarflexion. Treated with surgery or a boot with heel wedges that holds the ankle in plantarflexion. <b>Precautions</b>: no stretching into dorsiflexion and follow weight-bearing and boot orders until cleared.",
+    "<b>Plantar fasciitis.</b> Inflammation/degeneration of the plantar fascia near its calcaneal attachment. Classic sign: sharp heel pain with the <b>first steps in the morning</b> or after sitting. Linked to tight calves, long standing, flat or high arches and weight gain. Treatment: calf and plantar fascia stretching, night splints holding dorsiflexion, supportive shoes, orthotics, rolling the arch.",
+    "<b>Gout.</b> An inflammatory arthritis caused by <b>uric acid (monosodium urate) crystals</b> depositing in a joint. The classic site is the <b>1st MTP joint</b> of the great toe (called <i>podagra</i>). Attacks come on fast, often at night: the joint is red, hot, swollen and extremely painful, so that even a bed sheet hurts. Repeated attacks can form <b>tophi</b> (chalky lumps of crystals) and damage the joint. Risk factors include high-purine foods (red and organ meats, shellfish), alcohol (especially beer), sugary drinks, obesity, kidney disease and some diuretics.<br><b>Precautions during a flare:</b><ul><li>Rest, protect and elevate the joint; avoid weight bearing and pressure on it as tolerated (consider a bed cradle to keep sheets off the toe).</li><li><b>Do not do ROM, stretching or strengthening of the acutely inflamed joint</b>; cold may help pain, as ordered.</li><li>Use open-toe or roomy, soft footwear; adaptive equipment and an assistive device for mobility.</li><li>Encourage hydration and follow medical diet and medication plans.</li><li>Between flares: gentle ROM, joint protection, energy conservation and education about triggers.</li></ul>",
+    "<b>Hallux valgus (bunion).</b> The great toe angles <b>laterally</b> toward the 2nd toe at the 1st MTP, leaving a bony bump on the medial side of the 1st metatarsal head. Linked to genetics, narrow pointed shoes and rheumatoid arthritis. Treatment: wide toe box shoes, padding, orthotics, or surgery (bunionectomy) with post-op weight-bearing limits.",
+    "<b>Ankle fractures.</b> Often from twisting injuries or falls. The <b>lateral malleolus</b> (fibula) is broken most often; bimalleolar (both malleoli) and trimalleolar (plus the posterior tibia) fractures are less stable and often need <b>ORIF</b>. Older adults with osteoporosis are at higher risk. OT relevance: teach ADLs within <b>weight-bearing restrictions</b> (NWB, TTWB, PWB, WBAT, FWB), safe walker or knee-scooter use, tub and toilet transfers, cast or boot care, and edema control with elevation.",
+    "<b>Diabetic foot.</b> Diabetes can cause <b>peripheral neuropathy</b> (loss of protective sensation) and poor circulation, so small injuries go unnoticed and heal slowly. This leads to ulcers, infection, Charcot foot (joint breakdown) and amputation. <b>OT precautions and education</b>:<ul><li>Inspect feet every day; use a long-handled mirror if the person cannot see the soles.</li><li>Check bath water temperature with a thermometer or elbow, not the feet.</li><li>Never walk barefoot; wear well-fitting shoes and seamless socks; check inside shoes before putting them on.</li><li>Keep feet clean and dry, especially between the toes; moisturize the skin but not between the toes.</li><li>Have nails and calluses handled by a podiatrist; avoid heating pads on the feet.</li><li>Report any redness, blisters, cuts or color changes right away.</li></ul>",
+    "<b>Other conditions to know:</b> tibialis posterior tendon dysfunction (acquired flat foot), foot drop from fibular nerve injury, and Morton's neuroma (pinched nerve between the 3rd and 4th metatarsal heads)."
+   ]
+  }
+ ],
+ "terms": [
+  {
+   "term": "Hindfoot",
+   "def": "Rear region of the foot: talus and calcaneus.",
+   "section": "u7-s1"
+  },
+  {
+   "term": "Midfoot",
+   "def": "Middle region of the foot: navicular, cuboid and the three cuneiforms.",
+   "section": "u7-s1"
+  },
+  {
+   "term": "Forefoot",
+   "def": "Front region of the foot: the 5 metatarsals and 14 phalanges.",
+   "section": "u7-s1"
+  },
+  {
+   "term": "Talus",
+   "def": "Hindfoot bone that sits in the ankle mortise and transfers weight from the tibia to the foot; has no muscle attachments.",
+   "section": "u7-s1"
+  },
+  {
+   "term": "Calcaneus",
+   "def": "The heel bone; largest tarsal; Achilles tendon inserts on it.",
+   "section": "u7-s1"
+  },
+  {
+   "term": "Medial malleolus",
+   "def": "Distal bump of the tibia on the inside of the ankle.",
+   "section": "u7-s1"
+  },
+  {
+   "term": "Lateral malleolus",
+   "def": "Distal end of the fibula on the outside of the ankle; extends lower than the medial malleolus.",
+   "section": "u7-s1"
+  },
+  {
+   "term": "Hallux",
+   "def": "The great (big) toe.",
+   "section": "u7-s1"
+  },
+  {
+   "term": "Talocrural joint",
+   "def": "True ankle joint between the tibia/fibula mortise and the talus; synovial hinge for dorsiflexion and plantarflexion.",
+   "section": "u7-s2"
+  },
+  {
+   "term": "Ankle mortise",
+   "def": "The socket formed by the distal tibia and fibula that holds the talus.",
+   "section": "u7-s2"
+  },
+  {
+   "term": "Subtalar joint",
+   "def": "Joint between talus and calcaneus; main site of inversion and eversion.",
+   "section": "u7-s2"
+  },
+  {
+   "term": "Transverse tarsal (midtarsal) joint",
+   "def": "Talonavicular plus calcaneocuboid joints (Chopart joint); adds to inversion/eversion and adapts the forefoot.",
+   "section": "u7-s2"
+  },
+  {
+   "term": "Tarsometatarsal (Lisfranc) joint",
+   "def": "Plane joints between the distal tarsals and the metatarsal bases.",
+   "section": "u7-s2"
+  },
+  {
+   "term": "Metatarsophalangeal (MTP) joint",
+   "def": "Condyloid joint between metatarsal head and proximal phalanx; flexion/extension and abduction/adduction.",
+   "section": "u7-s2"
+  },
+  {
+   "term": "Deltoid ligament",
+   "def": "Strong fan-shaped medial ankle ligament; resists eversion.",
+   "section": "u7-s3"
+  },
+  {
+   "term": "Anterior talofibular ligament (ATFL)",
+   "def": "Lateral ankle ligament from fibula to talus; the most commonly sprained.",
+   "section": "u7-s3"
+  },
+  {
+   "term": "Calcaneofibular ligament (CFL)",
+   "def": "Lateral ligament from fibula to calcaneus; crosses the talocrural and subtalar joints; resists inversion.",
+   "section": "u7-s3"
+  },
+  {
+   "term": "Posterior talofibular ligament (PTFL)",
+   "def": "Strongest lateral ankle ligament; fibula to back of talus.",
+   "section": "u7-s3"
+  },
+  {
+   "term": "Spring ligament",
+   "def": "Plantar calcaneonavicular ligament; supports the head of the talus and medial longitudinal arch.",
+   "section": "u7-s3"
+  },
+  {
+   "term": "Plantar fascia",
+   "def": "Thick connective tissue band from calcaneus to toes that supports the arches.",
+   "section": "u7-s3"
+  },
+  {
+   "term": "Windlass mechanism",
+   "def": "Toe extension tightens the plantar fascia, raising the arch and stiffening the foot for push-off.",
+   "section": "u7-s3"
+  },
+  {
+   "term": "Dorsiflexion",
+   "def": "Moving the top of the foot up toward the shin; normal 0-20°.",
+   "section": "u7-s4"
+  },
+  {
+   "term": "Plantarflexion",
+   "def": "Pointing the foot down; normal 0-50°.",
+   "section": "u7-s4"
+  },
+  {
+   "term": "Inversion",
+   "def": "Turning the sole inward; normal about 0-35°.",
+   "section": "u7-s4"
+  },
+  {
+   "term": "Eversion",
+   "def": "Turning the sole outward; normal about 0-15°.",
+   "section": "u7-s4"
+  },
+  {
+   "term": "Supination (foot)",
+   "def": "Combined inversion, plantarflexion and adduction; makes the foot a rigid lever.",
+   "section": "u7-s4"
+  },
+  {
+   "term": "Pronation (foot)",
+   "def": "Combined eversion, dorsiflexion and abduction; makes the foot flexible for shock absorption.",
+   "section": "u7-s4"
+  },
+  {
+   "term": "Medial longitudinal arch",
+   "def": "Highest arch, from calcaneus through talus, navicular, cuneiforms and metatarsals 1-3; keystone is the talar head.",
+   "section": "u7-s5"
+  },
+  {
+   "term": "Pes planus",
+   "def": "Flat foot; low or collapsed medial longitudinal arch.",
+   "section": "u7-s5"
+  },
+  {
+   "term": "Pes cavus",
+   "def": "Abnormally high arch; rigid foot with poor shock absorption.",
+   "section": "u7-s5"
+  },
+  {
+   "term": "Triceps surae",
+   "def": "Gastrocnemius and soleus together; prime movers of plantarflexion via the Achilles tendon.",
+   "section": "u7-s6"
+  },
+  {
+   "term": "Achilles (calcaneal) tendon",
+   "def": "Shared tendon of gastrocnemius and soleus inserting on the calcaneus.",
+   "section": "u7-s6"
+  },
+  {
+   "term": "Two-joint (biarticular) muscle",
+   "def": "Muscle that crosses and acts on two joints, such as the gastrocnemius at the knee and ankle.",
+   "section": "u7-s7"
+  },
+  {
+   "term": "Active insufficiency",
+   "def": "A 2-joint muscle cannot shorten enough to produce full force at both joints at once.",
+   "section": "u7-s7"
+  },
+  {
+   "term": "Foot drop",
+   "def": "Inability to dorsiflex, often from fibular nerve injury; causes foot slap and toe drag.",
+   "section": "u7-s8"
+  },
+  {
+   "term": "Ankle-foot orthosis (AFO)",
+   "def": "Brace that holds the ankle, often in neutral, to manage foot drop or weakness.",
+   "section": "u7-s8"
+  },
+  {
+   "term": "Gout",
+   "def": "Inflammatory arthritis from uric acid crystal deposits, classically at the 1st MTP joint.",
+   "section": "u7-s9"
+  },
+  {
+   "term": "Tophi",
+   "def": "Chalky lumps of uric acid crystals under the skin or in joints from chronic gout.",
+   "section": "u7-s9"
+  },
+  {
+   "term": "Hallux valgus",
+   "def": "Lateral deviation of the great toe at the 1st MTP with a medial bunion.",
+   "section": "u7-s9"
+  },
+  {
+   "term": "Thompson test",
+   "def": "Squeezing the calf; no plantarflexion suggests an Achilles tendon rupture.",
+   "section": "u7-s9"
+  },
+  {
+   "term": "Peripheral neuropathy",
+   "def": "Nerve damage (often from diabetes) causing loss of protective sensation in the feet.",
+   "section": "u7-s9"
+  }
+ ],
+ "questions": [
+  {
+   "q": "Which bones make up the hindfoot?",
+   "choices": [
+    "Navicular and cuboid",
+    "Talus and calcaneus",
+    "Calcaneus and cuboid",
+    "Talus and navicular"
+   ],
+   "answer": 1,
+   "explain": "The hindfoot is the talus and calcaneus; navicular and cuboid are midfoot.",
+   "section": "u7-s1",
+   "difficulty": 1
+  },
+  {
+   "q": "Which bones make up the midfoot?",
+   "choices": [
+    "Talus, calcaneus and navicular",
+    "Navicular, cuboid and three cuneiforms",
+    "Metatarsals and cuneiforms",
+    "Cuboid and the five metatarsals"
+   ],
+   "answer": 1,
+   "explain": "The midfoot has five tarsals: navicular, cuboid and medial, intermediate and lateral cuneiforms.",
+   "section": "u7-s1",
+   "difficulty": 1
+  },
+  {
+   "q": "Which tarsal bone has no muscle attachments?",
+   "choices": [
+    "Calcaneus",
+    "Navicular",
+    "Cuboid",
+    "Talus"
+   ],
+   "answer": 3,
+   "explain": "The talus is covered mostly by cartilage and has no muscles attaching to it.",
+   "section": "u7-s1",
+   "difficulty": 2
+  },
+  {
+   "q": "Why are inversion sprains more common than eversion sprains?",
+   "choices": [
+    "The medial malleolus is longer and blocks inversion",
+    "The lateral malleolus extends farther distally and blocks eversion, and the lateral ligaments are weaker than the deltoid",
+    "The fibula bears most of the body weight",
+    "The subtalar joint only allows inversion"
+   ],
+   "answer": 1,
+   "explain": "The longer lateral malleolus and strong deltoid limit eversion, leaving the weaker lateral side vulnerable to inversion.",
+   "section": "u7-s1",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which bones are tarsals? (select all that apply)",
+   "choices": [
+    "Talus",
+    "Navicular",
+    "Hallux",
+    "Cuboid",
+    "Patella",
+    "1st metatarsal"
+   ],
+   "answers": [
+    0,
+    1,
+    3
+   ],
+   "explain": "Talus, navicular and cuboid are tarsals; the hallux is a toe, the patella is at the knee, metatarsals are forefoot.",
+   "section": "u7-s1",
+   "difficulty": 1
+  },
+  {
+   "q": "The talocrural joint is classified as which type?",
+   "choices": [
+    "Synovial condyloid",
+    "Synovial ball-and-socket",
+    "Fibrous syndesmosis",
+    "Synovial hinge"
+   ],
+   "answer": 3,
+   "explain": "The true ankle is a uniaxial hinge allowing dorsiflexion and plantarflexion.",
+   "section": "u7-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "Inversion and eversion occur mainly at which joint?",
+   "choices": [
+    "Subtalar",
+    "Talocrural",
+    "Tarsometatarsal",
+    "Distal tibiofibular"
+   ],
+   "answer": 0,
+   "explain": "The subtalar (talocalcaneal) joint, helped by the transverse tarsal joint, produces inversion and eversion.",
+   "section": "u7-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "The transverse tarsal (midtarsal) joint is made of which two joints?",
+   "choices": [
+    "Talocrural and subtalar",
+    "Talonavicular and calcaneocuboid",
+    "Calcaneocuboid and cuneonavicular",
+    "Tarsometatarsal and intermetatarsal"
+   ],
+   "answer": 1,
+   "explain": "Chopart's joint = talonavicular + calcaneocuboid.",
+   "section": "u7-s2",
+   "difficulty": 2
+  },
+  {
+   "q": "The MTP joints of the toes are what type of joint, and how many axes do they have?",
+   "choices": [
+    "Condyloid, biaxial",
+    "Hinge, uniaxial",
+    "Plane, nonaxial",
+    "Saddle, biaxial"
+   ],
+   "answer": 0,
+   "explain": "MTPs are condyloid like the MCPs, allowing flexion/extension and abduction/adduction.",
+   "section": "u7-s2",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which lateral ankle ligaments resist inversion? (select all that apply)",
+   "choices": [
+    "Anterior talofibular",
+    "Deltoid",
+    "Calcaneofibular",
+    "Posterior talofibular",
+    "Spring ligament"
+   ],
+   "answers": [
+    0,
+    2,
+    3
+   ],
+   "explain": "ATFL, CFL and PTFL make up the lateral complex; deltoid resists eversion and the spring ligament supports the arch.",
+   "section": "u7-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "In which position is the talocrural joint most stable?",
+   "choices": [
+    "Plantarflexion",
+    "Dorsiflexion",
+    "Inversion",
+    "Neutral with the toes flexed"
+   ],
+   "answer": 1,
+   "explain": "The wider anterior talus wedges into the mortise in dorsiflexion (close-packed).",
+   "section": "u7-s2",
+   "difficulty": 3
+  },
+  {
+   "q": "Which ligament is the most commonly sprained in the ankle?",
+   "choices": [
+    "Anterior talofibular ligament",
+    "Deltoid ligament",
+    "Posterior talofibular ligament",
+    "Spring ligament"
+   ],
+   "answer": 0,
+   "explain": "The ATFL is the weakest lateral ligament and is stressed by inversion with plantarflexion.",
+   "section": "u7-s3",
+   "difficulty": 1
+  },
+  {
+   "type": "short",
+   "q": "Explain the difference between a 1-joint and 2-joint calf muscle, and describe how you would stretch each one.",
+   "model": "The gastrocnemius is a 2-joint muscle because it crosses the knee and ankle; the soleus is a 1-joint muscle crossing only the ankle. To stretch the gastrocnemius, dorsiflex the ankle with the knee straight, such as a standing wall stretch with the back knee extended. To target the soleus, dorsiflex the ankle with the knee bent, which slackens the gastrocnemius so the stretch falls on the soleus.",
+   "points": [
+    "Gastrocnemius crosses knee and ankle (2-joint)",
+    "Soleus crosses only the ankle (1-joint)",
+    "Gastrocnemius stretch: dorsiflexion with knee extended",
+    "Soleus stretch: dorsiflexion with knee flexed",
+    "Bending the knee slackens the gastrocnemius"
+   ],
+   "section": "u7-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "The deltoid ligament mainly resists which motion?",
+   "choices": [
+    "Inversion",
+    "Dorsiflexion",
+    "Toe extension",
+    "Eversion"
+   ],
+   "answer": 3,
+   "explain": "The deltoid is the medial collateral complex of the ankle and resists eversion.",
+   "section": "u7-s3",
+   "difficulty": 1
+  },
+  {
+   "q": "Which ligament crosses both the talocrural and subtalar joints on the lateral side?",
+   "choices": [
+    "Anterior talofibular ligament",
+    "Posterior talofibular ligament",
+    "Calcaneofibular ligament",
+    "Long plantar ligament"
+   ],
+   "answer": 2,
+   "explain": "The CFL runs from the fibula to the calcaneus, spanning both joints.",
+   "section": "u7-s3",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which joints are synovial hinge joints? (select all that apply)",
+   "choices": [
+    "Talocrural",
+    "Subtalar",
+    "Interphalangeal joints of the toes",
+    "Metatarsophalangeal joints",
+    "Tarsometatarsal joints"
+   ],
+   "answers": [
+    0,
+    2
+   ],
+   "explain": "Talocrural and IP joints are hinges; MTPs are condyloid; subtalar and TMT are plane/gliding.",
+   "section": "u7-s2",
+   "difficulty": 2
+  },
+  {
+   "q": "The spring ligament (plantar calcaneonavicular) is associated with which joint and structure?",
+   "choices": [
+    "Talocrural joint; resists inversion",
+    "Distal tibiofibular joint; holds the mortise together",
+    "Talonavicular joint; supports the medial longitudinal arch",
+    "1st MTP joint; prevents hallux valgus"
+   ],
+   "answer": 2,
+   "explain": "It runs from calcaneus to navicular, cradling the talar head under the talonavicular joint.",
+   "section": "u7-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "Normal dorsiflexion ROM is about:",
+   "choices": [
+    "0-50°",
+    "0-10°",
+    "0-20°",
+    "0-35°"
+   ],
+   "answer": 2,
+   "explain": "AAOS norm for dorsiflexion is 0-20°; plantarflexion is 0-50°.",
+   "section": "u7-s4",
+   "difficulty": 1
+  },
+  {
+   "q": "Foot supination is a combination of:",
+   "choices": [
+    "Eversion, dorsiflexion and abduction",
+    "Inversion, dorsiflexion and abduction",
+    "Eversion, plantarflexion and adduction",
+    "Inversion, plantarflexion and adduction"
+   ],
+   "answer": 3,
+   "explain": "Supination = inversion + PF + adduction; pronation is the opposite.",
+   "section": "u7-s4",
+   "difficulty": 2
+  },
+  {
+   "q": "Ankle dorsiflexion is 15° with the knee bent but only 5° with the knee straight. Which muscle is most likely tight?",
+   "choices": [
+    "Gastrocnemius",
+    "Soleus",
+    "Tibialis anterior",
+    "Fibularis longus"
+   ],
+   "answer": 0,
+   "explain": "The gastrocnemius crosses the knee, so it limits DF only when the knee is extended.",
+   "section": "u7-s4",
+   "difficulty": 3
+  },
+  {
+   "type": "multi",
+   "q": "Which muscles are innervated by the deep fibular nerve? (select all that apply)",
+   "choices": [
+    "Tibialis anterior",
+    "Fibularis longus",
+    "Extensor hallucis longus",
+    "Extensor digitorum longus",
+    "Tibialis posterior",
+    "Fibularis tertius"
+   ],
+   "answers": [
+    0,
+    2,
+    3,
+    5
+   ],
+   "explain": "The anterior compartment (TA, EHL, EDL, fibularis tertius) gets the deep fibular nerve; fibularis longus is superficial fibular and tibialis posterior is tibial.",
+   "section": "u7-s6",
+   "difficulty": 2
+  },
+  {
+   "q": "What is the keystone of the medial longitudinal arch?",
+   "choices": [
+    "Cuboid",
+    "Intermediate cuneiform",
+    "Base of the 5th metatarsal",
+    "Head of the talus"
+   ],
+   "answer": 3,
+   "explain": "The talar head is the keystone of the medial arch; cuboid is the lateral keystone.",
+   "section": "u7-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "Which muscle inserts on the medial cuneiform and base of the 1st metatarsal and is the prime mover for dorsiflexion?",
+   "choices": [
+    "Tibialis posterior",
+    "Extensor digitorum longus",
+    "Tibialis anterior",
+    "Fibularis tertius"
+   ],
+   "answer": 2,
+   "explain": "Tibialis anterior dorsiflexes and inverts; fibularis longus also inserts nearby on the plantar side.",
+   "section": "u7-s6",
+   "difficulty": 1
+  },
+  {
+   "q": "Which nerve supplies the muscles of the lateral compartment (fibularis longus and brevis)?",
+   "choices": [
+    "Superficial fibular nerve",
+    "Deep fibular nerve",
+    "Tibial nerve",
+    "Sural nerve"
+   ],
+   "answer": 0,
+   "explain": "Lateral compartment = superficial fibular; anterior = deep fibular; posterior = tibial.",
+   "section": "u7-s6",
+   "difficulty": 2
+  },
+  {
+   "q": "Fibularis brevis inserts on the:",
+   "choices": [
+    "Medial cuneiform",
+    "Tuberosity at the base of the 5th metatarsal",
+    "Navicular tuberosity",
+    "Distal phalanx of the great toe"
+   ],
+   "answer": 1,
+   "explain": "Brevis inserts on the 5th metatarsal base; longus crosses under the foot to the medial cuneiform/1st metatarsal.",
+   "section": "u7-s6",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which muscles evert the foot? (select all that apply)",
+   "choices": [
+    "Fibularis longus",
+    "Fibularis brevis",
+    "Tibialis anterior",
+    "Fibularis tertius",
+    "Flexor hallucis longus"
+   ],
+   "answers": [
+    0,
+    1,
+    3
+   ],
+   "explain": "The fibularis muscles evert; tibialis anterior and FHL invert.",
+   "section": "u7-s6",
+   "difficulty": 2
+  },
+  {
+   "type": "short",
+   "q": "A client is in an acute gout flare in the right great toe. Describe the condition and list OT precautions and interventions.",
+   "model": "Gout is an inflammatory arthritis caused by uric acid crystals depositing in a joint, most often the 1st MTP. During a flare the joint is red, hot, swollen and very painful. Precautions: rest, protect and elevate the toe, keep pressure off it (bed cradle, open-toe shoe), and avoid ROM or strengthening of the inflamed joint. The OTA can provide adaptive equipment and an assistive device for ADLs and mobility, encourage hydration and the medical diet plan, and resume gentle ROM and joint protection after the flare.",
+   "points": [
+    "Uric acid (urate) crystals; 1st MTP classic site",
+    "Signs: red, hot, swollen, very painful joint",
+    "Rest, elevate and protect; avoid pressure and weight on the joint",
+    "No ROM/exercise to the acutely inflamed joint",
+    "Adaptive footwear/equipment and education on triggers, hydration and diet"
+   ],
+   "section": "u7-s9",
+   "difficulty": 2
+  },
+  {
+   "q": "Which muscle is the main dynamic support of the medial longitudinal arch and attaches to the navicular tuberosity?",
+   "choices": [
+    "Fibularis brevis",
+    "Soleus",
+    "Tibialis posterior",
+    "Extensor hallucis longus"
+   ],
+   "answer": 2,
+   "explain": "Tibialis posterior inverts, plantarflexes and supports the medial arch; dysfunction leads to flat foot.",
+   "section": "u7-s6",
+   "difficulty": 2
+  },
+  {
+   "q": "Which muscle is a 1-joint plantarflexor?",
+   "choices": [
+    "Gastrocnemius",
+    "Plantaris",
+    "Hamstrings",
+    "Soleus"
+   ],
+   "answer": 3,
+   "explain": "Soleus crosses only the ankle; gastrocnemius and plantaris also cross the knee.",
+   "section": "u7-s7",
+   "difficulty": 1
+  },
+  {
+   "q": "To best isolate and strengthen the soleus, the client should do heel raises:",
+   "choices": [
+    "Standing with the knees straight",
+    "Standing on one leg with the knee locked",
+    "Lying supine with the hips flexed",
+    "Seated with the knees bent"
+   ],
+   "answer": 3,
+   "explain": "With the knee flexed the gastrocnemius is in active insufficiency, so the soleus does most of the work.",
+   "section": "u7-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "A client slowly lowers their heels after rising onto their toes. What contraction are the plantarflexors doing?",
+   "choices": [
+    "Concentric",
+    "Eccentric",
+    "Isometric",
+    "Isokinetic"
+   ],
+   "answer": 1,
+   "explain": "The muscles lengthen under control while lowering, which is eccentric.",
+   "section": "u7-s7",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which muscles cross both the knee and the ankle (2-joint)? (select all that apply)",
+   "choices": [
+    "Gastrocnemius",
+    "Soleus",
+    "Plantaris",
+    "Tibialis posterior",
+    "Fibularis brevis"
+   ],
+   "answers": [
+    0,
+    2
+   ],
+   "explain": "Gastrocnemius and plantaris originate on the femur; soleus, tibialis posterior and fibularis brevis start below the knee.",
+   "section": "u7-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "Right after heel strike, which muscle works eccentrically to lower the foot to the floor?",
+   "choices": [
+    "Gastrocnemius",
+    "Fibularis longus",
+    "Tibialis anterior",
+    "Flexor hallucis longus"
+   ],
+   "answer": 2,
+   "explain": "Eccentric tibialis anterior control prevents foot slap during loading response.",
+   "section": "u7-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "A client after a fibular nerve injury drags the toes during swing and lifts the knee high. What is this gait pattern and a common device?",
+   "choices": [
+    "Trendelenburg gait; cane on the same side",
+    "Steppage gait from foot drop; ankle-foot orthosis",
+    "Antalgic gait; reacher",
+    "Shuffling gait; wheeled walker only"
+   ],
+   "answer": 1,
+   "explain": "Weak dorsiflexors cause foot drop; an AFO holds the ankle up for clearance.",
+   "section": "u7-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "Gout most classically affects which joint?",
+   "choices": [
+    "1st MTP joint of the great toe",
+    "Talocrural joint",
+    "Subtalar joint",
+    "5th IP joint"
+   ],
+   "answer": 0,
+   "explain": "The 1st MTP is the classic site (podagra) for urate crystal deposits.",
+   "section": "u7-s9",
+   "difficulty": 1
+  },
+  {
+   "q": "During an acute gout flare in the great toe, which OT action is most appropriate?",
+   "choices": [
+    "Rest and elevate the joint, keep pressure off it, and avoid ROM exercise to it",
+    "Perform aggressive PROM to keep the joint from stiffening",
+    "Apply firm compression with tight closed-toe shoes",
+    "Begin progressive resisted toe flexion with weights"
+   ],
+   "answer": 0,
+   "explain": "An acutely inflamed gouty joint is protected and rested; exercise resumes gently after the flare.",
+   "section": "u7-s9",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which are appropriate foot-care teaching points for a client with diabetic neuropathy? (select all that apply)",
+   "choices": [
+    "Inspect the feet daily, using a long-handled mirror if needed",
+    "Moisturize between the toes every day",
+    "Wear well-fitting shoes and check inside them before putting them on",
+    "Use a heating pad on cold feet at night",
+    "Have nails and calluses managed by a podiatrist",
+    "Walk barefoot at home to toughen the skin"
+   ],
+   "answers": [
+    0,
+    2,
+    4
+   ],
+   "explain": "Daily inspection, proper shoes and professional nail care protect insensate feet; skin between toes should stay dry, and heat and barefoot walking risk injury.",
+   "section": "u7-s9",
+   "difficulty": 2
+  },
+  {
+   "q": "A client with diabetic neuropathy is getting ready to bathe. What is the best safety instruction?",
+   "choices": [
+    "Check water temperature with a thermometer or elbow, not the feet",
+    "Test the water with the toes before stepping in",
+    "Soak the feet in hot water to improve circulation",
+    "Walk barefoot in the bathroom to feel the floor better"
+   ],
+   "answer": 0,
+   "explain": "Loss of protective sensation means feet cannot detect burns; use a thermometer or a body part with intact sensation.",
+   "section": "u7-s9",
+   "difficulty": 2
+  },
+  {
+   "type": "short",
+   "q": "Describe what the ankle and its muscles do from heel strike to toe off, including contraction types.",
+   "model": "At heel strike the tibialis anterior holds the ankle at neutral, then works eccentrically to lower the foot flat and prevent foot slap while the foot pronates to absorb shock. In midstance the tibia moves forward over the foot into dorsiflexion, controlled by eccentric soleus and gastrocnemius. At heel off and toe off the gastrocnemius and soleus contract concentrically to plantarflex for push-off, the toes extend at the MTPs, and the foot supinates into a rigid lever. In swing the tibialis anterior contracts concentrically to dorsiflex for toe clearance.",
+   "points": [
+    "Tibialis anterior eccentric after heel strike (prevents foot slap)",
+    "Midstance: dorsiflexion controlled by eccentric calf muscles",
+    "Push-off: concentric gastrocnemius and soleus plantarflexion",
+    "Foot pronates for shock absorption, supinates for a rigid lever",
+    "Swing: concentric dorsiflexion for toe clearance"
+   ],
+   "section": "u7-s8",
+   "difficulty": 3
+  },
+  {
+   "q": "A client hears a 'pop' at the back of the heel while playing basketball. Squeezing the calf produces no plantarflexion. What is the likely injury?",
+   "choices": [
+    "Lateral ankle sprain",
+    "Plantar fasciitis",
+    "Achilles tendon rupture",
+    "Gout flare"
+   ],
+   "answer": 2,
+   "explain": "A positive Thompson test points to an Achilles rupture.",
+   "section": "u7-s9",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which statements about gout are correct? (select all that apply)",
+   "choices": [
+    "It is caused by uric acid crystal deposits in the joint",
+    "It most often first affects the 1st MTP joint",
+    "It is caused by wear-and-tear loss of cartilage only",
+    "An acute flare causes a red, hot, swollen, very painful joint",
+    "Aggressive stretching of the joint is recommended during a flare"
+   ],
+   "answers": [
+    0,
+    1,
+    3
+   ],
+   "explain": "Gout is crystal-induced inflammatory arthritis, classically at the 1st MTP; the inflamed joint is rested, not stretched, during a flare.",
+   "section": "u7-s9",
+   "difficulty": 2
+  }
+ ]
+}

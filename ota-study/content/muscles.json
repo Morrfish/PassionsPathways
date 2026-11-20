@@ -1,0 +1,2653 @@
+[
+ {
+  "name": "Temporalis",
+  "region": "Head & Neck",
+  "unit": "u6",
+  "section": "u6-s1",
+  "joints": [
+   "TMJ"
+  ],
+  "twoJoint": false,
+  "origin": "Temporal fossa of skull",
+  "insertion": "Coronoid process and anterior ramus of mandible",
+  "actions": [
+   "Mandible elevation",
+   "Mandible retraction (posterior fibers)",
+   "Mandible lateral deviation (same side)"
+  ],
+  "nerve": "Trigeminal (CN V)",
+  "roots": "CN V3 (mandibular division)",
+  "stretch": "Mandible depression (open mouth), protraction",
+  "notes": "Muscle of mastication; palpate at the temple while clenching."
+ },
+ {
+  "name": "Masseter",
+  "region": "Head & Neck",
+  "unit": "u6",
+  "section": "u6-s1",
+  "joints": [
+   "TMJ"
+  ],
+  "twoJoint": false,
+  "origin": "Zygomatic arch (and zygomatic process of maxilla)",
+  "insertion": "Angle and lateral ramus of mandible",
+  "actions": [
+   "Mandible elevation",
+   "Mandible protraction (assist)",
+   "Mandible lateral deviation (same side, assist)"
+  ],
+  "nerve": "Trigeminal (CN V)",
+  "roots": "CN V3 (mandibular division)",
+  "stretch": "Mandible depression (open mouth)",
+  "notes": "Strongest jaw closer; palpate at the angle of the jaw while clenching."
+ },
+ {
+  "name": "Medial pterygoid",
+  "region": "Head & Neck",
+  "unit": "u6",
+  "section": "u6-s1",
+  "joints": [
+   "TMJ"
+  ],
+  "twoJoint": false,
+  "origin": "Medial surface of lateral pterygoid plate (sphenoid)",
+  "insertion": "Medial surface of ramus and angle of mandible",
+  "actions": [
+   "Mandible elevation",
+   "Mandible protraction",
+   "Mandible lateral deviation (opposite side)"
+  ],
+  "nerve": "Trigeminal (CN V)",
+  "roots": "CN V3 (mandibular division)",
+  "stretch": "Mandible depression, retraction",
+  "notes": "Forms a sling with the masseter around the angle of the mandible."
+ },
+ {
+  "name": "Lateral pterygoid",
+  "region": "Head & Neck",
+  "unit": "u6",
+  "section": "u6-s1",
+  "joints": [
+   "TMJ"
+  ],
+  "twoJoint": false,
+  "origin": "Greater wing and lateral surface of lateral pterygoid plate (sphenoid)",
+  "insertion": "Neck of mandibular condyle, TMJ disk and capsule",
+  "actions": [
+   "Mandible protraction",
+   "Mandible depression",
+   "Mandible lateral deviation (opposite side)"
+  ],
+  "nerve": "Trigeminal (CN V)",
+  "roots": "CN V3 (mandibular division)",
+  "stretch": "Mandible retraction, elevation",
+  "notes": "Only muscle of mastication that opens the mouth; pulls the disk forward."
+ },
+ {
+  "name": "Suprahyoids (digastric, mylohyoid, geniohyoid, stylohyoid)",
+  "region": "Head & Neck",
+  "unit": "u6",
+  "section": "u6-s1",
+  "joints": [
+   "TMJ"
+  ],
+  "twoJoint": false,
+  "origin": "Mandible, mastoid notch and styloid process of temporal bone",
+  "insertion": "Hyoid bone",
+  "actions": [
+   "Hyoid elevation",
+   "Mandible depression (assist)"
+  ],
+  "nerve": "Trigeminal (CN V), facial (CN VII), C1 via hypoglossal",
+  "roots": "CN V3, CN VII, C1",
+  "stretch": "Neck extension with mouth closed",
+  "notes": "Raise the hyoid for swallowing; assist opening the mouth."
+ },
+ {
+  "name": "Infrahyoids (sternohyoid, sternothyroid, thyrohyoid, omohyoid)",
+  "region": "Head & Neck",
+  "unit": "u6",
+  "section": "u6-s1",
+  "joints": [],
+  "twoJoint": false,
+  "origin": "Sternum, thyroid cartilage, superior border of scapula (omohyoid)",
+  "insertion": "Hyoid bone and thyroid cartilage",
+  "actions": [
+   "Hyoid depression",
+   "Hyoid stabilization"
+  ],
+  "nerve": "Ansa cervicalis",
+  "roots": "C1-C3",
+  "stretch": "Neck extension",
+  "notes": "Stabilize the hyoid so suprahyoids can open the mouth; aid swallowing and speech."
+ },
+ {
+  "name": "Sternocleidomastoid",
+  "region": "Head & Neck",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Head (atlanto-occipital)",
+   "Cervical spine"
+  ],
+  "twoJoint": false,
+  "origin": "Sternal head: manubrium; clavicular head: medial 1/3 of clavicle",
+  "insertion": "Mastoid process and lateral superior nuchal line",
+  "actions": [
+   "Neck flexion (bilateral)",
+   "Neck lateral flexion (same side)",
+   "Neck rotation (opposite side)",
+   "Rib elevation (accessory inspiration)"
+  ],
+  "nerve": "Spinal accessory (CN XI)",
+  "roots": "CN XI (C2-C3)",
+  "stretch": "Neck extension, lateral flexion to opposite side, rotation to same side",
+  "notes": "Turning the head left uses the right SCM. Tight in torticollis."
+ },
+ {
+  "name": "Scalene, anterior",
+  "region": "Head & Neck",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Cervical spine",
+   "Ribs"
+  ],
+  "twoJoint": false,
+  "origin": "Transverse processes C3-C6 (anterior tubercles)",
+  "insertion": "1st rib (scalene tubercle)",
+  "actions": [
+   "Neck flexion (bilateral)",
+   "Neck lateral flexion (same side)",
+   "Neck rotation (opposite side, assist)",
+   "Rib elevation (accessory inspiration)"
+  ],
+  "nerve": "Cervical ventral rami",
+  "roots": "C4-C6",
+  "stretch": "Neck lateral flexion to opposite side with extension (shoulder depressed)",
+  "notes": "Brachial plexus passes between anterior and middle scalenes (thoracic outlet syndrome)."
+ },
+ {
+  "name": "Scalene, middle",
+  "region": "Head & Neck",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Cervical spine",
+   "Ribs"
+  ],
+  "twoJoint": false,
+  "origin": "Transverse processes C2-C7 (posterior tubercles)",
+  "insertion": "1st rib (behind subclavian groove)",
+  "actions": [
+   "Neck lateral flexion (same side)",
+   "Neck flexion (assist)",
+   "Rib elevation (accessory inspiration)"
+  ],
+  "nerve": "Cervical ventral rami",
+  "roots": "C3-C8",
+  "stretch": "Neck lateral flexion to opposite side with extension (shoulder depressed)",
+  "notes": "Brachial plexus passes between anterior and middle scalenes (thoracic outlet syndrome)."
+ },
+ {
+  "name": "Scalene, posterior",
+  "region": "Head & Neck",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Cervical spine",
+   "Ribs"
+  ],
+  "twoJoint": false,
+  "origin": "Transverse processes C4-C6 (posterior tubercles)",
+  "insertion": "2nd rib",
+  "actions": [
+   "Neck lateral flexion (same side)",
+   "Rib elevation (accessory inspiration)"
+  ],
+  "nerve": "Cervical ventral rami",
+  "roots": "C6-C8",
+  "stretch": "Neck lateral flexion to opposite side with extension (shoulder depressed)",
+  "notes": "Accessory muscle of inspiration."
+ },
+ {
+  "name": "Prevertebrals (longus colli, longus capitis, rectus capitis anterior & lateralis)",
+  "region": "Head & Neck",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Head (atlanto-occipital)",
+   "Cervical spine"
+  ],
+  "twoJoint": false,
+  "origin": "Anterior bodies and transverse processes of cervical and upper thoracic vertebrae",
+  "insertion": "Occiput (basilar part) and upper cervical vertebrae",
+  "actions": [
+   "Head flexion",
+   "Neck flexion",
+   "Neck lateral flexion (same side)"
+  ],
+  "nerve": "Cervical ventral rami",
+  "roots": "C1-C6",
+  "stretch": "Head and neck extension",
+  "notes": "Deep neck flexors (chin tuck); weak after whiplash."
+ },
+ {
+  "name": "Splenius capitis",
+  "region": "Head & Neck",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Head (atlanto-occipital)",
+   "Cervical spine"
+  ],
+  "twoJoint": false,
+  "origin": "Lower ligamentum nuchae, spinous processes C7-T3",
+  "insertion": "Mastoid process and lateral superior nuchal line",
+  "actions": [
+   "Head and neck extension (bilateral)",
+   "Neck rotation (same side)",
+   "Neck lateral flexion (same side)"
+  ],
+  "nerve": "Posterior rami of spinal nerves",
+  "roots": "Middle cervical (C3-C4)",
+  "stretch": "Head/neck flexion, rotation and lateral flexion to opposite side",
+  "notes": ""
+ },
+ {
+  "name": "Splenius cervicis",
+  "region": "Head & Neck",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Cervical spine"
+  ],
+  "twoJoint": false,
+  "origin": "Spinous processes T3-T6",
+  "insertion": "Transverse processes C1-C3 (posterior tubercles)",
+  "actions": [
+   "Neck extension (bilateral)",
+   "Neck rotation (same side)",
+   "Neck lateral flexion (same side)"
+  ],
+  "nerve": "Posterior rami of spinal nerves",
+  "roots": "Lower cervical",
+  "stretch": "Neck flexion, rotation and lateral flexion to opposite side",
+  "notes": ""
+ },
+ {
+  "name": "Suboccipitals (rectus capitis posterior major & minor, obliquus capitis superior & inferior)",
+  "region": "Head & Neck",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Head (atlanto-occipital)",
+   "Atlantoaxial"
+  ],
+  "twoJoint": false,
+  "origin": "Spinous process of C2, posterior tubercle and transverse process of C1",
+  "insertion": "Occiput (inferior nuchal line) and transverse process of C1",
+  "actions": [
+   "Head extension",
+   "Head rotation (same side)",
+   "Head lateral flexion (same side)"
+  ],
+  "nerve": "Suboccipital (dorsal ramus C1)",
+  "roots": "C1",
+  "stretch": "Chin tuck (upper cervical flexion)",
+  "notes": "Fine postural control of the head; tight with forward-head posture."
+ },
+ {
+  "name": "Rectus abdominis",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Thoracic spine",
+   "Lumbar spine"
+  ],
+  "twoJoint": false,
+  "origin": "Pubic crest and pubic symphysis",
+  "insertion": "Xiphoid process and costal cartilages 5-7",
+  "actions": [
+   "Trunk flexion",
+   "Pelvis posterior tilt",
+   "Abdominal compression",
+   "Forced expiration (assist)"
+  ],
+  "nerve": "Intercostal & subcostal",
+  "roots": "T7-T12",
+  "stretch": "Trunk extension (hyperextension)",
+  "notes": "Segmented 'six-pack' muscle; the linea alba separates right and left sides."
+ },
+ {
+  "name": "External oblique",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Thoracic spine",
+   "Lumbar spine"
+  ],
+  "twoJoint": false,
+  "origin": "External surfaces of lower 8 ribs (5-12)",
+  "insertion": "Anterior iliac crest, linea alba, pubic tubercle (via aponeurosis)",
+  "actions": [
+   "Trunk flexion (bilateral)",
+   "Trunk lateral flexion (same side)",
+   "Trunk rotation (opposite side)",
+   "Abdominal compression",
+   "Forced expiration (assist)"
+  ],
+  "nerve": "Intercostal & subcostal",
+  "roots": "T7-T12",
+  "stretch": "Trunk extension, lateral flexion to opposite side, rotation to same side",
+  "notes": "Fibers run 'hands in pockets'; pairs with the opposite internal oblique for rotation."
+ },
+ {
+  "name": "Internal oblique",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Thoracic spine",
+   "Lumbar spine"
+  ],
+  "twoJoint": false,
+  "origin": "Thoracolumbar fascia, anterior iliac crest, lateral inguinal ligament",
+  "insertion": "Inferior borders of ribs 10-12, linea alba, pubis (conjoint tendon)",
+  "actions": [
+   "Trunk flexion (bilateral)",
+   "Trunk lateral flexion (same side)",
+   "Trunk rotation (same side)",
+   "Abdominal compression",
+   "Forced expiration (assist)"
+  ],
+  "nerve": "Intercostal, subcostal, iliohypogastric & ilioinguinal",
+  "roots": "T7-L1",
+  "stretch": "Trunk extension, lateral flexion and rotation to opposite side",
+  "notes": "Fibers run perpendicular to the external oblique."
+ },
+ {
+  "name": "Transverse abdominis",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Lumbar spine"
+  ],
+  "twoJoint": false,
+  "origin": "Internal surfaces of costal cartilages 7-12, thoracolumbar fascia, iliac crest, lateral inguinal ligament",
+  "insertion": "Linea alba and pubic crest (conjoint tendon)",
+  "actions": [
+   "Abdominal compression",
+   "Forced expiration",
+   "Lumbar spine stabilization"
+  ],
+  "nerve": "Intercostal, subcostal, iliohypogastric & ilioinguinal",
+  "roots": "T7-L1",
+  "stretch": "No joint motion; relaxes with full inspiration",
+  "notes": "Deepest abdominal; acts like a corset for core stability. Produces no trunk motion."
+ },
+ {
+  "name": "Iliocostalis (erector spinae)",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Cervical spine",
+   "Thoracic spine",
+   "Lumbar spine"
+  ],
+  "twoJoint": false,
+  "origin": "Sacrum, iliac crest, angles of ribs (common erector spinae tendon)",
+  "insertion": "Angles of ribs and cervical transverse processes",
+  "actions": [
+   "Trunk and neck extension (bilateral)",
+   "Trunk lateral flexion (same side)",
+   "Trunk rotation (same side, assist)"
+  ],
+  "nerve": "Posterior rami of spinal nerves",
+  "roots": "Segmental (cervical to lumbar)",
+  "stretch": "Trunk and neck flexion, lateral flexion to opposite side",
+  "notes": "Most lateral column of the erector spinae. Erector spinae (I Love Spaghetti: lateral to medial) are the prime trunk extensors."
+ },
+ {
+  "name": "Longissimus (erector spinae)",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Cervical spine",
+   "Thoracic spine",
+   "Lumbar spine"
+  ],
+  "twoJoint": false,
+  "origin": "Sacrum, iliac crest, transverse processes of lumbar-thoracic vertebrae",
+  "insertion": "Transverse processes above, lower ribs, mastoid process",
+  "actions": [
+   "Trunk, neck and head extension (bilateral)",
+   "Trunk lateral flexion (same side)",
+   "Head rotation (same side, assist)"
+  ],
+  "nerve": "Posterior rami of spinal nerves",
+  "roots": "Segmental (cervical to lumbar)",
+  "stretch": "Trunk and neck flexion, lateral flexion to opposite side",
+  "notes": "Middle and largest column of the erector spinae. Erector spinae (I Love Spaghetti: lateral to medial) are the prime trunk extensors."
+ },
+ {
+  "name": "Spinalis (erector spinae)",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Cervical spine",
+   "Thoracic spine",
+   "Lumbar spine"
+  ],
+  "twoJoint": false,
+  "origin": "Spinous processes of upper lumbar and lower thoracic vertebrae (and C7)",
+  "insertion": "Spinous processes of upper thoracic and cervical vertebrae",
+  "actions": [
+   "Trunk and neck extension (bilateral)",
+   "Trunk lateral flexion (same side, assist)"
+  ],
+  "nerve": "Posterior rami of spinal nerves",
+  "roots": "Segmental (cervical to lumbar)",
+  "stretch": "Trunk and neck flexion, lateral flexion to opposite side",
+  "notes": "Most medial column of the erector spinae. Erector spinae (I Love Spaghetti: lateral to medial) are the prime trunk extensors."
+ },
+ {
+  "name": "Semispinalis (transversospinalis)",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Cervical spine",
+   "Thoracic spine",
+   "Lumbar spine"
+  ],
+  "twoJoint": false,
+  "origin": "Transverse processes C4-T12",
+  "insertion": "Spinous processes C2-T4 and occiput (between nuchal lines)",
+  "actions": [
+   "Head, neck and upper trunk extension (bilateral)",
+   "Neck/trunk rotation (opposite side)"
+  ],
+  "nerve": "Posterior rami of spinal nerves",
+  "roots": "Segmental",
+  "stretch": "Trunk/neck flexion and rotation to same side",
+  "notes": "Semispinalis capitis is a major head extensor."
+ },
+ {
+  "name": "Multifidus (transversospinalis)",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Cervical spine",
+   "Thoracic spine",
+   "Lumbar spine"
+  ],
+  "twoJoint": false,
+  "origin": "Sacrum, PSIS, lumbar mammillary processes, thoracic transverse processes, cervical articular processes",
+  "insertion": "Spinous processes 2-4 segments above",
+  "actions": [
+   "Trunk extension (bilateral)",
+   "Trunk rotation (opposite side)",
+   "Spine stabilization"
+  ],
+  "nerve": "Posterior rami of spinal nerves",
+  "roots": "Segmental",
+  "stretch": "Trunk/neck flexion and rotation to same side",
+  "notes": "Thickest in the lumbar region; key segmental stabilizer."
+ },
+ {
+  "name": "Rotatores (transversospinalis)",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Cervical spine",
+   "Thoracic spine",
+   "Lumbar spine"
+  ],
+  "twoJoint": false,
+  "origin": "Transverse processes",
+  "insertion": "Lamina/spinous process 1-2 segments above",
+  "actions": [
+   "Trunk rotation (opposite side)",
+   "Trunk extension (assist)"
+  ],
+  "nerve": "Posterior rami of spinal nerves",
+  "roots": "Segmental",
+  "stretch": "Trunk/neck flexion and rotation to same side",
+  "notes": "Best developed in the thoracic region; important for proprioception."
+ },
+ {
+  "name": "Interspinales",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Cervical spine",
+   "Lumbar spine"
+  ],
+  "twoJoint": false,
+  "origin": "Spinous process of vertebra below",
+  "insertion": "Spinous process of adjacent vertebra above",
+  "actions": [
+   "Trunk and neck extension (assist)"
+  ],
+  "nerve": "Posterior rami of spinal nerves",
+  "roots": "Segmental",
+  "stretch": "Trunk and neck flexion",
+  "notes": "Short segmental muscles, best developed in cervical and lumbar regions."
+ },
+ {
+  "name": "Intertransversarii",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Cervical spine",
+   "Lumbar spine"
+  ],
+  "twoJoint": false,
+  "origin": "Transverse process of vertebra below",
+  "insertion": "Transverse process of adjacent vertebra above",
+  "actions": [
+   "Trunk and neck lateral flexion (same side, assist)"
+  ],
+  "nerve": "Posterior & anterior rami of spinal nerves",
+  "roots": "Segmental",
+  "stretch": "Lateral flexion to opposite side",
+  "notes": "Short segmental stabilizers."
+ },
+ {
+  "name": "Quadratus lumborum",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s3",
+  "joints": [
+   "Lumbar spine",
+   "Ribs"
+  ],
+  "twoJoint": false,
+  "origin": "Posterior iliac crest and iliolumbar ligament",
+  "insertion": "12th rib and transverse processes L1-L4",
+  "actions": [
+   "Trunk lateral flexion (same side)",
+   "Pelvis elevation (hip hike)",
+   "Trunk extension (bilateral, assist)",
+   "12th rib depression/fixation (respiration)"
+  ],
+  "nerve": "Ventral rami (lumbar plexus)",
+  "roots": "T12-L3",
+  "stretch": "Trunk lateral flexion to opposite side (pelvis lowered on same side)",
+  "notes": "Hikes the hip to clear the foot (e.g., stiff knee or long leg brace)."
+ },
+ {
+  "name": "Diaphragm",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s5",
+  "joints": [
+   "Ribs"
+  ],
+  "twoJoint": false,
+  "origin": "Xiphoid, inner surfaces of lower 6 ribs/costal cartilages, L1-L3 vertebral bodies (crura)",
+  "insertion": "Central tendon",
+  "actions": [
+   "Inspiration (prime mover)",
+   "Thoracic cavity enlargement (vertical)"
+  ],
+  "nerve": "Phrenic",
+  "roots": "C3-C5",
+  "stretch": "Full expiration (dome rises)",
+  "notes": "'C3, 4, 5 keeps the diaphragm alive' - SCI at or above C3 needs ventilator support."
+ },
+ {
+  "name": "External intercostals",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s5",
+  "joints": [
+   "Ribs"
+  ],
+  "twoJoint": false,
+  "origin": "Inferior border of rib above",
+  "insertion": "Superior border of rib below (fibers run down and forward)",
+  "actions": [
+   "Rib elevation (inspiration)"
+  ],
+  "nerve": "Intercostal",
+  "roots": "T1-T11",
+  "stretch": "Full expiration",
+  "notes": "Work with the diaphragm in quiet inspiration."
+ },
+ {
+  "name": "Internal intercostals",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s5",
+  "joints": [
+   "Ribs"
+  ],
+  "twoJoint": false,
+  "origin": "Superior border of rib below",
+  "insertion": "Inferior border of rib above (fibers run down and back)",
+  "actions": [
+   "Rib depression (forced expiration)"
+  ],
+  "nerve": "Intercostal",
+  "roots": "T1-T11",
+  "stretch": "Full inspiration",
+  "notes": "Fibers at right angles to external intercostals; parasternal fibers may assist inspiration."
+ },
+ {
+  "name": "Levatores costarum",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s5",
+  "joints": [
+   "Ribs"
+  ],
+  "twoJoint": false,
+  "origin": "Transverse processes C7-T11",
+  "insertion": "Rib below, between tubercle and angle",
+  "actions": [
+   "Rib elevation (deep inspiration, assist)"
+  ],
+  "nerve": "Posterior rami of spinal nerves",
+  "roots": "C8-T11",
+  "stretch": "Full expiration",
+  "notes": "Accessory muscle of deep inspiration."
+ },
+ {
+  "name": "Serratus posterior superior",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s5",
+  "joints": [
+   "Ribs"
+  ],
+  "twoJoint": false,
+  "origin": "Ligamentum nuchae and spinous processes C7-T3",
+  "insertion": "Superior borders of ribs 2-5",
+  "actions": [
+   "Rib elevation (deep inspiration, assist)"
+  ],
+  "nerve": "Intercostal",
+  "roots": "T2-T5",
+  "stretch": "Full expiration",
+  "notes": "Accessory muscle of deep inspiration."
+ },
+ {
+  "name": "Serratus posterior inferior",
+  "region": "Trunk & Respiration",
+  "unit": "u6",
+  "section": "u6-s5",
+  "joints": [
+   "Ribs"
+  ],
+  "twoJoint": false,
+  "origin": "Spinous processes T11-L2 (thoracolumbar fascia)",
+  "insertion": "Inferior borders of ribs 9-12",
+  "actions": [
+   "Rib depression (forced expiration, assist)"
+  ],
+  "nerve": "Intercostal & subcostal",
+  "roots": "T9-T12",
+  "stretch": "Full inspiration",
+  "notes": "Accessory muscle of forced expiration."
+ },
+ {
+  "name": "Trapezius, upper",
+  "region": "Shoulder Girdle",
+  "unit": "u4",
+  "section": "u4-s4",
+  "joints": [
+   "Shoulder girdle",
+   "Cervical spine"
+  ],
+  "twoJoint": false,
+  "origin": "External occipital protuberance, medial superior nuchal line, ligamentum nuchae",
+  "insertion": "Lateral 1/3 of clavicle and acromion",
+  "actions": [
+   "Scapular elevation",
+   "Scapular upward rotation",
+   "Neck extension (assist)",
+   "Neck lateral flexion (same side, assist)",
+   "Neck rotation (opposite side, assist)"
+  ],
+  "nerve": "Spinal accessory (CN XI)",
+  "roots": "CN XI (C3-C4 sensory)",
+  "stretch": "Scapular depression and downward rotation, with neck lateral flexion to opposite side",
+  "notes": "Force couple with lower trapezius and serratus anterior for upward rotation. Reverse action helps lift the trunk in crutch walking. CN XI injury causes shoulder drop/weak shrug."
+ },
+ {
+  "name": "Trapezius, middle",
+  "region": "Shoulder Girdle",
+  "unit": "u4",
+  "section": "u4-s4",
+  "joints": [
+   "Shoulder girdle"
+  ],
+  "twoJoint": false,
+  "origin": "Spinous processes C7-T3",
+  "insertion": "Acromion and superior lip of spine of scapula",
+  "actions": [
+   "Scapular retraction"
+  ],
+  "nerve": "Spinal accessory (CN XI)",
+  "roots": "CN XI (C3-C4 sensory)",
+  "stretch": "Scapular protraction",
+  "notes": "Weak with rounded-shoulder posture."
+ },
+ {
+  "name": "Trapezius, lower",
+  "region": "Shoulder Girdle",
+  "unit": "u4",
+  "section": "u4-s4",
+  "joints": [
+   "Shoulder girdle"
+  ],
+  "twoJoint": false,
+  "origin": "Spinous processes T4-T12",
+  "insertion": "Root (medial end) of spine of scapula",
+  "actions": [
+   "Scapular depression",
+   "Scapular upward rotation",
+   "Scapular retraction (assist)"
+  ],
+  "nerve": "Spinal accessory (CN XI)",
+  "roots": "CN XI (C3-C4 sensory)",
+  "stretch": "Scapular elevation, downward rotation",
+  "notes": ""
+ },
+ {
+  "name": "Levator scapulae",
+  "region": "Shoulder Girdle",
+  "unit": "u4",
+  "section": "u4-s4",
+  "joints": [
+   "Shoulder girdle",
+   "Cervical spine"
+  ],
+  "twoJoint": false,
+  "origin": "Transverse processes C1-C4",
+  "insertion": "Medial border of scapula, superior angle to root of spine",
+  "actions": [
+   "Scapular elevation",
+   "Scapular downward rotation",
+   "Neck lateral flexion (same side, assist)"
+  ],
+  "nerve": "Dorsal scapular",
+  "roots": "C3-C5",
+  "stretch": "Scapular depression and upward rotation, neck flexion and lateral flexion/rotation to opposite side",
+  "notes": "Common site of neck tension; forced inspiration in reverse action."
+ },
+ {
+  "name": "Rhomboid major",
+  "region": "Shoulder Girdle",
+  "unit": "u4",
+  "section": "u4-s4",
+  "joints": [
+   "Shoulder girdle"
+  ],
+  "twoJoint": false,
+  "origin": "Spinous processes T2-T5",
+  "insertion": "Medial border of scapula, root of spine to inferior angle",
+  "actions": [
+   "Scapular retraction",
+   "Scapular downward rotation",
+   "Scapular elevation"
+  ],
+  "nerve": "Dorsal scapular",
+  "roots": "C4-C5",
+  "stretch": "Scapular protraction, upward rotation, depression",
+  "notes": "Works with rhomboid minor; antagonist to serratus anterior."
+ },
+ {
+  "name": "Rhomboid minor",
+  "region": "Shoulder Girdle",
+  "unit": "u4",
+  "section": "u4-s4",
+  "joints": [
+   "Shoulder girdle"
+  ],
+  "twoJoint": false,
+  "origin": "Ligamentum nuchae and spinous processes C7-T1",
+  "insertion": "Medial border of scapula at root of spine",
+  "actions": [
+   "Scapular retraction",
+   "Scapular downward rotation",
+   "Scapular elevation"
+  ],
+  "nerve": "Dorsal scapular",
+  "roots": "C4-C5",
+  "stretch": "Scapular protraction, upward rotation, depression",
+  "notes": ""
+ },
+ {
+  "name": "Serratus anterior",
+  "region": "Shoulder Girdle",
+  "unit": "u4",
+  "section": "u4-s4",
+  "joints": [
+   "Shoulder girdle"
+  ],
+  "twoJoint": false,
+  "origin": "External surfaces of upper 8-9 ribs",
+  "insertion": "Anterior (costal) surface of medial border of scapula",
+  "actions": [
+   "Scapular protraction",
+   "Scapular upward rotation"
+  ],
+  "nerve": "Long thoracic",
+  "roots": "C5-C7",
+  "stretch": "Scapular retraction, downward rotation",
+  "notes": "Holds scapula to the thorax; long thoracic nerve injury causes scapular winging. Needed for full arm flexion."
+ },
+ {
+  "name": "Pectoralis minor",
+  "region": "Shoulder Girdle",
+  "unit": "u4",
+  "section": "u4-s4",
+  "joints": [
+   "Shoulder girdle"
+  ],
+  "twoJoint": false,
+  "origin": "Ribs 3-5 (anterior)",
+  "insertion": "Coracoid process of scapula",
+  "actions": [
+   "Scapular protraction",
+   "Scapular depression",
+   "Scapular downward rotation",
+   "Scapular anterior tilt",
+   "Rib elevation (forced inspiration, reverse action)"
+  ],
+  "nerve": "Medial pectoral",
+  "roots": "C8-T1",
+  "stretch": "Scapular retraction, elevation, upward rotation (doorway/corner stretch)",
+  "notes": "Only shoulder girdle muscle on the anterior body. Tightness contributes to rounded shoulders and thoracic outlet syndrome."
+ },
+ {
+  "name": "Deltoid, anterior",
+  "region": "Shoulder",
+  "unit": "u4",
+  "section": "u4-s7",
+  "joints": [
+   "Shoulder"
+  ],
+  "twoJoint": false,
+  "origin": "Lateral 1/3 of clavicle",
+  "insertion": "Deltoid tuberosity of humerus",
+  "actions": [
+   "Shoulder flexion",
+   "Shoulder horizontal adduction",
+   "Shoulder internal rotation",
+   "Shoulder abduction (assist)"
+  ],
+  "nerve": "Axillary",
+  "roots": "C5-C6",
+  "stretch": "Shoulder extension/hyperextension, horizontal abduction, external rotation",
+  "notes": "Humeral positioner."
+ },
+ {
+  "name": "Deltoid, middle",
+  "region": "Shoulder",
+  "unit": "u4",
+  "section": "u4-s7",
+  "joints": [
+   "Shoulder"
+  ],
+  "twoJoint": false,
+  "origin": "Acromion process",
+  "insertion": "Deltoid tuberosity of humerus",
+  "actions": [
+   "Shoulder abduction"
+  ],
+  "nerve": "Axillary",
+  "roots": "C5-C6",
+  "stretch": "Shoulder adduction (arm across body or behind back)",
+  "notes": "Force couple with the rotator cuff during abduction. Axillary nerve injury (e.g., shoulder dislocation) weakens abduction."
+ },
+ {
+  "name": "Deltoid, posterior",
+  "region": "Shoulder",
+  "unit": "u4",
+  "section": "u4-s7",
+  "joints": [
+   "Shoulder"
+  ],
+  "twoJoint": false,
+  "origin": "Spine of scapula",
+  "insertion": "Deltoid tuberosity of humerus",
+  "actions": [
+   "Shoulder extension",
+   "Shoulder hyperextension",
+   "Shoulder horizontal abduction",
+   "Shoulder external rotation"
+  ],
+  "nerve": "Axillary",
+  "roots": "C5-C6",
+  "stretch": "Shoulder flexion, horizontal adduction, internal rotation",
+  "notes": ""
+ },
+ {
+  "name": "Pectoralis major, clavicular head",
+  "region": "Shoulder",
+  "unit": "u4",
+  "section": "u4-s7",
+  "joints": [
+   "Shoulder"
+  ],
+  "twoJoint": false,
+  "origin": "Medial half of clavicle",
+  "insertion": "Lateral lip of bicipital (intertubercular) groove",
+  "actions": [
+   "Shoulder flexion (to about 60 degrees)",
+   "Shoulder horizontal adduction",
+   "Shoulder internal rotation",
+   "Shoulder adduction"
+  ],
+  "nerve": "Lateral pectoral",
+  "roots": "C5-C7",
+  "stretch": "Shoulder extension, horizontal abduction, external rotation",
+  "notes": "Whole muscle: adduction, horizontal adduction, internal rotation. Humeral propeller."
+ },
+ {
+  "name": "Pectoralis major, sternal head",
+  "region": "Shoulder",
+  "unit": "u4",
+  "section": "u4-s7",
+  "joints": [
+   "Shoulder"
+  ],
+  "twoJoint": false,
+  "origin": "Sternum, costal cartilages 1-6, aponeurosis of external oblique",
+  "insertion": "Lateral lip of bicipital (intertubercular) groove",
+  "actions": [
+   "Shoulder extension (from flexion, about 180 to 120 degrees)",
+   "Shoulder adduction",
+   "Shoulder internal rotation",
+   "Shoulder horizontal adduction",
+   "Rib elevation (deep inspiration, reverse action)"
+  ],
+  "nerve": "Medial & lateral pectoral",
+  "roots": "C6-T1",
+  "stretch": "Shoulder flexion/abduction overhead, horizontal abduction, external rotation",
+  "notes": "Whole muscle: adduction, horizontal adduction, internal rotation. Used for depression transfers/push-ups."
+ },
+ {
+  "name": "Supraspinatus",
+  "region": "Shoulder",
+  "unit": "u4",
+  "section": "u4-s7",
+  "joints": [
+   "Shoulder"
+  ],
+  "twoJoint": false,
+  "origin": "Supraspinous fossa of scapula",
+  "insertion": "Greater tubercle of humerus (superior facet)",
+  "actions": [
+   "Shoulder abduction (initiates)",
+   "Humeral head stabilization in glenoid"
+  ],
+  "nerve": "Suprascapular",
+  "roots": "C5-C6",
+  "stretch": "Shoulder adduction (arm behind back)",
+  "notes": "Rotator cuff (SITS). Most commonly torn/impinged cuff tendon."
+ },
+ {
+  "name": "Infraspinatus",
+  "region": "Shoulder",
+  "unit": "u4",
+  "section": "u4-s7",
+  "joints": [
+   "Shoulder"
+  ],
+  "twoJoint": false,
+  "origin": "Infraspinous fossa of scapula",
+  "insertion": "Greater tubercle of humerus (middle facet)",
+  "actions": [
+   "Shoulder external rotation",
+   "Shoulder horizontal abduction"
+  ],
+  "nerve": "Suprascapular",
+  "roots": "C5-C6",
+  "stretch": "Shoulder internal rotation, horizontal adduction (cross-body)",
+  "notes": "Rotator cuff (SITS); depresses and stabilizes the humeral head."
+ },
+ {
+  "name": "Teres minor",
+  "region": "Shoulder",
+  "unit": "u4",
+  "section": "u4-s7",
+  "joints": [
+   "Shoulder"
+  ],
+  "twoJoint": false,
+  "origin": "Upper 2/3 of lateral (axillary) border of scapula",
+  "insertion": "Greater tubercle of humerus (inferior facet)",
+  "actions": [
+   "Shoulder external rotation",
+   "Shoulder horizontal abduction"
+  ],
+  "nerve": "Axillary",
+  "roots": "C5-C6",
+  "stretch": "Shoulder internal rotation, horizontal adduction (cross-body)",
+  "notes": "Rotator cuff (SITS)."
+ },
+ {
+  "name": "Subscapularis",
+  "region": "Shoulder",
+  "unit": "u4",
+  "section": "u4-s7",
+  "joints": [
+   "Shoulder"
+  ],
+  "twoJoint": false,
+  "origin": "Subscapular fossa of scapula",
+  "insertion": "Lesser tubercle of humerus",
+  "actions": [
+   "Shoulder internal rotation"
+  ],
+  "nerve": "Upper & lower subscapular",
+  "roots": "C5-C6",
+  "stretch": "Shoulder external rotation",
+  "notes": "Rotator cuff (SITS); only cuff muscle on the anterior scapula and on the lesser tubercle."
+ },
+ {
+  "name": "Latissimus dorsi",
+  "region": "Shoulder",
+  "unit": "u4",
+  "section": "u4-s7",
+  "joints": [
+   "Shoulder",
+   "Shoulder girdle"
+  ],
+  "twoJoint": false,
+  "origin": "Spinous processes T7-L5, thoracolumbar fascia, posterior iliac crest, lower 3-4 ribs",
+  "insertion": "Floor of bicipital (intertubercular) groove",
+  "actions": [
+   "Shoulder extension",
+   "Shoulder hyperextension",
+   "Shoulder adduction",
+   "Shoulder internal rotation",
+   "Scapular depression (assist)"
+  ],
+  "nerve": "Thoracodorsal",
+  "roots": "C6-C8",
+  "stretch": "Shoulder flexion, abduction, external rotation (with trunk lateral flexion to opposite side)",
+  "notes": "Humeral propeller; key for depression transfers, wheelchair push-ups and crutch walking."
+ },
+ {
+  "name": "Teres major",
+  "region": "Shoulder",
+  "unit": "u4",
+  "section": "u4-s7",
+  "joints": [
+   "Shoulder"
+  ],
+  "twoJoint": false,
+  "origin": "Inferior angle and lower lateral border of scapula",
+  "insertion": "Medial lip of bicipital groove (crest of lesser tubercle)",
+  "actions": [
+   "Shoulder extension",
+   "Shoulder adduction",
+   "Shoulder internal rotation"
+  ],
+  "nerve": "Lower subscapular",
+  "roots": "C5-C6",
+  "stretch": "Shoulder flexion, abduction, external rotation",
+  "notes": "'Lat's little helper'; not part of the rotator cuff."
+ },
+ {
+  "name": "Coracobrachialis",
+  "region": "Shoulder",
+  "unit": "u4",
+  "section": "u4-s7",
+  "joints": [
+   "Shoulder"
+  ],
+  "twoJoint": false,
+  "origin": "Coracoid process of scapula",
+  "insertion": "Middle of medial humeral shaft",
+  "actions": [
+   "Shoulder flexion",
+   "Shoulder adduction"
+  ],
+  "nerve": "Musculocutaneous",
+  "roots": "C6-C7",
+  "stretch": "Shoulder extension/hyperextension, abduction",
+  "notes": ""
+ },
+ {
+  "name": "Biceps brachii",
+  "region": "Elbow & Forearm",
+  "unit": "u5",
+  "section": "u5-s2",
+  "joints": [
+   "Shoulder",
+   "Elbow",
+   "Radioulnar"
+  ],
+  "twoJoint": true,
+  "origin": "Long head: supraglenoid tubercle; short head: coracoid process",
+  "insertion": "Radial tuberosity and bicipital aponeurosis",
+  "actions": [
+   "Elbow flexion",
+   "Forearm supination",
+   "Shoulder flexion (assist)"
+  ],
+  "nerve": "Musculocutaneous",
+  "roots": "C5-C6",
+  "stretch": "Shoulder extension + elbow extension + forearm pronation",
+  "notes": "Strongest elbow flexor with forearm supinated. Also covered in u3-s2 and u4-s7."
+ },
+ {
+  "name": "Brachialis",
+  "region": "Elbow & Forearm",
+  "unit": "u5",
+  "section": "u5-s2",
+  "joints": [
+   "Elbow"
+  ],
+  "twoJoint": false,
+  "origin": "Distal half of anterior humerus",
+  "insertion": "Coronoid process and ulnar tuberosity",
+  "actions": [
+   "Elbow flexion"
+  ],
+  "nerve": "Musculocutaneous",
+  "roots": "C5-C6",
+  "stretch": "Elbow extension",
+  "notes": "'Workhorse' elbow flexor: flexes in any forearm position because it inserts on the ulna."
+ },
+ {
+  "name": "Brachioradialis",
+  "region": "Elbow & Forearm",
+  "unit": "u5",
+  "section": "u5-s2",
+  "joints": [
+   "Elbow",
+   "Radioulnar"
+  ],
+  "twoJoint": false,
+  "origin": "Proximal 2/3 of lateral supracondylar ridge of humerus",
+  "insertion": "Radial styloid process",
+  "actions": [
+   "Elbow flexion",
+   "Forearm return to midposition (assist)"
+  ],
+  "nerve": "Radial",
+  "roots": "C5-C6",
+  "stretch": "Elbow extension (forearm in neutral)",
+  "notes": "Strongest in midposition (hammer curl). Only elbow flexor supplied by the radial nerve."
+ },
+ {
+  "name": "Triceps brachii",
+  "region": "Elbow & Forearm",
+  "unit": "u5",
+  "section": "u5-s2",
+  "joints": [
+   "Shoulder",
+   "Elbow"
+  ],
+  "twoJoint": true,
+  "origin": "Long head: infraglenoid tubercle; lateral and medial heads: posterior humerus",
+  "insertion": "Olecranon process of ulna",
+  "actions": [
+   "Elbow extension",
+   "Shoulder extension (assist, long head)",
+   "Shoulder adduction (assist, long head)"
+  ],
+  "nerve": "Radial",
+  "roots": "C6-C8",
+  "stretch": "Shoulder flexion + elbow flexion",
+  "notes": "Only the long head crosses the shoulder. Key for push-up transfers. Also covered in u3-s2 and u4-s7."
+ },
+ {
+  "name": "Anconeus",
+  "region": "Elbow & Forearm",
+  "unit": "u5",
+  "section": "u5-s2",
+  "joints": [
+   "Elbow"
+  ],
+  "twoJoint": false,
+  "origin": "Posterior lateral epicondyle of humerus",
+  "insertion": "Lateral olecranon and posterior proximal ulna",
+  "actions": [
+   "Elbow extension"
+  ],
+  "nerve": "Radial",
+  "roots": "C7-C8",
+  "stretch": "Elbow flexion",
+  "notes": "Small; assists triceps and stabilizes the elbow."
+ },
+ {
+  "name": "Supinator",
+  "region": "Elbow & Forearm",
+  "unit": "u5",
+  "section": "u5-s2",
+  "joints": [
+   "Elbow",
+   "Radioulnar"
+  ],
+  "twoJoint": false,
+  "origin": "Lateral epicondyle, radial collateral and annular ligaments, supinator crest of ulna",
+  "insertion": "Lateral surface of proximal 1/3 of radius",
+  "actions": [
+   "Forearm supination"
+  ],
+  "nerve": "Radial",
+  "roots": "C5-C6",
+  "stretch": "Forearm pronation",
+  "notes": "Supinates in any elbow position; deep radial (posterior interosseous) nerve passes through it. Also in u3-s2."
+ },
+ {
+  "name": "Pronator teres",
+  "region": "Elbow & Forearm",
+  "unit": "u5",
+  "section": "u5-s2",
+  "joints": [
+   "Elbow",
+   "Radioulnar"
+  ],
+  "twoJoint": false,
+  "origin": "Medial epicondyle (common flexor tendon) and coronoid process of ulna",
+  "insertion": "Middle of lateral radius",
+  "actions": [
+   "Forearm pronation",
+   "Elbow flexion (assist)"
+  ],
+  "nerve": "Median",
+  "roots": "C6-C7",
+  "stretch": "Forearm supination with elbow extension",
+  "notes": "Median nerve passes between its two heads (pronator syndrome)."
+ },
+ {
+  "name": "Pronator quadratus",
+  "region": "Elbow & Forearm",
+  "unit": "u5",
+  "section": "u5-s2",
+  "joints": [
+   "Radioulnar"
+  ],
+  "twoJoint": false,
+  "origin": "Distal 1/4 of anterior ulna",
+  "insertion": "Distal 1/4 of anterior radius",
+  "actions": [
+   "Forearm pronation"
+  ],
+  "nerve": "Median",
+  "roots": "C8-T1",
+  "stretch": "Forearm supination",
+  "notes": "Prime pronator in any elbow position; anterior interosseous branch of median nerve."
+ },
+ {
+  "name": "Flexor carpi radialis",
+  "region": "Wrist",
+  "unit": "u5",
+  "section": "u5-s5",
+  "joints": [
+   "Elbow",
+   "Wrist"
+  ],
+  "twoJoint": true,
+  "origin": "Medial epicondyle (common flexor tendon)",
+  "insertion": "Palmar base of 2nd (and 3rd) metacarpal",
+  "actions": [
+   "Wrist flexion",
+   "Wrist radial deviation",
+   "Elbow flexion (assist)"
+  ],
+  "nerve": "Median",
+  "roots": "C6-C7",
+  "stretch": "Wrist extension + ulnar deviation with elbow extended",
+  "notes": "FCR."
+ },
+ {
+  "name": "Flexor carpi ulnaris",
+  "region": "Wrist",
+  "unit": "u5",
+  "section": "u5-s5",
+  "joints": [
+   "Elbow",
+   "Wrist"
+  ],
+  "twoJoint": true,
+  "origin": "Medial epicondyle (common flexor tendon), olecranon and posterior ulnar border",
+  "insertion": "Pisiform, hook of hamate, base of 5th metacarpal",
+  "actions": [
+   "Wrist flexion",
+   "Wrist ulnar deviation",
+   "Elbow flexion (assist)"
+  ],
+  "nerve": "Ulnar",
+  "roots": "C8-T1",
+  "stretch": "Wrist extension + radial deviation with elbow extended",
+  "notes": "FCU; ulnar nerve runs between its heads (cubital tunnel)."
+ },
+ {
+  "name": "Palmaris longus",
+  "region": "Wrist",
+  "unit": "u5",
+  "section": "u5-s5",
+  "joints": [
+   "Elbow",
+   "Wrist"
+  ],
+  "twoJoint": true,
+  "origin": "Medial epicondyle (common flexor tendon)",
+  "insertion": "Flexor retinaculum and palmar aponeurosis",
+  "actions": [
+   "Wrist flexion",
+   "Palmar fascia tension (cupping)",
+   "Elbow flexion (assist)"
+  ],
+  "nerve": "Median",
+  "roots": "C7-C8",
+  "stretch": "Wrist extension with elbow extended",
+  "notes": "PL; absent in about 14% of people; common tendon graft donor."
+ },
+ {
+  "name": "Extensor carpi radialis longus",
+  "region": "Wrist",
+  "unit": "u5",
+  "section": "u5-s5",
+  "joints": [
+   "Elbow",
+   "Wrist"
+  ],
+  "twoJoint": true,
+  "origin": "Distal lateral supracondylar ridge of humerus",
+  "insertion": "Dorsal base of 2nd metacarpal",
+  "actions": [
+   "Wrist extension",
+   "Wrist radial deviation",
+   "Elbow flexion (assist)"
+  ],
+  "nerve": "Radial",
+  "roots": "C6-C7",
+  "stretch": "Wrist flexion + ulnar deviation with elbow extended",
+  "notes": "ECRL; key wrist extensor for tenodesis grasp (C6 SCI)."
+ },
+ {
+  "name": "Extensor carpi radialis brevis",
+  "region": "Wrist",
+  "unit": "u5",
+  "section": "u5-s5",
+  "joints": [
+   "Elbow",
+   "Wrist"
+  ],
+  "twoJoint": true,
+  "origin": "Lateral epicondyle (common extensor tendon)",
+  "insertion": "Dorsal base of 3rd metacarpal",
+  "actions": [
+   "Wrist extension",
+   "Wrist radial deviation (assist)"
+  ],
+  "nerve": "Radial",
+  "roots": "C6-C7",
+  "stretch": "Wrist flexion with elbow extended",
+  "notes": "ECRB; most often involved in lateral epicondylitis (tennis elbow)."
+ },
+ {
+  "name": "Extensor carpi ulnaris",
+  "region": "Wrist",
+  "unit": "u5",
+  "section": "u5-s5",
+  "joints": [
+   "Elbow",
+   "Wrist"
+  ],
+  "twoJoint": true,
+  "origin": "Lateral epicondyle (common extensor tendon) and posterior ulna",
+  "insertion": "Dorsal base of 5th metacarpal",
+  "actions": [
+   "Wrist extension",
+   "Wrist ulnar deviation"
+  ],
+  "nerve": "Radial",
+  "roots": "C6-C8",
+  "stretch": "Wrist flexion + radial deviation with elbow extended",
+  "notes": "ECU."
+ },
+ {
+  "name": "Flexor digitorum superficialis",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "Elbow",
+   "Wrist",
+   "MCP",
+   "PIP"
+  ],
+  "twoJoint": true,
+  "origin": "Medial epicondyle (common flexor tendon), coronoid process, anterior radius",
+  "insertion": "Sides of middle phalanges D2-5",
+  "actions": [
+   "Finger PIP flexion",
+   "Finger MCP flexion",
+   "Wrist flexion (assist)"
+  ],
+  "nerve": "Median",
+  "roots": "C7-T1",
+  "stretch": "Wrist and finger MCP/PIP extension with elbow extended",
+  "notes": "FDS; prime PIP flexor. Tested by holding other fingers extended."
+ },
+ {
+  "name": "Flexor digitorum profundus",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "Wrist",
+   "MCP",
+   "PIP",
+   "DIP"
+  ],
+  "twoJoint": true,
+  "origin": "Proximal anterior and medial ulna, interosseous membrane",
+  "insertion": "Palmar bases of distal phalanges D2-5",
+  "actions": [
+   "Finger DIP flexion",
+   "Finger PIP flexion",
+   "Finger MCP flexion",
+   "Wrist flexion (assist)"
+  ],
+  "nerve": "Median & ulnar",
+  "roots": "C8-T1",
+  "stretch": "Wrist and finger MCP/PIP/DIP extension",
+  "notes": "FDP; only DIP flexor. Median (anterior interosseous) to D2-3, ulnar to D4-5."
+ },
+ {
+  "name": "Flexor pollicis longus",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "Wrist",
+   "Thumb CMC",
+   "Thumb MCP",
+   "Thumb IP"
+  ],
+  "twoJoint": true,
+  "origin": "Anterior radius and interosseous membrane",
+  "insertion": "Palmar base of distal phalanx of thumb",
+  "actions": [
+   "Thumb IP flexion",
+   "Thumb MCP flexion",
+   "Thumb CMC flexion (assist)",
+   "Wrist flexion (assist)"
+  ],
+  "nerve": "Median",
+  "roots": "C8-T1",
+  "stretch": "Wrist and thumb extension",
+  "notes": "FPL; only thumb IP flexor (tip pinch)."
+ },
+ {
+  "name": "Abductor pollicis longus",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "Wrist",
+   "Thumb CMC"
+  ],
+  "twoJoint": true,
+  "origin": "Posterior radius and ulna, interosseous membrane",
+  "insertion": "Lateral base of 1st metacarpal",
+  "actions": [
+   "Thumb CMC abduction",
+   "Thumb CMC extension",
+   "Wrist radial deviation (assist)"
+  ],
+  "nerve": "Radial",
+  "roots": "C6-C8",
+  "stretch": "Thumb flexion/adduction with wrist ulnar deviation",
+  "notes": "APL; lateral border of snuffbox. Inflamed with EPB in De Quervain's tenosynovitis."
+ },
+ {
+  "name": "Extensor pollicis brevis",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "Wrist",
+   "Thumb CMC",
+   "Thumb MCP"
+  ],
+  "twoJoint": true,
+  "origin": "Posterior radius and interosseous membrane",
+  "insertion": "Dorsal base of proximal phalanx of thumb",
+  "actions": [
+   "Thumb MCP extension",
+   "Thumb CMC extension",
+   "Wrist radial deviation (assist)"
+  ],
+  "nerve": "Radial",
+  "roots": "C6-C8",
+  "stretch": "Thumb flexion with wrist ulnar deviation (Finkelstein position)",
+  "notes": "EPB; lateral border of snuffbox; De Quervain's tenosynovitis."
+ },
+ {
+  "name": "Extensor pollicis longus",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "Wrist",
+   "Thumb CMC",
+   "Thumb MCP",
+   "Thumb IP"
+  ],
+  "twoJoint": true,
+  "origin": "Middle posterior ulna and interosseous membrane",
+  "insertion": "Dorsal base of distal phalanx of thumb",
+  "actions": [
+   "Thumb IP extension",
+   "Thumb MCP extension",
+   "Thumb CMC extension",
+   "Wrist extension (assist)"
+  ],
+  "nerve": "Radial",
+  "roots": "C6-C8",
+  "stretch": "Wrist and thumb flexion",
+  "notes": "EPL; medial (ulnar) border of the anatomical snuffbox; hooks around Lister's tubercle."
+ },
+ {
+  "name": "Extensor digitorum",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "Elbow",
+   "Wrist",
+   "MCP",
+   "PIP",
+   "DIP"
+  ],
+  "twoJoint": true,
+  "origin": "Lateral epicondyle (common extensor tendon)",
+  "insertion": "Extensor hood to middle and distal phalanges D2-5",
+  "actions": [
+   "Finger MCP extension",
+   "Finger PIP extension",
+   "Finger DIP extension",
+   "Wrist extension (assist)"
+  ],
+  "nerve": "Radial",
+  "roots": "C6-C8",
+  "stretch": "Wrist flexion + finger flexion with elbow extended",
+  "notes": "ED; prime MCP extensor; PIP/DIP extension aided by interossei and lumbricals."
+ },
+ {
+  "name": "Extensor indicis",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "Wrist",
+   "MCP",
+   "PIP",
+   "DIP"
+  ],
+  "twoJoint": true,
+  "origin": "Posterior distal ulna and interosseous membrane",
+  "insertion": "Extensor hood of index finger (D2)",
+  "actions": [
+   "Index MCP extension",
+   "Index PIP/DIP extension",
+   "Wrist extension (assist)"
+  ],
+  "nerve": "Radial",
+  "roots": "C6-C8",
+  "stretch": "Wrist and index finger flexion",
+  "notes": "Lets the index finger point independently."
+ },
+ {
+  "name": "Extensor digiti minimi",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "Elbow",
+   "Wrist",
+   "MCP",
+   "PIP",
+   "DIP"
+  ],
+  "twoJoint": true,
+  "origin": "Lateral epicondyle (common extensor tendon)",
+  "insertion": "Extensor hood of little finger (D5)",
+  "actions": [
+   "Little finger MCP extension",
+   "Little finger PIP/DIP extension",
+   "Wrist extension (assist)"
+  ],
+  "nerve": "Radial",
+  "roots": "C6-C8",
+  "stretch": "Wrist and little finger flexion",
+  "notes": ""
+ },
+ {
+  "name": "Abductor pollicis brevis",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "Thumb CMC",
+   "Thumb MCP"
+  ],
+  "twoJoint": true,
+  "origin": "Flexor retinaculum, scaphoid and trapezium tubercles",
+  "insertion": "Radial base of proximal phalanx of thumb",
+  "actions": [
+   "Thumb CMC palmar abduction",
+   "Thumb opposition (assist)"
+  ],
+  "nerve": "Median",
+  "roots": "C8-T1",
+  "stretch": "Thumb adduction",
+  "notes": "Thenar (OAF). Atrophies in carpal tunnel syndrome."
+ },
+ {
+  "name": "Flexor pollicis brevis",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "Thumb CMC",
+   "Thumb MCP"
+  ],
+  "twoJoint": true,
+  "origin": "Superficial head: flexor retinaculum, trapezium; deep head: trapezoid, capitate",
+  "insertion": "Radial base of proximal phalanx of thumb",
+  "actions": [
+   "Thumb MCP flexion",
+   "Thumb CMC flexion (assist)",
+   "Thumb opposition (assist)"
+  ],
+  "nerve": "Median & ulnar",
+  "roots": "C8-T1",
+  "stretch": "Thumb MCP and CMC extension",
+  "notes": "Thenar (OAF). Superficial head median, deep head ulnar."
+ },
+ {
+  "name": "Opponens pollicis",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "Thumb CMC"
+  ],
+  "twoJoint": false,
+  "origin": "Flexor retinaculum and trapezium",
+  "insertion": "Lateral (radial) border of 1st metacarpal",
+  "actions": [
+   "Thumb CMC opposition"
+  ],
+  "nerve": "Median",
+  "roots": "C8-T1",
+  "stretch": "Thumb reposition (extension and abduction away from palm)",
+  "notes": "Thenar (OAF). Loss gives 'ape hand'."
+ },
+ {
+  "name": "Abductor digiti minimi",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "MCP"
+  ],
+  "twoJoint": false,
+  "origin": "Pisiform and FCU tendon",
+  "insertion": "Ulnar base of proximal phalanx of D5",
+  "actions": [
+   "Little finger MCP abduction",
+   "Little finger MCP flexion (assist)"
+  ],
+  "nerve": "Ulnar",
+  "roots": "C8-T1",
+  "stretch": "Little finger adduction",
+  "notes": "Hypothenar (OAF)."
+ },
+ {
+  "name": "Flexor digiti minimi",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "MCP"
+  ],
+  "twoJoint": false,
+  "origin": "Hook of hamate and flexor retinaculum",
+  "insertion": "Ulnar base of proximal phalanx of D5",
+  "actions": [
+   "Little finger MCP flexion"
+  ],
+  "nerve": "Ulnar",
+  "roots": "C8-T1",
+  "stretch": "Little finger MCP extension",
+  "notes": "Hypothenar (OAF). Also called flexor digiti minimi brevis."
+ },
+ {
+  "name": "Opponens digiti minimi",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "CMC"
+  ],
+  "twoJoint": false,
+  "origin": "Hook of hamate and flexor retinaculum",
+  "insertion": "Ulnar border of 5th metacarpal",
+  "actions": [
+   "Little finger CMC opposition"
+  ],
+  "nerve": "Ulnar",
+  "roots": "C8-T1",
+  "stretch": "Flattening the palm (5th metacarpal extension)",
+  "notes": "Hypothenar (OAF); cups the palm."
+ },
+ {
+  "name": "Adductor pollicis",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "Thumb CMC",
+   "Thumb MCP"
+  ],
+  "twoJoint": true,
+  "origin": "Oblique head: capitate, bases of 2nd-3rd metacarpals; transverse head: palmar 3rd metacarpal shaft",
+  "insertion": "Ulnar base of proximal phalanx of thumb",
+  "actions": [
+   "Thumb CMC adduction",
+   "Thumb MCP flexion (assist)"
+  ],
+  "nerve": "Ulnar",
+  "roots": "C8-T1",
+  "stretch": "Thumb abduction (open the web space)",
+  "notes": "Deep palm (AIL); key pinch muscle. Weakness gives positive Froment's sign."
+ },
+ {
+  "name": "Dorsal interossei (4)",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "MCP",
+   "PIP",
+   "DIP"
+  ],
+  "twoJoint": true,
+  "origin": "Adjacent sides of all metacarpals (two heads)",
+  "insertion": "Bases of proximal phalanges and extensor hoods of D2-4",
+  "actions": [
+   "Finger MCP abduction",
+   "Finger MCP flexion (assist)",
+   "Finger PIP/DIP extension (assist)"
+  ],
+  "nerve": "Ulnar",
+  "roots": "C8-T1",
+  "stretch": "Finger adduction; MCP extension with IP flexion",
+  "notes": "DAB: dorsal ABduct away from the middle finger. Only intrinsics on the back of the hand."
+ },
+ {
+  "name": "Palmar interossei (3)",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "MCP",
+   "PIP",
+   "DIP"
+  ],
+  "twoJoint": true,
+  "origin": "Palmar surfaces of metacarpals 2, 4, 5",
+  "insertion": "Proximal phalanges and extensor hoods of D2, 4, 5",
+  "actions": [
+   "Finger MCP adduction",
+   "Finger MCP flexion (assist)",
+   "Finger PIP/DIP extension (assist)"
+  ],
+  "nerve": "Ulnar",
+  "roots": "C8-T1",
+  "stretch": "Finger abduction; MCP extension with IP flexion",
+  "notes": "PAD: palmar ADduct toward the middle finger."
+ },
+ {
+  "name": "Lumbricals (4)",
+  "region": "Hand",
+  "unit": "u5",
+  "section": "u5-s7",
+  "joints": [
+   "MCP",
+   "PIP",
+   "DIP"
+  ],
+  "twoJoint": true,
+  "origin": "Tendons of flexor digitorum profundus",
+  "insertion": "Radial side of extensor hoods of D2-5",
+  "actions": [
+   "Finger MCP flexion",
+   "Finger PIP/DIP extension"
+  ],
+  "nerve": "Median & ulnar",
+  "roots": "C8-T1",
+  "stretch": "MCP extension with PIP/DIP flexion (claw position)",
+  "notes": "Lumbricals 1-2 median, 3-4 ulnar. Produce the 'intrinsic plus' (tabletop) position; loss contributes to claw hand."
+ },
+ {
+  "name": "Psoas major",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Lumbar spine",
+   "Hip"
+  ],
+  "twoJoint": false,
+  "origin": "Bodies, discs and transverse processes T12-L5",
+  "insertion": "Lesser trochanter of femur",
+  "actions": [
+   "Hip flexion",
+   "Hip lateral rotation (assist)",
+   "Trunk flexion (reverse action)"
+  ],
+  "nerve": "Lumbar plexus (ventral rami)",
+  "roots": "L1-L3",
+  "stretch": "Hip extension (with lumbar spine neutral)",
+  "notes": "With iliacus forms the iliopsoas, prime hip flexor. Tightness increases anterior pelvic tilt/lordosis."
+ },
+ {
+  "name": "Iliacus",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip"
+  ],
+  "twoJoint": false,
+  "origin": "Iliac fossa",
+  "insertion": "Lesser trochanter (with psoas tendon)",
+  "actions": [
+   "Hip flexion",
+   "Hip lateral rotation (assist)"
+  ],
+  "nerve": "Femoral",
+  "roots": "L2-L4",
+  "stretch": "Hip extension",
+  "notes": "Part of the iliopsoas."
+ },
+ {
+  "name": "Sartorius",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip",
+   "Knee"
+  ],
+  "twoJoint": true,
+  "origin": "ASIS",
+  "insertion": "Proximal medial tibia (pes anserine)",
+  "actions": [
+   "Hip flexion",
+   "Hip abduction",
+   "Hip lateral rotation",
+   "Knee flexion",
+   "Knee medial rotation (assist)"
+  ],
+  "nerve": "Femoral",
+  "roots": "L2-L3",
+  "stretch": "Hip extension, adduction, medial rotation with knee extension",
+  "notes": "Longest muscle; 'tailor's muscle' (cross-legged sitting). Pes anserine member."
+ },
+ {
+  "name": "Pectineus",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip"
+  ],
+  "twoJoint": false,
+  "origin": "Superior pubic ramus (pectineal line of pubis)",
+  "insertion": "Pectineal line of femur",
+  "actions": [
+   "Hip flexion",
+   "Hip adduction",
+   "Hip medial rotation (assist)"
+  ],
+  "nerve": "Femoral (+/- obturator)",
+  "roots": "L2-L3",
+  "stretch": "Hip extension and abduction",
+  "notes": ""
+ },
+ {
+  "name": "Adductor longus",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip"
+  ],
+  "twoJoint": false,
+  "origin": "Body of pubis below pubic crest",
+  "insertion": "Middle 1/3 of linea aspera",
+  "actions": [
+   "Hip adduction",
+   "Hip flexion (assist)",
+   "Hip medial rotation (assist)"
+  ],
+  "nerve": "Obturator",
+  "roots": "L2-L4",
+  "stretch": "Hip abduction with extension",
+  "notes": "Most commonly strained adductor (groin pull)."
+ },
+ {
+  "name": "Adductor brevis",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip"
+  ],
+  "twoJoint": false,
+  "origin": "Body and inferior ramus of pubis",
+  "insertion": "Pectineal line and proximal linea aspera",
+  "actions": [
+   "Hip adduction",
+   "Hip flexion (assist)",
+   "Hip medial rotation (assist)"
+  ],
+  "nerve": "Obturator",
+  "roots": "L2-L4",
+  "stretch": "Hip abduction with extension",
+  "notes": ""
+ },
+ {
+  "name": "Adductor magnus",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip"
+  ],
+  "twoJoint": false,
+  "origin": "Inferior pubic ramus, ischial ramus, ischial tuberosity",
+  "insertion": "Linea aspera, gluteal tuberosity and adductor tubercle",
+  "actions": [
+   "Hip adduction",
+   "Hip extension (posterior fibers)",
+   "Hip medial rotation (assist)"
+  ],
+  "nerve": "Obturator & sciatic (tibial portion)",
+  "roots": "L2-L4",
+  "stretch": "Hip abduction with flexion",
+  "notes": "Largest adductor; posterior 'hamstring' part is supplied by the tibial portion of the sciatic nerve."
+ },
+ {
+  "name": "Gracilis",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip",
+   "Knee"
+  ],
+  "twoJoint": true,
+  "origin": "Body and inferior ramus of pubis",
+  "insertion": "Proximal medial tibia (pes anserine)",
+  "actions": [
+   "Hip adduction",
+   "Knee flexion",
+   "Knee medial rotation",
+   "Hip medial rotation (assist)"
+  ],
+  "nerve": "Obturator",
+  "roots": "L2-L3",
+  "stretch": "Hip abduction with knee extension",
+  "notes": "Only adductor that crosses the knee. Pes anserine member."
+ },
+ {
+  "name": "Gluteus maximus",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip"
+  ],
+  "twoJoint": false,
+  "origin": "Posterior ilium, sacrum, coccyx, sacrotuberous ligament",
+  "insertion": "Gluteal tuberosity of femur and IT band",
+  "actions": [
+   "Hip extension",
+   "Hip lateral rotation",
+   "Hip abduction (upper fibers)"
+  ],
+  "nerve": "Inferior gluteal",
+  "roots": "L5-S2",
+  "stretch": "Hip flexion, adduction, medial rotation (knee to opposite shoulder)",
+  "notes": "Prime hip extender for sit-to-stand, stairs and running; weakness gives a backward trunk lurch in gait."
+ },
+ {
+  "name": "Piriformis",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip"
+  ],
+  "twoJoint": false,
+  "origin": "Anterior sacrum",
+  "insertion": "Superior greater trochanter",
+  "actions": [
+   "Hip lateral rotation",
+   "Hip abduction (assist, hip flexed)"
+  ],
+  "nerve": "Nerve to piriformis",
+  "roots": "S1-S2",
+  "stretch": "Hip medial rotation; with hip flexed, flexion + adduction (knee toward opposite shoulder)",
+  "notes": "Deep 6 lateral rotator. Sciatic nerve usually exits below it (piriformis syndrome). Becomes a medial rotator/abductor when the hip is flexed past about 60 degrees."
+ },
+ {
+  "name": "Obturator internus",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip"
+  ],
+  "twoJoint": false,
+  "origin": "Inner surface of obturator membrane and surrounding pelvis",
+  "insertion": "Medial greater trochanter (trochanteric fossa region)",
+  "actions": [
+   "Hip lateral rotation"
+  ],
+  "nerve": "Nerve to obturator internus",
+  "roots": "L5-S2",
+  "stretch": "Hip medial rotation",
+  "notes": "Deep 6 lateral rotator."
+ },
+ {
+  "name": "Gemellus superior",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip"
+  ],
+  "twoJoint": false,
+  "origin": "Ischial spine",
+  "insertion": "Medial greater trochanter (with obturator internus tendon)",
+  "actions": [
+   "Hip lateral rotation"
+  ],
+  "nerve": "Nerve to obturator internus",
+  "roots": "L5-S2",
+  "stretch": "Hip medial rotation",
+  "notes": "Deep 6 lateral rotator."
+ },
+ {
+  "name": "Gemellus inferior",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip"
+  ],
+  "twoJoint": false,
+  "origin": "Ischial tuberosity",
+  "insertion": "Medial greater trochanter (with obturator internus tendon)",
+  "actions": [
+   "Hip lateral rotation"
+  ],
+  "nerve": "Nerve to quadratus femoris",
+  "roots": "L4-S1",
+  "stretch": "Hip medial rotation",
+  "notes": "Deep 6 lateral rotator."
+ },
+ {
+  "name": "Quadratus femoris",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip"
+  ],
+  "twoJoint": false,
+  "origin": "Lateral ischial tuberosity",
+  "insertion": "Quadrate tubercle on intertrochanteric crest",
+  "actions": [
+   "Hip lateral rotation"
+  ],
+  "nerve": "Nerve to quadratus femoris",
+  "roots": "L4-S1",
+  "stretch": "Hip medial rotation",
+  "notes": "Deep 6 lateral rotator."
+ },
+ {
+  "name": "Obturator externus",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip"
+  ],
+  "twoJoint": false,
+  "origin": "Outer surface of obturator membrane and surrounding pubis/ischium",
+  "insertion": "Trochanteric fossa of femur",
+  "actions": [
+   "Hip lateral rotation"
+  ],
+  "nerve": "Obturator",
+  "roots": "L3-L4",
+  "stretch": "Hip medial rotation",
+  "notes": "Deep 6 lateral rotator. Only deep rotator supplied by the obturator nerve."
+ },
+ {
+  "name": "Gluteus medius",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip"
+  ],
+  "twoJoint": false,
+  "origin": "Outer ilium between anterior and posterior gluteal lines (below iliac crest)",
+  "insertion": "Lateral greater trochanter",
+  "actions": [
+   "Hip abduction",
+   "Hip medial rotation (anterior fibers)",
+   "Hip lateral rotation (posterior fibers, assist)",
+   "Pelvis level in single-leg stance"
+  ],
+  "nerve": "Superior gluteal",
+  "roots": "L4-S1",
+  "stretch": "Hip adduction (leg crossed behind the other)",
+  "notes": "Prime abductor. Weakness gives Trendelenburg sign/gait (opposite pelvis drops)."
+ },
+ {
+  "name": "Gluteus minimus",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip"
+  ],
+  "twoJoint": false,
+  "origin": "Outer ilium between anterior and inferior gluteal lines",
+  "insertion": "Anterior greater trochanter",
+  "actions": [
+   "Hip abduction",
+   "Hip medial rotation",
+   "Hip flexion (assist)"
+  ],
+  "nerve": "Superior gluteal",
+  "roots": "L4-S1",
+  "stretch": "Hip adduction with lateral rotation",
+  "notes": "Deep to gluteus medius; helps keep the pelvis level."
+ },
+ {
+  "name": "Tensor fasciae latae",
+  "region": "Hip",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip",
+   "Knee"
+  ],
+  "twoJoint": true,
+  "origin": "ASIS and anterior outer iliac crest",
+  "insertion": "Lateral tibial condyle (Gerdy's tubercle) via IT band",
+  "actions": [
+   "Hip flexion",
+   "Hip abduction",
+   "Hip medial rotation",
+   "Knee lateral stabilization"
+  ],
+  "nerve": "Superior gluteal",
+  "roots": "L4-S1",
+  "stretch": "Hip extension, adduction, lateral rotation (Ober position)",
+  "notes": "Tight IT band contributes to lateral knee pain (IT band syndrome)."
+ },
+ {
+  "name": "Rectus femoris",
+  "region": "Knee",
+  "unit": "u6",
+  "section": "u6-s9",
+  "joints": [
+   "Hip",
+   "Knee"
+  ],
+  "twoJoint": true,
+  "origin": "AIIS (and just above acetabulum)",
+  "insertion": "Tibial tuberosity via patella and patellar tendon",
+  "actions": [
+   "Knee extension",
+   "Hip flexion"
+  ],
+  "nerve": "Femoral",
+  "roots": "L2-L4",
+  "stretch": "Hip extension + knee flexion",
+  "notes": "Only quadriceps that crosses the hip (2-joint). Also covered in u6-s7."
+ },
+ {
+  "name": "Vastus lateralis",
+  "region": "Knee",
+  "unit": "u6",
+  "section": "u6-s9",
+  "joints": [
+   "Knee"
+  ],
+  "twoJoint": false,
+  "origin": "Greater trochanter, intertrochanteric line, lateral lip of linea aspera",
+  "insertion": "Tibial tuberosity via patella and patellar tendon",
+  "actions": [
+   "Knee extension"
+  ],
+  "nerve": "Femoral",
+  "roots": "L2-L4",
+  "stretch": "Knee flexion",
+  "notes": "Largest quadriceps; 1-joint."
+ },
+ {
+  "name": "Vastus medialis",
+  "region": "Knee",
+  "unit": "u6",
+  "section": "u6-s9",
+  "joints": [
+   "Knee"
+  ],
+  "twoJoint": false,
+  "origin": "Intertrochanteric line and medial lip of linea aspera",
+  "insertion": "Tibial tuberosity via patella and patellar tendon",
+  "actions": [
+   "Knee extension"
+  ],
+  "nerve": "Femoral",
+  "roots": "L2-L4",
+  "stretch": "Knee flexion",
+  "notes": "VMO fibers resist lateral patellar tracking; 1-joint."
+ },
+ {
+  "name": "Vastus intermedius",
+  "region": "Knee",
+  "unit": "u6",
+  "section": "u6-s9",
+  "joints": [
+   "Knee"
+  ],
+  "twoJoint": false,
+  "origin": "Anterior and lateral shaft of femur (proximal 2/3)",
+  "insertion": "Tibial tuberosity via patella and patellar tendon",
+  "actions": [
+   "Knee extension"
+  ],
+  "nerve": "Femoral",
+  "roots": "L2-L4",
+  "stretch": "Knee flexion",
+  "notes": "Deep to rectus femoris; 1-joint."
+ },
+ {
+  "name": "Semitendinosus",
+  "region": "Knee",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip",
+   "Knee"
+  ],
+  "twoJoint": true,
+  "origin": "Ischial tuberosity",
+  "insertion": "Proximal medial tibia (pes anserine)",
+  "actions": [
+   "Knee flexion",
+   "Hip extension",
+   "Knee medial rotation"
+  ],
+  "nerve": "Sciatic (tibial portion)",
+  "roots": "L5-S2",
+  "stretch": "Hip flexion + knee extension (+ knee lateral rotation)",
+  "notes": "Medial hamstring; pes anserine member. Also in u6-s9."
+ },
+ {
+  "name": "Semimembranosus",
+  "region": "Knee",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip",
+   "Knee"
+  ],
+  "twoJoint": true,
+  "origin": "Ischial tuberosity",
+  "insertion": "Posterior medial tibial condyle",
+  "actions": [
+   "Knee flexion",
+   "Hip extension",
+   "Knee medial rotation"
+  ],
+  "nerve": "Sciatic (tibial portion)",
+  "roots": "L5-S2",
+  "stretch": "Hip flexion + knee extension (+ knee lateral rotation)",
+  "notes": "Medial hamstring. Also in u6-s9."
+ },
+ {
+  "name": "Biceps femoris",
+  "region": "Knee",
+  "unit": "u6",
+  "section": "u6-s7",
+  "joints": [
+   "Hip",
+   "Knee"
+  ],
+  "twoJoint": true,
+  "origin": "Long head: ischial tuberosity; short head: lateral lip of linea aspera",
+  "insertion": "Head of fibula (and lateral tibial condyle)",
+  "actions": [
+   "Knee flexion",
+   "Knee lateral rotation",
+   "Hip extension (long head)"
+  ],
+  "nerve": "Sciatic (tibial & common fibular portions)",
+  "roots": "L5-S2",
+  "stretch": "Hip flexion + knee extension (+ knee medial rotation)",
+  "notes": "Lateral hamstring. Long head 2-joint (tibial portion); short head 1-joint (common fibular portion). Also in u6-s9."
+ },
+ {
+  "name": "Popliteus",
+  "region": "Knee",
+  "unit": "u6",
+  "section": "u6-s9",
+  "joints": [
+   "Knee"
+  ],
+  "twoJoint": false,
+  "origin": "Lateral femoral condyle (and lateral meniscus)",
+  "insertion": "Posterior proximal tibia above soleal line",
+  "actions": [
+   "Knee medial rotation (unlocks the knee)",
+   "Knee flexion (assist)"
+  ],
+  "nerve": "Tibial",
+  "roots": "L4-S1",
+  "stretch": "Knee extension with tibial lateral rotation",
+  "notes": "'Key that unlocks the knee' - reverses screw-home rotation to begin flexion."
+ },
+ {
+  "name": "Gastrocnemius",
+  "region": "Ankle & Foot",
+  "unit": "u7",
+  "section": "u7-s6",
+  "joints": [
+   "Knee",
+   "Ankle"
+  ],
+  "twoJoint": true,
+  "origin": "Medial and lateral femoral condyles (posterior)",
+  "insertion": "Calcaneal tuberosity via calcaneal (Achilles) tendon",
+  "actions": [
+   "Ankle plantarflexion",
+   "Knee flexion (assist)"
+  ],
+  "nerve": "Tibial",
+  "roots": "S1-S2",
+  "stretch": "Ankle dorsiflexion with knee extended",
+  "notes": "Triceps surae (with soleus); 2-joint. Active insufficiency with knee flexed. Also in u3-s2 and u6-s9."
+ },
+ {
+  "name": "Soleus",
+  "region": "Ankle & Foot",
+  "unit": "u7",
+  "section": "u7-s6",
+  "joints": [
+   "Ankle"
+  ],
+  "twoJoint": false,
+  "origin": "Posterior head and proximal fibula, soleal line of tibia",
+  "insertion": "Calcaneal tuberosity via calcaneal (Achilles) tendon",
+  "actions": [
+   "Ankle plantarflexion"
+  ],
+  "nerve": "Tibial",
+  "roots": "S1-S2",
+  "stretch": "Ankle dorsiflexion with knee flexed",
+  "notes": "Triceps surae; 1-joint postural muscle in standing. Seated heel raise isolates it. Also in u3-s2."
+ },
+ {
+  "name": "Plantaris",
+  "region": "Ankle & Foot",
+  "unit": "u7",
+  "section": "u7-s6",
+  "joints": [
+   "Knee",
+   "Ankle"
+  ],
+  "twoJoint": true,
+  "origin": "Lateral supracondylar line of femur",
+  "insertion": "Calcaneus (medial to or with the calcaneal tendon)",
+  "actions": [
+   "Ankle plantarflexion (assist)",
+   "Knee flexion (assist)"
+  ],
+  "nerve": "Tibial",
+  "roots": "S1-S2",
+  "stretch": "Ankle dorsiflexion with knee extended",
+  "notes": "Small and absent in some people; long thin tendon."
+ },
+ {
+  "name": "Tibialis anterior",
+  "region": "Ankle & Foot",
+  "unit": "u7",
+  "section": "u7-s6",
+  "joints": [
+   "Ankle",
+   "Subtalar"
+  ],
+  "twoJoint": false,
+  "origin": "Lateral tibial condyle, proximal 2/3 lateral tibia, interosseous membrane",
+  "insertion": "Medial cuneiform and base of 1st metatarsal",
+  "actions": [
+   "Ankle dorsiflexion",
+   "Foot inversion"
+  ],
+  "nerve": "Deep fibular",
+  "roots": "L4-L5",
+  "stretch": "Ankle plantarflexion + foot eversion",
+  "notes": "Prime dorsiflexor; weakness (fibular nerve injury) causes foot drop/steppage gait. Lowers the foot eccentrically after heel strike."
+ },
+ {
+  "name": "Extensor hallucis longus",
+  "region": "Ankle & Foot",
+  "unit": "u7",
+  "section": "u7-s6",
+  "joints": [
+   "Ankle",
+   "Subtalar",
+   "Great toe MTP",
+   "Great toe IP"
+  ],
+  "twoJoint": true,
+  "origin": "Middle anterior fibula and interosseous membrane",
+  "insertion": "Dorsal base of distal phalanx of great toe",
+  "actions": [
+   "Great toe extension",
+   "Ankle dorsiflexion (assist)",
+   "Foot inversion (assist)"
+  ],
+  "nerve": "Deep fibular",
+  "roots": "L5-S1",
+  "stretch": "Ankle plantarflexion + great toe flexion",
+  "notes": "EHL; L5 myotome test."
+ },
+ {
+  "name": "Extensor digitorum longus",
+  "region": "Ankle & Foot",
+  "unit": "u7",
+  "section": "u7-s6",
+  "joints": [
+   "Ankle",
+   "Subtalar",
+   "Toe MTP",
+   "Toe PIP",
+   "Toe DIP"
+  ],
+  "twoJoint": true,
+  "origin": "Lateral tibial condyle, proximal 3/4 anterior fibula, interosseous membrane",
+  "insertion": "Middle and distal phalanges of toes 2-5 (dorsal expansion)",
+  "actions": [
+   "Toe extension (toes 2-5)",
+   "Ankle dorsiflexion (assist)",
+   "Foot eversion (assist)"
+  ],
+  "nerve": "Deep fibular",
+  "roots": "L5-S1",
+  "stretch": "Ankle plantarflexion + toe flexion (+ inversion)",
+  "notes": "EDL."
+ },
+ {
+  "name": "Fibularis tertius",
+  "region": "Ankle & Foot",
+  "unit": "u7",
+  "section": "u7-s6",
+  "joints": [
+   "Ankle",
+   "Subtalar"
+  ],
+  "twoJoint": false,
+  "origin": "Distal 1/3 anterior fibula and interosseous membrane",
+  "insertion": "Dorsal base of 5th metatarsal",
+  "actions": [
+   "Ankle dorsiflexion (assist)",
+   "Foot eversion (assist)"
+  ],
+  "nerve": "Deep fibular",
+  "roots": "L5-S1",
+  "stretch": "Ankle plantarflexion + foot inversion",
+  "notes": "Peroneus tertius; often blends with EDL; absent in some people."
+ },
+ {
+  "name": "Fibularis longus",
+  "region": "Ankle & Foot",
+  "unit": "u7",
+  "section": "u7-s6",
+  "joints": [
+   "Ankle",
+   "Subtalar"
+  ],
+  "twoJoint": false,
+  "origin": "Head and proximal 2/3 lateral fibula",
+  "insertion": "Plantar medial cuneiform and base of 1st metatarsal",
+  "actions": [
+   "Foot eversion",
+   "Ankle plantarflexion (assist)"
+  ],
+  "nerve": "Superficial fibular",
+  "roots": "L5-S1",
+  "stretch": "Foot inversion + ankle dorsiflexion",
+  "notes": "Peroneus longus; tendon passes behind lateral malleolus and under the foot to support the transverse and lateral arches ('stirrup' with tibialis anterior)."
+ },
+ {
+  "name": "Fibularis brevis",
+  "region": "Ankle & Foot",
+  "unit": "u7",
+  "section": "u7-s6",
+  "joints": [
+   "Ankle",
+   "Subtalar"
+  ],
+  "twoJoint": false,
+  "origin": "Distal 2/3 lateral fibula",
+  "insertion": "Tuberosity of base of 5th metatarsal",
+  "actions": [
+   "Foot eversion",
+   "Ankle plantarflexion (assist)"
+  ],
+  "nerve": "Superficial fibular",
+  "roots": "L5-S1",
+  "stretch": "Foot inversion + ankle dorsiflexion",
+  "notes": "Peroneus brevis; inversion sprains can avulse its insertion (5th metatarsal base fracture)."
+ },
+ {
+  "name": "Tibialis posterior",
+  "region": "Ankle & Foot",
+  "unit": "u7",
+  "section": "u7-s6",
+  "joints": [
+   "Ankle",
+   "Subtalar"
+  ],
+  "twoJoint": false,
+  "origin": "Posterior tibia, fibula and interosseous membrane",
+  "insertion": "Navicular tuberosity, cuneiforms, cuboid, bases of metatarsals 2-4",
+  "actions": [
+   "Foot inversion",
+   "Ankle plantarflexion (assist)"
+  ],
+  "nerve": "Tibial",
+  "roots": "L4-L5",
+  "stretch": "Foot eversion + ankle dorsiflexion",
+  "notes": "Main dynamic support of the medial arch; dysfunction leads to adult-acquired flatfoot. 'Tom' in Tom, Dick and Harry."
+ },
+ {
+  "name": "Flexor hallucis longus",
+  "region": "Ankle & Foot",
+  "unit": "u7",
+  "section": "u7-s6",
+  "joints": [
+   "Ankle",
+   "Subtalar",
+   "Great toe MTP",
+   "Great toe IP"
+  ],
+  "twoJoint": true,
+  "origin": "Distal 2/3 posterior fibula and interosseous membrane",
+  "insertion": "Plantar base of distal phalanx of great toe",
+  "actions": [
+   "Great toe flexion",
+   "Ankle plantarflexion (assist)",
+   "Foot inversion (assist)"
+  ],
+  "nerve": "Tibial",
+  "roots": "L5-S2",
+  "stretch": "Ankle dorsiflexion + great toe extension",
+  "notes": "FHL; push-off in gait. 'Harry' behind the medial malleolus."
+ },
+ {
+  "name": "Flexor digitorum longus",
+  "region": "Ankle & Foot",
+  "unit": "u7",
+  "section": "u7-s6",
+  "joints": [
+   "Ankle",
+   "Subtalar",
+   "Toe MTP",
+   "Toe PIP",
+   "Toe DIP"
+  ],
+  "twoJoint": true,
+  "origin": "Middle posterior tibia (below soleal line)",
+  "insertion": "Plantar bases of distal phalanges of toes 2-5",
+  "actions": [
+   "Toe flexion (toes 2-5)",
+   "Ankle plantarflexion (assist)",
+   "Foot inversion (assist)"
+  ],
+  "nerve": "Tibial",
+  "roots": "L5-S2",
+  "stretch": "Ankle dorsiflexion + toe extension",
+  "notes": "FDL. 'Dick' behind the medial malleolus."
+ }
+]
