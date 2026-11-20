@@ -839,7 +839,7 @@
         <dt>Actions</dt><dd><ul>${m.actions.map(a => `<li>${esc(a)}</li>`).join('')}</ul></dd>
         <dt>Nerve</dt><dd>${esc(m.nerve)}${m.roots ? ` (${esc(m.roots)})` : ''}</dd>
         ${m.stretch ? `<dt>Stretch</dt><dd>${esc(m.stretch)}</dd>` : ''}
-        <dt>Crosses</dt><dd>${esc((m.joints || []).join(', '))}${m.twoJoint ? ' <span class="chip">two-joint</span>' : ''}</dd>
+        <dt>Crosses</dt><dd>${esc((m.joints || []).join(', ')) || 'No joint (moves the hyoid)'}${m.twoJoint ? ' <span class="chip">two-joint</span>' : ''}</dd>
         ${m.notes ? `<dt>Notes</dt><dd>${esc(m.notes)}</dd>` : ''}
       </dl>
       ${sec ? `<a href="#/unit/${sec.u.id}/${sec.s.id}">Read in notes: ${esc(sec.s.heading)} ›</a>` : u ? `<a href="#/unit/${u.id}">Read in notes: ${esc(u.title)} ›</a>` : ''}
