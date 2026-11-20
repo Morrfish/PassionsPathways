@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Atelier Studio</title>
+<meta name="description" content="Sketch, color and see your fashion designs in 3D.">
+<meta name="theme-color" content="#2b2228">
+<link rel="icon" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/icon-256.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><img src="assets/logo-mark.svg" alt="" class="brand-mark"><span class="brand-name">Atelier <em>Studio</em></span></div>
+  <input id="designName" class="design-name" value="Untitled design" aria-label="Design name" spellcheck="false">
+  <div class="mode" role="tablist" aria-label="View">
+    <button role="tab" data-mode="sketch" class="on" aria-selected="true"><span class="i" data-i="pencil"></span><span>Sketch</span></button>
+    <button role="tab" data-mode="3d" aria-selected="false"><span class="i" data-i="cube"></span><span>3D</span></button>
+  </div>
+  <div class="actions">
+    <button id="btnSnap" class="btn" title="Take a picture of a drawing"><span class="i" data-i="camera"></span><span class="lbl">Snapshot</span></button>
+    <button id="btnUpload" class="btn" title="Upload a picture of a drawing"><span class="i" data-i="upload"></span><span class="lbl">Upload</span></button>
+    <button id="btnDesigns" class="btn" title="My designs and portfolio"><span class="i" data-i="grid"></span><span class="lbl">My designs</span></button>
+    <button id="btnPortfolio" class="btn" title="Add this design to your portfolio"><span class="i" data-i="star"></span><span class="lbl">Portfolio</span></button>
+    <div class="menu-wrap">
+      <button id="btnMore" class="btn icon" title="More" aria-haspopup="true"><span class="i" data-i="more"></span></button>
+      <div id="moreMenu" class="menu" hidden>
+        <button data-act="new"><span class="i" data-i="plus"></span>New design</button>
+        <button data-act="open"><span class="i" data-i="folder"></span>Open design file…</button>
+        <button data-act="save"><span class="i" data-i="save"></span>Save design file (.atelier)</button>
+        <hr>
+        <button data-act="png"><span class="i" data-i="image"></span>Export sketch picture (PNG)</button>
+        <button data-act="shot"><span class="i" data-i="image"></span>Export 3D picture (PNG)</button>
+        <button data-act="glb"><span class="i" data-i="cube"></span>Export 3D model (GLB)</button>
+        <hr>
+        <button data-act="clear"><span class="i" data-i="trash"></span>Clear the board</button>
+        <button data-act="about"><span class="i" data-i="info"></span>About Atelier Studio</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="work">
+  <nav class="tools" aria-label="Drawing tools">
+    <button data-tool="fill" class="on" title="Tap to fill (F)"><span class="i" data-i="bucket"></span><span>Fill</span></button>
+    <button data-tool="brush" title="Brush (B)"><span class="i" data-i="brush"></span><span>Brush</span></button>
+    <button data-tool="pen" title="Line pen (P)"><span class="i" data-i="pen"></span><span>Lines</span></button>
+    <button data-tool="eraser" title="Eraser (E)"><span class="i" data-i="eraser"></span><span>Eraser</span></button>
+    <button data-tool="clear" title="Tap a shape to clear its color"><span class="i" data-i="magic"></span><span>Clear</span></button>
+    <button data-tool="picker" title="Pick a color from the drawing (I)"><span class="i" data-i="dropper"></span><span>Pick</span></button>
+    <button data-tool="pan" title="Move the board (hold Space)"><span class="i" data-i="hand"></span><span>Move</span></button>
+    <span class="sep"></span>
+    <button id="btnUndo" title="Undo (Ctrl+Z)" disabled><span class="i" data-i="undo"></span><span>Undo</span></button>
+    <button id="btnRedo" title="Redo (Ctrl+Y)" disabled><span class="i" data-i="redo"></span><span>Redo</span></button>
+    <span class="sep"></span>
+    <button id="btnZoomIn" title="Zoom in"><span class="i" data-i="zoomin"></span><span>Zoom</span></button>
+    <button id="btnZoomOut" title="Zoom out"><span class="i" data-i="zoomout"></span><span>Out</span></button>
+    <button id="btnFit" title="Fit to screen"><span class="i" data-i="fit"></span><span>Fit</span></button>
+    <button id="btnGuide" class="on" title="Show the mannequin guide"><span class="i" data-i="figure"></span><span>Guide</span></button>
+  </nav>
+
+  <section class="stage">
+    <div class="board-wrap" id="boardWrap"><canvas id="board"></canvas></div>
+    <div class="view3d" id="view3d" hidden></div>
+    <div class="welcome" id="welcome" hidden>
+      <h2>Start a design</h2>
+      <p>Bring in a drawing, or start from an outline that fits the mannequin.</p>
+      <div class="welcome-btns">
+        <button class="big" data-w="snap"><span class="i" data-i="camera"></span>Snapshot a drawing</button>
+        <button class="big" data-w="upload"><span class="i" data-i="upload"></span>Upload a picture</button>
+        <button class="big" data-w="starter"><span class="i" data-i="dress"></span>Start from an outline</button>
+      </div>
+      <button class="link" data-w="blank">or draw on a blank board</button>
+    </div>
+    <div class="placebar" id="placeBar" hidden>
+      <span>Drag to move. Drag a corner, pinch or scroll to resize.</span>
+      <button class="btn" id="placeCancel">Cancel</button>
+      <button class="btn primary" id="placeOk">Place it</button>
+    </div>
+    <div class="hint3d" id="hint3d" hidden>Drag to spin · Tap the garment to apply the selected fabric</div>
+    <div class="viewbtns" id="viewBtns" hidden>
+      <button data-view="front">Front</button><button data-view="side">Side</button><button data-view="back">Back</button><button data-view="close">Close-up</button>
+      <button id="btnSpin" title="Turntable"><span class="i" data-i="spin"></span></button>
+    </div>
+  </section>
+
+  <aside class="panel" id="panel">
+    <button class="panel-grip" id="panelGrip" aria-label="Show or hide the side panel"><span></span></button>
+    <div class="paint-now">
+      <div class="paint-swatch" id="paintSwatch"></div>
+      <div><div class="paint-fabric" id="paintFabric">Cotton (solid)</div><div class="paint-hex" id="paintHex">#E85D8A</div></div>
+    </div>
+
+    <details class="sec" open data-sec="color"><summary>Color</summary>
+      <div class="cp" id="colorPicker"></div>
+      <div class="sub">Recent</div><div class="chips" id="recent"></div>
+      <div class="sub">Palettes</div><div id="palettes"></div>
+    </details>
+
+    <details class="sec" open data-sec="fabric"><summary>Fabric</summary>
+      <div id="fabricGrid"></div>
+      <label class="slider">Pattern size <input type="range" id="fabricScale" min="0.3" max="2.5" step="0.05" value="0.7"></label>
+    </details>
+
+    <details class="sec sketch-only" data-sec="brush"><summary>Brush and fill</summary>
+      <label class="slider">Brush size <input type="range" id="brushSize" min="2" max="80" value="14"></label>
+      <label class="slider">Close gaps in lines <input type="range" id="gapClose" min="0" max="8" value="2"></label>
+      <div class="sub">Eraser removes</div>
+      <div class="seg" id="eraseTarget"><button data-v="color" class="on">Color</button><button data-v="lines">Lines</button><button data-v="both">Both</button></div>
+      <label class="slider">Guide strength <input type="range" id="guideOpacity" min="0" max="1" step="0.05" value="0.55"></label>
+    </details>
+
+    <details class="sec sketch-only" data-sec="starters"><summary>Starter outlines</summary>
+      <p class="note">Draws an outline that fits the mannequin. Tap inside it with Fill to color it.</p>
+      <div class="starter-grid" id="starters"></div>
+    </details>
+
+    <details class="sec" open data-sec="body"><summary>Mannequin</summary>
+      <div class="sub">Body</div>
+      <div class="seg" id="bodyType"><button data-v="women">Women</button><button data-v="men">Men</button><button data-v="kids">Kids</button></div>
+      <div class="sub">Size</div>
+      <div class="seg wrap" id="bodySize"></div>
+      <div class="sub height-row">Height</div>
+      <div class="seg height-row" id="bodyHeight"><button data-v="petite">Petite</button><button data-v="regular">Regular</button><button data-v="tall">Tall</button></div>
+      <div class="sub">Skin</div>
+      <div class="chips" id="skinTones"></div>
+      <details class="custom"><summary>Custom measurements</summary>
+        <div class="custom-grid" id="customBody"></div>
+        <button class="btn small" id="customReset">Use the size chart</button>
+      </details>
+    </details>
+
+    <details class="sec" open data-sec="measure"><summary>Measurements</summary>
+      <div class="seg" id="units"><button data-v="in" class="on">Inches</button><button data-v="cm">Centimeters</button></div>
+      <table class="meas" id="measTable"></table>
+      <p class="note">Garment numbers are measured around the 3D garment. Editing them to change the pattern comes in the next update.</p>
+    </details>
+
+    <details class="sec three-only" data-sec="scene"><summary>Scene</summary>
+      <div class="sub">Background</div>
+      <div class="chips" id="bgChips"></div>
+    </details>
+  </aside>
+</main>
+
+<div class="modal" id="importModal" hidden>
+  <div class="dialog wide">
+    <h2>Bring in your drawing</h2>
+    <div class="import-body">
+      <div class="import-previews">
+        <figure><canvas id="impOrig"></canvas><figcaption>Your picture</figcaption></figure>
+        <figure><canvas id="impOut"></canvas><figcaption>What comes in</figcaption></figure>
+      </div>
+      <div class="import-opts">
+        <div class="sub">How should it come in?</div>
+        <label class="choice"><input type="radio" name="impMode" value="lines" checked><span><b>Lined sketch</b><br>Clean outlines, ready for you to color</span></label>
+        <label class="choice"><input type="radio" name="impMode" value="color"><span><b>Keep my colors</b><br>For drawings that are already colored in</span></label>
+        <p class="note" id="impColorNote"></p>
+        <label class="slider">Line strength <input type="range" id="impStrength" min="0" max="1" step="0.05" value="0.5"></label>
+        <p class="note">Raise it if light pencil lines go missing. Lower it if smudges show up.</p>
+      </div>
+    </div>
+    <div class="dialog-btns">
+      <button class="btn" data-close>Cancel</button>
+      <button class="btn" id="impTo3D"><span class="i" data-i="cube"></span>Straight to 3D</button>
+      <button class="btn primary" id="impPlace">Place on board</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="cameraModal" hidden>
+  <div class="dialog">
+    <h2>Snapshot</h2>
+    <div class="cam"><video id="camVideo" playsinline muted></video></div>
+    <p class="note">Lay the drawing flat in good light and fill the frame with it.</p>
+    <div class="dialog-btns">
+      <button class="btn" data-close>Cancel</button>
+      <button class="btn" id="camSwitch">Switch camera</button>
+      <button class="btn primary" id="camShoot"><span class="i" data-i="camera"></span>Take picture</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="designsModal" hidden>
+  <div class="dialog wide tall">
+    <div class="dialog-head">
+      <h2>My designs</h2>
+      <div class="seg" id="designFilter"><button data-v="all" class="on">All designs</button><button data-v="portfolio">Portfolio</button></div>
+      <button class="btn primary" id="designNew"><span class="i" data-i="plus"></span>New design</button>
+    </div>
+    <div class="cards" id="designCards"></div>
+    <div class="dialog-btns"><button class="btn" data-close>Close</button></div>
+  </div>
+</div>
+
+<div class="modal" id="starterModal" hidden>
+  <div class="dialog">
+    <h2>Start from an outline</h2>
+    <div class="starter-grid" id="starters2"></div>
+    <div class="dialog-btns"><button class="btn" data-close>Cancel</button></div>
+  </div>
+</div>
+
+<div class="modal" id="aboutModal" hidden>
+  <div class="dialog">
+    <h2>Atelier Studio</h2>
+    <p>Sketch, color and see your fashion designs in 3D. Atelier is French for a designer's workshop.</p>
+    <p class="note">Your designs are saved on this device and work without the internet. Use <b>Save design file</b> to keep a copy you can move to another computer.</p>
+    <p class="note">Made with three.js (MIT License).</p>
+    <div class="dialog-btns"><button class="btn primary" data-close>Close</button></div>
+  </div>
+</div>
+
+<input type="file" id="fileImage" accept="image/*" hidden>
+<input type="file" id="fileCamera" accept="image/*" capture="environment" hidden>
+<input type="file" id="fileProject" accept=".atelier,application/json" hidden>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
