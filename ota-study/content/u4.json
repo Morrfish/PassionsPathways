@@ -1,0 +1,1154 @@
+{
+ "id": "u4",
+ "title": "Shoulder Girdle & Shoulder Joint",
+ "summary": "Covers the bones, joints and ligaments of the shoulder girdle and glenohumeral joint, scapular motions and the 2:1 scapulohumeral rhythm. Includes origin/insertion/action/innervation tables for shoulder girdle and shoulder joint muscles, end feel, and common shoulder pathologies such as AC separation, fractures, subluxation, impingement and frozen shoulder, plus a prime-mover review for the elbow, forearm and wrist.",
+ "sources": [
+  "Shoulder Girdle Notes .pptx",
+  "ShoulderGirdleStudNotesHomework (Google Doc)",
+  "Shoulder Joint-1-4.pptx",
+  "GlenoHumeral Joint Packet-3.docx",
+  "GSEFW answers.docx"
+ ],
+ "sections": [
+  {
+   "id": "u4-s1",
+   "heading": "The Shoulder Complex: Bones and Landmarks",
+   "body": [
+    "The <b>shoulder complex</b> = shoulder girdle + shoulder (glenohumeral) joint. Its job is to place the hand in a huge variety of positions so it can perform tasks.",
+    "<b>Bones:</b> scapula, clavicle, humerus; the rib cage and sternum take part indirectly. The <b>shoulder girdle</b> itself is the scapula, clavicle and sternum.",
+    "<b>Joints:</b> sternoclavicular (SC), acromioclavicular (AC), glenohumeral (GH), and the scapulothoracic articulation (scapula gliding over the rib cage).",
+    "<b>Scapula landmarks</b>:<ul><li><b>Superior angle</b> - top of the vertebral border; attachment for levator scapulae.</li><li><b>Inferior angle</b> - where vertebral and axillary borders meet; the reference point for judging scapular rotation (and a useful posture check).</li><li><b>Vertebral (medial) border</b> - attachment of rhomboids and serratus anterior.</li><li><b>Axillary (lateral) border</b>.</li><li><b>Spine</b> - posterior ridge running from the medial border to the acromion; level with the T3-T4 spinous processes; attachment for middle and lower trapezius.</li><li><b>Acromion process</b> - broad, flat superior-lateral tip; attachment for upper trapezius.</li><li><b>Coracoid process</b> - anterior projection below the clavicle; attachment for pectoralis minor (also coracobrachialis and short head of biceps).</li><li><b>Glenoid fossa</b> - shallow, slightly concave socket on the lateral side that articulates with the humeral head.</li><li><b>Subscapular, supraspinous and infraspinous fossae</b> - origins of the rotator cuff muscles named for them.</li></ul>",
+    "<b>Clavicle:</b> sternal (medial) end and acromial (lateral) end. <b>Sternum:</b> manubrium (articulates with the clavicle), body, xiphoid process.",
+    "<b>Humerus landmarks:</b> head, anatomical neck, greater tubercle, lesser tubercle, intertubercular (bicipital) groove, deltoid tuberosity; distally the medial and lateral epicondyles, capitulum, trochlea and olecranon fossa."
+   ]
+  },
+  {
+   "id": "u4-s2",
+   "heading": "Joints and Ligaments of the Shoulder Girdle",
+   "body": [
+    "<table><tr><th></th><th>Sternoclavicular (SC)</th><th>Acromioclavicular (AC)</th></tr><tr><td>Articulating surfaces</td><td>Manubrium of sternum and sternal end of clavicle</td><td>Acromion process of scapula and acromial end of clavicle</td></tr><tr><td>Joint type</td><td>Synovial; saddle (functions like ball-and-socket), triaxial</td><td>Synovial; gliding (plane), biaxial</td></tr><tr><td>Motion</td><td>Clavicle moves on the stationary sternum: elevation/depression, protraction/retraction, anterior/posterior rotation</td><td>Anterior/posterior and superior/inferior gliding, in step with SC and scapulothoracic motion</td></tr><tr><td>Ligaments</td><td>Sternoclavicular (anterior and posterior), costoclavicular, interclavicular, plus an articular disc</td><td>Acromioclavicular (superior, inferior), coracoclavicular (lateral/trapezoid and deep/conoid), coracoacromial</td></tr></table>",
+    "<b>SC joint</b> is the <i>only direct attachment of the shoulder girdle (and upper limb) to the axial skeleton</i>. Dislocation is rare because the disc and ligaments are so strong.<ul><li>Anterior/posterior sternoclavicular ligaments limit anterior-posterior movement (each limits motion in the opposite direction).</li><li>Costoclavicular (clavicle to 1st rib) limits clavicular <b>elevation</b>.</li><li>Interclavicular (across the top of the manubrium, joining the two clavicles) limits clavicular <b>depression</b>.</li><li>Articular disc acts like a double hinge and absorbs shock, especially in a FOOSH (fall on outstretched hand).</li></ul>",
+    "<b>AC joint ligaments:</b><ul><li><b>Coracoclavicular</b> suspends the scapula from the clavicle, limits scapular rotation and backward motion, and is the AC joint's main defense against shoulder separation.</li><li><b>Coracoacromial</b> runs coracoid to acromion (both on the scapula, so it does not actually cross the AC joint) and forms the arch or roof over the humeral head, blocking upward dislocation.</li></ul>",
+    "<b>Scapulothoracic articulation:</b> the scapula gliding on the rib cage. It is <i>not a true joint</i> (no bony union or capsule) but provides motion and flexibility: elevation/depression, protraction/retraction, upward/downward and internal/external rotation, and anterior/posterior tilt."
+   ]
+  },
+  {
+   "id": "u4-s3",
+   "heading": "Scapular Motions, Scapulohumeral Rhythm and Force Couples",
+   "body": [
+    "<b>Scapular motions:</b><ul><li>Elevation - shrug</li><li>Depression - lowering the shrug</li><li>Protraction (abduction) - reaching forward, as in a hug</li><li>Retraction (adduction) - squeezing the shoulder blades together</li><li>Upward rotation - inferior angle swings laterally/up as the arm is raised in flexion or abduction</li><li>Downward rotation - return to resting position as the arm is lowered</li><li>Scapular tilt - top of scapula tips forward when the shoulder hyperextends (swinging arms back)</li></ul>",
+    "<b>Scapulohumeral rhythm:</b> roughly the first 30 degrees of shoulder motion is mostly glenohumeral; after that, for every <b>2 degrees</b> of shoulder motion the scapula rotates <b>1 degree</b> (2:1 ratio). Example from class: at 60 degrees of flexion, (60 - 30) / 2 = 15 degrees of scapular rotation.",
+    "<b>Clinical point:</b> check scapular mobility before ranging a shoulder. If the scapula is tight, do not force the arm; mobilize and stretch the scapula first (\"scap mobs\"). The shoulder cannot move fully if the scapula does not move.",
+    "<table><tr><th>Shoulder joint motion</th><th>Accompanying scapular motion</th></tr><tr><td>Flexion</td><td>Upward rotation + protraction</td></tr><tr><td>Extension</td><td>Downward rotation + retraction</td></tr><tr><td>Hyperextension</td><td>Scapular tilt</td></tr><tr><td>Abduction</td><td>Upward rotation</td></tr><tr><td>Adduction</td><td>Downward rotation</td></tr><tr><td>Internal (medial) rotation</td><td>Protraction</td></tr><tr><td>External (lateral) rotation</td><td>Retraction</td></tr><tr><td>Horizontal abduction</td><td>Retraction</td></tr><tr><td>Horizontal adduction</td><td>Protraction</td></tr></table>",
+    "Note that flexion and extension each pair with <i>two</i> scapular motions.",
+    "<b>Force couple:</b> muscles pulling in different directions that together produce one motion.<ul><li><b>Upward rotation:</b> upper trapezius (up), lower trapezius (down), serratus anterior (out/forward).</li><li><b>Downward rotation:</b> pectoralis minor (down), rhomboids (in), levator scapulae (up).</li></ul>"
+   ]
+  },
+  {
+   "id": "u4-s4",
+   "heading": "Muscles of the Shoulder Girdle",
+   "body": [
+    "<table><tr><th>Muscle</th><th>Origin</th><th>Insertion</th><th>Prime actions (scapula)</th><th>Innervation</th><th>Stretch by</th></tr><tr><td>Trapezius - upper</td><td>External occipital protuberance, medial superior nuchal line, nuchal ligament</td><td>Lateral clavicle and acromion</td><td>Elevation, upward rotation</td><td>Spinal accessory nerve (CN XI)</td><td>Depression, downward rotation</td></tr><tr><td>Trapezius - middle</td><td>Spinous processes C7-T3 (approx.)</td><td>Acromion and spine of scapula</td><td>Retraction</td><td>Spinal accessory nerve (CN XI)</td><td>Protraction</td></tr><tr><td>Trapezius - lower</td><td>Spinous processes T4-T12 (approx.)</td><td>Root of spine of scapula</td><td>Depression, upward rotation</td><td>Spinal accessory nerve (CN XI)</td><td>Elevation, downward rotation</td></tr><tr><td>Levator scapulae</td><td>Transverse processes C1-C4</td><td>Medial border between superior angle and root of spine</td><td>Elevation, downward rotation</td><td>Dorsal scapular nerve (C3-C5)</td><td>Depression, upward rotation</td></tr><tr><td>Rhomboids (major and minor)</td><td>Spinous processes C7-T5</td><td>Medial (vertebral) border of scapula</td><td>Retraction, downward rotation, elevation</td><td>Dorsal scapular nerve (C5)</td><td>Protraction, upward rotation, depression</td></tr><tr><td>Serratus anterior</td><td>External surfaces of upper 8-9 ribs</td><td>Anterior surface of medial border of scapula</td><td>Protraction, upward rotation</td><td>Long thoracic nerve (C5-C7)</td><td>Retraction, downward rotation</td></tr><tr><td>Pectoralis minor</td><td>Ribs 3-5</td><td>Coracoid process</td><td>Protraction, depression, downward rotation, scapular tilt</td><td>Medial pectoral nerve (C8-T1)</td><td>Retraction, elevation, upward rotation</td></tr></table>",
+    "<b>Muscle reminders:</b><ul><li>The direction of a muscle's fibers sets its line of pull and tells you how to stretch it (move opposite to every prime action).</li><li><b>Reversal of muscle action:</b> the insertion becomes the stable end and the origin moves. Examples: pectoralis minor helps lift the ribs during forced breathing; trapezius helps lift the trunk in crutch walking.</li><li>Pectoralis minor is the only shoulder girdle muscle on the anterior surface of the body.</li><li>Weak or paralyzed <b>serratus anterior</b> (long thoracic nerve injury) causes <b>scapular winging</b> - the medial border lifts off the rib cage. Serratus anterior is also essential for full arm flexion.</li></ul>",
+    "<b>Kinetic functional roles</b> (Keough, Sain & Roller):<ul><li><b>Scapular pivoters</b> - trapezius, serratus anterior, levator scapulae, rhomboids (move the scapula on the thorax).</li><li><b>Humeral positioners</b> - anterior, middle, posterior deltoid.</li><li><b>Humeral propellers</b> - latissimus dorsi, pectoralis major, teres major.</li><li><b>Shoulder protectors</b> - rotator cuff, which force-couples with the deltoid to keep the joint safe.</li></ul>"
+   ]
+  },
+  {
+   "id": "u4-s5",
+   "heading": "The Glenohumeral Joint: Structure and Motions",
+   "body": [
+    "The <b>glenohumeral (shoulder) joint</b> is a synovial ball-and-socket (triaxial) joint between the humeral head and the glenoid fossa. It moves in all three planes around all three axes - one of the most mobile and least stable joints in the body.",
+    "<table><tr><th>Motion</th><th>Plane</th><th>Axis</th><th>Normal ROM</th><th>Everyday example</th></tr><tr><td>Flexion</td><td>Sagittal</td><td>Frontal</td><td>0-180</td><td>Raising hands overhead</td></tr><tr><td>Extension</td><td>Sagittal</td><td>Frontal</td><td>180-0</td><td>Bringing a cup down from a cupboard</td></tr><tr><td>Hyperextension</td><td>Sagittal</td><td>Frontal</td><td>0-60</td><td>Bowling backswing</td></tr><tr><td>Abduction</td><td>Frontal</td><td>Sagittal</td><td>0-180</td><td>Arms up in a jumping jack</td></tr><tr><td>Adduction</td><td>Frontal</td><td>Sagittal</td><td>180-0</td><td>Arms down in a jumping jack</td></tr><tr><td>Medial (internal) rotation</td><td>Transverse</td><td>Vertical</td><td>0-70</td><td>Reaching for a seatbelt</td></tr><tr><td>Lateral (external) rotation</td><td>Transverse</td><td>Vertical</td><td>0-90</td><td>Tennis forehand swing</td></tr><tr><td>Horizontal abduction</td><td>Transverse</td><td>Vertical</td><td>0-40 (from 90 abd)</td><td>Opening arms for a hug</td></tr><tr><td>Horizontal adduction</td><td>Transverse</td><td>Vertical</td><td>0-130 (from 90 abd)</td><td>Hugging yourself</td></tr></table>",
+    "<b>Scaption</b> is elevation in the scapular plane, about 30 degrees forward of the frontal plane - most functional reaching happens here. <b>Circumduction</b> combines flexion, abduction, extension and adduction.",
+    "<b>Full abduction (and full flexion) requires external rotation</b> so the greater tubercle clears the acromion instead of jamming under it. The rotator cuff must work with the deltoid so the humeral head rolls and glides down while the arm rises.",
+    "Some muscles must co-contract to cancel unwanted actions: e.g., the anterior deltoid flexes and horizontally adducts, so to get pure flexion another muscle must counter the horizontal adduction."
+   ]
+  },
+  {
+   "id": "u4-s6",
+   "heading": "Glenohumeral Ligaments, Supporting Structures and End Feel",
+   "body": [
+    "<ul><li><b>Joint capsule</b> - attaches around the glenoid rim and the anatomical neck of the humerus; outer fibrous and inner synovial layer; creates a vacuum that helps hold the humeral head in the fossa. A tear in the capsule or labrum loses this vacuum.</li><li><b>Glenoid labrum</b> - fibrocartilage rim that deepens the shallow glenoid fossa, increasing contact and stability; often damaged in dislocation.</li><li><b>Glenohumeral ligaments</b> (superior, middle, inferior) - folds of the capsule that reinforce its anterior side.</li><li><b>Coracohumeral ligament</b> - supports the superior joint (part of the roof).</li><li><b>Coracoclavicular ligament</b> - keeps the AC joint from separating.</li><li><b>Subacromial space</b> - narrow gap between the humeral head and the underside of the acromion; contains the subdeltoid/subacromial bursa, the supraspinatus and infraspinatus tendons and the long head of biceps.</li><li><b>Bursae</b> - fluid-filled sacs that reduce friction between tissues; vulnerable to compression with repetitive overhead motion (bursitis = inflammation of a bursa).</li><li><b>Rotator cuff (SITS)</b> - Supraspinatus, Infraspinatus, Teres minor, Subscapularis; keep the humeral head centered and rotating in the glenoid fossa.</li></ul>",
+    "<b>End feel</b> is what the examiner feels at the end of passive ROM:<ul><li><b>Bony/hard</b> - abrupt bone-on-bone stop (elbow or knee extension).</li><li><b>Soft tissue stretch/firm</b> - firm with slight give from ligaments, capsule and muscle (<b>shoulder</b> motions, e.g. flexion).</li><li><b>Soft tissue approximation/soft</b> - muscle bulk or fat meets (elbow flexion).</li><li><b>Abnormal</b> - an end feel that occurs where it should not, or at the wrong point in the range.</li></ul>"
+   ]
+  },
+  {
+   "id": "u4-s7",
+   "heading": "Muscles of the Shoulder Joint",
+   "body": [
+    "<table><tr><th>Muscle</th><th>Origin</th><th>Insertion</th><th>Prime actions (shoulder)</th><th>Innervation</th></tr><tr><td>Deltoid - anterior</td><td>Lateral 1/3 of clavicle</td><td>Deltoid tuberosity</td><td>Flexion, horizontal adduction, internal rotation (assists abduction)</td><td>Axillary nerve (C5-C6)</td></tr><tr><td>Deltoid - middle</td><td>Acromion process</td><td>Deltoid tuberosity</td><td>Abduction</td><td>Axillary nerve (C5-C6)</td></tr><tr><td>Deltoid - posterior</td><td>Spine of scapula</td><td>Deltoid tuberosity</td><td>Extension, hyperextension, horizontal abduction, external rotation</td><td>Axillary nerve (C5-C6)</td></tr><tr><td>Pectoralis major - clavicular</td><td>Medial half of clavicle</td><td>Lateral lip of bicipital groove</td><td>Flexion (about 0-60), horizontal adduction, internal rotation</td><td>Lateral and medial pectoral nerves (C5-T1)</td></tr><tr><td>Pectoralis major - sternal</td><td>Sternum and upper costal cartilages</td><td>Lateral lip of bicipital groove</td><td>Extension from a flexed position (about 180 down to 120), adduction, internal rotation</td><td>Lateral and medial pectoral nerves (C5-T1)</td></tr><tr><td>Pectoralis major - whole</td><td></td><td></td><td>Adduction, horizontal adduction, internal rotation</td><td></td></tr><tr><td>Supraspinatus</td><td>Supraspinous fossa</td><td>Greater tubercle</td><td>Abduction (initiates; holds head in fossa)</td><td>Suprascapular nerve (C5-C6)</td></tr><tr><td>Infraspinatus</td><td>Infraspinous fossa</td><td>Greater tubercle</td><td>External rotation, horizontal abduction</td><td>Suprascapular nerve (C5-C6)</td></tr><tr><td>Teres minor</td><td>Lateral (axillary) border of scapula</td><td>Greater tubercle</td><td>External rotation, horizontal abduction</td><td>Axillary nerve (C5-C6)</td></tr><tr><td>Subscapularis</td><td>Subscapular fossa</td><td>Lesser tubercle</td><td>Internal rotation</td><td>Upper and lower subscapular nerves (C5-C6)</td></tr><tr><td>Latissimus dorsi</td><td>Spinous processes T7-L5, thoracolumbar fascia, iliac crest, lower ribs</td><td>Floor of bicipital groove</td><td>Extension, hyperextension, adduction, internal rotation</td><td>Thoracodorsal nerve (C6-C8)</td></tr><tr><td>Teres major</td><td>Inferior angle / lower lateral border of scapula</td><td>Medial lip of bicipital groove (crest of lesser tubercle)</td><td>Extension, adduction, internal rotation</td><td>Lower subscapular nerve (C5-C6)</td></tr><tr><td>Coracobrachialis</td><td>Coracoid process</td><td>Middle of medial humerus</td><td>Flexion, adduction</td><td>Musculocutaneous nerve (C6-C7)</td></tr><tr><td>Biceps brachii</td><td>Long head: supraglenoid tubercle; short head: coracoid process</td><td>Radial tuberosity and bicipital aponeurosis</td><td>Assists shoulder flexion (prime elbow flexor/supinator)</td><td>Musculocutaneous nerve (C5-C6)</td></tr><tr><td>Triceps brachii (long head)</td><td>Long head: infraglenoid tubercle; lateral/medial heads: posterior humerus</td><td>Olecranon process of ulna</td><td>Assists shoulder extension and adduction (prime elbow extensor)</td><td>Radial nerve (C6-C8)</td></tr></table>",
+    "<b>Stretching</b> a muscle = move the joint opposite to every prime action (e.g., stretch latissimus dorsi with flexion, abduction and external rotation; stretch subscapularis with external rotation). The same opposite motions give the direction of resistance when strengthening.",
+    "<b>Concentric vs eccentric:</b> concentric strengthening resists the muscle while it shortens through its prime action; eccentric strengthening controls the motion as the muscle lengthens (e.g., slowly lowering the arm from abduction works the middle deltoid and supraspinatus eccentrically)."
+   ]
+  },
+  {
+   "id": "u4-s8",
+   "heading": "Common Shoulder Pathologies",
+   "body": [
+    "<b>AC separation</b> (separated shoulder):<ul><li>1st degree - AC ligament stretched.</li><li>2nd degree - AC ligament ruptured, CC ligament stretched.</li><li>3rd degree - AC and CC ligaments both ruptured.</li></ul>",
+    "<b>Clavicle fracture</b> - the most frequently broken bone in children; usually from a FOOSH or a fall onto the lateral shoulder.",
+    "<b>Humeral fractures</b> - rising with an aging population, sports and osteoporosis.<ul><li><b>Humeral (surgical) neck fracture</b> - common in the elderly; often an impacted fracture.</li><li><b>Mid-humeral (shaft) fracture</b> - direct blow or twisting force, often spiral; about 18% injure the <b>radial nerve</b> as it wraps the shaft, causing weak wrist extension (wrist drop) and lost sensation on the dorsum of the hand. Most recover in 3-4 months.</li><li><b>Supracondylar (distal) fracture</b> - an elbow fracture that can damage muscles, nerves and vessels; risk of compartment swelling and <b>Volkmann's (ischemic) contracture</b>. Treated with closed reduction or ORIF, 4-6 weeks casting, then splinting. Therapy: ROM, strength, endurance; avoid prolonged dependent positioning and watch the pain cycle (risk of CRPS).</li><li><b>Pathological fracture</b> - from weakened bone: osteoporosis, tumors, metastatic cancer.</li></ul>",
+    "<b>Anterior shoulder dislocation</b> - forced abduction with external rotation drives the humeral head anteriorly out of the glenoid; the labrum is often damaged.",
+    "<b>Glenohumeral subluxation</b> - common after CVA or TBI when paralyzed muscles (especially the rotator cuff and deltoid) can no longer hold the humeral head in the fossa. The subluxation itself is not painful; pain comes from mishandling it (e.g., pulling on the arm or forcing ROM causes impingement).",
+    "<b>Impingement syndrome</b> - overuse pinching of soft tissue (rotator cuff, bursa, long head of biceps) between the humeral head and the coracoacromial arch; \"swimmer's shoulder\" (freestyle, butterfly, backstroke).",
+    "<b>Adhesive capsulitis (frozen shoulder)</b> - capsule thickens and tightens, causing pain and loss of ROM. Most common in women over 40 and in people with diabetes, cervical disc disease or post-stroke hemiplegia. Stages: (1) <i>freezing/painful</i>, 2-9 months, progressive pain worse at night; (2) <i>frozen/stiffening</i>, 4-12 months, lost ROM and ADL use with dull ache; (3) <i>thawing</i>, 5-24 months, ROM and function return.",
+    "<b>Rotator cuff tendonitis/tear</b> - acute trauma or gradual degeneration of the SITS tendons (supraspinatus most often).",
+    "<b>Bicipital tendonitis</b> - the long head of biceps tendon rubs as it crosses the humeral head in its groove, often with rotator cuff weakness; inflamed by repetitive motion.",
+    "<b>Erb's palsy</b> - upper brachial plexus (C5-C6) injury, usually in newborns after a difficult delivery; weakness or paralysis of the arm."
+   ]
+  },
+  {
+   "id": "u4-s9",
+   "heading": "GSEFW Review (Elbow, Forearm, Wrist)",
+   "body": [
+    "From the upper extremity prime-mover answer chart (Girdle, Shoulder, Elbow, Forearm, Wrist):",
+    "<table><tr><th>Region</th><th>Motion</th><th>Prime movers</th></tr><tr><td>Elbow</td><td>Flexion</td><td>Brachialis, brachioradialis, biceps brachii (pronator teres assists)</td></tr><tr><td>Elbow</td><td>Extension</td><td>Triceps brachii, anconeus</td></tr><tr><td>Forearm</td><td>Supination</td><td>Supinator, biceps brachii</td></tr><tr><td>Forearm</td><td>Pronation</td><td>Pronator teres, pronator quadratus</td></tr><tr><td>Wrist</td><td>Flexion</td><td>Flexor carpi ulnaris, flexor carpi radialis, palmaris longus</td></tr><tr><td>Wrist</td><td>Extension</td><td>Extensor carpi ulnaris, extensor carpi radialis longus, extensor carpi radialis brevis</td></tr><tr><td>Wrist</td><td>Radial deviation</td><td>Flexor carpi radialis, extensor carpi radialis longus (ECRB plays a lesser role)</td></tr><tr><td>Wrist</td><td>Ulnar deviation</td><td>Flexor carpi ulnaris, extensor carpi ulnaris</td></tr></table>",
+    "All of these wrist muscles cross the elbow, so they <b>assist elbow flexion</b>. Keep the elbow <b>extended</b> when stretching any of them."
+   ]
+  }
+ ],
+ "terms": [
+  {
+   "term": "Shoulder complex",
+   "def": "Shoulder girdle plus glenohumeral joint working together to position the hand.",
+   "section": "u4-s1"
+  },
+  {
+   "term": "Shoulder girdle",
+   "def": "Scapula, clavicle and sternum, linked by the SC and AC joints.",
+   "section": "u4-s1"
+  },
+  {
+   "term": "Superior angle",
+   "def": "Top corner of the scapula's vertebral border; attachment for levator scapulae.",
+   "section": "u4-s1"
+  },
+  {
+   "term": "Inferior angle",
+   "def": "Lowest point of the scapula where the vertebral and axillary borders meet; reference for scapular rotation.",
+   "section": "u4-s1"
+  },
+  {
+   "term": "Vertebral border",
+   "def": "Medial border of the scapula; attachment for rhomboids and serratus anterior.",
+   "section": "u4-s1"
+  },
+  {
+   "term": "Spine of scapula",
+   "def": "Posterior ridge from the medial border to the acromion, level with T3-T4; attachment for middle and lower trapezius.",
+   "section": "u4-s1"
+  },
+  {
+   "term": "Acromion process",
+   "def": "Flat superior-lateral tip of the scapula that articulates with the clavicle; attachment for upper trapezius.",
+   "section": "u4-s1"
+  },
+  {
+   "term": "Coracoid process",
+   "def": "Anterior hook-like projection of the scapula; attachment for pectoralis minor, coracobrachialis and short head of biceps.",
+   "section": "u4-s1"
+  },
+  {
+   "term": "Glenoid fossa",
+   "def": "Shallow socket on the lateral scapula that receives the humeral head.",
+   "section": "u4-s1"
+  },
+  {
+   "term": "Greater tubercle",
+   "def": "Lateral bump on the proximal humerus; insertion of supraspinatus, infraspinatus and teres minor.",
+   "section": "u4-s1"
+  },
+  {
+   "term": "Lesser tubercle",
+   "def": "Anterior bump on the proximal humerus; insertion of subscapularis.",
+   "section": "u4-s1"
+  },
+  {
+   "term": "Bicipital (intertubercular) groove",
+   "def": "Groove between the tubercles holding the long head of biceps tendon; site of pec major, lat and teres major insertions.",
+   "section": "u4-s1"
+  },
+  {
+   "term": "Deltoid tuberosity",
+   "def": "Roughened area on the lateral humeral shaft where the deltoid inserts.",
+   "section": "u4-s1"
+  },
+  {
+   "term": "Sternoclavicular joint",
+   "def": "Synovial saddle joint (triaxial) between the manubrium and the clavicle; the only direct attachment of the upper limb to the axial skeleton.",
+   "section": "u4-s2"
+  },
+  {
+   "term": "Acromioclavicular joint",
+   "def": "Synovial gliding (biaxial) joint between the acromion and the lateral clavicle.",
+   "section": "u4-s2"
+  },
+  {
+   "term": "Articular disc (SC)",
+   "def": "Fibrocartilage disc in the SC joint that acts as a double hinge and absorbs shock.",
+   "section": "u4-s2"
+  },
+  {
+   "term": "Costoclavicular ligament",
+   "def": "Connects the clavicle to the first rib; limits clavicular elevation.",
+   "section": "u4-s2"
+  },
+  {
+   "term": "Interclavicular ligament",
+   "def": "Joins the two clavicles across the manubrium; limits clavicular depression.",
+   "section": "u4-s2"
+  },
+  {
+   "term": "Coracoclavicular ligament",
+   "def": "Suspends the scapula from the clavicle and prevents AC separation.",
+   "section": "u4-s2"
+  },
+  {
+   "term": "Coracoacromial ligament",
+   "def": "Runs coracoid to acromion forming the roof over the humeral head; prevents upward dislocation.",
+   "section": "u4-s2"
+  },
+  {
+   "term": "Scapulothoracic articulation",
+   "def": "Scapula gliding over the rib cage; functional but not a true joint.",
+   "section": "u4-s2"
+  },
+  {
+   "term": "FOOSH",
+   "def": "Fall On OutStretched Hand; common cause of clavicle and other UE fractures.",
+   "section": "u4-s2"
+  },
+  {
+   "term": "Protraction",
+   "def": "Scapula moves away from the spine (forward reach, hug).",
+   "section": "u4-s3"
+  },
+  {
+   "term": "Retraction",
+   "def": "Scapula moves toward the spine (squeezing shoulder blades).",
+   "section": "u4-s3"
+  },
+  {
+   "term": "Upward rotation",
+   "def": "Inferior angle rotates laterally and up as the arm is raised.",
+   "section": "u4-s3"
+  },
+  {
+   "term": "Scapular tilt",
+   "def": "Top of the scapula tips forward, accompanying shoulder hyperextension.",
+   "section": "u4-s3"
+  },
+  {
+   "term": "Scapulohumeral rhythm",
+   "def": "After the first ~30 degrees, a 2:1 ratio of glenohumeral to scapular motion during arm elevation.",
+   "section": "u4-s3"
+  },
+  {
+   "term": "Force couple",
+   "def": "Muscles pulling in different directions that together produce one motion.",
+   "section": "u4-s3"
+  },
+  {
+   "term": "Reversal of muscle action",
+   "def": "The insertion becomes stable and the origin moves (e.g., pec minor lifting ribs).",
+   "section": "u4-s4"
+  },
+  {
+   "term": "Scapular winging",
+   "def": "Medial border of the scapula lifts off the thorax, usually from serratus anterior weakness (long thoracic nerve).",
+   "section": "u4-s4"
+  },
+  {
+   "term": "Scapular pivoters",
+   "def": "Trapezius, serratus anterior, levator scapulae and rhomboids, which move the scapula on the thorax.",
+   "section": "u4-s4"
+  },
+  {
+   "term": "Humeral propellers",
+   "def": "Latissimus dorsi, pectoralis major and teres major, which drive the humerus powerfully.",
+   "section": "u4-s4"
+  },
+  {
+   "term": "Glenohumeral joint",
+   "def": "Synovial ball-and-socket (triaxial) joint between the humeral head and glenoid fossa; highly mobile, less stable.",
+   "section": "u4-s5"
+  },
+  {
+   "term": "Scaption",
+   "def": "Arm elevation in the scapular plane, about 30 degrees anterior to the frontal plane.",
+   "section": "u4-s5"
+  },
+  {
+   "term": "Circumduction",
+   "def": "Circular combination of flexion, abduction, extension and adduction.",
+   "section": "u4-s5"
+  },
+  {
+   "term": "Glenoid labrum",
+   "def": "Fibrocartilage rim deepening the glenoid fossa for stability.",
+   "section": "u4-s6"
+  },
+  {
+   "term": "Joint capsule (GH)",
+   "def": "Fibrous/synovial sleeve from the glenoid rim to the anatomical neck that creates a stabilizing vacuum.",
+   "section": "u4-s6"
+  },
+  {
+   "term": "Coracohumeral ligament",
+   "def": "Ligament supporting the superior side of the GH joint.",
+   "section": "u4-s6"
+  },
+  {
+   "term": "Subacromial space",
+   "def": "Gap under the acromion containing the bursa, supraspinatus/infraspinatus tendons and long head of biceps.",
+   "section": "u4-s6"
+  },
+  {
+   "term": "Bursa",
+   "def": "Fluid-filled sac that reduces friction between tissues; inflammation is bursitis.",
+   "section": "u4-s6"
+  },
+  {
+   "term": "Rotator cuff (SITS)",
+   "def": "Supraspinatus, infraspinatus, teres minor, subscapularis; keep the humeral head centered in the glenoid.",
+   "section": "u4-s6"
+  },
+  {
+   "term": "End feel",
+   "def": "The quality of resistance felt at the end of passive ROM.",
+   "section": "u4-s6"
+  },
+  {
+   "term": "Firm (soft tissue stretch) end feel",
+   "def": "Firm stop with slight give from capsule/ligament/muscle tension; normal for the shoulder.",
+   "section": "u4-s6"
+  },
+  {
+   "term": "Concentric contraction",
+   "def": "Muscle shortens while producing force.",
+   "section": "u4-s7"
+  },
+  {
+   "term": "Eccentric contraction",
+   "def": "Muscle lengthens under control while producing force.",
+   "section": "u4-s7"
+  },
+  {
+   "term": "AC separation",
+   "def": "Sprain of the AC (and possibly CC) ligaments, graded 1st-3rd degree.",
+   "section": "u4-s8"
+  },
+  {
+   "term": "Impingement syndrome",
+   "def": "Overuse pinching of rotator cuff, bursa or biceps tendon under the coracoacromial arch.",
+   "section": "u4-s8"
+  },
+  {
+   "term": "Adhesive capsulitis",
+   "def": "Frozen shoulder: thickened, tight capsule causing pain and lost ROM in three stages.",
+   "section": "u4-s8"
+  },
+  {
+   "term": "Glenohumeral subluxation",
+   "def": "Partial downward displacement of the humeral head, common after stroke.",
+   "section": "u4-s8"
+  },
+  {
+   "term": "Volkmann's contracture",
+   "def": "Ischemic deformity of the forearm after supracondylar fracture with compartment swelling.",
+   "section": "u4-s8"
+  },
+  {
+   "term": "Erb's palsy",
+   "def": "Upper brachial plexus birth injury causing arm weakness/paralysis.",
+   "section": "u4-s8"
+  },
+  {
+   "term": "CRPS",
+   "def": "Complex Regional Pain Syndrome; a risk when pain, swelling and dependent positioning persist after injury.",
+   "section": "u4-s8"
+  }
+ ],
+ "questions": [
+  {
+   "q": "Which joint is the only direct bony attachment of the shoulder girdle to the axial skeleton?",
+   "choices": [
+    "Acromioclavicular joint",
+    "Sternoclavicular joint",
+    "Glenohumeral joint",
+    "Scapulothoracic articulation"
+   ],
+   "answer": 1,
+   "explain": "The SC joint links the clavicle to the manubrium, the trunk's only direct connection to the upper limb.",
+   "section": "u4-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "Which bones make up the shoulder girdle?",
+   "choices": [
+    "Scapula, clavicle and sternum",
+    "Scapula, humerus and clavicle",
+    "Humerus, radius and ulna",
+    "Clavicle, humerus and ribs"
+   ],
+   "answer": 0,
+   "explain": "The shoulder girdle is the scapula, clavicle and sternum; the humerus belongs to the shoulder joint.",
+   "section": "u4-s1",
+   "difficulty": 1
+  },
+  {
+   "q": "Which scapular landmark is used as the reference point for judging upward and downward rotation?",
+   "choices": [
+    "Superior angle",
+    "Coracoid process",
+    "Acromion process",
+    "Inferior angle"
+   ],
+   "answer": 3,
+   "explain": "Rotation is described by which way the inferior angle moves.",
+   "section": "u4-s1",
+   "difficulty": 1
+  },
+  {
+   "q": "Pectoralis minor attaches to which scapular landmark?",
+   "choices": [
+    "Acromion process",
+    "Spine of the scapula",
+    "Coracoid process",
+    "Inferior angle"
+   ],
+   "answer": 2,
+   "explain": "Pec minor runs from ribs 3-5 to the coracoid process.",
+   "section": "u4-s1",
+   "difficulty": 1
+  },
+  {
+   "q": "What type of joint is the acromioclavicular joint?",
+   "choices": [
+    "Synovial ball-and-socket, triaxial",
+    "Synovial gliding, biaxial",
+    "Fibrous, nonaxial",
+    "Synovial hinge, uniaxial"
+   ],
+   "answer": 1,
+   "explain": "The AC joint is a plane/gliding joint allowing two directions of glide.",
+   "section": "u4-s2",
+   "difficulty": 2
+  },
+  {
+   "q": "Which ligament limits elevation of the clavicle at the SC joint?",
+   "choices": [
+    "Costoclavicular",
+    "Interclavicular",
+    "Coracoacromial",
+    "Coracohumeral"
+   ],
+   "answer": 0,
+   "explain": "The costoclavicular ligament ties the clavicle down to the first rib.",
+   "section": "u4-s2",
+   "difficulty": 2
+  },
+  {
+   "q": "Which ligament limits clavicular depression?",
+   "choices": [
+    "Costoclavicular",
+    "Coracoclavicular",
+    "Anterior sternoclavicular",
+    "Interclavicular"
+   ],
+   "answer": 3,
+   "explain": "The interclavicular ligament across the manubrium stops the clavicle dropping.",
+   "section": "u4-s2",
+   "difficulty": 2
+  },
+  {
+   "q": "Why is dislocation of the SC joint rare?",
+   "choices": [
+    "It has no joint capsule",
+    "It is a fibrous joint with no motion",
+    "Its articular disc and ligaments are very strong",
+    "The rotator cuff surrounds it"
+   ],
+   "answer": 2,
+   "explain": "The disc and strong ligaments make the SC joint very stable.",
+   "section": "u4-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "Which structure forms the arch or roof over the humeral head and blocks upward dislocation?",
+   "choices": [
+    "Costoclavicular ligament",
+    "Coracoacromial ligament",
+    "Interclavicular ligament",
+    "Glenoid labrum"
+   ],
+   "answer": 1,
+   "explain": "The coracoacromial ligament spans coracoid to acromion above the humeral head.",
+   "section": "u4-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "Which ligament suspends the scapula from the clavicle and is key to preventing shoulder separation?",
+   "choices": [
+    "Coracoclavicular",
+    "Coracohumeral",
+    "Superior glenohumeral",
+    "Sternoclavicular"
+   ],
+   "answer": 0,
+   "explain": "The coracoclavicular ligament holds the scapula to the clavicle.",
+   "section": "u4-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "Why is the scapulothoracic articulation called an atypical or 'not true' joint?",
+   "choices": [
+    "It allows no movement",
+    "It is a cartilaginous joint",
+    "It only allows rotation",
+    "There is no direct bony union or capsule; the scapula glides on muscle over the ribs"
+   ],
+   "answer": 3,
+   "explain": "The scapula moves over the thorax without a true articular connection.",
+   "section": "u4-s2",
+   "difficulty": 2
+  },
+  {
+   "q": "A client shrugs their shoulders toward their ears. Which scapular motion is this?",
+   "choices": [
+    "Protraction",
+    "Upward rotation",
+    "Elevation",
+    "Retraction"
+   ],
+   "answer": 2,
+   "explain": "A shrug is scapular elevation.",
+   "section": "u4-s3",
+   "difficulty": 1
+  },
+  {
+   "q": "Reaching forward to push a door open mainly involves which scapular motion?",
+   "choices": [
+    "Retraction",
+    "Protraction",
+    "Depression",
+    "Downward rotation"
+   ],
+   "answer": 1,
+   "explain": "Protraction slides the scapula forward around the thorax.",
+   "section": "u4-s3",
+   "difficulty": 1
+  },
+  {
+   "q": "Using scapulohumeral rhythm, about how much scapular rotation accompanies 90 degrees of shoulder flexion?",
+   "choices": [
+    "30 degrees",
+    "15 degrees",
+    "45 degrees",
+    "60 degrees"
+   ],
+   "answer": 0,
+   "explain": "(90 - 30) / 2 = 30 degrees of scapular rotation.",
+   "section": "u4-s3",
+   "difficulty": 3
+  },
+  {
+   "q": "After the first ~30 degrees of elevation, the glenohumeral-to-scapular motion ratio is:",
+   "choices": [
+    "1:1",
+    "3:1",
+    "1:2",
+    "2:1"
+   ],
+   "answer": 3,
+   "explain": "Two degrees of shoulder motion for every one of scapular rotation.",
+   "section": "u4-s3",
+   "difficulty": 1
+  },
+  {
+   "q": "Before performing PROM on a client's shoulder, the OTA notes the scapula is very tight. What should be done?",
+   "choices": [
+    "Force the shoulder through full range anyway",
+    "Range only into abduction",
+    "Mobilize and stretch the scapula before ranging the shoulder",
+    "Skip ROM permanently"
+   ],
+   "answer": 2,
+   "explain": "The shoulder cannot move fully without scapular motion, so mobilize the scapula first.",
+   "section": "u4-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "Shoulder flexion is accompanied by which scapular motions?",
+   "choices": [
+    "Downward rotation and retraction",
+    "Upward rotation and protraction",
+    "Elevation only",
+    "Scapular tilt"
+   ],
+   "answer": 1,
+   "explain": "Flexion pairs with upward rotation plus protraction.",
+   "section": "u4-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "Shoulder hyperextension is accompanied by which scapular motion?",
+   "choices": [
+    "Scapular tilt",
+    "Upward rotation",
+    "Protraction",
+    "Elevation"
+   ],
+   "answer": 0,
+   "explain": "The scapula tilts when the arm swings back behind the body.",
+   "section": "u4-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "External rotation of the shoulder is accompanied by which scapular motion?",
+   "choices": [
+    "Protraction",
+    "Elevation",
+    "Upward rotation",
+    "Retraction"
+   ],
+   "answer": 3,
+   "explain": "Lateral rotation pairs with scapular retraction.",
+   "section": "u4-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "Which group of muscles forms the force couple for scapular upward rotation?",
+   "choices": [
+    "Rhomboids, levator scapulae, pectoralis minor",
+    "Deltoid, supraspinatus, biceps",
+    "Upper trapezius, lower trapezius, serratus anterior",
+    "Latissimus dorsi, teres major, pectoralis major"
+   ],
+   "answer": 2,
+   "explain": "These three pull in different directions to rotate the scapula upward.",
+   "section": "u4-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "Which muscle is NOT part of the downward-rotation force couple?",
+   "choices": [
+    "Pectoralis minor",
+    "Serratus anterior",
+    "Rhomboids",
+    "Levator scapulae"
+   ],
+   "answer": 1,
+   "explain": "Serratus anterior is an upward rotator.",
+   "section": "u4-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "What nerve innervates the trapezius?",
+   "choices": [
+    "Spinal accessory nerve (CN XI)",
+    "Dorsal scapular nerve",
+    "Long thoracic nerve",
+    "Axillary nerve"
+   ],
+   "answer": 0,
+   "explain": "The trapezius is supplied by cranial nerve XI.",
+   "section": "u4-s4",
+   "difficulty": 1
+  },
+  {
+   "q": "The rhomboids and levator scapulae share which nerve?",
+   "choices": [
+    "Long thoracic nerve",
+    "Spinal accessory nerve",
+    "Thoracodorsal nerve",
+    "Dorsal scapular nerve"
+   ],
+   "answer": 3,
+   "explain": "Both are innervated by the dorsal scapular nerve.",
+   "section": "u4-s4",
+   "difficulty": 2
+  },
+  {
+   "q": "Injury to the long thoracic nerve causes scapular winging because it supplies which muscle?",
+   "choices": [
+    "Rhomboids",
+    "Middle trapezius",
+    "Serratus anterior",
+    "Pectoralis minor"
+   ],
+   "answer": 2,
+   "explain": "Serratus anterior holds the medial border against the thorax.",
+   "section": "u4-s4",
+   "difficulty": 1
+  },
+  {
+   "q": "Which part of the trapezius is a prime mover for scapular retraction only?",
+   "choices": [
+    "Upper trapezius",
+    "Middle trapezius",
+    "Lower trapezius",
+    "All three equally"
+   ],
+   "answer": 1,
+   "explain": "Middle trapezius fibers run horizontally and pull the scapula toward the spine.",
+   "section": "u4-s4",
+   "difficulty": 2
+  },
+  {
+   "q": "To stretch the levator scapulae, the scapula should be moved into:",
+   "choices": [
+    "Depression and upward rotation",
+    "Elevation and downward rotation",
+    "Retraction",
+    "Protraction and elevation"
+   ],
+   "answer": 0,
+   "explain": "Stretch by moving opposite to its elevation and downward rotation.",
+   "section": "u4-s4",
+   "difficulty": 3
+  },
+  {
+   "q": "Which shoulder girdle muscle lies on the anterior surface of the body?",
+   "choices": [
+    "Rhomboid major",
+    "Levator scapulae",
+    "Trapezius",
+    "Pectoralis minor"
+   ],
+   "answer": 3,
+   "explain": "Pec minor is the only anterior shoulder girdle muscle.",
+   "section": "u4-s4",
+   "difficulty": 1
+  },
+  {
+   "q": "A client on crutches lifts their trunk by pushing down through the arms. This is an example of:",
+   "choices": [
+    "Force coupling",
+    "Scapulohumeral rhythm",
+    "Reversal of muscle action",
+    "Scapular winging"
+   ],
+   "answer": 2,
+   "explain": "The origin moves toward the stable insertion, lifting the trunk.",
+   "section": "u4-s4",
+   "difficulty": 2
+  },
+  {
+   "q": "Which muscles are classified as humeral propellers?",
+   "choices": [
+    "Deltoid heads",
+    "Latissimus dorsi, pectoralis major, teres major",
+    "Supraspinatus, infraspinatus, teres minor, subscapularis",
+    "Trapezius, rhomboids, levator scapulae"
+   ],
+   "answer": 1,
+   "explain": "The propellers are the large muscles that drive the humerus.",
+   "section": "u4-s4",
+   "difficulty": 2
+  },
+  {
+   "q": "In which plane and around which axis does shoulder abduction occur?",
+   "choices": [
+    "Frontal plane, sagittal axis",
+    "Sagittal plane, frontal axis",
+    "Transverse plane, vertical axis",
+    "Frontal plane, vertical axis"
+   ],
+   "answer": 0,
+   "explain": "Abduction moves sideways in the frontal plane around a front-to-back axis.",
+   "section": "u4-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "What is the normal ROM for shoulder lateral (external) rotation?",
+   "choices": [
+    "0-70 degrees",
+    "0-60 degrees",
+    "0-180 degrees",
+    "0-90 degrees"
+   ],
+   "answer": 3,
+   "explain": "Lateral rotation is about 90 degrees; medial rotation is about 70.",
+   "section": "u4-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "Normal shoulder hyperextension ROM is approximately:",
+   "choices": [
+    "0-40 degrees",
+    "0-90 degrees",
+    "0-60 degrees",
+    "0-130 degrees"
+   ],
+   "answer": 2,
+   "explain": "Hyperextension reaches about 60 degrees.",
+   "section": "u4-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "Why must the humerus externally rotate to achieve full abduction?",
+   "choices": [
+    "To stretch the biceps",
+    "So the greater tubercle clears the acromion instead of impinging under it",
+    "To lock the elbow",
+    "To activate the latissimus dorsi"
+   ],
+   "answer": 1,
+   "explain": "External rotation turns the greater tubercle away from the acromial arch.",
+   "section": "u4-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "Scaption occurs in which plane?",
+   "choices": [
+    "The scapular plane, about 30 degrees anterior to the frontal plane",
+    "The sagittal plane",
+    "The transverse plane",
+    "Directly in the frontal plane"
+   ],
+   "answer": 0,
+   "explain": "Scaption is elevation in the plane of the scapula, where most functional reaching occurs.",
+   "section": "u4-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "Which describes the glenohumeral joint?",
+   "choices": [
+    "Synovial hinge, uniaxial, very stable",
+    "Fibrous joint, immovable",
+    "Synovial gliding, biaxial",
+    "Synovial ball-and-socket, triaxial, very mobile but less stable"
+   ],
+   "answer": 3,
+   "explain": "The GH joint trades stability for mobility in all three planes.",
+   "section": "u4-s5",
+   "difficulty": 1
+  },
+  {
+   "q": "Which structure deepens the glenoid fossa to increase stability?",
+   "choices": [
+    "Subdeltoid bursa",
+    "Coracohumeral ligament",
+    "Glenoid labrum",
+    "Articular disc"
+   ],
+   "answer": 2,
+   "explain": "The labrum is a fibrocartilage rim around the glenoid.",
+   "section": "u4-s6",
+   "difficulty": 1
+  },
+  {
+   "q": "What is the normal end feel of the shoulder joint?",
+   "choices": [
+    "Bony (hard)",
+    "Soft tissue stretch (firm)",
+    "Soft tissue approximation (soft)",
+    "Empty"
+   ],
+   "answer": 1,
+   "explain": "Shoulder motions stop with firm capsular/ligament tension.",
+   "section": "u4-s6",
+   "difficulty": 1
+  },
+  {
+   "q": "Which muscle is NOT part of the rotator cuff?",
+   "choices": [
+    "Teres major",
+    "Teres minor",
+    "Subscapularis",
+    "Supraspinatus"
+   ],
+   "answer": 0,
+   "explain": "SITS: supraspinatus, infraspinatus, teres minor, subscapularis.",
+   "section": "u4-s6",
+   "difficulty": 1
+  },
+  {
+   "q": "Which structures lie in the subacromial space?",
+   "choices": [
+    "Rhomboids and levator scapulae",
+    "Articular disc of the SC joint",
+    "Radial nerve and triceps",
+    "Subdeltoid bursa, supraspinatus and infraspinatus tendons, long head of biceps"
+   ],
+   "answer": 3,
+   "explain": "These tissues are compressed in impingement.",
+   "section": "u4-s6",
+   "difficulty": 2
+  },
+  {
+   "q": "How does the GH joint capsule help hold the humeral head in place?",
+   "choices": [
+    "It contains a bony lock",
+    "It is fused to the labrum with bone",
+    "It creates a vacuum effect",
+    "It contracts like a muscle"
+   ],
+   "answer": 2,
+   "explain": "The sealed capsule's negative pressure helps keep the head seated.",
+   "section": "u4-s6",
+   "difficulty": 2
+  },
+  {
+   "q": "What is the nerve supply of the deltoid?",
+   "choices": [
+    "Musculocutaneous nerve",
+    "Axillary nerve (C5-C6)",
+    "Radial nerve",
+    "Suprascapular nerve"
+   ],
+   "answer": 1,
+   "explain": "All three deltoid heads are supplied by the axillary nerve.",
+   "section": "u4-s7",
+   "difficulty": 1
+  },
+  {
+   "q": "Which rotator cuff muscle inserts on the lesser tubercle and internally rotates the shoulder?",
+   "choices": [
+    "Subscapularis",
+    "Infraspinatus",
+    "Teres minor",
+    "Supraspinatus"
+   ],
+   "answer": 0,
+   "explain": "Subscapularis is the only cuff muscle on the lesser tubercle.",
+   "section": "u4-s7",
+   "difficulty": 1
+  },
+  {
+   "q": "Which muscle initiates shoulder abduction and lies under the acromion?",
+   "choices": [
+    "Infraspinatus",
+    "Teres major",
+    "Coracobrachialis",
+    "Supraspinatus"
+   ],
+   "answer": 3,
+   "explain": "Supraspinatus starts abduction and is most often torn.",
+   "section": "u4-s7",
+   "difficulty": 1
+  },
+  {
+   "q": "Infraspinatus and teres minor both perform which actions?",
+   "choices": [
+    "Internal rotation and adduction",
+    "Flexion and adduction",
+    "External rotation and horizontal abduction",
+    "Abduction only"
+   ],
+   "answer": 2,
+   "explain": "Both insert on the greater tubercle posteriorly and laterally rotate.",
+   "section": "u4-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "To stretch the latissimus dorsi, move the shoulder into:",
+   "choices": [
+    "Extension, adduction and internal rotation",
+    "Flexion, abduction and external rotation",
+    "Horizontal adduction only",
+    "Hyperextension"
+   ],
+   "answer": 1,
+   "explain": "Stretch by reversing its extension, adduction and internal rotation.",
+   "section": "u4-s7",
+   "difficulty": 3
+  },
+  {
+   "q": "Which nerve supplies the latissimus dorsi?",
+   "choices": [
+    "Thoracodorsal nerve",
+    "Long thoracic nerve",
+    "Lower subscapular nerve",
+    "Axillary nerve"
+   ],
+   "answer": 0,
+   "explain": "The thoracodorsal nerve innervates the lat.",
+   "section": "u4-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "Which deltoid head is the prime mover for horizontal abduction and hyperextension?",
+   "choices": [
+    "Anterior deltoid",
+    "Middle deltoid",
+    "All heads equally",
+    "Posterior deltoid"
+   ],
+   "answer": 3,
+   "explain": "Posterior fibers from the scapular spine pull the arm back.",
+   "section": "u4-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "A client slowly lowers their arm from 90 degrees of abduction to their side. The middle deltoid is working:",
+   "choices": [
+    "Concentrically",
+    "Isometrically only",
+    "Eccentrically",
+    "Not at all"
+   ],
+   "answer": 2,
+   "explain": "The deltoid lengthens under control as the arm lowers against gravity.",
+   "section": "u4-s7",
+   "difficulty": 3
+  },
+  {
+   "q": "In a 3rd degree AC separation:",
+   "choices": [
+    "Only the AC ligament is stretched",
+    "Both AC and CC ligaments are ruptured",
+    "AC ruptured, CC stretched",
+    "The labrum is torn"
+   ],
+   "answer": 1,
+   "explain": "Third degree means both ligament groups are torn.",
+   "section": "u4-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "Which is the most frequently broken bone in children?",
+   "choices": [
+    "Clavicle",
+    "Humerus",
+    "Scapula",
+    "Radius"
+   ],
+   "answer": 0,
+   "explain": "Clavicle fractures commonly result from FOOSH or falls on the shoulder.",
+   "section": "u4-s8",
+   "difficulty": 1
+  },
+  {
+   "q": "A client with a spiral mid-shaft humeral fracture now has weak wrist extension and numbness on the back of the hand. Which nerve is likely involved?",
+   "choices": [
+    "Ulnar nerve",
+    "Median nerve",
+    "Axillary nerve",
+    "Radial nerve"
+   ],
+   "answer": 3,
+   "explain": "The radial nerve wraps the humeral shaft in the spiral groove.",
+   "section": "u4-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "Which mechanism typically causes an anterior shoulder dislocation?",
+   "choices": [
+    "Forced adduction with internal rotation",
+    "Direct blow to the elbow",
+    "Forced abduction with external rotation",
+    "Repetitive scapular elevation"
+   ],
+   "answer": 2,
+   "explain": "Abduction plus ER levers the humeral head anteriorly.",
+   "section": "u4-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "A client after a stroke has a subluxed shoulder. Which statement is most accurate?",
+   "choices": [
+    "Subluxation is always extremely painful",
+    "The subluxation itself is not painful, but improper handling can cause impingement and pain",
+    "The arm should be pulled to assist transfers",
+    "Full aggressive ROM will reduce it"
+   ],
+   "answer": 1,
+   "explain": "Pain comes from mishandling, so protect and position the arm.",
+   "section": "u4-s8",
+   "difficulty": 3
+  },
+  {
+   "q": "During which stage of adhesive capsulitis does ROM begin to return?",
+   "choices": [
+    "Thawing",
+    "Freezing",
+    "Frozen",
+    "Painful"
+   ],
+   "answer": 0,
+   "explain": "The thawing stage brings back ROM and function.",
+   "section": "u4-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "Impingement syndrome ('swimmer's shoulder') involves compression of soft tissues between the humeral head and the:",
+   "choices": [
+    "Sternum",
+    "Olecranon fossa",
+    "Costoclavicular ligament",
+    "Coracoacromial arch"
+   ],
+   "answer": 3,
+   "explain": "Repetitive overhead motion pinches the cuff and bursa under the arch.",
+   "section": "u4-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "Volkmann's contracture is a risk after which fracture?",
+   "choices": [
+    "Clavicle fracture",
+    "Humeral neck fracture",
+    "Supracondylar humeral fracture",
+    "Scapular fracture"
+   ],
+   "answer": 2,
+   "explain": "Swelling in the forearm compartment after distal humeral fracture causes ischemia.",
+   "section": "u4-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "Erb's palsy is most often caused by:",
+   "choices": [
+    "Rotator cuff degeneration",
+    "Brachial plexus injury during a difficult birth",
+    "Osteoporosis",
+    "Repetitive swimming"
+   ],
+   "answer": 1,
+   "explain": "Stretch of the upper brachial plexus at delivery leads to arm weakness.",
+   "section": "u4-s8",
+   "difficulty": 1
+  },
+  {
+   "q": "Which muscles are prime movers of forearm supination?",
+   "choices": [
+    "Supinator and biceps brachii",
+    "Pronator teres and pronator quadratus",
+    "Brachialis and brachioradialis",
+    "Triceps and anconeus"
+   ],
+   "answer": 0,
+   "explain": "Supinator and biceps turn the palm up.",
+   "section": "u4-s9",
+   "difficulty": 1
+  },
+  {
+   "q": "Which wrist muscle produces both extension and ulnar deviation?",
+   "choices": [
+    "Flexor carpi radialis",
+    "Extensor carpi radialis longus",
+    "Palmaris longus",
+    "Extensor carpi ulnaris"
+   ],
+   "answer": 3,
+   "explain": "ECU extends and ulnarly deviates the wrist.",
+   "section": "u4-s9",
+   "difficulty": 2
+  },
+  {
+   "q": "Why should the elbow be kept extended when stretching the wrist flexors and extensors?",
+   "choices": [
+    "It prevents shoulder subluxation",
+    "It protects the radial nerve from compression",
+    "These muscles cross the elbow, so elbow extension lengthens them fully",
+    "Elbow extension activates the biceps"
+   ],
+   "answer": 2,
+   "explain": "Their origins at the epicondyles mean they assist elbow flexion.",
+   "section": "u4-s9",
+   "difficulty": 3
+  }
+ ]
+}

@@ -7,3 +7,4 @@
 - [Pathway CAD](cad-studio/): a student 3D part modeler (sketch, extrude, revolve, holes, fillets, patterns) that exports STL for 3D printing. Also builds as a Windows app.
 - [Anime Squad](anime-squad/): make anime-character bots, give them jobs and talk to them. Builds as an Android app and a Windows app.
 - [Wild Tag](animal-tag/): a third-person animal tag game. 22 animals and 10 mythical creatures, each with its own ability; gems to buy patterns, wearables and bonus abilities; play solo against bots or online with friends.
+- [OTA 1050 Study Hub](ota-study/): kinesiology study site for occupational therapy assistant students, with a table of contents, search, flashcards, quizzes, timed practice exams and review games.
