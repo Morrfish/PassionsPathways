@@ -1,0 +1,313 @@
+{
+ "questions": [
+  {
+   "type": "multi",
+   "q": "Which directional terms are used only for the limbs? (select all that apply)",
+   "choices": [
+    "Proximal",
+    "Superficial",
+    "Distal",
+    "Medial",
+    "Cranial"
+   ],
+   "answers": [
+    0,
+    2
+   ],
+   "explain": "Proximal and distal describe position relative to the trunk on the limbs; cranial and caudal are the trunk-only equivalents.",
+   "section": "u1-s3",
+   "difficulty": 1
+  },
+  {
+   "type": "multi",
+   "q": "Which motions occur in the sagittal plane around a frontal axis? (select all that apply)",
+   "choices": [
+    "Knee extension",
+    "Forearm pronation",
+    "Hip abduction",
+    "Ankle dorsiflexion",
+    "Wrist radial deviation",
+    "Elbow flexion"
+   ],
+   "answers": [
+    0,
+    3,
+    5
+   ],
+   "explain": "Flexion/extension and dorsiflexion/plantar flexion are sagittal-plane motions. Abduction and radial deviation are frontal; pronation is transverse.",
+   "section": "u1-s5",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which motions occur in the transverse (horizontal) plane around a vertical axis? (select all that apply)",
+   "choices": [
+    "Shoulder internal rotation",
+    "Forearm supination",
+    "Shoulder horizontal adduction",
+    "Ankle inversion",
+    "Trunk lateral flexion"
+   ],
+   "answers": [
+    0,
+    1,
+    2
+   ],
+   "explain": "Rotations, supination/pronation and horizontal abduction/adduction are transverse-plane motions; lateral flexion and inversion are frontal.",
+   "section": "u1-s5",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which are motions of the scapula? (select all that apply)",
+   "choices": [
+    "Protraction",
+    "Flexion",
+    "Upward rotation",
+    "Elevation",
+    "Tilt",
+    "Supination"
+   ],
+   "answers": [
+    0,
+    2,
+    3,
+    4
+   ],
+   "explain": "The scapula elevates, depresses, protracts, retracts, rotates upward/downward and tilts; it does not flex or supinate.",
+   "section": "u1-s4",
+   "difficulty": 1
+  },
+  {
+   "type": "multi",
+   "q": "Which are examples of QUALITATIVE movement analysis? (select all that apply)",
+   "choices": [
+    "Watching a client put on a shirt",
+    "A gross ROM screen",
+    "Interviewing a client about task performance",
+    "Formal goniometric ROM measurement",
+    "Computer/video motion analysis"
+   ],
+   "answers": [
+    0,
+    1,
+    2
+   ],
+   "explain": "Qualitative data come from observation or interview and are more subjective; goniometry and motion analysis yield numerical (quantitative) data.",
+   "section": "u1-s1",
+   "difficulty": 1
+  },
+  {
+   "type": "multi",
+   "q": "Which are components of the Model of Human Occupation (MOHO)? (select all that apply)",
+   "choices": [
+    "Biomechanical alignment",
+    "Volition",
+    "Habituation",
+    "Adaptation gap",
+    "Performance capacity",
+    "Spirituality"
+   ],
+   "answers": [
+    1,
+    2,
+    4
+   ],
+   "explain": "MOHO's components are volition (motivation), habituation (habits and roles) and performance capacity. Spirituality is the core of CMOP.",
+   "section": "u1-s2",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which are functions of skeletal muscle? (select all that apply)",
+   "choices": [
+    "Produce movement",
+    "Store calcium",
+    "Maintain posture",
+    "Generate heat",
+    "Produce blood cells",
+    "Stabilize joints"
+   ],
+   "answers": [
+    0,
+    2,
+    3,
+    5
+   ],
+   "explain": "Skeletal muscle moves, holds posture, stabilizes joints and produces heat. Blood cell production and mineral storage are skeletal (bone) functions.",
+   "section": "u1-s7",
+   "difficulty": 1
+  },
+  {
+   "type": "multi",
+   "q": "Which muscles are two-joint muscles? (select all that apply)",
+   "choices": [
+    "Biceps brachii",
+    "Deltoid",
+    "Brachialis",
+    "Gastrocnemius",
+    "Hamstrings",
+    "Soleus"
+   ],
+   "answers": [
+    0,
+    3,
+    4
+   ],
+   "explain": "Biceps cross the shoulder and elbow, hamstrings the hip and knee, and gastrocnemius the knee and ankle. Soleus, brachialis and deltoid each cross one joint.",
+   "section": "u1-s8",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which muscles have a pennate fiber arrangement? (select all that apply)",
+   "choices": [
+    "Sternocleidomastoid",
+    "Biceps brachii",
+    "Flexor pollicis longus",
+    "Deltoid",
+    "Sartorius",
+    "Semimembranosus"
+   ],
+   "answers": [
+    2,
+    3,
+    5
+   ],
+   "explain": "FPL and semimembranosus are unipennate and the deltoid is multipennate; sartorius, SCM and biceps are fusiform (parallel).",
+   "section": "u1-s8",
+   "difficulty": 3
+  },
+  {
+   "type": "multi",
+   "q": "Which of these are SIGNS rather than symptoms? (select all that apply)",
+   "choices": [
+    "Pain",
+    "Fever",
+    "Rash",
+    "Fatigue",
+    "Visible swelling",
+    "Nausea"
+   ],
+   "answers": [
+    1,
+    2,
+    4
+   ],
+   "explain": "Signs are objective and observable by others; symptoms such as pain, nausea and fatigue are subjective reports.",
+   "section": "u1-s9",
+   "difficulty": 1
+  },
+  {
+   "type": "multi",
+   "q": "Which findings are characteristic of osteoarthritis? (select all that apply)",
+   "choices": [
+    "Osteophytes (bone spurs)",
+    "Joint space narrowing on X-ray",
+    "Systemic autoimmune symptoms",
+    "Marked soft-tissue swelling",
+    "Aching with weight bearing",
+    "Crepitus"
+   ],
+   "answers": [
+    0,
+    1,
+    4,
+    5
+   ],
+   "explain": "OA is a non-inflammatory wear-and-tear disease with spurs, narrowing, crepitus and activity-related aching; systemic autoimmune signs point to RA.",
+   "section": "u1-s10",
+   "difficulty": 2
+  },
+  {
+   "type": "multi",
+   "q": "Which are possible complications of a fracture? (select all that apply)",
+   "choices": [
+    "Compartment syndrome",
+    "Phantom limb pain",
+    "Fat emboli",
+    "Malunion",
+    "Fibromyalgia",
+    "Nonunion"
+   ],
+   "answers": [
+    0,
+    2,
+    3,
+    5
+   ],
+   "explain": "Fracture complications include compartment syndrome, fat emboli, infection, delayed union, malunion and nonunion. Phantom limb pain follows amputation.",
+   "section": "u1-s10",
+   "difficulty": 2
+  },
+  {
+   "type": "short",
+   "q": "A client reaches up into an overhead kitchen cabinet to grab a cup. Name the main joint motions of the reaching arm and give the plane and axis of each.",
+   "model": "Shoulder flexion (sagittal plane, frontal axis) with scapular upward rotation and elevation; elbow extension (sagittal plane, frontal axis); wrist extension (sagittal plane, frontal axis) as the hand reaches; finger flexion to grasp the cup (sagittal plane, frontal axis). If the client rises onto the toes, ankle plantar flexion (sagittal plane, frontal axis).",
+   "points": [
+    "Shoulder flexion",
+    "Scapular upward rotation",
+    "Elbow extension",
+    "Finger flexion to grasp",
+    "Sagittal plane / frontal axis"
+   ],
+   "section": "u1-s5",
+   "difficulty": 2
+  },
+  {
+   "type": "short",
+   "q": "Compare and contrast a sprain and a strain. Give the tissue involved and one example of each.",
+   "model": "A sprain is a partial or complete tear of ligament fibers, the tissue that connects bone to bone (e.g., rolling the ankle and tearing a lateral ankle ligament). A strain is overstretching or tearing of muscle or tendon fibers, the tissue that connects muscle to bone (e.g., pulling a hamstring while sprinting). Both cause pain and swelling, and complete tears may need surgical repair.",
+   "points": [
+    "Sprain = ligament",
+    "Ligament connects bone to bone",
+    "Strain = muscle or tendon",
+    "Tendon connects muscle to bone",
+    "A valid example of each"
+   ],
+   "section": "u1-s6",
+   "difficulty": 2
+  },
+  {
+   "type": "short",
+   "q": "Define origin, insertion and reversal of muscle action, and give an example of reversal of muscle action.",
+   "model": "The origin is the more stable, usually proximal attachment; the insertion is the more movable, usually distal attachment, and normally the insertion moves toward the origin along the line of pull. In reversal of muscle action the usual insertion is fixed and the origin moves toward it. Example: during a chin-up the forearms are fixed on the bar and the biceps pull the trunk up toward them.",
+   "points": [
+    "Origin = stable/proximal",
+    "Insertion = movable/distal",
+    "Insertion normally moves toward origin",
+    "Reversal: origin moves toward fixed insertion",
+    "Example such as a chin-up"
+   ],
+   "section": "u1-s8",
+   "difficulty": 2
+  },
+  {
+   "type": "short",
+   "q": "List the stages of fracture healing in order and name two factors needed for good healing.",
+   "model": "1) Hematoma forms at the break. 2) Inflammation: bone ends become necrotic and osteoclasts remove debris. 3) Granulation tissue with new blood vessels and fibroblasts. 4) Fibrocartilaginous callus (about 2-6 weeks). 5) Osteoblasts form new bone (ossification/union). 6) Remodeling (6 weeks to 1 year). Good circulation and immobilization are needed; children heal faster than adults.",
+   "points": [
+    "Hematoma",
+    "Inflammation and debris removal",
+    "Callus formation",
+    "Ossification by osteoblasts",
+    "Remodeling; needs circulation and immobilization"
+   ],
+   "section": "u1-s10",
+   "difficulty": 3
+  },
+  {
+   "type": "short",
+   "q": "Define each term and give an example: iatrogenic, idiopathic, and exacerbation.",
+   "model": "Iatrogenic: a condition caused by a treatment, procedure or error, such as a bladder infection after catheterization. Idiopathic: the cause is unknown, such as fibromyalgia, whose cause is not known. Exacerbation: an increase in signs and symptoms (a flare), such as a fibromyalgia flare after poor sleep or stress; the opposite is remission.",
+   "points": [
+    "Iatrogenic = caused by treatment/procedure",
+    "Idiopathic = unknown cause",
+    "Exacerbation = flare of signs and symptoms",
+    "An appropriate example for each"
+   ],
+   "section": "u1-s9",
+   "difficulty": 2
+  }
+ ]
+}

@@ -7,6 +7,7 @@ Edit a unit's JSON (notes, terms, questions), then run:
 import glob
 import json
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -14,13 +15,13 @@ ROOT = os.path.dirname(HERE)
 CONTENT = os.path.join(ROOT, "content")
 
 EXAMS = [
-    {"id": "exam1", "title": "Exam 1 practice", "units": ["u1", "u2", "u3"], "count": 50, "minutes": 60,
+    {"id": "exam1", "title": "Exam 1 practice", "units": ["u1", "u2", "u3"], "count": 50, "short": 2, "minutes": 60,
      "description": "Terminology, kinesiology basics, the skeletal system, joints, muscles and the nervous system."},
-    {"id": "exam2", "title": "Exam 2 practice", "units": ["u4", "u5"], "count": 50, "minutes": 60,
+    {"id": "exam2", "title": "Exam 2 practice", "units": ["u4", "u5"], "count": 50, "short": 2, "minutes": 60,
      "description": "Shoulder girdle, shoulder joint, elbow, forearm, wrist and hand.", "topicsFrom": ("u5", "exam2")},
-    {"id": "exam3", "title": "Exam 3 practice", "units": ["u6"], "count": 50, "minutes": 60,
-     "description": "TMJ, trunk, thorax, pelvis, hip and knee.", "topicsFrom": ("u6", "exam3")},
-    {"id": "final", "title": "Comprehensive final review", "units": ["u1", "u2", "u3", "u4", "u5", "u6"], "count": 100, "minutes": 120,
+    {"id": "exam3", "title": "Exam 3 practice", "units": ["u6", "u7"], "count": 50, "short": 2, "minutes": 60,
+     "description": "TMJ, trunk, thorax, pelvis, hip, knee, ankle and foot.", "topicsFrom": ("u6", "exam3")},
+    {"id": "final", "title": "Comprehensive final review", "units": ["u1", "u2", "u3", "u4", "u5", "u6", "u7"], "count": 100, "short": 3, "minutes": 120,
      "description": "Questions from every unit, balanced across the course."},
 ]
 
@@ -30,10 +31,20 @@ def check_unit(u):
     secs = {s["id"] for s in u["sections"]}
     for i, q in enumerate(u["questions"]):
         where = f'{u["id"]} q{i + 1}'
-        if len(q.get("choices", [])) < 2:
-            errs.append(f"{where}: needs at least 2 choices")
-        if not isinstance(q.get("answer"), int) or not 0 <= q["answer"] < len(q.get("choices", [])):
-            errs.append(f"{where}: answer index out of range")
+        kind = q.get("type", "single")
+        n = len(q.get("choices", []))
+        if kind == "short":
+            if not q.get("model") or not q.get("points"):
+                errs.append(f"{where}: short answer needs model and points")
+        elif kind == "multi":
+            a = q.get("answers")
+            if n < 3 or not isinstance(a, list) or not a or any(not isinstance(x, int) or not 0 <= x < n for x in a):
+                errs.append(f"{where}: bad select-all answers")
+        else:
+            if n < 2:
+                errs.append(f"{where}: needs at least 2 choices")
+            if not isinstance(q.get("answer"), int) or not 0 <= q["answer"] < n:
+                errs.append(f"{where}: answer index out of range")
         if q.get("section") not in secs:
             errs.append(f"{where}: unknown section {q.get('section')!r}")
     return errs
@@ -42,8 +53,15 @@ def check_unit(u):
 def main():
     units = []
     for path in sorted(glob.glob(os.path.join(CONTENT, "u*.json"))):
+        if not re.fullmatch(r"u\d+\.json", os.path.basename(path)):
+            continue
         with open(path, encoding="utf-8") as f:
-            units.append(json.load(f))
+            u = json.load(f)
+        extra = os.path.join(CONTENT, u["id"] + ".extra.json")
+        if os.path.exists(extra):
+            with open(extra, encoding="utf-8") as f:
+                u["questions"] += json.load(f)["questions"]
+        units.append(u)
     units.sort(key=lambda u: int(u["id"][1:]))
     errs = [e for u in units for e in check_unit(u)]
     for e in errs:
@@ -60,11 +78,18 @@ def main():
         if ex["units"]:
             exams.append(ex)
 
+    muscles = []
+    mpath = os.path.join(CONTENT, "muscles.json")
+    if os.path.exists(mpath):
+        with open(mpath, encoding="utf-8") as f:
+            muscles = json.load(f)
+
     data = {
         "course": "OTA 1050 Study Hub",
         "tagline": "Kinesiology for occupational therapy assistants: notes, key terms, quizzes, practice exams and review games, all in one place.",
         "units": units,
         "exams": exams,
+        "muscles": muscles,
     }
     out = os.path.join(ROOT, "data.js")
     with open(out, "w", encoding="utf-8") as f:
@@ -74,7 +99,7 @@ def main():
         f.write(";\n")
     nq = sum(len(u["questions"]) for u in units)
     nt = sum(len(u["terms"]) for u in units)
-    print(f"Wrote {out}: {len(units)} units, {nt} terms, {nq} questions, {len(exams)} exams, {len(errs)} warnings")
+    print(f"Wrote {out}: {len(units)} units, {nt} terms, {nq} questions, {len(muscles)} muscles, {len(exams)} exams, {len(errs)} warnings")
 
 
 if __name__ == "__main__":
