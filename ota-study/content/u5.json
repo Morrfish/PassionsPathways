@@ -1,0 +1,1515 @@
+{
+ "id": "u5",
+ "title": "Elbow, Forearm, Wrist & Hand",
+ "summary": "Covers the bones, joints, ligaments and motions of the elbow, forearm, wrist and hand, with origin/insertion/action/innervation charts for the muscles that move them. Also covers hand arches, creases, grasps and prehension patterns, the median/ulnar/radial nerves, and common elbow, wrist and hand pathologies OT practitioners treat.",
+ "sources": [
+  "ElbowWrist updated-1.pptx",
+  "OTA1050_Forearm_Wrist_Practice_Questions.docx",
+  "Hand-2.docx",
+  "Hand-2 (2).pdf",
+  "1050 Exam 2 rundown.docx"
+ ],
+ "examTopics": {
+  "exam2": [
+   "Format: multiple choice, multiple answer, short answer",
+   "Short answer: list 5 muscles, their movements, how you used them during the test, how to stretch them",
+   "Bring Neuro packet",
+   "Rotator cuff muscles",
+   "Application: activities and the muscles/joint movements they use",
+   "Pathologies/conditions/diseases",
+   "Corresponding glenohumeral and scapular (shoulder girdle) movements",
+   "Identify muscles from a scenario, picture, innervation, or origin/insertion",
+   "Joints and their movements",
+   "Contraction types (eccentric, concentric, isometric) and which muscle is responsible",
+   "Prime motions of muscles (prime mover charts)",
+   "Reverse muscle actions",
+   "Bones involved in each joint",
+   "Bursa",
+   "Motions that stretch/elongate a muscle",
+   "Joint types and movements of specific joints",
+   "Carpal movements with wrist flexion and extension",
+   "Joint movement norms (ROM)",
+   "Carrying angle",
+   "Scapulohumeral rhythm",
+   "Ligaments in the digits",
+   "Thenar vs. hypothenar",
+   "Arches and creases",
+   "Anatomical snuffbox",
+   "Extensor hood",
+   "Grasps and grips",
+   "Nerve innervation (median/ulnar/radial)"
+  ]
+ },
+ "sections": [
+  {
+   "id": "u5-s1",
+   "heading": "Elbow & Radioulnar Joints: Bones, Landmarks, Ligaments, Motion",
+   "body": [
+    "The elbow is built from three bones: the <b>humerus</b>, <b>ulna</b> and <b>radius</b>. Like the knee, it is a hinge joint.",
+    "<table><thead><tr><th>Joint</th><th>Bones</th><th>Ligaments</th><th>Motion / ROM</th><th>Type</th></tr></thead><tbody><tr><td>Elbow (humeroulnar/humeroradial)</td><td>Humerus, ulna, radius</td><td>Ulnar (medial) collateral, radial (lateral) collateral; annular</td><td>Flexion/extension, 0-150&deg;</td><td>Synovial, uniaxial, hinge</td></tr><tr><td>Proximal radioulnar</td><td>Radius and ulna</td><td>Annular ligament; interosseous membrane (shared with distal RU joint)</td><td>Supination 0-80&deg;, pronation 0-80&deg;</td><td>Synovial, uniaxial, pivot</td></tr></tbody></table>",
+    "<b>Collateral ligaments</b> (both triangular) give the elbow side-to-side stability. Note: the <i>ulnar</i> collateral ligament is on the <b>medial</b> side and the <i>radial</i> collateral ligament is on the <b>lateral</b> side.",
+    "<b>Annular ligament</b>: a ring that wraps the radial head and holds it against the ulna; it sits just below the lateral collateral ligament.",
+    "<b>Interosseous membrane</b>: keeps the radius and ulna from separating and adds surface area for muscle attachment.",
+    "During pronation/supination the <b>radius rotates around the ulna</b>; the ulna stays put because of its bony shape proximally.",
+    "There is no true active hyperextension at the elbow: the <b>olecranon process</b> of the ulna locks into the <b>olecranon fossa</b> of the humerus. If a client hyperextends, suspect ligament laxity rather than bone.",
+    "<ul><li><b>Trochlea</b> &ndash; medial distal humerus; articulates with the ulna.</li><li><b>Capitulum</b> &ndash; lateral distal humerus, beside the trochlea; articulates with the radial head.</li><li><b>Olecranon process</b> &ndash; posterior proximal ulna, the point of the elbow; triceps attachment.</li><li><b>Medial epicondyle</b> &ndash; common flexor tendon origin. <b>Lateral epicondyle</b> &ndash; common extensor tendon origin.</li></ul>",
+    "<b>Carrying angle</b>: normally <b>5-15&deg; of valgus</b>, usually larger in females. It exists because the medial distal humerus (trochlea) sits lower than the lateral side (capitulum). It lets the hand come to the mouth (not the shoulder) when the elbow bends.",
+    "<b>Functional ROM</b>: most ADLs need only about <b>30-130&deg;</b> of elbow motion, which is considered WFL (within functional limits).",
+    "<table><thead><tr><th>Motion</th><th>End feel</th><th>Why</th></tr></thead><tbody><tr><td>Elbow flexion</td><td>Soft</td><td>Muscle bulk and soft tissue meet</td></tr><tr><td>Elbow extension</td><td>Hard/bony</td><td>Olecranon contacts the olecranon fossa</td></tr><tr><td>Supination</td><td>Firm</td><td>Stretch of ligaments/membrane between radius and ulna</td></tr><tr><td>Pronation</td><td>Hard/bony</td><td>Radius crosses over the ulna</td></tr></tbody></table>",
+    "<b>Stability vs mobility</b>: the elbow is far more stable and less mobile than the shoulder. It is most stable for weight bearing in full extension and can handle forces of 1-3x body weight. Elbow <b>flexors are stronger than extensors</b>; both are strongest in midrange."
+   ]
+  },
+  {
+   "id": "u5-s2",
+   "heading": "Muscles of the Elbow & Forearm",
+   "body": [
+    "<b>Prime movers</b>: Flexion &ndash; brachialis (the \"workhorse\"), biceps brachii, brachioradialis. Extension &ndash; triceps, anconeus. Supination &ndash; biceps brachii, supinator. Pronation &ndash; pronator teres (proximal), pronator quadratus (distal).",
+    "<table><thead><tr><th>Muscle</th><th>Origin</th><th>Insertion</th><th>Action (prime)</th><th>Innervation</th></tr></thead><tbody><tr><td>Biceps brachii</td><td>Long head: supraglenoid tubercle; short head: coracoid process</td><td>Radial tuberosity</td><td>Elbow flexion, forearm supination (assists shoulder flexion)</td><td>Musculocutaneous (C5-6)</td></tr><tr><td>Brachialis</td><td>Distal anterior humerus</td><td>Coronoid process / ulnar tuberosity</td><td>Elbow flexion (any forearm position)</td><td>Musculocutaneous (C5-6)</td></tr><tr><td>Brachioradialis</td><td>Lateral supracondylar ridge of humerus</td><td>Radial styloid process</td><td>Elbow flexion (strongest in midposition)</td><td>Radial (C5-6)</td></tr><tr><td>Triceps brachii</td><td>Long head: infraglenoid tubercle; lateral & medial heads: posterior humerus</td><td>Olecranon process</td><td>Elbow extension (long head assists shoulder extension)</td><td>Radial (C6-8)</td></tr><tr><td>Anconeus</td><td>Lateral epicondyle</td><td>Olecranon / posterior proximal ulna</td><td>Elbow extension</td><td>Radial (C7-8)</td></tr><tr><td>Supinator</td><td>Lateral epicondyle and supinator crest of ulna</td><td>Proximal lateral radius</td><td>Supination</td><td>Radial (C5-6)</td></tr><tr><td>Pronator teres</td><td>Medial epicondyle and coronoid process</td><td>Mid lateral radius</td><td>Pronation (assists elbow flexion)</td><td>Median (C6-7)</td></tr><tr><td>Pronator quadratus</td><td>Distal anterior ulna</td><td>Distal anterior radius</td><td>Pronation</td><td>Median (C8-T1)</td></tr></tbody></table>",
+    "Several muscles share each action, so some motion is preserved if one nerve is injured. The big exception is <b>elbow extension</b>: triceps and anconeus are both radial nerve.",
+    "Palpation tip: resist elbow flexion in midposition and the <b>brachioradialis</b> pops up on top of the forearm.",
+    "<b>Supinator</b> is key for turning a doorknob or a screwdriver."
+   ]
+  },
+  {
+   "id": "u5-s3",
+   "heading": "Elbow Pathologies",
+   "body": [
+    "<b>Cubital tunnel syndrome (ulnar nerve entrapment)</b>: second most common UE nerve compression after carpal tunnel. The cubital tunnel is on the medial elbow, behind the medial epicondyle. Causes: pressure on the medial elbow, sustained extreme elbow flexion, repetitive motion. S/S: tingling/numbness in ring and small fingers (often worse at night), medial elbow pain, weak grip, poor coordination, atrophy. Treatment: education, rest, avoid full elbow flexion, padded sleeve, towel splint at night to keep the elbow under 90&deg;, nerve glides; surgery (ulnar nerve transposition) if conservative care fails.",
+    "<b>Distal biceps tendon rupture</b>: tear at the radial tuberosity insertion, usually muscular males 35-60 lifting with forceful elbow extension. S/S: bruising, swelling, pain, a bulge/gap near the elbow, weak elbow flexion and supination. Post-surgery: cast ~2 weeks, hinged brace (about 40&deg; ext to 70-90&deg; flexion) weeks 2-8, PROM for flexion/supination, gentle strengthening after 8 weeks; full healing 3-6 months.",
+    "<b>Lateral epicondylitis (tennis elbow)</b>: overuse of the common extensor tendon, mainly <b>extensor carpi radialis brevis</b>. Ages 30-50, more often men. Pain at the lateral epicondyle that worsens with gripping or lifting in pronation; pain with resisted wrist extension (Cozen's test); weak grip. Treatment: rest, ergonomics, enlarged handles, pacing, avoid combined wrist and elbow extension, ice/heat, stretching, counterforce strap, friction massage; strengthen only once pain resolves.",
+    "<b>Medial epicondylitis (golfer's elbow)</b>: overuse of the common flexor tendon; tender at the medial epicondyle with pain on resisted wrist flexion. Treated like tennis elbow.",
+    "<b>Little League elbow</b>: repetitive throwing in young athletes puts valgus stress on the elbow, stressing the medial epicondyle tendons.",
+    "<b>Nursemaid's (pulled) elbow</b>: children under 5; a sudden pull on the arm makes the radial head slip out from under the annular ligament.",
+    "<b>Elbow dislocation</b>: ulna slides off the humerus from high force with the elbow flexed. <b>Supracondylar fracture</b>: break just above the humeral condyles, often a FOOSH in children. Both can injure the brachial artery and lead to <b>Volkmann's ischemic contracture</b> (forearm muscle necrosis from lost blood supply)."
+   ]
+  },
+  {
+   "id": "u5-s4",
+   "heading": "Wrist Joints, Ligaments & Carpal Motion",
+   "body": [
+    "Carpals, proximal row lateral to medial: <b>scaphoid, lunate, triquetrum, pisiform</b>; distal row: <b>trapezium, trapezoid, capitate, hamate</b>. Mnemonic: \"Steve Left The Party To Take Carol Home.\"",
+    "<table><thead><tr><th>Joint</th><th>Bones</th><th>Ligaments</th><th>Motions</th><th>Type</th></tr></thead><tbody><tr><td>Radiocarpal</td><td>Distal radius + articular disk with scaphoid, lunate, triquetrum</td><td>Palmar & dorsal radiocarpal; radial & ulnar collateral; joint capsule</td><td>Flexion ~80&deg;, extension ~70&deg;, radial dev ~20&deg;, ulnar dev ~30-35&deg;, circumduction</td><td>Ellipsoid (condyloid), biaxial</td></tr><tr><td>Intercarpal / Midcarpal</td><td>Carpal to carpal (inter = within a row; mid = proximal row to distal row)</td><td>Many small intercarpal ligaments</td><td>Gliding</td><td>Gliding, nonaxial</td></tr></tbody></table>",
+    "The <b>ulna does not articulate with the carpals</b>. An articular (ulnocarpal) disk fills the gap left because the ulnar styloid is shorter than the radial styloid; it acts as a shock absorber and contacts the lunate and triquetrum. So there is no ulnocarpal joint.",
+    "<b>Palmar radiocarpal ligament</b> limits extension and is the stronger one (the functional wrist position is extension). <b>Dorsal radiocarpal ligament</b> limits flexion.",
+    "There is <b>no rotation at the wrist</b>; rotation comes from the forearm. Flexion, extension, and radial/ulnar deviation combined make circumduction.",
+    "<b>Carpal glide rule</b>: the proximal row glides <b>opposite</b> the hand; the distal row follows the hand. Wrist flexion: proximal row glides dorsally, distal row palmarly. Wrist extension: proximal row glides palmarly, distal row dorsally.",
+    "<b>End feels</b>: radial deviation is hard/bony (scaphoid meets radial styloid); all other wrist motions are firm (ligament and capsule tension)."
+   ]
+  },
+  {
+   "id": "u5-s5",
+   "heading": "Muscles of the Wrist",
+   "body": [
+    "Wrist-only muscles are the most superficial forearm layer. <b>Anterior</b> (FCR, FCU, palmaris longus) arise from the <b>medial epicondyle</b>; <b>posterior</b> (ECRL, ECRB, ECU) arise from the <b>lateral epicondyle</b> region. All insert on metacarpals except palmaris longus and part of FCU.",
+    "Anterior layering: 3 flexor layers (the superficial wrist muscles, then 2 deeper layers mainly for the fingers). Posterior: 1 extensor layer; EDC sits in it but mainly moves the fingers.",
+    "Medial-to-lateral superficial flexor order: <b>FCU, PL, FCR, pronator teres</b>. Place your opposite palm on the medial epicondyle: your fingers map those four muscles.",
+    "<table><thead><tr><th>Muscle</th><th>Origin</th><th>Insertion</th><th>Action (prime)</th><th>Innervation</th></tr></thead><tbody><tr><td>Flexor carpi radialis (FCR)</td><td>Medial epicondyle (CFT)</td><td>Base of 2nd (and 3rd) metacarpal</td><td>Wrist flexion, radial deviation</td><td>Median (C6-7)</td></tr><tr><td>Flexor carpi ulnaris (FCU)</td><td>Medial epicondyle (CFT) and ulna</td><td>Pisiform, hook of hamate, base of 5th metacarpal</td><td>Wrist flexion, ulnar deviation</td><td>Ulnar (C8-T1)</td></tr><tr><td>Palmaris longus (PL)</td><td>Medial epicondyle (CFT)</td><td>Flexor retinaculum and palmar aponeurosis</td><td>Wrist flexion</td><td>Median (C7-8)</td></tr><tr><td>Extensor carpi radialis longus (ECRL)</td><td>Lateral supracondylar ridge</td><td>Base of 2nd metacarpal</td><td>Wrist extension, radial deviation</td><td>Radial (C6-7)</td></tr><tr><td>Extensor carpi radialis brevis (ECRB)</td><td>Lateral epicondyle (CET)</td><td>Base of 3rd metacarpal</td><td>Wrist extension (lesser radial deviation)</td><td>Radial (C6-7)</td></tr><tr><td>Extensor carpi ulnaris (ECU)</td><td>Lateral epicondyle (CET)</td><td>Base of 5th metacarpal</td><td>Wrist extension, ulnar deviation</td><td>Radial (C6-8)</td></tr></tbody></table>",
+    "Palmaris longus is absent in roughly 10% of people, a normal variant. ECRL is the more lateral of the two radial extensors.",
+    "Because these muscles cross the elbow, the wrist flexors can weakly assist elbow flexion."
+   ]
+  },
+  {
+   "id": "u5-s6",
+   "heading": "Hand Terminology, Joints & Ligaments",
+   "body": [
+    "<b>Palmar/volar</b> = palm side; <b>dorsal</b> = back; <b>radial</b> = thumb side; <b>ulnar</b> = little finger side. Digits: D1 thumb, D2 index, D3 middle, D4 ring, D5 little.",
+    "<b>Thenar</b> = thumb side of the palm; <b>hypothenar</b> = little-finger side. Muscle name clues: <b>pollicis</b> = thumb, <b>indicis</b> = index, <b>minimi</b> = little finger, <b>digitorum</b> = digits 2-5.",
+    "<table><thead><tr><th>Joint</th><th>Bones</th><th>Motions</th><th>Type</th></tr></thead><tbody><tr><td>CMC</td><td>Carpals + metacarpals</td><td>Thumb: flexion, extension, abduction, adduction, opposition, reposition (+ accessory rotation). D2-3 nearly immobile; D4-5 slight motion for cupping (D5 > D4)</td><td>Thumb: saddle. D2-D5: gliding</td></tr><tr><td>MCP</td><td>Metacarpals + proximal phalanges</td><td>Flexion, extension, hyperextension, abduction, adduction</td><td>Ellipsoid (condyloid), biaxial</td></tr><tr><td>PIP</td><td>Proximal + middle phalanges</td><td>Flexion, extension</td><td>Hinge, uniaxial</td></tr><tr><td>DIP</td><td>Middle + distal phalanges</td><td>Flexion, extension</td><td>Hinge, uniaxial</td></tr></tbody></table>",
+    "<b>Wrist/palm ligaments</b>: flexor retinaculum (holds flexor tendons at the wrist, prevents bowstringing); palmar carpal ligament; <b>transverse carpal ligament</b> (roof of the carpal tunnel: 9 flexor tendons + median nerve); extensor retinaculum (dorsal wrist).",
+    "<b>Digit ligaments</b>: <b>collateral ligaments</b> on each side of the finger joints prevent side-to-side bending; <b>annular and cruciate pulleys</b> keep flexor tendons close to the bones; the volar plate limits hyperextension.",
+    "<b>Extensor hood (extensor expansion)</b>: the extensor digitorum tendon spreads over the proximal phalanx and is joined by the lumbricals and interossei, letting these small intrinsics help extend the PIP and DIP.",
+    "<b>Skin</b>: palmar skin is thick, immobile and hairless for grip; dorsal skin is thin, supple and mobile so the fist can close."
+   ]
+  },
+  {
+   "id": "u5-s7",
+   "heading": "Extrinsic & Intrinsic Hand Muscles",
+   "body": [
+    "<b>Extrinsic</b> muscles originate outside the hand (forearm/humerus) and insert in the hand. <b>Intrinsic</b> muscles start and end within the hand. The common extensor tendon (CET) comes off the lateral epicondyle; the common flexor tendon (CFT) comes off the medial epicondyle.",
+    "<table><thead><tr><th>Extrinsic muscle</th><th>Origin</th><th>Insertion</th><th>Action (prime)</th><th>Innervation</th></tr></thead><tbody><tr><td>Flexor digitorum superficialis (FDS)</td><td>Medial epicondyle, coronoid, anterior radius</td><td>Sides of middle phalanges D2-5</td><td>Flex PIP (and MCP, wrist)</td><td>Median (C7-T1)</td></tr><tr><td>Flexor digitorum profundus (FDP)</td><td>Anterior ulna, interosseous membrane</td><td>Bases of distal phalanges D2-5</td><td>Flex DIP (the only DIP flexor), PIP, MCP, wrist</td><td>Median (D2-3) and ulnar (D4-5) (C8-T1)</td></tr><tr><td>Flexor pollicis longus (FPL)</td><td>Anterior radius, interosseous membrane</td><td>Base of distal phalanx of thumb</td><td>Thumb IP (and MCP) flexion</td><td>Median (C8-T1)</td></tr><tr><td>Abductor pollicis longus (APL)</td><td>Posterior radius & ulna, interosseous membrane</td><td>Base of 1st metacarpal</td><td>Thumb abduction/extension at CMC</td><td>Radial (C6-7)</td></tr><tr><td>Extensor pollicis brevis (EPB)</td><td>Posterior radius, interosseous membrane</td><td>Base of proximal phalanx of thumb</td><td>Thumb MCP extension</td><td>Radial (C6-7)</td></tr><tr><td>Extensor pollicis longus (EPL)</td><td>Posterior ulna, interosseous membrane</td><td>Base of distal phalanx of thumb</td><td>Thumb IP (and MCP) extension</td><td>Radial (C6-8)</td></tr><tr><td>Extensor digitorum (ED)</td><td>Lateral epicondyle (CET)</td><td>Extensor hood to middle & distal phalanges D2-5</td><td>Extend MCP, PIP, DIP D2-5 (assists wrist ext)</td><td>Radial (C6-8)</td></tr><tr><td>Extensor indicis (EI)</td><td>Posterior distal ulna</td><td>Extensor hood of D2</td><td>Extend index finger</td><td>Radial (C6-8)</td></tr><tr><td>Extensor digiti minimi (EDM)</td><td>Lateral epicondyle (CET)</td><td>Extensor hood of D5</td><td>Extend MCP, PIP, DIP of D5</td><td>Radial (C6-8)</td></tr></tbody></table>",
+    "<b>Anatomical snuffbox</b> (radial dorsal wrist, seen when the thumb extends): <b>EPL</b> is the medial (ulnar) border; <b>APL and EPB</b> form the lateral (radial) border. The scaphoid lies in its floor.",
+    "<b>Intrinsic groups</b>: Thenar &ndash; <b>OAF</b> (opponens pollicis, abductor pollicis brevis, flexor pollicis brevis). Hypothenar &ndash; <b>OAF</b> (opponens, abductor and flexor digiti minimi). Deep palm &ndash; <b>AIL</b> (adductor pollicis, interossei, lumbricals). Dorsal interossei are the only intrinsics on the back of the hand.",
+    "<table><thead><tr><th>Intrinsic muscle</th><th>Origin</th><th>Insertion</th><th>Action (prime)</th><th>Innervation</th></tr></thead><tbody><tr><td>Abductor pollicis brevis</td><td>Flexor retinaculum, scaphoid, trapezium</td><td>Base of thumb proximal phalanx</td><td>Thumb abduction</td><td>Median (C8-T1)</td></tr><tr><td>Flexor pollicis brevis</td><td>Flexor retinaculum, trapezium</td><td>Base of thumb proximal phalanx</td><td>Thumb MCP flexion</td><td>Median (superficial head); ulnar (deep head)</td></tr><tr><td>Opponens pollicis</td><td>Flexor retinaculum, trapezium</td><td>Lateral 1st metacarpal</td><td>Thumb opposition</td><td>Median (C8-T1)</td></tr><tr><td>Abductor digiti minimi</td><td>Pisiform</td><td>Base of D5 proximal phalanx</td><td>D5 abduction</td><td>Ulnar (C8-T1)</td></tr><tr><td>Flexor digiti minimi</td><td>Hook of hamate, flexor retinaculum</td><td>Base of D5 proximal phalanx</td><td>D5 MCP flexion</td><td>Ulnar (C8-T1)</td></tr><tr><td>Opponens digiti minimi</td><td>Hook of hamate, flexor retinaculum</td><td>5th metacarpal</td><td>D5 opposition</td><td>Ulnar (C8-T1)</td></tr><tr><td>Adductor pollicis</td><td>Capitate, bases of 2nd-3rd MC, 3rd MC shaft</td><td>Base of thumb proximal phalanx (ulnar side)</td><td>Thumb adduction</td><td>Ulnar (C8-T1)</td></tr><tr><td>Dorsal interossei (4)</td><td>Adjacent sides of metacarpals</td><td>Proximal phalanges and extensor hood</td><td>Abduct fingers (DAB); assist MCP flexion & IP extension</td><td>Ulnar (C8-T1)</td></tr><tr><td>Palmar interossei (3)</td><td>Metacarpals 2, 4, 5</td><td>Proximal phalanges and hood of same digits</td><td>Adduct fingers (PAD); assist MCP flexion & IP extension</td><td>Ulnar (C8-T1)</td></tr><tr><td>Lumbricals (4)</td><td>FDP tendons</td><td>Radial side of extensor hood</td><td>MCP flexion with PIP/DIP extension</td><td>Median (1-2) and ulnar (3-4)</td></tr></tbody></table>",
+    "Mnemonics: <b>DAB</b> = Dorsal ABduct; <b>PAD</b> = Palmar ADduct. Finger abduction/adduction is measured from the middle finger (D3)."
+   ]
+  },
+  {
+   "id": "u5-s8",
+   "heading": "Hand Position, Arches, Creases, Grasps & Prehension",
+   "body": [
+    "<b>Functional position</b>: wrist slightly extended, MCPs and PIPs slightly flexed, thumb in opposition (ready to grasp).",
+    "<b>Safe position (intrinsic plus)</b>: wrist extended about 20-40&deg;, MCPs flexed about 30-70&deg;, IPs fully extended, thumb in about 45&deg; palmar abduction. Collateral ligaments stay elongated, preventing contracture and claw deformity; used in resting hand orthoses for burns, fractures, arthritis and trauma.",
+    "<b>Three arches</b> let the hand cup: <ul><li><b>Proximal transverse (carpal) arch</b> &ndash; formed by the distal row of carpals; fixed.</li><li><b>Distal transverse (metacarpal) arch</b> &ndash; across the metacarpal heads; mobile, deepens as fingers flex.</li><li><b>Longitudinal arch</b> &ndash; runs lengthwise from the wrist through each finger ray.</li></ul>",
+    "<b>Creases</b>: proximal and distal carpal (wrist) creases; thenar eminence crease (around the thumb base); proximal and distal palmar creases (the distal one roughly marks the MCP joints &ndash; splints should end proximal to it to allow MCP flexion); and the digital creases at the MCP (proximal), PIP (middle) and DIP (distal).",
+    "<b>Power grips</b> (whole hand, force): <ul><li><b>Cylindrical</b> &ndash; fingers wrap around a cylinder (hammer, glass).</li><li><b>Spherical</b> &ndash; fingers spread around a ball or doorknob.</li><li><b>Hook</b> &ndash; fingers flexed at PIP/DIP, thumb not needed (carrying a bag or briefcase).</li><li><b>Composite/fist</b> &ndash; full finger flexion with thumb wrapped over.</li><li><b>Intrinsic plus</b> &ndash; MCPs flexed, IPs extended, as when holding a flat object like a book.</li></ul>",
+    "<b>Precision grips</b> (fine control): <ul><li><b>Tip pinch (2-point)</b> &ndash; tip of thumb to tip of index (picking up a pin or coin).</li><li><b>Three-jaw chuck (tripod)</b> &ndash; thumb pad against index and middle pads (holding a pen).</li><li><b>Lateral (key) pinch</b> &ndash; thumb pad to the side of the index finger (turning a key).</li><li><b>Lumbrical grip</b> &ndash; MCPs flexed, PIPs/DIPs extended, thumb opposing (holding a dinner plate).</li></ul>"
+   ]
+  },
+  {
+   "id": "u5-s9",
+   "heading": "Nerves of the Upper Extremity",
+   "body": [
+    "UE nerves come from roughly <b>C5-T1</b> (the course notes say C1-T1; the brachial plexus itself is C5-T1) and merge in the <b>brachial plexus</b>. The <b>radial</b> nerve comes from the posterior cord, the <b>ulnar</b> from the medial cord, and the <b>median</b> from both lateral and medial cords. Arteries supply muscles; veins remove waste.",
+    "<table><thead><tr><th>Nerve</th><th>Key muscles</th><th>Sensory area</th><th>Injury sign</th></tr></thead><tbody><tr><td>Radial</td><td>Triceps, anconeus, brachioradialis, supinator, all wrist & finger extensors, APL, EPB, EPL</td><td>Dorsum of hand on radial side (thumb, index, middle, half ring), except fingertips</td><td><b>Wrist drop</b> &ndash; cannot extend wrist/fingers; often from humeral shaft fracture or \"Saturday night palsy\"</td></tr><tr><td>Median</td><td>Pronators, FCR, PL, FDS, lateral FDP, FPL, thenar OAF, lumbricals 1-2</td><td>Palmar thumb, index, middle and radial half of ring finger</td><td><b>Ape hand</b>/loss of opposition, thenar atrophy; carpal tunnel syndrome</td></tr><tr><td>Ulnar</td><td>FCU, medial FDP, hypothenar OAF, adductor pollicis, interossei, lumbricals 3-4, deep FPB</td><td>Little finger and ulnar half of ring finger (palmar & dorsal)</td><td><b>Claw hand</b> (D4-5), weak grip/pinch; cubital tunnel syndrome</td></tr></tbody></table>",
+    "Musculocutaneous nerve (C5-6) supplies biceps and brachialis, so elbow flexion can partly survive a radial nerve injury, but elbow extension cannot."
+   ]
+  },
+  {
+   "id": "u5-s10",
+   "heading": "Wrist & Hand Pathologies",
+   "body": [
+    "<b>Colles fracture</b>: distal radius fracture from FOOSH with <b>dorsal (posterior) displacement</b> of the distal fragment and radial shortening; the classic \"dinner fork\" deformity.",
+    "<b>Smith's fracture</b>: the reverse of Colles; from a fall on the back of the hand, with <b>palmar (volar) displacement</b>.",
+    "<b>Scaphoid fracture</b>: the most commonly fractured carpal, often from FOOSH with wrist hyperextension and radial deviation. Poor blood supply means slow healing and risk of <b>avascular necrosis</b>. Tenderness in the anatomical snuffbox is a red flag.",
+    "Complications after wrist fracture that OT addresses: edema, scar tissue, nerve compression, and lingering wrist and finger stiffness.",
+    "<b>Ganglion cyst</b>: benign fluid-filled mass, most often on the dorsal wrist.",
+    "<b>Carpal tunnel syndrome</b>: median nerve compression in the carpal tunnel (under the transverse carpal ligament with 9 flexor tendons). Tingling, pain and weakness in the palmar thumb, index, middle and half the ring finger.",
+    "<b>De Quervain's tenosynovitis</b>: thickened sheath of APL and EPB on the radial wrist. Finkelstein test: fist with the thumb tucked in, then ulnarly deviate the wrist.",
+    "<b>Swan neck deformity</b>: MCP flexion, <b>PIP hyperextension</b>, DIP flexion; often with RA.",
+    "<b>Boutonniere deformity</b>: MCP extension, <b>PIP flexion</b>, DIP hyperextension; often with RA or a central slip injury.",
+    "<b>Ulnar drift</b>: fingers deviate ulnarly at the MCPs; common in RA.",
+    "<b>Mallet finger</b>: the DIP stays flexed and cannot actively extend (terminal extensor tendon injury, e.g., ball striking the fingertip).",
+    "<b>Trigger finger (stenosing tenosynovitis)</b>: a swollen tendon sheath or tendon nodule catches in the A1 pulley so the finger locks or snaps.",
+    "<b>Dupuytren's contracture</b>: nodular thickening of the <b>palmar aponeurosis</b> that pulls fingers (usually ring and small) into flexion.",
+    "<b>Tendinitis</b>: tendon inflammation from microtears due to overuse or repetitive strain.",
+    "<b>Skier's thumb / gamekeeper's thumb</b>: injury to the <b>ulnar collateral ligament of the thumb MCP</b>; skier's is an acute tear, gamekeeper's is a chronic stretching injury.",
+    "<b>Osteoarthritis</b>: commonly affects the thumb CMC (base-of-thumb pain with pinch) and the DIP/PIP joints of the fingers."
+   ]
+  },
+  {
+   "id": "u5-s11",
+   "heading": "Functional & Clinical Application",
+   "body": [
+    "Placing a plate in an overhead cabinet: elbow <b>extension</b>, forearm <b>pronation</b>. Bringing soup to the mouth: elbow <b>flexion</b>, forearm <b>supination</b>. Reaching for a desk phone: extension + pronation; holding it to the ear: flexion + supination.",
+    "Overhead triceps stretch (arm up, other hand pushes the hand down behind the head): right elbow goes into <b>flexion</b>, stretching the <b>triceps</b>.",
+    "Forearms flat on a table, pressing down: no joint motion, so it is an <b>isometric</b> contraction, strengthening the triceps and pronators.",
+    "Lowering a weight from the shoulder to anatomical position: elbow <b>extension</b> with an <b>eccentric</b> contraction of the elbow flexors (biceps, brachialis, brachioradialis); an <b>open-chain</b> movement because the hand is free.",
+    "<b>Reverse muscle action</b>: the origin moves toward the insertion, e.g., the elbow flexors pulling the body up in a chin-up, or triceps during a push-up.",
+    "To <b>stretch</b> a muscle, move every joint it crosses into the opposite of its prime actions (e.g., stretch FCR with wrist extension + ulnar deviation and elbow extension)."
+   ]
+  },
+  {
+   "id": "u5-s12",
+   "heading": "Exam 2 Checklist",
+   "body": [
+    "<b>Format</b>: multiple choice, multiple answer and short answer. One short answer asks you to list <b>5 muscles</b>, their movements, how you used them during the test, and how to stretch them. Bring your Neuro packet.",
+    "<b>Strategy</b>: act out the movements as you read. Think about <i>all</i> motions of a joint when contracting or stretching. Focus on what the question actually asks. Write your prime mover chart down at the start and use it as a reference.",
+    "<b>Know</b>: <ul><li>Rotator cuff muscles; shoulder (glenohumeral) vs shoulder girdle (scapula) paired motions; scapulohumeral rhythm; bursa (from the shoulder unit)</li><li>Prime motions of every muscle; identifying a muscle from a scenario, picture, origin/insertion or innervation</li><li>Contraction types (concentric, eccentric, isometric) and which muscle is working</li><li>Reverse muscle actions</li><li>Bones in each joint, joint types, joint motions and ROM norms</li><li>Motions that stretch a muscle</li><li>Pathologies/conditions</li><li>Carpal glides with wrist flexion/extension; carrying angle</li><li>Ligaments in the digits; extensor hood; anatomical snuffbox</li><li>Thenar vs hypothenar; arches and creases; grasps and grips</li><li>Median, ulnar and radial innervation</li></ul>"
+   ]
+  }
+ ],
+ "terms": [
+  {
+   "term": "Hinge joint",
+   "def": "Uniaxial synovial joint allowing flexion/extension only, like the elbow and IP joints.",
+   "section": "u5-s1"
+  },
+  {
+   "term": "Pivot joint",
+   "def": "Uniaxial joint allowing rotation; the proximal radioulnar joint is one.",
+   "section": "u5-s1"
+  },
+  {
+   "term": "Annular ligament",
+   "def": "Ring of ligament wrapping the radial head and holding it to the ulna.",
+   "section": "u5-s1"
+  },
+  {
+   "term": "Ulnar collateral ligament (elbow)",
+   "def": "Triangular ligament on the medial elbow that resists valgus stress.",
+   "section": "u5-s1"
+  },
+  {
+   "term": "Radial collateral ligament (elbow)",
+   "def": "Triangular ligament on the lateral elbow that resists varus stress.",
+   "section": "u5-s1"
+  },
+  {
+   "term": "Interosseous membrane",
+   "def": "Sheet of connective tissue between radius and ulna that keeps them together and gives muscles attachment area.",
+   "section": "u5-s1"
+  },
+  {
+   "term": "Supination",
+   "def": "Forearm rotation turning the palm up/forward; radius uncrosses from the ulna.",
+   "section": "u5-s1"
+  },
+  {
+   "term": "Pronation",
+   "def": "Forearm rotation turning the palm down/back; radius crosses over the ulna.",
+   "section": "u5-s1"
+  },
+  {
+   "term": "Olecranon process",
+   "def": "Posterior proximal ulna; the point of the elbow and triceps insertion.",
+   "section": "u5-s1"
+  },
+  {
+   "term": "Trochlea",
+   "def": "Spool-shaped medial distal humerus that articulates with the ulna.",
+   "section": "u5-s1"
+  },
+  {
+   "term": "Capitulum",
+   "def": "Rounded lateral distal humerus that articulates with the radial head.",
+   "section": "u5-s1"
+  },
+  {
+   "term": "Carrying angle",
+   "def": "Normal 5-15 degree valgus angle of the extended forearm relative to the humerus.",
+   "section": "u5-s1"
+  },
+  {
+   "term": "End feel",
+   "def": "The quality of resistance felt at the end of passive range (soft, firm, hard).",
+   "section": "u5-s1"
+  },
+  {
+   "term": "WFL",
+   "def": "Within functional limits; e.g., 30-130 degrees of elbow motion covers most ADLs.",
+   "section": "u5-s1"
+  },
+  {
+   "term": "Brachialis",
+   "def": "Elbow flexion workhorse; flexes regardless of forearm position; musculocutaneous nerve.",
+   "section": "u5-s2"
+  },
+  {
+   "term": "Brachioradialis",
+   "def": "Elbow flexor strongest in midposition; radial nerve.",
+   "section": "u5-s2"
+  },
+  {
+   "term": "Supinator",
+   "def": "Radial-nerve muscle that supinates the forearm; key for turning a doorknob.",
+   "section": "u5-s2"
+  },
+  {
+   "term": "Cubital tunnel syndrome",
+   "def": "Ulnar nerve compression behind the medial epicondyle causing ring/small finger numbness.",
+   "section": "u5-s3"
+  },
+  {
+   "term": "Lateral epicondylitis",
+   "def": "Tennis elbow; overuse of the common extensor tendon, mainly ECRB.",
+   "section": "u5-s3"
+  },
+  {
+   "term": "Medial epicondylitis",
+   "def": "Golfer's elbow; overuse of the common flexor tendon.",
+   "section": "u5-s3"
+  },
+  {
+   "term": "Nursemaid's elbow",
+   "def": "Radial head subluxation from under the annular ligament after a pull on a young child's arm.",
+   "section": "u5-s3"
+  },
+  {
+   "term": "Volkmann's ischemic contracture",
+   "def": "Forearm muscle necrosis from brachial artery damage after supracondylar fracture or dislocation.",
+   "section": "u5-s3"
+  },
+  {
+   "term": "Radiocarpal joint",
+   "def": "Main wrist joint between distal radius/disk and scaphoid, lunate, triquetrum; ellipsoid, biaxial.",
+   "section": "u5-s4"
+  },
+  {
+   "term": "Midcarpal joint",
+   "def": "Gliding joint between proximal and distal carpal rows.",
+   "section": "u5-s4"
+  },
+  {
+   "term": "Articular (ulnocarpal) disk",
+   "def": "Cartilage disk between the distal ulna and carpals that absorbs shock; the ulna does not touch the carpals.",
+   "section": "u5-s4"
+  },
+  {
+   "term": "Radial deviation",
+   "def": "Wrist motion toward the thumb side, about 20 degrees.",
+   "section": "u5-s4"
+  },
+  {
+   "term": "Ulnar deviation",
+   "def": "Wrist motion toward the little-finger side, about 30-35 degrees.",
+   "section": "u5-s4"
+  },
+  {
+   "term": "Circumduction",
+   "def": "Combination of flexion, extension and radial/ulnar deviation in a circular path.",
+   "section": "u5-s4"
+  },
+  {
+   "term": "Common flexor tendon (CFT)",
+   "def": "Shared origin of wrist/finger flexors at the medial epicondyle.",
+   "section": "u5-s5"
+  },
+  {
+   "term": "Common extensor tendon (CET)",
+   "def": "Shared origin of wrist/finger extensors at the lateral epicondyle.",
+   "section": "u5-s5"
+  },
+  {
+   "term": "Palmar aponeurosis",
+   "def": "Thick triangular fascia of the palm; palmaris longus inserts here.",
+   "section": "u5-s5"
+  },
+  {
+   "term": "Colles fracture",
+   "def": "Distal radius fracture with dorsal displacement after FOOSH; dinner fork deformity.",
+   "section": "u5-s10"
+  },
+  {
+   "term": "Smith's fracture",
+   "def": "Distal radius fracture with palmar/volar displacement; reverse Colles.",
+   "section": "u5-s10"
+  },
+  {
+   "term": "FOOSH",
+   "def": "Fall on an outstretched hand; common cause of wrist and scaphoid fractures.",
+   "section": "u5-s10"
+  },
+  {
+   "term": "Avascular necrosis",
+   "def": "Bone death from lost blood supply; a risk after scaphoid fracture.",
+   "section": "u5-s10"
+  },
+  {
+   "term": "Carpal tunnel syndrome",
+   "def": "Median nerve compression in the carpal tunnel causing thumb-index-middle finger symptoms.",
+   "section": "u5-s10"
+  },
+  {
+   "term": "De Quervain's tenosynovitis",
+   "def": "Inflamed sheath of APL and EPB at the radial wrist; Finkelstein test.",
+   "section": "u5-s10"
+  },
+  {
+   "term": "Thenar",
+   "def": "The thumb side of the palm.",
+   "section": "u5-s6"
+  },
+  {
+   "term": "Hypothenar",
+   "def": "The little-finger side of the palm.",
+   "section": "u5-s6"
+  },
+  {
+   "term": "Pollicis",
+   "def": "Muscle-name term for the thumb.",
+   "section": "u5-s6"
+  },
+  {
+   "term": "Minimi",
+   "def": "Muscle-name term for the little finger.",
+   "section": "u5-s6"
+  },
+  {
+   "term": "Digitorum",
+   "def": "Muscle-name term for digits 2-5.",
+   "section": "u5-s6"
+  },
+  {
+   "term": "Saddle joint",
+   "def": "Biaxial joint with reciprocally curved surfaces; the thumb CMC.",
+   "section": "u5-s6"
+  },
+  {
+   "term": "Transverse carpal ligament",
+   "def": "Roof of the carpal tunnel covering 9 flexor tendons and the median nerve.",
+   "section": "u5-s6"
+  },
+  {
+   "term": "Collateral ligaments (digits)",
+   "def": "Ligaments on each side of the finger joints that prevent side-to-side bending.",
+   "section": "u5-s6"
+  },
+  {
+   "term": "Annular and cruciate pulleys",
+   "def": "Fibrous bands that hold flexor tendons close to the phalanges.",
+   "section": "u5-s6"
+  },
+  {
+   "term": "Extensor hood",
+   "def": "Expansion of the extensor tendon over the proximal phalanx joined by lumbricals and interossei to extend the PIP/DIP.",
+   "section": "u5-s6"
+  },
+  {
+   "term": "Extrinsic hand muscle",
+   "def": "Muscle that originates outside the hand and inserts in the hand.",
+   "section": "u5-s7"
+  },
+  {
+   "term": "Intrinsic hand muscle",
+   "def": "Muscle that originates and inserts within the hand.",
+   "section": "u5-s7"
+  },
+  {
+   "term": "Anatomical snuffbox",
+   "def": "Hollow on the radial dorsal wrist bordered by EPL medially and APL/EPB laterally; scaphoid in its floor.",
+   "section": "u5-s7"
+  },
+  {
+   "term": "DAB / PAD",
+   "def": "Dorsal interossei ABduct; Palmar interossei ADduct the fingers.",
+   "section": "u5-s7"
+  },
+  {
+   "term": "Lumbricals",
+   "def": "Intrinsics from FDP tendons that flex the MCPs while extending the IPs.",
+   "section": "u5-s7"
+  },
+  {
+   "term": "Safe (intrinsic plus) position",
+   "def": "Wrist extended, MCPs flexed, IPs extended; keeps ligaments long to prevent contracture.",
+   "section": "u5-s8"
+  },
+  {
+   "term": "Functional position",
+   "def": "Wrist slightly extended, MCPs/PIPs slightly flexed, thumb opposed.",
+   "section": "u5-s8"
+  },
+  {
+   "term": "Distal transverse arch",
+   "def": "Mobile arch across the metacarpal heads that deepens with finger flexion.",
+   "section": "u5-s8"
+  },
+  {
+   "term": "Hook grip",
+   "def": "Power grip with flexed PIP/DIP and no thumb, as when carrying a bag.",
+   "section": "u5-s8"
+  },
+  {
+   "term": "Three-jaw chuck",
+   "def": "Precision pinch of thumb pad against index and middle pads; tripod pen grasp.",
+   "section": "u5-s8"
+  },
+  {
+   "term": "Lateral (key) pinch",
+   "def": "Thumb pad pressed against the side of the index finger.",
+   "section": "u5-s8"
+  },
+  {
+   "term": "Wrist drop",
+   "def": "Inability to extend the wrist from radial nerve injury.",
+   "section": "u5-s9"
+  },
+  {
+   "term": "Claw hand",
+   "def": "Ulnar nerve sign: MCP hyperextension and IP flexion of D4-5.",
+   "section": "u5-s9"
+  },
+  {
+   "term": "Ape hand",
+   "def": "Median nerve sign: thenar flattening and loss of thumb opposition.",
+   "section": "u5-s9"
+  },
+  {
+   "term": "Swan neck deformity",
+   "def": "MCP flexion, PIP hyperextension, DIP flexion; often RA.",
+   "section": "u5-s10"
+  },
+  {
+   "term": "Boutonniere deformity",
+   "def": "MCP extension, PIP flexion, DIP hyperextension.",
+   "section": "u5-s10"
+  },
+  {
+   "term": "Ulnar drift",
+   "def": "Ulnar deviation of the fingers at the MCPs, typical in RA.",
+   "section": "u5-s10"
+  },
+  {
+   "term": "Mallet finger",
+   "def": "DIP stuck in flexion because the terminal extensor tendon is injured.",
+   "section": "u5-s10"
+  },
+  {
+   "term": "Trigger finger",
+   "def": "Stenosing tenosynovitis where a flexor tendon catches and the finger locks.",
+   "section": "u5-s10"
+  },
+  {
+   "term": "Dupuytren's contracture",
+   "def": "Nodular thickening of the palmar aponeurosis causing finger flexion contractures.",
+   "section": "u5-s10"
+  },
+  {
+   "term": "Gamekeeper's thumb",
+   "def": "Chronic stretch injury of the thumb MCP ulnar collateral ligament (skier's thumb is the acute tear).",
+   "section": "u5-s10"
+  },
+  {
+   "term": "Reverse muscle action",
+   "def": "The origin moves toward the insertion while the distal segment is fixed, as in a push-up.",
+   "section": "u5-s11"
+  },
+  {
+   "term": "Eccentric contraction",
+   "def": "Muscle lengthens while contracting to control a motion, like lowering a weight.",
+   "section": "u5-s11"
+  }
+ ],
+ "questions": [
+  {
+   "q": "Which joint allows forearm pronation and supination?",
+   "choices": [
+    "Radiocarpal joint",
+    "Humeroulnar joint",
+    "Proximal radioulnar joint",
+    "Midcarpal joint"
+   ],
+   "answer": 2,
+   "explain": "The pivot-type proximal (and distal) radioulnar joints produce forearm rotation.",
+   "section": "u5-s1",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "During pronation, what does the radius do?",
+   "choices": [
+    "Stays fixed while the ulna rotates",
+    "Rotates around the stationary ulna",
+    "Glides toward the humerus",
+    "Separates from the ulna"
+   ],
+   "answer": 1,
+   "explain": "The radius moves around the ulna, which is held in place by its bony shape.",
+   "section": "u5-s1",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "What type of joint is the elbow (humeroulnar) joint?",
+   "choices": [
+    "Synovial, uniaxial, hinge",
+    "Synovial, biaxial, ellipsoid",
+    "Synovial, uniaxial, pivot",
+    "Synovial, triaxial, ball and socket"
+   ],
+   "answer": 0,
+   "explain": "The elbow flexes and extends in one plane like a hinge.",
+   "section": "u5-s1",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which ligament encircles the radial head?",
+   "choices": [
+    "Ulnar collateral ligament",
+    "Radial collateral ligament",
+    "Palmar radiocarpal ligament",
+    "Annular ligament"
+   ],
+   "answer": 3,
+   "explain": "The annular ligament wraps the radial head and holds it to the ulna.",
+   "section": "u5-s1",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "What structure blocks elbow hyperextension?",
+   "choices": [
+    "The coronoid process in the radial fossa",
+    "The annular ligament",
+    "The olecranon process fitting into the olecranon fossa",
+    "The biceps tendon"
+   ],
+   "answer": 2,
+   "explain": "Bone-on-bone contact of olecranon and fossa gives the hard end feel.",
+   "section": "u5-s1",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "What is the normal elbow carrying angle?",
+   "choices": [
+    "0-3 degrees of varus",
+    "5-15 degrees of valgus",
+    "20-25 degrees of varus",
+    "30 degrees of hyperextension"
+   ],
+   "answer": 1,
+   "explain": "A 5-15 degree valgus angle is normal and usually larger in females.",
+   "section": "u5-s1",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "Most ADLs require roughly how much elbow range?",
+   "choices": [
+    "30-130 degrees",
+    "0-90 degrees",
+    "60-150 degrees",
+    "0-180 degrees"
+   ],
+   "answer": 0,
+   "explain": "Functional elbow range is about 30-130 degrees.",
+   "section": "u5-s1",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which landmark articulates with the radial head?",
+   "choices": [
+    "Trochlea",
+    "Olecranon fossa",
+    "Medial epicondyle",
+    "Capitulum"
+   ],
+   "answer": 3,
+   "explain": "The lateral capitulum meets the radius; the trochlea meets the ulna.",
+   "section": "u5-s1",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which muscle is the elbow flexion 'workhorse'?",
+   "choices": [
+    "Biceps brachii",
+    "Brachioradialis",
+    "Brachialis",
+    "Pronator teres"
+   ],
+   "answer": 2,
+   "explain": "Brachialis flexes the elbow in every forearm position.",
+   "section": "u5-s2",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which muscles are prime movers for supination?",
+   "choices": [
+    "Pronator teres and pronator quadratus",
+    "Biceps brachii and supinator",
+    "Brachialis and anconeus",
+    "FCR and FCU"
+   ],
+   "answer": 1,
+   "explain": "Biceps and supinator turn the palm up.",
+   "section": "u5-s2",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which muscles are prime movers for pronation?",
+   "choices": [
+    "Pronator teres and pronator quadratus",
+    "Biceps brachii and supinator",
+    "Triceps and anconeus",
+    "Brachialis and brachioradialis"
+   ],
+   "answer": 0,
+   "explain": "Both pronators are median-nerve muscles.",
+   "section": "u5-s2",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "All of these flex the elbow EXCEPT:",
+   "choices": [
+    "Brachialis",
+    "Brachioradialis",
+    "Biceps brachii",
+    "Anconeus"
+   ],
+   "answer": 3,
+   "explain": "Anconeus assists the triceps in elbow extension.",
+   "section": "u5-s2",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which elbow flexor is innervated by the radial nerve?",
+   "choices": [
+    "Biceps brachii",
+    "Brachialis",
+    "Brachioradialis",
+    "Pronator teres"
+   ],
+   "answer": 2,
+   "explain": "Biceps and brachialis are musculocutaneous; brachioradialis is radial.",
+   "section": "u5-s2",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which muscle is most important for turning a doorknob to open it (palm-up rotation)?",
+   "choices": [
+    "Pronator teres",
+    "Supinator",
+    "Brachialis",
+    "Anconeus"
+   ],
+   "answer": 1,
+   "explain": "Supination turns the knob and screwdriver.",
+   "section": "u5-s2",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "A radial nerve injury in the arm would most likely eliminate which elbow motion?",
+   "choices": [
+    "Elbow extension",
+    "Elbow flexion",
+    "Pronation",
+    "Wrist flexion"
+   ],
+   "answer": 0,
+   "explain": "Triceps and anconeus are both radial, so no backup exists for extension.",
+   "section": "u5-s2",
+   "difficulty": 3,
+   "exam": "exam2"
+  },
+  {
+   "q": "A client reports tingling in the ring and small fingers that worsens when sleeping with elbows bent. Which condition fits?",
+   "choices": [
+    "Carpal tunnel syndrome",
+    "Lateral epicondylitis",
+    "De Quervain's tenosynovitis",
+    "Cubital tunnel syndrome"
+   ],
+   "answer": 3,
+   "explain": "Ulnar nerve compression at the medial elbow is aggravated by sustained flexion.",
+   "section": "u5-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "Which night positioning is recommended for cubital tunnel syndrome?",
+   "choices": [
+    "Full elbow flexion splint",
+    "Wrist cock-up splint only",
+    "A towel splint keeping the elbow under 90 degrees of flexion",
+    "Shoulder sling"
+   ],
+   "answer": 2,
+   "explain": "Limiting flexion reduces ulnar nerve stretch and pressure.",
+   "section": "u5-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "Which muscle is mainly involved in lateral epicondylitis?",
+   "choices": [
+    "Flexor carpi ulnaris",
+    "Extensor carpi radialis brevis",
+    "Pronator teres",
+    "Brachialis"
+   ],
+   "answer": 1,
+   "explain": "ECRB from the common extensor tendon is the usual culprit in tennis elbow.",
+   "section": "u5-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "Pain with resisted wrist flexion and tenderness at the medial epicondyle suggests:",
+   "choices": [
+    "Medial epicondylitis (golfer's elbow)",
+    "Lateral epicondylitis",
+    "Cubital tunnel syndrome",
+    "Distal biceps rupture"
+   ],
+   "answer": 0,
+   "explain": "Golfer's elbow involves the common flexor tendon.",
+   "section": "u5-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "A distal biceps tendon rupture causes weakness in which motions?",
+   "choices": [
+    "Elbow extension and wrist extension",
+    "Wrist flexion and ulnar deviation",
+    "Pronation and elbow extension",
+    "Elbow flexion and forearm supination"
+   ],
+   "answer": 3,
+   "explain": "Biceps flexes the elbow and supinates the forearm.",
+   "section": "u5-s3",
+   "difficulty": 1
+  },
+  {
+   "q": "A 3-year-old cries and won't use the arm after being lifted by the hand. The most likely injury is:",
+   "choices": [
+    "Little League elbow",
+    "Colles fracture",
+    "Nursemaid's elbow",
+    "Cubital tunnel syndrome"
+   ],
+   "answer": 2,
+   "explain": "A sudden pull slips the radial head out of the annular ligament.",
+   "section": "u5-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "Which recommendation fits a client with tennis elbow?",
+   "choices": [
+    "Begin heavy grip strengthening immediately",
+    "Use enlarged handles and avoid combined wrist and elbow extension",
+    "Keep the elbow in sustained full flexion",
+    "Increase repetitive hammering to toughen the tendon"
+   ],
+   "answer": 1,
+   "explain": "Rest, ergonomics and adaptive tools come first; strengthen only after pain resolves.",
+   "section": "u5-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "Which bones articulate with the distal radius at the radiocarpal joint?",
+   "choices": [
+    "Scaphoid, lunate and triquetrum",
+    "Capitate, hamate and pisiform",
+    "Trapezium and trapezoid",
+    "Ulna and pisiform"
+   ],
+   "answer": 0,
+   "explain": "The radius and disk meet the proximal carpals except the pisiform.",
+   "section": "u5-s4",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "What type of joint is the radiocarpal joint?",
+   "choices": [
+    "Hinge, uniaxial",
+    "Pivot, uniaxial",
+    "Gliding, nonaxial",
+    "Ellipsoid, biaxial"
+   ],
+   "answer": 3,
+   "explain": "It allows flexion/extension and radial/ulnar deviation.",
+   "section": "u5-s4",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which motion is NOT available at the wrist?",
+   "choices": [
+    "Flexion",
+    "Ulnar deviation",
+    "Rotation",
+    "Circumduction"
+   ],
+   "answer": 2,
+   "explain": "Rotation comes from the forearm, not the wrist.",
+   "section": "u5-s4",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "During wrist flexion, the proximal row of carpals glides:",
+   "choices": [
+    "Palmarly (anteriorly)",
+    "Dorsally (posteriorly)",
+    "Radially",
+    "Ulnarly"
+   ],
+   "answer": 1,
+   "explain": "The proximal row moves opposite the hand.",
+   "section": "u5-s4",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "During wrist flexion, the distal row of carpals glides:",
+   "choices": [
+    "Palmarly (anteriorly)",
+    "Dorsally (posteriorly)",
+    "Radially",
+    "Not at all"
+   ],
+   "answer": 0,
+   "explain": "The distal row follows the hand.",
+   "section": "u5-s4",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "During wrist extension, the proximal row of carpals glides:",
+   "choices": [
+    "Dorsally (posteriorly)",
+    "Radially",
+    "Ulnarly",
+    "Palmarly (anteriorly)"
+   ],
+   "answer": 3,
+   "explain": "The proximal row glides opposite the hand's dorsal motion.",
+   "section": "u5-s4",
+   "difficulty": 3,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which wrist motion has a hard/bony end feel?",
+   "choices": [
+    "Flexion",
+    "Extension",
+    "Radial deviation",
+    "Ulnar deviation"
+   ],
+   "answer": 2,
+   "explain": "The scaphoid meets the radial styloid; other motions are firm.",
+   "section": "u5-s4",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which muscle flexes the wrist and radially deviates it?",
+   "choices": [
+    "Flexor carpi ulnaris",
+    "Flexor carpi radialis",
+    "Extensor carpi ulnaris",
+    "Palmaris longus"
+   ],
+   "answer": 1,
+   "explain": "FCR runs to the 2nd metacarpal on the radial side.",
+   "section": "u5-s5",
+   "difficulty": 1
+  },
+  {
+   "q": "Which muscle extends the wrist and ulnarly deviates it?",
+   "choices": [
+    "Extensor carpi ulnaris",
+    "Extensor carpi radialis longus",
+    "Flexor carpi radialis",
+    "Palmaris longus"
+   ],
+   "answer": 0,
+   "explain": "ECU inserts on the 5th metacarpal.",
+   "section": "u5-s5",
+   "difficulty": 1
+  },
+  {
+   "q": "Which wrist flexor inserts on the flexor retinaculum and palmar aponeurosis?",
+   "choices": [
+    "Flexor carpi ulnaris",
+    "Flexor carpi radialis",
+    "Extensor carpi ulnaris",
+    "Palmaris longus"
+   ],
+   "answer": 3,
+   "explain": "PL is the only wrist flexor without a metacarpal insertion.",
+   "section": "u5-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "Which muscle extends the wrist with only a lesser role in radial deviation?",
+   "choices": [
+    "Extensor carpi radialis longus",
+    "Extensor carpi ulnaris",
+    "Extensor carpi radialis brevis",
+    "Flexor carpi radialis"
+   ],
+   "answer": 2,
+   "explain": "ECRB inserts centrally on the 3rd metacarpal.",
+   "section": "u5-s5",
+   "difficulty": 3
+  },
+  {
+   "q": "Where do the wrist extensors mainly originate?",
+   "choices": [
+    "Medial epicondyle",
+    "Lateral epicondyle (common extensor tendon)",
+    "Coracoid process",
+    "Olecranon"
+   ],
+   "answer": 1,
+   "explain": "The CET arises from the lateral epicondyle region.",
+   "section": "u5-s5",
+   "difficulty": 1
+  },
+  {
+   "q": "Which distal radius fracture shows dorsal displacement and a dinner fork deformity?",
+   "choices": [
+    "Colles fracture",
+    "Smith's fracture",
+    "Scaphoid fracture",
+    "Supracondylar fracture"
+   ],
+   "answer": 0,
+   "explain": "Colles results from FOOSH with posterior displacement.",
+   "section": "u5-s10",
+   "difficulty": 1
+  },
+  {
+   "q": "Why can a scaphoid fracture heal slowly?",
+   "choices": [
+    "It has no articulations",
+    "It is made of cartilage",
+    "It lies outside the wrist",
+    "Its blood supply is poor"
+   ],
+   "answer": 3,
+   "explain": "Poor vascular supply risks avascular necrosis.",
+   "section": "u5-s10",
+   "difficulty": 1
+  },
+  {
+   "q": "What passes through the carpal tunnel?",
+   "choices": [
+    "The ulnar nerve and artery",
+    "The radial nerve and EPL",
+    "Nine flexor tendons and the median nerve",
+    "All the extensor tendons"
+   ],
+   "answer": 2,
+   "explain": "FDS (4), FDP (4) and FPL plus the median nerve.",
+   "section": "u5-s10",
+   "difficulty": 2
+  },
+  {
+   "q": "Pollicis, minimi and digitorum refer to:",
+   "choices": [
+    "Digits 2-5, little finger, thumb",
+    "Thumb, little finger, digits 2-5",
+    "Little finger, thumb, digits 2-5",
+    "Index, thumb, all digits"
+   ],
+   "answer": 1,
+   "explain": "These are standard muscle-name terms.",
+   "section": "u5-s6",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "Thenar refers to the:",
+   "choices": [
+    "Thumb side of the palm",
+    "Little-finger side of the palm",
+    "Back of the hand",
+    "Fingertips"
+   ],
+   "answer": 0,
+   "explain": "Hypothenar is the little-finger side.",
+   "section": "u5-s6",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "What prevents the finger joints from bending side to side?",
+   "choices": [
+    "Pulleys",
+    "Transverse carpal ligament",
+    "Extensor retinaculum",
+    "Collateral ligaments"
+   ],
+   "answer": 3,
+   "explain": "Collaterals on each side stabilize the joint.",
+   "section": "u5-s6",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "What is the main job of the extensor hood?",
+   "choices": [
+    "Flex the MCPs",
+    "Rotate the forearm",
+    "Help small intrinsic muscles extend the PIPs and DIPs",
+    "Abduct the thumb"
+   ],
+   "answer": 2,
+   "explain": "Lumbricals and interossei join the hood to extend the IPs.",
+   "section": "u5-s6",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which joint is ellipsoid and biaxial in the fingers?",
+   "choices": [
+    "PIP",
+    "MCP",
+    "DIP",
+    "CMC of D2"
+   ],
+   "answer": 1,
+   "explain": "MCPs flex/extend and abduct/adduct.",
+   "section": "u5-s6",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which tendons form the anatomical snuffbox borders?",
+   "choices": [
+    "EPL medially; APL and EPB laterally",
+    "EDM and EI",
+    "EPB and ED",
+    "APL and EI"
+   ],
+   "answer": 0,
+   "explain": "The scaphoid lies in the snuffbox floor.",
+   "section": "u5-s7",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which muscle is the only one that flexes the DIP joints?",
+   "choices": [
+    "Flexor digitorum superficialis",
+    "Lumbricals",
+    "Palmar interossei",
+    "Flexor digitorum profundus"
+   ],
+   "answer": 3,
+   "explain": "FDP inserts on the distal phalanges.",
+   "section": "u5-s7",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "The thenar intrinsic group (OAF) includes:",
+   "choices": [
+    "Adductor pollicis, interossei, lumbricals",
+    "Opponens, abductor, flexor digiti minimi",
+    "Opponens pollicis, abductor pollicis brevis, flexor pollicis brevis",
+    "FPL, EPL, APL"
+   ],
+   "answer": 2,
+   "explain": "Thenar OAF muscles move the thumb.",
+   "section": "u5-s7",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which muscles abduct the fingers?",
+   "choices": [
+    "Palmar interossei",
+    "Dorsal interossei",
+    "Lumbricals",
+    "Adductor pollicis"
+   ],
+   "answer": 1,
+   "explain": "DAB: Dorsal ABduct.",
+   "section": "u5-s7",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which nerve supplies most thumb thenar muscles?",
+   "choices": [
+    "Median nerve",
+    "Ulnar nerve",
+    "Radial nerve",
+    "Musculocutaneous nerve"
+   ],
+   "answer": 0,
+   "explain": "The median nerve supplies thenar OAF.",
+   "section": "u5-s7",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "What defines an intrinsic hand muscle?",
+   "choices": [
+    "It originates on the humerus",
+    "It crosses the elbow",
+    "It only extends the fingers",
+    "It originates and inserts within the hand"
+   ],
+   "answer": 3,
+   "explain": "Extrinsics start outside the hand.",
+   "section": "u5-s7",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "What are the three arches of the hand?",
+   "choices": [
+    "Thenar, hypothenar, and middle",
+    "Radial, ulnar, and central",
+    "Proximal transverse, distal transverse, and longitudinal",
+    "Palmar, dorsal, and lateral"
+   ],
+   "answer": 2,
+   "explain": "These arches let the hand cup.",
+   "section": "u5-s8",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which arch is mobile and deepens with finger flexion?",
+   "choices": [
+    "Proximal transverse arch",
+    "Distal transverse arch",
+    "Longitudinal arch only",
+    "Carpal tunnel arch"
+   ],
+   "answer": 1,
+   "explain": "The metacarpal-head arch is the mobile one.",
+   "section": "u5-s8",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "Holding a key between the thumb pad and the side of the index finger is a:",
+   "choices": [
+    "Lateral (key) pinch",
+    "Tip pinch",
+    "Cylindrical grip",
+    "Hook grip"
+   ],
+   "answer": 0,
+   "explain": "Lateral pinch uses the side of the index.",
+   "section": "u5-s8",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "Holding a pen with the thumb, index and middle fingers is a:",
+   "choices": [
+    "Lateral pinch",
+    "Cylindrical grip",
+    "Hook grip",
+    "Three-jaw chuck (tripod) pinch"
+   ],
+   "answer": 3,
+   "explain": "Thumb pad opposes index and middle pads.",
+   "section": "u5-s8",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "Holding a dinner plate with MCPs flexed and IPs straight is a:",
+   "choices": [
+    "Spherical grip",
+    "Tip pinch",
+    "Lumbrical grip",
+    "Composite fist"
+   ],
+   "answer": 2,
+   "explain": "MCP flexion with IP extension is the lumbrical action.",
+   "section": "u5-s8",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "Grasping a doorknob or ball with spread fingers is a:",
+   "choices": [
+    "Cylindrical grip",
+    "Spherical grip",
+    "Hook grip",
+    "Lateral pinch"
+   ],
+   "answer": 1,
+   "explain": "The fingers curve around a round object.",
+   "section": "u5-s8",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "Difficulty with thumb opposition and numbness in the thumb, index and middle fingers point to injury of the:",
+   "choices": [
+    "Median nerve",
+    "Radial nerve",
+    "Ulnar nerve",
+    "Axillary nerve"
+   ],
+   "answer": 0,
+   "explain": "The median nerve supplies thenar muscles and that sensory area.",
+   "section": "u5-s9",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which nerve injury causes wrist drop?",
+   "choices": [
+    "Ulnar nerve",
+    "Median nerve",
+    "Musculocutaneous nerve",
+    "Radial nerve"
+   ],
+   "answer": 3,
+   "explain": "The radial nerve supplies all wrist and finger extensors.",
+   "section": "u5-s9",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "Sensation on the palmar side of the small finger is supplied by the:",
+   "choices": [
+    "Median nerve",
+    "Radial nerve",
+    "Ulnar nerve",
+    "Musculocutaneous nerve"
+   ],
+   "answer": 2,
+   "explain": "Ulnar covers D5 and half of D4.",
+   "section": "u5-s9",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "Which describes a swan neck deformity?",
+   "choices": [
+    "MCP extension, PIP flexion, DIP hyperextension",
+    "MCP flexion, PIP hyperextension, DIP flexion",
+    "Ulnar deviation at the MCPs",
+    "DIP stuck in flexion only"
+   ],
+   "answer": 1,
+   "explain": "Swan neck hyperextends the PIP.",
+   "section": "u5-s10",
+   "difficulty": 2
+  },
+  {
+   "q": "Which describes a boutonniere deformity?",
+   "choices": [
+    "MCP extension, PIP flexion, DIP hyperextension",
+    "MCP flexion, PIP hyperextension, DIP flexion",
+    "Flexion contracture of the ring finger",
+    "Thumb CMC subluxation"
+   ],
+   "answer": 0,
+   "explain": "Boutonniere flexes the PIP.",
+   "section": "u5-s10",
+   "difficulty": 2
+  },
+  {
+   "q": "A client cannot straighten the tip of the finger after a ball struck it. This is:",
+   "choices": [
+    "Trigger finger",
+    "Boutonniere deformity",
+    "Dupuytren's contracture",
+    "Mallet finger"
+   ],
+   "answer": 3,
+   "explain": "The terminal extensor tendon is injured at the DIP.",
+   "section": "u5-s10",
+   "difficulty": 1
+  },
+  {
+   "q": "Dupuytren's contracture involves thickening of the:",
+   "choices": [
+    "Extensor retinaculum",
+    "Annular ligament of the elbow",
+    "Palmar aponeurosis",
+    "Ulnar collateral ligament of the thumb"
+   ],
+   "answer": 2,
+   "explain": "Nodules in the palmar fascia pull fingers into flexion.",
+   "section": "u5-s10",
+   "difficulty": 2
+  },
+  {
+   "q": "Ulnar drift of the fingers at the MCPs is most associated with:",
+   "choices": [
+    "Carpal tunnel syndrome",
+    "Rheumatoid arthritis",
+    "Colles fracture",
+    "Mallet finger"
+   ],
+   "answer": 1,
+   "explain": "RA weakens MCP supporting structures.",
+   "section": "u5-s10",
+   "difficulty": 1
+  },
+  {
+   "q": "Placing a dinner plate in an overhead cabinet uses elbow ____ and forearm ____.",
+   "choices": [
+    "Extension; pronation",
+    "Flexion; supination",
+    "Extension; supination",
+    "Flexion; pronation"
+   ],
+   "answer": 0,
+   "explain": "Reaching up with palm down is extension plus pronation.",
+   "section": "u5-s11",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "Bringing a spoonful of soup to the mouth uses elbow ____ and forearm ____.",
+   "choices": [
+    "Extension; pronation",
+    "Flexion; pronation",
+    "Extension; supination",
+    "Flexion; supination"
+   ],
+   "answer": 3,
+   "explain": "The hand comes to the mouth palm up.",
+   "section": "u5-s11",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "Slowly lowering a dumbbell from the shoulder to the side involves which contraction of the elbow flexors?",
+   "choices": [
+    "Concentric",
+    "Isometric",
+    "Eccentric",
+    "Isokinetic"
+   ],
+   "answer": 2,
+   "explain": "The flexors lengthen to control the descent.",
+   "section": "u5-s11",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "Pressing the forearms down into a table without moving is what contraction type?",
+   "choices": [
+    "Concentric",
+    "Isometric",
+    "Eccentric",
+    "Passive"
+   ],
+   "answer": 1,
+   "explain": "No joint motion occurs while the triceps and pronators work.",
+   "section": "u5-s11",
+   "difficulty": 1,
+   "exam": "exam2"
+  },
+  {
+   "q": "When a muscle's origin moves toward its insertion, as in a push-up, it is called:",
+   "choices": [
+    "Reverse muscle action",
+    "Active insufficiency",
+    "Passive insufficiency",
+    "Active sufficiency"
+   ],
+   "answer": 0,
+   "explain": "The distal segment is fixed and the proximal part moves.",
+   "section": "u5-s11",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "The overhead triceps stretch puts the stretched elbow into:",
+   "choices": [
+    "Extension",
+    "Pronation",
+    "Hyperextension",
+    "Flexion"
+   ],
+   "answer": 3,
+   "explain": "Elbow flexion elongates the triceps.",
+   "section": "u5-s11",
+   "difficulty": 2,
+   "exam": "exam2"
+  },
+  {
+   "q": "To stretch the flexor carpi radialis, position the wrist in:",
+   "choices": [
+    "Flexion and radial deviation",
+    "Flexion and ulnar deviation",
+    "Extension and ulnar deviation",
+    "Extension and radial deviation"
+   ],
+   "answer": 2,
+   "explain": "Stretch by moving opposite every prime action.",
+   "section": "u5-s11",
+   "difficulty": 3,
+   "exam": "exam2"
+  },
+  {
+   "q": "On Exam 2, the short-answer item asks you to list how many muscles with their movements and stretches?",
+   "choices": [
+    "3",
+    "5",
+    "10",
+    "1"
+   ],
+   "answer": 1,
+   "explain": "The rundown asks for 5 muscles, their movements, use during the test and stretches.",
+   "section": "u5-s12",
+   "difficulty": 1,
+   "exam": "exam2"
+  }
+ ]
+}

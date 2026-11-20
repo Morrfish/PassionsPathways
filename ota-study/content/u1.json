@@ -1,0 +1,1208 @@
+{
+ "id": "u1",
+ "title": "Foundations: Terminology, Kinesiology & Pathology",
+ "summary": "Introduces kinesiology and its place in OT, the theories, models and frames of reference that guide practice, and the language of movement: anatomical position, directional terms, joint motions, and planes and axes. It then covers muscle physiology and attachments, core disease terminology, and common musculoskeletal pathologies such as OA, fractures, osteoporosis and fibromyalgia.",
+ "sources": [
+  "Learning the Lingo.docx",
+  "Intro to kinesiology and pathology.pptx",
+  "Theory, model and frame of reference-1.pdf",
+  "OTA 1050 8/24 Notes",
+  "A and P 8/31/26",
+  "jeopardy_disease_terminology.pptx",
+  "MusculoskeletalSystemDisease-2 (2).docx"
+ ],
+ "sections": [
+  {
+   "id": "u1-s1",
+   "heading": "Kinesiology, Pathology & OT Foundations",
+   "body": [
+    "<b>Kinesiology</b> is the study of the principles of mechanics and anatomy in relation to human movement. It draws on anatomy, physiology, biomechanics, physics and even calculus.",
+    "<b>Two approaches to analyzing movement:</b><ul><li><b>Quantitative</b> - numerical data gathered under standardized conditions (formal goniometric ROM, formal manual muscle testing, computer/video motion analysis).</li><li><b>Qualitative</b> - information from observation or interview that is more subjective (watching a client move, interviewing about task performance, gross ROM or gross MMT screens).</li></ul>",
+    "<b>Clinical reasoning</b> merges the science and the art of practice: understand the diagnosis, analyze the person's unique problems and characteristics, and determine the impact on occupational performance. OT reasoning is unique because the goal is helping people become self-sufficient in daily activities.",
+    "The unique nature of OT is reflected in its core values, philosophical assumptions, personalized care, person-first language and the language of the OT Practice Framework, and evidence-based practice.",
+    "<b>Accreditation & certification:</b> ACOTE sets educational standards (e.g., B.1.4 know the structure and function of the human body; B.2.7 analyze tasks relative to occupations, performance skills, patterns, activity demands, contexts and client factors). <b>NBCOT</b> (National Board for Certification in Occupational Therapy) is separate from AOTA and ACOTE; it defines entry-level practice through Domain, Task, Knowledge and Skill statements and administers the national certification exam.",
+    "<b>Historical eras of OT practice:</b><table><tr><th>Years</th><th>Era / Model</th><th>Key points</th></tr><tr><td>1900s-1920s</td><td>Reconstruction & Curative Era</td><td>OT grew out of the moral treatment movement; WWI increased demand for physical-disability services; craftwork led to more measurement and record keeping.</td></tr><tr><td>1930s-1950s</td><td>Reductionistic Era & Orthopedic Model</td><td>Focus on the smallest component of injury; identifying motor deficits; closer ties to medicine; WWII increased demand.</td></tr><tr><td>1950s-1970s</td><td>Medical Era & Kinetic Model</td><td>Medical model emphasis, scientific effort, growth of OT journals and texts.</td></tr><tr><td>1970-present</td><td>Occupation Era & Biomechanical Model</td><td>Medical model still primary; biomechanical model incorporates kinesiology; renewed emphasis on occupation.</td></tr></table>"
+   ]
+  },
+  {
+   "id": "u1-s2",
+   "heading": "Theory, Models & Frames of Reference",
+   "body": [
+    "<b>Theory</b> - broadly applicable, supported by many lines of evidence, and subject to change. In OT, theory helps us (1) understand individuals and their occupations and (2) predict and improve functioning and occupational performance.",
+    "<b>Model</b> - a way to organize thinking and intervention around the profession's philosophical base.<ul><li><b>MOHO (Model of Human Occupation)</b> - systems-based; the person is a dynamic system affected by how they take in, process and respond to information. Components: <b>volition</b> (motivation), <b>habituation</b> (habits and roles) and <b>performance capacity</b>.</li><li><b>PEO / PEOP (Person-Environment-Occupation[-Performance])</b> - client-centered; Person = physical and psychological qualities; Environment = physical and social context that can be barriers or supports; Occupation = everyday meaningful activities.</li><li><b>Occupational Adaptation</b> - uses the occupations a client wants to return to as motivation for adapting; considers sensorimotor, cognitive and psychosocial factors.</li><li><b>CMOP (Canadian Model of Occupational Performance)</b> - links environment and occupation with <b>spirituality</b> at the core. Do not confuse with the COPM, which is an assessment.</li></ul>",
+    "<b>Frame of reference</b> - gives overarching direction on how to provide treatment: population, theory of change, function/dysfunction, intervention principles, practitioner role and evaluation tools.<ul><li><b>Biomechanical</b> - strength, endurance, ROM, edema control.</li><li><b>Rehabilitation</b> - maximize independence regardless of the deficit (often through compensation and adaptation).</li><li><b>Cognitive-Behavioral</b> - thoughts influence behavior.</li><li><b>Sensory-Motor (sensory integration)</b> - how auditory, vestibular, proprioceptive, tactile and visual input combine to support a child's learning and adaptive behavior.</li><li><b>Neurological (e.g., NDT - Neuro-Developmental Treatment)</b> - alignment, planes of movement, ROM, base of support, postural control, weight shift, mobility and strength.</li><li><b>Developmental</b> - development follows a sequence from infancy to adulthood; behavior builds on mastery of earlier stages.</li></ul>"
+   ]
+  },
+  {
+   "id": "u1-s3",
+   "heading": "Anatomical Position & Directional Terms",
+   "body": [
+    "<b>Anatomical position:</b> standing upright, facing forward, feet flat and parallel, arms at the sides with palms facing forward (forearms supinated) and fingers extended. It is the universal reference point: all directional terms and joint motions are described from it.",
+    "<table><tr><th>Term</th><th>Meaning</th></tr><tr><td>Anterior / ventral</td><td>Toward the front</td></tr><tr><td>Posterior / dorsal</td><td>Toward the back</td></tr><tr><td>Medial</td><td>Closer to the midline</td></tr><tr><td>Lateral</td><td>Farther from the midline</td></tr><tr><td>Proximal</td><td>Closer to the trunk (limbs only)</td></tr><tr><td>Distal</td><td>Farther from the trunk (limbs only)</td></tr><tr><td>Superior</td><td>Toward the head; above</td></tr><tr><td>Inferior</td><td>Toward the feet; below</td></tr><tr><td>Cranial</td><td>Toward the head (trunk only)</td></tr><tr><td>Caudal</td><td>Toward the buttocks/tail (trunk only)</td></tr><tr><td>Radial</td><td>Thumb side of forearm, wrist, hand</td></tr><tr><td>Ulnar</td><td>Little-finger side of forearm, wrist, hand</td></tr><tr><td>Superficial</td><td>Closer to the body surface</td></tr><tr><td>Deep</td><td>Farther from the body surface</td></tr></table>",
+    "Examples: the sternum is anterior to the spine; the elbow is proximal to the wrist; the nose is medial to the eyes; the knee is distal to the hip; skin is superficial to muscle."
+   ]
+  },
+  {
+   "id": "u1-s4",
+   "heading": "Joint Movements",
+   "body": [
+    "Movement happens at joints where bones articulate. <b>Always name the joint with the motion</b> (e.g., 'elbow flexion', not just 'flexion').",
+    "<ul><li><b>Flexion</b> - bending; bones move closer together. <b>Extension</b> - straightening, return toward anatomical position; beyond it is <b>hyperextension</b>.</li><li>Ankle exceptions: <b>dorsiflexion</b> (top of foot toward shin/ceiling) and <b>plantar flexion</b> (toes point toward floor).</li><li><b>Lateral flexion</b> - side-bending of the trunk or neck.</li><li><b>Abduction</b> - away from midline; <b>adduction</b> - toward midline. The middle finger and second toe are the reference midline, so they only abduct (to either side).</li><li><b>Radial / ulnar deviation</b> - wrist moving toward the thumb side (abduction) or little-finger side (adduction).</li><li><b>Horizontal abduction / adduction</b> - at the shoulder with the arm flexed or abducted to 90 degrees, moving away from or across the body.</li><li><b>Medial (internal) rotation</b> - anterior surface turns toward midline; <b>lateral (external) rotation</b> - anterior surface turns away (shoulder, hip). Trunk and neck rotate left/right.</li><li><b>Supination</b> - forearm, palm up; <b>pronation</b> - palm down.</li><li><b>Inversion</b> (supination) - sole turns inward; <b>eversion</b> (pronation) - sole turns outward.</li><li><b>Protraction</b> - forward/away from midline ('protrude'); <b>retraction</b> - backward/toward midline ('retreat'). Applies to scapula, clavicle, head and jaw. Pulling the shoulder blades together = scapular retraction.</li><li><b>Elevation / depression</b> - scapula, mandible (closing the mouth = mandibular elevation), ribs.</li><li><b>Upward / downward rotation</b> and <b>tilt</b> of the scapula; scapular tilt accompanies shoulder hyperextension.</li><li><b>Scaption</b> - raising the arm in the scapular plane, between flexion and abduction (about 30-45 degrees anterior to the frontal plane).</li><li><b>Opposition / reposition</b> - thumb pad to finger pads and back; thumb also has palmar and radial abduction.</li><li><b>Circumduction</b> - cone-shaped movement; not a true single motion but a combination of flexion, abduction, extension and adduction (shoulder, wrist, hip).</li><li><b>Pelvic tilt</b> - anterior, posterior and lateral.</li></ul>",
+    "<b>Motions by joint:</b><table><tr><th>Joint</th><th>Motions</th></tr><tr><td>Spine / neck</td><td>Flexion, extension (hyperextension), rotation, lateral flexion</td></tr><tr><td>Ribs</td><td>Elevation (expansion), depression (collapse)</td></tr><tr><td>Scapula</td><td>Elevation, depression, protraction, retraction, upward/downward rotation, tilt</td></tr><tr><td>Shoulder</td><td>Flexion, extension/hyperextension, abduction, adduction, horizontal abd/add, internal/external rotation, circumduction, scaption</td></tr><tr><td>Elbow</td><td>Flexion, extension</td></tr><tr><td>Forearm</td><td>Supination, pronation</td></tr><tr><td>Wrist</td><td>Flexion, extension, radial deviation, ulnar deviation, circumduction</td></tr><tr><td>Thumb</td><td>Flexion, extension, abduction (palmar and radial), adduction, opposition, reposition</td></tr><tr><td>Fingers</td><td>Flexion, extension, abduction, adduction</td></tr><tr><td>Mandible</td><td>Elevation, depression, protraction, retraction, lateral deviation</td></tr><tr><td>Pelvis</td><td>Anterior, posterior and lateral tilt</td></tr><tr><td>Hip</td><td>Flexion, extension, abduction, adduction, internal/external rotation</td></tr><tr><td>Knee</td><td>Flexion, extension; medial/lateral rotation only when flexed</td></tr><tr><td>Ankle</td><td>Dorsiflexion, plantar flexion</td></tr><tr><td>Foot</td><td>Inversion/supination, eversion/pronation</td></tr><tr><td>Toes</td><td>Flexion, extension</td></tr></table>"
+   ]
+  },
+  {
+   "id": "u1-s5",
+   "heading": "Planes & Axes of Motion",
+   "body": [
+    "A <b>plane</b> is a flat reference surface dividing the body, along which movement occurs (think of a sheet of paper). An <b>axis</b> is a line through the center of the joint around which the part rotates (a pencil pushed through the paper). The axis is always perpendicular to its plane. <b>Movement occurs in a plane, around an axis.</b>",
+    "<table><tr><th>Plane</th><th>Divides body into</th><th>Motions</th><th>Axis</th></tr><tr><td>Sagittal</td><td>Right and left</td><td>Flexion, extension, hyperextension, dorsiflexion, plantar flexion</td><td>Frontal (coronal / medial-lateral)</td></tr><tr><td>Frontal (coronal)</td><td>Front and back</td><td>Abduction, adduction, lateral flexion, radial/ulnar deviation, inversion/eversion</td><td>Sagittal (anterior-posterior)</td></tr><tr><td>Transverse (horizontal)</td><td>Top and bottom</td><td>Rotation (internal/external, left/right), supination/pronation, horizontal abd/add</td><td>Vertical (longitudinal)</td></tr></table>",
+    "Applied examples: a jumping jack (hip/shoulder abduction) is in the frontal plane around a sagittal axis. Elbow flexion while bringing a toothbrush to the mouth is sagittal plane, frontal axis. Forearm pronation is transverse plane, vertical axis.",
+    "<b>Activity analysis</b> (OT application): pick an occupation (e.g., brushing teeth), break out one step (grasping the brush), name each joint motion with its plane and axis, then consider how an illness or dysfunction could interfere with that step."
+   ]
+  },
+  {
+   "id": "u1-s6",
+   "heading": "Arthrology Wrap-Up: Connective Tissue & Joint Injuries",
+   "body": [
+    "<ul><li><b>Tendon</b> - dense, tough cord or band connecting muscle to bone; some have a <b>tendon sheath</b> (fibrous sleeve). Overstretching injury = strain.</li><li><b>Ligament</b> - connects bone to bone; overstretch/tear injury = sprain.</li><li><b>Aponeurosis</b> - broad, flat sheet of tendon-like tissue (e.g., palm and sole).</li><li><b>Bursa</b> - small fluid-filled sac that reduces friction where tendons pass over bony prominences; may be natural or acquired.</li></ul>",
+    "<b>Assessment tools:</b> <b>goniometry</b> (measuring joint angles/ROM), MRI, arthroscopy, and synovial fluid aspiration and analysis (fluid removed and cultured to identify infection, crystals or inflammation).",
+    "<b>Joint injuries & inflammation:</b><ul><li><b>Dislocation</b> - complete separation of the articular surfaces.</li><li><b>Subluxation</b> - partial dislocation; common at the shoulder after stroke.</li><li><b>Sprain</b> - partial or complete tear of ligament fibers. <b>Strain</b> - overstretching/tearing of muscle or tendon fibers. Complete tears often need surgical repair.</li><li><b>Tendinitis</b> (tendon), <b>tenosynovitis</b> (tendon sheath), <b>synovitis</b> (synovial membrane), <b>capsulitis</b> (joint capsule), <b>bursitis</b> (bursa) - the suffix -itis means inflammation.</li></ul>"
+   ]
+  },
+  {
+   "id": "u1-s7",
+   "heading": "Muscle Physiology & Properties",
+   "body": [
+    "<b>Muscle types:</b> smooth (internal organs, involuntary), cardiac (heart), skeletal (striated, voluntary; moves bones at joints). Skeletal muscle fibers are wrapped in connective tissue (fascia) and richly supplied with nerves and blood vessels.",
+    "<b>Four functions of skeletal muscle:</b> produce movement, maintain posture/body position, stabilize joints (prevent excessive motion), and generate heat to maintain body temperature.",
+    "<b>Motor unit</b> = one motor neuron plus all the muscle fibers it innervates. Fibers fire all-or-none. Small motor units (few fibers) give fine control; large units give strength. <b>Slow-twitch</b> fibers resist fatigue; <b>fast-twitch</b> fibers act quickly but fatigue sooner. Fatigue is reduced by activating motor units in sequence rather than all at once.",
+    "<b>Contraction process:</b> an efferent (motor) neuron sends an action potential; calcium enters the presynaptic terminal, releasing <b>acetylcholine (ACh)</b> at the neuromuscular junction, which triggers contraction. <b>Acetylcholinesterase (AChE)</b> breaks down ACh to end the signal. Afferent neurons carry sensory information back to the CNS.",
+    "<b>Sliding filament theory:</b> muscle -> fascicles -> muscle fibers -> myofibrils -> sarcomeres (bounded by Z discs, with actin thin filaments, myosin thick filaments, and the M line). Actin slides over myosin so sarcomeres shorten -> fibers shorten -> muscle contracts.",
+    "<b>Energy:</b> aerobic respiration uses oxygen; anaerobic metabolism uses glucose without oxygen and produces lactic acid, contributing to burning and cramping. <b>DOMS</b> (delayed-onset muscle soreness) appears more than a day after exercise from minor muscle damage and inflammation.",
+    "<b>Speed and strength:</b> speed depends on axon diameter, myelin thickness and fiber type (faster contraction = more fatigue). Strength depends on the number and size of fibers and axon size; larger muscles contract more strongly. The CNS automatically adjusts the number and type of motor units recruited for each movement.",
+    "<b>Properties:</b> <b>irritability</b> (responds to stimuli), <b>contractility</b> (develops tension when stimulated), <b>extensibility</b> (can be stretched), <b>elasticity</b> (recoils to resting length). <b>Tension</b> = force built up in a muscle (active and passive). <b>Tone</b> = slight resting tension, a state of readiness (hypertonicity = too much, hypotonicity = too little).",
+    "<b>Excursion</b> - distance from maximal elongation to maximal shortening. A muscle can typically shorten to about half its resting length and lengthen by about the same amount (e.g., shortened 3, resting 6, stretched 9). <b>Optimal length</b> - a slight stretch before contracting maximizes actin-myosin overlap plus some passive tension, so force is greatest (e.g., wind-up before kicking a ball). Two-joint muscles (biceps brachii, hamstrings) gain an advantage by being stretched over one joint while contracting over the other."
+   ]
+  },
+  {
+   "id": "u1-s8",
+   "heading": "Muscle Attachments, Fiber Arrangement & Naming",
+   "body": [
+    "<b>Origin</b> - the more stable (usually proximal) attachment. <b>Insertion</b> - the more movable (usually distal) attachment. Normally the insertion moves toward the origin along the <b>line of pull</b>.",
+    "<b>Reversal of muscle action</b> - the usual insertion becomes fixed and the origin moves toward it (e.g., in a chin-up the biceps pull the trunk up toward the fixed forearm).",
+    "<b>Fiber arrangement:</b><ul><li><b>Fusiform (parallel)</b> - fibers run parallel to the line of force; long fibers give a large range of motion but less force (e.g., sternocleidomastoid, sartorius).</li><li><b>Pennate</b> - short, diagonal, feather-like fibers; more force over a shorter range. <b>Unipennate</b> examples: flexor pollicis longus, semimembranosus. (Bipennate and multipennate also exist.)</li></ul>",
+    "<b>One-joint vs. two-joint muscles</b> - most muscles cross one joint; two-joint muscles such as biceps brachii (shoulder and elbow) and hamstrings (hip and knee) cross two and can generate more momentum.",
+    "<b>Muscles are named by:</b> location (tibialis anterior, rectus abdominis), shape (trapezius), action (extensor carpi ulnaris), number of heads (biceps, triceps), attachments (sternocleidomastoid), fiber direction (rectus, oblique), and size (gluteus maximus/minimus).",
+    "<b>Extrinsic</b> muscles originate outside the region they act on (e.g., forearm muscles moving the fingers); <b>intrinsic</b> muscles begin and end within the region (e.g., small hand muscles)."
+   ]
+  },
+  {
+   "id": "u1-s9",
+   "heading": "Disease Terminology",
+   "body": [
+    "<table><tr><th>Term</th><th>Meaning</th></tr><tr><td>Disease</td><td>Deviation from normal health/wellness (WHO: physical, mental and social)</td></tr><tr><td>Pathophysiology</td><td>Functional/physiologic changes in the body from disease, at the organ level</td></tr><tr><td>Diagnosis</td><td>Identifying a specific disease by name, signs and symptoms</td></tr><tr><td>Etiology</td><td>Cause(s) of a disease</td></tr><tr><td>Idiopathic</td><td>Cause unknown</td></tr><tr><td>Iatrogenic</td><td>Caused by a treatment, procedure or error (e.g., bladder infection after catheterization)</td></tr><tr><td>Pathogenesis</td><td>Sequence of events in tissue changes during the disease process</td></tr><tr><td>Epidemiology</td><td>Science of tracking the pattern and occurrence of disease</td></tr><tr><td>Morbidity</td><td>Disease rates within a group; also the functional impairment a condition causes</td></tr><tr><td>Mortality</td><td>Death rates from a disease</td></tr><tr><td>Signs</td><td>Objective indicators observable by others (fever, rash)</td></tr><tr><td>Symptoms</td><td>Subjective feelings reported by the patient (pain, nausea, fatigue)</td></tr><tr><td>Lesion</td><td>Specific local tissue change, microscopic or visible</td></tr><tr><td>Acute</td><td>Short-term, often sudden onset</td></tr><tr><td>Chronic</td><td>Long-term, persistent</td></tr><tr><td>Latent</td><td>Silent stage with no clinical signs</td></tr><tr><td>Precipitating factor</td><td>Condition that triggers an acute episode</td></tr><tr><td>Exacerbation</td><td>Signs and symptoms increase (flare); remission is the opposite</td></tr><tr><td>Complications</td><td>New secondary problems after the original disease begins</td></tr><tr><td>Prognosis</td><td>Probable outcome/likelihood of recovery</td></tr><tr><td>Communicable</td><td>Infection that spreads person to person (direct or indirect)</td></tr><tr><td>Prevention</td><td>Vaccines, diet/lifestyle changes, removing harmful materials, stopping harmful activities</td></tr><tr><td>Atrophy</td><td>Decrease in cell size, shrinking tissue/organ mass</td></tr><tr><td>Necrosis</td><td>Death of cells</td></tr><tr><td>Ischemia</td><td>Reduced blood flow to an area, causing inadequate oxygen</td></tr><tr><td>Infarction</td><td>Area of dead cells from lack of oxygen</td></tr><tr><td>Gangrene</td><td>Necrotic tissue invaded by bacteria</td></tr></table>"
+   ]
+  },
+  {
+   "id": "u1-s10",
+   "heading": "Musculoskeletal Pathology",
+   "body": [
+    "<b>Osteoarthritis (OA)</b> - degenerative, 'wear and tear', non-inflammatory joint disease (more common with age; after 50 more common in women). Risk factors: age, overuse/repetitive stress, prior injury, obesity, genetics, abnormal joint mechanics, weak muscles. Course: articular cartilage of weight-bearing joints roughens and erodes -> enzymes speed breakdown -> subchondral bone exposed, osteophytes (bone spurs) form and may break off -> joint space narrows, secondary inflammation. Signs: no systemic symptoms, aching with weight bearing/movement, limited motion, hard enlarged joints, crepitus, muscle atrophy, little soft-tissue swelling. Dx: X-ray (joint space narrowing, spurs), MRI, blood tests and fluid analysis to rule out RA, gout or infection. Contrast: <b>rheumatoid arthritis</b> is a systemic autoimmune inflammatory disease.",
+    "<b>Fractures</b> - a break in bone. Types: closed (skin intact) vs. open/compound (bone through skin; infection risk); complete vs. incomplete; transverse, oblique, spiral (twisting), comminuted (3+ pieces), greenstick (bends and cracks on one side; children), impacted, compression, avulsion (tendon/ligament pulls off a piece of bone), stress (repetitive overuse).<br><b>Healing:</b> hematoma forms -> inflammation, necrosis of bone ends, osteoclasts remove debris -> granulation tissue with new vessels and fibroblasts -> fibrocartilaginous callus (about 2-6 weeks) -> osteoblasts form new bone (ossification/union) -> remodeling (6 weeks to 1 year). Needs good circulation and immobilization; children heal faster than adults.<br><b>Signs:</b> pain, swelling, deformity, loss of function, crepitus, ecchymosis (bruising); severe pain can cause shock.<br><b>Treatment:</b> X-ray dx; reduction (closed or open), immobilization (cast, splint, brace, traction), ORIF (pins, plates, rods, screws).<br><b>Complications:</b> infection, muscle spasm causing malalignment, ischemia from edema or tight casts, <b>compartment syndrome</b> (pressure within non-elastic fascia compresses nerves and vessels), fat emboli, nerve damage, delayed union, malunion (heals deformed), nonunion.<br>Falls are the leading cause of fractures in older adults; hip fractures are the most serious (about 80% occur in older women, and many patients die within a year). OT speeds return to independence.",
+    "<b>Tendinitis / tenosynovitis / repetitive strain (cumulative trauma)</b> - inflammation of the tendon or its sheath from repetitive overuse. Cycle: overuse -> microtrauma -> pain, swelling, limited motion -> rest, disuse, weakness. Signs: pain, swelling, weakness, crepitus, muscle imbalance, substitution patterns. Tx: rest, splinting, NSAIDs, edema control, then gradual ROM and strengthening, plus prevention education. Related: lateral epicondylitis (tennis elbow), medial epicondylitis (golfer's elbow), bursitis.",
+    "<b>Tendon tear and repair</b> - often with fractures or crush injuries; the muscle's motion is lost. Flexor tendon zone II is 'no man's land.' After surgical repair, follow physician protocols: splinting and precautions to prevent overstretching while promoting tendon gliding and limiting scar adhesions.",
+    "<b>Amputation</b> - surgical removal of part or all of a limb. Causes: congenital, peripheral vascular disease, trauma, cancer, infection, chemical/thermal/electrical injury. Course: surgery and wound healing -> pain management -> residual limb shaping and strengthening -> prosthetic fitting and training -> return to ADLs. Complications: neuromas, skin breakdown, phantom limb sensation/pain, infection, contractures. OT: desensitization, ROM, change of dominance if needed, limb wrapping (distal to proximal with tension decreasing proximally), ADL training, skin care. UE levels range from forequarter to finger; LE from hemipelvectomy to phalanges. Terminal devices: voluntary opening, voluntary closing, cosmetic.",
+    "<b>Fibromyalgia</b> - syndrome of widespread pain and stiffness in muscles, tendons and soft tissue (not joints). Cause unknown; linked to altered central pain processing and increased sensitivity to substance P. More common in women ages 20-50. Flares triggered by stress, poor sleep, overexertion, trauma, cold/damp weather, inactivity. Hallmarks: 18 specific tender points, marked fatigue, sleep disturbance, depression, IBS; no inflammation or tissue degeneration and not progressively destructive. Tx: stress reduction, regular exercise, rest, heat/massage, low-dose antidepressants, NSAIDs, pregabalin (Lyrica), OT.",
+    "<b>Osteoporosis</b> - metabolic bone disorder in which osteoclast resorption exceeds osteoblast formation, lowering bone mass and density. Primary or secondary; risk factors include sedentary lifestyle, smoking, excessive caffeine, low calcium, menopause. Affects bones rich in cancellous (spongy) bone, such as vertebrae and the femoral neck. Often silent until a fracture; signs include vertebral compression fractures, loss of height, kyphosis and back pain. Dx: bone density (DEXA) scan, X-ray. Tx: calcium, vitamin D and protein, bisphosphonates (reduce osteoclast activity), weight-bearing exercise, fall prevention.",
+    "<b>Osteomyelitis</b> - bone infection, often a complication of open fracture, surgery/hardware, nearby infection or bloodstream spread; common in adolescent males at the metaphysis of the femur or tibia. Pus forms and destroys bone, raises pressure, may lift or tear the periosteum. Signs: bone pain, swelling, redness, warmth, fever, chills, drainage. Tx: aggressive bone-penetrating antibiotics, surgical debridement.",
+    "<b>Dislocation, subluxation, sprain, strain, avulsion</b> - see definitions in Arthrology. Course: acute pain/swelling -> inflammation -> healing -> rehab of ROM and strength -> return to activity. Tx: X-ray, reduction of dislocations, immobilization. Avulsion may need surgery.",
+    "<b>Abnormal spinal curvatures:</b> <b>lordosis</b> - excessive inward (anterior) curve, usually lumbar ('swayback'); <b>kyphosis</b> - excessive outward rounding of the thoracic spine ('hunchback'); <b>scoliosis</b> - lateral (sideways) curvature forming a C or S shape."
+   ]
+  }
+ ],
+ "terms": [
+  {
+   "term": "Kinesiology",
+   "def": "Study of the principles of mechanics and anatomy in relation to human movement.",
+   "section": "u1-s1"
+  },
+  {
+   "term": "Quantitative analysis",
+   "def": "Numerical movement data gathered under standardized conditions, e.g., goniometry or formal MMT.",
+   "section": "u1-s1"
+  },
+  {
+   "term": "Qualitative analysis",
+   "def": "Observation or interview-based movement information that is more subjective.",
+   "section": "u1-s1"
+  },
+  {
+   "term": "Clinical reasoning",
+   "def": "Merging science with the art of practice to understand a diagnosis and its impact on occupational performance.",
+   "section": "u1-s1"
+  },
+  {
+   "term": "NBCOT",
+   "def": "National Board for Certification in Occupational Therapy; defines entry-level practice and gives the certification exam.",
+   "section": "u1-s1"
+  },
+  {
+   "term": "Frame of reference",
+   "def": "Guide to treatment describing population, theory of change, function/dysfunction, intervention, and evaluation.",
+   "section": "u1-s2"
+  },
+  {
+   "term": "MOHO",
+   "def": "Model of Human Occupation; systems model with volition, habituation and performance capacity.",
+   "section": "u1-s2"
+  },
+  {
+   "term": "PEO",
+   "def": "Person-Environment-Occupation model; client-centered fit between person, context and meaningful activity.",
+   "section": "u1-s2"
+  },
+  {
+   "term": "CMOP",
+   "def": "Canadian Model of Occupational Performance; spirituality at its core (not the COPM assessment).",
+   "section": "u1-s2"
+  },
+  {
+   "term": "Biomechanical FOR",
+   "def": "Frame of reference addressing strength, endurance, ROM and edema.",
+   "section": "u1-s2"
+  },
+  {
+   "term": "Rehabilitation FOR",
+   "def": "Frame of reference aimed at maximum independence despite the deficit.",
+   "section": "u1-s2"
+  },
+  {
+   "term": "Anatomical position",
+   "def": "Upright, facing forward, feet parallel, arms at sides with palms forward; reference for all terms.",
+   "section": "u1-s3"
+  },
+  {
+   "term": "Proximal",
+   "def": "Closer to the trunk (used for limbs).",
+   "section": "u1-s3"
+  },
+  {
+   "term": "Distal",
+   "def": "Farther from the trunk (used for limbs).",
+   "section": "u1-s3"
+  },
+  {
+   "term": "Cranial / caudal",
+   "def": "Toward the head / toward the buttocks; used for the trunk.",
+   "section": "u1-s3"
+  },
+  {
+   "term": "Radial / ulnar",
+   "def": "Thumb side / little-finger side of forearm, wrist and hand.",
+   "section": "u1-s3"
+  },
+  {
+   "term": "Flexion",
+   "def": "Bending a joint so bones move closer together.",
+   "section": "u1-s4"
+  },
+  {
+   "term": "Dorsiflexion",
+   "def": "Ankle motion bringing the top of the foot toward the shin.",
+   "section": "u1-s4"
+  },
+  {
+   "term": "Plantar flexion",
+   "def": "Ankle motion pointing the toes toward the floor.",
+   "section": "u1-s4"
+  },
+  {
+   "term": "Supination",
+   "def": "Forearm rotation so the palm faces up (or forward).",
+   "section": "u1-s4"
+  },
+  {
+   "term": "Pronation",
+   "def": "Forearm rotation so the palm faces down (or back).",
+   "section": "u1-s4"
+  },
+  {
+   "term": "Inversion",
+   "def": "Turning the sole of the foot inward.",
+   "section": "u1-s4"
+  },
+  {
+   "term": "Eversion",
+   "def": "Turning the sole of the foot outward.",
+   "section": "u1-s4"
+  },
+  {
+   "term": "Protraction",
+   "def": "Moving a structure forward/away from midline (scapula, jaw).",
+   "section": "u1-s4"
+  },
+  {
+   "term": "Retraction",
+   "def": "Moving a structure backward/toward midline, e.g., squeezing shoulder blades together.",
+   "section": "u1-s4"
+  },
+  {
+   "term": "Scaption",
+   "def": "Arm elevation in the scapular plane, between flexion and abduction.",
+   "section": "u1-s4"
+  },
+  {
+   "term": "Circumduction",
+   "def": "Cone-shaped combination of flexion, abduction, extension and adduction; not a true single motion.",
+   "section": "u1-s4"
+  },
+  {
+   "term": "Plane",
+   "def": "Flat reference surface along which movement occurs.",
+   "section": "u1-s5"
+  },
+  {
+   "term": "Axis",
+   "def": "Line through a joint, perpendicular to the plane, around which rotation occurs.",
+   "section": "u1-s5"
+  },
+  {
+   "term": "Sagittal plane",
+   "def": "Divides body into right and left; flexion/extension around a frontal axis.",
+   "section": "u1-s5"
+  },
+  {
+   "term": "Frontal plane",
+   "def": "Divides body into front and back; abduction/adduction around a sagittal axis.",
+   "section": "u1-s5"
+  },
+  {
+   "term": "Transverse plane",
+   "def": "Divides body into top and bottom; rotation around a vertical axis.",
+   "section": "u1-s5"
+  },
+  {
+   "term": "Tendon",
+   "def": "Dense connective tissue connecting muscle to bone.",
+   "section": "u1-s6"
+  },
+  {
+   "term": "Bursa",
+   "def": "Fluid-filled sac that reduces friction over bony prominences.",
+   "section": "u1-s6"
+  },
+  {
+   "term": "Goniometry",
+   "def": "Measurement of joint angles/range of motion.",
+   "section": "u1-s6"
+  },
+  {
+   "term": "Subluxation",
+   "def": "Partial dislocation of a joint; common at the shoulder after stroke.",
+   "section": "u1-s6"
+  },
+  {
+   "term": "Sprain",
+   "def": "Stretch or tear of a ligament.",
+   "section": "u1-s6"
+  },
+  {
+   "term": "Tenosynovitis",
+   "def": "Inflammation of a tendon sheath.",
+   "section": "u1-s6"
+  },
+  {
+   "term": "Motor unit",
+   "def": "One motor neuron plus all muscle fibers it innervates.",
+   "section": "u1-s7"
+  },
+  {
+   "term": "Acetylcholine",
+   "def": "Neurotransmitter released at the neuromuscular junction to trigger contraction; broken down by AChE.",
+   "section": "u1-s7"
+  },
+  {
+   "term": "Sarcomere",
+   "def": "Contractile unit of a myofibril between Z discs; shortens as actin slides over myosin.",
+   "section": "u1-s7"
+  },
+  {
+   "term": "DOMS",
+   "def": "Delayed-onset muscle soreness appearing over a day after exercise.",
+   "section": "u1-s7"
+  },
+  {
+   "term": "Muscle tone",
+   "def": "Slight resting tension that keeps a muscle ready to act.",
+   "section": "u1-s7"
+  },
+  {
+   "term": "Excursion",
+   "def": "Distance a muscle can move from maximum elongation to maximum shortening.",
+   "section": "u1-s7"
+  },
+  {
+   "term": "Origin",
+   "def": "More stable attachment of a muscle.",
+   "section": "u1-s8"
+  },
+  {
+   "term": "Insertion",
+   "def": "More movable attachment of a muscle.",
+   "section": "u1-s8"
+  },
+  {
+   "term": "Reversal of muscle action",
+   "def": "Insertion is fixed and the origin moves toward it, e.g., a chin-up.",
+   "section": "u1-s8"
+  },
+  {
+   "term": "Pennate",
+   "def": "Short, diagonal, feather-like fibers giving more force over less range.",
+   "section": "u1-s8"
+  },
+  {
+   "term": "Etiology",
+   "def": "The cause of a disease.",
+   "section": "u1-s9"
+  },
+  {
+   "term": "Idiopathic",
+   "def": "Of unknown cause.",
+   "section": "u1-s9"
+  },
+  {
+   "term": "Iatrogenic",
+   "def": "Caused by a medical treatment, procedure or error.",
+   "section": "u1-s9"
+  },
+  {
+   "term": "Prognosis",
+   "def": "Predicted outcome or likelihood of recovery.",
+   "section": "u1-s9"
+  },
+  {
+   "term": "Exacerbation",
+   "def": "Increase in severity of signs and symptoms.",
+   "section": "u1-s9"
+  },
+  {
+   "term": "Ischemia",
+   "def": "Inadequate blood flow and oxygen to tissue.",
+   "section": "u1-s9"
+  },
+  {
+   "term": "Osteophyte",
+   "def": "Bone spur that forms in osteoarthritis.",
+   "section": "u1-s10"
+  },
+  {
+   "term": "Compartment syndrome",
+   "def": "Rising pressure within fascia that compresses nerves and vessels.",
+   "section": "u1-s10"
+  },
+  {
+   "term": "ORIF",
+   "def": "Open reduction internal fixation with pins, plates, rods or screws.",
+   "section": "u1-s10"
+  },
+  {
+   "term": "Osteomyelitis",
+   "def": "Infection of bone.",
+   "section": "u1-s10"
+  },
+  {
+   "term": "Kyphosis",
+   "def": "Excessive outward rounding of the thoracic spine.",
+   "section": "u1-s10"
+  },
+  {
+   "term": "Scoliosis",
+   "def": "Lateral curvature of the spine in a C or S shape.",
+   "section": "u1-s10"
+  }
+ ],
+ "questions": [
+  {
+   "q": "Kinesiology is best defined as the study of:",
+   "choices": [
+    "Mechanics and anatomy in relation to human movement",
+    "Disease patterns in populations",
+    "Cell structure and function",
+    "Drug effects on muscle"
+   ],
+   "answer": 0,
+   "explain": "Kinesiology studies mechanical and anatomical principles of movement.",
+   "section": "u1-s1",
+   "difficulty": 1
+  },
+  {
+   "q": "Which is an example of a QUANTITATIVE approach to movement analysis?",
+   "choices": [
+    "Interviewing a client about dressing",
+    "Formal goniometric ROM measurement",
+    "Watching a client walk",
+    "A gross MMT screen"
+   ],
+   "answer": 1,
+   "explain": "Formal goniometry produces standardized numerical data.",
+   "section": "u1-s1",
+   "difficulty": 1
+  },
+  {
+   "q": "An OTA watches a client reach into a cabinet and notes the movement looks stiff. This is:",
+   "choices": [
+    "Quantitative analysis",
+    "Goniometry",
+    "Qualitative analysis",
+    "Epidemiology"
+   ],
+   "answer": 2,
+   "explain": "Observation is a qualitative, more subjective approach.",
+   "section": "u1-s1",
+   "difficulty": 2
+  },
+  {
+   "q": "Which organization administers the national certification exam for OT practitioners?",
+   "choices": [
+    "AOTA",
+    "ACOTE",
+    "WHO",
+    "NBCOT"
+   ],
+   "answer": 3,
+   "explain": "NBCOT is separate from AOTA and ACOTE and runs the exam.",
+   "section": "u1-s1",
+   "difficulty": 1
+  },
+  {
+   "q": "The 1930s-1950s era of OT practice is associated with:",
+   "choices": [
+    "Reductionistic Era and Orthopedic Model",
+    "Occupation Era and Biomechanical Model",
+    "Reconstruction and Curative Era",
+    "Medical Era and Kinetic Model"
+   ],
+   "answer": 0,
+   "explain": "That period focused on the smallest component of injury and motor deficits.",
+   "section": "u1-s1",
+   "difficulty": 2
+  },
+  {
+   "q": "OT originally emerged from which movement?",
+   "choices": [
+    "Sanitation movement",
+    "Moral treatment movement",
+    "Biomechanical movement",
+    "Germ theory movement"
+   ],
+   "answer": 1,
+   "explain": "OT grew out of the moral treatment movement in the early 1900s.",
+   "section": "u1-s1",
+   "difficulty": 2
+  },
+  {
+   "q": "Which model has volition, habituation and performance capacity as components?",
+   "choices": [
+    "PEO",
+    "CMOP",
+    "MOHO",
+    "Occupational Adaptation"
+   ],
+   "answer": 2,
+   "explain": "MOHO describes people as dynamic systems with these three components.",
+   "section": "u1-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "Spirituality is at the core of which model?",
+   "choices": [
+    "MOHO",
+    "Biomechanical",
+    "Developmental",
+    "CMOP"
+   ],
+   "answer": 3,
+   "explain": "The Canadian Model of Occupational Performance places spirituality at its center.",
+   "section": "u1-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "A frame of reference focused on strength, endurance, ROM and edema control is:",
+   "choices": [
+    "Biomechanical",
+    "Cognitive-behavioral",
+    "Developmental",
+    "Sensory-motor"
+   ],
+   "answer": 0,
+   "explain": "These are the targets of the biomechanical FOR.",
+   "section": "u1-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "A client with permanent paralysis learns to dress using adaptive equipment. Which FOR fits best?",
+   "choices": [
+    "Biomechanical",
+    "Rehabilitation",
+    "Developmental",
+    "Sensory-motor"
+   ],
+   "answer": 1,
+   "explain": "Rehabilitation maximizes independence despite the deficit, often through compensation.",
+   "section": "u1-s2",
+   "difficulty": 2
+  },
+  {
+   "q": "In anatomical position, the palms face:",
+   "choices": [
+    "Backward",
+    "Toward the thighs",
+    "Forward",
+    "Downward"
+   ],
+   "answer": 2,
+   "explain": "Anatomical position has forearms supinated with palms forward.",
+   "section": "u1-s3",
+   "difficulty": 1
+  },
+  {
+   "q": "The wrist is ____ to the elbow.",
+   "choices": [
+    "Proximal",
+    "Medial",
+    "Superior",
+    "Distal"
+   ],
+   "answer": 3,
+   "explain": "The wrist is farther from the trunk.",
+   "section": "u1-s3",
+   "difficulty": 1
+  },
+  {
+   "q": "Which directional pair is used only for the trunk?",
+   "choices": [
+    "Cranial/caudal",
+    "Proximal/distal",
+    "Radial/ulnar",
+    "Medial/lateral"
+   ],
+   "answer": 0,
+   "explain": "Cranial and caudal describe positions on the trunk.",
+   "section": "u1-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "The thumb is on the ____ side of the hand.",
+   "choices": [
+    "Ulnar",
+    "Radial",
+    "Medial",
+    "Caudal"
+   ],
+   "answer": 1,
+   "explain": "Radial refers to the thumb side.",
+   "section": "u1-s3",
+   "difficulty": 1
+  },
+  {
+   "q": "Pulling your shoulder blades together is:",
+   "choices": [
+    "Scapular protraction",
+    "Scapular elevation",
+    "Scapular retraction",
+    "Scapular upward rotation"
+   ],
+   "answer": 2,
+   "explain": "Retraction moves the scapulae back toward midline.",
+   "section": "u1-s4",
+   "difficulty": 1
+  },
+  {
+   "q": "Pointing the toes toward the floor is:",
+   "choices": [
+    "Dorsiflexion",
+    "Eversion",
+    "Inversion",
+    "Plantar flexion"
+   ],
+   "answer": 3,
+   "explain": "Plantar flexion moves the foot toward the floor.",
+   "section": "u1-s4",
+   "difficulty": 1
+  },
+  {
+   "q": "Which digit can only abduct, because it serves as the midline reference?",
+   "choices": [
+    "Middle finger",
+    "Thumb",
+    "Index finger",
+    "Little finger"
+   ],
+   "answer": 0,
+   "explain": "The middle finger is the hand's midline, so it abducts to either side.",
+   "section": "u1-s4",
+   "difficulty": 2
+  },
+  {
+   "q": "With elbow at the side, turning the palm up is:",
+   "choices": [
+    "Pronation",
+    "Supination",
+    "Radial deviation",
+    "Inversion"
+   ],
+   "answer": 1,
+   "explain": "Supination turns the palm up.",
+   "section": "u1-s4",
+   "difficulty": 1
+  },
+  {
+   "q": "Turning the sole of the foot inward is:",
+   "choices": [
+    "Eversion",
+    "Dorsiflexion",
+    "Inversion",
+    "Abduction"
+   ],
+   "answer": 2,
+   "explain": "Inversion turns the sole inward.",
+   "section": "u1-s4",
+   "difficulty": 1
+  },
+  {
+   "q": "Moving the arm across the body at shoulder height (from 90 degrees abduction) is:",
+   "choices": [
+    "Adduction",
+    "Internal rotation",
+    "Protraction",
+    "Horizontal adduction"
+   ],
+   "answer": 3,
+   "explain": "Horizontal adduction occurs with the shoulder at 90 degrees.",
+   "section": "u1-s4",
+   "difficulty": 2
+  },
+  {
+   "q": "Why is circumduction not considered a true motion?",
+   "choices": [
+    "It combines flexion, abduction, extension and adduction",
+    "It only occurs at the knee",
+    "It occurs only in the transverse plane",
+    "It is a pathologic movement"
+   ],
+   "answer": 0,
+   "explain": "Circumduction is a sequence of four motions forming a cone.",
+   "section": "u1-s4",
+   "difficulty": 2
+  },
+  {
+   "q": "Raising the arm in a plane between flexion and abduction is called:",
+   "choices": [
+    "Circumduction",
+    "Scaption",
+    "Horizontal abduction",
+    "Protraction"
+   ],
+   "answer": 1,
+   "explain": "Scaption is elevation in the scapular plane.",
+   "section": "u1-s4",
+   "difficulty": 1
+  },
+  {
+   "q": "Rotation at the knee is possible only when the knee is:",
+   "choices": [
+    "Fully extended",
+    "Hyperextended",
+    "Flexed",
+    "Weight bearing in extension"
+   ],
+   "answer": 2,
+   "explain": "Medial and lateral knee rotation occurs on a flexed knee.",
+   "section": "u1-s4",
+   "difficulty": 2
+  },
+  {
+   "q": "Flexion and extension occur in which plane?",
+   "choices": [
+    "Frontal",
+    "Transverse",
+    "Horizontal",
+    "Sagittal"
+   ],
+   "answer": 3,
+   "explain": "Flexion/extension divide right-left motion in the sagittal plane.",
+   "section": "u1-s5",
+   "difficulty": 1
+  },
+  {
+   "q": "Abduction and adduction occur around which axis?",
+   "choices": [
+    "Sagittal",
+    "Frontal",
+    "Vertical",
+    "Longitudinal"
+   ],
+   "answer": 0,
+   "explain": "Frontal plane motions rotate around the sagittal (A-P) axis.",
+   "section": "u1-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "Forearm pronation occurs in the ____ plane around the ____ axis.",
+   "choices": [
+    "Sagittal; frontal",
+    "Transverse; vertical",
+    "Frontal; sagittal",
+    "Transverse; frontal"
+   ],
+   "answer": 1,
+   "explain": "Rotational motions are transverse plane, vertical axis.",
+   "section": "u1-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "The leg motion of a jumping jack happens in which plane?",
+   "choices": [
+    "Sagittal",
+    "Transverse",
+    "Frontal",
+    "Oblique"
+   ],
+   "answer": 2,
+   "explain": "Hip abduction during a jumping jack is in the frontal plane.",
+   "section": "u1-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "Bringing a toothbrush to the mouth by bending the elbow is:",
+   "choices": [
+    "Frontal plane, sagittal axis",
+    "Transverse plane, vertical axis",
+    "Sagittal plane, vertical axis",
+    "Sagittal plane, frontal axis"
+   ],
+   "answer": 3,
+   "explain": "Elbow flexion is in the sagittal plane around a frontal axis.",
+   "section": "u1-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "Wrist radial deviation occurs in which plane?",
+   "choices": [
+    "Frontal",
+    "Sagittal",
+    "Transverse",
+    "None"
+   ],
+   "answer": 0,
+   "explain": "Radial/ulnar deviation are abduction/adduction motions in the frontal plane.",
+   "section": "u1-s5",
+   "difficulty": 3
+  },
+  {
+   "q": "Shoulder internal rotation occurs around which axis?",
+   "choices": [
+    "Frontal",
+    "Vertical",
+    "Sagittal",
+    "Coronal"
+   ],
+   "answer": 1,
+   "explain": "Rotation occurs in the transverse plane around a vertical axis.",
+   "section": "u1-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "Which structure connects bone to bone?",
+   "choices": [
+    "Tendon",
+    "Aponeurosis",
+    "Ligament",
+    "Bursa"
+   ],
+   "answer": 2,
+   "explain": "Ligaments link bones; tendons link muscle to bone.",
+   "section": "u1-s6",
+   "difficulty": 1
+  },
+  {
+   "q": "A small fluid-filled sac that reduces friction over bony prominences is a:",
+   "choices": [
+    "Tendon sheath",
+    "Fascicle",
+    "Ligament",
+    "Bursa"
+   ],
+   "answer": 3,
+   "explain": "Bursae cushion areas of friction.",
+   "section": "u1-s6",
+   "difficulty": 1
+  },
+  {
+   "q": "Partial dislocation of a joint, common at the shoulder after stroke, is:",
+   "choices": [
+    "Subluxation",
+    "Sprain",
+    "Strain",
+    "Avulsion"
+   ],
+   "answer": 0,
+   "explain": "Subluxation is a partial displacement of joint surfaces.",
+   "section": "u1-s6",
+   "difficulty": 1
+  },
+  {
+   "q": "Inflammation of the tendon sheath is:",
+   "choices": [
+    "Tendinitis",
+    "Tenosynovitis",
+    "Synovitis",
+    "Capsulitis"
+   ],
+   "answer": 1,
+   "explain": "Teno- (tendon) + synov- (sheath) + -itis.",
+   "section": "u1-s6",
+   "difficulty": 2
+  },
+  {
+   "q": "A client twists an ankle and overstretches a ligament. This is a:",
+   "choices": [
+    "Strain",
+    "Fracture",
+    "Sprain",
+    "Bursitis"
+   ],
+   "answer": 2,
+   "explain": "Ligament injuries are sprains.",
+   "section": "u1-s6",
+   "difficulty": 1
+  },
+  {
+   "q": "A motor unit consists of:",
+   "choices": [
+    "One muscle and all its tendons",
+    "All neurons in a nerve",
+    "One sarcomere",
+    "One motor neuron and all the muscle fibers it innervates"
+   ],
+   "answer": 3,
+   "explain": "A motor unit is a single motor neuron plus its fibers.",
+   "section": "u1-s7",
+   "difficulty": 1
+  },
+  {
+   "q": "According to the sliding filament theory, contraction occurs when:",
+   "choices": [
+    "Sarcomeres shorten as actin slides over myosin",
+    "Myosin dissolves",
+    "Tendons lengthen",
+    "Z discs separate"
+   ],
+   "answer": 0,
+   "explain": "Sarcomere shortening shortens fibers and the muscle.",
+   "section": "u1-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "The ability of a muscle to return to resting length after being stretched is:",
+   "choices": [
+    "Extensibility",
+    "Elasticity",
+    "Irritability",
+    "Contractility"
+   ],
+   "answer": 1,
+   "explain": "Elasticity is recoil after stretch.",
+   "section": "u1-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "If a muscle's resting length is 6 cm, about how short can it contract?",
+   "choices": [
+    "1 cm",
+    "5 cm",
+    "3 cm",
+    "6 cm"
+   ],
+   "answer": 2,
+   "explain": "A muscle can shorten to roughly half its resting length.",
+   "section": "u1-s7",
+   "difficulty": 3
+  },
+  {
+   "q": "Pain appearing two days after a new workout is called:",
+   "choices": [
+    "Atrophy",
+    "Tone",
+    "Ischemia",
+    "DOMS"
+   ],
+   "answer": 3,
+   "explain": "Delayed-onset muscle soreness comes from minor damage and inflammation.",
+   "section": "u1-s7",
+   "difficulty": 1
+  },
+  {
+   "q": "A muscle generates the most force when it is:",
+   "choices": [
+    "On a slight stretch before contracting",
+    "Fully shortened",
+    "Fatigued",
+    "Completely relaxed"
+   ],
+   "answer": 0,
+   "explain": "Optimal length maximizes actin-myosin overlap plus passive tension.",
+   "section": "u1-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "During a chin-up the biceps pull the body toward the fixed forearm. This is:",
+   "choices": [
+    "Eccentric contraction",
+    "Reversal of muscle action",
+    "Circumduction",
+    "Tenodesis"
+   ],
+   "answer": 1,
+   "explain": "The insertion is fixed and the origin moves toward it.",
+   "section": "u1-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "Pennate muscle fibers provide:",
+   "choices": [
+    "Greater range with less force",
+    "No force",
+    "Greater force over a shorter range",
+    "Only stabilization"
+   ],
+   "answer": 2,
+   "explain": "Short diagonal fibers pack in more force over less range.",
+   "section": "u1-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "Which muscle is named by its shape?",
+   "choices": [
+    "Tibialis anterior",
+    "Extensor carpi ulnaris",
+    "Rectus abdominis",
+    "Trapezius"
+   ],
+   "answer": 3,
+   "explain": "The trapezius is trapezoid-shaped.",
+   "section": "u1-s8",
+   "difficulty": 1
+  },
+  {
+   "q": "Which is a two-joint muscle?",
+   "choices": [
+    "Hamstrings",
+    "Brachialis",
+    "Soleus",
+    "Deltoid"
+   ],
+   "answer": 0,
+   "explain": "The hamstrings cross the hip and knee.",
+   "section": "u1-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "A disease with no known cause is described as:",
+   "choices": [
+    "Iatrogenic",
+    "Idiopathic",
+    "Communicable",
+    "Latent"
+   ],
+   "answer": 1,
+   "explain": "Idiopathic means cause unknown.",
+   "section": "u1-s9",
+   "difficulty": 1
+  },
+  {
+   "q": "A bladder infection after catheterization is an example of a(n) ____ condition.",
+   "choices": [
+    "Idiopathic",
+    "Congenital",
+    "Iatrogenic",
+    "Latent"
+   ],
+   "answer": 2,
+   "explain": "It was caused by a medical procedure.",
+   "section": "u1-s9",
+   "difficulty": 2
+  },
+  {
+   "q": "Which is a SIGN rather than a symptom?",
+   "choices": [
+    "Nausea",
+    "Pain",
+    "Fatigue",
+    "Fever"
+   ],
+   "answer": 3,
+   "explain": "Fever is objective and measurable by others.",
+   "section": "u1-s9",
+   "difficulty": 1
+  },
+  {
+   "q": "The predicted outcome or likelihood of recovery is the:",
+   "choices": [
+    "Prognosis",
+    "Diagnosis",
+    "Etiology",
+    "Pathogenesis"
+   ],
+   "answer": 0,
+   "explain": "Prognosis describes probable outcome.",
+   "section": "u1-s9",
+   "difficulty": 1
+  },
+  {
+   "q": "Necrotic tissue invaded by bacteria is:",
+   "choices": [
+    "Infarction",
+    "Gangrene",
+    "Ischemia",
+    "Atrophy"
+   ],
+   "answer": 1,
+   "explain": "Gangrene is infected dead tissue.",
+   "section": "u1-s9",
+   "difficulty": 2
+  },
+  {
+   "q": "The science of tracking patterns and occurrence of disease is:",
+   "choices": [
+    "Pathophysiology",
+    "Etiology",
+    "Epidemiology",
+    "Morbidity"
+   ],
+   "answer": 2,
+   "explain": "Epidemiology studies disease distribution.",
+   "section": "u1-s9",
+   "difficulty": 1
+  },
+  {
+   "q": "Which finding is typical of osteoarthritis?",
+   "choices": [
+    "Systemic fever",
+    "Autoimmune antibodies",
+    "Marked soft tissue swelling",
+    "Osteophytes and joint space narrowing"
+   ],
+   "answer": 3,
+   "explain": "OA erodes cartilage and forms bone spurs.",
+   "section": "u1-s10",
+   "difficulty": 2
+  },
+  {
+   "q": "A fracture where the bone breaks into three or more pieces is:",
+   "choices": [
+    "Comminuted",
+    "Greenstick",
+    "Spiral",
+    "Avulsion"
+   ],
+   "answer": 0,
+   "explain": "Comminuted fractures have multiple fragments.",
+   "section": "u1-s10",
+   "difficulty": 1
+  },
+  {
+   "q": "A child's forearm bone bends and cracks on one side. This is a(n) ____ fracture.",
+   "choices": [
+    "Transverse",
+    "Greenstick",
+    "Compression",
+    "Impacted"
+   ],
+   "answer": 1,
+   "explain": "Greenstick is an incomplete fracture common in children.",
+   "section": "u1-s10",
+   "difficulty": 1
+  },
+  {
+   "q": "Increased pressure inside a fascial compartment compressing nerves and vessels is:",
+   "choices": [
+    "Malunion",
+    "Fat embolism",
+    "Compartment syndrome",
+    "Osteomyelitis"
+   ],
+   "answer": 2,
+   "explain": "Non-elastic fascia traps swelling, causing compartment syndrome.",
+   "section": "u1-s10",
+   "difficulty": 2
+  },
+  {
+   "q": "Osteoporosis results when:",
+   "choices": [
+    "Osteoblast activity exceeds osteoclast activity",
+    "Cartilage overgrows",
+    "Bacteria infect bone",
+    "Bone resorption exceeds bone formation"
+   ],
+   "answer": 3,
+   "explain": "Osteoclasts outpace osteoblasts, lowering bone density.",
+   "section": "u1-s10",
+   "difficulty": 2
+  },
+  {
+   "q": "Which condition features 18 tender points, marked fatigue and sleep disturbance without joint damage?",
+   "choices": [
+    "Fibromyalgia",
+    "Rheumatoid arthritis",
+    "Osteoarthritis",
+    "Osteomyelitis"
+   ],
+   "answer": 0,
+   "explain": "Fibromyalgia is a non-inflammatory soft-tissue pain syndrome.",
+   "section": "u1-s10",
+   "difficulty": 1
+  },
+  {
+   "q": "When wrapping a residual limb after amputation, the OTA should wrap:",
+   "choices": [
+    "Proximal to distal with even tension",
+    "Distal to proximal with tension decreasing proximally",
+    "Only the proximal end",
+    "Loosely without tension"
+   ],
+   "answer": 1,
+   "explain": "Distal-to-proximal wrapping with decreasing tension shapes the limb and controls edema.",
+   "section": "u1-s10",
+   "difficulty": 3
+  },
+  {
+   "q": "Flexor tendon zone II is known as:",
+   "choices": [
+    "The anatomical snuffbox",
+    "The carpal tunnel",
+    "No man's land",
+    "The safe zone"
+   ],
+   "answer": 2,
+   "explain": "Zone II repairs are difficult due to tendons in tight sheaths.",
+   "section": "u1-s10",
+   "difficulty": 2
+  },
+  {
+   "q": "A sideways C- or S-shaped curvature of the spine is:",
+   "choices": [
+    "Kyphosis",
+    "Lordosis",
+    "Spondylosis",
+    "Scoliosis"
+   ],
+   "answer": 3,
+   "explain": "Scoliosis is lateral curvature.",
+   "section": "u1-s10",
+   "difficulty": 1
+  }
+ ]
+}

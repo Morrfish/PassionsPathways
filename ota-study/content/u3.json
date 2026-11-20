@@ -1,0 +1,1184 @@
+{
+ "id": "u3",
+ "title": "Myology & the Nervous System",
+ "summary": "This unit introduces muscle contraction types and muscle roles using the lab muscle chart, then covers the nervous system: neurons, CNS and brain regions, spinal cord tracts and reflexes, spinal cord injury levels, dermatomes, cranial nerves, and the brachial and lumbosacral plexuses. It closes with common neuromuscular and peripheral nerve conditions plus an overview of the cardiovascular and lymphatic systems.",
+ "sources": [
+  "Lab_2_myology.docx",
+  "Neuro PP section 1-2.pptx",
+  "neuro packet updated 2026.docx",
+  "Nervous_system_lab.docx"
+ ],
+ "sections": [
+  {
+   "id": "u3-s1",
+   "heading": "Myology: Muscle Tissue, Contractions & Muscle Roles",
+   "body": [
+    "Myology is the study of the muscular system. The body has three muscle tissue types: <b>skeletal</b> (striated, voluntary, moves bones), <b>cardiac</b> (striated, involuntary, heart wall), and <b>smooth</b> (non-striated, involuntary, walls of organs and vessels). OTAs focus mainly on skeletal muscle.",
+    "<b>Contraction types</b><ul><li><b>Isotonic</b> - muscle length changes and the joint moves.<ul><li><b>Concentric</b>: muscle shortens while acting as prime mover (e.g., biceps during elbow flexion lifting a cup).</li><li><b>Eccentric</b>: muscle lengthens under control - a <i>slow lowering into gravity</i> through the opposite motion (e.g., biceps slowly lowering the cup into elbow extension).</li></ul></li><li><b>Isometric</b> - muscle generates tension with no joint movement; the position is <i>held</i>.</li></ul>",
+    "<b>Muscle roles</b><ul><li><b>Prime mover (agonist)</b>: the muscle chiefly responsible for a motion.</li><li><b>Antagonist</b>: performs the opposite motion; it must relax/lengthen for the agonist to work.</li><li><b>Synergist</b>: assists the prime mover or cancels unwanted motion.</li><li><b>Stabilizer (fixator)</b>: holds a proximal segment steady so the distal segment can move.</li></ul>",
+    "<b>Origin</b> is usually the proximal, more stable attachment; <b>insertion</b> is usually the distal, more mobile attachment. A muscle acts on every joint it crosses.",
+    "<b>Strengthening vs. stretching</b>: To strengthen, use the motions the muscle is prime mover for (concentric), the opposite motions performed slowly into gravity (eccentric), or holds (isometric). To stretch a shortened muscle, move it through the motions it is an <i>antagonist</i> to, at <i>all</i> joints it crosses. Always name the joint AND the motion."
+   ]
+  },
+  {
+   "id": "u3-s2",
+   "heading": "Muscle Movement Chart: Practice Muscles",
+   "body": [
+    "The lab chart asks for: muscle name, origin/insertion (and joints crossed), prime mover actions, innervation, motions to strengthen, and motions to stretch.",
+    "<table><tr><th>Muscle</th><th>Origin / Insertion</th><th>Prime mover for</th><th>Innervation</th><th>Stretch by</th></tr><tr><td>Biceps brachii</td><td>O: short head - coracoid process; long head - supraglenoid tubercle. I: radial tuberosity</td><td>Elbow flexion, forearm supination (assists shoulder flexion)</td><td>Musculocutaneous (C5-6)</td><td>Shoulder extension + elbow extension + forearm pronation</td></tr><tr><td>Triceps brachii</td><td>O: long head - infraglenoid tubercle; lateral and medial heads - posterior humerus. I: olecranon process of ulna</td><td>Elbow extension (long head assists shoulder extension)</td><td>Radial (C6-8)</td><td>Shoulder flexion + elbow flexion</td></tr><tr><td>Supinator</td><td>O: lateral epicondyle of humerus and supinator crest of ulna. I: proximal lateral radius</td><td>Forearm supination</td><td>Radial (deep branch)</td><td>Forearm pronation (elbow extended)</td></tr><tr><td>Soleus</td><td>O: posterior proximal tibia and fibula. I: calcaneus via Achilles (calcaneal) tendon</td><td>Ankle plantarflexion</td><td>Tibial (S1-2)</td><td>Ankle dorsiflexion with knee <i>flexed</i></td></tr><tr><td>Gastrocnemius</td><td>O: medial and lateral condyles of femur. I: calcaneus via Achilles tendon</td><td>Ankle plantarflexion; assists knee flexion</td><td>Tibial (S1-2)</td><td>Ankle dorsiflexion with knee <i>extended</i></td></tr></table>",
+    "Example: to strengthen the biceps concentrically, perform elbow flexion/supination against resistance; eccentrically, slowly lower into elbow extension; isometrically, hold the elbow flexed against resistance."
+   ]
+  },
+  {
+   "id": "u3-s3",
+   "heading": "Neurons and Nerve Types",
+   "body": [
+    "A <b>neuron</b> (nerve cell) is the functional unit of nervous tissue, including all its processes.<ul><li><b>Cell body</b>: contains the nucleus.</li><li><b>Dendrites</b>: branches that receive impulses toward the cell body.</li><li><b>Axon</b>: carries impulses away from the cell body (opposite side from dendrites).</li><li><b>Nerve fiber</b>: the conductor of impulses from the neuron.</li><li><b>Myelin sheath</b>: insulation on the axon that speeds conduction.</li><li><b>Nodes of Ranvier</b>: gaps in the myelin where the impulse jumps.</li><li><b>Synapse</b>: small gap where an impulse passes from one neuron to the next.</li><li><b>Motor end plate</b>: end of the motor axon with end brushes lying close to muscle fibers.</li><li><b>Impulse</b>: the message traveling through the nervous system.</li></ul>",
+    "<b>Functional types</b><ul><li><b>Afferent (sensory)</b>: carry impulses from the periphery TO the CNS (\"affects\" the brain). Cell body sits in the dorsal root ganglion; the axon enters through the dorsal root and posterior horn.</li><li><b>Efferent (motor)</b>: carry impulses AWAY from the CNS to make an \"effect\" on muscle/target tissue. Cell body is in the anterior horn; the axon exits via the anterior (ventral) root and travels down a peripheral nerve to a motor end plate.</li><li><b>Interneurons</b>: located in the CNS; connect and integrate sensory and motor signals; key in reflexes.</li></ul>"
+   ]
+  },
+  {
+   "id": "u3-s4",
+   "heading": "Divisions of the Nervous System & the Brain",
+   "body": [
+    "<b>Central nervous system (CNS)</b>: brain and spinal cord. <b>Peripheral nervous system (PNS)</b>: 12 pairs of cranial nerves and 31 pairs of spinal nerves (8 cervical, 12 thoracic, 5 lumbar, 5 sacral, 1 coccygeal), which form plexuses and supply dermatomes. <b>Autonomic nervous system</b>: sympathetic (fight or flight) and parasympathetic (rest and digest).",
+    "<b>Gray matter</b>: mostly unmyelinated fibers, cell bodies and synapses; H/butterfly shape in the center of the spinal cord. <b>White matter</b>: mostly myelinated fibers organized into ascending (sensory) and descending (motor) tracts.",
+    "<b>Cerebrum</b>: largest part of the brain, responsible for highest mental functions; divided into left and right hemispheres connected by the <b>corpus callosum</b>.<ul><li>Left hemisphere: logic, analysis, communication/language.</li><li>Right hemisphere: music and art appreciation, behavior, spatial awareness.</li></ul>",
+    "<table><tr><th>Lobe</th><th>Main functions</th></tr><tr><td>Frontal</td><td>Personality, voluntary motor movement, expressive speech</td></tr><tr><td>Parietal</td><td>Touch, pressure, fine sensation (texture, weight, size, shape), reading</td></tr><tr><td>Temporal</td><td>Hearing, language reception/understanding, behavior, memory</td></tr><tr><td>Occipital</td><td>Vision; recognition of size, shape, color</td></tr></table>",
+    "<b>Other structures</b><ul><li><b>Diencephalon</b>: thalamus (relay station, perceives pain) and hypothalamus (hormones, behavior, homeostasis).</li><li><b>Basal ganglia</b>: coordination/regulation of motor movement.</li><li><b>Brain stem</b>: midbrain, pons, medulla. The <b>medulla</b> controls automatic respiration and heart rate.</li><li><b>Cerebellum</b>: muscle coordination, tone, posture and balance.</li></ul>"
+   ]
+  },
+  {
+   "id": "u3-s5",
+   "heading": "Spinal Cord, Tracts, Motor Neurons & Reflexes",
+   "body": [
+    "The spinal cord is about 17 inches long, runs from the foramen magnum to the <b>conus medullaris</b> (around L1), and has the consistency of a ripe banana. It is protected by 33 vertebrae. Below L1, nerve roots continue as the <b>cauda equina</b> (\"horse's tail\"). Meninges surround it and contain cerebrospinal fluid (CSF); spinal taps are done at L2-L4 where there is CSF but no cord to injure.",
+    "Cross-section: peripheral <b>white matter</b> (tracts) surrounds central <b>gray matter</b> with a <b>posterior horn</b> (sensory in) and <b>anterior horn</b> (motor out).",
+    "<b>Decussation</b> (crossing over): Most ascending touch, pressure and limb-position tracts cross at the brainstem. Pain, temperature (and some proprioception) cross almost immediately at the spinal level where they enter. About 80% of descending motor fibers cross at the brainstem; about 20% cross at the spinal level where they exit.",
+    "<b>Brown-Sequard syndrome</b>: damage to one half of the cord - loss of motor function and touch/position sense on the SAME side (ipsilateral) but loss of pain and temperature on the OPPOSITE side (contralateral).",
+    "<b>Upper motor neuron (UMN)</b>: from the brain down to the anterior horn; lesion gives spasticity, hyperreflexia, clonus, positive Babinski, little atrophy. <b>Lower motor neuron (LMN)</b>: at or distal to the anterior horn; lesion gives flaccidity, hyporeflexia/areflexia, atrophy and fasciculations.",
+    "<b>Reflex arc</b>: a sensory impulse enters through the posterior (dorsal) root, synapses with an interneuron or motor neuron in the cord, and exits via the anterior (ventral) root - an automatic response that does not require the brain first. Other neurons still relay the message to the brain so it is felt almost immediately. Some spinal cord injuries keep reflex arcs below the lesion (e.g., clonus)."
+   ]
+  },
+  {
+   "id": "u3-s6",
+   "heading": "Spinal Nerves, Dermatomes & Spinal Cord Injury Levels",
+   "body": [
+    "31 pairs of spinal nerves: 8 cervical, 12 thoracic, 5 lumbar, 5 sacral, 1 coccygeal. Cervical nerves exit <i>above</i> their vertebra (there are 8 cervical nerves but 7 cervical vertebrae); from T1 down they exit <i>below</i> their vertebra.",
+    "<b>Functional levels</b><ul><li>C3 and above: cannot breathe independently (diaphragm is C3-5).</li><li>Elbow flexors: C5-6 (most muscles get input from 2 adjacent levels).</li><li>C8-T1: last upper-extremity muscles innervated - intrinsic hand muscles.</li><li>Upper thoracic: back extensors and intercostals. Lower thoracic: abdominals.</li><li>The lower the injury, the more trunk control is preserved (abdominals are lowest).</li><li>Sacral: bowel and bladder control.</li></ul>",
+    "<b>Paraplegia</b> affects the lower body (thoracic level or below); <b>quadriplegia/tetraplegia</b> affects upper and lower body (cervical level). Injury level is named as the last intact segment or the first impaired segment, depending on the physician. The <b>ASIA Impairment Scale</b> classifies injuries as complete vs. incomplete and by severity.",
+    "Example: a patient who dons a shirt normally and sits upright with good balance but cannot move his legs likely has a <b>low thoracic</b> injury (paraplegia with intact abdominals). A similar patient who needs a belt and firm seat to stay upright likely has a <b>higher thoracic</b> injury with poor trunk control.",
+    "<b>Dermatomes</b>: areas of skin supplied by the sensory fibers of a single spinal nerve; used to locate spinal cord injury level. Landmarks: C6 lateral forearm and thumb; C7 middle finger; C8 little finger/medial hand; T4 nipple line; T10 umbilicus; L1 groin/upper anterior thigh; L4 medial leg; L5 dorsum of foot; S1 lateral foot. A wheelchair user who doesn't feel a hot plate on the upper anterior thigh likely has lost L1-L2 sensation."
+   ]
+  },
+  {
+   "id": "u3-s7",
+   "heading": "Cranial Nerves",
+   "body": [
+    "12 pairs of cranial nerves arise from the brain (best seen on its inferior surface). They do not cross over and may be sensory, motor or mixed. Mnemonic: \"<i>On Old Olympus Towering Top, A Famous Vocal German Viewed Some Hops</i>.\"",
+    "<table><tr><th>#</th><th>Name</th><th>Type</th><th>Function</th></tr><tr><td>I</td><td>Olfactory</td><td>S</td><td>Smell</td></tr><tr><td>II</td><td>Optic</td><td>S</td><td>Vision</td></tr><tr><td>III</td><td>Oculomotor</td><td>M, P</td><td>Most eye movements; pupil constriction</td></tr><tr><td>IV</td><td>Trochlear</td><td>M</td><td>Eye movement (superior oblique)</td></tr><tr><td>V</td><td>Trigeminal</td><td>S, M</td><td>Sensation of face, scalp, teeth, eyes, nose; chewing</td></tr><tr><td>VI</td><td>Abducens</td><td>M</td><td>Eye movement - lateral (abduction)</td></tr><tr><td>VII</td><td>Facial</td><td>S, M, P</td><td>Taste anterior 2/3 of tongue; facial expression; salivation/tears</td></tr><tr><td>VIII</td><td>Vestibulocochlear</td><td>S</td><td>Hearing and balance</td></tr><tr><td>IX</td><td>Glossopharyngeal</td><td>S, M, P</td><td>Taste posterior 1/3 of tongue; swallowing and gag reflex; saliva</td></tr><tr><td>X</td><td>Vagus</td><td>S, M, P</td><td>Autonomic control of heart, lungs, GI; swallowing/voice</td></tr><tr><td>XI</td><td>Spinal accessory</td><td>M</td><td>Head rotation and shoulder shrug (SCM, trapezius)</td></tr><tr><td>XII</td><td>Hypoglossal</td><td>M</td><td>Tongue movement for speech and swallowing</td></tr></table>",
+    "Clinical examples: a client whose eyes cannot move to the left may have involvement of CN VI (abducens, lateral gaze) along with CN III/IV; facial numbness plus difficulty chewing suggests CN V (trigeminal)."
+   ]
+  },
+  {
+   "id": "u3-s8",
+   "heading": "Plexuses and Peripheral Nerves",
+   "body": [
+    "A <b>plexus</b> is a network formed when spinal nerves join after leaving the cord (thoracic nerves do not form a plexus), then branch into individual peripheral nerves. <b>Cervical plexus</b> C1-C4; <b>Brachial plexus</b> C5-T1; <b>Lumbosacral plexus</b> L1-S4.",
+    "<b>Brachial plexus terminal nerves</b><table><tr><th>Nerve</th><th>Roots</th><th>Motor</th><th>Sensory</th></tr><tr><td>Axillary</td><td>C5-6</td><td>Shoulder abduction and external rotation (deltoid, teres minor)</td><td>Lateral arm over lower deltoid</td></tr><tr><td>Musculocutaneous</td><td>C5-6</td><td>Elbow flexion and supination (biceps, brachialis, coracobrachialis)</td><td>Anterolateral forearm</td></tr><tr><td>Radial</td><td>C5/C6-T1</td><td>Elbow, wrist, finger and thumb extension; supination (triceps, anconeus, brachioradialis, supinator, extensors)</td><td>Posterior arm, forearm and radial dorsal hand</td></tr><tr><td>Median</td><td>C6-T1</td><td>Pronation; radial wrist flexion; thumb opposition, flexion, palmar abduction; finger flexion (radial side)</td><td>Palmar thumb, index, middle and radial half of ring finger</td></tr><tr><td>Ulnar</td><td>C8-T1</td><td>Ulnar wrist flexion/deviation; hook grasp of digits 4-5; most hand intrinsics</td><td>Ulnar half of ring finger and little finger</td></tr></table>",
+    "<b>Lumbosacral plexus terminal nerves</b><table><tr><th>Nerve</th><th>Roots</th><th>Motor</th><th>Sensory</th></tr><tr><td>Femoral</td><td>L2-4</td><td>Hip flexion, knee extension (iliopsoas, sartorius, pectineus, quadriceps)</td><td>Anterior and medial thigh, medial leg and foot</td></tr><tr><td>Obturator</td><td>L2-4</td><td>Hip adduction (adductors, obturator externus)</td><td>Middle medial thigh</td></tr><tr><td>Sciatic</td><td>L4-S3</td><td>Hip extension, knee flexion (hamstrings)</td><td>None directly (via branches)</td></tr><tr><td>Tibial</td><td>L4-S3</td><td>Plantarflexion, inversion, toe flexion (gastrocnemius, soleus, tibialis posterior, foot intrinsics)</td><td>Posterolateral leg, lateral foot, sole</td></tr><tr><td>Common peroneal (fibular)</td><td>L4-S2</td><td>Dorsiflexion, toe extension, eversion (tibialis anterior, fibularis, toe extensors)</td><td>Anterolateral leg and dorsum of foot</td></tr></table>",
+    "Examples: trouble reaching out a car window (shoulder abduction) with numbness near the deltoid tuberosity suggests the <b>axillary nerve</b> (brachial plexus). Weak pronation and difficulty picking up coins with thumb and index finger suggests the <b>median nerve</b>."
+   ]
+  },
+  {
+   "id": "u3-s9",
+   "heading": "Neuromuscular System & Nervous System Pathologies",
+   "body": [
+    "A <b>motor unit</b> is one motor neuron plus all the muscle fibers it supplies. The impulse travels from the brain down the cord, out the anterior horn, along the axon to the motor end plate, where <b>acetylcholine</b> is released to stimulate the muscle fiber, causing actin and myosin filaments to slide. Ratio of fibers per motor neuron ranges from about 10 (fine motor, e.g., eyes/fingers) to 2,000 (gross motor, e.g., thigh).",
+    "<b>All-or-none principle</b>: when a motor unit is stimulated, all of its fibers contract fully. <b>Tetanus</b>: impulses arrive so fast the muscle cannot relax - sustained contraction. <b>Tone</b>: the slight tension present in muscle at all times, even at rest.",
+    "<b>CNS/neuromuscular diseases</b><ul><li>Neuromuscular junction/muscle: myasthenia gravis, muscular dystrophy.</li><li>Degenerative: ALS, Alzheimer's disease.</li><li>Demyelinating: multiple sclerosis.</li><li>Congenital: spina bifida, hydrocephalus, cerebral palsy.</li><li>Spinal cord trauma: SCI, central cord syndrome, Brown-Sequard syndrome, autonomic dysreflexia.</li></ul>",
+    "<b>Peripheral nerve conditions</b><table><tr><th>Nerve / area</th><th>Condition</th><th>Notes</th></tr><tr><td>Radial</td><td>Saturday night palsy; wrist drop</td><td>Compression where nerve wraps around the humerus (spiral groove); high radial injury gives wrist drop</td></tr><tr><td>Median</td><td>Carpal tunnel syndrome; ape hand; pope's (hand of) benediction</td><td>Compression at the wrist; loss of thumb opposition</td></tr><tr><td>Ulnar</td><td>Cubital tunnel syndrome; claw hand</td><td>Compression at the elbow; intrinsic weakness</td></tr><tr><td>Facial (CN VII)</td><td>Bell's palsy</td><td>Usually temporary; one side of the face</td></tr><tr><td>Long thoracic</td><td>Scapular winging</td><td>Serratus anterior weakness; medial scapular border lifts off ribs</td></tr><tr><td>Brachial plexus</td><td>Thoracic outlet syndrome; stinger; Erb's palsy</td><td>TOS: compression between clavicle and first rib. Stinger: stretch/compression. Erb's: upper plexus stretch during childbirth</td></tr><tr><td>Sciatic</td><td>Sciatica</td><td>Nerve root irritation; pain down back of leg</td></tr><tr><td>Common peroneal</td><td>Foot drop</td><td>Pressure at fibular head; loss of dorsiflexion</td></tr><tr><td>Tibial (plantar digital)</td><td>Morton's neuroma</td><td>Thickened nerve between 3rd and 4th toes</td></tr></table>",
+    "<b>Neuropathy</b> = degeneration of the motor or sensory components of a neuron."
+   ]
+  },
+  {
+   "id": "u3-s10",
+   "heading": "Cardiovascular & Lymphatic Systems",
+   "body": [
+    "Blood vessels in order of flow: arteries, arterioles, capillaries, venules, veins. Arteries have thicker, more muscular walls; veins are thinner with valves and rely on surrounding skeletal muscle contraction (the muscle pump) to squeeze blood back toward the heart.",
+    "The <b>lymphatic system</b> is linked to the cardiovascular and immune systems. It collects leaked, protein-rich fluid (lymph), filters it through lymph nodes (where microbes are detected and immune responses triggered), and returns it to the venous system. It is a one-way route from the periphery, not a loop. It helps maintain blood volume and pressure.",
+    "Lymph moves by muscle pumping, diaphragmatic breathing, and smooth muscle contraction of vessel walls. Drainage regions: <b>cervical</b> nodes (above the clavicle), <b>axillary</b> nodes (clavicle to umbilicus), <b>inguinal</b> nodes (below the umbilicus); anastomoses allow cross-over drainage.",
+    "Common pathologies: hemorrhage, CVA (stroke), epidural/subdural bleeds, congestive heart failure, heart murmur, myocardial infarction, varicose veins, thrombosis/DVT and embolism, aneurysm, lymphedema."
+   ]
+  }
+ ],
+ "terms": [
+  {
+   "term": "Skeletal muscle",
+   "def": "Striated, voluntary muscle that attaches to bones and produces movement.",
+   "section": "u3-s1"
+  },
+  {
+   "term": "Smooth muscle",
+   "def": "Non-striated, involuntary muscle in walls of organs and blood vessels.",
+   "section": "u3-s1"
+  },
+  {
+   "term": "Cardiac muscle",
+   "def": "Striated, involuntary muscle forming the heart wall.",
+   "section": "u3-s1"
+  },
+  {
+   "term": "Isotonic contraction",
+   "def": "Contraction in which muscle length changes and the joint moves; includes concentric and eccentric.",
+   "section": "u3-s1"
+  },
+  {
+   "term": "Concentric contraction",
+   "def": "Muscle shortens while producing the motion it is prime mover for.",
+   "section": "u3-s1"
+  },
+  {
+   "term": "Eccentric contraction",
+   "def": "Muscle lengthens under tension, controlling a slow lowering into gravity.",
+   "section": "u3-s1"
+  },
+  {
+   "term": "Isometric contraction",
+   "def": "Muscle tension without joint movement; a hold.",
+   "section": "u3-s1"
+  },
+  {
+   "term": "Prime mover (agonist)",
+   "def": "Muscle chiefly responsible for producing a motion.",
+   "section": "u3-s1"
+  },
+  {
+   "term": "Antagonist",
+   "def": "Muscle performing the opposite motion of the agonist; it lengthens as the agonist works.",
+   "section": "u3-s1"
+  },
+  {
+   "term": "Synergist",
+   "def": "Muscle that assists the prime mover or neutralizes unwanted motion.",
+   "section": "u3-s1"
+  },
+  {
+   "term": "Stabilizer",
+   "def": "Muscle that holds a body segment steady so another segment can move.",
+   "section": "u3-s1"
+  },
+  {
+   "term": "Origin",
+   "def": "Usually the proximal, more stationary attachment of a muscle.",
+   "section": "u3-s1"
+  },
+  {
+   "term": "Insertion",
+   "def": "Usually the distal, more movable attachment of a muscle.",
+   "section": "u3-s1"
+  },
+  {
+   "term": "Neuron",
+   "def": "Nerve cell; the functional unit of nervous tissue including dendrites and axon.",
+   "section": "u3-s3"
+  },
+  {
+   "term": "Dendrite",
+   "def": "Branch of a neuron that receives impulses.",
+   "section": "u3-s3"
+  },
+  {
+   "term": "Axon",
+   "def": "Process that carries impulses away from the cell body.",
+   "section": "u3-s3"
+  },
+  {
+   "term": "Myelin sheath",
+   "def": "Insulating layer on axons that speeds impulse conduction.",
+   "section": "u3-s3"
+  },
+  {
+   "term": "Nodes of Ranvier",
+   "def": "Gaps in the myelin sheath along an axon.",
+   "section": "u3-s3"
+  },
+  {
+   "term": "Synapse",
+   "def": "Small gap where an impulse passes from one neuron to another.",
+   "section": "u3-s3"
+  },
+  {
+   "term": "Motor end plate",
+   "def": "End of a motor axon with end brushes lying close to muscle fibers.",
+   "section": "u3-s3"
+  },
+  {
+   "term": "Afferent neuron",
+   "def": "Sensory neuron carrying impulses from the periphery to the CNS.",
+   "section": "u3-s3"
+  },
+  {
+   "term": "Efferent neuron",
+   "def": "Motor neuron carrying impulses from the CNS to muscles or glands.",
+   "section": "u3-s3"
+  },
+  {
+   "term": "Interneuron",
+   "def": "CNS neuron that relays and integrates signals between sensory and motor neurons.",
+   "section": "u3-s3"
+  },
+  {
+   "term": "Gray matter",
+   "def": "CNS tissue of cell bodies, synapses and unmyelinated fibers; H-shaped in the cord.",
+   "section": "u3-s4"
+  },
+  {
+   "term": "White matter",
+   "def": "CNS tissue of myelinated fibers organized into ascending and descending tracts.",
+   "section": "u3-s4"
+  },
+  {
+   "term": "Corpus callosum",
+   "def": "Band of fibers connecting the left and right cerebral hemispheres.",
+   "section": "u3-s4"
+  },
+  {
+   "term": "Cerebellum",
+   "def": "Brain region controlling coordination, muscle tone and posture.",
+   "section": "u3-s4"
+  },
+  {
+   "term": "Medulla",
+   "def": "Lowest part of the brain stem; controls automatic breathing and heart rate.",
+   "section": "u3-s4"
+  },
+  {
+   "term": "Thalamus",
+   "def": "Diencephalon structure that relays sensation and perceives pain.",
+   "section": "u3-s4"
+  },
+  {
+   "term": "Hypothalamus",
+   "def": "Diencephalon structure regulating hormones and behavior.",
+   "section": "u3-s4"
+  },
+  {
+   "term": "Basal ganglia",
+   "def": "Deep brain nuclei that coordinate motor movement.",
+   "section": "u3-s4"
+  },
+  {
+   "term": "Decussation",
+   "def": "Crossing over of nerve tracts to the opposite side of the CNS.",
+   "section": "u3-s5"
+  },
+  {
+   "term": "Cauda equina",
+   "def": "Bundle of nerve roots continuing below the end of the spinal cord (L1); \"horse's tail.\"",
+   "section": "u3-s5"
+  },
+  {
+   "term": "Conus medullaris",
+   "def": "Tapered lower end of the spinal cord near L1.",
+   "section": "u3-s5"
+  },
+  {
+   "term": "Upper motor neuron",
+   "def": "Motor pathway from the brain to the anterior horn; lesion causes spasticity and hyperreflexia.",
+   "section": "u3-s5"
+  },
+  {
+   "term": "Lower motor neuron",
+   "def": "Motor neuron at or distal to the anterior horn; lesion causes flaccidity and atrophy.",
+   "section": "u3-s5"
+  },
+  {
+   "term": "Reflex arc",
+   "def": "Pathway in which a sensory impulse synapses in the cord and exits as a motor response without first going to the brain.",
+   "section": "u3-s5"
+  },
+  {
+   "term": "Clonus",
+   "def": "Rhythmic involuntary muscle contractions after stretch, seen with UMN lesions.",
+   "section": "u3-s5"
+  },
+  {
+   "term": "Brown-Sequard syndrome",
+   "def": "Hemisection of the cord: ipsilateral motor/touch loss and contralateral pain/temperature loss.",
+   "section": "u3-s5"
+  },
+  {
+   "term": "Dermatome",
+   "def": "Area of skin supplied by sensory fibers of one spinal nerve.",
+   "section": "u3-s6"
+  },
+  {
+   "term": "Paraplegia",
+   "def": "Paralysis affecting the lower half of the body.",
+   "section": "u3-s6"
+  },
+  {
+   "term": "Tetraplegia (quadriplegia)",
+   "def": "Paralysis affecting upper and lower body, from cervical injury.",
+   "section": "u3-s6"
+  },
+  {
+   "term": "ASIA Impairment Scale",
+   "def": "Standard classification of spinal cord injury as complete vs. incomplete and by severity.",
+   "section": "u3-s6"
+  },
+  {
+   "term": "Cranial nerves",
+   "def": "12 pairs of nerves arising from the brain; sensory, motor or mixed.",
+   "section": "u3-s7"
+  },
+  {
+   "term": "Plexus",
+   "def": "Network of spinal nerves that branch into peripheral nerves.",
+   "section": "u3-s8"
+  },
+  {
+   "term": "Brachial plexus",
+   "def": "Plexus from C5-T1 supplying the upper extremity.",
+   "section": "u3-s8"
+  },
+  {
+   "term": "Lumbosacral plexus",
+   "def": "Plexus from the lumbar and sacral nerves supplying the lower extremity.",
+   "section": "u3-s8"
+  },
+  {
+   "term": "Motor unit",
+   "def": "A motor neuron and all the muscle fibers it supplies.",
+   "section": "u3-s9"
+  },
+  {
+   "term": "Acetylcholine",
+   "def": "Neurotransmitter released at the motor end plate to stimulate muscle contraction.",
+   "section": "u3-s9"
+  },
+  {
+   "term": "All-or-none principle",
+   "def": "Stimulated muscle fibers of a motor unit contract fully or not at all.",
+   "section": "u3-s9"
+  },
+  {
+   "term": "Tetanus",
+   "def": "Sustained contraction from impulses too rapid for the muscle to relax.",
+   "section": "u3-s9"
+  },
+  {
+   "term": "Muscle tone",
+   "def": "Constant slight tension in a muscle, even at rest.",
+   "section": "u3-s9"
+  },
+  {
+   "term": "Neuropathy",
+   "def": "Degeneration of motor or sensory components of a nerve.",
+   "section": "u3-s9"
+  },
+  {
+   "term": "Wrist drop",
+   "def": "Inability to extend the wrist due to radial nerve injury.",
+   "section": "u3-s9"
+  },
+  {
+   "term": "Claw hand",
+   "def": "Hand deformity from ulnar nerve injury.",
+   "section": "u3-s9"
+  },
+  {
+   "term": "Foot drop",
+   "def": "Inability to dorsiflex the ankle, usually from common peroneal nerve injury.",
+   "section": "u3-s9"
+  },
+  {
+   "term": "Lymphedema",
+   "def": "Swelling from impaired lymphatic drainage.",
+   "section": "u3-s10"
+  }
+ ],
+ "questions": [
+  {
+   "q": "Which contraction type involves a muscle lengthening while slowly lowering a load into gravity?",
+   "choices": [
+    "Concentric",
+    "Isometric",
+    "Eccentric",
+    "Tetanic"
+   ],
+   "answer": 2,
+   "explain": "Eccentric contractions lengthen the muscle under control, such as lowering into gravity.",
+   "section": "u3-s1",
+   "difficulty": 1
+  },
+  {
+   "q": "Holding a gallon of milk with the elbow bent at 90 degrees without moving is which contraction?",
+   "choices": [
+    "Isokinetic",
+    "Concentric",
+    "Eccentric",
+    "Isometric"
+   ],
+   "answer": 3,
+   "explain": "Tension without joint motion is isometric.",
+   "section": "u3-s1",
+   "difficulty": 1
+  },
+  {
+   "q": "The muscle chiefly responsible for producing a motion is the:",
+   "choices": [
+    "Antagonist",
+    "Stabilizer",
+    "Synergist",
+    "Prime mover"
+   ],
+   "answer": 3,
+   "explain": "The prime mover (agonist) is chiefly responsible for a motion.",
+   "section": "u3-s1",
+   "difficulty": 1
+  },
+  {
+   "q": "During elbow flexion, the triceps acts as the:",
+   "choices": [
+    "Prime mover",
+    "Antagonist",
+    "Synergist",
+    "Stabilizer"
+   ],
+   "answer": 1,
+   "explain": "The triceps performs the opposite motion (extension), making it the antagonist.",
+   "section": "u3-s1",
+   "difficulty": 2
+  },
+  {
+   "q": "To stretch a shortened muscle, the patient should move through the motions for which the muscle is the:",
+   "choices": [
+    "Antagonist",
+    "Prime mover",
+    "Synergist",
+    "Fixator"
+   ],
+   "answer": 0,
+   "explain": "Stretching takes the muscle through the motions it opposes, at all joints it crosses.",
+   "section": "u3-s1",
+   "difficulty": 2
+  },
+  {
+   "q": "Slowly lowering a cup from the mouth to the table is what kind of contraction of the biceps?",
+   "choices": [
+    "Concentric",
+    "No contraction",
+    "Isometric",
+    "Eccentric"
+   ],
+   "answer": 3,
+   "explain": "The biceps lengthens under control as the elbow extends into gravity.",
+   "section": "u3-s2",
+   "difficulty": 2
+  },
+  {
+   "q": "Which nerve innervates the biceps brachii?",
+   "choices": [
+    "Radial",
+    "Median",
+    "Musculocutaneous",
+    "Axillary"
+   ],
+   "answer": 2,
+   "explain": "The musculocutaneous nerve (C5-6) supplies elbow flexors including biceps.",
+   "section": "u3-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "The triceps brachii inserts on the:",
+   "choices": [
+    "Olecranon process",
+    "Radial tuberosity",
+    "Coracoid process",
+    "Lateral epicondyle"
+   ],
+   "answer": 0,
+   "explain": "All three heads of the triceps insert on the ulna's olecranon.",
+   "section": "u3-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "To stretch the soleus specifically rather than the gastrocnemius, dorsiflex the ankle with the knee:",
+   "choices": [
+    "Extended",
+    "Hyperextended",
+    "Flexed",
+    "Rotated"
+   ],
+   "answer": 2,
+   "explain": "Flexing the knee slackens the gastrocnemius, isolating the soleus.",
+   "section": "u3-s2",
+   "difficulty": 3
+  },
+  {
+   "q": "Both gastrocnemius and soleus insert on the calcaneus via the:",
+   "choices": [
+    "Patellar tendon",
+    "IT band",
+    "Plantar fascia",
+    "Achilles tendon"
+   ],
+   "answer": 3,
+   "explain": "The calcaneal (Achilles) tendon joins both muscles to the calcaneus.",
+   "section": "u3-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "Which part of a neuron receives incoming impulses?",
+   "choices": [
+    "Axon",
+    "Myelin sheath",
+    "Dendrite",
+    "Motor end plate"
+   ],
+   "answer": 2,
+   "explain": "Dendrites receive impulses and carry them toward the cell body.",
+   "section": "u3-s3",
+   "difficulty": 1
+  },
+  {
+   "q": "A neuron carrying information from skin receptors to the spinal cord is:",
+   "choices": [
+    "Efferent",
+    "Motor",
+    "Interneuron",
+    "Afferent"
+   ],
+   "answer": 3,
+   "explain": "Afferent (sensory) neurons carry impulses to the CNS.",
+   "section": "u3-s3",
+   "difficulty": 1
+  },
+  {
+   "q": "The cell bodies of efferent motor neurons are located in the:",
+   "choices": [
+    "Dorsal root ganglion",
+    "Anterior horn",
+    "Posterior horn",
+    "Cerebellum"
+   ],
+   "answer": 1,
+   "explain": "Motor neuron cell bodies sit in the anterior horn of the spinal cord.",
+   "section": "u3-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "What is the main function of myelin?",
+   "choices": [
+    "Receive impulses",
+    "Store neurotransmitters",
+    "Produce CSF",
+    "Increase speed of impulse conduction"
+   ],
+   "answer": 3,
+   "explain": "Myelin insulates axons and speeds conduction.",
+   "section": "u3-s3",
+   "difficulty": 1
+  },
+  {
+   "q": "The central nervous system consists of:",
+   "choices": [
+    "Brain and cranial nerves",
+    "Spinal cord and spinal nerves",
+    "Brain and spinal cord",
+    "Plexuses and peripheral nerves"
+   ],
+   "answer": 2,
+   "explain": "The CNS is the brain and spinal cord only.",
+   "section": "u3-s4",
+   "difficulty": 1
+  },
+  {
+   "q": "Which lobe controls personality and expressive speech?",
+   "choices": [
+    "Frontal",
+    "Parietal",
+    "Temporal",
+    "Occipital"
+   ],
+   "answer": 0,
+   "explain": "The frontal lobe governs personality, motor movement and expressive speech.",
+   "section": "u3-s4",
+   "difficulty": 1
+  },
+  {
+   "q": "A client has trouble identifying an object's texture and shape by touch. Which lobe is most likely involved?",
+   "choices": [
+    "Occipital",
+    "Temporal",
+    "Parietal",
+    "Frontal"
+   ],
+   "answer": 2,
+   "explain": "The parietal lobe processes touch and fine sensation such as texture and shape.",
+   "section": "u3-s4",
+   "difficulty": 2
+  },
+  {
+   "q": "Which brain structure controls automatic respiration and heart rate?",
+   "choices": [
+    "Cerebellum",
+    "Corpus callosum",
+    "Thalamus",
+    "Medulla"
+   ],
+   "answer": 3,
+   "explain": "The medulla of the brain stem regulates breathing and heart rate.",
+   "section": "u3-s4",
+   "difficulty": 1
+  },
+  {
+   "q": "A client shows poor coordination, low tone and unsteady posture. Which structure is most likely affected?",
+   "choices": [
+    "Occipital lobe",
+    "Hypothalamus",
+    "Cerebellum",
+    "Corpus callosum"
+   ],
+   "answer": 2,
+   "explain": "The cerebellum controls coordination, tone and posture.",
+   "section": "u3-s4",
+   "difficulty": 2
+  },
+  {
+   "q": "The spinal cord ends at approximately which vertebral level?",
+   "choices": [
+    "C7",
+    "T12",
+    "L1",
+    "S1"
+   ],
+   "answer": 2,
+   "explain": "The cord ends near L1 at the conus medullaris; the cauda equina continues below.",
+   "section": "u3-s5",
+   "difficulty": 1
+  },
+  {
+   "q": "Why are spinal taps performed at L2-L4?",
+   "choices": [
+    "The cord is thickest there",
+    "CSF is present but the spinal cord is not",
+    "There are no nerve roots there",
+    "Meninges end there"
+   ],
+   "answer": 1,
+   "explain": "Below L1 there is CSF but no cord to injure.",
+   "section": "u3-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "Pain and temperature tracts cross over (decussate):",
+   "choices": [
+    "At the cerebellum",
+    "At the brainstem",
+    "They never cross",
+    "Near the spinal level where they enter"
+   ],
+   "answer": 3,
+   "explain": "Pain and temperature fibers cross almost immediately at the entry level.",
+   "section": "u3-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "A patient with a right-sided spinal cord hemisection would most likely have:",
+   "choices": [
+    "Right motor loss and left pain/temperature loss",
+    "Left motor loss and right pain/temperature loss",
+    "Bilateral motor loss only",
+    "Loss of all sensation on the right only"
+   ],
+   "answer": 0,
+   "explain": "Brown-Sequard: ipsilateral motor/touch loss, contralateral pain/temp loss.",
+   "section": "u3-s5",
+   "difficulty": 3
+  },
+  {
+   "q": "Spasticity, hyperreflexia and clonus are signs of a lesion of the:",
+   "choices": [
+    "Lower motor neuron",
+    "Upper motor neuron",
+    "Neuromuscular junction",
+    "Peripheral nerve"
+   ],
+   "answer": 1,
+   "explain": "UMN lesions remove brain inhibition, producing spasticity and hyperreflexia.",
+   "section": "u3-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "Flaccid paralysis, atrophy and fasciculations suggest a lesion of the:",
+   "choices": [
+    "Upper motor neuron",
+    "Cerebellum",
+    "Lower motor neuron",
+    "Corpus callosum"
+   ],
+   "answer": 2,
+   "explain": "LMN lesions at or distal to the anterior horn cause flaccidity and atrophy.",
+   "section": "u3-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "In a reflex arc, the sensory impulse enters the spinal cord through the:",
+   "choices": [
+    "Cauda equina",
+    "Anterior (ventral) root",
+    "Corpus callosum",
+    "Posterior (dorsal) root"
+   ],
+   "answer": 3,
+   "explain": "Afferent fibers enter via the dorsal root, and motor output exits the ventral root.",
+   "section": "u3-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "The sensory (posterior) horn and motor (anterior) horn are part of the cord's:",
+   "choices": [
+    "White matter",
+    "Gray matter",
+    "Meninges",
+    "Dorsal root ganglion"
+   ],
+   "answer": 1,
+   "explain": "The H-shaped central gray matter contains the horns.",
+   "section": "u3-s5",
+   "difficulty": 1
+  },
+  {
+   "q": "How many pairs of spinal nerves are there?",
+   "choices": [
+    "12",
+    "24",
+    "31",
+    "33"
+   ],
+   "answer": 2,
+   "explain": "8 cervical, 12 thoracic, 5 lumbar, 5 sacral, 1 coccygeal = 31.",
+   "section": "u3-s6",
+   "difficulty": 1
+  },
+  {
+   "q": "A patient with a complete C2 injury will most likely:",
+   "choices": [
+    "Walk with a walker",
+    "Need ventilator support to breathe",
+    "Have full hand function",
+    "Have only bowel/bladder loss"
+   ],
+   "answer": 1,
+   "explain": "Injury at C3 or above disrupts diaphragm innervation (C3-5).",
+   "section": "u3-s6",
+   "difficulty": 2
+  },
+  {
+   "q": "The intrinsic muscles of the hand are innervated mainly at:",
+   "choices": [
+    "C5-6",
+    "C6-7",
+    "T2-T4",
+    "C8-T1"
+   ],
+   "answer": 3,
+   "explain": "C8-T1 are the last UE levels, supplying hand intrinsics.",
+   "section": "u3-s6",
+   "difficulty": 1
+  },
+  {
+   "q": "A patient after SCI dons his shirt normally and sits upright with good balance but cannot move his legs. The most likely level is:",
+   "choices": [
+    "C5",
+    "C7",
+    "High thoracic",
+    "Low thoracic"
+   ],
+   "answer": 3,
+   "explain": "Intact arms plus good trunk/abdominal control point to a low thoracic injury.",
+   "section": "u3-s6",
+   "difficulty": 3
+  },
+  {
+   "q": "Compared with a low thoracic injury, a high thoracic injury typically results in:",
+   "choices": [
+    "Better sitting balance",
+    "Poorer trunk control",
+    "Loss of hand function",
+    "Normal leg function"
+   ],
+   "answer": 1,
+   "explain": "Lower abdominals and trunk muscles are lost with higher thoracic injuries.",
+   "section": "u3-s6",
+   "difficulty": 2
+  },
+  {
+   "q": "Cervical spinal nerves exit:",
+   "choices": [
+    "Below their vertebra",
+    "Above their vertebra",
+    "Through the sacrum",
+    "Through the foramen magnum"
+   ],
+   "answer": 1,
+   "explain": "Cervical nerves exit above their vertebrae; from T1 down they exit below.",
+   "section": "u3-s6",
+   "difficulty": 2
+  },
+  {
+   "q": "A client reports numbness on the lateral surface of the anterior forearm. Which dermatome is most likely involved?",
+   "choices": [
+    "L1",
+    "C8",
+    "T1",
+    "C6"
+   ],
+   "answer": 3,
+   "explain": "C6 supplies the lateral forearm and thumb.",
+   "section": "u3-s6",
+   "difficulty": 2
+  },
+  {
+   "q": "A wheelchair user burned her upper anterior thigh without feeling it. This suggests loss of sensation in:",
+   "choices": [
+    "C5-6",
+    "T4-T6",
+    "L1-L2",
+    "S1-S2"
+   ],
+   "answer": 2,
+   "explain": "The upper anterior thigh is supplied by L1-L2 dermatomes.",
+   "section": "u3-s6",
+   "difficulty": 2
+  },
+  {
+   "q": "Quadriplegia (tetraplegia) results from injury at the:",
+   "choices": [
+    "Cervical level",
+    "Lumbar level",
+    "Sacral level",
+    "Cauda equina only"
+   ],
+   "answer": 0,
+   "explain": "Cervical injuries affect both upper and lower body.",
+   "section": "u3-s6",
+   "difficulty": 1
+  },
+  {
+   "q": "Which cranial nerve is responsible for smell?",
+   "choices": [
+    "II Optic",
+    "I Olfactory",
+    "VII Facial",
+    "IX Glossopharyngeal"
+   ],
+   "answer": 1,
+   "explain": "CN I is the olfactory nerve.",
+   "section": "u3-s7",
+   "difficulty": 1
+  },
+  {
+   "q": "A client has facial numbness and difficulty chewing. Which cranial nerve is most likely affected?",
+   "choices": [
+    "VII Facial",
+    "XII Hypoglossal",
+    "X Vagus",
+    "V Trigeminal"
+   ],
+   "answer": 3,
+   "explain": "The trigeminal nerve provides facial sensation and chewing.",
+   "section": "u3-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "A client's eye cannot move outward (laterally). Which cranial nerve is most likely involved?",
+   "choices": [
+    "VI Abducens",
+    "IV Trochlear",
+    "II Optic",
+    "VIII Vestibulocochlear"
+   ],
+   "answer": 0,
+   "explain": "The abducens moves the eye laterally (abduction).",
+   "section": "u3-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "Bell's palsy affects which cranial nerve?",
+   "choices": [
+    "V Trigeminal",
+    "VII Facial",
+    "IX Glossopharyngeal",
+    "XI Accessory"
+   ],
+   "answer": 1,
+   "explain": "Bell's palsy is a usually temporary CN VII palsy on one side of the face.",
+   "section": "u3-s7",
+   "difficulty": 1
+  },
+  {
+   "q": "Weakness turning the head and shrugging points to which cranial nerve?",
+   "choices": [
+    "XII Hypoglossal",
+    "X Vagus",
+    "XI Spinal accessory",
+    "IV Trochlear"
+   ],
+   "answer": 2,
+   "explain": "CN XI supplies the SCM and trapezius.",
+   "section": "u3-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "The brachial plexus is formed by spinal nerves:",
+   "choices": [
+    "C1-C4",
+    "L1-L4",
+    "T2-T12",
+    "C5-T1"
+   ],
+   "answer": 3,
+   "explain": "The brachial plexus arises from C5 through T1.",
+   "section": "u3-s8",
+   "difficulty": 1
+  },
+  {
+   "q": "A patient can't abduct her arm to reach out a car window and has numbness over the lower deltoid. Which nerve is suspected?",
+   "choices": [
+    "Radial",
+    "Ulnar",
+    "Musculocutaneous",
+    "Axillary"
+   ],
+   "answer": 3,
+   "explain": "The axillary nerve supplies the deltoid and the skin over it.",
+   "section": "u3-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "Weak forearm pronation and difficulty picking up coins with thumb and index finger suggest the:",
+   "choices": [
+    "Median nerve",
+    "Ulnar nerve",
+    "Radial nerve",
+    "Axillary nerve"
+   ],
+   "answer": 0,
+   "explain": "The median nerve controls pronation and thumb opposition/pinch.",
+   "section": "u3-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "Which nerve supplies the quadriceps for knee extension?",
+   "choices": [
+    "Obturator",
+    "Sciatic",
+    "Femoral",
+    "Tibial"
+   ],
+   "answer": 2,
+   "explain": "The femoral nerve (L2-4) supplies hip flexors and quadriceps.",
+   "section": "u3-s8",
+   "difficulty": 1
+  },
+  {
+   "q": "Weak hip adduction most likely involves which nerve?",
+   "choices": [
+    "Femoral",
+    "Tibial",
+    "Common peroneal",
+    "Obturator"
+   ],
+   "answer": 3,
+   "explain": "The obturator nerve supplies the hip adductors.",
+   "section": "u3-s8",
+   "difficulty": 1
+  },
+  {
+   "q": "The hamstrings are innervated by the:",
+   "choices": [
+    "Sciatic nerve",
+    "Femoral nerve",
+    "Obturator nerve",
+    "Axillary nerve"
+   ],
+   "answer": 0,
+   "explain": "The sciatic nerve (L4-S3) supplies hip extension and knee flexion.",
+   "section": "u3-s8",
+   "difficulty": 1
+  },
+  {
+   "q": "Which nerve supplies ankle dorsiflexors and evertors?",
+   "choices": [
+    "Tibial",
+    "Femoral",
+    "Common peroneal",
+    "Obturator"
+   ],
+   "answer": 2,
+   "explain": "The common peroneal (fibular) nerve supplies tibialis anterior and fibularis muscles.",
+   "section": "u3-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "Which group of spinal nerves does NOT form a plexus?",
+   "choices": [
+    "Cervical",
+    "Thoracic",
+    "Lumbar",
+    "Sacral"
+   ],
+   "answer": 1,
+   "explain": "Thoracic nerves run individually as intercostal nerves.",
+   "section": "u3-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "A motor unit consists of:",
+   "choices": [
+    "One muscle and its tendon",
+    "A sensory and a motor neuron",
+    "All nerves in a plexus",
+    "One motor neuron and all muscle fibers it supplies"
+   ],
+   "answer": 3,
+   "explain": "A motor unit is a single motor neuron plus its muscle fibers.",
+   "section": "u3-s9",
+   "difficulty": 1
+  },
+  {
+   "q": "Which neurotransmitter is released at the motor end plate to trigger contraction?",
+   "choices": [
+    "Dopamine",
+    "Serotonin",
+    "Acetylcholine",
+    "Epinephrine"
+   ],
+   "answer": 2,
+   "explain": "Acetylcholine stimulates muscle fibers, leading to actin-myosin sliding.",
+   "section": "u3-s9",
+   "difficulty": 1
+  },
+  {
+   "q": "Muscles used for fine motor control have:",
+   "choices": [
+    "Few muscle fibers per motor neuron",
+    "Many fibers per motor neuron",
+    "No motor units",
+    "Only smooth muscle"
+   ],
+   "answer": 0,
+   "explain": "Fine motor muscles have ratios near 10 fibers per neuron for precision.",
+   "section": "u3-s9",
+   "difficulty": 2
+  },
+  {
+   "q": "Wrist drop after sleeping with an arm draped over a chair (Saturday night palsy) involves the:",
+   "choices": [
+    "Median nerve",
+    "Ulnar nerve",
+    "Radial nerve",
+    "Musculocutaneous nerve"
+   ],
+   "answer": 2,
+   "explain": "The radial nerve is compressed where it wraps around the humerus.",
+   "section": "u3-s9",
+   "difficulty": 2
+  },
+  {
+   "q": "Carpal tunnel syndrome is compression of the:",
+   "choices": [
+    "Ulnar nerve at the elbow",
+    "Axillary nerve at the shoulder",
+    "Radial nerve at the humerus",
+    "Median nerve at the wrist"
+   ],
+   "answer": 3,
+   "explain": "Carpal tunnel compresses the median nerve at the wrist.",
+   "section": "u3-s9",
+   "difficulty": 1
+  },
+  {
+   "q": "Claw hand is associated with injury to the:",
+   "choices": [
+    "Ulnar nerve",
+    "Radial nerve",
+    "Axillary nerve",
+    "Femoral nerve"
+   ],
+   "answer": 0,
+   "explain": "Ulnar nerve injury weakens hand intrinsics causing clawing.",
+   "section": "u3-s9",
+   "difficulty": 1
+  },
+  {
+   "q": "Scapular winging results from injury to the:",
+   "choices": [
+    "Axillary nerve",
+    "Long thoracic nerve",
+    "Radial nerve",
+    "Spinal accessory nerve only"
+   ],
+   "answer": 1,
+   "explain": "The long thoracic nerve supplies serratus anterior, which holds the scapula to the ribs.",
+   "section": "u3-s9",
+   "difficulty": 2
+  },
+  {
+   "q": "Foot drop caused by pressure at the head of the fibula involves the:",
+   "choices": [
+    "Tibial nerve",
+    "Femoral nerve",
+    "Common peroneal nerve",
+    "Obturator nerve"
+   ],
+   "answer": 2,
+   "explain": "The common peroneal nerve wraps around the fibular head.",
+   "section": "u3-s9",
+   "difficulty": 2
+  },
+  {
+   "q": "Thoracic outlet syndrome involves compression between the:",
+   "choices": [
+    "Humerus and scapula",
+    "Radius and ulna",
+    "Tibia and fibula",
+    "Clavicle and first rib"
+   ],
+   "answer": 3,
+   "explain": "TOS compresses brachial plexus nerves/vessels between the clavicle and first rib.",
+   "section": "u3-s9",
+   "difficulty": 2
+  },
+  {
+   "q": "Lymph from the lower extremities drains mainly to which nodes?",
+   "choices": [
+    "Cervical",
+    "Axillary",
+    "Inguinal",
+    "Popliteal only"
+   ],
+   "answer": 2,
+   "explain": "Areas below the umbilicus drain to the inguinal nodes.",
+   "section": "u3-s10",
+   "difficulty": 1
+  },
+  {
+   "q": "Which helps move blood in veins back toward the heart?",
+   "choices": [
+    "Skeletal muscle pumping",
+    "Lymph nodes",
+    "Myelin",
+    "Synapses"
+   ],
+   "answer": 0,
+   "explain": "Contracting muscles squeeze veins, aiding venous return.",
+   "section": "u3-s10",
+   "difficulty": 1
+  }
+ ]
+}

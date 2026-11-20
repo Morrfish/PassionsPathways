@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OTA 1050 Study Hub</title>
+<meta name="description" content="Interactive study hub for OTA 1050 Kinesiology: notes, key terms, search, quizzes, practice exams and review games.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <button class="icon-btn" id="tocToggle" aria-label="Open table of contents" aria-expanded="false">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <a class="brand" href="#/">OTA 1050 <span>Study Hub</span></a>
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <input id="searchBox" type="search" placeholder="Search notes, terms, questions…  ( / )" aria-label="Search the study hub" autocomplete="off">
+  </div>
+  <nav class="topnav" aria-label="Main">
+    <a href="#/quiz">Quizzes</a>
+    <a href="#/exams">Exams</a>
+    <a href="#/games">Games</a>
+  </nav>
+  <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></svg>
+  </button>
+</header>
+<div class="layout">
+  <aside class="toc" id="toc" aria-label="Table of contents"></aside>
+  <div class="scrim" id="scrim" hidden></div>
+  <main id="main" tabindex="-1"></main>
+</div>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

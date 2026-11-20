@@ -1,0 +1,1209 @@
+{
+ "id": "u2",
+ "title": "Skeletal System & Arthrology",
+ "summary": "This unit covers the functions, divisions and composition of the skeleton, how bones are classified, and the landmarks used to describe them. It then turns to arthrology: the structural types of joints, how synovial joints are classified by their axes, the connective tissues that support joints, common skeletal and joint pathologies, the lab landmarks you will palpate, and normal range-of-motion values.",
+ "sources": [
+  "SkeletalSystemStudentCopy.pptx",
+  "Arthrology.pptx",
+  "skeletal system and arthrology lab-2.docx",
+  "Skeletal system: fibrous, cartilaginous, osseous, nervous, vascular tissue",
+  "ROM norms table.docx"
+ ],
+ "sections": [
+  {
+   "id": "u2-s1",
+   "heading": "Skeletal System Overview & Functions",
+   "body": [
+    "The skeletal system is built from <b>fibrous, cartilaginous, osseous (bone), nervous, and vascular tissue</b>. It sets the basic size and proportions of the body.",
+    "<b>Five functions (memory aid: SPAMS)</b><ul><li><b>S</b>upport: gives the body its framework</li><li><b>P</b>rotect: shields vital organs (the skull protects the brain, the vertebrae the spinal cord, the rib cage the heart)</li><li><b>A</b>ssist movement: gives muscles rigid levers to attach to. Bones do not move on their own. Muscles move them.</li><li><b>M</b>anufacture blood cells (<i>hematopoiesis</i>) in red marrow, mostly in flat bones</li><li><b>S</b>tore calcium and other mineral salts in bone tissue</li></ul>",
+    "<b>Divisions of the skeleton</b><ul><li><b>Axial skeleton (80 bones):</b> the upright core, which is the skull, vertebral column, ribs and sternum. The pelvic (hip) bones are not part of it, although the sacrum and coccyx are.</li><li><b>Appendicular skeleton (126 bones):</b> the extremities plus the shoulder and pelvic girdles that attach them to the axial skeleton</li><li><b>Total: 206 bones</b></li></ul>"
+   ]
+  },
+  {
+   "id": "u2-s2",
+   "heading": "Bone Composition & Remodeling",
+   "body": [
+    "Bone is living, vascular tissue. About <b>1/3 is organic material</b> (mainly collagen), which gives it elasticity. About <b>2/3 is inorganic mineral</b> (calcium salts), which gives it hardness and strength.",
+    "<b>Types of bone tissue</b><ul><li><b>Compact (cortical):</b> the hard, dense outer shell. It is thick along the shaft of a long bone and thin at the ends.</li><li><b>Cancellous (spongy):</b> porous tissue inside bones and at the articular ends</li></ul>",
+    "<b>Periosteum</b> is the outer membrane covering bone. It has a rich nerve and blood supply. Articular surfaces are covered with cartilage instead.",
+    "<b>Dynamic equilibrium:</b> bone is constantly being remodeled.<ul><li><b>Osteoblasts</b> build new bone and repair and remodel it (think <i>b</i> = build)</li><li><b>Osteoclasts</b> resorb, or break down, old bone (think <i>c</i> = chomp)</li></ul>When osteoclast activity outpaces osteoblast activity, bone mass is lost and bones become brittle, as in osteoporosis."
+   ]
+  },
+  {
+   "id": "u2-s3",
+   "heading": "Bone Classification & Long Bone Structure",
+   "body": [
+    "<b>Bones are classified by shape</b><table><tr><th>Type</th><th>Description</th><th>Examples</th></tr><tr><td>Long</td><td>Longer than wide, with a tubular shaft (diaphysis) and two ends (epiphyses). They are the largest bones and make up most of the appendicular skeleton.</td><td>Humerus, radius, ulna, femur, tibia, fibula, metacarpals, phalanges</td></tr><tr><td>Short</td><td>About equal in length, width and height. No diaphysis, with lots of articular surface, and usually articulate with several bones.</td><td>Carpals, tarsals</td></tr><tr><td>Flat</td><td>Broad, thin and often curved. Two layers of compact bone surround cancellous bone and marrow.</td><td>Scapula, ilium, skull bones, sternum, ribs</td></tr><tr><td>Irregular</td><td>Mixed shapes, with a thin compact layer over cancellous bone</td><td>Vertebrae, sacrum</td></tr><tr><td>Sesamoid</td><td>Small, nodular bones embedded in a tendon where it crosses a joint. They protect the tendon from wear.</td><td>Patella; small sesamoids in the hands and feet</td></tr></table>",
+    "<b>Key rules:</b> the <b>axial</b> skeleton has <b>no long or short bones</b>, and the <b>appendicular</b> skeleton has <b>no irregular bones</b>.",
+    "Long bones form the framework that makes movement possible. They do not create movement themselves, but they give muscles places to attach.",
+    "<b>Parts of a long bone</b><ul><li><b>Diaphysis:</b> the shaft</li><li><b>Epiphysis:</b> each end (proximal and distal)</li><li><b>Metaphysis:</b> the flared region between the shaft and the end</li><li><b>Epiphyseal (growth) plate:</b> the cartilage plate where a growing bone lengthens</li><li><b>Periosteum:</b> the outer covering, rich in nerves and blood vessels</li><li><b>Medullary cavity:</b> the central canal of the shaft that holds marrow</li></ul>"
+   ]
+  },
+  {
+   "id": "u2-s4",
+   "heading": "Bony Landmarks",
+   "body": [
+    "<b>Depressions and openings</b><ul><li><b>Foramen:</b> a hole through bone (for example, the foramen magnum and the obturator foramen)</li><li><b>Fossa:</b> a smooth, hollow surface (for example, the olecranon fossa and the subscapular fossa)</li><li><b>Groove or notch:</b> a ditch-like cut-out that lets other structures pass (for example, the bicipital groove)</li><li><b>Meatus:</b> a canal or tube-like opening (for example, the external auditory meatus)</li><li><b>Sinus:</b> an air-filled cavity in bone</li></ul>",
+    "<b>Projections that form joints</b><ul><li><b>Condyle:</b> a large, rounded knob at the end of a long bone</li><li><b>Eminence:</b> a projecting part of a bone</li><li><b>Facet:</b> a small, flat, smooth articular surface</li><li><b>Head:</b> a rounded articular projection set beyond a narrow neck</li></ul>",
+    "<b>Projections where tendons and ligaments attach</b><ul><li><b>Crest:</b> a sharp ridge or border (for example, the iliac crest)</li><li><b>Epicondyle:</b> a smaller knob just above a condyle</li><li><b>Line:</b> a less prominent ridge (for example, the linea aspera of the femur)</li><li><b>Spine or spinous process:</b> a long, thin projection</li><li><b>Tubercle:</b> a small bump (for example, Lister's tubercle of the radius and the greater tubercle of the humerus)</li><li><b>Tuberosity:</b> a large bump (for example, the deltoid tuberosity and the tibial tuberosity)</li><li><b>Trochanter:</b> a very large prominence, found only on the femur (greater and lesser)</li></ul>"
+   ]
+  },
+  {
+   "id": "u2-s5",
+   "heading": "Joints: Functions & Structural Types",
+   "body": [
+    "A <b>joint (articulation)</b> is a connection where two or more bones meet.",
+    "<b>Joint functions:</b> allow motion, help bear weight, and provide stability. Synovial joints also contain fluid that lubricates the joint and nourishes the cartilage.",
+    "<b>Mobility vs. stability trade-off:</b> a joint that allows a lot of motion has little stability, and a joint that allows little motion is very stable.",
+    "<b>Structural types</b><table><tr><th>Type (functional term)</th><th>Features</th><th>Movement and stability</th><th>Examples</th></tr><tr><td><b>Fibrous</b> (synarthrodial; subtypes include sutures, syndesmoses and gomphoses)</td><td>No joint cavity. Bones are joined by fibrous tissue.</td><td>Little or no motion, extreme stability</td><td>Skull sutures, distal tibiofibular syndesmosis, teeth in their sockets</td></tr><tr><td><b>Cartilaginous</b> (amphiarthrodial)</td><td>Hyaline cartilage or fibrocartilage joins the bones</td><td>Small amount of motion, great stability</td><td>Intervertebral joints, pubic symphysis, rib-to-sternum cartilage</td></tr><tr><td><b>Synovial</b> (diarthrodial)</td><td>The bones are separated by a joint cavity enclosed in a capsule</td><td>The most motion, the least stability</td><td>Knee, shoulder, hip, elbow</td></tr></table>"
+   ]
+  },
+  {
+   "id": "u2-s6",
+   "heading": "Synovial Joint Classification, Planes & Axes",
+   "body": [
+    "Synovial joints are classified by their shape and by how many axes they move around. Each axis of motion matches one plane of movement: motion in the sagittal plane occurs around a frontal (medial-lateral) axis, motion in the frontal plane around a sagittal (anterior-posterior) axis, and motion in the transverse plane around a vertical (longitudinal) axis.",
+    "<table><tr><th>Joint type</th><th>Axes</th><th>Motions</th><th>Examples</th></tr><tr><td>Gliding (plane, irregular)</td><td>Non-axial (0)</td><td>Gliding or sliding</td><td>Intercarpal joints</td></tr><tr><td>Hinge</td><td>Uniaxial (1)</td><td>Flexion and extension</td><td>Elbow (humeroulnar), knee (which also allows slight rotation), interphalangeal joints</td></tr><tr><td>Pivot</td><td>Uniaxial (1)</td><td>Rotation</td><td>Atlantoaxial joint (C1 on C2), proximal and distal radioulnar joints</td></tr><tr><td>Ellipsoid (condyloid)</td><td>Biaxial (2)</td><td>Flexion and extension, abduction and adduction</td><td>Wrist (radiocarpal), finger MCP joints</td></tr><tr><td>Saddle</td><td>Biaxial (2)</td><td>Flexion and extension, abduction and adduction, plus some accessory rotation</td><td>Thumb CMC joint</td></tr><tr><td>Ball and socket</td><td>Triaxial or multiaxial (3)</td><td>Flexion and extension, abduction and adduction, rotation</td><td>Shoulder (glenohumeral), hip</td></tr></table>"
+   ]
+  },
+  {
+   "id": "u2-s7",
+   "heading": "Synovial Joint Structures & Connective Tissues",
+   "body": [
+    "<b>Ligaments</b> are strong, dense fibrous connective tissue that connects <b>bone to bone</b>. They are flexible but not elastic: they bend but do not stretch. An injury to a ligament is a <b>sprain</b>.",
+    "<b>Joint capsule</b> surrounds the joint and protects the articular surfaces. It has two layers:<ul><li><b>Outer fibrous layer:</b> gives support and protection and is reinforced by ligaments</li><li><b>Inner synovial membrane:</b> a well-vascularized lining that secretes synovial fluid</li></ul>At the shoulder, the capsule creates a vacuum effect that helps hold the humeral head in the glenoid fossa.",
+    "<b>Synovial fluid</b> is a thick, clear fluid that lubricates the joint, nourishes the cartilage and absorbs shock. Moving the joint helps keep the fluid circulating.",
+    "<b>Three types of cartilage</b><ul><li><b>Hyaline (articular):</b> covers the ends of bones in synovial joints to give smooth surfaces. It has no blood supply of its own and gets nutrients from synovial fluid, so it cannot repair itself when damaged.</li><li><b>Fibrocartilage:</b> absorbs shock (the knee menisci, intervertebral discs, and the disc between the clavicle and sternum), deepens a socket (the glenoid labrum), and fills gaps between bones (the triangular fibrocartilage disc at the ulnocarpal joint)</li><li><b>Elastic:</b> helps a structure keep its shape (the ear, the eustachian tube, the larynx)</li></ul>",
+    "<b>Tendons</b> are cords or bands that connect <b>muscle to bone</b>. Some run in tendon sheaths that protect and lubricate them. An <b>aponeurosis</b> is a broad, flat sheet of tendon, such as the linea alba of the abdominals. An injury to a muscle or tendon is a <b>strain</b>.",
+    "<b>Bursae</b> are small fluid-filled sacs that reduce friction under tendons and over bony prominences. They can be <i>natural</i>, or <i>acquired</i> where repeated friction occurs, such as the writer's bump on a finger.",
+    "<b>Nerve supply:</b> joints are supplied by the nerves of the muscles that cross them. These nerves carry sensory fibers from proprioceptors in the tendons and ligaments that help regulate joint movement. The capsule and ligaments also contain pain receptors."
+   ]
+  },
+  {
+   "id": "u2-s8",
+   "heading": "Skeletal & Joint Pathology and Evaluation",
+   "body": [
+    "<b>How bone and joint problems are evaluated:</b> X-rays (radiographs), bone scans, CT scans, MRI (best for soft tissue), arthroscopy (scope-guided surgery for viewing and treating a joint), and synovial fluid aspiration and analysis.",
+    "<b>Fractures</b> are broken bones. They are caused by direct force, indirect force, or disease that weakens the bone (a pathologic fracture), and are described by type, direction and position.<ul><li><b>Comminuted:</b> many fragments</li><li><b>Transverse:</b> straight across the bone</li><li><b>Oblique:</b> on a diagonal</li><li><b>Spiral:</b> twists around the bone, usually from a rotational force</li><li><b>Segmental:</b> a separate segment broken out</li></ul>",
+    "<b>Osteoporosis:</b> loss of normal bone density or mass, which weakens bone to the point of fracture.<br><b>Osteomyelitis:</b> a bone infection, usually caused by bacteria.",
+    "<b>Legg-Calve-Perthes disease (coxa plana):</b> a childhood loss of blood supply (avascular necrosis) to the femoral head. The bone dies and then slowly revascularizes and remodels. A slipped epiphysis at the hip is a separate condition called slipped capital femoral epiphysis.<br><b>Osgood-Schlatter disease:</b> an overuse condition of growing children and adolescents. It causes inflammation at the tibial tuberosity and its growth plate, where the patellar tendon pulls, and is aggravated by knee exertion during growth spurts.",
+    "<b>Joint terms</b><ul><li><b>Dislocation:</b> complete separation of two articular surfaces</li><li><b>Subluxation:</b> partial dislocation, common at the shoulder after a stroke</li><li><b>Osteoarthritis (degenerative arthritis):</b> wear-and-tear breakdown of articular cartilage over time</li><li><b>Sprain:</b> a partial or complete tear of ligament fibers</li><li><b>Strain:</b> overstretching or tearing of muscle (or tendon) fibers</li><li><b>Tendonitis:</b> inflammation of a tendon</li><li><b>Synovitis:</b> inflammation of the synovial membrane</li><li><b>Tenosynovitis:</b> inflammation of a tendon sheath</li><li><b>Bursitis:</b> inflammation of a bursa</li><li><b>Capsulitis:</b> inflammation of a joint capsule</li></ul>"
+   ]
+  },
+  {
+   "id": "u2-s9",
+   "heading": "Lab: Bones, Joints & Palpable Landmarks",
+   "body": [
+    "In lab, students locate each item on skeleton models and palpate the starred items (*) on a partner.",
+    "<b>Shoulder, arm and upper anterior thorax:</b> clavicle* (acromial and sternal ends); humerus* (head, greater and lesser tubercles, deltoid tuberosity*, lateral* and medial* epicondyles, capitulum, trochlea, olecranon fossa*); scapula (acromion, glenoid fossa, axillary/lateral border*, vertebral/medial border*, superior* and inferior* angles, subscapular, supraspinous and infraspinous fossae, spine*, coracoid process*); SC joint*, AC joint*, glenohumeral joint; sternum* (manubrium, xiphoid process, sternocostal joints).",
+    "<b>Forearm and hand:</b> elbow joint*; proximal and distal radioulnar joints; radius* (head, radial styloid, Lister's tubercle*); ulna* (head, ulnar styloid*, olecranon process*); radiocarpal, carpometacarpal, intermetacarpal, MCP, PIP and DIP joints; metacarpals*; phalanges* (proximal, middle, distal); carpals*.",
+    "<b>Carpals, from lateral (thumb side) to medial, proximal row then distal row:</b> scaphoid*, lunate, triquetrum, pisiform*, then trapezium*, trapezoid, capitate*, hamate*. Mnemonic: <i>Steve Left The Party To Take Carol Home</i>.",
+    "<b>Spine, pelvis and thorax:</b> cervical, thoracic and lumbar vertebrae (body, spinous process*, transverse process*, vertebral foramen); intervertebral and costovertebral joints; sacrum, coccyx, sacroiliac and lumbosacral joints; ribs (head, sternal end); ilium (iliac crest*), ischium (ischial tuberosity), pubis (pubic symphysis), obturator foramen, ASIS*, PSIS*, acetabulum.",
+    "<b>Head and face:</b> frontal, parietal, temporal (mastoid process*), sphenoid, occipital (foramen magnum), nasal, zygomatic, maxilla, mandible, TMJ.",
+    "<b>Thigh, knee, leg and foot:</b> hip joint; femur (head, greater and lesser trochanters, lateral* and medial* condyles and epicondyles, patellar surface); knee joint; patella*; fibula (head, lateral malleolus*); tibia (medial malleolus*, tibial tuberosity); proximal and distal tibiofibular joints; talocrural (ankle) joint; calcaneus*, talus*, cuboid, navicular, cuneiforms, metatarsals*, phalanges*, sesamoid bones; MTP and IP joints."
+   ]
+  },
+  {
+   "id": "u2-s10",
+   "heading": "Goniometry & Normal ROM Values",
+   "body": [
+    "<b>Goniometry</b> is the measurement of joint angles, or range of motion (ROM), with a goniometer. Measured values are compared with normal ranges to find limitations. Normal values below are from Mahle & Ward, Table 12-1, adapted from the AAOS and Eaton Hand.",
+    "<h4>Upper extremity</h4>",
+    "<b>Shoulder</b><table><tr><th>Motion</th><th>Normal range</th></tr><tr><td>Flexion</td><td>0-180&deg;</td></tr><tr><td>(Hyper)extension</td><td>0-60&deg;</td></tr><tr><td>Abduction</td><td>0-180&deg;</td></tr><tr><td>Internal rotation</td><td>0-70&deg;</td></tr><tr><td>External rotation</td><td>0-90&deg;</td></tr><tr><td>Horizontal abduction</td><td>0-40&deg;</td></tr><tr><td>Horizontal adduction</td><td>0-130&deg;</td></tr></table>",
+    "<b>Elbow and forearm</b><table><tr><th>Motion</th><th>Normal range</th></tr><tr><td>Flexion</td><td>0-150&deg;</td></tr><tr><td>Extension</td><td>0&deg; (in a 180&deg; plane)</td></tr><tr><td>Supination</td><td>0-80/85&deg;</td></tr><tr><td>Pronation</td><td>0-70/80&deg;</td></tr></table>",
+    "<b>Wrist</b><table><tr><th>Motion</th><th>Normal range</th></tr><tr><td>Extension</td><td>0-70&deg;</td></tr><tr><td>Flexion</td><td>0-75/80&deg;</td></tr><tr><td>Ulnar deviation</td><td>0-30/35&deg;</td></tr><tr><td>Radial deviation</td><td>0-20&deg;</td></tr></table>",
+    "<b>Fingers</b><table><tr><th>Motion</th><th>Normal range</th></tr><tr><td>MCP flexion</td><td>0-90&deg;</td></tr><tr><td>MCP hyperextension</td><td>0-45&deg;</td></tr><tr><td>MCP abduction</td><td>0-25&deg;</td></tr><tr><td>PIP flexion</td><td>0-100&deg;</td></tr><tr><td>DIP flexion</td><td>0-80&deg;</td></tr></table>",
+    "<b>Thumb</b><table><tr><th>Motion</th><th>Normal range</th></tr><tr><td>CMC flexion</td><td>0-15&deg;</td></tr><tr><td>CMC extension</td><td>0-20&deg;</td></tr><tr><td>CMC (palmar) abduction</td><td>0-45&deg;</td></tr><tr><td>CMC opposition</td><td>To the base of the small finger; any deficit is measured in cm</td></tr><tr><td>MCP flexion</td><td>0-50/55&deg;</td></tr><tr><td>IP flexion</td><td>0-80&deg;</td></tr></table>",
+    "<h4>Lower extremity</h4>",
+    "<b>Hip</b><table><tr><th>Motion</th><th>Normal range</th></tr><tr><td>Flexion</td><td>0-120&deg;</td></tr><tr><td>(Hyper)extension</td><td>0-30&deg;</td></tr><tr><td>Abduction</td><td>0-45&deg;</td></tr><tr><td>Adduction</td><td>0-30&deg;</td></tr><tr><td>Internal rotation</td><td>0-45&deg;</td></tr><tr><td>External rotation</td><td>0-45&deg;</td></tr></table>",
+    "<b>Knee</b><table><tr><th>Motion</th><th>Normal range</th></tr><tr><td>Flexion</td><td>0-135&deg;</td></tr></table>",
+    "<b>Ankle</b><table><tr><th>Motion</th><th>Normal range</th></tr><tr><td>Dorsiflexion</td><td>0-20&deg;</td></tr><tr><td>Plantar flexion</td><td>0-50&deg;</td></tr></table>",
+    "<b>Ankle/foot</b><table><tr><th>Motion</th><th>Normal range</th></tr><tr><td>Inversion</td><td>0-35&deg;</td></tr><tr><td>Eversion</td><td>0-20&deg;</td></tr></table>"
+   ]
+  }
+ ],
+ "terms": [
+  {
+   "term": "Hematopoiesis",
+   "def": "Making blood cells in red bone marrow, mostly in flat bones.",
+   "section": "u2-s1"
+  },
+  {
+   "term": "Axial skeleton",
+   "def": "The 80 bones of the body's upright core: the skull, vertebral column, ribs and sternum.",
+   "section": "u2-s1"
+  },
+  {
+   "term": "Appendicular skeleton",
+   "def": "The 126 bones of the limbs and the girdles that attach them to the axial skeleton.",
+   "section": "u2-s1"
+  },
+  {
+   "term": "Compact bone",
+   "def": "Dense, hard outer layer of bone, thickest along the shaft of a long bone.",
+   "section": "u2-s2"
+  },
+  {
+   "term": "Cancellous bone",
+   "def": "Spongy, porous bone found inside bones and at the articular ends.",
+   "section": "u2-s2"
+  },
+  {
+   "term": "Osteoblast",
+   "def": "Cell that builds new bone and helps repair and remodel it.",
+   "section": "u2-s2"
+  },
+  {
+   "term": "Osteoclast",
+   "def": "Cell that resorbs, or breaks down, old bone.",
+   "section": "u2-s2"
+  },
+  {
+   "term": "Periosteum",
+   "def": "Outer membrane covering bone, rich in nerves and blood vessels.",
+   "section": "u2-s2"
+  },
+  {
+   "term": "Long bone",
+   "def": "Bone that is longer than it is wide, with a shaft and two ends (for example, the femur or phalanges).",
+   "section": "u2-s3"
+  },
+  {
+   "term": "Short bone",
+   "def": "Roughly cube-shaped bone with no shaft and many articular surfaces (for example, the carpals).",
+   "section": "u2-s3"
+  },
+  {
+   "term": "Flat bone",
+   "def": "Thin, broad bone with compact layers around cancellous bone and marrow (for example, the scapula or ilium).",
+   "section": "u2-s3"
+  },
+  {
+   "term": "Irregular bone",
+   "def": "Bone with a mixed shape, made of a thin compact layer over cancellous bone (for example, the vertebrae).",
+   "section": "u2-s3"
+  },
+  {
+   "term": "Sesamoid bone",
+   "def": "Small bone embedded in a tendon that protects the tendon from wear (for example, the patella).",
+   "section": "u2-s3"
+  },
+  {
+   "term": "Diaphysis",
+   "def": "The shaft of a long bone.",
+   "section": "u2-s3"
+  },
+  {
+   "term": "Epiphysis",
+   "def": "Either end of a long bone.",
+   "section": "u2-s3"
+  },
+  {
+   "term": "Metaphysis",
+   "def": "The flared region between the diaphysis and the epiphysis.",
+   "section": "u2-s3"
+  },
+  {
+   "term": "Epiphyseal plate",
+   "def": "The cartilage growth plate where a long bone lengthens.",
+   "section": "u2-s3"
+  },
+  {
+   "term": "Medullary cavity",
+   "def": "The central marrow-filled canal of a long bone's shaft.",
+   "section": "u2-s3"
+  },
+  {
+   "term": "Foramen",
+   "def": "A hole through a bone.",
+   "section": "u2-s4"
+  },
+  {
+   "term": "Fossa",
+   "def": "A smooth, hollow depression on a bone.",
+   "section": "u2-s4"
+  },
+  {
+   "term": "Meatus",
+   "def": "A canal or tube-like opening in a bone.",
+   "section": "u2-s4"
+  },
+  {
+   "term": "Condyle",
+   "def": "A large, rounded knob at the end of a long bone that forms part of a joint.",
+   "section": "u2-s4"
+  },
+  {
+   "term": "Epicondyle",
+   "def": "A smaller bony knob just above a condyle, used for muscle or ligament attachment.",
+   "section": "u2-s4"
+  },
+  {
+   "term": "Facet",
+   "def": "A small, flat, smooth articular surface.",
+   "section": "u2-s4"
+  },
+  {
+   "term": "Tubercle",
+   "def": "A small bony bump where a structure attaches.",
+   "section": "u2-s4"
+  },
+  {
+   "term": "Tuberosity",
+   "def": "A large bony bump where a structure attaches.",
+   "section": "u2-s4"
+  },
+  {
+   "term": "Trochanter",
+   "def": "A very large bony prominence, found on the femur.",
+   "section": "u2-s4"
+  },
+  {
+   "term": "Crest",
+   "def": "A sharp ridge or border of a bone (for example, the iliac crest).",
+   "section": "u2-s4"
+  },
+  {
+   "term": "Articulation",
+   "def": "A joint: a connection between two or more bones.",
+   "section": "u2-s5"
+  },
+  {
+   "term": "Synovial (diarthrodial) joint",
+   "def": "A freely movable joint with a joint cavity. It is the most mobile and least stable type.",
+   "section": "u2-s5"
+  },
+  {
+   "term": "Fibrous (synarthrodial) joint",
+   "def": "A joint with no cavity, joined by fibrous tissue. It allows little or no motion and is very stable.",
+   "section": "u2-s5"
+  },
+  {
+   "term": "Cartilaginous (amphiarthrodial) joint",
+   "def": "A joint in which bones are joined by cartilage. It allows slight motion and is very stable.",
+   "section": "u2-s5"
+  },
+  {
+   "term": "Non-axial",
+   "def": "Describes motion with no axis, such as the gliding of plane joints between the carpals.",
+   "section": "u2-s6"
+  },
+  {
+   "term": "Uniaxial",
+   "def": "Describes motion in one plane around one axis, as in hinge and pivot joints.",
+   "section": "u2-s6"
+  },
+  {
+   "term": "Biaxial",
+   "def": "Describes motion in two planes, as in ellipsoid and saddle joints.",
+   "section": "u2-s6"
+  },
+  {
+   "term": "Triaxial",
+   "def": "Describes motion in three planes, as in ball and socket joints.",
+   "section": "u2-s6"
+  },
+  {
+   "term": "Saddle joint",
+   "def": "A biaxial joint with reciprocal concave and convex surfaces (for example, the thumb CMC joint).",
+   "section": "u2-s6"
+  },
+  {
+   "term": "Ligament",
+   "def": "Dense fibrous tissue connecting bone to bone. It is flexible but not elastic.",
+   "section": "u2-s7"
+  },
+  {
+   "term": "Tendon",
+   "def": "A cord or band connecting muscle to bone.",
+   "section": "u2-s7"
+  },
+  {
+   "term": "Aponeurosis",
+   "def": "A broad, flat sheet of tendon (for example, the linea alba).",
+   "section": "u2-s7"
+  },
+  {
+   "term": "Bursa",
+   "def": "A small fluid-filled sac that reduces friction between tendons and bone.",
+   "section": "u2-s7"
+  },
+  {
+   "term": "Joint capsule",
+   "def": "A two-layer sleeve around a synovial joint: a fibrous outer layer lined by synovial membrane.",
+   "section": "u2-s7"
+  },
+  {
+   "term": "Synovial fluid",
+   "def": "A thick, clear fluid that lubricates the joint, nourishes cartilage and absorbs shock.",
+   "section": "u2-s7"
+  },
+  {
+   "term": "Hyaline cartilage",
+   "def": "Smooth articular cartilage on bone ends. It has no blood supply, so it cannot heal itself.",
+   "section": "u2-s7"
+  },
+  {
+   "term": "Fibrocartilage",
+   "def": "Tough, shock-absorbing cartilage (for example, the menisci, intervertebral discs and labrum).",
+   "section": "u2-s7"
+  },
+  {
+   "term": "Elastic cartilage",
+   "def": "Flexible cartilage that keeps a structure's shape (for example, the ear and larynx).",
+   "section": "u2-s7"
+  },
+  {
+   "term": "Labrum",
+   "def": "A ring of fibrocartilage that deepens a socket, such as the glenoid fossa.",
+   "section": "u2-s7"
+  },
+  {
+   "term": "Osteoporosis",
+   "def": "Loss of bone density or mass that makes bones fragile.",
+   "section": "u2-s8"
+  },
+  {
+   "term": "Osteomyelitis",
+   "def": "A bacterial infection of bone.",
+   "section": "u2-s8"
+  },
+  {
+   "term": "Comminuted fracture",
+   "def": "A fracture in which the bone breaks into many fragments.",
+   "section": "u2-s8"
+  },
+  {
+   "term": "Subluxation",
+   "def": "Partial dislocation of a joint, common at the shoulder after a stroke.",
+   "section": "u2-s8"
+  },
+  {
+   "term": "Dislocation",
+   "def": "Complete separation of a joint's articular surfaces.",
+   "section": "u2-s8"
+  },
+  {
+   "term": "Sprain",
+   "def": "A partial or complete tear of a ligament.",
+   "section": "u2-s8"
+  },
+  {
+   "term": "Strain",
+   "def": "Overstretching or tearing of muscle (or tendon) fibers.",
+   "section": "u2-s8"
+  },
+  {
+   "term": "Tenosynovitis",
+   "def": "Inflammation of a tendon sheath.",
+   "section": "u2-s8"
+  },
+  {
+   "term": "Legg-Calve-Perthes disease",
+   "def": "Childhood avascular necrosis of the femoral head, also called coxa plana.",
+   "section": "u2-s8"
+  },
+  {
+   "term": "Osgood-Schlatter disease",
+   "def": "Overuse inflammation of the tibial tuberosity and its growth plate in adolescents.",
+   "section": "u2-s8"
+  },
+  {
+   "term": "Lister's tubercle",
+   "def": "A palpable bump on the dorsal distal radius.",
+   "section": "u2-s9"
+  },
+  {
+   "term": "ASIS",
+   "def": "Anterior superior iliac spine: a palpable front tip of the iliac crest.",
+   "section": "u2-s9"
+  },
+  {
+   "term": "Goniometry",
+   "def": "Measurement of joint range of motion with a goniometer.",
+   "section": "u2-s10"
+  }
+ ],
+ "questions": [
+  {
+   "q": "Which is NOT a function of the skeletal system?",
+   "choices": [
+    "Protecting vital organs",
+    "Producing voluntary movement on its own",
+    "Storing calcium and minerals",
+    "Producing blood cells"
+   ],
+   "answer": 1,
+   "explain": "Bones only give muscles places to attach. Muscles produce the movement.",
+   "section": "u2-s1",
+   "difficulty": 1
+  },
+  {
+   "q": "Hematopoiesis takes place mostly in which type of bone?",
+   "choices": [
+    "Flat bones",
+    "Sesamoid bones",
+    "Short bones",
+    "Irregular bones only"
+   ],
+   "answer": 0,
+   "explain": "Red marrow for blood cell production is concentrated mainly in flat bones.",
+   "section": "u2-s1",
+   "difficulty": 1
+  },
+  {
+   "q": "How many bones are in the axial skeleton?",
+   "choices": [
+    "126",
+    "206",
+    "64",
+    "80"
+   ],
+   "answer": 3,
+   "explain": "The axial skeleton has 80 bones and the appendicular skeleton has 126.",
+   "section": "u2-s1",
+   "difficulty": 1
+  },
+  {
+   "q": "Which bone belongs to the appendicular skeleton?",
+   "choices": [
+    "Sternum",
+    "Vertebra",
+    "Scapula",
+    "Occipital bone"
+   ],
+   "answer": 2,
+   "explain": "The scapula is part of the shoulder girdle, which attaches the arm to the axial skeleton.",
+   "section": "u2-s1",
+   "difficulty": 2
+  },
+  {
+   "q": "About how much of bone's makeup is inorganic mineral?",
+   "choices": [
+    "One-third",
+    "Two-thirds",
+    "One-half",
+    "Nine-tenths"
+   ],
+   "answer": 1,
+   "explain": "About 2/3 of bone is mineral, which gives hardness. The other 1/3 is organic and gives elasticity.",
+   "section": "u2-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "The organic portion of bone mainly gives it:",
+   "choices": [
+    "Elasticity",
+    "Hardness",
+    "Blood cell production",
+    "Color"
+   ],
+   "answer": 0,
+   "explain": "Organic collagen gives bone flexibility, while minerals give it hardness.",
+   "section": "u2-s2",
+   "difficulty": 2
+  },
+  {
+   "q": "Which cell breaks down old bone?",
+   "choices": [
+    "Osteoblast",
+    "Chondrocyte",
+    "Fibroblast",
+    "Osteoclast"
+   ],
+   "answer": 3,
+   "explain": "Osteoclasts resorb bone ('c' for chomp).",
+   "section": "u2-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "If osteoclast activity consistently exceeds osteoblast activity, the most likely result is:",
+   "choices": [
+    "Osteomyelitis",
+    "Bone thickening",
+    "Osteoporosis",
+    "Osgood-Schlatter disease"
+   ],
+   "answer": 2,
+   "explain": "When more bone is resorbed than built, bone mass drops and bones become brittle.",
+   "section": "u2-s2",
+   "difficulty": 2
+  },
+  {
+   "q": "Carpals are classified as which type of bone?",
+   "choices": [
+    "Long",
+    "Short",
+    "Flat",
+    "Irregular"
+   ],
+   "answer": 1,
+   "explain": "Carpals are cube-like, with no shaft and many articular surfaces.",
+   "section": "u2-s3",
+   "difficulty": 1
+  },
+  {
+   "q": "The patella is an example of which type of bone?",
+   "choices": [
+    "Sesamoid",
+    "Short",
+    "Flat",
+    "Irregular"
+   ],
+   "answer": 0,
+   "explain": "The patella sits inside the quadriceps tendon, which makes it a sesamoid bone.",
+   "section": "u2-s3",
+   "difficulty": 1
+  },
+  {
+   "q": "Vertebrae are classified as:",
+   "choices": [
+    "Short bones",
+    "Flat bones",
+    "Long bones",
+    "Irregular bones"
+   ],
+   "answer": 3,
+   "explain": "Vertebrae have mixed, complex shapes.",
+   "section": "u2-s3",
+   "difficulty": 1
+  },
+  {
+   "q": "Which statement about bone distribution is correct?",
+   "choices": [
+    "There are no flat bones in the axial skeleton",
+    "There are no long bones in the appendicular skeleton",
+    "There are no long or short bones in the axial skeleton",
+    "Irregular bones are found only in the limbs"
+   ],
+   "answer": 2,
+   "explain": "The axial skeleton has no long or short bones, and the appendicular skeleton has no irregular bones.",
+   "section": "u2-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "Phalanges are classified as:",
+   "choices": [
+    "Short bones",
+    "Long bones",
+    "Sesamoid bones",
+    "Irregular bones"
+   ],
+   "answer": 1,
+   "explain": "Even though they are small, phalanges are longer than they are wide and have a shaft, so they are long bones.",
+   "section": "u2-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "The shaft of a long bone is called the:",
+   "choices": [
+    "Diaphysis",
+    "Epiphysis",
+    "Metaphysis",
+    "Periosteum"
+   ],
+   "answer": 0,
+   "explain": "The diaphysis is the tubular shaft.",
+   "section": "u2-s3",
+   "difficulty": 1
+  },
+  {
+   "q": "The flared region between the shaft and the end of a long bone is the:",
+   "choices": [
+    "Diaphysis",
+    "Epiphyseal plate",
+    "Medullary cavity",
+    "Metaphysis"
+   ],
+   "answer": 3,
+   "explain": "The metaphysis connects the diaphysis to the epiphysis.",
+   "section": "u2-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "Which type of bone has two layers of compact bone around a layer of cancellous bone and marrow?",
+   "choices": [
+    "Long",
+    "Sesamoid",
+    "Flat",
+    "Short"
+   ],
+   "answer": 2,
+   "explain": "Flat bones such as the scapula have this sandwich structure.",
+   "section": "u2-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "A hole through a bone that lets nerves or vessels pass is a:",
+   "choices": [
+    "Fossa",
+    "Foramen",
+    "Facet",
+    "Condyle"
+   ],
+   "answer": 1,
+   "explain": "A foramen is an opening through bone, such as the foramen magnum.",
+   "section": "u2-s4",
+   "difficulty": 1
+  },
+  {
+   "q": "The olecranon fossa is best described as a:",
+   "choices": [
+    "Smooth, hollow depression",
+    "Large rounded projection",
+    "Sharp ridge",
+    "Air-filled cavity"
+   ],
+   "answer": 0,
+   "explain": "A fossa is a hollow depression. The olecranon fits into it when the elbow extends.",
+   "section": "u2-s4",
+   "difficulty": 1
+  },
+  {
+   "q": "The deltoid tuberosity is a landmark used for:",
+   "choices": [
+    "Forming a joint surface",
+    "Passage of nerves",
+    "Housing an air sinus",
+    "Muscle attachment"
+   ],
+   "answer": 3,
+   "explain": "Tuberosities are large bumps where tendons attach. The deltoid attaches here.",
+   "section": "u2-s4",
+   "difficulty": 2
+  },
+  {
+   "q": "The iliac crest is an example of which kind of landmark?",
+   "choices": [
+    "A rounded articular head",
+    "A tube-like canal",
+    "A sharp ridge or border",
+    "A depression"
+   ],
+   "answer": 2,
+   "explain": "A crest is a prominent ridge or border.",
+   "section": "u2-s4",
+   "difficulty": 1
+  },
+  {
+   "q": "Which joint function relationship is correct?",
+   "choices": [
+    "More mobility means more stability",
+    "More mobility means less stability",
+    "Stability does not depend on mobility",
+    "Fibrous joints are the most mobile"
+   ],
+   "answer": 1,
+   "explain": "Mobility and stability trade off against each other.",
+   "section": "u2-s5",
+   "difficulty": 1
+  },
+  {
+   "q": "Skull sutures are which structural type of joint?",
+   "choices": [
+    "Fibrous",
+    "Synovial",
+    "Cartilaginous",
+    "Ball and socket"
+   ],
+   "answer": 0,
+   "explain": "Sutures are fibrous joints with little or no motion.",
+   "section": "u2-s5",
+   "difficulty": 1
+  },
+  {
+   "q": "The pubic symphysis is a(n):",
+   "choices": [
+    "Synovial (diarthrodial) joint",
+    "Fibrous suture",
+    "Hinge joint",
+    "Cartilaginous (amphiarthrodial) joint"
+   ],
+   "answer": 3,
+   "explain": "Fibrocartilage joins the pubic bones and allows slight motion.",
+   "section": "u2-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "Which joint type has a joint cavity and allows the most movement?",
+   "choices": [
+    "Fibrous",
+    "Cartilaginous",
+    "Synovial",
+    "Gomphosis"
+   ],
+   "answer": 2,
+   "explain": "Synovial joints have a cavity and allow free motion, at the cost of stability.",
+   "section": "u2-s5",
+   "difficulty": 1
+  },
+  {
+   "q": "The intercarpal joints are which type of synovial joint?",
+   "choices": [
+    "Hinge (uniaxial)",
+    "Gliding (non-axial)",
+    "Saddle (biaxial)",
+    "Ball and socket (triaxial)"
+   ],
+   "answer": 1,
+   "explain": "Carpals slide over one another without a defined axis.",
+   "section": "u2-s6",
+   "difficulty": 1
+  },
+  {
+   "q": "The elbow (humeroulnar) joint is a:",
+   "choices": [
+    "Hinge joint",
+    "Pivot joint",
+    "Ellipsoid joint",
+    "Saddle joint"
+   ],
+   "answer": 0,
+   "explain": "The elbow flexes and extends in one plane.",
+   "section": "u2-s6",
+   "difficulty": 1
+  },
+  {
+   "q": "The atlantoaxial joint (C1 on C2) is a:",
+   "choices": [
+    "Hinge joint",
+    "Gliding joint",
+    "Saddle joint",
+    "Pivot joint"
+   ],
+   "answer": 3,
+   "explain": "This joint allows head rotation around one vertical axis.",
+   "section": "u2-s6",
+   "difficulty": 1
+  },
+  {
+   "q": "Which joint is biaxial and classified as ellipsoid (condyloid)?",
+   "choices": [
+    "Elbow",
+    "Hip",
+    "Wrist (radiocarpal)",
+    "Thumb CMC"
+   ],
+   "answer": 2,
+   "explain": "The wrist allows flexion and extension plus radial and ulnar deviation.",
+   "section": "u2-s6",
+   "difficulty": 2
+  },
+  {
+   "q": "The thumb CMC joint is a:",
+   "choices": [
+    "Ball and socket joint",
+    "Saddle joint",
+    "Hinge joint",
+    "Pivot joint"
+   ],
+   "answer": 1,
+   "explain": "The thumb CMC is the classic saddle joint, biaxial with accessory rotation.",
+   "section": "u2-s6",
+   "difficulty": 1
+  },
+  {
+   "q": "How many axes of motion does a ball and socket joint have?",
+   "choices": [
+    "Three",
+    "Zero",
+    "One",
+    "Two"
+   ],
+   "answer": 0,
+   "explain": "Ball and socket joints are triaxial: flexion and extension, abduction and adduction, and rotation.",
+   "section": "u2-s6",
+   "difficulty": 1
+  },
+  {
+   "q": "Forearm supination and pronation occur at the radioulnar joints, which are:",
+   "choices": [
+    "Hinge joints",
+    "Saddle joints",
+    "Fibrous joints",
+    "Pivot joints"
+   ],
+   "answer": 3,
+   "explain": "The radius rotates around the ulna at pivot joints.",
+   "section": "u2-s6",
+   "difficulty": 2
+  },
+  {
+   "q": "A client flexes and abducts the MCP joints of the fingers. How many axes does this joint provide?",
+   "choices": [
+    "One",
+    "Three",
+    "Two",
+    "Zero"
+   ],
+   "answer": 2,
+   "explain": "MCPs are ellipsoid (biaxial) joints: flexion and extension, abduction and adduction.",
+   "section": "u2-s6",
+   "difficulty": 3
+  },
+  {
+   "q": "Elbow flexion occurs in which plane?",
+   "choices": [
+    "Frontal",
+    "Sagittal",
+    "Transverse",
+    "Horizontal only"
+   ],
+   "answer": 1,
+   "explain": "Hinge flexion and extension occur in the sagittal plane around a frontal axis.",
+   "section": "u2-s6",
+   "difficulty": 3
+  },
+  {
+   "q": "Ligaments connect:",
+   "choices": [
+    "Bone to bone",
+    "Muscle to bone",
+    "Muscle to muscle",
+    "Skin to bone"
+   ],
+   "answer": 0,
+   "explain": "Ligaments hold the two bones of a joint together.",
+   "section": "u2-s7",
+   "difficulty": 1
+  },
+  {
+   "q": "An injury to a ligament is called a:",
+   "choices": [
+    "Strain",
+    "Subluxation",
+    "Bursitis",
+    "Sprain"
+   ],
+   "answer": 3,
+   "explain": "Sprain means ligament, and strain means muscle or tendon.",
+   "section": "u2-s7",
+   "difficulty": 1
+  },
+  {
+   "q": "Why can damaged hyaline cartilage NOT repair itself well?",
+   "choices": [
+    "It is made of bone",
+    "It regenerates too quickly",
+    "It has no blood supply of its own and relies on synovial fluid",
+    "It contains osteoclasts"
+   ],
+   "answer": 2,
+   "explain": "Without its own blood supply, hyaline cartilage has a very limited ability to heal.",
+   "section": "u2-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "The glenoid labrum is made of which tissue?",
+   "choices": [
+    "Hyaline cartilage",
+    "Fibrocartilage",
+    "Elastic cartilage",
+    "Compact bone"
+   ],
+   "answer": 1,
+   "explain": "The labrum is fibrocartilage that deepens the glenoid fossa.",
+   "section": "u2-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "Which structure is made of elastic cartilage?",
+   "choices": [
+    "External ear",
+    "Knee meniscus",
+    "Intervertebral disc",
+    "Articular ends of the femur"
+   ],
+   "answer": 0,
+   "explain": "Elastic cartilage keeps the shape of the ear, eustachian tube and larynx.",
+   "section": "u2-s7",
+   "difficulty": 1
+  },
+  {
+   "q": "A broad, flat sheet of tendon such as the linea alba is a(n):",
+   "choices": [
+    "Bursa",
+    "Ligament",
+    "Labrum",
+    "Aponeurosis"
+   ],
+   "answer": 3,
+   "explain": "An aponeurosis is a flattened tendon sheet.",
+   "section": "u2-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "A callus-like sac that forms on a finger from years of writing pressure is an example of a(n):",
+   "choices": [
+    "Natural bursa",
+    "Sesamoid bone",
+    "Acquired bursa",
+    "Aponeurosis"
+   ],
+   "answer": 2,
+   "explain": "Acquired bursae form where repeated friction occurs.",
+   "section": "u2-s7",
+   "difficulty": 3
+  },
+  {
+   "q": "Joints receive their nerve supply mainly from:",
+   "choices": [
+    "Cranial nerves only",
+    "The nerves of the muscles that cross the joint",
+    "The autonomic system only",
+    "They have no nerve supply"
+   ],
+   "answer": 1,
+   "explain": "The nerves to muscles covering a joint also carry sensory and proprioceptive fibers from it.",
+   "section": "u2-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "A partial dislocation of the shoulder, common after a stroke, is called:",
+   "choices": [
+    "Subluxation",
+    "Dislocation",
+    "Capsulitis",
+    "Synovitis"
+   ],
+   "answer": 0,
+   "explain": "Subluxation is an incomplete separation of the joint surfaces.",
+   "section": "u2-s8",
+   "difficulty": 1
+  },
+  {
+   "q": "Inflammation of a tendon sheath is called:",
+   "choices": [
+    "Tendonitis",
+    "Synovitis",
+    "Bursitis",
+    "Tenosynovitis"
+   ],
+   "answer": 3,
+   "explain": "'Teno' means tendon and 'synovitis' means synovial sheath inflammation.",
+   "section": "u2-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "Osteoarthritis is best described as:",
+   "choices": [
+    "A bacterial bone infection",
+    "Inflammation of a bursa",
+    "Wear-and-tear breakdown of articular cartilage",
+    "An immune attack on the bone marrow"
+   ],
+   "answer": 2,
+   "explain": "OA is degenerative arthritis caused by cartilage breaking down over time.",
+   "section": "u2-s8",
+   "difficulty": 1
+  },
+  {
+   "q": "A fracture in which the bone is shattered into many fragments is:",
+   "choices": [
+    "Transverse",
+    "Comminuted",
+    "Oblique",
+    "Spiral"
+   ],
+   "answer": 1,
+   "explain": "Comminuted means broken into multiple pieces.",
+   "section": "u2-s8",
+   "difficulty": 1
+  },
+  {
+   "q": "A twisting injury that produces a fracture winding around the bone is most likely a:",
+   "choices": [
+    "Spiral fracture",
+    "Transverse fracture",
+    "Segmental fracture",
+    "Comminuted fracture"
+   ],
+   "answer": 0,
+   "explain": "Rotational force produces a spiral fracture.",
+   "section": "u2-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "A 7-year-old has a hip limp caused by loss of blood supply to the femoral head. This is most consistent with:",
+   "choices": [
+    "Osgood-Schlatter disease",
+    "Osteomyelitis",
+    "Osteoarthritis",
+    "Legg-Calve-Perthes disease"
+   ],
+   "answer": 3,
+   "explain": "LCP disease is childhood avascular necrosis of the femoral head (coxa plana).",
+   "section": "u2-s8",
+   "difficulty": 3
+  },
+  {
+   "q": "A 13-year-old athlete in a growth spurt has a painful bump below the kneecap. This suggests:",
+   "choices": [
+    "Legg-Calve-Perthes disease",
+    "Patellar dislocation",
+    "Osgood-Schlatter disease",
+    "Osteoporosis"
+   ],
+   "answer": 2,
+   "explain": "Osgood-Schlatter is inflammation at the tibial tuberosity and its growth plate.",
+   "section": "u2-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "Using the mnemonic 'Steve Left The Party To Take Carol Home,' which carpal is represented by 'Carol'?",
+   "choices": [
+    "Hamate",
+    "Capitate",
+    "Trapezium",
+    "Pisiform"
+   ],
+   "answer": 1,
+   "explain": "The distal row is trapezium, trapezoid, capitate, hamate.",
+   "section": "u2-s9",
+   "difficulty": 2
+  },
+  {
+   "q": "Lister's tubercle is palpated on which bone?",
+   "choices": [
+    "Radius",
+    "Ulna",
+    "Humerus",
+    "Scaphoid"
+   ],
+   "answer": 0,
+   "explain": "Lister's tubercle is on the dorsal distal radius.",
+   "section": "u2-s9",
+   "difficulty": 2
+  },
+  {
+   "q": "Which landmark is located on the scapula?",
+   "choices": [
+    "Olecranon process",
+    "Mastoid process",
+    "Greater trochanter",
+    "Coracoid process"
+   ],
+   "answer": 3,
+   "explain": "The coracoid process projects anteriorly from the scapula.",
+   "section": "u2-s9",
+   "difficulty": 1
+  },
+  {
+   "q": "The medial malleolus is part of which bone?",
+   "choices": [
+    "Fibula",
+    "Talus",
+    "Tibia",
+    "Femur"
+   ],
+   "answer": 2,
+   "explain": "The medial malleolus is on the tibia and the lateral malleolus is on the fibula.",
+   "section": "u2-s9",
+   "difficulty": 2
+  },
+  {
+   "q": "What is the normal ROM for shoulder flexion?",
+   "choices": [
+    "0-150 degrees",
+    "0-180 degrees",
+    "0-120 degrees",
+    "0-90 degrees"
+   ],
+   "answer": 1,
+   "explain": "Normal shoulder flexion and abduction are both 0-180 degrees.",
+   "section": "u2-s10",
+   "difficulty": 1
+  },
+  {
+   "q": "Normal elbow flexion is:",
+   "choices": [
+    "0-150 degrees",
+    "0-135 degrees",
+    "0-180 degrees",
+    "0-120 degrees"
+   ],
+   "answer": 0,
+   "explain": "Elbow flexion normally reaches 150 degrees.",
+   "section": "u2-s10",
+   "difficulty": 1
+  },
+  {
+   "q": "A client's hip flexion measures 90 degrees. Compared with the norm, this is:",
+   "choices": [
+    "Normal",
+    "Hypermobile",
+    "Exactly the norm for knee flexion",
+    "Limited (the norm is 0-120 degrees)"
+   ],
+   "answer": 3,
+   "explain": "Normal hip flexion is 120 degrees, so 90 degrees shows a limitation.",
+   "section": "u2-s10",
+   "difficulty": 3
+  },
+  {
+   "q": "Normal knee flexion is:",
+   "choices": [
+    "0-120 degrees",
+    "0-150 degrees",
+    "0-135 degrees",
+    "0-90 degrees"
+   ],
+   "answer": 2,
+   "explain": "The table lists knee flexion as 0-135 degrees.",
+   "section": "u2-s10",
+   "difficulty": 1
+  },
+  {
+   "q": "Which wrist motion has the SMALLEST normal range?",
+   "choices": [
+    "Ulnar deviation",
+    "Radial deviation",
+    "Flexion",
+    "Extension"
+   ],
+   "answer": 1,
+   "explain": "Radial deviation is about 20 degrees, compared with 30-35 degrees for ulnar deviation and 70-80 degrees for flexion and extension.",
+   "section": "u2-s10",
+   "difficulty": 2
+  },
+  {
+   "q": "Normal shoulder external rotation is:",
+   "choices": [
+    "0-90 degrees",
+    "0-70 degrees",
+    "0-45 degrees",
+    "0-180 degrees"
+   ],
+   "answer": 0,
+   "explain": "External rotation is 90 degrees and internal rotation is 70 degrees.",
+   "section": "u2-s10",
+   "difficulty": 2
+  },
+  {
+   "q": "Ankle dorsiflexion normally measures:",
+   "choices": [
+    "0-50 degrees",
+    "0-35 degrees",
+    "0-45 degrees",
+    "0-20 degrees"
+   ],
+   "answer": 3,
+   "explain": "Dorsiflexion is 20 degrees and plantar flexion is 50 degrees.",
+   "section": "u2-s10",
+   "difficulty": 2
+  },
+  {
+   "q": "How is thumb CMC opposition measured?",
+   "choices": [
+    "0-45 degrees with a goniometer",
+    "0-90 degrees",
+    "Reaching the base of the small finger, with any deficit measured in centimeters",
+    "0-15 degrees"
+   ],
+   "answer": 2,
+   "explain": "Opposition is recorded as distance, not degrees.",
+   "section": "u2-s10",
+   "difficulty": 3
+  }
+ ]
+}

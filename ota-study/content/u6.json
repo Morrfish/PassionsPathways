@@ -1,0 +1,1465 @@
+{
+ "id": "u6",
+ "title": "TMJ, Trunk, Thorax, Pelvis, Hip & Knee",
+ "summary": "This unit covers the jaw, spine and trunk, thorax and breathing, pelvis, hip and knee: their bones, joints, ligaments, motions and the muscles that move them (origins, insertions, actions, nerves). It also covers common conditions and OT precautions, including the Valsalva maneuver and total hip and knee replacement. It ends with an Exam 3 checklist and highlights from the course-wide comprehensive review.",
+ "sources": [
+  "TMJ Trunk and Thorax Lab-1.docx",
+  "ThoraxStudentHomework-1-1 IRv .pdf",
+  "Pelvis_and_Hip updated.docx",
+  "The_Knee_Joint-1-1 - Copy.pdf",
+  "Study guide for 1050 Exam 3.docx",
+  "Comprehensive Review PP updated.pptx"
+ ],
+ "examTopics": {
+  "exam3": [
+   "Prime movers and muscle groups by location",
+   "All prime motions of a muscle, including assists",
+   "Motions of the joints",
+   "Pelvic tilts and associated muscles/movements",
+   "TMJ motions, muscles and functional use",
+   "Trunk muscles: bilateral vs unilateral contractions",
+   "Motions of the trunk",
+   "Stretching and strengthening (concentric, eccentric, isometric)",
+   "Pathologies and precautions: THR, TKR, gout, fractures",
+   "Hindfoot, midfoot, forefoot",
+   "1-joint vs 2-joint muscles",
+   "Q angle",
+   "Bursa vs ligament vs cartilage vs tendon",
+   "True vs false pelvis",
+   "Joints of the foot and ankle",
+   "Valsalva maneuver and clinical significance",
+   "Head and neck muscles: bilateral vs unilateral",
+   "Normal ROM for hip and knee",
+   "Matching ligaments to joints by name",
+   "Nutation/counternutation",
+   "Respiratory muscles by phase (quiet/deep/forced inspiration; quiet/forced expiration)",
+   "Pelvic girdle motions with vertebral column and hip motions"
+  ]
+ },
+ "sections": [
+  {
+   "id": "u6-s1",
+   "heading": "Temporomandibular Joint (TMJ)",
+   "body": [
+    "The TMJ sits just in front of the ear, where the condyle of the <b>mandible</b> meets the <b>temporal bone</b>. An articular <b>disk</b> sits between them. It is a synovial, hinge-like joint that also glides, and it is one of the most heavily used joints in the body: chewing, talking, yawning and swallowing.",
+    "Structure: 2 bones, a disk, a joint capsule, ligaments and 4 main muscles of mastication.",
+    "<b>Motions:</b> elevation (close mouth), depression (open mouth), protraction/protrusion (jaw forward), retraction/retrusion (jaw back), lateral deviation (side to side).",
+    "<table><thead><tr><th>Muscle</th><th>Origin</th><th>Insertion</th><th>Action</th><th>Innervation</th></tr></thead><tbody><tr><td>Temporalis</td><td>Temporal fossa of skull</td><td>Coronoid process and ramus of mandible</td><td>Elevation; retraction (posterior fibers); unilateral: lateral deviation to the <b>same</b> side</td><td>Trigeminal (CN V)</td></tr><tr><td>Masseter</td><td>Zygomatic arch</td><td>Angle and ramus of mandible</td><td>Elevation (strongest closer); assists protraction; unilateral: lateral deviation to the <b>same</b> side</td><td>Trigeminal (CN V)</td></tr><tr><td>Medial pterygoid</td><td>Medial surface of lateral pterygoid plate (sphenoid)</td><td>Medial surface of ramus/angle of mandible</td><td>Elevation, protraction; unilateral: lateral deviation to the <b>opposite</b> side</td><td>Trigeminal (CN V)</td></tr><tr><td>Lateral pterygoid</td><td>Greater wing and lateral pterygoid plate of sphenoid</td><td>Neck of mandibular condyle and TMJ disk</td><td>Protraction and depression (opening); unilateral: lateral deviation to the <b>opposite</b> side</td><td>Trigeminal (CN V)</td></tr></tbody></table>",
+    "<b>Hyoid muscles:</b> suprahyoids (digastric, mylohyoid, geniohyoid, stylohyoid) assist depression of the mandible; infrahyoids (sternohyoid, sternothyroid, thyrohyoid, omohyoid) stabilize the hyoid and assist swallowing and speech.",
+    "Innervation for this region overall involves cranial nerves V (trigeminal), VII (facial) and XII (hypoglossal, carrying C1 fibers to geniohyoid/thyrohyoid); infrahyoids are supplied by the ansa cervicalis (C1-C3).",
+    "<b>Functional example:</b> opening your mouth against light resistance = mandibular depression with a concentric contraction of the lateral pterygoid (helped by suprahyoids).",
+    "<b>Bones of the head and face to know on models:</b> frontal, parietal, temporal (with mastoid process), sphenoid, occipital (with foramen magnum), nasal, zygomatic, maxilla, mandible."
+   ]
+  },
+  {
+   "id": "u6-s2",
+   "heading": "Vertebral Column: Bones, Curves, Joints and Ligaments",
+   "body": [
+    "The spinal column is the bony housing for the spinal cord. Its functions: hold the body upright, protect the spinal cord, and act as a pivot for movement while supporting the head.",
+    "<table><thead><tr><th>Region</th><th>Number</th><th>Key features</th></tr></thead><tbody><tr><td>Cervical</td><td>7</td><td>Smallest; bifid spinous processes; transverse foramina for vertebral vessels; includes C1 atlas and C2 axis</td></tr><tr><td>Thoracic</td><td>12</td><td>Long, downward-pointing spinous processes; facets for the 12 pairs of ribs</td></tr><tr><td>Lumbar</td><td>5</td><td>Largest bodies; thick, blunt spinous processes</td></tr><tr><td>Sacrum</td><td>5 fused</td><td>Separate at birth, fuse with growth; articulates with ilia at the SI joints</td></tr><tr><td>Coccyx</td><td>~4 fused</td><td>Tailbone; fuses during growth</td></tr></tbody></table>",
+    "Total: about 33 vertebrae. Parts of a typical vertebra: body, vertebral foramen, spinous process, transverse processes, facets.",
+    "<b>Four curves:</b> cervical and lumbar are lordotic (convex anteriorly); thoracic and sacral are kyphotic (concave anteriorly). The curves make the column roughly 10x stronger than a straight rod and keep the center of gravity over the base of support.",
+    "<b>Abnormal curves:</b> kyphosis = exaggerated thoracic curve; lordosis = exaggerated lumbar curve; scoliosis = lateral curve, usually thoracic.",
+    "<b>Joints:</b> intervertebral (facet) joints are small gliding joints, but the column as a whole is triaxial. The atlanto-occipital joint (skull-C1) allows nodding; the atlantoaxial joint (C1-C2) allows most cervical rotation.",
+    "<b>Ligaments:</b> <ul><li>Anterior longitudinal - front of vertebral bodies; limits hyperextension</li><li>Posterior longitudinal - back of bodies inside the canal; limits flexion</li><li>Supraspinous - tips of spinous processes (continues as ligamentum nuchae in the neck)</li><li>Interspinous - between spinous processes</li><li>Ligamentum flavum - connects laminae; elastic, yellow</li></ul>",
+    "<b>Motions:</b> flexion, extension, hyperextension, lateral flexion (bending), rotation; the cervical spine also protracts and retracts.",
+    "<b>Occupation examples:</b> flexion - writing, tying shoes; extension - standing upright in line; hyperextension - leaning back at a shampoo bowl; lateral bending - putting in ear drops; rotation - turning to look at someone talking."
+   ]
+  },
+  {
+   "id": "u6-s3",
+   "heading": "Muscles of the Neck and Trunk",
+   "body": [
+    "Rule of thumb: when a muscle contracts <b>bilaterally</b> it usually produces flexion or extension; when it contracts <b>unilaterally</b> it produces lateral flexion and/or rotation. Know which side each rotates toward.",
+    "<table><thead><tr><th>Muscle</th><th>Origin</th><th>Insertion</th><th>Action</th><th>Innervation</th></tr></thead><tbody><tr><td>Sternocleidomastoid</td><td>Manubrium and medial clavicle</td><td>Mastoid process</td><td>Bilateral: neck flexion; unilateral: lateral flexion same side, rotation to <b>opposite</b> side; accessory inspiration</td><td>Accessory nerve (CN XI), C2-C3</td></tr><tr><td>Scalenes (anterior, middle, posterior)</td><td>Transverse processes of cervical vertebrae</td><td>Ribs 1-2</td><td>Bilateral: neck flexion, elevate ribs (accessory inspiration); unilateral: lateral flexion same side</td><td>Cervical ventral rami (C3-C8)</td></tr><tr><td>Prevertebrals (longus colli/capitis, rectus capitis anterior/lateralis)</td><td>Anterior cervical/upper thoracic vertebrae</td><td>Occiput and upper cervical vertebrae</td><td>Bilateral: head/neck flexion; unilateral: lateral flexion</td><td>Cervical ventral rami (C1-C6)</td></tr><tr><td>Splenius capitis</td><td>Ligamentum nuchae, spinous processes C7-T3</td><td>Mastoid process and occiput</td><td>Bilateral: head/neck extension; unilateral: rotation and lateral flexion to <b>same</b> side</td><td>Dorsal rami of cervical nerves</td></tr><tr><td>Splenius cervicis</td><td>Spinous processes T3-T6</td><td>Transverse processes C1-C3</td><td>Bilateral: neck extension; unilateral: rotation/lateral flexion same side</td><td>Dorsal rami of cervical nerves</td></tr><tr><td>Suboccipitals (rectus capitis posterior, obliquus capitis)</td><td>C1-C2</td><td>Occiput / C1</td><td>Head extension; unilateral: head rotation same side, lateral flexion</td><td>Suboccipital nerve (C1)</td></tr><tr><td>Rectus abdominis</td><td>Pubic crest and symphysis</td><td>Xiphoid and costal cartilages 5-7</td><td>Trunk flexion; compresses abdomen; accessory forced expiration</td><td>Ventral rami T7-T12</td></tr><tr><td>External oblique</td><td>External surface of lower 8 ribs</td><td>Iliac crest, linea alba</td><td>Bilateral: trunk flexion, compress abdomen; unilateral: lateral flexion same side, rotation to <b>opposite</b> side</td><td>T7-T12</td></tr><tr><td>Internal oblique</td><td>Iliac crest, inguinal ligament, thoracolumbar fascia</td><td>Lower 3-4 ribs, linea alba</td><td>Bilateral: trunk flexion, compress abdomen; unilateral: lateral flexion and rotation to <b>same</b> side</td><td>T7-T12, L1</td></tr><tr><td>Transverse abdominis</td><td>Iliac crest, inguinal ligament, thoracolumbar fascia, lower costal cartilages</td><td>Linea alba</td><td>Compresses abdomen (no trunk motion); forced expiration, spinal stabilization</td><td>T7-T12, L1</td></tr><tr><td>Erector spinae (iliocostalis, longissimus, spinalis)</td><td>Sacrum, iliac crest, spinous/transverse processes</td><td>Ribs, vertebrae, mastoid</td><td>Bilateral: trunk/neck extension; unilateral: lateral flexion (and rotation) same side</td><td>Dorsal rami of spinal nerves</td></tr><tr><td>Transversospinalis (semispinalis, multifidus, rotatores)</td><td>Transverse processes</td><td>Spinous processes of vertebrae above</td><td>Bilateral: extension of trunk/neck/head; unilateral: rotation to <b>opposite</b> side</td><td>Dorsal rami of spinal nerves</td></tr><tr><td>Interspinales / Intertransversarii</td><td>Between adjacent spinous / transverse processes</td><td>Adjacent vertebra</td><td>Interspinales: extension; intertransversarii: lateral flexion</td><td>Dorsal (and ventral) rami</td></tr><tr><td>Quadratus lumborum</td><td>Posterior iliac crest</td><td>12th rib and transverse processes L1-L4</td><td>Unilateral: lateral flexion of trunk, hikes the hip (elevates pelvis); bilateral: assists extension; stabilizes 12th rib in forced expiration</td><td>T12-L3</td></tr></tbody></table>",
+    "<b>Functional tip:</b> turning your head to the left uses the <i>right</i> SCM. Hiking the hip to clear the foot (e.g., with a stiff knee) uses quadratus lumborum."
+   ]
+  },
+  {
+   "id": "u6-s4",
+   "heading": "Thorax: Bones, Joints and Mechanics of Breathing",
+   "body": [
+    "<b>Bones:</b> sternum (manubrium, body, xiphoid process), 12 pairs of ribs, costal cartilages, 12 thoracic vertebrae. The thorax is wider side to side than front to back; it protects the heart, lungs and upper abdominal organs.",
+    "<b>Ribs:</b> true ribs 1-7 attach directly to the sternum by their own costal cartilage; false ribs 8-10 attach indirectly through the cartilage of rib 7; floating ribs 11-12 have no anterior attachment. Each rib articulates with 2 thoracic vertebrae.",
+    "<b>Joints:</b> costovertebral (rib head to vertebral bodies and rib tubercle to transverse process) and sternocostal joints - both diarthrodial, nonaxial gliding joints.",
+    "<b>Motion:</b> ribs glide/rotate up (elevation) and out with inspiration, and down (depression) and in with expiration.",
+    "<b>Respiratory tract:</b> upper = nasal cavity, oral cavity, pharynx, larynx; lower = trachea, bronchial tree, alveoli; the pleura is the membrane sac around each lung.",
+    "<b>Pressure principle:</b> the lungs are passive. Air moves from higher to lower pressure. When the thorax enlarges, pressure inside drops and air flows in; when it gets smaller, pressure rises and air flows out.",
+    "<b>Two ways to change thoracic volume:</b> move the ribs, or lower the diaphragm. The diaphragm and intercostals are the most important respiratory muscles.",
+    "<b>Diaphragmatic vs chest breathing:</b> diaphragmatic breathing is the most efficient (belly moves out as the diaphragm drops). Chest breathing recruits rib cage and shoulder girdle muscles, costs more energy, is faster and raises the risk of hyperventilation. Gravity helps the diaphragm descend, so elevate the head of the bed for a client with breathing difficulty."
+   ]
+  },
+  {
+   "id": "u6-s5",
+   "heading": "Phases of Respiration, Respiratory Muscles and the Valsalva Maneuver",
+   "body": [
+    "<table><thead><tr><th>Phase</th><th>When</th><th>Muscles</th></tr></thead><tbody><tr><td>Quiet inspiration</td><td>At rest</td><td>Diaphragm, external intercostals</td></tr><tr><td>Deep inspiration</td><td>Need more air</td><td>Quiet muscles + SCM, scalenes, pectoralis major (reverse action), levator costarum, serratus posterior superior</td></tr><tr><td>Forced inspiration</td><td>Air hunger</td><td>All of the above + levator scapulae, upper trapezius, rhomboids, pectoralis minor (reverse actions; shoulder girdle lifted)</td></tr><tr><td>Quiet expiration</td><td>At rest</td><td>Passive: relaxation of diaphragm/external intercostals, elastic recoil, gravity (internal intercostals may assist)</td></tr><tr><td>Forced expiration</td><td>Coughing, blowing, exertion</td><td>Internal intercostals, abdominals (rectus abdominis, external/internal obliques, transverse abdominis), quadratus lumborum, serratus posterior inferior</td></tr></tbody></table>",
+    "<table><thead><tr><th>Muscle</th><th>Origin</th><th>Insertion</th><th>Action</th><th>Innervation</th></tr></thead><tbody><tr><td>Diaphragm</td><td>Xiphoid, inner surfaces of lower 6 ribs/costal cartilages, L1-L3 vertebrae (crura)</td><td>Central tendon</td><td>Contracts and descends to enlarge the thorax vertically - prime mover of inspiration</td><td>Phrenic nerve (C3-C5)</td></tr><tr><td>External intercostals</td><td>Inferior border of rib above</td><td>Superior border of rib below (fibers run down and forward)</td><td>Elevate ribs - inspiration</td><td>Intercostal nerves (T1-T11)</td></tr><tr><td>Internal intercostals</td><td>Superior border of rib below</td><td>Inferior border of rib above (fibers run down and back)</td><td>Depress ribs - forced expiration</td><td>Intercostal nerves (T1-T11)</td></tr></tbody></table>",
+    "<b>Valsalva maneuver:</b> attempting to exhale against a closed glottis. It raises intrathoracic and intra-abdominal pressure, which stabilizes the spine during heavy effort but impedes venous return to the heart and causes swings in heart rate and blood pressure. Risky for clients with cardiovascular compromise. It can happen during lifting, straining with bowel movements, childbirth pushing, repositioning in bed, coughing or sneezing.",
+    "<b>OTA takeaway:</b> coach clients to breathe out slowly during exertion and never hold their breath during exercise.",
+    "<b>Common respiratory conditions:</b> <ul><li>URI - nose, throat, larynx (cold, flu, laryngitis, hay fever)</li><li>Lower respiratory infection/disease - trachea to alveoli (pneumonia, bronchitis, emphysema, asthma)</li><li>Hyperventilation - rapid breathing blowing off too much CO2</li><li>Stitch - diaphragm cramp below the ribs; hiccups - involuntary diaphragm spasms</li><li>Pleurisy - inflamed pleura; pneumothorax - collapsed lung</li><li>Flail chest - multiple rib fractures; chest wall moves in on inspiration and out on expiration (paradoxical)</li><li>Asthma - bronchial spasm making exhalation especially hard</li></ul>"
+   ]
+  },
+  {
+   "id": "u6-s6",
+   "heading": "The Pelvic Girdle",
+   "body": [
+    "<b>Bones:</b> two hip (coxal) bones - each formed by the fused <b>ilium, ischium and pubis</b> - plus the sacrum and coccyx. Landmarks: iliac crest, iliac fossa, ASIS, PSIS, ischial tuberosity (sitting bone), pubic symphysis, obturator foramen, acetabulum.",
+    "<b>Functions:</b> supports upper-body weight transmitted down the spine and passes it to the hips; receives ground reaction forces and directs them up to the spine; supports and protects pelvic organs; provides muscle attachments; forms the bony birth canal; plays a central role in posture, balance and musculoskeletal alignment.",
+    "<b>False pelvis</b> (greater/major) = superior portion between the iliac wings, no pelvic organs. <b>True pelvis</b> (lesser/minor) = inferior portion containing GI, urinary and reproductive organs and the birth canal.",
+    "<b>Joints:</b> pubic symphysis (fibrocartilage disk, amphiarthrosis); sacroiliac (SI) joint - synovial, nonaxial, between sacrum and ilium, very stable with little mobility; lumbosacral joint - L5 on S1.",
+    "<b>SI motion:</b> small, debated rotation/translation; increases in pregnancy and decreases with age. <b>Nutation</b> = sacral flexion (top of sacrum moves anterior/inferior, coccyx moves posterior). <b>Counternutation</b> = sacral extension (top moves posterior/superior, coccyx moves anterior).",
+    "<b>Lumbosacral joint:</b> has two extra ligaments (iliolumbar and lumbosacral). Optimal lumbosacral angle is about 30 degrees; a larger angle increases shear stress on the joint and disk and is a common source of low back pain.",
+    "<table><thead><tr><th>Pelvic motion</th><th>Lumbar spine</th><th>Hip</th></tr></thead><tbody><tr><td>Anterior tilt (ASIS moves forward/down, ahead of pubic symphysis)</td><td>Hyperextension (increased lordosis)</td><td>Flexion</td></tr><tr><td>Posterior tilt</td><td>Flexion (flattened lumbar curve)</td><td>Extension</td></tr><tr><td>Lateral tilt (unsupported side drops)</td><td>Lateral flexion toward the weight-bearing side</td><td>Weight-bearing hip adducts; non-weight-bearing hip abducts</td></tr><tr><td>Forward rotation (non-stance side moves forward)</td><td>Rotation to the opposite side</td><td>Weight-bearing hip medially rotates</td></tr><tr><td>Backward rotation</td><td>Rotation to the opposite side</td><td>Weight-bearing hip laterally rotates</td></tr></tbody></table>",
+    "<b>Force couples:</b> anterior tilt = trunk extensors (erector spinae) + hip flexors (iliopsoas, rectus femoris). Posterior tilt = trunk flexors (rectus abdominis, obliques) + hip extensors (gluteus maximus, hamstrings). Hiking the unsupported side = quadratus lumborum on that side + hip abductors (gluteus medius) on the weight-bearing side.",
+    "<table><thead><tr><th>Habitual posture</th><th>Trunk extensors & hip flexors</th><th>Trunk flexors & hip extensors</th></tr></thead><tbody><tr><td>Anterior pelvic tilt</td><td>Shortened (tight)</td><td>Lengthened (weak)</td></tr><tr><td>Posterior pelvic tilt</td><td>Lengthened</td><td>Shortened</td></tr></tbody></table>"
+   ]
+  },
+  {
+   "id": "u6-s7",
+   "heading": "The Hip Joint: Structure, Motions and Muscles",
+   "body": [
+    "The hip (coxofemoral) joint is a synovial, <b>ball-and-socket, triaxial</b> joint: the femoral head sits in the acetabulum (formed by ilium, ischium and pubis). The deep socket, deepened further by the <b>acetabular labrum</b>, makes it very stable but less mobile than the shoulder. It is essential for weight bearing and walking.",
+    "<b>Femur landmarks:</b> head, neck, greater trochanter, lesser trochanter, linea aspera, medial/lateral condyles and epicondyles, patellar surface.",
+    "<b>Ligaments:</b> iliofemoral (strongest, Y-ligament, limits hyperextension), pubofemoral, ischiofemoral, all reinforcing the cylindrical capsule. <b>Inguinal ligament</b> runs from ASIS to pubic tubercle, separating the abdominal wall from the thigh (femoral vessels and nerve pass beneath). <b>Iliotibial band (tract)</b> is the long tendon of the TFL (and part of gluteus maximus) running down the lateral thigh to the lateral tibia.",
+    "<table><thead><tr><th>Motion</th><th>Normal ROM</th></tr></thead><tbody><tr><td>Flexion</td><td>0-120 degrees</td></tr><tr><td>Hyperextension</td><td>0-30 degrees</td></tr><tr><td>Abduction</td><td>0-45 degrees</td></tr><tr><td>Adduction</td><td>0-30 degrees (past neutral)</td></tr><tr><td>Internal (medial) rotation</td><td>0-45 degrees</td></tr><tr><td>External (lateral) rotation</td><td>0-45 degrees</td></tr></tbody></table>",
+    "<b>Grouping by location:</b> anterior = flexors; posterior = extensors (and lateral rotators); medial = adductors; lateral = abductors.",
+    "<table><thead><tr><th>Muscle</th><th>Origin</th><th>Insertion</th><th>Action</th><th>Innervation</th></tr></thead><tbody><tr><td>Iliopsoas (psoas major + iliacus)</td><td>Psoas: T12-L5 bodies/transverse processes; iliacus: iliac fossa</td><td>Lesser trochanter</td><td>Hip flexion (prime mover); assists lateral rotation</td><td>Femoral nerve (L2-L4); psoas also L1-L3 ventral rami</td></tr><tr><td>Sartorius</td><td>ASIS</td><td>Proximal medial tibia (pes anserine)</td><td>Hip flexion, abduction, lateral rotation; knee flexion</td><td>Femoral nerve (L2-L3)</td></tr><tr><td>Rectus femoris</td><td>AIIS</td><td>Tibial tuberosity via patella/patellar tendon</td><td>Hip flexion; knee extension</td><td>Femoral nerve (L2-L4)</td></tr><tr><td>Pectineus</td><td>Superior pubic ramus</td><td>Pectineal line of femur</td><td>Hip flexion, adduction, medial rotation</td><td>Femoral (+/- obturator) nerve (L2-L4)</td></tr><tr><td>Adductor magnus, longus, brevis</td><td>Pubic body/rami; magnus also ischial tuberosity</td><td>Linea aspera; magnus also adductor tubercle</td><td>Hip adduction, medial rotation (longus/brevis assist flexion)</td><td>Obturator nerve (L2-L4); magnus also sciatic (tibial)</td></tr><tr><td>Gracilis</td><td>Pubic body and inferior ramus</td><td>Proximal medial tibia (pes anserine)</td><td>Hip adduction, medial rotation; knee flexion</td><td>Obturator nerve (L2-L3)</td></tr><tr><td>Gluteus maximus</td><td>Posterior ilium, sacrum, coccyx</td><td>Gluteal tuberosity of femur and IT band</td><td>Hip extension (prime mover), lateral rotation; upper fibers abduct</td><td>Inferior gluteal nerve (L5-S2)</td></tr><tr><td>Deep 6 lateral rotators (piriformis, obturator internus/externus, gemellus superior/inferior, quadratus femoris)</td><td>Sacrum, ischium, obturator membrane area</td><td>Greater trochanter region</td><td>Hip lateral rotation</td><td>Sacral plexus branches (L4-S2); obturator externus by obturator n.</td></tr><tr><td>Semitendinosus / Semimembranosus</td><td>Ischial tuberosity</td><td>Semitendinosus: pes anserine; semimembranosus: posterior medial tibial condyle</td><td>Hip extension, knee flexion, medial rotation of knee</td><td>Sciatic nerve, tibial portion (L5-S2)</td></tr><tr><td>Biceps femoris</td><td>Long head: ischial tuberosity; short head: linea aspera</td><td>Head of fibula</td><td>Hip extension (long head), knee flexion, lateral rotation of knee</td><td>Sciatic: tibial (long head), common fibular (short head) (L5-S2)</td></tr><tr><td>Gluteus medius</td><td>Outer ilium below iliac crest</td><td>Greater trochanter</td><td>Hip abduction (prime mover); anterior fibers medially rotate</td><td>Superior gluteal nerve (L4-S1)</td></tr><tr><td>Gluteus minimus</td><td>Outer ilium (below medius)</td><td>Greater trochanter (anterior)</td><td>Hip abduction, medial rotation</td><td>Superior gluteal nerve (L4-S1)</td></tr><tr><td>Tensor fascia latae</td><td>ASIS / anterior iliac crest</td><td>IT band to lateral tibial condyle</td><td>Hip flexion, abduction, medial rotation</td><td>Superior gluteal nerve (L4-S1)</td></tr></tbody></table>",
+    "<b>Reverse action of gluteus medius/minimus:</b> when standing on one leg, they hold the pelvis level so the opposite side does not drop. Weakness produces a <b>Trendelenburg sign/gait</b> (pelvis drops on the unsupported side).",
+    "<b>Strengthening and stretching:</b> to strengthen concentrically, perform the prime motion against resistance applied in the opposite direction; eccentric strengthening = controlled lengthening against resistance (lowering); isometric = contraction without joint movement. To stretch a muscle, move the joint(s) opposite to <i>every</i> prime action (e.g., stretch iliopsoas with hip extension).",
+    "<b>Functional notes:</b> a raised toilet seat reduces the hip flexion needed to sit and stand. Standing with feet apart, knees together and pushing down on the knees places the hips in adduction and internal rotation."
+   ]
+  },
+  {
+   "id": "u6-s8",
+   "heading": "Hip Pathologies, Fractures and Total Hip Replacement",
+   "body": [
+    "<ul><li><b>Congenital hip dislocation</b> - AKA developmental dysplasia of the hip (DDH); a shallow acetabulum lets the femoral head slide up and stretch the capsule.</li><li><b>Legg-Calve-Perthes disease</b> - AKA coxa plana; avascular necrosis of the femoral head followed by revascularization and repair over 2-4 years; mostly boys about 4-10 years old.</li><li><b>Slipped capital femoral epiphysis (SCFE)</b> - in adolescents during the growth spurt, the proximal femoral epiphysis slips off the femoral neck.</li><li><b>Osteoarthritis of the hip</b> - degeneration of the articular cartilage from trauma and wear and tear of aging; often treated with THR/THA.</li><li><b>Hip fractures</b> - femoral neck (intracapsular) or intertrochanteric (extracapsular); common in older adults, especially women with osteoporosis. Signs: shortened, externally rotated leg, inability to bear weight, pain that may refer to the knee.</li><li><b>Iliotibial band syndrome</b> - overuse friction of the IT band over the lateral femoral epicondyle with repeated knee flexion/extension (runners, cyclists); lateral knee pain.</li><li><b>Trochanteric bursitis</b> - inflammation of the bursa over the greater trochanter from repetitive stress/overuse.</li><li><b>Hamstring strain</b> - pulled hamstring; the most common muscle strain and frequently recurrent; overload during sprinting.</li><li><b>Hip pointer</b> - severe bruise of the iliac crest.</li></ul>",
+    "<b>Fractures in general:</b> complete vs incomplete (greenstick), open (compound - skin broken, higher infection risk) vs closed, comminuted (multiple fragments). Healing stages: hematoma, inflammation, fibrocartilaginous callus (2-6 weeks), bony callus/union, remodeling (6 weeks-1 year). Complications include infection, compartment syndrome, fat emboli, nerve damage, delayed union, malunion and nonunion. Treatment: immobilization, closed or open reduction (ORIF with pins, plates, screws), traction. Falls are the leading cause of fractures in older adults; about 1 in 5 people die within a year after hip fracture, and clients who receive OT return to independence sooner.",
+    "<b>Total hip replacement (THR) / total hip arthroplasty (THA):</b> replaces the acetabulum and femoral head with implants (cemented or cementless; cementless needs stricter precautions, often younger clients). Indicated for severe pain/deterioration from OA, RA, certain fractures, avascular necrosis or tumors, usually in people about 60+. Implants last roughly 10-25 years.",
+    "<b>Posterior/posterolateral approach precautions (typically 6-8 weeks):</b> no hip flexion past 90 degrees, no internal rotation of the operated leg, no adduction past midline (sleep with an abduction wedge/pillow). <b>Anterior approach:</b> avoid hip extension and external rotation. Weight-bearing precautions are common. No driving for about 4-6 weeks.",
+    "<b>OT role:</b> clients need adaptive equipment (reacher, sock aid, long-handled sponge/shoe horn, raised toilet seat) to follow precautions and be independent with dressing and toileting; many facilities run pre-op education classes."
+   ]
+  },
+  {
+   "id": "u6-s9",
+   "heading": "The Knee Joint: Structure, Motions and Muscles",
+   "body": [
+    "The <b>tibiofemoral joint</b> is the largest joint in the body: a synovial, <b>modified hinge</b>. It has little bony stability and depends on ligaments and muscles, making it one of the most complex and frequently injured joints. Rotation is an accessory motion; it happens because the medial femoral condyle is longer than the lateral (the basis of the 'screw-home' locking in full extension).",
+    "<b>Bones:</b> femur, tibia and patella (the fibula is not part of the knee joint proper but is attached via the LCL and biceps femoris).",
+    "<b>ROM:</b> flexion 0-135 degrees; extension returns to 0 (a few degrees of hyperextension is possible but not a normal goal).",
+    "<table><thead><tr><th>Ligament</th><th>Location / role</th></tr></thead><tbody><tr><td>ACL - anterior cruciate</td><td>Inside the joint; prevents the tibia sliding forward on the femur</td></tr><tr><td>PCL - posterior cruciate</td><td>Inside the joint; prevents the tibia sliding backward on the femur</td></tr><tr><td>MCL - medial (tibial) collateral</td><td>Medial side; resists valgus (inward-knee) force</td></tr><tr><td>LCL - lateral (fibular) collateral</td><td>Lateral side, femur to fibular head; resists varus force</td></tr></tbody></table>",
+    "<b>Menisci:</b> medial and lateral C-shaped (half-moon) wedges of fibrocartilage on the tibial plateau; thicker at the outer edge, they deepen the flat tibial surface and absorb shock. The knee also has about 13 bursae to reduce tendon friction.",
+    "<b>Popliteal space:</b> area behind the knee bordered by the hamstrings and gastrocnemius; contains nerves and vessels. <b>Pes anserine</b> ('goose foot') = sartorius, gracilis and semitendinosus inserting together on the proximal anteromedial tibia.",
+    "<b>Patellofemoral joint:</b> the patella is the largest sesamoid bone, embedded in the quadriceps tendon. It increases the leverage (mechanical advantage) of the quadriceps in extension, stabilizes the anterior knee in flexion and protects the joint.",
+    "<b>Tibiofibular joints:</b> proximal and distal, like the radius/ulna; small gliding joints joined by an interosseous membrane.",
+    "<b>Q angle:</b> angle between the line of pull of the quadriceps (ASIS to mid-patella) and the patellar tendon (mid-patella to tibial tuberosity). Normal is about 13 degrees in males and 18 degrees in females (roughly 13-18). A larger angle increases lateral pull on the patella and is linked to patellofemoral problems.",
+    "<table><thead><tr><th>Muscle</th><th>Origin</th><th>Insertion</th><th>Action</th><th>Innervation</th></tr></thead><tbody><tr><td>Rectus femoris</td><td>AIIS</td><td>Tibial tuberosity via patellar tendon</td><td>Knee extension; hip flexion (2-joint)</td><td>Femoral nerve (L2-L4)</td></tr><tr><td>Vastus lateralis, medialis, intermedius</td><td>Femur (greater trochanter/linea aspera; anterior shaft for intermedius)</td><td>Tibial tuberosity via patellar tendon</td><td>Knee extension (1-joint)</td><td>Femoral nerve (L2-L4)</td></tr><tr><td>Hamstrings (semitendinosus, semimembranosus, biceps femoris)</td><td>Ischial tuberosity (biceps short head: linea aspera)</td><td>Medial tibia / fibular head</td><td>Knee flexion; hip extension (except short head)</td><td>Sciatic nerve (L5-S2)</td></tr><tr><td>Gastrocnemius</td><td>Medial and lateral femoral condyles</td><td>Calcaneus via Achilles tendon</td><td>Knee flexion; ankle plantar flexion (2-joint)</td><td>Tibial nerve (S1-S2)</td></tr><tr><td>Popliteus</td><td>Lateral femoral condyle</td><td>Posterior proximal tibia</td><td>'Unlocks' the extended knee by medially rotating the tibia (laterally rotating femur) to start flexion</td><td>Tibial nerve (L4-S1)</td></tr></tbody></table>",
+    "Sartorius, gracilis and TFL also cross the knee (sartorius/gracilis flex; TFL stabilizes laterally via the IT band).",
+    "<b>Active insufficiency:</b> a 2-joint muscle cannot shorten enough to produce full motion at both joints at once. Hamstrings extend the hip and flex the knee; with the hip already extended they run out of contraction before full knee flexion. Working hamstrings with the hip slightly flexed keeps them lengthened at the hip and is more effective for strengthening."
+   ]
+  },
+  {
+   "id": "u6-s10",
+   "heading": "Knee Pathologies and Total Knee Replacement",
+   "body": [
+    "<ul><li><b>Genu valgum</b> - knock-knees; the lower leg angles laterally (knees touch).</li><li><b>Genu varum</b> - bowlegs; the lower leg angles medially.</li><li><b>Genu recurvatum</b> - back knees; hyperextension of the knee.</li><li><b>Patellar tendonitis</b> - jumper's knee; tenderness at the patellar tendon/inferior pole of the patella from repetitive jumping.</li><li><b>Osgood-Schlatter disease</b> - overuse of the quadriceps in growing adolescents causes painful inflammation/bony bump at the tibial tuberosity.</li><li><b>Baker's cyst</b> - popliteal cyst; synovial herniation or bursitis in the back of the knee.</li><li><b>Patellofemoral pain syndrome</b> - runner's knee; diffuse anterior knee pain, often linked to Q angle, patella alta, quad weakness/tightness or excessive foot pronation.</li><li><b>Chondromalacia patella</b> - softening and breakdown of cartilage on the posterior patella; anterior knee pain.</li><li><b>Prepatellar bursitis</b> - housemaid's knee; from constant kneeling pressure (e.g., carpet layers).</li><li><b>Unhappy triad</b> - single blow to the lateral knee tearing the ACL, MCL and medial meniscus.</li></ul>",
+    "<b>Total knee replacement (TKR) / total knee arthroplasty (TKA):</b> usually for severe OA/RA. Immediate post-op: pain control and early mobilization to strengthen the quadriceps and preserve ROM (sometimes a CPM machine). Out of bed in 1-3 days; goals include knee flexion to 90 degrees, full extension and walking with an assistive device.",
+    "<b>TKR precautions:</b> no twisting/rotation of the knee, no kneeling, no pillow under the knee in bed (risk of flexion contracture), rest both feet flat on the floor when sitting, wear the immobilizer as ordered; some procedures limit full flexion. Return to normal activities about 3-6 weeks; driving about 4-6 weeks."
+   ]
+  },
+  {
+   "id": "u6-s11",
+   "heading": "Exam 3 Checklist",
+   "body": [
+    "From the instructor's study guide - be ready for multiple choice (some multiple-answer), matching, short answer/fill in the blank, and muscle/prime motion/activity/stretch short answers.",
+    "<ul><li>Prime movers and how muscles group by location (anterior/posterior/medial/lateral)</li><li>ALL prime motions of each muscle, including assists (needed for stretching)</li><li>Joint motions and normal hip and knee ROM</li><li>Pelvic tilts, their muscles, and the matching vertebral and hip motions</li><li>TMJ motions, muscles and functional use</li><li>Trunk, head and neck muscles with bilateral vs unilateral actions</li><li>How to stretch, and concentric vs eccentric vs isometric strengthening</li><li>Pathologies and precautions: THR, TKR, gout, fractures and highlighted conditions</li><li>Hindfoot, midfoot, forefoot and the joints of the foot and ankle</li><li>1-joint vs 2-joint muscles</li><li>Q angle</li><li>Bursa vs ligament vs cartilage (menisci, costal cartilage) vs tendon</li><li>True vs false pelvis; nutation/counternutation</li><li>Valsalva maneuver and why it matters</li><li>Matching ligament names to their joints</li><li>Respiratory muscles in quiet/deep/forced inspiration and quiet/forced expiration</li></ul>",
+    "Tip from the guide: it's fine to move and act out the motions during the test - and breathe!",
+    "Note: the foot/ankle and gout items are covered in a separate unit; review them there."
+   ]
+  },
+  {
+   "id": "u6-s12",
+   "heading": "Comprehensive Review Highlights",
+   "body": [
+    "<table><thead><tr><th>Plane</th><th>Divides body into</th><th>Motions</th><th>Axis</th></tr></thead><tbody><tr><td>Sagittal</td><td>Left and right</td><td>Flexion/extension</td><td>Frontal (medial-lateral)</td></tr><tr><td>Frontal (coronal)</td><td>Front and back</td><td>Abduction/adduction, radial/ulnar deviation, inversion/eversion</td><td>Sagittal (anterior-posterior)</td></tr><tr><td>Transverse (horizontal)</td><td>Upper and lower</td><td>Rotation, supination/pronation, horizontal abduction/adduction</td><td>Vertical (longitudinal)</td></tr></tbody></table>",
+    "<b>Synovial joint types:</b> gliding/plane - nonaxial (carpals); hinge - uniaxial (elbow, knee); pivot - uniaxial (atlantoaxial, radioulnar); ellipsoid/condyloid - biaxial (wrist, MCPs); saddle - biaxial (thumb CMC); ball-and-socket - triaxial (hip, shoulder). More mobility = less stability and vice versa.",
+    "<b>Skeletal functions:</b> support, protection, leverage for movement, blood cell production, mineral (calcium) storage.",
+    "<b>Pathology terms:</b> fracture (break), dislocation (complete separation of joint surfaces), subluxation (partial dislocation - common at the shoulder after stroke), capsulitis, sprain (ligament), strain (muscle/tendon overstretch), tendonitis.",
+    "<b>Nervous system:</b> CNS = brain and spinal cord; PNS = 12 cranial nerves and 31 pairs of spinal nerves; ANS = sympathetic (fight or flight) and parasympathetic (rest and digest). Gray matter (H shape) - posterior horn sensory, anterior horn motor; white matter = ascending/descending tracts. Pain and temperature tracts cross at the spinal level; most touch/position tracts cross in the brainstem; about 80% of motor fibers cross in the brainstem.",
+    "<b>UMN vs LMN:</b> UMN lesions (SCI, MS, CVA, Parkinsonism, TBI) - spasticity, hyperreflexia. LMN lesions (peripheral nerve injury, polio, muscular dystrophy-type conditions, myasthenia gravis listed in class) - flaccidity, hyporeflexia, atrophy. <b>Brown-Sequard syndrome:</b> hemisection of the cord - same-side motor and proprioceptive loss, opposite-side pain and temperature loss.",
+    "<b>Shoulder:</b> rotator cuff = SITS (supraspinatus, infraspinatus, teres minor, subscapularis). Scapulohumeral rhythm: after the first ~30 degrees, 2 degrees of glenohumeral motion for every 1 degree of scapular upward rotation - mobilize the scapula before ranging a tight shoulder. Full abduction requires external rotation. Common problems: subluxation post-CVA, impingement, adhesive capsulitis, rotator cuff tear.",
+    "<b>Elbow and forearm:</b> elbow = humeroulnar/humeroradial hinge, 0-150 degrees, MCL/LCL; hyperextension blocked by the olecranon in the olecranon fossa. Radioulnar = pivot; supination 0-80/85, pronation 0-70/80; the radius moves around the ulna.",
+    "<b>Wrist and hand:</b> radiocarpal = condyloid, biaxial (radius with scaphoid, lunate, triquetrum; ulna excluded by the articular disk); flexion 0-80, extension 0-70, radial deviation 0-20, ulnar deviation 0-30. Functional hand position: wrist slightly extended, MCP/PIP slightly flexed, thumb opposed. Safe (intrinsic-plus) position: wrist extended, MCPs flexed, IPs extended. Arches: proximal and distal transverse, longitudinal. Grasps: cylindrical, spherical, hook, intrinsic plus; precision: tip, palmar (three-jaw chuck), lateral (key) pinch.",
+    "<b>UE nerves:</b> the brachial plexus is formed by C5-T1. Radial nerve (posterior cord) - dorsal hand/thumb side, wrist and finger extensors; median nerve (lateral + medial cords) - palmar thumb, index, middle, half of ring; ulnar nerve (medial cord) - ring and little fingers.",
+    "<b>Final exam reminders:</b> comprehensive; knee flexors; knee is the most frequently injured joint; forefoot/midfoot/hindfoot; brachial vs lumbosacral plexus; PAD/DAB (palmar interossei adduct, dorsal abduct) applies to hand and foot; contracting the right SCM rotates the head to the left; parts of the pelvis; hip, knee and ankle ROM; which ligaments belong to which joint."
+   ]
+  }
+ ],
+ "terms": [
+  {
+   "term": "Temporomandibular joint (TMJ)",
+   "def": "Synovial hinge-like joint with gliding between the mandibular condyle and temporal bone, with an articular disk.",
+   "section": "u6-s1"
+  },
+  {
+   "term": "Lateral deviation",
+   "def": "Side-to-side movement of the mandible.",
+   "section": "u6-s1"
+  },
+  {
+   "term": "Protraction (mandibular protrusion)",
+   "def": "Moving the jaw forward.",
+   "section": "u6-s1"
+  },
+  {
+   "term": "Masseter",
+   "def": "Strongest jaw-closing muscle, from zygomatic arch to mandible angle; CN V.",
+   "section": "u6-s1"
+  },
+  {
+   "term": "Lateral pterygoid",
+   "def": "Muscle that protracts and depresses the mandible and deviates it to the opposite side.",
+   "section": "u6-s1"
+  },
+  {
+   "term": "Suprahyoid muscles",
+   "def": "Digastric, mylohyoid, geniohyoid, stylohyoid; assist mandibular depression.",
+   "section": "u6-s1"
+  },
+  {
+   "term": "Lordosis",
+   "def": "Anterior-convex spinal curve (normal in cervical/lumbar); also the term for an exaggerated lumbar curve.",
+   "section": "u6-s2"
+  },
+  {
+   "term": "Kyphosis",
+   "def": "Posterior-convex curve (normal thoracic/sacral); abnormal when the thoracic curve is exaggerated.",
+   "section": "u6-s2"
+  },
+  {
+   "term": "Scoliosis",
+   "def": "Abnormal lateral curvature of the spine, usually thoracic.",
+   "section": "u6-s2"
+  },
+  {
+   "term": "Atlas (C1) / Axis (C2)",
+   "def": "First two cervical vertebrae; atlantoaxial joint provides most neck rotation.",
+   "section": "u6-s2"
+  },
+  {
+   "term": "Ligamentum flavum",
+   "def": "Elastic yellow ligament connecting the laminae of adjacent vertebrae.",
+   "section": "u6-s2"
+  },
+  {
+   "term": "Anterior longitudinal ligament",
+   "def": "Runs along the front of vertebral bodies; limits hyperextension.",
+   "section": "u6-s2"
+  },
+  {
+   "term": "Sternocleidomastoid",
+   "def": "Neck muscle: bilateral flexion; unilateral lateral flexion same side and rotation to opposite side; CN XI.",
+   "section": "u6-s3"
+  },
+  {
+   "term": "Transversospinalis",
+   "def": "Deep back group (semispinalis, multifidus, rotatores); unilateral rotation to the opposite side.",
+   "section": "u6-s3"
+  },
+  {
+   "term": "Erector spinae",
+   "def": "Iliocostalis, longissimus, spinalis; prime trunk extensors.",
+   "section": "u6-s3"
+  },
+  {
+   "term": "Quadratus lumborum",
+   "def": "Lateral trunk muscle that laterally flexes the trunk and hikes the hip.",
+   "section": "u6-s3"
+  },
+  {
+   "term": "True ribs",
+   "def": "Ribs 1-7, attaching directly to the sternum by their own costal cartilage.",
+   "section": "u6-s4"
+  },
+  {
+   "term": "False ribs",
+   "def": "Ribs 8-10, attaching to the sternum through the cartilage of rib 7.",
+   "section": "u6-s4"
+  },
+  {
+   "term": "Floating ribs",
+   "def": "Ribs 11-12, with no anterior attachment.",
+   "section": "u6-s4"
+  },
+  {
+   "term": "Costovertebral joint",
+   "def": "Gliding joint where a rib meets thoracic vertebral bodies and transverse process.",
+   "section": "u6-s4"
+  },
+  {
+   "term": "Diaphragmatic breathing",
+   "def": "Efficient breathing driven by diaphragm descent; abdomen moves out.",
+   "section": "u6-s4"
+  },
+  {
+   "term": "Diaphragm",
+   "def": "Dome muscle; prime mover of inspiration; phrenic nerve C3-C5.",
+   "section": "u6-s5"
+  },
+  {
+   "term": "External intercostals",
+   "def": "Elevate the ribs during inspiration.",
+   "section": "u6-s5"
+  },
+  {
+   "term": "Internal intercostals",
+   "def": "Depress the ribs during forced expiration.",
+   "section": "u6-s5"
+  },
+  {
+   "term": "Forced inspiration",
+   "def": "Inspiration during air hunger using shoulder girdle muscles in reverse action.",
+   "section": "u6-s5"
+  },
+  {
+   "term": "Valsalva maneuver",
+   "def": "Exhaling against a closed glottis; raises intrathoracic pressure and stresses the heart.",
+   "section": "u6-s5"
+  },
+  {
+   "term": "Flail chest",
+   "def": "Multiple rib fractures causing paradoxical chest wall movement.",
+   "section": "u6-s5"
+  },
+  {
+   "term": "Pneumothorax",
+   "def": "Collapsed lung from air in the pleural space.",
+   "section": "u6-s5"
+  },
+  {
+   "term": "True pelvis",
+   "def": "Inferior (lesser) pelvis containing pelvic organs and the birth canal.",
+   "section": "u6-s6"
+  },
+  {
+   "term": "False pelvis",
+   "def": "Superior (greater) pelvis between the iliac wings; no pelvic organs.",
+   "section": "u6-s6"
+  },
+  {
+   "term": "Nutation",
+   "def": "Sacral flexion: top of sacrum moves anteriorly, coccyx posteriorly.",
+   "section": "u6-s6"
+  },
+  {
+   "term": "Counternutation",
+   "def": "Sacral extension: top of sacrum moves posteriorly, coccyx anteriorly.",
+   "section": "u6-s6"
+  },
+  {
+   "term": "Anterior pelvic tilt",
+   "def": "ASIS moves forward/down; accompanies lumbar hyperextension and hip flexion.",
+   "section": "u6-s6"
+  },
+  {
+   "term": "Force couple",
+   "def": "Two muscle groups pulling in different directions to produce one rotation (e.g., pelvic tilt).",
+   "section": "u6-s6"
+  },
+  {
+   "term": "ASIS",
+   "def": "Anterior superior iliac spine; origin of sartorius and TFL.",
+   "section": "u6-s6"
+  },
+  {
+   "term": "Acetabulum",
+   "def": "Hip socket formed by the ilium, ischium and pubis.",
+   "section": "u6-s7"
+  },
+  {
+   "term": "Acetabular labrum",
+   "def": "Fibrocartilage rim that deepens the acetabulum.",
+   "section": "u6-s7"
+  },
+  {
+   "term": "Iliofemoral ligament",
+   "def": "Strong Y-shaped anterior hip ligament limiting hyperextension.",
+   "section": "u6-s7"
+  },
+  {
+   "term": "Inguinal ligament",
+   "def": "Runs from ASIS to pubic tubercle; separates the abdominal wall from the thigh.",
+   "section": "u6-s7"
+  },
+  {
+   "term": "Iliotibial (IT) band",
+   "def": "Long tendon of TFL running down the lateral thigh to the lateral tibia.",
+   "section": "u6-s7"
+  },
+  {
+   "term": "Trendelenburg sign",
+   "def": "Pelvis drops on the unsupported side due to weak hip abductors on the stance side.",
+   "section": "u6-s7"
+  },
+  {
+   "term": "Eccentric contraction",
+   "def": "Muscle lengthens while producing force, e.g., slowly lowering a load.",
+   "section": "u6-s7"
+  },
+  {
+   "term": "Legg-Calve-Perthes disease",
+   "def": "Avascular necrosis of the femoral head in children (coxa plana).",
+   "section": "u6-s8"
+  },
+  {
+   "term": "SCFE",
+   "def": "Slipped capital femoral epiphysis; epiphysis slips off the femoral neck in adolescents.",
+   "section": "u6-s8"
+  },
+  {
+   "term": "Total hip arthroplasty (THA)",
+   "def": "Replacement of acetabulum and femoral head with implants.",
+   "section": "u6-s8"
+  },
+  {
+   "term": "ORIF",
+   "def": "Open reduction internal fixation: surgical alignment with pins, plates or screws.",
+   "section": "u6-s8"
+  },
+  {
+   "term": "Compartment syndrome",
+   "def": "Raised pressure within a fascial compartment compressing nerves and vessels.",
+   "section": "u6-s8"
+  },
+  {
+   "term": "Menisci",
+   "def": "C-shaped fibrocartilage disks on the tibia that deepen the joint and absorb shock.",
+   "section": "u6-s9"
+  },
+  {
+   "term": "ACL",
+   "def": "Anterior cruciate ligament; prevents anterior tibial translation.",
+   "section": "u6-s9"
+  },
+  {
+   "term": "Pes anserine",
+   "def": "Shared insertion of sartorius, gracilis and semitendinosus on the medial tibia.",
+   "section": "u6-s9"
+  },
+  {
+   "term": "Q angle",
+   "def": "Angle between quadriceps line of pull and patellar tendon; about 13-18 degrees.",
+   "section": "u6-s9"
+  },
+  {
+   "term": "Active insufficiency",
+   "def": "A 2-joint muscle cannot shorten enough to complete motion at both joints at once.",
+   "section": "u6-s9"
+  },
+  {
+   "term": "Popliteus",
+   "def": "Small posterior knee muscle that unlocks the knee to begin flexion.",
+   "section": "u6-s9"
+  },
+  {
+   "term": "Genu valgum",
+   "def": "Knock-knees.",
+   "section": "u6-s10"
+  },
+  {
+   "term": "Genu varum",
+   "def": "Bowlegs.",
+   "section": "u6-s10"
+  },
+  {
+   "term": "Unhappy triad",
+   "def": "Combined tear of ACL, MCL and medial meniscus.",
+   "section": "u6-s10"
+  },
+  {
+   "term": "Osgood-Schlatter disease",
+   "def": "Painful inflammation at the tibial tuberosity in adolescents from quadriceps overuse.",
+   "section": "u6-s10"
+  },
+  {
+   "term": "Scapulohumeral rhythm",
+   "def": "About 2 degrees of glenohumeral motion for every 1 degree of scapular rotation.",
+   "section": "u6-s12"
+  },
+  {
+   "term": "Brown-Sequard syndrome",
+   "def": "Cord hemisection: ipsilateral motor loss, contralateral pain/temperature loss.",
+   "section": "u6-s12"
+  },
+  {
+   "term": "Decussation",
+   "def": "Crossing of nerve tracts to the opposite side.",
+   "section": "u6-s12"
+  }
+ ],
+ "questions": [
+  {
+   "q": "Which bones form the temporomandibular joint?",
+   "choices": [
+    "Sphenoid and mandible",
+    "Zygomatic and temporal bone",
+    "Maxilla and mandible",
+    "Mandible and temporal bone"
+   ],
+   "answer": 3,
+   "explain": "The mandibular condyle articulates with the temporal bone, with a disk between.",
+   "section": "u6-s1",
+   "difficulty": 1
+  },
+  {
+   "q": "A client opens their mouth against light resistance. Which motion and contraction is occurring?",
+   "choices": [
+    "Mandibular elevation, eccentric",
+    "Mandibular depression, isometric",
+    "Mandibular retraction, concentric",
+    "Mandibular depression, concentric"
+   ],
+   "answer": 3,
+   "explain": "Opening is depression and the lateral pterygoid/suprahyoids shorten against resistance.",
+   "section": "u6-s1",
+   "difficulty": 2
+  },
+  {
+   "q": "Unilateral contraction of the medial pterygoid deviates the mandible toward which side?",
+   "choices": [
+    "The opposite side",
+    "The same side",
+    "Forward only",
+    "It does not deviate the jaw"
+   ],
+   "answer": 0,
+   "explain": "Both pterygoids deviate the jaw to the opposite side; temporalis and masseter to the same side.",
+   "section": "u6-s1",
+   "difficulty": 2
+  },
+  {
+   "q": "Which cranial nerve supplies the four muscles of mastication?",
+   "choices": [
+    "Accessory (CN XI)",
+    "Facial (CN VII)",
+    "Trigeminal (CN V)",
+    "Hypoglossal (CN XII)"
+   ],
+   "answer": 2,
+   "explain": "The mandibular branch of CN V innervates temporalis, masseter and both pterygoids.",
+   "section": "u6-s1",
+   "difficulty": 1
+  },
+  {
+   "q": "Which muscle is the main protractor of the mandible and also assists opening?",
+   "choices": [
+    "Masseter",
+    "Temporalis",
+    "Lateral pterygoid",
+    "Sternohyoid"
+   ],
+   "answer": 2,
+   "explain": "The lateral pterygoid pulls the condyle and disk forward.",
+   "section": "u6-s1",
+   "difficulty": 2
+  },
+  {
+   "q": "How many vertebrae are in the cervical, thoracic and lumbar regions?",
+   "choices": [
+    "8, 12, 5",
+    "7, 12, 4",
+    "7, 11, 6",
+    "7, 12, 5"
+   ],
+   "answer": 3,
+   "explain": "There are 7 cervical, 12 thoracic and 5 lumbar vertebrae.",
+   "section": "u6-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "A bifid spinous process and transverse foramina identify which vertebrae?",
+   "choices": [
+    "Sacral",
+    "Lumbar",
+    "Thoracic",
+    "Cervical"
+   ],
+   "answer": 3,
+   "explain": "Only cervical vertebrae have transverse foramina and typically bifid spines.",
+   "section": "u6-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "An exaggerated lateral curve of the spine, usually thoracic, is called:",
+   "choices": [
+    "Spondylosis",
+    "Lordosis",
+    "Kyphosis",
+    "Scoliosis"
+   ],
+   "answer": 3,
+   "explain": "Scoliosis is a lateral curvature.",
+   "section": "u6-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "Which ligament runs along the front of the vertebral bodies and limits hyperextension?",
+   "choices": [
+    "Supraspinous ligament",
+    "Anterior longitudinal ligament",
+    "Posterior longitudinal ligament",
+    "Ligamentum flavum"
+   ],
+   "answer": 1,
+   "explain": "The ALL lies anteriorly and resists backward bending.",
+   "section": "u6-s2",
+   "difficulty": 2
+  },
+  {
+   "q": "Putting ear drops into your right ear while seated mainly uses which neck motion?",
+   "choices": [
+    "Lateral flexion",
+    "Protraction",
+    "Rotation",
+    "Hyperextension"
+   ],
+   "answer": 0,
+   "explain": "Tilting the ear toward the shoulder is lateral flexion (bending).",
+   "section": "u6-s2",
+   "difficulty": 1
+  },
+  {
+   "q": "To rotate the head to the LEFT, which sternocleidomastoid contracts?",
+   "choices": [
+    "The left SCM",
+    "Both SCMs equally",
+    "Neither; SCM only flexes",
+    "The right SCM"
+   ],
+   "answer": 3,
+   "explain": "Unilateral SCM rotates the head to the opposite side.",
+   "section": "u6-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "Which abdominal muscle rotates the trunk to the SAME side when contracting unilaterally?",
+   "choices": [
+    "Transverse abdominis",
+    "Internal oblique",
+    "External oblique",
+    "Rectus abdominis"
+   ],
+   "answer": 1,
+   "explain": "Internal oblique rotates to the same side; external oblique to the opposite side.",
+   "section": "u6-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "Which trunk muscle compresses the abdomen but produces no trunk motion?",
+   "choices": [
+    "Quadratus lumborum",
+    "Rectus abdominis",
+    "Erector spinae",
+    "Transverse abdominis"
+   ],
+   "answer": 3,
+   "explain": "Transverse abdominis fibers run horizontally and act like a corset.",
+   "section": "u6-s3",
+   "difficulty": 1
+  },
+  {
+   "q": "A client with a stiff knee hikes the hip to clear the foot when walking. Which muscle is the primary hip hiker?",
+   "choices": [
+    "Quadratus lumborum",
+    "Gluteus maximus",
+    "Iliopsoas",
+    "Rectus abdominis"
+   ],
+   "answer": 0,
+   "explain": "Quadratus lumborum elevates the pelvis on the same side.",
+   "section": "u6-s3",
+   "difficulty": 2
+  },
+  {
+   "q": "Unilateral contraction of the transversospinalis group rotates the trunk:",
+   "choices": [
+    "Only in the cervical region",
+    "To the opposite side",
+    "To the same side",
+    "Not at all"
+   ],
+   "answer": 1,
+   "explain": "Transversospinalis (e.g., multifidus, rotatores) rotates to the opposite side.",
+   "section": "u6-s3",
+   "difficulty": 3
+  },
+  {
+   "q": "Ribs 8-10 are classified as:",
+   "choices": [
+    "True ribs",
+    "Vertebrosternal ribs",
+    "Floating ribs",
+    "False ribs"
+   ],
+   "answer": 3,
+   "explain": "They attach indirectly to the sternum via rib 7's cartilage.",
+   "section": "u6-s4",
+   "difficulty": 1
+  },
+  {
+   "q": "What happens to pressure inside the lungs during inspiration?",
+   "choices": [
+    "It decreases, so air flows out",
+    "It increases, so air flows in",
+    "It stays the same",
+    "It decreases, so air flows in"
+   ],
+   "answer": 3,
+   "explain": "Enlarging the thorax lowers internal pressure; air moves toward lower pressure.",
+   "section": "u6-s4",
+   "difficulty": 1
+  },
+  {
+   "q": "Why should you elevate the head of the bed for a client with breathing difficulty?",
+   "choices": [
+    "It activates the internal intercostals",
+    "Gravity helps the diaphragm descend",
+    "It increases chest breathing",
+    "It prevents the Valsalva maneuver entirely"
+   ],
+   "answer": 1,
+   "explain": "Gravity pulls abdominal contents down so the diaphragm can drop more easily.",
+   "section": "u6-s4",
+   "difficulty": 2
+  },
+  {
+   "q": "Which muscles work during QUIET inspiration?",
+   "choices": [
+    "Scalenes and SCM only",
+    "Diaphragm and external intercostals",
+    "Internal intercostals and abdominals",
+    "Upper trapezius and rhomboids"
+   ],
+   "answer": 1,
+   "explain": "Quiet inspiration needs only the diaphragm and external intercostals.",
+   "section": "u6-s5",
+   "difficulty": 1
+  },
+  {
+   "q": "Quiet expiration is mainly:",
+   "choices": [
+    "Driven by the scalenes",
+    "Passive - relaxation, elastic recoil and gravity",
+    "Driven by external intercostals",
+    "Driven by rectus abdominis"
+   ],
+   "answer": 1,
+   "explain": "No active muscle contraction is required at rest.",
+   "section": "u6-s5",
+   "difficulty": 1
+  },
+  {
+   "q": "A client in respiratory distress is lifting their shoulders with each breath. Which phase is this?",
+   "choices": [
+    "Quiet inspiration",
+    "Quiet expiration",
+    "Forced expiration",
+    "Forced inspiration"
+   ],
+   "answer": 3,
+   "explain": "Air hunger recruits upper trapezius, levator scapulae and others in reverse action.",
+   "section": "u6-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "Which nerve innervates the diaphragm?",
+   "choices": [
+    "Long thoracic nerve",
+    "Intercostal nerves T1-T11",
+    "Vagus nerve",
+    "Phrenic nerve (C3-C5)"
+   ],
+   "answer": 3,
+   "explain": "'C3, 4, 5 keeps the diaphragm alive.'",
+   "section": "u6-s5",
+   "difficulty": 1
+  },
+  {
+   "q": "Which group is used in FORCED expiration?",
+   "choices": [
+    "Internal intercostals and abdominal muscles",
+    "Pectoralis minor and rhomboids",
+    "External intercostals and diaphragm",
+    "Scalenes and SCM"
+   ],
+   "answer": 0,
+   "explain": "These muscles pull the ribs down and push the diaphragm up.",
+   "section": "u6-s5",
+   "difficulty": 1
+  },
+  {
+   "q": "The Valsalva maneuver is best described as:",
+   "choices": [
+    "Inhaling through pursed lips",
+    "Attempting to exhale against a closed glottis",
+    "Rapid shallow breathing",
+    "A spasm of the diaphragm"
+   ],
+   "answer": 1,
+   "explain": "Closing the glottis while straining raises thoracic pressure.",
+   "section": "u6-s5",
+   "difficulty": 1
+  },
+  {
+   "q": "Why do OTAs coach clients to breathe out during exertion?",
+   "choices": [
+    "To strengthen the diaphragm only",
+    "To increase intrathoracic pressure",
+    "To avoid the Valsalva maneuver and its cardiovascular stress",
+    "To prevent hiccups"
+   ],
+   "answer": 2,
+   "explain": "Breath holding raises pressure and strains the heart.",
+   "section": "u6-s5",
+   "difficulty": 1
+  },
+  {
+   "q": "Chest wall moving inward on inspiration after several fractured ribs describes:",
+   "choices": [
+    "Flail chest",
+    "Pleurisy",
+    "Pneumothorax",
+    "Asthma"
+   ],
+   "answer": 0,
+   "explain": "Paradoxical movement is the hallmark of flail chest.",
+   "section": "u6-s5",
+   "difficulty": 2
+  },
+  {
+   "q": "The true pelvis is:",
+   "choices": [
+    "Only the sacrum and coccyx",
+    "The pubic symphysis region only",
+    "The superior portion between the iliac wings",
+    "The inferior portion containing pelvic organs and the birth canal"
+   ],
+   "answer": 3,
+   "explain": "The lesser pelvis lies below the pelvic brim and holds organs.",
+   "section": "u6-s6",
+   "difficulty": 1
+  },
+  {
+   "q": "Nutation of the sacrum refers to:",
+   "choices": [
+    "Rotation of L5 on S1",
+    "Sacral extension - top moves posteriorly",
+    "Lateral tilt of the pelvis",
+    "Sacral flexion - top moves anteriorly, coccyx posteriorly"
+   ],
+   "answer": 3,
+   "explain": "Nutation = sacral flexion.",
+   "section": "u6-s6",
+   "difficulty": 2
+  },
+  {
+   "q": "An anterior pelvic tilt is accompanied by:",
+   "choices": [
+    "Lumbar flexion and hip flexion",
+    "Lumbar hyperextension and hip flexion",
+    "Lumbar flexion and hip extension",
+    "Lumbar rotation and hip abduction"
+   ],
+   "answer": 1,
+   "explain": "Tipping the pelvis forward increases lordosis and flexes the hips.",
+   "section": "u6-s6",
+   "difficulty": 2
+  },
+  {
+   "q": "Which force couple produces a POSTERIOR pelvic tilt?",
+   "choices": [
+    "Trunk flexors and hip extensors",
+    "Hip abductors and adductors",
+    "Trunk extensors and hip flexors",
+    "Quadratus lumborum and iliopsoas"
+   ],
+   "answer": 0,
+   "explain": "Abdominals pull the pubis up while glutes/hamstrings pull the ischium down.",
+   "section": "u6-s6",
+   "difficulty": 2
+  },
+  {
+   "q": "A person with a habitual anterior pelvic tilt likely has:",
+   "choices": [
+    "Short abdominals and hip extensors",
+    "Long hip flexors and trunk extensors",
+    "Short hip flexors and trunk extensors, long abdominals and hip extensors",
+    "Equal length in all groups"
+   ],
+   "answer": 2,
+   "explain": "The muscles producing the tilt become shortened.",
+   "section": "u6-s6",
+   "difficulty": 3
+  },
+  {
+   "q": "The optimal lumbosacral angle is about:",
+   "choices": [
+    "30 degrees",
+    "60 degrees",
+    "10 degrees",
+    "45 degrees"
+   ],
+   "answer": 0,
+   "explain": "Larger angles increase shear stress and low back pain.",
+   "section": "u6-s6",
+   "difficulty": 2
+  },
+  {
+   "q": "The hip joint is classified as:",
+   "choices": [
+    "Fibrous, nonaxial",
+    "Condyloid, biaxial",
+    "Synovial ball-and-socket, triaxial",
+    "Synovial hinge, uniaxial"
+   ],
+   "answer": 2,
+   "explain": "The femoral head in the acetabulum moves in three planes.",
+   "section": "u6-s7",
+   "difficulty": 1
+  },
+  {
+   "q": "Normal hip flexion ROM is:",
+   "choices": [
+    "0-45 degrees",
+    "0-150 degrees",
+    "0-90 degrees",
+    "0-120 degrees"
+   ],
+   "answer": 3,
+   "explain": "The course standard is 0-120 degrees.",
+   "section": "u6-s7",
+   "difficulty": 1
+  },
+  {
+   "q": "Which muscle is the prime mover for hip flexion and inserts on the lesser trochanter?",
+   "choices": [
+    "Iliopsoas",
+    "Sartorius",
+    "Pectineus",
+    "Rectus femoris"
+   ],
+   "answer": 0,
+   "explain": "Psoas major and iliacus share an insertion on the lesser trochanter.",
+   "section": "u6-s7",
+   "difficulty": 1
+  },
+  {
+   "q": "Which muscle flexes, abducts and laterally rotates the hip AND flexes the knee?",
+   "choices": [
+    "Sartorius",
+    "Gracilis",
+    "Rectus femoris",
+    "Tensor fascia latae"
+   ],
+   "answer": 0,
+   "explain": "Sartorius produces the 'figure-4' sitting position.",
+   "section": "u6-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "Weakness of the gluteus medius produces:",
+   "choices": [
+    "Trendelenburg gait - pelvis drops on the unsupported side",
+    "Genu recurvatum",
+    "Foot drop",
+    "Increased lumbar flexion"
+   ],
+   "answer": 0,
+   "explain": "Gluteus medius holds the pelvis level in single-leg stance.",
+   "section": "u6-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "The hip adductor group is mainly innervated by the:",
+   "choices": [
+    "Obturator nerve",
+    "Femoral nerve",
+    "Superior gluteal nerve",
+    "Sciatic nerve"
+   ],
+   "answer": 0,
+   "explain": "The medial thigh is the obturator nerve's territory.",
+   "section": "u6-s7",
+   "difficulty": 1
+  },
+  {
+   "q": "To stretch the iliopsoas, you would position the hip in:",
+   "choices": [
+    "Abduction",
+    "Extension",
+    "Flexion",
+    "Lateral rotation"
+   ],
+   "answer": 1,
+   "explain": "Stretch a muscle by moving opposite its prime action.",
+   "section": "u6-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "Slowly lowering the leg back down after a straight-leg raise works the hip flexors:",
+   "choices": [
+    "Eccentrically",
+    "Isometrically",
+    "Concentrically",
+    "Passively"
+   ],
+   "answer": 0,
+   "explain": "The flexors lengthen while controlling the descent.",
+   "section": "u6-s7",
+   "difficulty": 2
+  },
+  {
+   "q": "After a posterior-approach THR, which activity violates precautions?",
+   "choices": [
+    "Bending forward to pick up a shoe from the floor",
+    "Sleeping with an abduction wedge",
+    "Using a reacher to retrieve items",
+    "Sitting on a raised toilet seat"
+   ],
+   "answer": 0,
+   "explain": "Bending to the floor flexes the hip past 90 degrees.",
+   "section": "u6-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "Typical posterior-approach THR precautions include all EXCEPT:",
+   "choices": [
+    "Encourage crossing the legs when seated",
+    "No adduction past midline",
+    "No internal rotation of the operated leg",
+    "No hip flexion past 90 degrees"
+   ],
+   "answer": 0,
+   "explain": "Crossing the legs causes adduction, which risks dislocation.",
+   "section": "u6-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "For an ANTERIOR-approach THR, which motion is typically restricted?",
+   "choices": [
+    "Hip extension (with external rotation)",
+    "Ankle dorsiflexion",
+    "Hip flexion past 30 degrees",
+    "Knee flexion"
+   ],
+   "answer": 0,
+   "explain": "The anterior approach disrupts anterior tissues, so extension/ER are limited.",
+   "section": "u6-s8",
+   "difficulty": 3
+  },
+  {
+   "q": "Legg-Calve-Perthes disease is:",
+   "choices": [
+    "Slipping of the femoral epiphysis in adolescents",
+    "Avascular necrosis of the femoral head in children",
+    "A shallow acetabulum present at birth",
+    "Inflammation of the trochanteric bursa"
+   ],
+   "answer": 1,
+   "explain": "LCP (coxa plana) mostly affects boys about 4-10.",
+   "section": "u6-s8",
+   "difficulty": 2
+  },
+  {
+   "q": "A 'hip pointer' is a bruise of the:",
+   "choices": [
+    "Greater trochanter",
+    "Iliac crest",
+    "Femoral head",
+    "Ischial tuberosity"
+   ],
+   "answer": 1,
+   "explain": "Hip pointers are contusions of the iliac crest.",
+   "section": "u6-s8",
+   "difficulty": 1
+  },
+  {
+   "q": "Which muscles form the pes anserine?",
+   "choices": [
+    "Sartorius, rectus femoris, gracilis",
+    "Semimembranosus, biceps femoris, gracilis",
+    "Sartorius, gracilis, semitendinosus",
+    "TFL, sartorius, gastrocnemius"
+   ],
+   "answer": 2,
+   "explain": "Remember 'Say Grace before Tea' (SGT).",
+   "section": "u6-s9",
+   "difficulty": 1
+  },
+  {
+   "q": "The ACL primarily prevents:",
+   "choices": [
+    "Posterior translation of the tibia",
+    "Varus stress",
+    "Valgus stress",
+    "Anterior translation of the tibia on the femur"
+   ],
+   "answer": 3,
+   "explain": "The anterior cruciate stops the tibia sliding forward.",
+   "section": "u6-s9",
+   "difficulty": 2
+  },
+  {
+   "q": "Normal knee flexion ROM is about:",
+   "choices": [
+    "0-135 degrees",
+    "0-60 degrees",
+    "0-90 degrees",
+    "0-180 degrees"
+   ],
+   "answer": 0,
+   "explain": "Typical knee flexion is 0-135 degrees.",
+   "section": "u6-s9",
+   "difficulty": 1
+  },
+  {
+   "q": "Which muscle 'unlocks' the fully extended knee to begin flexion?",
+   "choices": [
+    "Gastrocnemius",
+    "Vastus medialis",
+    "Sartorius",
+    "Popliteus"
+   ],
+   "answer": 3,
+   "explain": "Popliteus rotates tibia/femur to unlock the screw-home position.",
+   "section": "u6-s9",
+   "difficulty": 1
+  },
+  {
+   "q": "Which quadriceps muscle also crosses the hip?",
+   "choices": [
+    "Vastus lateralis",
+    "Rectus femoris",
+    "Vastus medialis",
+    "Vastus intermedius"
+   ],
+   "answer": 1,
+   "explain": "Rectus femoris originates on the AIIS; the vasti arise from the femur.",
+   "section": "u6-s9",
+   "difficulty": 1
+  },
+  {
+   "q": "The main function of the patella is to:",
+   "choices": [
+    "Increase the quadriceps' leverage for knee extension",
+    "Produce knee flexion",
+    "Act as the knee's main ligament",
+    "Absorb shock between femur and tibia"
+   ],
+   "answer": 0,
+   "explain": "As a sesamoid bone it improves the mechanical advantage of the quads.",
+   "section": "u6-s9",
+   "difficulty": 1
+  },
+  {
+   "q": "Hamstrings become actively insufficient when the hip is:",
+   "choices": [
+    "Flexed while the knee is flexed",
+    "Neutral with the knee straight",
+    "Flexed while the knee is extended",
+    "Extended while the knee is flexed"
+   ],
+   "answer": 3,
+   "explain": "They are shortened over both joints at once.",
+   "section": "u6-s9",
+   "difficulty": 3
+  },
+  {
+   "q": "For more effective hamstring strengthening in knee flexion, position the hip in:",
+   "choices": [
+    "Full abduction",
+    "Hyperextension",
+    "Full extension",
+    "Slight flexion"
+   ],
+   "answer": 3,
+   "explain": "Hip flexion keeps the hamstrings lengthened at the hip so they can shorten at the knee.",
+   "section": "u6-s9",
+   "difficulty": 3
+  },
+  {
+   "q": "A normal Q angle is approximately:",
+   "choices": [
+    "45 degrees",
+    "13-18 degrees",
+    "25-35 degrees",
+    "0-5 degrees"
+   ],
+   "answer": 1,
+   "explain": "About 13 degrees in males and 18 in females.",
+   "section": "u6-s9",
+   "difficulty": 2
+  },
+  {
+   "q": "Genu valgum is also known as:",
+   "choices": [
+    "Bowlegs",
+    "Jumper's knee",
+    "Knock-knees",
+    "Back knees"
+   ],
+   "answer": 2,
+   "explain": "In valgum the knees angle in and lower legs out.",
+   "section": "u6-s10",
+   "difficulty": 1
+  },
+  {
+   "q": "A single blow to the lateral knee tearing the ACL, MCL and medial meniscus is the:",
+   "choices": [
+    "Housemaid's knee",
+    "Baker's cyst",
+    "Osgood-Schlatter disease",
+    "Unhappy triad"
+   ],
+   "answer": 3,
+   "explain": "These three structures are often injured together.",
+   "section": "u6-s10",
+   "difficulty": 1
+  },
+  {
+   "q": "An adolescent athlete has a painful bump at the tibial tuberosity. The most likely condition is:",
+   "choices": [
+    "Baker's cyst",
+    "Chondromalacia patella",
+    "Prepatellar bursitis",
+    "Osgood-Schlatter disease"
+   ],
+   "answer": 3,
+   "explain": "Quadriceps traction at the growth plate of the tibial tuberosity.",
+   "section": "u6-s10",
+   "difficulty": 2
+  },
+  {
+   "q": "A carpet layer develops swelling over the front of the kneecap. This is:",
+   "choices": [
+    "Patellar tendonitis",
+    "Prepatellar bursitis (housemaid's knee)",
+    "Popliteal cyst",
+    "Genu recurvatum"
+   ],
+   "answer": 1,
+   "explain": "Constant kneeling pressure inflames the prepatellar bursa.",
+   "section": "u6-s10",
+   "difficulty": 1
+  },
+  {
+   "q": "Which is a standard TKR precaution?",
+   "choices": [
+    "Kneel to strengthen the quadriceps",
+    "Keep the knee flexed at all times",
+    "Twist on the planted leg",
+    "Do not place a pillow under the knee in bed"
+   ],
+   "answer": 3,
+   "explain": "A pillow encourages a flexion contracture.",
+   "section": "u6-s10",
+   "difficulty": 2
+  },
+  {
+   "q": "Flexion and extension occur in which plane, around which axis?",
+   "choices": [
+    "Transverse plane, vertical axis",
+    "Frontal plane, sagittal axis",
+    "Sagittal plane, vertical axis",
+    "Sagittal plane, frontal axis"
+   ],
+   "answer": 3,
+   "explain": "Flexion/extension occur in the sagittal plane about a medial-lateral axis.",
+   "section": "u6-s12",
+   "difficulty": 2
+  },
+  {
+   "q": "Shoulder internal and external rotation occur in which plane?",
+   "choices": [
+    "Frontal",
+    "Transverse (horizontal)",
+    "Sagittal",
+    "Coronal"
+   ],
+   "answer": 1,
+   "explain": "Rotations occur in the transverse plane around a vertical axis.",
+   "section": "u6-s12",
+   "difficulty": 1
+  },
+  {
+   "q": "Which joint is a biaxial saddle joint?",
+   "choices": [
+    "Hip",
+    "Atlantoaxial",
+    "Thumb CMC",
+    "Elbow"
+   ],
+   "answer": 2,
+   "explain": "The first carpometacarpal is the classic saddle joint.",
+   "section": "u6-s12",
+   "difficulty": 1
+  },
+  {
+   "q": "A partial dislocation, common at the shoulder after a stroke, is a:",
+   "choices": [
+    "Subluxation",
+    "Strain",
+    "Sprain",
+    "Capsulitis"
+   ],
+   "answer": 0,
+   "explain": "Subluxation is incomplete separation of joint surfaces.",
+   "section": "u6-s12",
+   "difficulty": 1
+  },
+  {
+   "q": "Which condition is an UPPER motor neuron lesion?",
+   "choices": [
+    "Carpal tunnel neuropathy",
+    "Cerebrovascular accident (CVA)",
+    "Peripheral nerve injury",
+    "Poliomyelitis"
+   ],
+   "answer": 1,
+   "explain": "CVA damages neurons in the brain, above the anterior horn.",
+   "section": "u6-s12",
+   "difficulty": 2
+  },
+  {
+   "q": "In Brown-Sequard syndrome, pain and temperature are lost on which side?",
+   "choices": [
+    "Opposite the lesion",
+    "Neither side",
+    "Same side as the lesion",
+    "Both sides"
+   ],
+   "answer": 0,
+   "explain": "Spinothalamic fibers cross at the spinal level, so loss is contralateral.",
+   "section": "u6-s12",
+   "difficulty": 3
+  },
+  {
+   "q": "The posterior horn of spinal cord gray matter carries:",
+   "choices": [
+    "Motor output",
+    "Cerebrospinal fluid",
+    "Sensory input",
+    "Autonomic output only"
+   ],
+   "answer": 2,
+   "explain": "Sensory in posterior, motor out anterior.",
+   "section": "u6-s12",
+   "difficulty": 1
+  },
+  {
+   "q": "Scapulohumeral rhythm after the first 30 degrees is approximately:",
+   "choices": [
+    "2 degrees of shoulder motion to 1 degree of scapular rotation",
+    "1:2",
+    "1:1",
+    "3:1"
+   ],
+   "answer": 0,
+   "explain": "The glenohumeral joint moves twice as much as the scapula.",
+   "section": "u6-s12",
+   "difficulty": 2
+  },
+  {
+   "q": "Which muscle is NOT part of the rotator cuff?",
+   "choices": [
+    "Teres major",
+    "Infraspinatus",
+    "Supraspinatus",
+    "Subscapularis"
+   ],
+   "answer": 0,
+   "explain": "The cuff is SITS: supraspinatus, infraspinatus, teres minor, subscapularis.",
+   "section": "u6-s12",
+   "difficulty": 1
+  },
+  {
+   "q": "Elbow hyperextension is normally blocked by:",
+   "choices": [
+    "The annular ligament",
+    "The interosseous membrane",
+    "The olecranon process fitting into the olecranon fossa",
+    "The radial head"
+   ],
+   "answer": 2,
+   "explain": "Bony contact limits extension; hyperextension suggests ligament laxity.",
+   "section": "u6-s12",
+   "difficulty": 2
+  },
+  {
+   "q": "The 'safe' (intrinsic-plus) position of the hand is:",
+   "choices": [
+    "Wrist extended, MCPs extended, IPs flexed",
+    "Wrist extended, MCPs flexed, IPs extended",
+    "Wrist neutral, all joints extended",
+    "Wrist flexed, MCPs extended, IPs flexed"
+   ],
+   "answer": 1,
+   "explain": "This keeps collateral ligaments long and prevents claw deformity.",
+   "section": "u6-s12",
+   "difficulty": 2
+  },
+  {
+   "q": "Turning a key in a car ignition uses which grasp?",
+   "choices": [
+    "Cylindrical grasp",
+    "Hook grasp",
+    "Tip-to-tip pinch",
+    "Lateral (key) pinch"
+   ],
+   "answer": 3,
+   "explain": "Thumb pad to the side of the index finger is lateral pinch.",
+   "section": "u6-s12",
+   "difficulty": 1
+  },
+  {
+   "q": "The brachial plexus is formed from which spinal levels?",
+   "choices": [
+    "L1-L4",
+    "C5-T1",
+    "C1-C4",
+    "T1-T12"
+   ],
+   "answer": 1,
+   "explain": "The brachial plexus arises from ventral rami C5-T1.",
+   "section": "u6-s12",
+   "difficulty": 2
+  },
+  {
+   "q": "Which nerve supplies sensation to the palmar thumb, index and middle fingers?",
+   "choices": [
+    "Ulnar nerve",
+    "Musculocutaneous nerve",
+    "Radial nerve",
+    "Median nerve"
+   ],
+   "answer": 3,
+   "explain": "The median nerve covers the radial 3.5 digits on the palm.",
+   "section": "u6-s12",
+   "difficulty": 2
+  },
+  {
+   "q": "The radiocarpal joint does NOT include the ulna because:",
+   "choices": [
+    "The ulna fuses with the radius",
+    "An articular disk separates the ulna from the carpals",
+    "The ulna is too short to reach the wrist",
+    "The ulna articulates only with the humerus"
+   ],
+   "answer": 1,
+   "explain": "The triangular disk acts as a shock absorber between ulna and carpals.",
+   "section": "u6-s12",
+   "difficulty": 2
+  }
+ ]
+}
