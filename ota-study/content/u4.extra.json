@@ -1,0 +1,318 @@
+{
+  "questions": [
+    {
+      "type": "multi",
+      "q": "Which rotator cuff muscles insert on the greater tubercle of the humerus? (select all that apply)",
+      "choices": [
+        "Supraspinatus",
+        "Teres major",
+        "Infraspinatus",
+        "Subscapularis",
+        "Teres minor"
+      ],
+      "answers": [
+        0,
+        2,
+        4
+      ],
+      "explain": "Supraspinatus, infraspinatus and teres minor insert on the greater tubercle; subscapularis inserts on the lesser tubercle, and teres major is not a cuff muscle.",
+      "section": "u4-s7",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "Which shoulder (glenohumeral) motions are accompanied by scapular retraction? (select all that apply)",
+      "choices": [
+        "Horizontal abduction",
+        "Horizontal adduction",
+        "Internal (medial) rotation",
+        "External (lateral) rotation",
+        "Flexion",
+        "Extension"
+      ],
+      "answers": [
+        0,
+        3,
+        5
+      ],
+      "explain": "Extension, external rotation and horizontal abduction pair with retraction; flexion, internal rotation and horizontal adduction pair with protraction.",
+      "section": "u4-s3",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "Which muscles are prime movers for scapular elevation? (select all that apply)",
+      "choices": [
+        "Upper trapezius",
+        "Levator scapulae",
+        "Serratus anterior",
+        "Rhomboids",
+        "Pectoralis minor",
+        "Lower trapezius"
+      ],
+      "answers": [
+        0,
+        1,
+        3
+      ],
+      "explain": "Upper trapezius, levator scapulae and the rhomboids elevate the scapula; lower trapezius and pectoralis minor depress it.",
+      "section": "u4-s4",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "To stretch the pectoralis minor, which scapular positions should be used? (select all that apply)",
+      "choices": [
+        "Protraction",
+        "Elevation",
+        "Upward rotation",
+        "Depression",
+        "Retraction"
+      ],
+      "answers": [
+        1,
+        2,
+        4
+      ],
+      "explain": "Pectoralis minor protracts, depresses and downwardly rotates the scapula, so it is stretched by moving into the opposite of each: retraction, elevation and upward rotation.",
+      "section": "u4-s4",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "Which muscles are prime movers for shoulder internal (medial) rotation? (select all that apply)",
+      "choices": [
+        "Subscapularis",
+        "Teres major",
+        "Latissimus dorsi",
+        "Teres minor",
+        "Posterior deltoid",
+        "Infraspinatus"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Subscapularis, latissimus dorsi and teres major (along with pectoralis major and anterior deltoid) internally rotate; infraspinatus, teres minor and posterior deltoid externally rotate.",
+      "section": "u4-s7",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "Which muscles are prime movers for shoulder extension? (select all that apply)",
+      "choices": [
+        "Latissimus dorsi",
+        "Coracobrachialis",
+        "Anterior deltoid",
+        "Supraspinatus",
+        "Teres major",
+        "Posterior deltoid"
+      ],
+      "answers": [
+        0,
+        4,
+        5
+      ],
+      "explain": "Latissimus dorsi, teres major and posterior deltoid extend the shoulder; anterior deltoid and coracobrachialis flex it and supraspinatus abducts.",
+      "section": "u4-s7",
+      "difficulty": 1
+    },
+    {
+      "type": "multi",
+      "q": "Which muscles are innervated by the axillary nerve? (select all that apply)",
+      "choices": [
+        "Supraspinatus",
+        "Deltoid",
+        "Teres minor",
+        "Teres major",
+        "Infraspinatus"
+      ],
+      "answers": [
+        1,
+        2
+      ],
+      "explain": "The axillary nerve (C5-C6) supplies the deltoid and teres minor; teres major gets the lower subscapular nerve and supraspinatus/infraspinatus get the suprascapular nerve.",
+      "section": "u4-s7",
+      "difficulty": 3
+    },
+    {
+      "type": "multi",
+      "q": "Which structures help keep the humeral head stable in the glenoid? (select all that apply)",
+      "choices": [
+        "Coracoacromial arch",
+        "Joint capsule and glenohumeral ligaments",
+        "Glenoid labrum",
+        "Annular ligament",
+        "Interclavicular ligament",
+        "Rotator cuff muscles"
+      ],
+      "answers": [
+        0,
+        1,
+        2,
+        5
+      ],
+      "explain": "The labrum deepens the fossa, the capsule/ligaments and rotator cuff hold the head in place, and the coracoacromial arch blocks upward dislocation; the annular ligament is at the elbow and the interclavicular ligament is at the SC joint.",
+      "section": "u4-s6",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "Which ligaments are associated with the sternoclavicular (SC) joint? (select all that apply)",
+      "choices": [
+        "Coracoclavicular",
+        "Annular",
+        "Interclavicular",
+        "Costoclavicular",
+        "Anterior and posterior sternoclavicular",
+        "Coracoacromial"
+      ],
+      "answers": [
+        2,
+        3,
+        4
+      ],
+      "explain": "The SC joint is supported by the sternoclavicular, costoclavicular and interclavicular ligaments plus an articular disc; the coracoclavicular and coracoacromial ligaments belong to the AC region.",
+      "section": "u4-s2",
+      "difficulty": 1
+    },
+    {
+      "type": "multi",
+      "q": "A client actively abducts the shoulder to 120 degrees. Using the course's scapulohumeral rhythm rule, which statements are correct? (select all that apply)",
+      "choices": [
+        "The scapula downwardly rotates during this motion",
+        "The scapula has upwardly rotated about 45 degrees",
+        "About 75 degrees of the motion came from the glenohumeral joint",
+        "The scapula has upwardly rotated about 60 degrees",
+        "The ratio is 1 degree glenohumeral to 2 degrees scapular"
+      ],
+      "answers": [
+        1,
+        2
+      ],
+      "explain": "After the first 30 degrees the ratio is 2:1, so (120 - 30) / 2 = 45 degrees of scapular upward rotation, leaving 75 degrees at the glenohumeral joint.",
+      "section": "u4-s3",
+      "difficulty": 3
+    },
+    {
+      "type": "multi",
+      "q": "Which are examples of reverse muscle action (the insertion is fixed and the origin moves)? (select all that apply)",
+      "choices": [
+        "Pectoralis minor lifting the ribs during forced inspiration",
+        "Trapezius helping lift the trunk during crutch walking",
+        "Middle deltoid slowly lowering the arm to the side",
+        "Anterior deltoid raising a cup toward the mouth",
+        "Latissimus dorsi lifting the trunk during a wheelchair push-up (depression transfer)"
+      ],
+      "answers": [
+        0,
+        1,
+        4
+      ],
+      "explain": "In each correct example the distal attachment is stable and the trunk or ribs move toward it; raising a cup is a normal open-chain action and lowering the arm is an eccentric contraction, not a reversal.",
+      "section": "u4-s4",
+      "difficulty": 3
+    },
+    {
+      "type": "multi",
+      "q": "A client slowly lowers a jug from a high shelf (arm in front of the body) down to the counter. Which statements are correct? (select all that apply)",
+      "choices": [
+        "The shoulder flexors are contracting eccentrically",
+        "The shoulder joint motion is extension",
+        "The anterior deltoid is controlling the lowering",
+        "The contraction is isometric",
+        "Latissimus dorsi is the prime mover contracting concentrically"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Lowering against gravity is controlled by the muscles that would raise the arm, so the shoulder flexors (anterior deltoid, coracobrachialis) lengthen eccentrically while the joint extends.",
+      "section": "u4-s7",
+      "difficulty": 3
+    },
+    {
+      "type": "short",
+      "q": "Exam 2 style: List 5 muscles of the shoulder (glenohumeral) joint, their prime movements, how you used each during the test, and how to stretch each one.",
+      "model": "Anterior deltoid: flexion, horizontal adduction, internal rotation; used raising a hand to ask a question; stretch with hyperextension, horizontal abduction and external rotation. Middle deltoid: abduction; used lifting the arm out to the side to hang a backpack on the chair; stretch with adduction (arm across/behind the body). Posterior deltoid: extension, hyperextension, horizontal abduction, external rotation; used reaching back to the bag on the chair; stretch with flexion, horizontal adduction (cross-body) and internal rotation. Latissimus dorsi: extension, hyperextension, adduction, internal rotation; used pushing up to shift in the seat; stretch with overhead flexion, abduction and external rotation. Infraspinatus: external rotation, horizontal abduction; used turning the paper/arm outward; stretch with internal rotation and horizontal adduction. (Also acceptable: subscapularis - IR, stretch ER; pectoralis major - horizontal adduction, adduction, IR, stretch with horizontal abduction/abduction/ER in a doorway stretch.)",
+      "points": [
+        "5 correct shoulder muscles",
+        "Accurate prime movements for each",
+        "A realistic test-day use matching the movement",
+        "Stretch = opposite of every prime action",
+        "No mixing up girdle and GH actions"
+      ],
+      "section": "u4-s7",
+      "difficulty": 3
+    },
+    {
+      "type": "short",
+      "q": "List 5 shoulder girdle (scapular) muscles, their prime scapular movements, how you used each during the test, and how to stretch each one.",
+      "model": "Upper trapezius: elevation, upward rotation; used shrugging or reaching overhead; stretch with depression and downward rotation (plus neck lateral flexion away). Levator scapulae: elevation, downward rotation; used shrugging; stretch with depression and upward rotation (neck flexed and rotated away). Rhomboids: retraction, downward rotation, elevation; used sitting up tall/squeezing shoulder blades; stretch with protraction, upward rotation, depression (hugging yourself). Serratus anterior: protraction, upward rotation; used reaching forward to hand in the test; stretch with retraction and downward rotation. Pectoralis minor: protraction, depression, downward rotation, tilt; used pushing down on the desk to stand; stretch with retraction, elevation and upward rotation. (Middle trapezius - retraction, stretch protraction; lower trapezius - depression/upward rotation, stretch elevation/downward rotation also acceptable.)",
+      "points": [
+        "5 correct shoulder girdle muscles",
+        "Correct scapular actions (not GH actions)",
+        "Functional example for each",
+        "Stretch into the opposite scapular motions"
+      ],
+      "section": "u4-s4",
+      "difficulty": 3
+    },
+    {
+      "type": "short",
+      "q": "Activity analysis: A client lifts a gallon of milk from the counter up onto a high refrigerator shelf in front of them. Name the shoulder, scapular and elbow motions, the prime movers, and the contraction type.",
+      "model": "Shoulder flexion (anterior deltoid, coracobrachialis, clavicular pectoralis major) with scapular upward rotation and protraction (upper and lower trapezius, serratus anterior). The elbow extends as the arm reaches out and up (triceps, anconeus). The fingers hold the handle in a cylindrical/hook grip (finger flexors) with the wrist stabilized by the wrist extensors. Lifting against gravity is concentric; holding the jug still at the shelf is isometric; setting it back down from the shelf would be eccentric shoulder flexors.",
+      "points": [
+        "Shoulder flexion with anterior deltoid/coracobrachialis",
+        "Scapular upward rotation + protraction (trapezius, serratus anterior)",
+        "Elbow extension by triceps",
+        "Concentric when lifting; eccentric when lowering",
+        "Grip and wrist stabilization"
+      ],
+      "section": "u4-s7",
+      "difficulty": 3
+    },
+    {
+      "type": "short",
+      "q": "Explain scapulohumeral rhythm. Then calculate how much scapular rotation occurs at 150 degrees of shoulder flexion, and state what an OTA should do before passively ranging a shoulder whose scapula is tight.",
+      "model": "Scapulohumeral rhythm is the coordinated motion of the scapula and humerus during elevation. The first ~30 degrees is mostly glenohumeral; after that the ratio is about 2 degrees of glenohumeral motion to 1 degree of scapular upward rotation. At 150 degrees: (150 - 30) / 2 = 60 degrees of scapular rotation, so about 90 degrees comes from the GH joint. If the scapula is tight, do not force the arm (risk of impingement and pain); mobilize and stretch the scapula first.",
+      "points": [
+        "First ~30 degrees mostly GH",
+        "2:1 GH to scapular ratio after that",
+        "60 degrees scapular rotation at 150",
+        "Mobilize the scapula before PROM; never force"
+      ],
+      "section": "u4-s3",
+      "difficulty": 2
+    },
+    {
+      "type": "short",
+      "q": "Define reverse muscle action and give two examples from the shoulder region, stating what moves in each.",
+      "model": "In reverse muscle action the usual insertion (distal end) is stabilized and the origin (proximal end) moves toward it. Examples: pectoralis minor with the scapula fixed lifts ribs 3-5 during forced inspiration; latissimus dorsi with the arms fixed on armrests pulls the trunk/pelvis up in a wheelchair push-up or depression transfer; trapezius helps lift the trunk in crutch walking; serratus anterior moves the thorax on the fixed scapula in the 'plus' phase of a push-up.",
+      "points": [
+        "Insertion fixed, origin moves",
+        "Usually closed-chain (hand/arm fixed)",
+        "Two accurate shoulder-region examples",
+        "States what body part moves"
+      ],
+      "section": "u4-s4",
+      "difficulty": 2
+    },
+    {
+      "type": "short",
+      "q": "Describe the three degrees of AC separation, naming the ligaments involved, and explain the typical mechanism of an anterior shoulder dislocation.",
+      "model": "1st degree: AC ligament stretched. 2nd degree: AC ligament ruptured and coracoclavicular ligament stretched. 3rd degree: both AC and coracoclavicular ligaments ruptured (the clavicle rides up). Anterior shoulder dislocation is usually caused by forced abduction with external rotation, which drives the humeral head forward out of the glenoid; the labrum is often damaged.",
+      "points": [
+        "1st: AC ligament stretched",
+        "2nd: AC ruptured, CC stretched",
+        "3rd: AC and CC ruptured",
+        "Dislocation from forced abduction + external rotation",
+        "Labrum often injured"
+      ],
+      "section": "u4-s8",
+      "difficulty": 2
+    }
+  ]
+}

@@ -1,0 +1,321 @@
+{
+  "questions": [
+    {
+      "type": "multi",
+      "q": "Which muscles are innervated by the radial nerve? (select all that apply)",
+      "choices": [
+        "Triceps brachii",
+        "Pronator teres",
+        "Brachioradialis",
+        "Supinator",
+        "Flexor carpi radialis",
+        "Biceps brachii"
+      ],
+      "answers": [
+        0,
+        2,
+        3
+      ],
+      "explain": "The radial nerve supplies triceps, anconeus, brachioradialis, supinator and the wrist/finger extensors; pronator teres and FCR are median, and biceps is musculocutaneous.",
+      "section": "u5-s9",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "To stretch the extensor carpi ulnaris, which positions should be used? (select all that apply)",
+      "choices": [
+        "Ulnar deviation",
+        "Radial deviation",
+        "Elbow extension",
+        "Wrist extension",
+        "Elbow flexion",
+        "Wrist flexion"
+      ],
+      "answers": [
+        1,
+        2,
+        5
+      ],
+      "explain": "ECU extends and ulnarly deviates the wrist and crosses the elbow, so stretch it with wrist flexion, radial deviation and the elbow kept extended.",
+      "section": "u5-s5",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "Which describe carpal movement during wrist flexion? (select all that apply)",
+      "choices": [
+        "The distal row glides palmarly",
+        "The carpals rotate to produce forearm pronation",
+        "The proximal row glides palmarly",
+        "The distal row glides dorsally",
+        "The proximal row glides dorsally"
+      ],
+      "answers": [
+        0,
+        4
+      ],
+      "explain": "The proximal row glides opposite the hand (dorsally) and the distal row follows the hand (palmarly) during wrist flexion.",
+      "section": "u5-s4",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "Which muscles are located in the hypothenar eminence? (select all that apply)",
+      "choices": [
+        "Opponens pollicis",
+        "Adductor pollicis",
+        "Abductor pollicis brevis",
+        "Opponens digiti minimi",
+        "Flexor digiti minimi",
+        "Abductor digiti minimi"
+      ],
+      "answers": [
+        3,
+        4,
+        5
+      ],
+      "explain": "The hypothenar OAF group (opponens, abductor and flexor digiti minimi) sits on the little-finger side and is ulnar-innervated; the pollicis muscles belong to the thumb side.",
+      "section": "u5-s7",
+      "difficulty": 1
+    },
+    {
+      "type": "multi",
+      "q": "Which statements about the anatomical snuffbox are true? (select all that apply)",
+      "choices": [
+        "It is located on the palmar side of the wrist",
+        "Flexor carpi radialis forms its radial border",
+        "Extensor pollicis longus forms its ulnar (medial) border",
+        "Tenderness there after a FOOSH is a red flag for scaphoid fracture",
+        "The scaphoid lies in its floor"
+      ],
+      "answers": [
+        2,
+        3,
+        4
+      ],
+      "explain": "The snuffbox is on the dorsal radial wrist between EPL (ulnar border) and APL/EPB (radial border), with the scaphoid in its floor.",
+      "section": "u5-s7",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "Which muscles attach into or contribute to the extensor hood? (select all that apply)",
+      "choices": [
+        "Flexor digitorum profundus",
+        "Extensor digitorum",
+        "Palmar interossei",
+        "Dorsal interossei",
+        "Flexor digitorum superficialis",
+        "Lumbricals"
+      ],
+      "answers": [
+        1,
+        2,
+        3,
+        5
+      ],
+      "explain": "The extensor digitorum tendon spreads into the hood and is joined by the lumbricals and interossei, letting them help extend the IP joints; FDS and FDP are flexor tendons on the palmar side.",
+      "section": "u5-s6",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "Which statements about the supporting structures of the digits are correct? (select all that apply)",
+      "choices": [
+        "The annular ligament of the finger wraps the radial head",
+        "Annular and cruciate pulleys keep flexor tendons close to the bones",
+        "The transverse carpal ligament prevents PIP hyperextension",
+        "Collateral ligaments prevent side-to-side bending of the finger joints",
+        "The volar plate limits hyperextension"
+      ],
+      "answers": [
+        1,
+        3,
+        4
+      ],
+      "explain": "Collateral ligaments give lateral stability, the volar plate limits hyperextension and pulleys prevent bowstringing; the transverse carpal ligament roofs the carpal tunnel.",
+      "section": "u5-s6",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "Which of these are power grips? (select all that apply)",
+      "choices": [
+        "Tip pinch",
+        "Hook grip",
+        "Spherical grip",
+        "Composite (fist) grip",
+        "Lateral (key) pinch",
+        "Cylindrical grip"
+      ],
+      "answers": [
+        1,
+        2,
+        3,
+        5
+      ],
+      "explain": "Cylindrical, spherical, hook and fist grips use the whole hand for force; tip and lateral pinch are precision grips.",
+      "section": "u5-s8",
+      "difficulty": 1
+    },
+    {
+      "type": "multi",
+      "q": "Which normal ROM values are correct? (select all that apply)",
+      "choices": [
+        "Elbow flexion 0-150 degrees",
+        "Wrist extension 0-70 degrees",
+        "Wrist ulnar deviation 0-10 degrees",
+        "Forearm supination 0-80 degrees",
+        "Wrist radial deviation 0-45 degrees"
+      ],
+      "answers": [
+        0,
+        1,
+        3
+      ],
+      "explain": "Elbow flexion is 0-150, supination about 0-80 and wrist extension about 0-70; radial deviation is only about 0-20 and ulnar deviation about 0-30.",
+      "section": "u5-s4",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "Which statements about the elbow carrying angle are true? (select all that apply)",
+      "choices": [
+        "It lets the hand reach the shoulder when the elbow bends",
+        "It exists because the trochlea sits lower than the capitulum",
+        "It is measured with the elbow flexed to 90 degrees",
+        "It is usually larger in males",
+        "It is normally about 5-15 degrees of valgus"
+      ],
+      "answers": [
+        1,
+        4
+      ],
+      "explain": "The carrying angle is 5-15 degrees of valgus seen with the elbow extended, usually larger in females, and it guides the hand to the mouth.",
+      "section": "u5-s1",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "A client uses a screwdriver with the right hand to tighten a screw (palm-up rotation). Which statements are correct? (select all that apply)",
+      "choices": [
+        "Pronator teres is the prime mover",
+        "Biceps brachii helps, especially with the elbow flexed",
+        "The forearm is supinating",
+        "The rotation occurs at the radiocarpal joint",
+        "Supinator is a prime mover"
+      ],
+      "answers": [
+        1,
+        2,
+        4
+      ],
+      "explain": "Tightening with the right hand is supination by supinator and biceps (strongest with the elbow bent); rotation happens at the radioulnar joints, not the wrist.",
+      "section": "u5-s11",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "Which muscles arise from the common extensor tendon at the lateral epicondyle (involved in lateral epicondylitis)? (select all that apply)",
+      "choices": [
+        "Extensor digiti minimi",
+        "Extensor carpi ulnaris",
+        "Extensor carpi radialis brevis",
+        "Palmaris longus",
+        "Flexor carpi radialis",
+        "Extensor digitorum"
+      ],
+      "answers": [
+        0,
+        1,
+        2,
+        5
+      ],
+      "explain": "ECRB, extensor digitorum, EDM and ECU share the common extensor origin; FCR and palmaris longus come off the medial epicondyle.",
+      "section": "u5-s5",
+      "difficulty": 3
+    },
+    {
+      "type": "short",
+      "q": "Exam 2 style: List 5 muscles of the elbow and forearm, their prime movements, how you used each during the test, and how to stretch each one.",
+      "model": "Biceps brachii: elbow flexion and supination (assists shoulder flexion); used bringing a water bottle to the mouth; stretch with elbow extension, pronation and shoulder hyperextension. Brachialis: elbow flexion in any forearm position; used lifting the pencil to write; stretch with full elbow extension. Brachioradialis: elbow flexion, strongest in mid-position; used lifting the backpack by the strap with thumb up; stretch with elbow extension. Triceps brachii: elbow extension (long head assists shoulder extension); used pushing up from the desk; stretch with elbow flexion plus shoulder flexion (overhead). Supinator: supination; used turning the doorknob/turning the paper over palm up; stretch with pronation. Pronator teres: pronation (assists elbow flexion); used turning the paper face down / writing palm down; stretch with supination and elbow extension. (Pronator quadratus - pronation, stretch supination; anconeus - extension, stretch flexion also acceptable.)",
+      "points": [
+        "5 correct elbow/forearm muscles",
+        "Accurate prime movements (including supination/pronation)",
+        "Realistic test-day use",
+        "Stretch = opposite of all prime actions",
+        "Two-joint muscles stretched at both joints"
+      ],
+      "section": "u5-s2",
+      "difficulty": 3
+    },
+    {
+      "type": "short",
+      "q": "Exam 2 style: List 5 muscles of the wrist and hand, their prime movements, how you used each during the test, and how to stretch each one.",
+      "model": "Flexor carpi radialis: wrist flexion and radial deviation; used flicking the pencil while writing; stretch with wrist extension, ulnar deviation and elbow extension. Flexor carpi ulnaris: wrist flexion and ulnar deviation; stretch with wrist extension, radial deviation, elbow extension. Extensor carpi radialis longus/brevis: wrist extension and radial deviation; used holding the wrist up while writing; stretch with wrist flexion, ulnar deviation, elbow extension. Extensor carpi ulnaris: wrist extension and ulnar deviation; stretch with wrist flexion, radial deviation, elbow extension. Flexor digitorum profundus: flexes DIP, PIP, MCP (assists wrist flexion); used gripping the pencil; stretch with finger and wrist extension together. Extensor digitorum: extends MCP, PIP, DIP of D2-5; used letting go of the pencil/spreading the paper; stretch with finger flexion plus wrist flexion.",
+      "points": [
+        "5 correct wrist/hand muscles",
+        "Correct prime movements including deviation",
+        "Realistic functional use",
+        "Stretch opposite actions",
+        "Keep elbow extended for muscles that cross it"
+      ],
+      "section": "u5-s5",
+      "difficulty": 3
+    },
+    {
+      "type": "short",
+      "q": "Activity analysis: A client pushes up from an armchair to stand using the armrests. Name the joint motions, the prime movers, and the contraction types, and explain what is unusual about the muscle action.",
+      "model": "The elbows extend (triceps, anconeus) with a concentric contraction. The shoulders move toward extension/depression as the trunk rises: latissimus dorsi and pectoralis major (sternal) pull the trunk up and the scapulae depress (lower trapezius, pectoralis minor). The wrists are held in extension with the hand flat and the wrist muscles co-contract isometrically to stabilize. Because the hands are fixed on the armrests this is closed-chain and a reverse muscle action (the proximal segment moves toward the fixed distal end). Lowering back into the chair uses the same muscles eccentrically.",
+      "points": [
+        "Elbow extension by triceps, concentric",
+        "Scapular depression / latissimus dorsi lifting trunk",
+        "Wrist stabilized isometrically in extension",
+        "Closed chain / reverse muscle action",
+        "Eccentric when sitting back down"
+      ],
+      "section": "u5-s11",
+      "difficulty": 3
+    },
+    {
+      "type": "short",
+      "q": "Compare radial, median and ulnar nerve injuries: for each give the classic deformity or sign, a key motor loss, and the sensory area affected.",
+      "model": "Radial: wrist drop - cannot extend the wrist and fingers (also weak supination, elbow extension if high); sensory loss on the dorsal radial hand (thumb, index, middle, half ring), sparing fingertips. Median: ape hand - loss of thumb opposition with thenar atrophy, weak pronation and finger flexion (carpal tunnel syndrome at the wrist); sensory loss on the palmar thumb, index, middle and radial half of the ring finger. Ulnar: claw hand of D4-5 - weak interossei, hypothenar and adductor pollicis, weak grip and pinch (cubital tunnel at the elbow); sensory loss on the little finger and ulnar half of the ring finger.",
+      "points": [
+        "Radial = wrist drop, dorsal radial hand",
+        "Median = ape hand / lost opposition, palmar radial 3.5 digits",
+        "Ulnar = claw hand D4-5, little + half ring finger",
+        "One motor loss for each nerve"
+      ],
+      "section": "u5-s9",
+      "difficulty": 2
+    },
+    {
+      "type": "short",
+      "q": "Name and describe 3 power grips and 3 precision grips, with an everyday example of each.",
+      "model": "Power: cylindrical - fingers wrap around a cylinder (hammer, glass); spherical - fingers spread around a round object (ball, doorknob); hook - IPs flexed, thumb not needed (carrying a briefcase or grocery bag); also fist/composite. Precision: tip pinch - tip of thumb to tip of index (picking up a pin or coin); three-jaw chuck/tripod - thumb pad to index and middle pads (holding a pen); lateral/key pinch - thumb pad to the side of the index (turning a key); lumbrical grip - MCPs flexed, IPs extended (holding a plate).",
+      "points": [
+        "Power grips use whole hand for force",
+        "Precision grips use fingertips for control",
+        "3 correctly named power grips with examples",
+        "3 correctly named precision grips with examples"
+      ],
+      "section": "u5-s8",
+      "difficulty": 2
+    },
+    {
+      "type": "short",
+      "q": "Describe the joint positions in swan neck deformity, boutonniere deformity, mallet finger and ulnar drift, and name a common cause of each.",
+      "model": "Swan neck: MCP flexion, PIP hyperextension, DIP flexion - often rheumatoid arthritis. Boutonniere: MCP extension, PIP flexion, DIP hyperextension - RA or a central slip injury. Mallet finger: DIP stays flexed and cannot actively extend - terminal extensor tendon injury, e.g., a ball striking the fingertip. Ulnar drift: fingers deviate ulnarly at the MCP joints - RA.",
+      "points": [
+        "Swan neck: PIP hyperextension, DIP flexion",
+        "Boutonniere: PIP flexion, DIP hyperextension",
+        "Mallet: DIP cannot extend",
+        "Ulnar drift at MCPs",
+        "RA as common cause"
+      ],
+      "section": "u5-s10",
+      "difficulty": 2
+    }
+  ]
+}

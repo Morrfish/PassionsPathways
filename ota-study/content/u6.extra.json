@@ -1,0 +1,326 @@
+{
+  "questions": [
+    {
+      "type": "multi",
+      "q": "Which muscles are added during DEEP inspiration (beyond the diaphragm and external intercostals)? (select all that apply)",
+      "choices": [
+        "Sternocleidomastoid",
+        "Pectoralis major (reverse action)",
+        "Internal intercostals",
+        "Scalenes",
+        "Serratus posterior superior",
+        "Transverse abdominis"
+      ],
+      "answers": [
+        0,
+        1,
+        3,
+        4
+      ],
+      "explain": "Deep inspiration recruits SCM, scalenes, pectoralis major, levator costarum and serratus posterior superior to lift the ribs further; internal intercostals and transverse abdominis are expiratory.",
+      "section": "u6-s5",
+      "difficulty": 3
+    },
+    {
+      "type": "multi",
+      "q": "Which muscles work during FORCED expiration? (select all that apply)",
+      "choices": [
+        "Internal intercostals",
+        "Quadratus lumborum",
+        "External intercostals",
+        "Diaphragm",
+        "Transverse abdominis",
+        "Scalenes"
+      ],
+      "answers": [
+        0,
+        1,
+        4
+      ],
+      "explain": "Forced expiration uses internal intercostals, the abdominals, quadratus lumborum and serratus posterior inferior; the diaphragm, scalenes and external intercostals are inspiratory.",
+      "section": "u6-s5",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "A POSTERIOR pelvic tilt is accompanied by which motions? (select all that apply)",
+      "choices": [
+        "Hip flexion",
+        "Increased lumbar lordosis",
+        "Lumbar hyperextension",
+        "Lumbar spine flexion (flattened lumbar curve)",
+        "Hip extension"
+      ],
+      "answers": [
+        3,
+        4
+      ],
+      "explain": "In a posterior tilt the lumbar spine flexes and the hips extend; an anterior tilt pairs with lumbar hyperextension and hip flexion.",
+      "section": "u6-s6",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "Which muscles form the force couple that produces an ANTERIOR pelvic tilt? (select all that apply)",
+      "choices": [
+        "Rectus femoris",
+        "Erector spinae",
+        "Hamstrings",
+        "Gluteus maximus",
+        "Rectus abdominis",
+        "Iliopsoas"
+      ],
+      "answers": [
+        0,
+        1,
+        5
+      ],
+      "explain": "Trunk extensors pull the back of the pelvis up while hip flexors pull the front down; rectus abdominis, gluteus maximus and hamstrings create a posterior tilt.",
+      "section": "u6-s6",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "When contracting UNILATERALLY, which muscles rotate the head or trunk to the OPPOSITE side? (select all that apply)",
+      "choices": [
+        "Sternocleidomastoid",
+        "Transversospinalis (multifidus, rotatores)",
+        "Erector spinae",
+        "External oblique",
+        "Internal oblique",
+        "Splenius capitis"
+      ],
+      "answers": [
+        0,
+        1,
+        3
+      ],
+      "explain": "SCM, external oblique and transversospinalis rotate to the opposite side; internal oblique, splenius and erector spinae rotate to the same side.",
+      "section": "u6-s3",
+      "difficulty": 3
+    },
+    {
+      "type": "multi",
+      "q": "After a POSTERIOR-approach total hip replacement, which activities violate precautions? (select all that apply)",
+      "choices": [
+        "Turning the operated leg's toes inward while lying in bed",
+        "Bending forward to tie the shoe on the operated side",
+        "Using a reacher to pick up a dropped item",
+        "Sleeping with an abduction wedge between the legs",
+        "Crossing the legs while sitting",
+        "Sitting on a low, soft couch"
+      ],
+      "answers": [
+        0,
+        1,
+        4,
+        5
+      ],
+      "explain": "Posterior precautions restrict hip flexion past 90, adduction past midline and internal rotation; reachers and abduction wedges help clients follow them.",
+      "section": "u6-s8",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "Which are appropriate precautions after a total knee replacement? (select all that apply)",
+      "choices": [
+        "No pillow under the knee in bed",
+        "Kneel on a soft cushion to garden",
+        "No twisting or pivoting on the operated knee",
+        "No kneeling",
+        "Keep the knee propped in flexion at night for comfort"
+      ],
+      "answers": [
+        0,
+        2,
+        3
+      ],
+      "explain": "TKR precautions include no pillow under the knee (flexion contracture risk), no kneeling and no twisting, plus feet flat when sitting and wearing the immobilizer as ordered.",
+      "section": "u6-s10",
+      "difficulty": 1
+    },
+    {
+      "type": "multi",
+      "q": "Which of these are 2-joint muscles? (select all that apply)",
+      "choices": [
+        "Rectus femoris",
+        "Semitendinosus",
+        "Gastrocnemius",
+        "Vastus medialis",
+        "Gluteus medius",
+        "Vastus lateralis"
+      ],
+      "answers": [
+        0,
+        1,
+        2
+      ],
+      "explain": "Rectus femoris (hip/knee), semitendinosus (hip/knee) and gastrocnemius (knee/ankle) cross two joints; the vasti and gluteus medius cross only one.",
+      "section": "u6-s9",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "Which muscles are prime movers for hip abduction? (select all that apply)",
+      "choices": [
+        "Gluteus minimus",
+        "Pectineus",
+        "Gracilis",
+        "Adductor magnus",
+        "Gluteus medius",
+        "Semitendinosus"
+      ],
+      "answers": [
+        0,
+        4
+      ],
+      "explain": "Gluteus medius and minimus on the lateral hip abduct it; adductor magnus, gracilis and pectineus are medial adductors and semitendinosus is a hamstring.",
+      "section": "u6-s7",
+      "difficulty": 1
+    },
+    {
+      "type": "multi",
+      "q": "Which muscles ELEVATE the mandible (close the mouth)? (select all that apply)",
+      "choices": [
+        "Geniohyoid",
+        "Temporalis",
+        "Masseter",
+        "Digastric",
+        "Lateral pterygoid",
+        "Medial pterygoid"
+      ],
+      "answers": [
+        1,
+        2,
+        5
+      ],
+      "explain": "Temporalis, masseter and medial pterygoid close the jaw; lateral pterygoid and the suprahyoids (digastric, geniohyoid) depress/open it.",
+      "section": "u6-s1",
+      "difficulty": 2
+    },
+    {
+      "type": "multi",
+      "q": "Which ligaments belong to the knee? (select all that apply)",
+      "choices": [
+        "Posterior cruciate ligament",
+        "Lateral (fibular) collateral ligament",
+        "Anterior cruciate ligament",
+        "Ligamentum flavum",
+        "Medial (tibial) collateral ligament",
+        "Iliofemoral ligament"
+      ],
+      "answers": [
+        0,
+        1,
+        2,
+        4
+      ],
+      "explain": "The cruciates and collaterals stabilize the knee; the iliofemoral ligament is at the hip and the ligamentum flavum connects vertebral laminae.",
+      "section": "u6-s9",
+      "difficulty": 1
+    },
+    {
+      "type": "multi",
+      "q": "Which normal ROM values are correct? (select all that apply)",
+      "choices": [
+        "Hip hyperextension 0-60 degrees",
+        "Hip external rotation 0-90 degrees",
+        "Knee flexion 0-90 degrees",
+        "Knee flexion 0-135 degrees",
+        "Hip flexion 0-120 degrees",
+        "Hip abduction 0-45 degrees"
+      ],
+      "answers": [
+        3,
+        4,
+        5
+      ],
+      "explain": "Hip flexion is 0-120, abduction 0-45, hyperextension only 0-30 and rotation about 0-45 each way; the knee flexes to about 135.",
+      "section": "u6-s7",
+      "difficulty": 2
+    },
+    {
+      "type": "short",
+      "q": "List the muscles used in each phase of respiration: quiet inspiration, deep inspiration, forced inspiration, quiet expiration and forced expiration.",
+      "model": "Quiet inspiration: diaphragm and external intercostals. Deep inspiration: the quiet muscles plus SCM, scalenes, pectoralis major (reverse action), levator costarum and serratus posterior superior. Forced inspiration: all of the above plus levator scapulae, upper trapezius, rhomboids and pectoralis minor (reverse actions lifting the shoulder girdle). Quiet expiration: passive - the diaphragm and external intercostals relax, with elastic recoil and gravity. Forced expiration: internal intercostals, abdominals (rectus abdominis, external/internal obliques, transverse abdominis), quadratus lumborum and serratus posterior inferior.",
+      "points": [
+        "Quiet inspiration = diaphragm + external intercostals",
+        "Deep adds SCM, scalenes, pec major",
+        "Forced adds shoulder girdle muscles (reverse action)",
+        "Quiet expiration is passive",
+        "Forced expiration = internal intercostals + abdominals"
+      ],
+      "section": "u6-s5",
+      "difficulty": 3
+    },
+    {
+      "type": "short",
+      "q": "Describe anterior and posterior pelvic tilts: what the pelvis does, the accompanying lumbar spine and hip motions, the muscles of each force couple, and which muscles are tight vs weak with a habitual anterior tilt.",
+      "model": "Anterior tilt: the ASIS moves forward/down ahead of the pubic symphysis; the lumbar spine hyperextends (increased lordosis) and the hips flex; produced by the erector spinae plus hip flexors (iliopsoas, rectus femoris). Posterior tilt: the ASIS moves back/up; the lumbar spine flexes (flattens) and the hips extend; produced by the rectus abdominis/obliques plus hip extensors (gluteus maximus, hamstrings). With a habitual anterior tilt the trunk extensors and hip flexors are shortened/tight while the abdominals and hip extensors are lengthened/weak.",
+      "points": [
+        "Anterior: lumbar hyperextension + hip flexion",
+        "Posterior: lumbar flexion + hip extension",
+        "Anterior force couple: erector spinae + hip flexors",
+        "Posterior force couple: abdominals + glutes/hamstrings",
+        "Habitual anterior tilt: tight extensors/hip flexors, weak abs/hip extensors"
+      ],
+      "section": "u6-s6",
+      "difficulty": 3
+    },
+    {
+      "type": "short",
+      "q": "State the precautions after a posterior-approach THR and an anterior-approach THR, name adaptive equipment that helps, and list the main TKR precautions.",
+      "model": "Posterior THR (typically 6-8 weeks): no hip flexion past 90 degrees, no internal rotation of the operated leg, no adduction past midline (no crossing legs; abduction wedge in bed). Anterior THR: avoid hip extension and external rotation. Weight-bearing limits are common; no driving about 4-6 weeks. Adaptive equipment: reacher, sock aid, long-handled sponge and shoe horn, raised toilet seat (and elastic laces). TKR: no twisting/pivoting on the knee, no kneeling, no pillow under the knee (flexion contracture), feet flat on the floor when sitting, wear the immobilizer as ordered.",
+      "points": [
+        "Posterior THR: no flexion >90, no IR, no adduction past midline",
+        "Anterior THR: no extension or ER",
+        "Adaptive equipment (reacher, sock aid, raised toilet seat)",
+        "TKR: no pillow under knee, no kneeling, no twisting"
+      ],
+      "section": "u6-s8",
+      "difficulty": 2
+    },
+    {
+      "type": "short",
+      "q": "Activity analysis: A client climbs a flight of stairs, stepping up with the right leg. Name the hip, knee and ankle motions, the prime movers, and the contraction types. How does going DOWN the stairs differ?",
+      "model": "Lifting the right foot to the step: hip flexion (iliopsoas, rectus femoris) and knee flexion (hamstrings), with ankle dorsiflexion to clear the step. Pulling the body up onto the step: right hip extension (gluteus maximus, hamstrings) and knee extension (quadriceps), concentric and closed-chain; the trailing left ankle plantarflexes (gastrocnemius, soleus) to push off. Gluteus medius on the stance leg stabilizes the pelvis so the opposite side does not drop. Going down, the quadriceps and hip extensors on the stance leg work eccentrically to lower the body under control.",
+      "points": [
+        "Hip flexion to lift the leg (iliopsoas)",
+        "Knee extension by quadriceps and hip extension by gluteus maximus, concentric",
+        "Plantarflexion push-off (gastrocnemius/soleus)",
+        "Gluteus medius stabilizes the pelvis",
+        "Descending = eccentric quadriceps"
+      ],
+      "section": "u6-s9",
+      "difficulty": 3
+    },
+    {
+      "type": "short",
+      "q": "List 5 muscles of the hip and knee, their prime movements, how you would use each in a daily activity, and how to stretch each one.",
+      "model": "Iliopsoas: hip flexion (assists lateral rotation); lifting the leg into the car; stretch with hip extension/hyperextension (lunge with back hip extended). Gluteus maximus: hip extension and lateral rotation; rising from a chair or climbing stairs; stretch with hip flexion and medial rotation (knee to opposite shoulder). Gluteus medius: hip abduction (anterior fibers medially rotate); stabilizing the pelvis when standing on one leg; stretch with adduction (leg across midline). Hamstrings: hip extension and knee flexion; pulling the heel back to sit; stretch with hip flexion while the knee is extended. Rectus femoris: hip flexion and knee extension; kicking a ball; stretch with hip extension plus knee flexion. Adductors: hip adduction (and medial rotation); squeezing knees to slide in a car; stretch with abduction (and lateral rotation).",
+      "points": [
+        "5 correct hip/knee muscles",
+        "Accurate prime movements",
+        "Functional use for each",
+        "Stretch into opposite of all actions",
+        "2-joint muscles stretched at both joints"
+      ],
+      "section": "u6-s7",
+      "difficulty": 3
+    },
+    {
+      "type": "short",
+      "q": "Compare bilateral and unilateral actions of these neck and trunk muscles: sternocleidomastoid, external oblique, internal oblique, erector spinae and quadratus lumborum.",
+      "model": "SCM: bilateral - neck flexion; unilateral - lateral flexion to the same side and rotation to the opposite side (right SCM turns the head left). External oblique: bilateral - trunk flexion and abdominal compression; unilateral - lateral flexion same side, rotation to the opposite side. Internal oblique: bilateral - trunk flexion, compression; unilateral - lateral flexion and rotation to the same side. Erector spinae: bilateral - trunk/neck extension; unilateral - lateral flexion (and rotation) to the same side. Quadratus lumborum: unilateral - lateral trunk flexion and hip hiking (elevates the pelvis); bilateral - assists extension and stabilizes the 12th rib.",
+      "points": [
+        "Bilateral usually = flexion or extension",
+        "Unilateral = lateral flexion and/or rotation",
+        "SCM and external oblique rotate opposite",
+        "Internal oblique and erector spinae rotate same side",
+        "Quadratus lumborum hikes the hip"
+      ],
+      "section": "u6-s3",
+      "difficulty": 3
+    }
+  ]
+}
