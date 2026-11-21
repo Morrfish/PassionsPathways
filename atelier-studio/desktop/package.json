@@ -1,0 +1,44 @@
+{
+  "name": "atelier-studio-desktop",
+  "productName": "Atelier Studio",
+  "version": "0.1.0",
+  "description": "Atelier Studio: sketch, color and see fashion designs in 3D.",
+  "author": "Passions Pathways",
+  "main": "main.js",
+  "scripts": {
+    "start": "node copy-app.js && electron .",
+    "prebuild": "node copy-app.js",
+    "build": "electron-builder --win nsis portable --x64"
+  },
+  "build": {
+    "appId": "org.passionspathways.atelierstudio",
+    "files": ["main.js", "preload.js", "app/**", "licenses/**"],
+    "directories": { "output": "dist", "buildResources": "build" },
+    "win": { "target": ["nsis", "portable"], "signAndEditExecutable": false, "icon": "app/assets/icon.ico" },
+    "portable": { "artifactName": "AtelierStudio-Portable.exe" },
+    "nsis": {
+      "artifactName": "AtelierStudio-Setup.exe",
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Atelier Studio",
+      "uninstallDisplayName": "Atelier Studio",
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
+      "installerHeaderIcon": "icon.ico",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "license": "license.txt"
+    },
+    "fileAssociations": [
+      { "ext": "atelier", "name": "AtelierStudioDesign", "description": "Atelier Studio design", "icon": "icon.ico", "role": "Editor" }
+    ]
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  }
+}

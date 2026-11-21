@@ -1,0 +1,49 @@
+# Builds Atelier Studio for Windows on a Windows machine:
+#   AtelierStudio-Setup.exe     installer (Start menu + desktop shortcuts, uninstaller,
+#                               opens .atelier design files on double-click)
+#   AtelierStudio-Portable.exe  single file that runs without installing
+# Both are kept as a build artifact on the run page: only people signed in to
+# GitHub with access to this repo can download them. Nothing is published.
+name: Atelier Studio exe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, 'claude/dazzling-heisenberg-20luyl']
+    paths:
+      - 'atelier-studio/**'
+      - '.github/workflows/atelier-studio-exe.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atelier-studio-exe-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Build the web app
+        working-directory: atelier-studio
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+      - name: Build the installer and the portable exe
+        working-directory: atelier-studio/desktop
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AtelierStudio-Windows
+          path: |
+            atelier-studio/desktop/dist/AtelierStudio-Setup.exe
+            atelier-studio/desktop/dist/AtelierStudio-Portable.exe
+          retention-days: 90
+          compression-level: 0
