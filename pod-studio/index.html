@@ -1,0 +1,920 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pathway Pod Studio</title>
+<meta name="description" content="Turn any website or text into a finished podcast series: AI-planned episodes, two-host scripts, narration, cover art, show notes and an RSS feed.">
+<style>
+:root{
+  --bg:#f6f4fb; --panel:#ffffff; --ink:#1d1b26; --muted:#6a6578; --line:#e3dfee;
+  --accent:#6b3fd6; --accent-ink:#ffffff; --accent-soft:#eee7ff; --good:#1d8a54; --bad:#c43a3a;
+  --host-a:#6b3fd6; --host-b:#d6563f; --host-c:#1f86a8;
+  --shadow:0 1px 2px rgba(20,10,50,.06),0 6px 24px rgba(20,10,50,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121019; --panel:#1c1926; --ink:#ece9f5; --muted:#a09ab3; --line:#2f2a3d;
+    --accent:#9b7bff; --accent-ink:#120d24; --accent-soft:#2a2342; --good:#4cc98a; --bad:#ff7a7a;
+    --host-a:#9b7bff; --host-b:#ff8a70; --host-c:#5cc6e8; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121019; --panel:#1c1926; --ink:#ece9f5; --muted:#a09ab3; --line:#2f2a3d;
+  --accent:#9b7bff; --accent-ink:#120d24; --accent-soft:#2a2342; --good:#4cc98a; --bad:#ff7a7a;
+  --host-a:#9b7bff; --host-b:#ff8a70; --host-c:#5cc6e8; --shadow:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--accent)}
+header.top{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:0;z-index:5}
+header.top h1{font-size:18px;margin:0;flex:1}
+header.top .logo{width:30px;height:30px;border-radius:8px;background:var(--accent);display:grid;place-items:center;color:var(--accent-ink);font-weight:800}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 80px}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.steps button{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:8px 14px;border-radius:999px;cursor:pointer;font:inherit}
+.steps button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.steps button:disabled{opacity:.45;cursor:default}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+.card h2{margin:0 0 4px;font-size:18px}
+.card h3{margin:14px 0 6px;font-size:15px}
+.sub{color:var(--muted);margin:0 0 14px}
+label{display:block;font-weight:600;font-size:13px;margin:10px 0 4px}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:9px 11px}
+textarea{resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:0;background:var(--accent);color:var(--accent-ink);padding:10px 16px;border-radius:10px;font:inherit;font-weight:650;cursor:pointer}
+.btn.ghost{background:var(--accent-soft);color:var(--accent)}
+.btn.small{padding:6px 10px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:default}
+.tabs{display:flex;gap:4px;margin-bottom:10px}
+.tabs button{flex:0 0 auto;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer;font:inherit}
+.tabs button.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.hidden{display:none!important}
+.status{font-size:13px;color:var(--muted);margin-top:10px;white-space:pre-wrap}
+.status.err{color:var(--bad)}
+.status.ok{color:var(--good)}
+.ep-list{display:grid;gap:10px}
+.ep{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--bg)}
+.ep .head{display:flex;gap:10px;align-items:flex-start}
+.ep .num{width:30px;height:30px;flex:0 0 30px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700}
+.ep .t{flex:1;min-width:0}
+.ep .t input{font-weight:650;margin-bottom:6px}
+.pill{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pill.good{background:transparent;border:1px solid var(--good);color:var(--good)}
+.layout{display:grid;grid-template-columns:260px 1fr;gap:16px}
+@media (max-width:820px){.layout{grid-template-columns:1fr}}
+.side .ep-btn{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:9px 11px;border-radius:10px;margin-bottom:6px;cursor:pointer;font:inherit}
+.side .ep-btn.on{border-color:var(--accent);background:var(--accent-soft)}
+.side .ep-btn small{display:block;color:var(--muted)}
+.lines{display:grid;gap:8px;max-height:60vh;overflow:auto;padding-right:4px}
+.line{display:grid;grid-template-columns:120px 1fr 28px;gap:8px;align-items:start;border-radius:10px;padding:4px}
+.line.playing{background:var(--accent-soft)}
+.line select{padding:6px;font-size:13px;font-weight:650}
+.line textarea{min-height:44px;padding:7px 9px}
+.line .x{background:none;border:0;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;padding-top:8px}
+@media (max-width:560px){.line{grid-template-columns:1fr 28px}.line select{grid-column:1/-1}}
+.player{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px;border:1px solid var(--line);border-radius:12px;margin:10px 0;background:var(--bg)}
+.player audio{width:100%;max-width:420px}
+.cover-wrap{display:grid;grid-template-columns:300px 1fr;gap:16px}
+@media (max-width:700px){.cover-wrap{grid-template-columns:1fr}}
+canvas#cover{width:100%;max-width:300px;aspect-ratio:1;border-radius:12px;border:1px solid var(--line)}
+.swatches{display:flex;gap:6px;flex-wrap:wrap}
+.swatches button{width:34px;height:34px;border-radius:8px;border:2px solid transparent;cursor:pointer}
+.swatches button.on{border-color:var(--ink)}
+.social{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--bg)}
+.social b{font-size:13px}
+.social p{margin:4px 0 8px;white-space:pre-wrap}
+pre.code{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;overflow:auto;max-height:260px;font-size:12px}
+.checklist li{margin-bottom:6px}
+.note{font-size:13px;color:var(--muted)}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);max-width:560px;width:calc(100% - 32px)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:s 0.8s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes s{to{transform:rotate(360deg)}}
+.progress{height:6px;background:var(--line);border-radius:999px;overflow:hidden;margin-top:8px}
+.progress>div{height:100%;background:var(--accent);width:0;transition:width .3s}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">P</div>
+  <h1>Pathway Pod Studio</h1>
+  <button class="btn ghost small" id="newBtn" title="Start a new show">New show</button>
+  <button class="btn ghost small" id="settingsBtn">Settings &amp; keys</button>
+</header>
+
+<main>
+  <nav class="steps" id="steps">
+    <button data-step="source" class="on">1 · Source</button>
+    <button data-step="plan">2 · Series plan</button>
+    <button data-step="studio">3 · Scripts &amp; audio</button>
+    <button data-step="brand">4 · Cover &amp; promo</button>
+    <button data-step="publish">5 · Publish</button>
+  </nav>
+
+  <!-- STEP 1 -->
+  <section data-panel="source">
+    <div class="card">
+      <h2>What should the podcast be about?</h2>
+      <p class="sub">Give it a website and the AI reads it, then plans a whole podcast series about it. You can also paste text or upload a document.</p>
+      <div class="tabs" id="srcTabs">
+        <button data-src="url" class="on">Website</button>
+        <button data-src="text">Paste text</button>
+        <button data-src="file">Upload file</button>
+      </div>
+      <div data-srcpanel="url">
+        <label for="srcUrl">Website address</label>
+        <input id="srcUrl" type="url" placeholder="https://www.yourschool.org">
+        <p class="note">The AI opens this page and up to a few more pages on the same site (About, Programs, Blog).</p>
+      </div>
+      <div data-srcpanel="text" class="hidden">
+        <label for="srcText">Text to turn into a podcast</label>
+        <textarea id="srcText" rows="8" placeholder="Paste an article, lesson, newsletter, notes..."></textarea>
+      </div>
+      <div data-srcpanel="file" class="hidden">
+        <label for="srcFile">Text, Markdown, HTML or PDF file</label>
+        <input id="srcFile" type="file" accept=".txt,.md,.html,.htm,.csv,.pdf">
+        <p class="note" id="fileInfo"></p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Show settings</h2>
+      <div class="grid">
+        <div><label for="optFormat">Format</label>
+          <select id="optFormat">
+            <option value="duo">Two hosts talking</option>
+            <option value="solo">One narrator</option>
+            <option value="interview">Host interviews a guest expert</option>
+            <option value="panel">Three-person panel</option>
+          </select></div>
+        <div><label for="optEpisodes">Episodes in the series</label>
+          <select id="optEpisodes"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option><option>8</option><option>10</option></select></div>
+        <div><label for="optMinutes">Length of each episode</label>
+          <select id="optMinutes"><option value="3">About 3 min</option><option value="5" selected>About 5 min</option><option value="10">About 10 min</option><option value="15">About 15 min</option><option value="20">About 20 min</option></select></div>
+        <div><label for="optTone">Tone</label>
+          <select id="optTone"><option>Friendly and upbeat</option><option>Calm and informative</option><option>Professional</option><option>Funny and casual</option><option>Inspiring storytelling</option></select></div>
+        <div><label for="optAudience">Who is listening?</label>
+          <input id="optAudience" placeholder="e.g. parents of new students"></div>
+        <div><label for="optLang">Language</label>
+          <select id="optLang"><option value="en">English</option><option value="es">Spanish</option><option value="fr">French</option><option value="de">German</option><option value="pt">Portuguese</option></select></div>
+        <div><label for="optHosts">Host names (comma separated)</label>
+          <input id="optHosts" placeholder="Maya, Jordan"></div>
+        <div><label for="optShow">Show name (optional)</label>
+          <input id="optShow" placeholder="Leave blank and the AI will suggest one"></div>
+      </div>
+      <label for="optExtra">Anything else? (optional)</label>
+      <textarea id="optExtra" rows="2" placeholder="e.g. end each episode with a question for listeners; mention our open house on May 3"></textarea>
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="planBtn">Plan my podcast series</button>
+        <button class="btn ghost" id="sampleBtn">Load a sample show</button>
+      </div>
+      <div class="status" id="planStatus"></div>
+    </div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section data-panel="plan" class="hidden">
+    <div class="card">
+      <h2>Series plan</h2>
+      <p class="sub">Edit anything you like, then write the scripts.</p>
+      <div class="grid">
+        <div><label for="showTitle">Show title</label><input id="showTitle"></div>
+        <div><label for="showTagline">Tagline</label><input id="showTagline"></div>
+        <div><label for="showCategory">Podcast category</label><input id="showCategory"></div>
+      </div>
+      <label for="showDesc">Show description</label>
+      <textarea id="showDesc" rows="3"></textarea>
+      <label>Hosts</label>
+      <div id="hostList" class="row"></div>
+      <h3>Episodes</h3>
+      <div class="ep-list" id="epList"></div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="writeAllBtn">Write all episode scripts</button>
+        <button class="btn ghost" id="addEpBtn">Add episode</button>
+      </div>
+      <div class="progress hidden" id="writeProg"><div></div></div>
+      <div class="status" id="writeStatus"></div>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section data-panel="studio" class="hidden">
+    <div class="layout">
+      <aside class="side" id="epSide"></aside>
+      <div class="card" id="studioCard">
+        <div class="row" style="justify-content:space-between">
+          <h2 id="stTitle">Episode</h2>
+          <span class="pill" id="stLen"></span>
+        </div>
+        <p class="sub" id="stSummary"></p>
+        <div class="player">
+          <button class="btn small" id="playBtn">▶ Listen (browser voices)</button>
+          <button class="btn ghost small" id="stopBtn">■ Stop</button>
+          <button class="btn ghost small" id="renderBtn" title="Uses your ElevenLabs key">Make MP3 (ElevenLabs)</button>
+          <button class="btn ghost small" id="regenBtn">Rewrite episode</button>
+          <span class="note" id="audioNote"></span>
+          <audio id="epAudio" controls class="hidden"></audio>
+          <a id="mp3Link" class="btn ghost small hidden" download>Download MP3</a>
+        </div>
+        <div class="progress hidden" id="renderProg"><div></div></div>
+        <div class="status" id="studioStatus"></div>
+        <h3>Script</h3>
+        <div class="lines" id="lines"></div>
+        <div class="row" style="margin-top:8px">
+          <button class="btn ghost small" id="addLineBtn">+ Add line</button>
+          <button class="btn ghost small" id="dlScriptBtn">Download script (.txt)</button>
+        </div>
+        <h3>Episode description</h3>
+        <textarea id="epDesc" rows="2"></textarea>
+        <h3>Show notes</h3>
+        <textarea id="epNotes" rows="6"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section data-panel="brand" class="hidden">
+    <div class="card">
+      <h2>Cover art</h2>
+      <p class="sub">Podcast apps need a square image at least 1400×1400. This one is 3000×3000.</p>
+      <div class="cover-wrap">
+        <canvas id="cover" width="3000" height="3000"></canvas>
+        <div>
+          <label>Colors</label>
+          <div class="swatches" id="swatches"></div>
+          <label for="coverStyle">Style</label>
+          <select id="coverStyle"><option value="waves">Sound waves</option><option value="mic">Microphone</option><option value="circles">Circles</option><option value="bold">Bold type</option></select>
+          <label for="coverLogo">Add your logo (optional)</label>
+          <input type="file" id="coverLogo" accept="image/*">
+          <div class="row" style="margin-top:12px"><button class="btn" id="dlCoverBtn">Download cover (JPG)</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Promo posts</h2>
+      <p class="sub">Ready-to-post social captions for each episode.</p>
+      <div id="socialList"></div>
+    </div>
+  </section>
+
+  <!-- STEP 5 -->
+  <section data-panel="publish" class="hidden">
+    <div class="card">
+      <h2>Publish to Spotify, Apple Podcasts and more</h2>
+      <p class="sub">Every podcast app reads one file: an RSS feed. Put your MP3s, cover and feed on the web, then give the feed's address to each app once. New episodes show up on their own after that.</p>
+      <div class="grid">
+        <div><label for="pubBase">Web folder where files will live</label><input id="pubBase" placeholder="https://morrfish.github.io/PassionsPathways/podcasts/my-show/"></div>
+        <div><label for="pubAuthor">Author / organization</label><input id="pubAuthor"></div>
+        <div><label for="pubEmail">Owner email (apps send a check code here)</label><input id="pubEmail" type="email"></div>
+        <div><label for="pubExplicit">Explicit content?</label><select id="pubExplicit"><option value="false">No</option><option value="true">Yes</option></select></div>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="zipBtn">Download publish kit (.zip)</button>
+        <button class="btn ghost" id="feedBtn">Download feed.xml only</button>
+      </div>
+      <div class="status" id="pubStatus"></div>
+      <h3>Steps</h3>
+      <ol class="checklist">
+        <li>Make an MP3 for each episode in step 3.</li>
+        <li>Download the publish kit. It has <code>feed.xml</code>, <code>cover.jpg</code>, every MP3, scripts and show notes.</li>
+        <li>Upload the files to the web folder you typed above (a GitHub Pages folder works, as do Google Cloud, Dropbox-style hosts or any web host).</li>
+        <li>Open the feed address in a browser to check it loads: <code id="feedUrl">…/feed.xml</code></li>
+        <li>Submit that address once at <a href="https://creators.spotify.com" target="_blank" rel="noopener">Spotify for Creators</a> and <a href="https://podcastsconnect.apple.com" target="_blank" rel="noopener">Apple Podcasts Connect</a>. YouTube Music, Amazon Music, Pocket Casts and others take the same feed.</li>
+      </ol>
+      <h3>Feed preview</h3>
+      <pre class="code" id="feedPreview"></pre>
+    </div>
+  </section>
+</main>
+
+<dialog id="settings">
+  <form method="dialog">
+    <h2 style="margin-top:0">Settings &amp; keys</h2>
+    <p class="note">Keys are kept only in this browser and sent only to the service they belong to.</p>
+    <label for="keyClaude">Claude API key (writes the plan and scripts)</label>
+    <input id="keyClaude" type="password" placeholder="sk-ant-..." autocomplete="off">
+    <p class="note">Get one at <a href="https://platform.claude.com" target="_blank" rel="noopener">platform.claude.com</a> → API keys.</p>
+    <label for="keyEleven">ElevenLabs API key (optional: real human-sounding MP3s)</label>
+    <input id="keyEleven" type="password" placeholder="xi-..." autocomplete="off">
+    <p class="note">Without it you can still listen with your browser's built-in voices.</p>
+    <div class="grid">
+      <div><label for="voiceA">Voice ID, host 1</label><input id="voiceA" placeholder="21m00Tcm4TlvDq8ikWAM"></div>
+      <div><label for="voiceB">Voice ID, host 2</label><input id="voiceB" placeholder="pNInz6obpgDQGcFmaJgB"></div>
+      <div><label for="voiceC">Voice ID, host 3</label><input id="voiceC" placeholder="EXAVITQu4vr4xnSDxMaL"></div>
+    </div>
+    <label for="themeSel">Theme</label>
+    <select id="themeSel"><option value="">Match my device</option><option value="light">Light</option><option value="dark">Dark</option></select>
+    <div class="row" style="margin-top:16px;justify-content:flex-end">
+      <button class="btn" value="save" id="saveSettings">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script type="module">
+import Anthropic from "https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@1.5.0/+esm";
+
+const MODEL = "claude-opus-5-5";
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem("pps_"+k); return v==null ? d : JSON.parse(v); }catch{ return d; } },
+  set(k, v){ try{ localStorage.setItem("pps_"+k, JSON.stringify(v)); }catch{} }
+};
+
+/* ---------- state ---------- */
+let settings = store.get("settings", {});
+let project = store.get("project", null);
+let audio = {};          // episode index -> {blob, url}  (kept in memory)
+let current = 0;         // selected episode in the studio
+let srcMode = "url";
+let fileData = null;     // {name, kind:'text'|'pdf', data}
+const save = () => store.set("project", project);
+
+/* ---------- theme ---------- */
+function applyTheme(){ if(settings.theme) document.documentElement.dataset.theme = settings.theme; else delete document.documentElement.dataset.theme; }
+applyTheme();
+
+/* ---------- steps ---------- */
+function show(step){
+  $$("#steps button").forEach(b => b.classList.toggle("on", b.dataset.step===step));
+  $$("[data-panel]").forEach(p => p.classList.toggle("hidden", p.dataset.panel!==step));
+  if(step==="plan") renderPlan();
+  if(step==="studio") renderStudio();
+  if(step==="brand"){ drawCover(); renderSocial(); }
+  if(step==="publish") renderPublish();
+  window.scrollTo({top:0});
+}
+function lockSteps(){
+  const has = !!project, scripted = has && project.episodes.some(e => e.lines?.length);
+  $$("#steps button").forEach(b => {
+    const s = b.dataset.step;
+    b.disabled = s!=="source" && (!has || (s!=="plan" && !scripted));
+  });
+}
+$("#steps").addEventListener("click", e => { const b = e.target.closest("button"); if(b && !b.disabled) show(b.dataset.step); });
+
+/* ---------- settings dialog ---------- */
+const keyFields = {keyClaude:"claude", keyEleven:"eleven", voiceA:"voiceA", voiceB:"voiceB", voiceC:"voiceC", themeSel:"theme"};
+$("#settingsBtn").onclick = () => { for(const [id,k] of Object.entries(keyFields)) $("#"+id).value = settings[k] || ""; $("#settings").showModal(); };
+$("#saveSettings").onclick = () => { for(const [id,k] of Object.entries(keyFields)) settings[k] = $("#"+id).value.trim(); store.set("settings", settings); applyTheme(); };
+$("#newBtn").onclick = () => { if(project && !confirm("Start a new show? The current one will be cleared from this browser.")) return; project = null; audio = {}; save(); lockSteps(); show("source"); };
+
+/* ---------- source tabs ---------- */
+$("#srcTabs").addEventListener("click", e => {
+  const b = e.target.closest("button"); if(!b) return;
+  srcMode = b.dataset.src;
+  $$("#srcTabs button").forEach(x => x.classList.toggle("on", x===b));
+  $$("[data-srcpanel]").forEach(p => p.classList.toggle("hidden", p.dataset.srcpanel!==srcMode));
+});
+$("#srcFile").onchange = async e => {
+  const f = e.target.files[0]; if(!f){ fileData=null; return; }
+  if(f.type==="application/pdf" || f.name.toLowerCase().endsWith(".pdf")){
+    const buf = new Uint8Array(await f.arrayBuffer());
+    let bin = ""; for(let i=0;i<buf.length;i+=0x8000) bin += String.fromCharCode(...buf.subarray(i,i+0x8000));
+    fileData = {name:f.name, kind:"pdf", data:btoa(bin)};
+  } else {
+    let t = await f.text();
+    if(/\.html?$/i.test(f.name)) t = new DOMParser().parseFromString(t,"text/html").body.innerText;
+    fileData = {name:f.name, kind:"text", data:t};
+  }
+  $("#fileInfo").textContent = `${f.name} loaded (${Math.round(f.size/1024)} KB)`;
+};
+
+/* ---------- Claude ---------- */
+function client(){
+  if(!settings.claude){ $("#settingsBtn").click(); throw new Error("Add your Claude API key in Settings first."); }
+  return new Anthropic({apiKey: settings.claude, dangerouslyAllowBrowser: true});
+}
+// Streams a request, follows pause_turn for server tools, and checks for refusals.
+async function ask(params, onText){
+  const c = client();
+  const messages = [...params.messages];
+  for(let turn=0; turn<6; turn++){
+    const stream = c.beta.messages.stream({
+      model: MODEL, max_tokens: 32000,
+      betas: ["server-side-fallback-2026-07-01"], fallbacks: "default",
+      ...params, messages
+    });
+    if(onText) stream.on("text", onText);
+    const msg = await stream.finalMessage();
+    if(msg.stop_reason === "refusal") throw new Error("The AI declined this request" + (msg.stop_details?.explanation ? ": " + msg.stop_details.explanation : "."));
+    if(msg.stop_reason === "pause_turn"){ messages.push({role:"assistant", content: msg.content}); continue; }
+    if(msg.stop_reason === "max_tokens") throw new Error("The answer was cut off. Try fewer or shorter episodes.");
+    return msg.content.filter(b => b.type==="text").map(b => b.text).join("");
+  }
+  throw new Error("The AI took too many steps. Please try again.");
+}
+function errText(e){
+  const s = e?.status;
+  if(s===401) return "Your Claude API key was not accepted. Check it in Settings.";
+  if(s===429) return "Too many requests right now. Wait a minute and try again.";
+  if(s===529 || s>=500) return "Claude is busy right now. Please try again in a moment.";
+  return e?.message || String(e);
+}
+function parseJSON(text){
+  const m = text.match(/<plan>([\s\S]*?)<\/plan>/i);
+  let t = m ? m[1] : text;
+  const a = t.indexOf("{"), b = t.lastIndexOf("}");
+  return JSON.parse(t.slice(a, b+1));
+}
+
+function opts(){
+  const fmt = $("#optFormat").value;
+  const defaults = {duo:["Maya","Jordan"], solo:["Alex"], interview:["Maya","Dr. Rivera"], panel:["Maya","Jordan","Sam"]}[fmt];
+  let hosts = $("#optHosts").value.split(",").map(s=>s.trim()).filter(Boolean);
+  const need = defaults.length;
+  hosts = [...hosts, ...defaults.filter(d => !hosts.includes(d))].slice(0, need);
+  return {format:fmt, episodes:+$("#optEpisodes").value, minutes:+$("#optMinutes").value, tone:$("#optTone").value,
+    audience:$("#optAudience").value.trim(), lang:$("#optLang").value, hosts, showName:$("#optShow").value.trim(), extra:$("#optExtra").value.trim()};
+}
+const FORMAT_TEXT = {
+  duo:"two co-hosts in a natural, back-and-forth conversation",
+  solo:"a single narrator speaking directly to the listener",
+  interview:"a host interviewing a guest expert (the second voice)",
+  panel:"three people in a lively panel discussion"
+};
+const LANG = {en:"English", es:"Spanish", fr:"French", de:"German", pt:"Portuguese"};
+
+/* ---------- step 1 → plan ---------- */
+$("#planBtn").onclick = async () => {
+  const st = $("#planStatus"); st.className = "status";
+  const o = opts();
+  const content = [];
+  let tools;
+  if(srcMode==="url"){
+    let u = $("#srcUrl").value.trim();
+    if(!u){ st.className="status err"; st.textContent="Type a website address first."; return; }
+    if(!/^https?:\/\//i.test(u)) u = "https://" + u;
+    content.push({type:"text", text:`Source website: ${u}\nUse web_fetch to read this page, then read up to 4 more of the most useful pages on the same site (for example About, Programs, Services, Products, Blog). Base the podcast only on what you read.`});
+    tools = [{type:"web_fetch_20260209", name:"web_fetch", max_uses:5, max_content_tokens:40000}];
+    o.source = u;
+  } else if(srcMode==="text"){
+    const t = $("#srcText").value.trim();
+    if(t.length < 40){ st.className="status err"; st.textContent="Paste a bit more text (a paragraph or more)."; return; }
+    content.push({type:"text", text:"Source text:\n<source>\n"+t+"\n</source>"});
+    o.source = "pasted text";
+  } else {
+    if(!fileData){ st.className="status err"; st.textContent="Choose a file first."; return; }
+    if(fileData.kind==="pdf") content.push({type:"document", source:{type:"base64", media_type:"application/pdf", data:fileData.data}});
+    else content.push({type:"text", text:`Source file (${fileData.name}):\n<source>\n${fileData.data}\n</source>`});
+    o.source = fileData.name;
+  }
+  content.push({type:"text", text:
+`Plan a podcast series from this source.
+- Format: ${FORMAT_TEXT[o.format]}. Speakers: ${o.hosts.join(", ")}.
+- ${o.episodes} episode(s), each about ${o.minutes} minutes.
+- Tone: ${o.tone}. Audience: ${o.audience || "general listeners interested in this topic"}.
+- Language for all text: ${LANG[o.lang]}.
+${o.showName ? "- Show name: "+o.showName : "- Suggest a short, catchy show name."}
+${o.extra ? "- Extra instructions: "+o.extra : ""}
+Give each episode a distinct angle so the series does not repeat itself, and order them so they build on each other.
+
+Reply with only this JSON inside <plan></plan> tags:
+{"show":{"title":"","tagline":"","description":"2-3 sentence show description for podcast apps","category":"one Apple Podcasts category, e.g. Education"},
+ "source_notes":"A detailed fact sheet (400-900 words) of everything useful from the source: names, programs, numbers, dates, quotes, stories. Script writers will rely only on this.",
+ "episodes":[{"title":"","summary":"1-2 sentences","key_points":["",""]}]}`});
+
+  $("#planBtn").disabled = true;
+  st.innerHTML = '<span class="spin"></span>' + (srcMode==="url" ? "Reading the website and planning your series…" : "Reading your source and planning your series…");
+  try{
+    const text = await ask({system:"You are a senior podcast producer. You turn source material into well-structured, accurate podcast series. Never invent facts that are not in the source.", tools, messages:[{role:"user", content}]});
+    const plan = parseJSON(text);
+    project = {opts:o, show:plan.show, notes:plan.source_notes || "", hosts:o.hosts,
+      episodes:(plan.episodes||[]).map(e => ({title:e.title, summary:e.summary, key_points:e.key_points||[], lines:[], description:"", show_notes:"", social:[]})),
+      cover:{palette:0, style:"waves"}, pub:{}};
+    if(o.showName) project.show.title = o.showName;
+    audio = {}; save(); lockSteps(); st.textContent = ""; show("plan");
+  }catch(e){ st.className="status err"; st.textContent = errText(e); console.error(e); }
+  finally{ $("#planBtn").disabled = false; }
+};
+
+/* ---------- step 2 ---------- */
+function renderPlan(){
+  if(!project) return;
+  $("#showTitle").value = project.show.title||""; $("#showTagline").value = project.show.tagline||"";
+  $("#showCategory").value = project.show.category||""; $("#showDesc").value = project.show.description||"";
+  $("#hostList").innerHTML = project.hosts.map((h,i) => `<input data-host="${i}" value="${esc(h)}" style="max-width:180px;border-left:4px solid var(--host-${"abc"[i]})">`).join("");
+  $("#epList").innerHTML = project.episodes.map((e,i) => `
+    <div class="ep" data-ep="${i}">
+      <div class="head"><div class="num">${i+1}</div>
+        <div class="t"><input data-f="title" value="${esc(e.title)}"><textarea data-f="summary" rows="2">${esc(e.summary)}</textarea></div>
+        <div class="row" style="flex-direction:column;align-items:flex-end">
+          ${e.lines.length ? '<span class="pill good">Script ready</span>' : '<span class="pill">Not written</span>'}
+          <button class="btn ghost small" data-act="del" title="Remove episode">Remove</button>
+        </div>
+      </div>
+    </div>`).join("");
+}
+$("[data-panel=plan]").addEventListener("input", e => {
+  if(!project) return;
+  const t = e.target;
+  if(t.id==="showTitle") project.show.title=t.value;
+  if(t.id==="showTagline") project.show.tagline=t.value;
+  if(t.id==="showCategory") project.show.category=t.value;
+  if(t.id==="showDesc") project.show.description=t.value;
+  if(t.dataset.host) project.hosts[+t.dataset.host]=t.value;
+  const ep = t.closest("[data-ep]"); if(ep && t.dataset.f) project.episodes[+ep.dataset.ep][t.dataset.f]=t.value;
+  save();
+});
+$("#epList").addEventListener("click", e => {
+  const b = e.target.closest("[data-act=del]"); if(!b) return;
+  const i = +b.closest("[data-ep]").dataset.ep;
+  if(!confirm("Remove episode "+(i+1)+"?")) return;
+  project.episodes.splice(i,1); audio = {}; save(); renderPlan(); lockSteps();
+});
+$("#addEpBtn").onclick = () => { project.episodes.push({title:"New episode", summary:"What this episode covers", key_points:[], lines:[], description:"", show_notes:"", social:[]}); save(); renderPlan(); };
+
+const EP_SCHEMA = {type:"object", additionalProperties:false, required:["title","description","show_notes","lines","social_posts"], properties:{
+  title:{type:"string"}, description:{type:"string"}, show_notes:{type:"string"},
+  lines:{type:"array", items:{type:"object", additionalProperties:false, required:["speaker","text"], properties:{speaker:{type:"string"}, text:{type:"string"}}}},
+  social_posts:{type:"array", items:{type:"object", additionalProperties:false, required:["platform","text"], properties:{platform:{type:"string"}, text:{type:"string"}}}}
+}};
+async function writeEpisode(i, onProgress){
+  const p = project, o = p.opts, e = p.episodes[i];
+  const words = o.minutes * 150;
+  const others = p.episodes.map((x,j) => `${j+1}. ${x.title}${j===i ? "  ← this one" : ""}`).join("\n");
+  let chars = 0;
+  const text = await ask({
+    system:`You are a podcast scriptwriter. You write scripts that sound like real people talking: contractions, short sentences, reactions ("Right!", "Wait, really?"), the occasional light joke, and clear takeaways. Never use stage directions, sound-effect cues, markdown or emoji inside spoken lines. Only use facts from the fact sheet.`,
+    output_config:{effort:"medium", format:{type:"json_schema", schema:EP_SCHEMA}},
+    messages:[{role:"user", content:
+`Show: ${p.show.title} — ${p.show.tagline}
+Format: ${FORMAT_TEXT[o.format]}. Speakers (use these exact names in "speaker"): ${p.hosts.join(", ")}.
+Tone: ${o.tone}. Audience: ${o.audience || "general listeners"}. Language: ${LANG[o.lang]}.
+${o.extra ? "Extra instructions: "+o.extra : ""}
+
+Series episodes:
+${others}
+
+Write episode ${i+1}: "${e.title}"
+Summary: ${e.summary}
+Key points: ${(e.key_points||[]).join("; ")}
+
+Length: about ${words} spoken words in total (about ${o.minutes} minutes). Open with a short hook and a welcome to "${p.show.title}", and close with a recap and a sign-off${i < p.episodes.length-1 ? " that teases the next episode" : ""}. Keep each line under 90 words.
+Also write: a 1-2 sentence episode description; show notes (a short paragraph, then 3-6 bullet takeaways starting with "- ", then any links from the source); and 3 social posts (Instagram, LinkedIn, X) with hashtags.
+
+<fact_sheet>
+${p.notes}
+</fact_sheet>`}]
+  }, t => { chars += t.length; onProgress?.(Math.min(0.97, chars / (words*6.5))); });
+  const r = JSON.parse(text);
+  const names = p.hosts.map(h => h.toLowerCase());
+  e.title = r.title || e.title; e.description = r.description; e.show_notes = r.show_notes; e.social = r.social_posts || [];
+  e.lines = (r.lines||[]).filter(l => l.text?.trim()).map(l => {
+    let k = names.indexOf((l.speaker||"").toLowerCase()); if(k<0) k = 0;
+    return {s:k, text:l.text.trim()};
+  });
+  delete audio[i];
+  save();
+}
+$("#writeAllBtn").onclick = async () => {
+  const st = $("#writeStatus"), bar = $("#writeProg"); st.className="status";
+  const todo = project.episodes.map((e,i) => i);
+  if(project.episodes.some(e => e.lines.length) && !confirm("Rewrite every episode? Scripts you already have will be replaced.")) return;
+  $("#writeAllBtn").disabled = true; bar.classList.remove("hidden");
+  const prog = new Array(todo.length).fill(0);
+  const upd = () => { bar.firstElementChild.style.width = (prog.reduce((a,b)=>a+b,0)/todo.length*100)+"%"; };
+  let done = 0, failed = [];
+  st.innerHTML = `<span class="spin"></span>Writing ${todo.length} episode script(s)…`;
+  // run 3 at a time
+  const queue = [...todo];
+  async function worker(){
+    while(queue.length){
+      const i = queue.shift();
+      try{ await writeEpisode(i, f => { prog[i]=f; upd(); }); prog[i]=1; done++; }
+      catch(e){ console.error(e); failed.push(`Episode ${i+1}: ${errText(e)}`); prog[i]=1; }
+      upd(); st.innerHTML = `<span class="spin"></span>${done} of ${todo.length} written…`;
+    }
+  }
+  await Promise.all([worker(), worker(), worker()]);
+  $("#writeAllBtn").disabled = false; bar.classList.add("hidden");
+  renderPlan(); lockSteps();
+  if(failed.length){ st.className="status err"; st.textContent = failed.join("\n"); }
+  else { st.className="status ok"; st.textContent = "All scripts written."; current = 0; show("studio"); }
+};
+
+/* ---------- step 3: studio ---------- */
+function wordCount(e){ return e.lines.reduce((n,l) => n + l.text.split(/\s+/).filter(Boolean).length, 0); }
+function renderStudio(){
+  if(!project) return;
+  if(current >= project.episodes.length) current = 0;
+  $("#epSide").innerHTML = project.episodes.map((e,i) => `<button class="ep-btn ${i===current?"on":""}" data-i="${i}">${i+1}. ${esc(e.title)}<small>${e.lines.length ? Math.max(1,Math.round(wordCount(e)/150))+" min" + (audio[i] ? " · MP3 ready" : "") : "not written yet"}</small></button>`).join("");
+  const e = project.episodes[current];
+  $("#stTitle").textContent = `Episode ${current+1}: ${e.title}`;
+  $("#stSummary").textContent = e.summary;
+  $("#stLen").textContent = e.lines.length ? `~${Math.max(1,Math.round(wordCount(e)/150))} min · ${wordCount(e)} words` : "";
+  $("#epDesc").value = e.description||""; $("#epNotes").value = e.show_notes||"";
+  $("#lines").innerHTML = e.lines.length ? e.lines.map((l,j) => `
+    <div class="line" data-j="${j}">
+      <select data-k="s" style="color:var(--host-${"abc"[l.s]||"a"})">${project.hosts.map((h,k)=>`<option value="${k}" ${k===l.s?"selected":""}>${esc(h)}</option>`).join("")}</select>
+      <textarea data-k="text" rows="2">${esc(l.text)}</textarea>
+      <button class="x" data-k="del" title="Delete line">×</button>
+    </div>`).join("") : '<p class="note">No script yet. Press "Rewrite episode" to write it.</p>';
+  $$("#lines textarea").forEach(autoGrow);
+  const a = audio[current];
+  $("#epAudio").classList.toggle("hidden", !a); $("#mp3Link").classList.toggle("hidden", !a);
+  if(a){ $("#epAudio").src = a.url; $("#mp3Link").href = a.url; $("#mp3Link").download = fileName(current); }
+  $("#audioNote").textContent = settings.eleven ? "" : "Add an ElevenLabs key in Settings to make MP3s.";
+}
+function autoGrow(t){ t.style.height = "auto"; t.style.height = (t.scrollHeight+2)+"px"; }
+$("#epSide").addEventListener("click", e => { const b = e.target.closest("[data-i]"); if(!b) return; stopSpeech(); current = +b.dataset.i; renderStudio(); });
+$("#lines").addEventListener("input", e => {
+  const row = e.target.closest("[data-j]"); if(!row) return;
+  const l = project.episodes[current].lines[+row.dataset.j];
+  if(e.target.dataset.k==="text"){ l.text = e.target.value; autoGrow(e.target); }
+  if(e.target.dataset.k==="s"){ l.s = +e.target.value; e.target.style.color = `var(--host-${"abc"[l.s]})`; }
+  delete audio[current]; save();
+});
+$("#lines").addEventListener("click", e => {
+  if(e.target.dataset.k!=="del") return;
+  project.episodes[current].lines.splice(+e.target.closest("[data-j]").dataset.j, 1); delete audio[current]; save(); renderStudio();
+});
+$("#addLineBtn").onclick = () => { const ls = project.episodes[current].lines; ls.push({s: ls.length ? (ls[ls.length-1].s+1)%project.hosts.length : 0, text:""}); save(); renderStudio(); };
+$("#epDesc").oninput = e => { project.episodes[current].description = e.target.value; save(); };
+$("#epNotes").oninput = e => { project.episodes[current].show_notes = e.target.value; save(); };
+$("#regenBtn").onclick = async () => {
+  const st = $("#studioStatus"), bar = $("#renderProg"); st.className="status";
+  if(project.episodes[current].lines.length && !confirm("Rewrite this episode's script from scratch?")) return;
+  $("#regenBtn").disabled = true; bar.classList.remove("hidden"); bar.firstElementChild.style.width="0";
+  st.innerHTML = '<span class="spin"></span>Writing the script…';
+  try{ await writeEpisode(current, f => bar.firstElementChild.style.width = f*100+"%"); st.textContent=""; lockSteps(); renderStudio(); }
+  catch(e){ st.className="status err"; st.textContent = errText(e); }
+  finally{ $("#regenBtn").disabled = false; bar.classList.add("hidden"); }
+};
+function scriptText(i){
+  const e = project.episodes[i];
+  return `${project.show.title}\nEpisode ${i+1}: ${e.title}\n\n` + e.lines.map(l => `${project.hosts[l.s]}: ${l.text}`).join("\n\n") + "\n";
+}
+$("#dlScriptBtn").onclick = () => download(new Blob([scriptText(current)],{type:"text/plain"}), `episode-${current+1}-script.txt`);
+
+/* browser voices */
+let speaking = false;
+function pickVoices(){
+  const lang = project.opts.lang;
+  const all = speechSynthesis.getVoices();
+  let vs = all.filter(v => v.lang.toLowerCase().startsWith(lang));
+  if(!vs.length) vs = all;
+  const good = vs.filter(v => /natural|neural|online|premium|enhanced|google/i.test(v.name));
+  const pool = (good.length >= 2 ? good : vs);
+  return project.hosts.map((h,i) => pool[(i * Math.max(1, Math.floor(pool.length/project.hosts.length))) % pool.length]);
+}
+function stopSpeech(){ speaking = false; speechSynthesis.cancel(); $$(".line.playing").forEach(x => x.classList.remove("playing")); $("#playBtn").textContent = "▶ Listen (browser voices)"; }
+$("#stopBtn").onclick = stopSpeech;
+$("#playBtn").onclick = () => {
+  if(!("speechSynthesis" in window)){ $("#studioStatus").textContent = "This browser has no built-in voices."; return; }
+  if(speaking){ stopSpeech(); return; }
+  const e = project.episodes[current]; if(!e.lines.length) return;
+  const voices = pickVoices();
+  speaking = true; $("#playBtn").textContent = "❚❚ Stop listening";
+  let j = 0;
+  const next = () => {
+    if(!speaking || j >= e.lines.length){ stopSpeech(); return; }
+    $$(".line").forEach((x,k) => x.classList.toggle("playing", k===j));
+    $(`.line[data-j="${j}"]`)?.scrollIntoView({block:"nearest", behavior:"smooth"});
+    const l = e.lines[j++];
+    const u = new SpeechSynthesisUtterance(l.text);
+    if(voices[l.s]) u.voice = voices[l.s];
+    u.lang = voices[l.s]?.lang || project.opts.lang;
+    u.pitch = [1, 0.85, 1.1][l.s] ?? 1; u.rate = 1.02;
+    u.onend = next; u.onerror = next;
+    speechSynthesis.speak(u);
+  };
+  next();
+};
+if("speechSynthesis" in window) speechSynthesis.onvoiceschanged = () => {};
+
+/* ElevenLabs MP3 */
+const DEFAULT_VOICES = ["21m00Tcm4TlvDq8ikWAM","pNInz6obpgDQGcFmaJgB","EXAVITQu4vr4xnSDxMaL"];
+function fileName(i){ return `episode-${i+1}.mp3`; }
+async function tts(text, voice, prev, nextText){
+  const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voice)}?output_format=mp3_44100_128`, {
+    method:"POST", headers:{"xi-api-key":settings.eleven, "Content-Type":"application/json", "Accept":"audio/mpeg"},
+    body: JSON.stringify({text, model_id:"eleven_multilingual_v2", previous_text: prev || undefined, next_text: nextText || undefined,
+      voice_settings:{stability:0.45, similarity_boost:0.8, style:0.25, use_speaker_boost:true}})
+  });
+  if(!r.ok){
+    let msg = r.status===401 ? "Your ElevenLabs key was not accepted." : `ElevenLabs error ${r.status}`;
+    try{ const j = await r.json(); if(j.detail?.message) msg += ": " + j.detail.message; }catch{}
+    throw new Error(msg);
+  }
+  return new Uint8Array(await r.arrayBuffer());
+}
+function stripId3(u8){ // drop ID3 tags so the joined file is one clean MP3 stream
+  if(u8[0]===0x49 && u8[1]===0x44 && u8[2]===0x33){ const size = (u8[6]<<21)|(u8[7]<<14)|(u8[8]<<7)|u8[9]; return u8.subarray(10+size); }
+  return u8;
+}
+$("#renderBtn").onclick = async () => {
+  const st = $("#studioStatus"), bar = $("#renderProg"); st.className = "status";
+  if(!settings.eleven){ $("#settingsBtn").click(); st.className="status err"; st.textContent="Add your ElevenLabs API key in Settings to make MP3s."; return; }
+  const i = current, e = project.episodes[i]; if(!e.lines.length) return;
+  const voices = [settings.voiceA, settings.voiceB, settings.voiceC].map((v,k) => v || DEFAULT_VOICES[k]);
+  $("#renderBtn").disabled = true; bar.classList.remove("hidden");
+  try{
+    const parts = new Array(e.lines.length); let done = 0;
+    const idx = e.lines.map((_,j)=>j);
+    async function worker(){
+      while(idx.length){
+        const j = idx.shift(), l = e.lines[j];
+        const same = k => e.lines[k] && e.lines[k].s===l.s ? e.lines[k].text : "";
+        parts[j] = stripId3(await tts(l.text, voices[l.s] || voices[0], same(j-1), same(j+1)));
+        done++; bar.firstElementChild.style.width = (done/e.lines.length*100)+"%";
+        st.innerHTML = `<span class="spin"></span>Recording line ${done} of ${e.lines.length}…`;
+      }
+    }
+    await Promise.all([worker(), worker(), worker()]);
+    const blob = new Blob(parts, {type:"audio/mpeg"});
+    if(audio[i]) URL.revokeObjectURL(audio[i].url);
+    audio[i] = {blob, url: URL.createObjectURL(blob)};
+    st.className = "status ok"; st.textContent = `MP3 ready (${(blob.size/1048576).toFixed(1)} MB). It stays here until you close the page, so download it or the publish kit.`;
+    renderStudio();
+  }catch(err){ st.className="status err"; st.textContent = err.message; }
+  finally{ $("#renderBtn").disabled = false; bar.classList.add("hidden"); }
+};
+
+/* ---------- step 4: cover + social ---------- */
+const PALETTES = [
+  ["#2b1166","#7b3fe4","#ffd166"], ["#0b3d2e","#1f8a5b","#f4e285"], ["#14213d","#fca311","#ffffff"],
+  ["#5f0f40","#e36414","#fb8b24"], ["#003049","#2a9d8f","#e9c46a"], ["#111111","#e63946","#f1faee"], ["#3a0ca3","#4cc9f0","#f72585"]
+];
+let logoImg = null;
+$("#swatches").innerHTML = PALETTES.map((p,i) => `<button data-p="${i}" style="background:linear-gradient(135deg,${p[0]},${p[1]} 60%,${p[2]})" title="Palette ${i+1}"></button>`).join("");
+$("#swatches").onclick = e => { const b = e.target.closest("[data-p]"); if(!b) return; project.cover.palette = +b.dataset.p; save(); drawCover(); };
+$("#coverStyle").onchange = e => { project.cover.style = e.target.value; save(); drawCover(); };
+$("#coverLogo").onchange = e => { const f = e.target.files[0]; if(!f) return; const img = new Image(); img.onload = () => { logoImg = img; drawCover(); }; img.src = URL.createObjectURL(f); };
+function wrap(ctx, text, maxW){
+  const words = String(text).split(/\s+/); const lines = []; let cur = "";
+  for(const w of words){ const t = cur ? cur+" "+w : w; if(ctx.measureText(t).width > maxW && cur){ lines.push(cur); cur = w; } else cur = t; }
+  if(cur) lines.push(cur); return lines;
+}
+function drawCover(){
+  if(!project) return;
+  const cv = $("#cover"), ctx = cv.getContext("2d"), W = cv.width;
+  const [c1,c2,c3] = PALETTES[project.cover.palette||0];
+  $$("#swatches button").forEach((b,i) => b.classList.toggle("on", i===(project.cover.palette||0)));
+  $("#coverStyle").value = project.cover.style || "waves";
+  const g = ctx.createLinearGradient(0,0,W,W); g.addColorStop(0,c1); g.addColorStop(1,c2);
+  ctx.fillStyle = g; ctx.fillRect(0,0,W,W);
+  const style = project.cover.style || "waves";
+  ctx.save();
+  if(style==="waves"){
+    ctx.strokeStyle = c3; ctx.lineCap = "round";
+    const bars = 34, bw = W/bars;
+    for(let i=0;i<bars;i++){
+      const h = (Math.sin(i*0.55)*0.5+0.5)*(Math.sin(i*1.7)*0.3+0.7)*W*0.22 + 40;
+      ctx.globalAlpha = 0.85; ctx.lineWidth = bw*0.5;
+      ctx.beginPath(); ctx.moveTo(i*bw+bw/2, W*0.80-h/2); ctx.lineTo(i*bw+bw/2, W*0.80+h/2); ctx.stroke();
+    }
+  } else if(style==="mic"){
+    ctx.fillStyle = c3; ctx.globalAlpha = 0.95;
+    const cx = W*0.74, cy = W*0.70;
+    ctx.beginPath(); ctx.roundRect(cx-170, cy-420, 340, 560, 170); ctx.fill();
+    ctx.lineWidth = 60; ctx.strokeStyle = c3;
+    ctx.beginPath(); ctx.arc(cx, cy-40, 280, 0.1*Math.PI, 0.9*Math.PI); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, cy+240); ctx.lineTo(cx, cy+420); ctx.moveTo(cx-170, cy+430); ctx.lineTo(cx+170, cy+430); ctx.stroke();
+  } else if(style==="circles"){
+    for(let i=0;i<7;i++){ ctx.globalAlpha = 0.18 + i*0.06; ctx.strokeStyle = c3; ctx.lineWidth = 50; ctx.beginPath(); ctx.arc(W*0.82, W*0.82, 220+i*190, 0, Math.PI*2); ctx.stroke(); }
+  } else {
+    ctx.globalAlpha = 0.12; ctx.fillStyle = c3; ctx.font = `900 ${W*0.62}px system-ui, sans-serif`; ctx.textBaseline="bottom";
+    ctx.fillText((project.show.title||"P")[0].toUpperCase(), W*0.42, W*1.08);
+  }
+  ctx.restore();
+  // title
+  ctx.fillStyle = "#ffffff"; ctx.textBaseline = "top";
+  let size = 300, lines;
+  do{ ctx.font = `800 ${size}px system-ui, -apple-system, "Segoe UI", sans-serif`; lines = wrap(ctx, project.show.title||"My Podcast", W*0.84); size -= 10; }
+  while((lines.length*size*1.08 > W*0.42 || lines.some(l => ctx.measureText(l).width > W*0.84)) && size > 120);
+  let y = W*0.10;
+  for(const l of lines){ ctx.fillText(l, W*0.08, y); y += size*1.08; }
+  ctx.fillStyle = c3; ctx.font = `600 ${110}px system-ui, sans-serif`;
+  for(const l of wrap(ctx, project.show.tagline||"", W*0.8).slice(0,2)){ y += 20; ctx.fillText(l, W*0.08, y); y += 120; }
+  ctx.fillStyle = "rgba(255,255,255,.85)"; ctx.font = `700 90px system-ui, sans-serif`; ctx.textBaseline = "alphabetic";
+  ctx.fillText("PODCAST", W*0.08, W*0.95);
+  if(logoImg){ const s = W*0.16, r = Math.min(s/logoImg.width, s/logoImg.height); ctx.drawImage(logoImg, W*0.92-logoImg.width*r, W*0.95-logoImg.height*r - 60, logoImg.width*r, logoImg.height*r); }
+}
+const coverBlob = () => new Promise(r => { drawCover(); $("#cover").toBlob(r, "image/jpeg", 0.9); });
+$("#dlCoverBtn").onclick = async () => download(await coverBlob(), "cover.jpg");
+function renderSocial(){
+  const items = project.episodes.flatMap((e,i) => (e.social||[]).map(s => ({...s, ep:i})));
+  $("#socialList").innerHTML = items.length ? items.map((s,k) => `<div class="social"><b>Episode ${s.ep+1} · ${esc(s.platform)}</b><p>${esc(s.text)}</p><button class="btn ghost small" data-copy="${k}">Copy</button></div>`).join("") : '<p class="note">Write the scripts first and promo posts appear here.</p>';
+  $("#socialList").onclick = async e => { const b = e.target.closest("[data-copy]"); if(!b) return; try{ await navigator.clipboard.writeText(items[+b.dataset.copy].text); b.textContent = "Copied!"; }catch{ b.textContent = "Select and copy"; } };
+}
+
+/* ---------- step 5: RSS ---------- */
+const pubFields = {pubBase:"base", pubAuthor:"author", pubEmail:"email", pubExplicit:"explicit"};
+function renderPublish(){
+  project.pub ||= {};
+  for(const [id,k] of Object.entries(pubFields)) $("#"+id).value = project.pub[k] ?? (k==="explicit" ? "false" : "");
+  updateFeedPreview();
+}
+$("[data-panel=publish]").addEventListener("input", e => { const k = pubFields[e.target.id]; if(k){ project.pub[k] = e.target.value; save(); updateFeedPreview(); } });
+function baseUrl(){ let b = (project.pub.base||"").trim(); if(b && !b.endsWith("/")) b += "/"; return b || "https://example.com/podcast/"; }
+function xml(s){ return String(s??"").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[c])); }
+function dur(i){ const a = audio[i]; const sec = a?.duration || Math.round(wordCount(project.episodes[i])/150*60); return `${Math.floor(sec/60)}:${String(sec%60).padStart(2,"0")}`; }
+function notesHtml(t){
+  const out = []; let list = [];
+  const flush = () => { if(list.length){ out.push("<ul>"+list.map(x=>"<li>"+xml(x)+"</li>").join("")+"</ul>"); list=[]; } };
+  for(const raw of String(t||"").split("\n")){ const l = raw.trim(); if(!l){ flush(); continue; } if(/^[-*•]\s+/.test(l)) list.push(l.replace(/^[-*•]\s+/,"")); else { flush(); out.push("<p>"+xml(l)+"</p>"); } }
+  flush(); return out.join("");
+}
+function buildFeed(){
+  const p = project, b = baseUrl(), now = Date.now();
+  const cat = (p.show.category||"Education").split(/[>&,/]/)[0].trim();
+  const items = p.episodes.map((e,i) => ({e,i})).filter(x => x.e.lines.length).map(({e,i}) => {
+    const date = new Date(now - (p.episodes.length-1-i)*86400000).toUTCString();
+    return `    <item>
+      <title>${xml(e.title)}</title>
+      <description><![CDATA[<p>${xml(e.description)}</p>${notesHtml(e.show_notes)}]]></description>
+      <itunes:summary>${xml(e.description)}</itunes:summary>
+      <enclosure url="${xml(b+fileName(i))}" length="${audio[i]?.blob.size || 0}" type="audio/mpeg"/>
+      <guid isPermaLink="false">${xml((p.show.title||"show").toLowerCase().replace(/[^a-z0-9]+/g,"-"))}-ep${i+1}</guid>
+      <pubDate>${date}</pubDate>
+      <itunes:episode>${i+1}</itunes:episode>
+      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:duration>${dur(i)}</itunes:duration>
+      <itunes:explicit>${p.pub.explicit==="true"}</itunes:explicit>
+    </item>`;
+  }).join("\n");
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>${xml(p.show.title)}</title>
+    <link>${xml(p.opts.source?.startsWith("http") ? p.opts.source : b)}</link>
+    <atom:link href="${xml(b+"feed.xml")}" rel="self" type="application/rss+xml"/>
+    <description>${xml(p.show.description)}</description>
+    <language>${p.opts.lang}</language>
+    <itunes:author>${xml(p.pub.author || p.show.title)}</itunes:author>
+    <itunes:owner><itunes:name>${xml(p.pub.author || p.show.title)}</itunes:name><itunes:email>${xml(p.pub.email||"")}</itunes:email></itunes:owner>
+    <itunes:image href="${xml(b+"cover.jpg")}"/>
+    <itunes:category text="${xml(cat)}"/>
+    <itunes:explicit>${p.pub.explicit==="true"}</itunes:explicit>
+    <itunes:type>serial</itunes:type>
+${items}
+  </channel>
+</rss>
+`;
+}
+async function measureDurations(){
+  await Promise.all(Object.entries(audio).map(([i,a]) => a.duration ? null : new Promise(res => {
+    const el = new Audio(); el.preload = "metadata"; el.onloadedmetadata = () => { a.duration = Math.round(el.duration)||0; res(); }; el.onerror = res; el.src = a.url;
+  })));
+}
+function updateFeedPreview(){ $("#feedPreview").textContent = buildFeed(); $("#feedUrl").textContent = baseUrl()+"feed.xml"; }
+$("#feedBtn").onclick = async () => { await measureDurations(); updateFeedPreview(); download(new Blob([buildFeed()],{type:"application/rss+xml"}), "feed.xml"); };
+$("#zipBtn").onclick = async () => {
+  const st = $("#pubStatus"); st.className = "status";
+  const missing = project.episodes.map((e,i)=>i).filter(i => project.episodes[i].lines.length && !audio[i]);
+  if(missing.length) st.textContent = `Note: no MP3 yet for episode ${missing.map(i=>i+1).join(", ")}. Make them in step 3 so the kit is complete.`;
+  if(!project.pub.base) { st.className="status err"; st.textContent = "Type the web folder address first so the feed points at the right place."; return; }
+  await measureDurations(); updateFeedPreview();
+  const zip = new JSZip();
+  zip.file("feed.xml", buildFeed());
+  zip.file("cover.jpg", await coverBlob());
+  project.episodes.forEach((e,i) => {
+    if(!e.lines.length) return;
+    if(audio[i]) zip.file(fileName(i), audio[i].blob);
+    zip.file(`scripts/episode-${i+1}.txt`, scriptText(i));
+    zip.file(`show-notes/episode-${i+1}.txt`, `${e.title}\n\n${e.description}\n\n${e.show_notes}\n\nPromo posts:\n` + (e.social||[]).map(s => `[${s.platform}]\n${s.text}`).join("\n\n"));
+  });
+  zip.file("README.txt", `Upload every file in this folder to:\n${baseUrl()}\n\nThen submit this feed address to Spotify for Creators and Apple Podcasts Connect:\n${baseUrl()}feed.xml\n`);
+  const blob = await zip.generateAsync({type:"blob"});
+  download(blob, (project.show.title||"podcast").replace(/[^a-z0-9]+/gi,"-").toLowerCase()+"-publish-kit.zip");
+  if(!missing.length){ st.className="status ok"; st.textContent = "Publish kit downloaded."; }
+};
+
+function download(blob, name){ const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
+
+/* ---------- sample show (works without a key) ---------- */
+$("#sampleBtn").onclick = () => {
+  if(project && !confirm("Replace the current show with the sample?")) return;
+  project = {opts:{format:"duo", episodes:2, minutes:3, tone:"Friendly and upbeat", audience:"high school students", lang:"en", hosts:["Maya","Jordan"], source:"sample"},
+    show:{title:"Pathways in Progress", tagline:"Real talk about finding what you love", description:"Two friends explore how students turn their interests into real careers, one small step at a time.", category:"Education"},
+    notes:"", hosts:["Maya","Jordan"], cover:{palette:0, style:"waves"}, pub:{},
+    episodes:[
+      {title:"Your Passion Is a Starting Point", summary:"Why you don't need it all figured out to start exploring careers.", key_points:[], description:"Maya and Jordan talk about turning what you already like into your first career step.", show_notes:"You don't need a five-year plan to start.\n- Notice what you already do for fun\n- Try one small project this month\n- Talk to someone who does the job", social:[{platform:"Instagram", text:"New episode! You don't need a five-year plan, just a first step. 🎧 #CareerPathways #StudentLife"}],
+       lines:[
+        {s:0,text:"Hey everyone, welcome to Pathways in Progress! I'm Maya."},
+        {s:1,text:"And I'm Jordan. Today we're tackling a big one: what if you have no idea what you want to do after high school?"},
+        {s:0,text:"Which, honestly, is most people. Me included, two years ago."},
+        {s:1,text:"Right! So here's the thing. Your passion doesn't have to be a job title yet. It can just be something you already do when nobody's making you."},
+        {s:0,text:"Like how I spent every weekend editing videos for my friends. I didn't think of it as a skill. It was just fun."},
+        {s:1,text:"And now you're in a media program. So the first step is easy: notice what you already do for fun, then try one small project with it this month."},
+        {s:0,text:"That's it for today. Next time, we'll talk about how to find someone who actually does the job you're curious about."},
+        {s:1,text:"See you then!"}]},
+      {title:"Find Your First Mentor", summary:"How to reach out to people who do the work you're curious about.", key_points:[], description:"", show_notes:"", social:[], lines:[]}
+    ]};
+  audio = {}; save(); lockSteps(); show("plan");
+};
+
+/* ---------- boot ---------- */
+lockSteps();
+if(project) show("plan");
+</script>
+</body>
+</html>
