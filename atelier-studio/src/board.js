@@ -21,6 +21,7 @@ export class Board {
     this.brushSize = 14; this.gap = 2; this.eraseTarget = 'color';
     this.view = { s: 0.5, x: 0, y: 0 };
     this.undoStack = []; this.redoStack = [];
+    this.fillFabric = {}; // fill id -> fabric id
     this.pointers = new Map();
     this.place = null;
     this.hover = null;
@@ -188,15 +189,22 @@ export class Board {
     const base = this.tool === 'pen' ? Math.max(1.5, this.brushSize * 0.3) : this.brushSize;
     return base * (pressure > 0 && pressure !== 0.5 ? 0.3 + 0.9 * pressure : 1);
   }
-  patternFor(which) {
-    const p = this.paint, pat = this.cx.color.createPattern(tileCanvas(p.fabric, p.color, which), 'repeat');
+  patternFor(which, id = 0) {
+    const p = this.paint, tc = tileCanvas(p.fabric, p.color, which);
+    if (which === 'mat' && id) { // stamp the fill id so 3D knows which fabric this is
+      const x = tc.getContext('2d'), im = x.getImageData(0, 0, tc.width, tc.height);
+      for (let i = 0; i < im.data.length; i += 4) im.data[i] = id;
+      x.putImageData(im, 0, 0);
+    }
+    const pat = this.cx.color.createPattern(tc, 'repeat');
     pat.setTransform(new DOMMatrix([p.scale, 0, 0, p.scale, 0, 0]));
     return pat;
   }
   startStroke(x, y, e) {
     const names = this.tool === 'pen' ? ['lines'] : this.tool === 'eraser' ? (this.eraseTarget === 'lines' ? ['lines'] : this.eraseTarget === 'both' ? ['color', 'mat', 'lines'] : ['color', 'mat']) : ['color', 'mat'];
     this.begin(names);
-    this.stroke = { names, last: [x, y], rect: { x0: x, y0: y, x1: x, y1: y }, pressure: e.pressure, pats: this.tool === 'brush' ? { color: this.patternFor('color'), mat: this.patternFor('mat') } : null };
+    this.stroke = { names, last: [x, y], rect: { x0: x, y0: y, x1: x, y1: y }, pressure: e.pressure, pats: null };
+    if (this.tool === 'brush') { const id = this.newFillId(); this.fillFabric[id] = this.paint.fabric; this.stroke.pats = { color: this.patternFor('color'), mat: this.patternFor('mat', id) }; }
     this.strokeTo(x, y, e.pressure, true);
   }
   strokeTo(x, y, pressure, first) {
@@ -245,6 +253,7 @@ export class Board {
   newFillId() { this.fillId = (this.fillId || 0) % 254 + 1; return this.fillId; }
   paintMask(mask, erase) {
     const id = this.newFillId();
+    if (!erase) this.fillFabric[id] = this.paint.fabric;
     const ci = this.cx.color.getImageData(0, 0, BW, BH), mi = this.cx.mat.getImageData(0, 0, BW, BH);
     const t = fabricTiles(this.paint.fabric, this.paint.color), k = 1 / this.paint.scale;
     let x0 = BW, y0 = BH, x1 = -1, y1 = -1;
@@ -399,11 +408,17 @@ export class Board {
     return this.tex;
   }
   // Coarse grid of where the garment is (used to shape the 3D garment).
+  // ids: which fill each cell belongs to; fabricOf(id) names its fabric.
   alphaGrid(step = 4) {
-    const d = this.cx.color.getImageData(0, 0, BW, BH).data, w = BW / step, h = BH / step, g = new Uint8Array(w * h);
+    const d = this.cx.color.getImageData(0, 0, BW, BH).data, m = this.cx.mat.getImageData(0, 0, BW, BH).data;
+    const w = BW / step, h = BH / step, g = new Uint8Array(w * h), ids = new Uint8Array(w * h);
     let any = false;
-    for (let y = 0; y < BH; y++) for (let x = 0; x < BW; x++) if (d[(y * BW + x) * 4 + 3] > 20) { g[((y / step) | 0) * w + ((x / step) | 0)] = 1; any = true; }
-    return { data: g, w, h, step, any };
+    for (let y = 0; y < BH; y++) for (let x = 0; x < BW; x++) {
+      const o = (y * BW + x) * 4; if (d[o + 3] <= 20) continue;
+      const c = ((y / step) | 0) * w + ((x / step) | 0); g[c] = 1; any = true; if (m[o + 3] === 255) ids[c] = m[o];
+    }
+    const fills = this.fillFabric;
+    return { data: g, ids, w, h, step, any, fabricOf: (id) => fills[id] || 'cotton' };
   }
   composite(maxH = 600, background = '#fffdfa') {
     const k = maxH / BH, c = mk(Math.round(BW * k), maxH), x = c.getContext('2d');
@@ -425,6 +440,7 @@ export class Board {
     let maxId = 0; const md = this.cx.mat.getImageData(0, 0, BW, BH).data;
     for (let i = 0; i < md.length; i += 4) if (md[i + 3] && md[i] > maxId) maxId = md[i];
     this.fillId = maxId;
+    this.fillFabric = { ...(src.fills || {}) };
     this.resetHistory(); this.dirty = true;
   }
 }

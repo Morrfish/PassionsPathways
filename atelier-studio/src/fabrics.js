@@ -61,7 +61,7 @@ function nearest(pts, x, y) {
 
 const GEN = {
   cotton: () => make(({ lum, rough }) => { const n = fbm(11); each((x, y, i) => { lum[i] = 0.94 + n[i] * 0.08; rough[i] = 0.9; }); }),
-  satin: () => make(({ lum, rough }) => { const n = fbm(12, [2, 4], [0.7, 0.3]); each((x, y, i) => { const s = Math.sin(TAU * (x + y * 0.35 + n[i] * 40) / TILE); lum[i] = 0.9 + 0.2 * s * s; rough[i] = 0.22; }); }),
+  satin: () => make(({ lum, rough }) => { const n = fbm(12, [2, 4], [0.7, 0.3]); each((x, y, i) => { const s = Math.sin(TAU * (x + y) / TILE + n[i] * 2.5); lum[i] = 0.95 + 0.07 * s * s; rough[i] = 0.2; }); }),
   silk: () => make(({ lum, rough }) => { const n = fbm(13, [2, 4, 8], [0.6, 0.3, 0.1]); each((x, y, i) => { lum[i] = 0.95 + 0.06 * Math.sin(TAU * (x / TILE + n[i] * 0.8)); rough[i] = 0.3; }); }),
   linen: () => make(({ lum, rough }) => { const n = fbm(14, [16, 32, 64], [0.5, 0.3, 0.2]), slub = noiseField(8, 5); each((x, y, i) => { const w = Math.sin(TAU * x * 24 / TILE) * 0.5 + Math.sin(TAU * y * 24 / TILE) * 0.5; lum[i] = 0.86 + 0.06 * w + 0.1 * n[i] - 0.05 * slub[i]; rough[i] = 0.95; }); }),
   denim: () => make(({ lum, rough }) => { const n = fbm(15, [16, 32, 64], [0.4, 0.3, 0.3]), r = rng(77); each((x, y, i) => { const tw = ((x + y) % 6) < 3 ? 1 : 0; lum[i] = 0.74 + 0.14 * tw + 0.12 * n[i] + (r() < 0.03 ? 0.18 : 0); rough[i] = 0.95; }); }),
@@ -211,3 +211,23 @@ export const PALETTES = [
   { name: 'Earth', colors: ['#8a5a44', '#c47f4f', '#d9a86c', '#6b705c', '#a5a58d', '#b5838d', '#6d4c3d', '#3f4238'] },
   { name: 'Metallics', colors: ['#d4af37', '#c0c0c0', '#b87333', '#e5c1a8', '#8c8c8c', '#f1e5ac', '#aa7c39', '#2f2f35'] },
 ];
+
+// How each fabric hangs and moves in 3D.
+//   hang  - how far the hem falls in toward the body (1 = holds its shape, 0.7 = falls in a lot)
+//   bend  - stiffness against folding (0 = liquid, 1 = stiff)
+//   folds - how many folds form around a skirt
+//   drag  - air resistance (light fabrics float and settle slowly)
+//   weight- how strongly gravity pulls it
+const D = (hang, bend, folds, drag, weight) => ({ hang, bend, folds, drag, weight });
+export const DRAPE = {
+  cotton: D(0.84, 0.3, 10, 0.03, 1), satin: D(0.78, 0.14, 12, 0.025, 1.05), silk: D(0.74, 0.07, 14, 0.035, 0.9),
+  chiffon: D(0.7, 0.03, 16, 0.06, 0.7), tissue: D(0.72, 0.04, 16, 0.06, 0.7), organza: D(0.92, 0.5, 8, 0.05, 0.75),
+  tulle: D(0.9, 0.42, 9, 0.06, 0.7), mesh: D(0.82, 0.2, 10, 0.04, 0.85), taffeta: D(0.92, 0.55, 8, 0.03, 0.95),
+  velvet: D(0.77, 0.2, 10, 0.02, 1.25), lame: D(0.8, 0.25, 11, 0.025, 1.05), laceFloral: D(0.8, 0.2, 11, 0.04, 0.9),
+  laceChantilly: D(0.79, 0.15, 12, 0.045, 0.85), laceEyelet: D(0.84, 0.32, 10, 0.03, 1), sequin: D(0.8, 0.28, 9, 0.02, 1.35),
+  glitter: D(0.83, 0.3, 10, 0.025, 1.1), corduroy: D(0.86, 0.5, 7, 0.02, 1.2), linen: D(0.85, 0.36, 9, 0.03, 1),
+  denim: D(0.9, 0.7, 6, 0.02, 1.3), leather: D(0.9, 0.8, 5, 0.02, 1.4), vinyl: D(0.9, 0.7, 6, 0.02, 1.3),
+  brocade: D(0.9, 0.62, 7, 0.02, 1.2), tweed: D(0.88, 0.6, 7, 0.02, 1.25), knit: D(0.76, 0.14, 10, 0.025, 1.15),
+  fur: D(0.92, 0.75, 6, 0.02, 1.3), suede: D(0.86, 0.5, 7, 0.02, 1.25),
+};
+export function drapeFor(id) { return DRAPE[id] || DRAPE.cotton; }

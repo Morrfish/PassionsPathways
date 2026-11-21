@@ -175,6 +175,10 @@ function refresh3D() {
 $('#viewBtns').addEventListener('click', (e) => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.id === 'btnSpin') { const on = !b.classList.contains('on'); b.classList.toggle('on', on); viewer.setAutoRotate(on); return; }
+  if (b.id === 'btnTwirl') { $('#btnSpin').classList.remove('on'); viewer.twirl(); return; }
+  if (b.id === 'btnSway') { const on = !b.classList.contains('on'); b.classList.toggle('on', on); viewer.setSway(on); return; }
+  if (b.id === 'btnBreeze') { const on = !b.classList.contains('on'); b.classList.toggle('on', on); viewer.setBreeze(on); return; }
+  $('#btnSpin').classList.remove('on');
   viewer.view(b.dataset.view);
 });
 // Tap the garment in 3D to apply the selected fabric/color to that part.
@@ -202,7 +206,7 @@ async function saveNow() {
   design.name = $('#designName').value.trim() || 'Untitled design';
   const layers = await board.layerBlobs();
   const thumb = await new Promise((r) => board.composite(360).toBlob(r, 'image/jpeg', 0.85));
-  try { await store.saveDesign({ ...design, layers, thumb }); LS.set('last', design.id); }
+  try { await store.saveDesign({ ...design, layers, thumb, fills: { ...board.fillFabric } }); LS.set('last', design.id); }
   catch (e) { console.error(e); toast('Could not save on this device: ' + (e.message || e)); }
 }
 board.onChange = () => { scheduleSave(); updateWelcome(); };
@@ -224,7 +228,7 @@ async function openDesign(rec) {
   design = { id: rec.id, name: rec.name, created: rec.created, updated: rec.updated, body: rec.body, portfolio: !!rec.portfolio, notes: rec.notes || '' };
   if (rec.body) { body = { ...defaultBodySettings(), ...rec.body }; applyBody(false); }
   $('#designName').value = rec.name;
-  await board.loadLayers(rec.layers || {});
+  await board.loadLayers({ ...(rec.layers || {}), fills: rec.fills });
   updatePortfolioBtn(); updateWelcome();
   if (mode === '3d') refresh3D();
   LS.set('last', rec.id);
@@ -387,7 +391,7 @@ $('#moreMenu').addEventListener('click', async (e) => {
   const a = e.target.closest('[data-act]')?.dataset.act; if (!a) return; $('#moreMenu').hidden = true;
   if (a === 'new') await newDesign();
   else if (a === 'open') $('#fileProject').click();
-  else if (a === 'save') { await saveNow(); download(await store.toProjectFile({ ...design, body, layers: await board.layerBlobs() }), safeName() + '.atelier'); }
+  else if (a === 'save') { await saveNow(); download(await store.toProjectFile({ ...design, body, layers: await board.layerBlobs(), fills: { ...board.fillFabric } }), safeName() + '.atelier'); }
   else if (a === 'png') { const c = board.composite(BH, '#ffffff'); c.toBlob((b) => download(b, safeName() + '-sketch.png'), 'image/png'); }
   else if (a === 'shot') { if (mode !== '3d') setMode('3d'); setTimeout(async () => download(await (await fetch(viewer.screenshot())).blob(), safeName() + '-3d.png'), 120); }
   else if (a === 'glb') { if (mode !== '3d') setMode('3d'); try { download(await busy('Building the 3D model…', () => viewer.exportGLB()), safeName() + '.glb'); } catch (err) { toast('Could not export the 3D model: ' + (err.message || err)); } }

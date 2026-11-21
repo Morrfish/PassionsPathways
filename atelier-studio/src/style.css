@@ -75,6 +75,7 @@ input, select { font: inherit; color: inherit; }
 .viewbtns { padding: 6px; gap: 4px; }
 .viewbtns button { border: 0; background: transparent; padding: 8px 12px; border-radius: 9px; font-weight: 600; display: flex; align-items: center; }
 .viewbtns button:hover { background: var(--surface-2); }
+.viewbtns .vsep { width: 1px; height: 24px; background: var(--line); margin: 0 2px; }
 .viewbtns button.on { background: var(--accent-soft); color: var(--accent); }
 .hint3d { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); background: rgba(43,34,40,.78); color: #fff; padding: 7px 14px; border-radius: 999px; font-size: 13px; pointer-events: none; white-space: nowrap; }
 
@@ -206,6 +207,8 @@ input, select { font: inherit; color: inherit; }
   .panel-grip { display: block; position: absolute; top: 0; left: 0; right: 0; height: 22px; border: 0; background: transparent; }
   .panel-grip span { display: block; width: 44px; height: 5px; border-radius: 3px; background: var(--line); margin: 8px auto 0; }
   .placebar, .viewbtns { bottom: auto; top: 10px; }
+  .viewbtns { flex-wrap: wrap; justify-content: center; width: calc(100% - 20px); }
+  .viewbtns button { padding: 7px 9px; }
   .hint3d { display: none; }
   .welcome-btns { grid-template-columns: 1fr; }
   .big { flex-direction: row; justify-content: center; padding: 12px; }

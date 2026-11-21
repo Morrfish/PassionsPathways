@@ -21,6 +21,10 @@ Everything works offline and designs are saved on the device.
 - **3D on a mannequin:** women's, men's and kids' bodies, sizes XS-4XL (kids 4-14),
   petite/regular/tall, skin tones or a dress form, and custom measurements. Switch between
   Sketch and 3D any time; tap the garment in 3D to change its fabric.
+- **Fabric that flows:** skirts and dresses are simulated cloth. They hang from the waist,
+  fall into folds, rest against the hips and legs, and swing when the mannequin moves.
+  Each fabric drapes its own way (chiffon soft and floaty, taffeta full and crisp, denim
+  and leather heavy). **Twirl**, **Sway** and **Breeze** buttons show the movement.
 - **Straight to 3D:** skip coloring and see the drawing in 3D right away.
 - **Starter outlines** that fit the mannequin: A-line dress, ball gown, T-shirt, skirt, trousers.
 - **Measurements** of the mannequin and the garment (bust, waist, hip, length, hem, sleeve,
@@ -53,6 +57,7 @@ To try the desktop app locally: `cd desktop && npm ci && npm start`.
 - `src/fabrics.js` - the fabric library (each fabric is a small generated tile)
 - `src/body.js` - size charts and the mannequin's shape
 - `src/viewer3d.js` - the 3D mannequin and the garment built from the drawing
+- `src/cloth.js` - the cloth simulation for skirts and dresses
 - `src/starters.js` - starter outlines
 - `src/store.js` - saving designs on the device and design files
 - `desktop/` - the Windows app (Electron)

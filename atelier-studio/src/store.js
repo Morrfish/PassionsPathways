@@ -26,7 +26,7 @@ export const newId = () => 'd' + Date.now().toString(36) + Math.random().toStrin
 const toDataURL = (blob) => new Promise((r) => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(blob); });
 const fromDataURL = async (u) => (await fetch(u)).blob();
 export async function toProjectFile(rec) {
-  const out = { app: 'Atelier Studio', version: 1, name: rec.name, created: rec.created, updated: rec.updated, body: rec.body, portfolio: !!rec.portfolio, notes: rec.notes || '', layers: {} };
+  const out = { app: 'Atelier Studio', version: 1, name: rec.name, created: rec.created, updated: rec.updated, body: rec.body, portfolio: !!rec.portfolio, notes: rec.notes || '', fills: rec.fills || {}, layers: {} };
   for (const k of ['color', 'mat', 'lines']) if (rec.layers?.[k]) out.layers[k] = await toDataURL(rec.layers[k]);
   return new Blob([JSON.stringify(out)], { type: 'application/json' });
 }
@@ -35,5 +35,5 @@ export async function fromProjectFile(text) {
   if (j.app !== 'Atelier Studio') throw new Error('This is not an Atelier Studio design file.');
   const layers = {};
   for (const k of ['color', 'mat', 'lines']) if (j.layers?.[k]) layers[k] = await fromDataURL(j.layers[k]);
-  return { id: newId(), name: j.name || 'Imported design', created: j.created || Date.now(), updated: Date.now(), body: j.body, portfolio: !!j.portfolio, notes: j.notes || '', layers };
+  return { id: newId(), name: j.name || 'Imported design', created: j.created || Date.now(), updated: Date.now(), body: j.body, portfolio: !!j.portfolio, notes: j.notes || '', fills: j.fills || {}, layers };
 }
