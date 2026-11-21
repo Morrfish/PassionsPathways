@@ -71,12 +71,20 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-
 .side .ep-btn.on{border-color:var(--accent);background:var(--accent-soft)}
 .side .ep-btn small{display:block;color:var(--muted)}
 .lines{display:grid;gap:8px;max-height:60vh;overflow:auto;padding-right:4px}
-.line{display:grid;grid-template-columns:120px 1fr 28px;gap:8px;align-items:start;border-radius:10px;padding:4px}
+.line{display:grid;grid-template-columns:120px 1fr auto 28px;gap:8px;align-items:start;border-radius:10px;padding:4px;border-left:3px solid transparent}
+.line.recorded{border-left-color:var(--good)}
+.line.recording{background:var(--accent-soft);border-left-color:var(--bad)}
+.lrec{display:flex;gap:4px;padding-top:4px}
+.mic{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer;font-size:15px;line-height:1;display:grid;place-items:center}
+.mic.play{border-color:var(--good);color:var(--good)}
+.mic.stop{background:var(--bad);border-color:var(--bad);color:#fff;animation:pulse 1.2s ease-in-out infinite}
+.mic.next{outline:2px solid var(--accent);outline-offset:2px}
+@keyframes pulse{50%{opacity:.6}}
 .line.playing{background:var(--accent-soft)}
 .line select{padding:6px;font-size:13px;font-weight:650}
 .line textarea{min-height:44px;padding:7px 9px}
 .line .x{background:none;border:0;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;padding-top:8px}
-@media (max-width:560px){.line{grid-template-columns:1fr 28px}.line select{grid-column:1/-1}}
+@media (max-width:560px){.line{grid-template-columns:1fr auto 28px}.line select{grid-column:1/-1}}
 .player{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px;border:1px solid var(--line);border-radius:12px;margin:10px 0;background:var(--bg)}
 .player audio{width:100%;max-width:420px}
 .cover-wrap{display:grid;grid-template-columns:300px 1fr;gap:16px}
@@ -214,9 +222,9 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
         </div>
         <p class="sub" id="stSummary"></p>
         <div class="player">
-          <button class="btn small" id="playBtn">▶ Listen (browser voices)</button>
+          <button class="btn small" id="playBtn">▶ Listen</button>
           <button class="btn ghost small" id="stopBtn">■ Stop</button>
-          <button class="btn ghost small" id="renderBtn" title="Uses your ElevenLabs key">Make MP3 (ElevenLabs)</button>
+          <button class="btn ghost small" id="renderBtn" title="Joins your recorded lines, plus AI voices for any you didn't record">Make episode MP3</button>
           <button class="btn ghost small" id="regenBtn">Rewrite episode</button>
           <span class="note" id="audioNote"></span>
           <audio id="epAudio" controls class="hidden"></audio>
@@ -225,6 +233,7 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
         <div class="progress hidden" id="renderProg"><div></div></div>
         <div class="status" id="studioStatus"></div>
         <h3>Script</h3>
+        <p class="note">Press 🎙 on a line to read it yourself (press ■ when you finish). Your takes are saved in this browser and go into the MP3. Lines you don't record use AI voices if you have an ElevenLabs key. With no key, record every line: you and a friend can each read a host.</p>
         <div class="lines" id="lines"></div>
         <div class="row" style="margin-top:8px">
           <button class="btn ghost small" id="addLineBtn">+ Add line</button>
@@ -353,6 +362,7 @@ Ready? Let's go.</p>
 </dialog>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js"></script>
 <script type="module">
 import Anthropic from "https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@1.5.0/+esm";
 
@@ -401,7 +411,7 @@ $("#steps").addEventListener("click", e => { const b = e.target.closest("button"
 const keyFields = {keyClaude:"claude", keyEleven:"eleven", ttsModel:"ttsModel", themeSel:"theme"};
 $("#settingsBtn").onclick = () => { for(const [id,k] of Object.entries(keyFields)) $("#"+id).value = settings[k] || $("#"+id).options?.[0]?.value || ""; $("#settings").showModal(); };
 $("#saveSettings").onclick = () => { for(const [id,k] of Object.entries(keyFields)) settings[k] = $("#"+id).value.trim(); store.set("settings", settings); applyTheme(); };
-$("#newBtn").onclick = () => { if(project && !confirm("Start a new show? The current one will be cleared from this browser.")) return; project = null; audio = {}; save(); lockSteps(); show("source"); };
+$("#newBtn").onclick = () => { if(project && !confirm("Start a new show? The current one will be cleared from this browser.")) return; project?.episodes.forEach(e => e.lines.forEach(l => dropRec(l.id))); project = null; audio = {}; save(); lockSteps(); show("source"); };
 
 /* ---------- source tabs ---------- */
 $("#srcTabs").addEventListener("click", e => {
@@ -604,9 +614,10 @@ ${p.notes}
   const r = JSON.parse(text);
   const names = p.hosts.map(h => h.toLowerCase());
   e.title = r.title || e.title; e.description = r.description; e.show_notes = r.show_notes; e.social = r.social_posts || [];
+  e.lines.forEach(l => dropRec(l.id));
   e.lines = (r.lines||[]).filter(l => l.text?.trim()).map(l => {
     let k = names.indexOf((l.speaker||"").toLowerCase()); if(k<0) k = 0;
-    return {s:k, text:l.text.trim()};
+    return {id:rid(), s:k, text:l.text.trim()};
   });
   delete audio[i];
   save();
@@ -648,10 +659,13 @@ function renderStudio(){
   $("#stSummary").textContent = e.summary;
   $("#stLen").textContent = e.lines.length ? `~${Math.max(1,Math.round(wordCount(e)/150))} min · ${wordCount(e)} words` : "";
   $("#epDesc").value = e.description||""; $("#epNotes").value = e.show_notes||"";
+  let added = false; e.lines.forEach(l => { if(!l.id){ l.id = rid(); added = true; } }); if(added) save();
   $("#lines").innerHTML = e.lines.length ? e.lines.map((l,j) => `
-    <div class="line" data-j="${j}">
+    <div class="line ${recIds.has(l.id) ? "recorded" : ""} ${lineRec?.id===l.id ? "recording" : ""}" data-j="${j}">
       <select data-k="s" style="color:var(--host-${"abc"[l.s]||"a"})">${project.hosts.map((h,k)=>`<option value="${k}" ${k===l.s?"selected":""}>${esc(h)}</option>`).join("")}</select>
       <textarea data-k="text" rows="2">${esc(l.text)}</textarea>
+      <div class="lrec">${lineRec?.id===l.id ? '<button class="mic stop" data-k="rec" title="Stop recording">■</button>'
+        : (recIds.has(l.id) ? '<button class="mic play" data-k="play" title="Play my take">▶</button>' : "") + `<button class="mic" data-k="rec" title="${recIds.has(l.id) ? "Record again" : "Record this line yourself"}">🎙</button>`}</div>
       <button class="x" data-k="del" title="Delete line">×</button>
     </div>`).join("") : '<p class="note">No script yet. Press "Rewrite episode" to write it.</p>';
   $$("#lines textarea").forEach(autoGrow);
@@ -673,15 +687,21 @@ $("#lines").addEventListener("input", e => {
   delete audio[current]; save();
 });
 $("#lines").addEventListener("click", e => {
-  if(e.target.dataset.k!=="del") return;
-  project.episodes[current].lines.splice(+e.target.closest("[data-j]").dataset.j, 1); delete audio[current]; save(); renderStudio();
+  const k = e.target.closest("[data-k]")?.dataset.k, row = e.target.closest("[data-j]"); if(!row) return;
+  const j = +row.dataset.j, l = project.episodes[current].lines[j];
+  if(k==="del"){
+    if(recIds.has(l.id) && !confirm("Delete this line and your recording of it?")) return;
+    project.episodes[current].lines.splice(j, 1); dropRec(l.id); delete audio[current]; save(); renderStudio();
+  }
+  if(k==="rec") toggleLineRec(j);
+  if(k==="play") playTake(l.id);
 });
-$("#addLineBtn").onclick = () => { const ls = project.episodes[current].lines; ls.push({s: ls.length ? (ls[ls.length-1].s+1)%project.hosts.length : 0, text:""}); save(); renderStudio(); };
+$("#addLineBtn").onclick = () => { const ls = project.episodes[current].lines; ls.push({id:rid(), s: ls.length ? (ls[ls.length-1].s+1)%project.hosts.length : 0, text:""}); save(); renderStudio(); };
 $("#epDesc").oninput = e => { project.episodes[current].description = e.target.value; save(); };
 $("#epNotes").oninput = e => { project.episodes[current].show_notes = e.target.value; save(); };
 $("#regenBtn").onclick = async () => {
   const st = $("#studioStatus"), bar = $("#renderProg"); st.className="status";
-  if(project.episodes[current].lines.length && !confirm("Rewrite this episode's script from scratch?")) return;
+  if(project.episodes[current].lines.length && !confirm("Rewrite this episode's script from scratch? Any lines you recorded for it will be deleted.")) return;
   $("#regenBtn").disabled = true; bar.classList.remove("hidden"); bar.firstElementChild.style.width="0";
   st.innerHTML = '<span class="spin"></span>Writing the script…';
   try{ await writeEpisode(current, f => bar.firstElementChild.style.width = f*100+"%"); st.textContent=""; lockSteps(); renderStudio(); }
@@ -705,7 +725,7 @@ function pickVoices(){
   const pool = (good.length >= 2 ? good : vs);
   return project.hosts.map((h,i) => pool[(i * Math.max(1, Math.floor(pool.length/project.hosts.length))) % pool.length]);
 }
-function stopSpeech(){ speaking = false; speechSynthesis.cancel(); $$(".line.playing").forEach(x => x.classList.remove("playing")); $("#playBtn").textContent = "▶ Listen (browser voices)"; }
+function stopSpeech(){ speaking = false; speechSynthesis.cancel(); $$(".line.playing").forEach(x => x.classList.remove("playing")); $("#playBtn").textContent = "▶ Listen"; playingTake?.pause(); }
 $("#stopBtn").onclick = stopSpeech;
 $("#playBtn").onclick = () => {
   if(!("speechSynthesis" in window)){ $("#studioStatus").textContent = "This browser has no built-in voices."; return; }
@@ -719,6 +739,7 @@ $("#playBtn").onclick = () => {
     $$(".line").forEach((x,k) => x.classList.toggle("playing", k===j));
     $(`.line[data-j="${j}"]`)?.scrollIntoView({block:"nearest", behavior:"smooth"});
     const l = e.lines[j++];
+    if(recIds.has(l.id)){ playTake(l.id, next); return; }
     const u = new SpeechSynthesisUtterance(stripTags(l.text));
     if(voices[l.s]) u.voice = voices[l.s];
     u.lang = voices[l.s]?.lang || project.opts.lang;
@@ -749,35 +770,162 @@ async function tts(text, voice, prev, nextText){
   }
   return new Uint8Array(await r.arrayBuffer());
 }
-function stripId3(u8){ // drop ID3 tags so the joined file is one clean MP3 stream
-  if(u8[0]===0x49 && u8[1]===0x44 && u8[2]===0x33){ const size = (u8[6]<<21)|(u8[7]<<14)|(u8[8]<<7)|u8[9]; return u8.subarray(10+size); }
-  return u8;
+/* ---------- your own recorded lines ---------- */
+const rid = () => Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4);
+// Takes live in IndexedDB so they survive a reload; a Map is the fallback when storage is blocked.
+const mem = new Map();
+const idb = (() => {
+  let dbp = null;
+  const open = () => dbp ||= new Promise((res, rej) => {
+    const r = indexedDB.open("pod-studio", 1);
+    r.onupgradeneeded = () => r.result.createObjectStore("takes");
+    r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+  });
+  const run = (mode, fn) => open().then(db => new Promise((res, rej) => {
+    const t = db.transaction("takes", mode), req = fn(t.objectStore("takes"));
+    t.oncomplete = () => res(req?.result); t.onerror = () => rej(t.error);
+  }));
+  return {
+    get: k => run("readonly", st => st.get(k)).then(v => v ?? mem.get(k)).catch(() => mem.get(k)),
+    put: (k, v) => { mem.set(k, v); return run("readwrite", st => st.put(v, k)).catch(() => {}); },
+    del: k => { mem.delete(k); return run("readwrite", st => st.delete(k)).catch(() => {}); },
+    keys: () => run("readonly", st => st.getAllKeys()).catch(() => [...mem.keys()])
+  };
+})();
+const recIds = new Set();
+idb.keys().then(ks => { ks.forEach(k => recIds.add(k)); if(project && !$("[data-panel=studio]").classList.contains("hidden")) renderStudio(); });
+function dropRec(id){ if(recIds.delete(id)) idb.del(id); }
+
+let lineRec = null;   // {id, j, ep, rec, chunks, done}
+let playingTake = null;
+async function playTake(id, onDone){
+  playingTake?.pause();
+  const t = await idb.get(id); if(!t){ onDone?.(); return; }
+  const url = URL.createObjectURL(t.blob);
+  playingTake = new Audio(url);
+  playingTake.onended = playingTake.onerror = () => { URL.revokeObjectURL(url); onDone?.(); };
+  playingTake.play().catch(() => onDone?.());
+}
+function stopLineRec(){ return new Promise(res => { if(!lineRec || lineRec.rec.state === "inactive") return res(); lineRec.done = res; lineRec.rec.stop(); }); }
+async function toggleLineRec(j){
+  const st = $("#studioStatus"); st.className = "status";
+  const e = project.episodes[current], l = e.lines[j];
+  if(lineRec){ const same = lineRec.id === l.id; await stopLineRec(); if(same) return; }
+  stopSpeech();
+  let stream;
+  try{ stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true, autoGainControl:true, channelCount:1}}); }
+  catch{ st.className = "status err"; st.textContent = "I couldn't use your microphone. Allow microphone access for this page and try again."; return; }
+  const rec = new MediaRecorder(stream), chunks = [];
+  lineRec = {id:l.id, j, ep:current, rec, chunks};
+  rec.ondataavailable = ev => ev.data.size && chunks.push(ev.data);
+  rec.onstop = async () => {
+    const me = lineRec; lineRec = null;
+    stream.getTracks().forEach(t => t.stop());
+    const blob = new Blob(chunks, {type: rec.mimeType || "audio/webm"});
+    if(blob.size > 2000){
+      await idb.put(l.id, {blob, text:l.text, at:Date.now()});
+      recIds.add(l.id); delete audio[me.ep];
+      st.className = "status ok"; st.textContent = "Saved. Press ▶ on the line to hear it.";
+    } else { st.textContent = "That take was empty, so it wasn't saved."; }
+    if(current === me.ep){
+      renderStudio();
+      // point at the next line this person still has to read
+      const ls = project.episodes[current].lines;
+      const k = ls.findIndex((x, n) => n > me.j && x.s === l.s && !recIds.has(x.id));
+      if(k >= 0){ const btn = $(`.line[data-j="${k}"] [data-k=rec]`); btn?.classList.add("next"); btn?.scrollIntoView({block:"center", behavior:"smooth"}); btn?.focus({preventScroll:true}); }
+    }
+    me.done?.();
+  };
+  rec.start(500);
+  st.innerHTML = `<span class="spin"></span>Recording ${esc(project.hosts[l.s])}'s line… press ■ when you finish.`;
+  renderStudio();
+}
+
+/* ---------- build the episode MP3 from takes + AI voices ---------- */
+const RATE = 44100;
+async function decodeMono(arrayBuffer){
+  const ac = new (window.AudioContext || window.webkitAudioContext)();
+  try{
+    const buf = await ac.decodeAudioData(arrayBuffer);
+    const off = new OfflineAudioContext(1, Math.max(1, Math.ceil(buf.duration * RATE)), RATE);
+    const src = off.createBufferSource(); src.buffer = buf; src.connect(off.destination); src.start();
+    return (await off.startRendering()).getChannelData(0);
+  } finally { ac.close(); }
+}
+function trimSilence(d){
+  const thr = 0.02, pad = Math.round(RATE * 0.12);
+  let a = 0, b = d.length - 1;
+  while(a < d.length && Math.abs(d[a]) < thr) a++;
+  while(b > a && Math.abs(d[b]) < thr) b--;
+  return a >= b ? d : d.subarray(Math.max(0, a - pad), Math.min(d.length, b + pad));
+}
+function levelMatch(d){ // even out loudness between your takes and AI lines
+  let sum = 0, peak = 0;
+  for(let i = 0; i < d.length; i++){ sum += d[i] * d[i]; const v = Math.abs(d[i]); if(v > peak) peak = v; }
+  const rms = Math.sqrt(sum / (d.length || 1)); if(!rms) return d;
+  const g = Math.min(0.1 / rms, 0.97 / (peak || 1));
+  const out = new Float32Array(d.length); for(let i = 0; i < d.length; i++) out[i] = d[i] * g; return out;
+}
+async function encodeMp3(pcm, onProgress){
+  const enc = new lamejs.Mp3Encoder(1, RATE, 96), out = [], step = 1152 * 40;
+  const i16 = new Int16Array(step);
+  for(let i = 0, n = 0; i < pcm.length; i += step, n++){
+    const len = Math.min(step, pcm.length - i);
+    for(let k = 0; k < len; k++){ const v = Math.max(-1, Math.min(1, pcm[i + k])); i16[k] = v < 0 ? v * 0x8000 : v * 0x7fff; }
+    const mp3 = enc.encodeBuffer(len === step ? i16 : i16.subarray(0, len)); if(mp3.length) out.push(new Uint8Array(mp3));
+    if(n % 20 === 0){ onProgress?.(i / pcm.length); await new Promise(r => setTimeout(r)); }
+  }
+  const end = enc.flush(); if(end.length) out.push(new Uint8Array(end));
+  return new Blob(out, {type:"audio/mpeg"});
 }
 $("#renderBtn").onclick = async () => {
   const st = $("#studioStatus"), bar = $("#renderProg"); st.className = "status";
-  if(!settings.eleven){ $("#settingsBtn").click(); st.className="status err"; st.textContent="Add your ElevenLabs API key in Settings to make MP3s."; return; }
   const i = current, e = project.episodes[i]; if(!e.lines.length) return;
+  if(lineRec) await stopLineRec();
+  const missing = e.lines.map((l, j) => j).filter(j => !recIds.has(e.lines[j].id));
+  if(missing.length && !settings.eleven){
+    st.className = "status err";
+    st.textContent = `${missing.length} line(s) aren't recorded yet. Record them with 🎙 (you and a friend can each read a host), or add an ElevenLabs key in Settings so AI voices read them.`;
+    $$(".line").forEach((x, k) => x.querySelector("[data-k=rec]")?.classList.toggle("next", missing.includes(k)));
+    $(`.line[data-j="${missing[0]}"]`)?.scrollIntoView({block:"center", behavior:"smooth"});
+    return;
+  }
+  if(typeof lamejs === "undefined"){ st.className = "status err"; st.textContent = "The MP3 maker didn't load. Check your internet connection and reload the page."; return; }
   const voices = hostVoiceIds();
   $("#renderBtn").disabled = true; bar.classList.remove("hidden");
+  const setBar = f => bar.firstElementChild.style.width = (f * 100) + "%";
   try{
     const parts = new Array(e.lines.length); let done = 0;
-    const idx = e.lines.map((_,j)=>j);
+    const idx = e.lines.map((_, j) => j);
     async function worker(){
       while(idx.length){
         const j = idx.shift(), l = e.lines[j];
-        const same = k => e.lines[k] && e.lines[k].s===l.s ? e.lines[k].text : "";
-        parts[j] = stripId3(await tts(l.text, voices[l.s] || voices[0], same(j-1), same(j+1)));
-        done++; bar.firstElementChild.style.width = (done/e.lines.length*100)+"%";
-        st.innerHTML = `<span class="spin"></span>Recording line ${done} of ${e.lines.length}…`;
+        if(recIds.has(l.id)){
+          const t = await idb.get(l.id);
+          parts[j] = levelMatch(trimSilence(await decodeMono(await t.blob.arrayBuffer())));
+        } else {
+          const same = k => e.lines[k] && e.lines[k].s === l.s ? e.lines[k].text : "";
+          const mp3 = await tts(l.text, voices[l.s] || voices[0], same(j - 1), same(j + 1));
+          parts[j] = levelMatch(trimSilence(await decodeMono(mp3.buffer.slice(mp3.byteOffset, mp3.byteOffset + mp3.byteLength))));
+        }
+        done++; setBar(done / e.lines.length * 0.7);
+        st.innerHTML = `<span class="spin"></span>Preparing line ${done} of ${e.lines.length}…`;
       }
     }
     await Promise.all([worker(), worker(), worker()]);
-    const blob = new Blob(parts, {type:"audio/mpeg"});
+    const gap = Math.round(RATE * 0.3), lead = Math.round(RATE * 0.5);
+    const total = lead * 2 + parts.reduce((a, q) => a + q.length, 0) + gap * (parts.length - 1);
+    const pcm = new Float32Array(total); let pos = lead;
+    parts.forEach((q, k) => { pcm.set(q, pos); pos += q.length + (k < parts.length - 1 ? gap : 0); });
+    st.innerHTML = '<span class="spin"></span>Making the MP3…';
+    const blob = await encodeMp3(pcm, f => setBar(0.7 + f * 0.3));
     if(audio[i]) URL.revokeObjectURL(audio[i].url);
-    audio[i] = {blob, url: URL.createObjectURL(blob)};
-    st.className = "status ok"; st.textContent = `MP3 ready (${(blob.size/1048576).toFixed(1)} MB). It stays here until you close the page, so download it or the publish kit.`;
+    audio[i] = {blob, url: URL.createObjectURL(blob), duration: Math.round(total / RATE)};
+    const mine = e.lines.length - missing.length;
+    st.className = "status ok";
+    st.textContent = `MP3 ready: ${fmtSec(total / RATE)}, ${(blob.size / 1048576).toFixed(1)} MB` + (mine ? ` (${mine} line${mine > 1 ? "s" : ""} in your voice, ${missing.length} AI)` : "") + ". It stays here until you close the page, so download it or the publish kit.";
     renderStudio();
-  }catch(err){ st.className="status err"; st.textContent = err.message; }
+  }catch(err){ st.className = "status err"; st.textContent = err.message; console.error(err); }
   finally{ $("#renderBtn").disabled = false; bar.classList.add("hidden"); }
 };
 
@@ -1067,6 +1215,7 @@ function download(blob, name){ const a = document.createElement("a"); a.href = U
 /* ---------- sample show (works without a key) ---------- */
 $("#sampleBtn").onclick = () => {
   if(project && !confirm("Replace the current show with the sample?")) return;
+  project?.episodes.forEach(e => e.lines.forEach(l => dropRec(l.id)));
   project = {opts:{format:"duo", episodes:2, minutes:3, tone:"Friendly and upbeat", audience:"high school students", lang:"en", hosts:["Maya","Jordan"], source:"sample"},
     show:{title:"Pathways in Progress", tagline:"Real talk about finding what you love", description:"Two friends explore how students turn their interests into real careers, one small step at a time.", category:"Education"},
     notes:"", hosts:["Maya","Jordan"], cover:{palette:0, style:"waves"}, pub:{},
