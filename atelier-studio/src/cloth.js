@@ -29,8 +29,8 @@ export class Cloth {
     const k = Math.max(4, Math.round(phys.folds)), phase = Array.from({ length: k }, () => rnd() * 0.6);
     for (let r = 0; r < R; r++) {
       const g = rings[r], t = R > 1 ? r / (R - 1) : 0;
-      const shrink = 1 - (1 - phys.hang) * 0.6 * Math.pow(t, 1.2);
-      const amp = Math.min(0.32, (2 / k) * Math.sqrt(Math.max(0, 1 / shrink - 1))) * Math.pow(t, 0.6);
+      const shrink = 1 - (1 - phys.hang) * 0.85 * Math.pow(t, 1.15);
+      const amp = Math.min(0.38, (2 / k) * Math.sqrt(Math.max(0, 1 / shrink - 1)) * 1.15) * Math.pow(t, 0.55);
       for (let c = 0; c < C; c++) {
         const th = (c / C) * Math.PI * 2, f = Math.floor((c / C) * k);
         const rad = shrink * (1 + amp * Math.sin(k * th + phase[f] * Math.PI * 0.5));

@@ -63,10 +63,9 @@ export async function startRunway(list, { Viewer, Board, fmtFabrics }) {
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshStandardMaterial({ color: '#141118', roughness: 0.9 }));
   floor.rotation.x = -Math.PI / 2; floor.position.y = -0.1; floor.receiveShadow = true; S.add(floor);
   // Back wall with the studio name in lights.
-  const wc = document.createElement('canvas'); wc.width = 1024; wc.height = 256; const wx = wc.getContext('2d');
-  wx.fillStyle = '#18141c'; wx.fillRect(0, 0, 1024, 256); wx.fillStyle = '#ffe6ef'; wx.shadowColor = '#ff8fb8'; wx.shadowBlur = 30; wx.font = 'italic 600 110px Georgia, serif'; wx.textAlign = 'center'; wx.fillText('Atelier Studio', 512, 165);
-  const wall = new THREE.Mesh(new THREE.PlaneGeometry(9, 2.25), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(wc) }));
-  wall.position.set(0, 2.6, -12.6); S.add(wall);
+  const logoTex = new THREE.TextureLoader().load('assets/logo-full.jpg'); logoTex.colorSpace = THREE.SRGBColorSpace;
+  const wall = new THREE.Mesh(new THREE.PlaneGeometry(6, 4), new THREE.MeshBasicMaterial({ map: logoTex }));
+  wall.position.set(0, 2.05, -12.6); S.add(wall);
   // The audience on both sides.
   const people = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.17, 0.42, 4, 10), new THREE.MeshStandardMaterial({ color: '#2a2430', roughness: 0.8 }), 120);
   const heads = new THREE.InstancedMesh(new THREE.SphereGeometry(0.12, 12, 10), new THREE.MeshStandardMaterial({ color: '#3a3240', roughness: 0.8 }), 120);

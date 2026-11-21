@@ -1,6 +1,6 @@
 # Atelier Studio
 
-A fashion design studio for students. Snapshot or upload a hand drawing, color it in
+A fashion design studio for students. The logo (`assets/logo-full.jpg`) and the app icons come from the designer's own logo, and the 3D fabric look (dusty rose, soft matte sheen, gentle fold shading) is matched to it. Snapshot or upload a hand drawing, color it in
 with real fabrics, and see it on a 3D mannequin. Atelier is French for a designer's workshop.
 
 Open `index.html` (it is hosted with the rest of this site), or install the Windows app.

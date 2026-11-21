@@ -20,7 +20,7 @@ export class Board {
     this.texF = mk(); this.texB = mk(); this.atlas = mk(BW * 2, BH); this.atlasMat = mk(BW * 2, BH);
     this.guides = { front: null, back: null }; this.guideOpacity = 0.55; this.showGuide = true;
     this.tool = 'fill';
-    this.paint = { color: '#e85d8a', fabric: 'cotton', scale: 0.7 };
+    this.paint = { color: '#b07a74', fabric: 'satin', scale: 0.7 };
     this.brushSize = 14; this.gap = 2; this.eraseTarget = 'color';
     this.view = { s: 0.5, x: 0, y: 0 };
     this.undoStack = []; this.redoStack = [];
@@ -341,7 +341,7 @@ export class Board {
     const outside = this.flood(wall, seeds), ca = this.cx.color.getImageData(0, 0, BW, BH).data;
     const inside = new Uint8Array(BW * BH);
     for (let i = 0; i < BW * BH; i++) if (!outside[i] && !wall[i]) inside[i] = 1;
-    const grow = dilate(inside, BW, BH, 5);
+    const grow = dilate(inside, BW, BH, 7);
     let n = 0;
     for (let i = 0; i < BW * BH; i++) { if (grow[i] && (wall[i] || raw[i]) && !outside[i]) inside[i] = 1; if (ca[i * 4 + 3] > 10) inside[i] = 0; if (inside[i]) n++; }
     if (n < 500) return false;
@@ -418,13 +418,26 @@ export class Board {
   sideTexture(side) {
     const L = this.sides[side], out = side === 'front' ? this.texF : this.texB;
     const ci = L.cx.color.getImageData(0, 0, BW, BH), li = L.cx.lines.getImageData(0, 0, BW, BH), c = ci.data, l = li.data;
+    // A drawn line between two colored areas (a seam) must not leave a see-through gap:
+    // fill it from the colors on either side.
+    for (let y = 1; y < BH - 1; y++) for (let x = 1; x < BW - 1; x++) {
+      const i = y * BW + x, o = i * 4; if (c[o + 3] >= 20 || l[o + 3] < 40) continue;
+      let best = null;
+      for (const [dx, dy] of [[0, 1], [1, 0], [1, 1], [1, -1]]) {
+        let a = null, b = null;
+        for (let k = 1; k <= 9 && !a; k++) { const xx = x - dx * k, yy = y - dy * k; if (xx < 0 || yy < 0 || xx >= BW || yy >= BH) break; if (c[(yy * BW + xx) * 4 + 3] >= 20) a = (yy * BW + xx) * 4; }
+        for (let k = 1; k <= 9 && !b; k++) { const xx = x + dx * k, yy = y + dy * k; if (xx < 0 || yy < 0 || xx >= BW || yy >= BH) break; if (c[(yy * BW + xx) * 4 + 3] >= 20) b = (yy * BW + xx) * 4; }
+        if (a !== null && b !== null) { best = [a, b]; break; }
+      }
+      if (best) { const [a, b] = best; c[o] = (c[a] + c[b]) / 2; c[o + 1] = (c[a + 1] + c[b + 1]) / 2; c[o + 2] = (c[a + 2] + c[b + 2]) / 2; c[o + 3] = 255; }
+    }
     const outside = new Uint8Array(BW * BH);
     for (let i = 0; i < BW * BH; i++) outside[i] = c[i * 4 + 3] < 20 ? 1 : 0;
     const edge = dilate(outside, BW, BH, 5);
     for (let i = 0; i < BW * BH; i++) {
       const o = i * 4, a = l[o + 3] / 255;
       if (!a || c[o + 3] < 20 || edge[i]) continue;
-      c[o] = c[o] * (1 - a) + l[o] * a; c[o + 1] = c[o + 1] * (1 - a) + l[o + 1] * a; c[o + 2] = c[o + 2] * (1 - a) + l[o + 2] * a;
+      const k = 1 - 0.42 * a; c[o] *= k; c[o + 1] *= k; c[o + 2] *= k;
     }
     out.getContext('2d').putImageData(ci, 0, 0);
     return out;
