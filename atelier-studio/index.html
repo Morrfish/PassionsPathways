@@ -62,7 +62,13 @@
   </nav>
 
   <section class="stage">
-    <div class="board-wrap" id="boardWrap"><canvas id="board"></canvas></div>
+    <div class="board-wrap" id="boardWrap"><canvas id="board"></canvas>
+      <div class="sidebar-top">
+        <div class="seg small" id="sideSeg" role="tablist" aria-label="Side"><button data-v="front" class="on">Front</button><button data-v="back">Back</button></div>
+        <span class="side-note" id="sideNote" hidden></span>
+        <button class="btn small" id="btnMatchFront" hidden>Match front</button>
+      </div>
+    </div>
     <div class="view3d" id="view3d" hidden></div>
     <div class="welcome" id="welcome" hidden>
       <h2>Start a design</h2>
@@ -139,7 +145,8 @@
     <details class="sec" open data-sec="measure"><summary>Measurements</summary>
       <div class="seg" id="units"><button data-v="in" class="on">Inches</button><button data-v="cm">Centimeters</button></div>
       <table class="meas" id="measTable"></table>
-      <p class="note">Garment numbers are measured around the 3D garment. Editing them to change the pattern comes in the next update.</p>
+      <p class="note">Type a new garment measurement and the 3D garment changes to match.</p>
+      <button class="btn small" id="fitReset" hidden>Go back to the drawing's measurements</button>
     </details>
 
     <details class="sec three-only" data-sec="scene"><summary>Scene</summary>

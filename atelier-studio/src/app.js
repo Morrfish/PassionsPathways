@@ -43,7 +43,8 @@ const safeName = () => (design?.name || 'design').replace(/[^\w\- ]+/g, '').trim
 // ---------- body / mannequin ----------
 function applyBody(rebuildGarment = true) {
   spec = viewer.setBody(body, BW, BH);
-  board.guide = viewer.renderGuide(BW / 2, BH / 2);
+  board.guides.front = viewer.renderGuide(BW / 2, BH / 2, 'front');
+  board.guides.back = viewer.renderGuide(BW / 2, BH / 2, 'back');
   board.dirty = true;
   if (rebuildGarment && mode === '3d') refresh3D();
   renderBodyUI(); renderMeasurements();
@@ -78,13 +79,30 @@ function bodyChanged() { applyBody(true); scheduleSave(); }
 function fmtNum(cm) { return units === 'in' ? (Math.round(cm / 2.54 * 4) / 4).toString() : (Math.round(cm * 2) / 2).toString(); }
 const fmt = (cm) => cm == null ? null : `${fmtNum(cm)} ${units === 'in' ? 'in' : 'cm'}`;
 function renderMeasurements() {
-  const m = measurementsFor(body), g = viewer.measure || {};
+  if ($('#measTable').contains(document.activeElement)) return;
+  const m = measurementsFor(body), g = (mode === '3d' && viewer.measure) || {}, u = units === 'in' ? 'in' : 'cm';
   const row = (label, v) => `<tr><td>${label}</td><td class="${v == null ? 'na' : ''}">${v == null ? '–' : v}</td></tr>`;
+  // Garment numbers can be typed over: the 3D garment changes to match.
+  const edit = (label, k) => g[k] == null ? row(label, null) : `<tr><td>${label}${fit()[k] ? ' <span class="changed" title="Changed from the drawing">•</span>' : ''}</td><td><input class="meas-in" type="number" step="${units === 'in' ? 0.25 : 0.5}" data-k="${k}" value="${fmtNum(g[k])}"> ${u}</td></tr>`;
   const bustL = body.type === 'women' ? 'Bust' : 'Chest';
   let html = `<tr><th colspan="2">Mannequin</th></tr>` + row('Height', fmt(m.height)) + row(bustL, fmt(m.bust)) + row('Waist', fmt(m.waist)) + row('Hip', fmt(m.hip)) + row('Shoulder width', fmt(m.shoulder)) + row('Inseam', fmt(m.inseam));
-  html += `<tr><th colspan="2">Garment${mode === '3d' ? '' : ' (open 3D to measure)'}</th></tr>` + row(bustL, fmt(g.bust)) + row('Waist', fmt(g.waist)) + row('Hip', fmt(g.hip)) + row('Length', fmt(g.length)) + row('Hem around', fmt(g.hem)) + row('Sleeve', fmt(g.sleeve)) + row('Inseam', fmt(g.inseam));
+  html += `<tr><th colspan="2">Garment${mode === '3d' ? '' : ' (open 3D to measure)'}</th></tr>` + edit(bustL, 'bust') + edit('Waist', 'waist') + edit('Hip', 'hip') + edit('Length', 'length') + edit('Hem around', 'hem') + edit('Sleeve', 'sleeve') + edit('Inseam', 'inseam');
   $('#measTable').innerHTML = html;
+  $('#fitReset').hidden = !Object.values(fit()).some(Boolean);
 }
+const fit = () => (design ? (design.fit = design.fit || {}) : {});
+$('#measTable').addEventListener('change', (e) => {
+  const k = e.target.dataset.k, cur = viewer.measure?.[k]; if (!k || cur == null) return;
+  const v = parseFloat(e.target.value); if (!(v > 0)) { renderMeasurements(); return; }
+  const want = units === 'in' ? v * 2.54 : v, f = fit();
+  if (Math.abs(want - cur) < 0.3) return; // unchanged (or already applied)
+  const key = k === 'length' && viewer.measure.lengthIsLegs ? 'inseam' : k; // trousers get longer at the legs
+  f[key] = Math.round(((f[key] || 0) + want - cur) * 10) / 10;
+  viewer.setFit(f); refresh3D(); scheduleSave();
+  toast('Garment updated to the new measurement.');
+});
+$('#measTable').addEventListener('keydown', (e) => { if (e.key === 'Enter') e.target.blur(); });
+$('#fitReset').addEventListener('click', () => { if (!design) return; design.fit = {}; viewer.setFit({}); if (mode === '3d') refresh3D(); else renderMeasurements(); scheduleSave(); });
 $('#units').addEventListener('click', (e) => { const v = e.target.closest('button')?.dataset.v; if (!v) return; units = v; LS.set('units', v); $$('#units button').forEach((b) => b.classList.toggle('on', b.dataset.v === v)); $('#customBody').innerHTML = ''; renderBodyUI(); renderMeasurements(); });
 $$('#units button').forEach((b) => b.classList.toggle('on', b.dataset.v === units));
 
@@ -138,15 +156,33 @@ $('#guideOpacity').addEventListener('input', (e) => { board.guideOpacity = +e.ta
 $('#eraseTarget').addEventListener('click', (e) => { const v = e.target.closest('button')?.dataset.v; if (!v) return; board.eraseTarget = v; $$('#eraseTarget button').forEach((b) => b.classList.toggle('on', b.dataset.v === v)); });
 
 // Starter outlines
-const starterHTML = STARTERS.map((s) => `<button class="starter" data-s="${s.id}"><span class="i">${icon(s.id === 'top' ? 'top' : s.id)}</span>${s.name}</button>`).join('');
+const starterHTML = STARTERS.map((s) => `<button class="starter" data-s="${s.id}"><span class="i">${icon(s.icon || s.id)}</span>${s.name}</button>`).join('');
 $('#starters').innerHTML = starterHTML; $('#starters2').innerHTML = starterHTML;
 function useStarter(id) {
+  setSide('front');
   board.drawLines((ctx) => drawStarter(id, spec, viewer, ctx));
   closeModal('#starterModal'); updateWelcome(); setTool('fill');
   toast('Outline added. Tap inside it with Fill to color it.');
 }
 $('#starters').addEventListener('click', (e) => { const s = e.target.closest('[data-s]')?.dataset.s; if (s) useStarter(s); });
 $('#starters2').addEventListener('click', (e) => { const s = e.target.closest('[data-s]')?.dataset.s; if (s) useStarter(s); });
+
+// ---------- front / back ----------
+function setSide(side) {
+  if (board.side === side) return;
+  if (board.place) { $('#placeBar').hidden = true; }
+  board.setSide(side);
+  renderSideBar();
+}
+function renderSideBar() {
+  $$('#sideSeg button').forEach((b) => b.classList.toggle('on', b.dataset.v === board.side));
+  const back = board.side === 'back';
+  $('#sideNote').hidden = !back;
+  $('#sideNote').textContent = board.backLinked ? 'The back matches the front. Draw or color here to change it.' : 'The back has its own design.';
+  $('#btnMatchFront').hidden = !back || board.backLinked;
+}
+$('#sideSeg').addEventListener('click', (e) => { const v = e.target.closest('button')?.dataset.v; if (v) setSide(v); });
+$('#btnMatchFront').addEventListener('click', () => { if (confirm('Make the back match the front again? The back design will be replaced.')) { board.linkBack(); renderSideBar(); } });
 
 // ---------- sketch <-> 3D ----------
 function setMode(m) {
@@ -160,7 +196,7 @@ function setMode(m) {
   $('#viewBtns').hidden = m !== '3d'; $('#hint3d').hidden = m !== '3d';
   viewer.setVisible(m === '3d');
   if (m === '3d') {
-    if (!board.hasColor() && board.hasLines()) { if (board.autoFillGarment()) toast('Your outline was filled in white so you can see it in 3D. Pick a fabric and tap the garment to change it.', 5000); }
+    if (!board.hasColor() && board.hasLines()) { const was = board.side; board.useSide('front'); const ok = board.autoFillGarment(); board.useSide(was); if (ok) toast('Your outline was filled in white so you can see it in 3D. Pick a fabric and tap the garment to change it.', 5000); }
     else if (!board.hasColor()) toast('Nothing to show yet. Color a design in Sketch first.', 4000);
     refresh3D();
   } else board.dirty = true;
@@ -169,7 +205,8 @@ function setMode(m) {
 }
 $$('.mode button').forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
 function refresh3D() {
-  viewer.setDesign(board.textureCanvas(), board.mat, board.alphaGrid());
+  viewer.setFit(fit());
+  viewer.setDesign(board.textureAtlas(), board.alphaGrid());
   renderMeasurements();
 }
 $('#viewBtns').addEventListener('click', (e) => {
@@ -188,8 +225,14 @@ $('#viewBtns').addEventListener('click', (e) => {
   el.addEventListener('pointerup', (e) => {
     if (!down) return; const d = down; down = null;
     if (Math.hypot(e.clientX - d.x, e.clientY - d.y) > 6 || performance.now() - d.t > 600) return;
-    const px = viewer.pick(e.clientX, e.clientY); if (!px) return;
-    if (board.fillAt(px[0], px[1])) { refresh3D(); }
+    const hit = viewer.pick(e.clientX, e.clientY); if (!hit) return;
+    // While the back matches the front, tapping the back changes the front (mirrored).
+    let side = hit.side, x = hit.x;
+    if (side === 'back' && board.backLinked) { side = 'front'; x = BW - 1 - x; }
+    const was = board.side; board.useSide(side);
+    const ok = board.fillAt(x, hit.y);
+    board.useSide(was);
+    if (ok) { refresh3D(); renderSideBar(); }
   });
 }
 const BGS = ['#efe9e2', '#ffffff', '#e6eef5', '#f3e1e7', '#2b2228', '#111114'];
@@ -206,10 +249,10 @@ async function saveNow() {
   design.name = $('#designName').value.trim() || 'Untitled design';
   const layers = await board.layerBlobs();
   const thumb = await new Promise((r) => board.composite(360).toBlob(r, 'image/jpeg', 0.85));
-  try { await store.saveDesign({ ...design, layers, thumb, fills: { ...board.fillFabric } }); LS.set('last', design.id); }
+  try { await store.saveDesign({ ...design, layers, thumb, fills: { ...board.fillFabric }, fit: { ...fit() } }); LS.set('last', design.id); }
   catch (e) { console.error(e); toast('Could not save on this device: ' + (e.message || e)); }
 }
-board.onChange = () => { scheduleSave(); updateWelcome(); };
+board.onChange = () => { scheduleSave(); updateWelcome(); renderSideBar(); };
 $('#designName').addEventListener('change', scheduleSave);
 $('#designName').addEventListener('keydown', (e) => { if (e.key === 'Enter') e.target.blur(); });
 window.addEventListener('beforeunload', () => { if (saveTimer) saveNow(); });
@@ -217,18 +260,20 @@ document.addEventListener('visibilitychange', () => { if (document.hidden && sav
 
 async function newDesign() {
   if (saveTimer) await saveNow();
-  design = { id: store.newId(), name: 'Untitled design', created: Date.now(), updated: Date.now(), body: { ...body }, portfolio: false };
+  design = { id: store.newId(), name: 'Untitled design', created: Date.now(), updated: Date.now(), body: { ...body }, portfolio: false, fit: {} };
   welcomeDismissed = false;
   $('#designName').value = design.name;
   await board.loadLayers({});
+  renderSideBar();
   updatePortfolioBtn(); setMode('sketch'); updateWelcome();
 }
 async function openDesign(rec) {
   if (saveTimer) await saveNow();
-  design = { id: rec.id, name: rec.name, created: rec.created, updated: rec.updated, body: rec.body, portfolio: !!rec.portfolio, notes: rec.notes || '' };
+  design = { id: rec.id, name: rec.name, created: rec.created, updated: rec.updated, body: rec.body, portfolio: !!rec.portfolio, notes: rec.notes || '', fit: { ...(rec.fit || {}) } };
   if (rec.body) { body = { ...defaultBodySettings(), ...rec.body }; applyBody(false); }
   $('#designName').value = rec.name;
   await board.loadLayers({ ...(rec.layers || {}), fills: rec.fills });
+  renderSideBar();
   updatePortfolioBtn(); updateWelcome();
   if (mode === '3d') refresh3D();
   LS.set('last', rec.id);
@@ -392,7 +437,7 @@ $('#moreMenu').addEventListener('click', async (e) => {
   if (a === 'new') await newDesign();
   else if (a === 'open') $('#fileProject').click();
   else if (a === 'save') { await saveNow(); download(await store.toProjectFile({ ...design, body, layers: await board.layerBlobs(), fills: { ...board.fillFabric } }), safeName() + '.atelier'); }
-  else if (a === 'png') { const c = board.composite(BH, '#ffffff'); c.toBlob((b) => download(b, safeName() + '-sketch.png'), 'image/png'); }
+  else if (a === 'png') { const c = board.composite(BH, '#ffffff', board.side); c.toBlob((b) => download(b, safeName() + (board.side === 'back' ? '-back' : '') + '-sketch.png'), 'image/png'); }
   else if (a === 'shot') { if (mode !== '3d') setMode('3d'); setTimeout(async () => download(await (await fetch(viewer.screenshot())).blob(), safeName() + '-3d.png'), 120); }
   else if (a === 'glb') { if (mode !== '3d') setMode('3d'); try { download(await busy('Building the 3D model…', () => viewer.exportGLB()), safeName() + '.glb'); } catch (err) { toast('Could not export the 3D model: ' + (err.message || err)); } }
   else if (a === 'clear') { if (confirm('Clear everything on the board? You can undo this.')) { board.clearAll(); if (mode === '3d') refresh3D(); } }

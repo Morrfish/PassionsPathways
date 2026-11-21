@@ -26,31 +26,46 @@ function densify(keys, fields, sub) {
 }
 
 // Build a tube through rings. pointFn(ring, cos, sin) returns [x, y, z].
-function loft(rings, pointFn, { capStart = false, capEnd = false, uvFn = null } = {}) {
+// With texFn (the drawing point each vertex came from) and uvMap(point, half), the front half
+// (z >= 0) and back half get their own vertices so each can show its own drawing.
+function loft(rings, pointFn, { capStart = false, capEnd = false, texFn = null, uvMap = null } = {}) {
   const pos = [], uv = [], idx = [];
-  rings.forEach((r) => {
-    for (let j = 0; j < SEG; j++) {
-      const t = (j / SEG) * Math.PI * 2, p = pointFn(r, Math.cos(t), Math.sin(t));
-      pos.push(p[0], p[1], p[2]);
-      if (uvFn) { const q = uvFn(p, r); uv.push(q[0], q[1]); }
+  if (texFn) {
+    const H = SEG / 2, cols = H + 1;
+    for (const half of [0, 1]) {
+      const base = pos.length / 3;
+      rings.forEach((r) => {
+        for (let j = 0; j <= H; j++) {
+          const t = ((half * H + j) / SEG) * Math.PI * 2, c = Math.cos(t), s = Math.sin(t), p = pointFn(r, c, s);
+          pos.push(p[0], p[1], p[2]);
+          const q = uvMap(texFn(r, c, s), half); uv.push(q[0], q[1]);
+        }
+      });
+      for (let i = 0; i < rings.length - 1; i++) for (let j = 0; j < H; j++) {
+        const a = base + i * cols + j, b = a + 1, c = a + cols, d = c + 1;
+        idx.push(a, c, b, b, c, d);
+      }
     }
-  });
-  for (let i = 0; i < rings.length - 1; i++) for (let j = 0; j < SEG; j++) {
-    const a = i * SEG + j, b = i * SEG + ((j + 1) % SEG), c = (i + 1) * SEG + j, d = (i + 1) * SEG + ((j + 1) % SEG);
-    idx.push(a, c, b, b, c, d);
+  } else {
+    rings.forEach((r) => {
+      for (let j = 0; j < SEG; j++) { const t = (j / SEG) * Math.PI * 2, p = pointFn(r, Math.cos(t), Math.sin(t)); pos.push(p[0], p[1], p[2]); }
+    });
+    for (let i = 0; i < rings.length - 1; i++) for (let j = 0; j < SEG; j++) {
+      const a = i * SEG + j, b = i * SEG + ((j + 1) % SEG), c = (i + 1) * SEG + j, d = (i + 1) * SEG + ((j + 1) % SEG);
+      idx.push(a, c, b, b, c, d);
+    }
+    const addCap = (ri, flip) => {
+      const base = ri * SEG; let cx = 0, cy = 0, cz = 0;
+      for (let j = 0; j < SEG; j++) { cx += pos[(base + j) * 3]; cy += pos[(base + j) * 3 + 1]; cz += pos[(base + j) * 3 + 2]; }
+      const ci = pos.length / 3; pos.push(cx / SEG, cy / SEG, cz / SEG);
+      for (let j = 0; j < SEG; j++) { const a = base + j, b = base + ((j + 1) % SEG); if (flip) idx.push(ci, b, a); else idx.push(ci, a, b); }
+    };
+    if (capStart) addCap(0, false);
+    if (capEnd) addCap(rings.length - 1, true);
   }
-  const addCap = (ri, flip) => {
-    const base = ri * SEG; let cx = 0, cy = 0, cz = 0;
-    for (let j = 0; j < SEG; j++) { cx += pos[(base + j) * 3]; cy += pos[(base + j) * 3 + 1]; cz += pos[(base + j) * 3 + 2]; }
-    const ci = pos.length / 3; pos.push(cx / SEG, cy / SEG, cz / SEG);
-    if (uvFn) { const q = uvFn([cx / SEG, cy / SEG, cz / SEG]); uv.push(q[0], q[1]); }
-    for (let j = 0; j < SEG; j++) { const a = base + j, b = base + ((j + 1) % SEG); if (flip) idx.push(ci, b, a); else idx.push(ci, a, b); }
-  };
-  if (capStart) addCap(0, false);
-  if (capEnd) addCap(rings.length - 1, true);
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-  if (uvFn) g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  if (texFn) g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
   g.setIndex(idx);
   g.computeVertexNormals();
   return g;
@@ -87,7 +102,7 @@ export class Viewer {
     this.bodyGroup = new THREE.Group(); this.figure.add(this.bodyGroup);
     this.garmentGroup = new THREE.Group(); this.figure.add(this.garmentGroup);
     this.clothGroup = new THREE.Group(); scene.add(this.clothGroup);
-    this.cloth = null;
+    this.cloths = [];
     this.move = { angle: 0, x: 0, spin: false, sway: false, breeze: false, twirl: null, home: null, t: 0 };
     this.last = performance.now();
     this.skinMat = new THREE.MeshStandardMaterial({ color: '#efe8dc', roughness: 0.55 });
@@ -176,21 +191,23 @@ export class Viewer {
   toWorld(px, py) { const b = this.box; return [b.x0 + px / this.BW * b.w, b.y0 + (1 - py / this.BH) * b.h]; }
   uvOf(p) { const b = this.box; return [(p[0] - b.x0) / b.w, (p[1] - b.y0) / b.h]; }
 
-  // Light gray front view of the mannequin, used as the drawing guide on the sketch board.
-  renderGuide(w, h) {
+  // Light gray view of the mannequin from the front or back, used as the drawing guide.
+  renderGuide(w, h, side = 'front') {
     const b = this.box, cam = new THREE.OrthographicCamera(b.x0, b.x0 + b.w, b.y0 + b.h, b.y0, -10, 10);
-    cam.position.set(0, 0, 5); cam.lookAt(0, 0, 0);
+    cam.position.set(0, 0, side === 'back' ? -5 : 5); cam.lookAt(0, 0, 0);
+    const oldRot = this.figure.rotation.y, oldX = this.figure.position.x; this.figure.rotation.y = 0; this.figure.position.x = 0; this.clothGroup.visible = false;
     const rt = new THREE.WebGLRenderTarget(w, h, { samples: 4 });
     const oldBg = this.scene.background, oldEnv = this.scene.environment;
     this.scene.background = null; this.scene.environment = null;
     this.garmentGroup.visible = false; this.stage.visible = false;
-    const head = new THREE.DirectionalLight('#ffffff', 2.2); head.position.set(0.3, 0.6, 3); this.scene.add(head);
+    const head = new THREE.DirectionalLight('#ffffff', 2.2); head.position.set(0.3, 0.6, side === 'back' ? -3 : 3); this.scene.add(head);
     this.scene.overrideMaterial = new THREE.MeshLambertMaterial({ color: '#c9c2bb' });
     const r = this.renderer, oldTone = r.toneMapping; r.toneMapping = THREE.NoToneMapping;
     r.setRenderTarget(rt); r.setClearColor(0x000000, 0); r.clear(); r.render(this.scene, cam); r.setRenderTarget(null);
     r.toneMapping = oldTone;
     this.scene.overrideMaterial = null; this.scene.remove(head);
-    this.scene.background = oldBg; this.scene.environment = oldEnv; this.garmentGroup.visible = true; this.stage.visible = true;
+    this.scene.background = oldBg; this.scene.environment = oldEnv; this.garmentGroup.visible = true; this.stage.visible = true; this.clothGroup.visible = true;
+    this.figure.rotation.y = oldRot; this.figure.position.x = oldX;
     const px = new Uint8Array(w * h * 4); r.readRenderTargetPixels(rt, 0, 0, w, h, px); rt.dispose();
     const c = document.createElement('canvas'); c.width = w; c.height = h;
     const img = c.getContext('2d').createImageData(w, h);
@@ -200,21 +217,24 @@ export class Viewer {
   }
 
   // ---------- garment ----------
-  // colorCanvas: what the garment looks like (front view). matCanvas: G = roughness, B = metalness.
-  setDesign(colorCanvas, matCanvas, alphaGrid) {
-    if (!this.colorTex || this.colorTex.image !== colorCanvas) {
+  // atlas: { color, mat } canvases twice the board width: the front drawing on the left half and
+  // the back (as seen from behind) on the right half. grid: where the front drawing has fabric.
+  setDesign(atlas, grid) {
+    if (!this.colorTex || this.colorTex.image !== atlas.color) {
       this.colorTex?.dispose(); this.matTex?.dispose();
-      this.colorTex = new THREE.CanvasTexture(colorCanvas); this.colorTex.colorSpace = THREE.SRGBColorSpace;
+      this.colorTex = new THREE.CanvasTexture(atlas.color); this.colorTex.colorSpace = THREE.SRGBColorSpace;
       this.colorTex.anisotropy = this.renderer.capabilities.getMaxAnisotropy();
-      this.matTex = new THREE.CanvasTexture(matCanvas);
+      this.matTex = new THREE.CanvasTexture(atlas.mat);
       this.garmentMats.forEach((m) => m.dispose());
       const mk = (side) => new THREE.MeshPhysicalMaterial({ map: this.colorTex, roughnessMap: this.matTex, metalnessMap: this.matTex, roughness: 1, metalness: 1, transparent: true, alphaTest: 0.04, side });
       this.garmentMats = [mk(THREE.BackSide), mk(THREE.FrontSide)];
     }
     this.colorTex.needsUpdate = true; this.matTex.needsUpdate = true;
-    this.grid = alphaGrid;
+    this.grid = grid;
     this.buildGarment();
   }
+  // Fit changes in cm: { bust, waist, hip, hem, length, sleeve, inseam }.
+  setFit(fit) { this.fit = { ...(fit || {}) }; }
 
   opaque(x, y) {
     const g = this.grid; if (!g) return false;
@@ -232,43 +252,85 @@ export class Viewer {
     if (l === null || r === null) return null;
     return { l: walk(l, -1), r: walk(r, 1) };
   }
+  // Opaque run through (x, y) along direction (dx, dy): distances to each edge.
+  runAlong(x, y, dx, dy, reach) {
+    const step = this.box.w / this.grid.w * 0.999, at = (t) => this.opaque(x + dx * t, y + dy * t);
+    if (!at(0)) return null;
+    const walk = (dir) => { let t = 0, miss = 0, last = 0; while (Math.abs(t) < reach) { t += dir * step; if (at(t)) { last = t; miss = 0; } else if (++miss > 3) break; } return last; };
+    return { l: walk(-1), r: walk(1) };
+  }
+  // A drawn line down the middle below the crotch means trousers (an inseam), not a skirt.
+  splitAt(y) {
+    const g = this.grid; if (!g.lines) return false;
+    for (let x = -0.02; x <= 0.02; x += 0.004) { const [px, py] = this.toBoard(x, y), c = Math.floor(py / g.step) * g.w + Math.floor(px / g.step); if (g.lines[c]) return true; }
+    return false;
+  }
+  // Texture coordinates for a drawing point, on the front or back half of the texture.
+  texUV(p, half) { const [u, v] = this.uvOf(p); return half ? [0.5 + (1 - u) * 0.5, v] : [u * 0.5, v]; }
 
   buildGarment() {
     for (const m of this.garmentGroup.children) m.geometry.dispose();
     this.garmentGroup.clear();
-    if (!this.grid || !this.grid.any) { this.measure = null; return; }
-    const spec = this.spec, eps = 0.007, uvFn = (p) => this.uvOf(p);
+    const oldCloths = this.cloths || [];
+    this.cloths = [];
+    const finish = () => {
+      for (const c of oldCloths) if (!this.cloths.includes(c)) { c.meshes.forEach((m) => this.clothGroup.remove(m)); c.cloth.geometry.dispose(); }
+      this.clothFabric = this.cloths[0]?.fabric || null;
+    };
+    if (!this.grid || !this.grid.any) { this.measure = null; finish(); return; }
+    const spec = this.spec, eps = 0.007, fit = this.fit || {}, H = spec.H, cm = (v) => (+v || 0) / 100;
     const smooth = (arr, f) => arr.map((r, i) => { const a = arr[Math.max(0, i - 1)], c = arr[Math.min(arr.length - 1, i + 1)]; return { ...r, [f]: (a[f] + 2 * r[f] + c[f]) / 4 }; });
-    // Center shell: torso rings top to bottom, then rings below the crotch while a skirt continues.
     const legAt = (y) => { const L = this.denseLeg; if (y > L[0].y) return null; for (let i = 0; i < L.length - 1; i++) if (y <= L[i].y && y >= L[i + 1].y) { const t = (L[i].y - y) / (L[i].y - L[i + 1].y); return { x: L[i].x + (L[i + 1].x - L[i].x) * t, r: L[i].r + (L[i + 1].r - L[i].r) * t }; } return L[L.length - 1]; };
+    const torsoAt = (y) => { const T = this.denseTorso; for (let i = 0; i < T.length - 1; i++) if (y >= T[i].y && y <= T[i + 1].y) { const t = (y - T[i].y) / (T[i + 1].y - T[i].y); return { a: T[i].a + (T[i + 1].a - T[i].a) * t, b: T[i].b + (T[i + 1].b - T[i].b) * t }; } return null; };
     // The shape a skirt hangs from at height y: the torso, or both legs together, whichever is wider.
     const baseAt = (y, torso) => {
       const lg = legAt(y), la = lg ? lg.x + lg.r : 0, lb = lg ? lg.r * 1.15 : 0;
       return { a: Math.max(torso ? torso.a : 0, la) + eps, b: Math.max(torso ? torso.b : 0, lb) + eps };
     };
-    const rows = [];
     const flare = (y, base, reach, bodyA) => {
       const run = this.runAt(y, 0, reach);
       let a = base.a, b = base.b, cx = 0;
       if (run) { const hw = (run.r - run.l) / 2; if (hw > a) { b += (hw - a) * 0.95; a = hw; cx = (run.l + run.r) / 2; } }
-      return { y, a, b, cx, body: bodyA, hit: !!run };
+      return { y, a, b, cx, body: bodyA, base: base.a, hit: !!run };
     };
+    // Interpolate between two rings (all their numbers, and the drawing ring they came from).
+    const lerpRow = (A, B, t) => {
+      const out = { hit: true };
+      for (const k of Object.keys(A)) if (typeof A[k] === 'number') out[k] = A[k] + (B[k] - A[k]) * t;
+      if (A.o) { out.o = {}; for (const k of Object.keys(A.o)) out.o[k] = A.o[k] + (B.o[k] - A.o[k]) * t; }
+      return out;
+    };
+    // Even spacing of about 2 cm for cloth rows (fewer points, same shape).
+    const resample = (part) => {
+      const len = Math.hypot(part[0].y - part[part.length - 1].y, (part[0].d || 0) - (part[part.length - 1].d || 0) * 0);
+      const n = Math.max(6, Math.min(48, Math.round(len / 0.022))), out = [{ ...part[0] }];
+      for (let i = 1; i <= n; i++) {
+        const f = (i / n) * (part.length - 1), j = Math.min(part.length - 2, Math.floor(f));
+        out.push(lerpRow(part[j], part[j + 1], f - j));
+      }
+      return out;
+    };
+    const keep = (rows) => rows.forEach((r) => { r.o = {}; for (const k of Object.keys(r)) if (typeof r[k] === 'number') r.o[k] = r[k]; });
+
+    // ---- center: bodice down to the hem ----
+    const underbust = (spec.y.bust + spec.y.waist) / 2;
+    const rows = [];
     for (const r of [...this.denseTorso].reverse()) {
       if (r.y > spec.y.neckTop) continue;
-      if (r.y >= spec.y.waist) { rows.push({ y: r.y, a: r.a + eps, b: r.b + eps, cx: 0, body: r.a }); continue; }
+      if (r.y >= underbust) { rows.push({ y: r.y, a: r.a + eps, b: r.b + eps, cx: 0, body: r.a, base: r.a + eps, hit: this.opaque(0, r.y) }); continue; }
       rows.push(flare(r.y, baseAt(r.y, r), r.a * 1.1, r.a));
     }
     // Below the crotch: does a skirt keep going?
-    const stepY = spec.H * 0.008;
+    const stepY = H * 0.008;
     let hemY = null, miss = 0;
-    for (let y = rows[rows.length - 1].y - stepY; y > spec.H * 0.005; y -= stepY) {
-      const base = baseAt(y, null), row = flare(y, base, base.a * 0.9, base.a - eps);
-      if (!row.hit) { if (++miss > 2) break; continue; }
+    for (let y = rows[rows.length - 1].y - stepY; y > H * 0.005; y -= stepY) {
+      const base = baseAt(y, null), row = flare(y, base, 0.035, base.a - eps); // must cover the middle (not just two trouser legs)
+      if (!row.hit || this.splitAt(y)) { if (++miss > 2) break; continue; }
       miss = 0; rows.push(row); hemY = y;
     }
-    // Fabric hangs down from the hips: below hip level the skirt never gets narrower.
+    // Fabric hangs down from the hips: below hip level a skirt never gets narrower.
     let maxA = 0, maxB = 0;
-    for (const r of rows) {
+    if (hemY !== null) for (const r of rows) {
       if (r.y > spec.y.hip) continue;
       if (r.a < maxA) { r.cx = r.cx * (r.a / maxA); r.a = maxA; }
       if (r.b < maxB) r.b = maxB;
@@ -278,68 +340,140 @@ export class Viewer {
     let center = rows;
     for (let k = 0; k < 3; k++) center = smooth(smooth(center, 'a'), 'b');
     for (let k = 0; k < 6; k++) center = smooth(center, 'cx');
-    const inset = (p, r) => this.uvOf([r && r.cx !== undefined ? r.cx + (p[0] - r.cx) * 0.975 : p[0], p[1]]);
-    const ringPoint = (r, c, s) => { const x = r.cx + r.a * c; const bz = r.a - eps > r.body * 1.2 ? 0 : spec.bulge(r.y, x - r.cx, r.body, s); return [x, r.y, r.b * s + bz]; };
-    // Skirts and dresses: from the waist down the fabric is real cloth that hangs and moves.
-    let rigid = center, keepCloth = false;
-    const dropCloth = () => { for (const m of this.clothGroup.children) m.geometry.dispose(); this.clothGroup.clear(); this.cloth = null; this.clothKey = null; };
-    if (hemY === null) dropCloth();
-    else {
-      let top = center.findIndex((r) => r.y <= spec.y.waist); if (top < 0) top = 0;
-      let end = center.length - 1; while (end > top && !center[end].hit) end--;
-      if (end - top >= 3) {
-        rigid = center.slice(0, top + 1);
-        const part = center.slice(top, end + 1), y0 = part[0].y, y1 = part[part.length - 1].y;
-        const n = Math.max(8, Math.min(48, Math.round((y0 - y1) / 0.022)));
-        const at = (y) => { for (let i = 0; i < part.length - 1; i++) if (y <= part[i].y && y >= part[i + 1].y) { const t = (part[i].y - y) / ((part[i].y - part[i + 1].y) || 1), A = part[i], B = part[i + 1]; return { y, a: A.a + (B.a - A.a) * t, b: A.b + (B.b - A.b) * t, cx: A.cx + (B.cx - A.cx) * t, body: A.body + (B.body - A.body) * t }; } return { ...part[part.length - 1], y }; };
-        const rings = Array.from({ length: n + 1 }, (_, i) => at(y0 + (y1 - y0) * i / n));
-        rings[0] = { ...part[0] };
-        const fabric = this.dominantFabric(rings), phys = drapeFor(fabric);
-        // Same shape and fabric as before (only colors changed): keep the cloth as it is.
-        const key = fabric + '|' + rings.map((r) => [r.y, r.a, r.b, r.cx].map((v) => v.toFixed(3)).join(',')).join(';');
-        if (this.cloth && key === this.clothKey) { keepCloth = true; } else {
-        dropCloth();
-        this.clothKey = key;
-        this.clothFabric = fabric;
-        const cloth = this.cloth = new Cloth({ rings, phys, uvFn: inset, pointFn: ringPoint, collide: this.makeCollider() });
-        cloth.frame = { angle: this.move.angle, x: this.move.x, z: 0 };
-        cloth.wind = this.move.breeze ? 2.2 : 0;
-        cloth.settle(90); cloth.sync();
-        for (const [i, mat] of this.garmentMats.entries()) {
-          const m = new THREE.Mesh(cloth.geometry, mat); m.castShadow = i === 1; m.receiveShadow = true; m.renderOrder = 1 + i; m.userData.garment = true; m.frustumCulled = false; this.clothGroup.add(m);
-        }
-        this.wake();
-        }
-      } else dropCloth();
+    keep(center);
+    const covered = (r) => r.hit || this.opaque(0, r.o.y);
+    let topIdx = center.findIndex(covered), botIdx = -1;
+    for (let i = center.length - 1; i >= 0; i--) if (covered(center[i])) { botIdx = i; break; }
+
+    // ---- fit changes (from edited measurements) ----
+    const minA = (r) => Math.min(r.o.a, r.body + eps * 0.6);
+    const ease = (h, d) => { if (!d) return; for (const r of center) { const w = Math.exp(-Math.pow((r.o.y - h) / (0.045 * H), 2)), da = d / (2 * Math.PI) * w; r.a = Math.max(minA(r), r.a + da); r.b = Math.max(r.o.b * 0.6, r.b + da); } };
+    ease(spec.y.bust, cm(fit.bust)); ease(spec.y.waist, cm(fit.waist)); ease(spec.y.hip, cm(fit.hip));
+    const bottomY = botIdx >= 0 ? center[botIdx].o.y : spec.y.waist;
+    if (fit.hem && bottomY < spec.y.hip - 0.02) for (const r of center) {
+      if (r.o.y > spec.y.hip) continue;
+      const t = Math.min(1, (spec.y.hip - r.o.y) / (spec.y.hip - bottomY)), da = cm(fit.hem) / (2 * Math.PI) * t;
+      r.a = Math.max(minA(r), r.a + da); r.b = Math.max(r.o.b * 0.6, r.b + da);
     }
-    void keepCloth;
-    const centerGeo = loft(rigid, ringPoint, { uvFn: inset });
-    const geos = [centerGeo];
+    if (fit.length && botIdx > topIdx) {
+      const anchor = bottomY < spec.y.waist - 0.05 * H ? spec.y.waist : underbust, L = anchor - bottomY;
+      if (L > 0.02) {
+        const k = Math.max(0.25, (L + cm(fit.length)) / L);
+        for (const r of center) if (r.o.y < anchor) {
+          r.y = Math.max(0.012, anchor - (anchor - r.o.y) * k);
+          const base = baseAt(r.y, torsoAt(r.y)); if (r.a < base.a) r.a = base.a; if (r.b < base.b) r.b = base.b;
+        }
+      }
+    }
+    const ell = (r, c, s) => { const x = r.cx + r.a * c; const bz = r.a - eps > r.body * 1.2 ? 0 : spec.bulge(r.y, x - r.cx, r.body, s); return [x, r.y, r.b * s + bz]; };
+    const ellTex = (r, c) => [r.o.cx + r.o.a * c * 0.975, r.o.y];
+    const uvMap = (p, half) => this.texUV(p, half);
+
+    // ---- cloth pieces ----
+    const addCloth = (name, rings, opts) => {
+      const fabric = this.dominantFabric(rings, opts.texFn), phys = { ...drapeFor(fabric), ...(opts.phys || {}) };
+      const key = name + '|' + fabric + '|' + rings.map((r) => [r.y, r.a, r.b, r.cx || 0, r.d || 0, r.off || 0].map((v) => v.toFixed(3)).join(',')).join(';');
+      const old = oldCloths.find((c) => c.key === key);
+      if (old) { old.meshes.forEach((m, i) => { m.material = this.garmentMats[i]; }); this.cloths.push(old); return; }
+      const cloth = new Cloth({ rings, uvMap, ...opts, phys });
+      cloth.frame = { angle: this.move.angle, x: this.move.x, z: 0 };
+      cloth.wind = this.move.breeze ? 2.2 : 0;
+      cloth.settle(opts.settle || 90); cloth.sync();
+      const meshes = this.garmentMats.map((mat, i) => { const m = new THREE.Mesh(cloth.geometry, mat); m.castShadow = i === 1; m.receiveShadow = true; m.renderOrder = 1 + i; m.userData.garment = true; m.frustumCulled = false; this.clothGroup.add(m); return m; });
+      this.cloths.push({ key, cloth, meshes, fabric });
+      this.wake();
+    };
+    // Skirts, dresses and loose tops: from where the fabric stands away from the body.
+    const idxOf = (y) => { const i = center.findIndex((r) => r.o.y <= y); return i < 0 ? 0 : i; };
+    const iBust = idxOf(spec.y.bust), iWaist = idxOf(spec.y.waist);
+    const flareIdx = center.findIndex((r, i) => i >= iBust && r.hit && r.a - r.base > (hemY !== null ? 0.012 : 0.025));
+    let cTop = -1;
+    if (hemY !== null) cTop = flareIdx >= 0 ? Math.max(iBust, Math.min(flareIdx - 2, iWaist)) : iWaist;
+    else if (flareIdx >= 0 && botIdx - flareIdx >= 3 && bottomY > spec.y.crotch + 0.02 * H) cTop = Math.max(iBust, flareIdx - 2);
+    // Trousers: the hip section stops at the crotch; the legs take over below.
+    const yc = spec.y.crotch - 0.05 * H, trousers = hemY === null && (this.splitAt(yc) || (!this.opaque(0, yc) && (this.opaque(-spec.legX, yc) || this.opaque(spec.legX, yc))));
+    let rigid = trousers ? center.filter((r) => r.o.y >= spec.y.crotch + 0.012 * H) : center;
+    if (cTop >= 0 && botIdx - cTop >= 3 && !trousers) {
+      rigid = center.slice(0, cTop + 1);
+      addCloth('center', resample(center.slice(cTop, botIdx + 1)), { pointFn: ell, texFn: ellTex, collide: this.makeCollider(true) });
+    }
+    const geos = [];
+    if (rigid.length > 1) geos.push(loft(rigid, ell, { texFn: ellTex, uvMap }));
     const skirtAt = (y) => hemY !== null && y >= hemY - stepY;
-    // Legs (trousers): follow each leg, widen for flares where no skirt covers it.
+
+    // ---- legs (trousers) ----
+    const legPt = (r, c, s) => [r.cx + r.a * c, r.y, r.b * s];
+    const legMeasure = [];
     for (const side of [-1, 1]) {
-      const lrows = this.denseLeg.map((r) => {
-        let rr = r.r + eps, x = side * r.x;
-        if (!skirtAt(r.y) && r.y < spec.y.crotch) { const run = this.runAt(r.y, x, r.r * 1.3); if (run && !this.opaque(0, r.y)) { const hw = (run.r - run.l) / 2; if (hw > rr) { rr = hw; x = (run.l + run.r) / 2; } } }
-        return { y: r.y, r: rr, x };
+      let lrows = this.denseLeg.map((r) => {
+        let rr = r.r + eps, x = side * r.x, hit = false;
+        if (!skirtAt(r.y) && r.y < spec.y.crotch) { const run = this.runAt(r.y, x, r.r * 1.3); if (run && (!this.opaque(0, r.y) || this.splitAt(r.y))) { hit = true; if (side < 0) run.r = Math.min(run.r, -0.004); else run.l = Math.max(run.l, 0.004); const hw = (run.r - run.l) / 2; if (hw > rr) { rr = hw; x = (run.l + run.r) / 2; } } }
+        return { y: r.y, a: rr, b: rr * 0.96, cx: x, body: r.r, base: r.r + eps, hit };
       });
-      geos.push(loft(smooth(lrows, 'r'), (r, c, s) => [r.x + r.r * c, r.y, r.r * 0.96 * s], { uvFn }));
+      // Trouser legs start as wide as the trousers are at the crotch (no lip under the hips).
+      const firstLeg = lrows.find((r) => r.hit);
+      if (firstLeg && trousers) {
+        const hipEnd = rigid[rigid.length - 1];
+        for (const r of lrows) {
+          if (r.y < spec.y.crotch - 0.03 * H) break;
+          if (firstLeg.a > r.a) { r.a = firstLeg.a; r.b = firstLeg.b; r.cx = firstLeg.cx; }
+          // Line the leg's outer edge and depth up with the bottom of the hip section.
+          if (hipEnd) { r.a = Math.max(r.a, hipEnd.a / 2 + 0.012); r.cx = side * Math.max(Math.abs(r.cx), hipEnd.a + 0.002 - r.a); r.b = Math.max(r.b, hipEnd.b * 0.92); }
+        }
+      }
+      lrows = smooth(smooth(lrows, 'a'), 'b'); lrows.forEach((r) => { r.b = Math.max(r.b, r.a * 0.9); });
+      keep(lrows);
+      let last = -1; lrows.forEach((r, i) => { if (r.hit) last = i; });
+      if (last >= 0 && fit.inseam) {
+        const cr = spec.y.crotch, L = cr - lrows[last].o.y, k = Math.max(0.2, (L + cm(fit.inseam)) / L);
+        for (const r of lrows) if (r.o.y < cr) { r.y = Math.max(0.01, cr - (cr - r.o.y) * k); const lg = legAt(r.y); if (lg && r.a < lg.r + eps) { r.a = lg.r + eps; r.b = Math.max(r.b, r.a * 0.96); } }
+      }
+      if (last >= 0) legMeasure.push(lrows[last].y);
+      const legTex = (r, c) => [r.o.cx + r.o.a * c * 0.975, r.o.y];
+      const flared = lrows.some((r) => r.hit && r.a - r.base > 0.015);
+      if (flared && last >= 3) addCloth('leg' + side, resample(lrows.slice(0, last + 1)), { pointFn: legPt, texFn: legTex, centerFn: (r) => [r.cx, r.y, 0], collide: this.makeCollider(true), settle: 70, phys: { hang: 0.97 } });
+      else geos.push(loft(lrows, legPt, { texFn: legTex, uvMap }));
     }
-    // Sleeves follow the arms.
+
+    // ---- sleeves ----
+    let sleeveLen = null;
     for (const side of [-1, 1]) {
-      geos.push(loft(this.denseArm, (r, c, s) => { const p = this.armPoint(side, r.d), rr = r.r + eps * 0.8 + Math.max(0, 1 - r.d / (spec.H * 0.06)) * 0.012; const ux = Math.cos(ARM_ANGLE), uy = Math.sin(ARM_ANGLE) * side; return [p.x + rr * c * ux * side, p.y + rr * c * uy * side, rr * 0.94 * s]; }, { uvFn }));
+      const px = side * Math.cos(ARM_ANGLE), py = Math.sin(ARM_ANGLE);
+      let arows = this.denseArm.map((r) => {
+        const p = this.armPoint(side, r.d), bodyR = r.r + eps * 0.8 + Math.max(0, 1 - r.d / (H * 0.06)) * 0.012;
+        let a = bodyR, off = 0, hit = this.opaque(p.x, p.y);
+        if (r.d > H * 0.07) { const run = this.runAlong(p.x, p.y, px, py, 0.16); if (run) { const hw = (run.r - run.l) / 2; if (hw > a) { a = hw; off = (run.l + run.r) / 2; } } }
+        return { d: r.d, y: p.y, a, b: bodyR * 0.94 + (a - bodyR), off, body: bodyR, base: bodyR, hit };
+      });
+      arows = smooth(smooth(smooth(arows, 'a'), 'b'), 'off');
+      keep(arows);
+      let last = -1; arows.forEach((r, i) => { if (r.hit) last = i; });
+      if (last >= 0 && fit.sleeve) {
+        const dEnd = Math.max(0.03, arows[last].o.d), k = Math.max(0.1, (dEnd + cm(fit.sleeve)) / dEnd);
+        for (const r of arows) { r.d = r.o.d * k; r.y = this.armPoint(side, r.d).y; }
+      }
+      if (side === 1 && last >= 0 && arows[last].d > 0.03) sleeveLen = arows[last].d;
+      const armPt = (r, c, s) => { const p = this.armPoint(side, r.d), cx = p.x + px * r.off, cy = p.y + py * r.off; return [cx + px * r.a * c, cy + py * r.a * c, r.b * s]; };
+      const armTex = (r, c) => { const o = r.o, p = this.armPoint(side, o.d), t = o.off + o.a * c * 0.975; return [p.x + px * t, p.y + py * t]; };
+      // Only long, flared sleeves flow (bell and bishop sleeves); short sleeves stay fitted.
+      const flared = arows.some((r) => r.hit && r.a - r.base > 0.022) && arows[last]?.o.d > H * 0.16;
+      if (flared && last >= 4) addCloth('sleeve' + side, resample(arows.slice(0, last + 1)), { pointFn: armPt, texFn: armTex, centerFn: (r) => { const p = this.armPoint(side, r.d); return [p.x + px * r.off, p.y + py * r.off, 0]; }, collide: this.makeCollider(false), seg: 48, settle: 70 });
+      else geos.push(loft(arows, armPt, { texFn: armTex, uvMap }));
     }
+
     for (const g of geos) for (const [i, mat] of this.garmentMats.entries()) {
       const m = new THREE.Mesh(g, mat); m.castShadow = i === 1; m.renderOrder = 1 + i; m.userData.garment = true; this.garmentGroup.add(m);
     }
-    this.measure = this.measureGarment(center, hemY);
+    finish();
+    this.lastRows = center;
+    this.measure = this.measureGarment(center, covered, legMeasure, sleeveLen);
   }
 
-  // The fabric used most in the skirt part, which decides how it drapes.
-  dominantFabric(rings) {
+  // The fabric used most in a cloth piece, which decides how it drapes.
+  dominantFabric(rings, texFn) {
     const g = this.grid, count = {};
     for (const r of rings) for (let k = -10; k <= 10; k++) {
-      const x = r.cx + r.a * k / 10.5, [px, py] = this.toBoard(x, r.y), c = Math.floor(py / g.step) * g.w + Math.floor(px / g.step);
+      const [x, y] = texFn(r, k / 10.5, 0), [px, py] = this.toBoard(x, y), c = Math.floor(py / g.step) * g.w + Math.floor(px / g.step);
       if (c < 0 || c >= g.data.length || !g.data[c]) continue;
       const f = g.fabricOf ? g.fabricOf(g.ids[c]) : 'cotton'; count[f] = (count[f] || 0) + 1;
     }
@@ -348,17 +482,17 @@ export class Viewer {
   }
 
   // Keeps cloth points outside the mannequin (hips, legs, arms), in the mannequin's own coordinates.
-  makeCollider() {
+  makeCollider(withTorso) {
     const spec = this.spec, T = this.denseTorso, L = this.denseLeg, m = 0.009;
     const torsoAt = (y) => { for (let i = 0; i < T.length - 1; i++) if (y >= T[i].y && y <= T[i + 1].y) { const t = (y - T[i].y) / (T[i + 1].y - T[i].y); return { a: T[i].a + (T[i + 1].a - T[i].a) * t, b: T[i].b + (T[i + 1].b - T[i].b) * t }; } return null; };
     const legAt = (y) => { if (y > L[0].y) return null; for (let i = 0; i < L.length - 1; i++) if (y <= L[i].y && y >= L[i + 1].y) { const t = (L[i].y - y) / (L[i].y - L[i + 1].y); return { x: L[i].x + (L[i + 1].x - L[i].x) * t, r: L[i].r + (L[i + 1].r - L[i].r) * t }; } return { x: L[L.length - 1].x, r: L[L.length - 1].r }; };
     const arms = [-1, 1].map((side) => { const a = this.armPoint(side, 0.02), b = this.armPoint(side, spec.armLen + spec.H * 0.07); return { ax: a.x, ay: a.y, bx: b.x, by: b.y, r: spec.upperR * 0.9 + m }; });
-    const yTop = spec.y.waist + 0.03;
+    const yTop = withTorso ? spec.y.bust + 0.02 : spec.y.waist;
     return (P, o) => {
       let x = P[o], y = P[o + 1], z = P[o + 2];
       if (y < 0.004) { P[o + 1] = y = 0.004; }
       if (y <= yTop) {
-        const r = torsoAt(y);
+        const r = withTorso ? torsoAt(y) : null;
         if (r) {
           const s = Math.max(-1, Math.min(1, z / r.b)), bz = spec.bulge(y, x, r.a, s), a = r.a + m, b = r.b + m, zz = z - bz;
           const d = (x / a) * (x / a) + (zz / b) * (zz / b);
@@ -366,8 +500,8 @@ export class Viewer {
         }
         const lg = legAt(y);
         if (lg) for (const side of [-1, 1]) {
-          const cx = side * lg.x, dx = x - cx, r = lg.r + m, d2 = dx * dx + z * z;
-          if (d2 < r * r) { const d = Math.sqrt(d2) || 1e-6; x = cx + dx / d * r; z = z / d * r; P[o] = x; P[o + 2] = z; }
+          const cx = side * lg.x, dx = x - cx, rr = lg.r + m, d2 = dx * dx + z * z;
+          if (d2 < rr * rr) { const d = Math.sqrt(d2) || 1e-6; x = cx + dx / d * rr; z = z / d * rr; P[o] = x; P[o + 2] = z; }
         }
       }
       for (const A of arms) {
@@ -378,30 +512,26 @@ export class Viewer {
     };
   }
 
-  // Garment measurements in cm, worked out from the shell.
-  measureGarment(center, hemY) {
-    const spec = this.spec, at = (y) => center.reduce((best, r) => Math.abs(r.y - y) < Math.abs(best.y - y) ? r : best, center[0]);
-    const covered = (y) => this.opaque(0, y) || !!this.runAt(y, 0, spec.half.hip);
-    const circ = (y) => { if (!covered(y)) return null; const r = at(y); return ellipsePerimeter(r.a, r.b) * 100; };
-    // Top and bottom of the garment along the body's center line.
-    let top = null, bottom = null;
-    for (let y = spec.y.neckTop; y > 0; y -= spec.H * 0.004) { if (covered(y)) { if (top === null) top = y; bottom = y; } }
-    let legBottom = null;
-    for (let y = spec.y.crotch; y > 0; y -= spec.H * 0.004) { const x = this.denseLeg[0].x; if (this.runAt(y, x, 0.08) && !covered(y)) legBottom = y; }
-    const out = {
+  // Garment measurements in cm, from the garment as it is now (including fit changes).
+  measureGarment(center, covered, legBottoms, sleeveLen) {
+    const spec = this.spec, rows = center.filter(covered);
+    if (!rows.length) return null;
+    const near = (y) => { let best = null; for (const r of rows) if (!best || Math.abs(r.y - y) < Math.abs(best.y - y)) best = r; return best && Math.abs(best.y - y) < spec.H * 0.03 ? best : null; };
+    const circ = (y) => { const r = near(y); return r ? ellipsePerimeter(r.a, r.b) * 100 : null; };
+    const top = rows[0], bottom = rows[rows.length - 1];
+    return {
       bust: circ(spec.y.bust), waist: circ(spec.y.waist), hip: circ(spec.y.hip),
-      length: top !== null ? (top - bottom) * 100 : null,
-      hem: hemY !== null ? circ(hemY) : (bottom !== null && bottom > spec.y.crotch ? circ(bottom) : null),
-      inseam: legBottom !== null ? (spec.y.crotch - legBottom) * 100 : null,
+      // Trousers: length runs from the waist to the bottom of the legs.
+      length: (top.y - Math.min(bottom.y, ...(legBottoms.length ? legBottoms : [bottom.y]))) * 100,
+      lengthIsLegs: legBottoms.length > 0 && Math.min(...legBottoms) < bottom.y - 0.02,
+      hem: bottom.o.y < spec.y.waist ? ellipsePerimeter(bottom.a, bottom.b) * 100 : null,
+      sleeve: sleeveLen !== null ? sleeveLen * 100 : null,
+      inseam: legBottoms.length ? (spec.y.crotch - Math.min(...legBottoms)) * 100 : null,
     };
-    // Sleeve length: how far along the arm the drawing reaches.
-    let sleeve = null;
-    for (let d = 0; d <= this.spec.armLen; d += 0.005) { const p = this.armPoint(1, d); if (this.opaque(p.x, p.y)) sleeve = d; else if (sleeve !== null && d - sleeve > 0.03) break; }
-    out.sleeve = sleeve !== null ? sleeve * 100 : null;
-    return out;
   }
 
-  // Board pixel under a screen point, if it lands on the garment.
+  // What part of which drawing is under a screen point, if it lands on the garment.
+  // Returns { side: 'front' | 'back', x, y } in board pixels (the back as drawn, seen from behind).
   pick(clientX, clientY) {
     const rect = this.renderer.domElement.getBoundingClientRect();
     const ndc = new THREE.Vector2(((clientX - rect.left) / rect.width) * 2 - 1, -((clientY - rect.top) / rect.height) * 2 + 1);
@@ -410,9 +540,9 @@ export class Viewer {
     for (const h of hits) {
       if (!h.object.userData.garment) return null;
       if (!h.uv) continue;
-      const px = h.uv.x * this.BW, py = (1 - h.uv.y) * this.BH, g = this.grid;
-      const cell = g.data[Math.floor(py / g.step) * g.w + Math.floor(px / g.step)];
-      if (cell) return [Math.round(px), Math.round(py)];
+      const back = h.uv.x >= 0.5, x = back ? (h.uv.x - 0.5) * 2 * this.BW : h.uv.x * 2 * this.BW, y = (1 - h.uv.y) * this.BH, g = this.grid;
+      const fx = back ? this.BW - x : x, cell = g.data[Math.floor(y / g.step) * g.w + Math.floor(fx / g.step)];
+      if (cell) return { side: back ? 'back' : 'front', x: Math.round(x), y: Math.round(y) };
     }
     return null;
   }
@@ -426,7 +556,7 @@ export class Viewer {
   // ---------- movement ----------
   setAutoRotate(on) { this.move.spin = on; if (on) this.move.home = null; this.wake(); }
   setSway(on) { this.move.sway = on; this.move.t = 0; this.wake(); }
-  setBreeze(on) { this.move.breeze = on; if (this.cloth) this.cloth.wind = on ? 2.2 : 0; this.wake(); }
+  setBreeze(on) { this.move.breeze = on; for (const c of this.cloths) c.cloth.wind = on ? 2.2 : 0; this.wake(); }
   twirl() { this.move.twirl = { t: 0, from: this.move.angle }; this.move.spin = false; this.wake(); }
   wake() { this.clothAwake = 240; }
   updateMotion(dt) {
@@ -445,15 +575,16 @@ export class Viewer {
     }
     m.angle = angle; m.x = x;
     this.figure.rotation.y = angle; this.figure.position.x = x;
-    const c = this.cloth;
-    if (!c) return;
+    if (!this.cloths.length) return;
     const busy = m.spin || m.sway || m.breeze || m.twirl || m.home !== null;
     if (busy) this.clothAwake = 240;
     if (this.clothAwake > 0) {
-      c.setFrame(angle, x, 0);
-      const sub = 2; let moved = 0;
-      for (let k = 0; k < sub; k++) moved = c.step(Math.max(1 / 240, dt / sub));
-      c.sync();
+      let moved = 0;
+      for (const { cloth: c } of this.cloths) {
+        c.setFrame(angle, x, 0);
+        for (let k = 0; k < 2; k++) moved = Math.max(moved, c.step(Math.max(1 / 240, dt / 2)));
+        c.sync();
+      }
       if (!busy && moved < 2e-5) this.clothAwake--;
     }
   }

@@ -79,6 +79,16 @@ input, select { font: inherit; color: inherit; }
 .viewbtns button.on { background: var(--accent-soft); color: var(--accent); }
 .hint3d { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); background: rgba(43,34,40,.78); color: #fff; padding: 7px 14px; border-radius: 999px; font-size: 13px; pointer-events: none; white-space: nowrap; }
 
+.sidebar-top { position: absolute; top: 12px; left: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; max-width: calc(100% - 24px); pointer-events: none; }
+.sidebar-top > * { pointer-events: auto; }
+.seg.small { background: var(--surface); box-shadow: var(--shadow); }
+.seg.small button { padding: 6px 14px; }
+.side-note { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 6px 10px; font-size: 12.5px; color: var(--ink-2); }
+.meas-in { width: 70px; border: 1px solid var(--line); border-radius: 7px; padding: 3px 6px; text-align: right; font: inherit; font-weight: 600; background: var(--surface); }
+.meas-in:focus { outline: none; border-color: var(--accent); }
+.changed { color: var(--accent); font-weight: 700; }
+#fitReset { margin-top: 8px; }
+
 /* ---------- side panel ---------- */
 .panel { width: var(--panel-w); flex: none; background: var(--surface); border-left: 1px solid var(--line); overflow-y: auto; padding: 12px 14px 30px; }
 .panel-grip { display: none; }

@@ -1,4 +1,4 @@
-// The sketch board: a front-view drawing area with three layers
+// The sketch board: front and back drawing areas, each with three layers
 //   color - fabric and color fills (what the garment looks like)
 //   mat   - hidden layer telling 3D how shiny/metallic each spot is (G = roughness, B = metalness)
 //   lines - the drawing's outlines, always on top
@@ -12,10 +12,13 @@ export class Board {
   constructor(canvas) {
     this.el = canvas;
     this.ctx = canvas.getContext('2d');
-    this.color = mk(); this.mat = mk(); this.lines = mk();
-    this.cx = { color: this.color.getContext('2d', { willReadFrequently: true }), mat: this.mat.getContext('2d', { willReadFrequently: true }), lines: this.lines.getContext('2d', { willReadFrequently: true }) };
-    this.tex = mk();
-    this.guide = null; this.guideOpacity = 0.55; this.showGuide = true;
+    const sideLayers = () => { const L = { color: mk(), mat: mk(), lines: mk() }; L.cx = Object.fromEntries(['color', 'mat', 'lines'].map((n) => [n, L[n].getContext('2d', { willReadFrequently: true })])); return L; };
+    // The back is drawn as seen from behind. Until it is edited it mirrors the front.
+    this.sides = { front: sideLayers(), back: sideLayers() };
+    this.backLinked = true;
+    this.useSide('front');
+    this.texF = mk(); this.texB = mk(); this.atlas = mk(BW * 2, BH); this.atlasMat = mk(BW * 2, BH);
+    this.guides = { front: null, back: null }; this.guideOpacity = 0.55; this.showGuide = true;
     this.tool = 'fill';
     this.paint = { color: '#e85d8a', fabric: 'cotton', scale: 0.7 };
     this.brushSize = 14; this.gap = 2; this.eraseTarget = 'color';
@@ -33,6 +36,21 @@ export class Board {
     loop();
   }
 
+  get guide() { return this.guides[this.side]; }
+  useSide(name) { const L = this.sides[name]; this.side = name; this.color = L.color; this.mat = L.mat; this.lines = L.lines; this.cx = L.cx; this.dirty = true; }
+  // Copy the front, mirrored, onto the back (what the back looks like while it matches the front).
+  mirrorFrontToBack() {
+    const F = this.sides.front, B = this.sides.back;
+    for (const n of ['color', 'mat', 'lines']) { const c = B.cx[n]; c.save(); c.setTransform(-1, 0, 0, 1, BW, 0); c.globalCompositeOperation = 'copy'; c.drawImage(F[n], 0, 0); c.restore(); }
+  }
+  setSide(name) {
+    if (name === this.side) return;
+    if (this.place) this.cancelPlace();
+    if (name === 'back' && this.backLinked) this.mirrorFrontToBack();
+    this.useSide(name);
+  }
+  // Make the back match the front again.
+  linkBack() { this.backLinked = true; this.mirrorFrontToBack(); this.undoStack = this.undoStack.filter((e) => e.side !== 'back'); this.redoStack = []; this.changed(); }
   resize() {
     const p = this.el.parentElement, dpr = Math.min(2, window.devicePixelRatio || 1);
     const w = p.clientWidth, h = p.clientHeight; if (!w || !h) return;
@@ -164,12 +182,15 @@ export class Board {
   }
 
   // ---------- history ----------
-  begin(names) { this.snap = { names, data: Object.fromEntries(names.map((n) => [n, this.cx[n].getImageData(0, 0, BW, BH)])) }; }
+  begin(names) {
+    // The first change on the back makes it its own drawing.
+    if (this.side === 'back' && this.backLinked) { this.mirrorFrontToBack(); this.backLinked = false; }
+    this.snap = { names, data: Object.fromEntries(names.map((n) => [n, this.cx[n].getImageData(0, 0, BW, BH)])) }; }
   commit(rect) {
     const s = this.snap; this.snap = null; if (!s || !rect) return;
     const x = Math.max(0, Math.floor(rect.x0)), y = Math.max(0, Math.floor(rect.y0)), w = Math.min(BW, Math.ceil(rect.x1) + 1) - x, h = Math.min(BH, Math.ceil(rect.y1) + 1) - y;
     if (w <= 0 || h <= 0) return;
-    const entry = { x, y, w, h, layers: {} };
+    const entry = { x, y, w, h, side: this.side, layers: {} };
     for (const n of s.names) {
       const before = new ImageData(w, h), src = s.data[n].data;
       for (let r = 0; r < h; r++) before.data.set(src.subarray(((y + r) * BW + x) * 4, ((y + r) * BW + x + w) * 4), r * w * 4);
@@ -179,8 +200,8 @@ export class Board {
     this.redoStack = [];
     this.changed();
   }
-  undo() { const e = this.undoStack.pop(); if (!e) return; for (const [n, l] of Object.entries(e.layers)) this.cx[n].putImageData(l.before, e.x, e.y); this.redoStack.push(e); this.changed(); }
-  redo() { const e = this.redoStack.pop(); if (!e) return; for (const [n, l] of Object.entries(e.layers)) this.cx[n].putImageData(l.after, e.x, e.y); this.undoStack.push(e); this.changed(); }
+  undo() { const e = this.undoStack.pop(); if (!e) return; if (e.side !== this.side) this.setSide(e.side); for (const [n, l] of Object.entries(e.layers)) this.cx[n].putImageData(l.before, e.x, e.y); this.redoStack.push(e); this.changed(); }
+  redo() { const e = this.redoStack.pop(); if (!e) return; if (e.side !== this.side) this.setSide(e.side); for (const [n, l] of Object.entries(e.layers)) this.cx[n].putImageData(l.after, e.x, e.y); this.undoStack.push(e); this.changed(); }
   changed() { this.dirty = true; this.onHistory(this.undoStack.length, this.redoStack.length); this.onChange(); }
   resetHistory() { this.undoStack = []; this.redoStack = []; this.onHistory(0, 0); }
 
@@ -390,12 +411,13 @@ export class Board {
     const c = this.cx.lines; c.save(); c.strokeStyle = '#1c181e'; c.lineWidth = 4; c.lineCap = 'round'; c.lineJoin = 'round'; fn(c); c.restore();
     this.commit({ x0: 0, y0: 0, x1: BW - 1, y1: BH - 1 });
   }
-  hasColor() { const d = this.cx.color.getImageData(0, 0, BW, BH).data; for (let i = 3; i < d.length; i += 64) if (d[i] > 10) return true; return false; }
-  hasLines() { const d = this.cx.lines.getImageData(0, 0, BW, BH).data; for (let i = 3; i < d.length; i += 32) if (d[i] > 90) return true; return false; }
+  hasColor(side = 'front') { const d = this.sides[side].cx.color.getImageData(0, 0, BW, BH).data; for (let i = 3; i < d.length; i += 64) if (d[i] > 10) return true; return false; }
+  hasLines(side = 'front') { const d = this.sides[side].cx.lines.getImageData(0, 0, BW, BH).data; for (let i = 3; i < d.length; i += 32) if (d[i] > 90) return true; return false; }
   // Garment texture for 3D: color with the outlines drawn on top (only where there is fabric).
   // The outer outline is left off so it does not smear along the sides of the 3D garment.
-  textureCanvas() {
-    const ci = this.cx.color.getImageData(0, 0, BW, BH), li = this.cx.lines.getImageData(0, 0, BW, BH), c = ci.data, l = li.data;
+  sideTexture(side) {
+    const L = this.sides[side], out = side === 'front' ? this.texF : this.texB;
+    const ci = L.cx.color.getImageData(0, 0, BW, BH), li = L.cx.lines.getImageData(0, 0, BW, BH), c = ci.data, l = li.data;
     const outside = new Uint8Array(BW * BH);
     for (let i = 0; i < BW * BH; i++) outside[i] = c[i * 4 + 3] < 20 ? 1 : 0;
     const edge = dilate(outside, BW, BH, 5);
@@ -404,41 +426,59 @@ export class Board {
       if (!a || c[o + 3] < 20 || edge[i]) continue;
       c[o] = c[o] * (1 - a) + l[o] * a; c[o + 1] = c[o + 1] * (1 - a) + l[o + 1] * a; c[o + 2] = c[o + 2] * (1 - a) + l[o + 2] * a;
     }
-    this.tex.getContext('2d').putImageData(ci, 0, 0);
-    return this.tex;
+    out.getContext('2d').putImageData(ci, 0, 0);
+    return out;
+  }
+  // 3D textures: front on the left half, back (as seen from behind) on the right half.
+  textureAtlas() {
+    const a = this.atlas.getContext('2d'), m = this.atlasMat.getContext('2d'), F = this.sides.front, B = this.sides.back;
+    const front = this.sideTexture('front');
+    a.clearRect(0, 0, BW * 2, BH); m.clearRect(0, 0, BW * 2, BH);
+    a.drawImage(front, 0, 0); m.drawImage(F.mat, 0, 0);
+    if (this.backLinked) {
+      a.save(); a.setTransform(-1, 0, 0, 1, BW * 2, 0); a.drawImage(front, 0, 0); a.restore();
+      m.save(); m.setTransform(-1, 0, 0, 1, BW * 2, 0); m.drawImage(F.mat, 0, 0); m.restore();
+    } else { a.drawImage(this.sideTexture('back'), BW, 0); m.drawImage(B.mat, BW, 0); }
+    return { color: this.atlas, mat: this.atlasMat };
   }
   // Coarse grid of where the garment is (used to shape the 3D garment).
   // ids: which fill each cell belongs to; fabricOf(id) names its fabric.
   alphaGrid(step = 4) {
-    const d = this.cx.color.getImageData(0, 0, BW, BH).data, m = this.cx.mat.getImageData(0, 0, BW, BH).data;
-    const w = BW / step, h = BH / step, g = new Uint8Array(w * h), ids = new Uint8Array(w * h);
+    const F = this.sides.front.cx, d = F.color.getImageData(0, 0, BW, BH).data, m = F.mat.getImageData(0, 0, BW, BH).data, ld = F.lines.getImageData(0, 0, BW, BH).data;
+    const w = BW / step, h = BH / step, g = new Uint8Array(w * h), ids = new Uint8Array(w * h), lines = new Uint8Array(w * h);
+    for (let i = 3; i < ld.length; i += 4) if (ld[i] > 90) { const p = (i - 3) / 4, x = p % BW, y = (p / BW) | 0; lines[((y / step) | 0) * w + ((x / step) | 0)] = 1; }
     let any = false;
     for (let y = 0; y < BH; y++) for (let x = 0; x < BW; x++) {
       const o = (y * BW + x) * 4; if (d[o + 3] <= 20) continue;
       const c = ((y / step) | 0) * w + ((x / step) | 0); g[c] = 1; any = true; if (m[o + 3] === 255) ids[c] = m[o];
     }
     const fills = this.fillFabric;
-    return { data: g, ids, w, h, step, any, fabricOf: (id) => fills[id] || 'cotton' };
+    return { data: g, ids, lines, w, h, step, any, fabricOf: (id) => fills[id] || 'cotton' };
   }
-  composite(maxH = 600, background = '#fffdfa') {
+  composite(maxH = 600, background = '#fffdfa', side = 'front') {
     const k = maxH / BH, c = mk(Math.round(BW * k), maxH), x = c.getContext('2d');
     x.fillStyle = background; x.fillRect(0, 0, c.width, c.height);
-    x.drawImage(this.color, 0, 0, c.width, c.height); x.drawImage(this.lines, 0, 0, c.width, c.height);
+    const L = this.sides[side];
+    x.drawImage(L.color, 0, 0, c.width, c.height); x.drawImage(L.lines, 0, 0, c.width, c.height);
     return c;
   }
   async layerBlobs() {
     const b = (c) => new Promise((r) => c.toBlob(r, 'image/png'));
-    return { color: await b(this.color), mat: await b(this.mat), lines: await b(this.lines) };
+    const F = this.sides.front, B = this.sides.back, out = { color: await b(F.color), mat: await b(F.mat), lines: await b(F.lines) };
+    if (!this.backLinked) { out.bcolor = await b(B.color); out.bmat = await b(B.mat); out.blines = await b(B.lines); }
+    return out;
   }
   async loadLayers(src) {
-    for (const n of ['color', 'mat', 'lines']) {
-      this.cx[n].clearRect(0, 0, BW, BH);
-      if (!src[n]) continue;
-      const bmp = await createImageBitmap(src[n]);
-      this.cx[n].drawImage(bmp, 0, 0, BW, BH);
+    for (const [side, pre] of [['front', ''], ['back', 'b']]) for (const n of ['color', 'mat', 'lines']) {
+      const c = this.sides[side].cx[n]; c.clearRect(0, 0, BW, BH);
+      if (!src[pre + n]) continue;
+      const bmp = await createImageBitmap(src[pre + n]);
+      c.drawImage(bmp, 0, 0, BW, BH);
     }
-    let maxId = 0; const md = this.cx.mat.getImageData(0, 0, BW, BH).data;
-    for (let i = 0; i < md.length; i += 4) if (md[i + 3] && md[i] > maxId) maxId = md[i];
+    this.backLinked = !(src.bcolor || src.blines);
+    this.useSide('front');
+    let maxId = 0;
+    for (const side of ['front', 'back']) { const md = this.sides[side].cx.mat.getImageData(0, 0, BW, BH).data; for (let i = 0; i < md.length; i += 4) if (md[i + 3] && md[i] > maxId) maxId = md[i]; }
     this.fillId = maxId;
     this.fillFabric = { ...(src.fills || {}) };
     this.resetHistory(); this.dirty = true;
