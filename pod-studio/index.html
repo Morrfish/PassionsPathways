@@ -104,6 +104,7 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
   <div class="logo">P</div>
   <h1>Pathway Pod Studio</h1>
   <button class="btn ghost small" id="newBtn" title="Start a new show">New show</button>
+  <button class="btn ghost small" id="voicesBtn">🎙 Voices</button>
   <button class="btn ghost small" id="settingsBtn">Settings &amp; keys</button>
 </header>
 
@@ -162,7 +163,7 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
           <input id="optAudience" placeholder="e.g. parents of new students"></div>
         <div><label for="optLang">Language</label>
           <select id="optLang"><option value="en">English</option><option value="es">Spanish</option><option value="fr">French</option><option value="de">German</option><option value="pt">Portuguese</option></select></div>
-        <div><label for="optHosts">Host names (comma separated)</label>
+        <div><label for="optHosts">Host names (comma separated; put your name first to host in your own cloned voice)</label>
           <input id="optHosts" placeholder="Maya, Jordan"></div>
         <div><label for="optShow">Show name (optional)</label>
           <input id="optShow" placeholder="Leave blank and the AI will suggest one"></div>
@@ -301,17 +302,53 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
     <p class="note">Get one at <a href="https://platform.claude.com" target="_blank" rel="noopener">platform.claude.com</a> → API keys.</p>
     <label for="keyEleven">ElevenLabs API key (optional: real human-sounding MP3s)</label>
     <input id="keyEleven" type="password" placeholder="xi-..." autocomplete="off">
-    <p class="note">Without it you can still listen with your browser's built-in voices.</p>
-    <div class="grid">
-      <div><label for="voiceA">Voice ID, host 1</label><input id="voiceA" placeholder="21m00Tcm4TlvDq8ikWAM"></div>
-      <div><label for="voiceB">Voice ID, host 2</label><input id="voiceB" placeholder="pNInz6obpgDQGcFmaJgB"></div>
-      <div><label for="voiceC">Voice ID, host 3</label><input id="voiceC" placeholder="EXAVITQu4vr4xnSDxMaL"></div>
-    </div>
+    <p class="note">Without it you can still listen with your browser's built-in voices. With it you can also clone your own voice (the "Voices" button at the top).</p>
+    <label for="ttsModel">AI voice engine</label>
+    <select id="ttsModel">
+      <option value="eleven_multilingual_v2">Steady and consistent (Multilingual v2)</option>
+      <option value="eleven_v3">Most lifelike: laughs, sighs, emotion (v3)</option>
+    </select>
     <label for="themeSel">Theme</label>
     <select id="themeSel"><option value="">Match my device</option><option value="light">Light</option><option value="dark">Dark</option></select>
     <div class="row" style="margin-top:16px;justify-content:flex-end">
       <button class="btn" value="save" id="saveSettings">Save</button>
     </div>
+  </form>
+</dialog>
+
+<dialog id="voices">
+  <form method="dialog">
+    <div class="row" style="justify-content:space-between"><h2 style="margin:0">Voices</h2><button class="btn ghost small" value="close">Done</button></div>
+    <p class="note">Needs your ElevenLabs API key (Settings &amp; keys).</p>
+
+    <h3>Who speaks for each host</h3>
+    <div id="hostVoices"></div>
+    <div class="row" style="margin-top:8px"><button type="button" class="btn ghost small" id="loadVoicesBtn">Load voices from my ElevenLabs account</button></div>
+    <div class="status" id="hostVoiceStatus"></div>
+
+    <h3>Clone my voice</h3>
+    <p class="note">Record 1 to 3 minutes of yourself reading in a quiet room, about a hand's width from the mic. More clean audio makes a more lifelike voice. Talk the way you would on the show.</p>
+    <details>
+      <summary class="note" style="cursor:pointer">Something to read while you record</summary>
+      <p class="note" id="readText" style="white-space:pre-wrap;border-left:3px solid var(--accent);padding-left:10px">Hi, and welcome to the show! I'm really glad you're here. Today we're going to dig into something I care a lot about, and I think you will too.
+You know that feeling when something finally clicks? When you've been stuck on a problem for days, and then, out of nowhere, it all makes sense? That's what this podcast is about. Real people, real questions, and the small steps that get us from "I have no idea" to "Oh, I've got this."
+Now, I'll be honest. Not every idea works the first time. Some of mine have failed spectacularly! But every one of them taught me something. So grab a coffee, take a walk, or just sit back, and let's figure it out together.
+Ready? Let's go.</p>
+    </details>
+    <div class="grid">
+      <div><label for="cloneName">Voice name</label><input id="cloneName" placeholder="e.g. My voice"></div>
+      <div><label for="cloneFor">Use it for</label><select id="cloneFor"></select></div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button type="button" class="btn" id="recBtn">● Record</button>
+      <span class="note" id="recTime"></span>
+      <label class="btn ghost small" style="margin:0;font-weight:650">Upload audio<input type="file" id="cloneFiles" accept="audio/*,video/mp4" multiple class="hidden"></label>
+    </div>
+    <div id="samples" style="margin-top:8px"></div>
+    <label style="display:flex;gap:8px;align-items:flex-start;font-weight:400"><input type="checkbox" id="cloneNoise" checked style="width:auto;margin-top:4px"> Remove background noise from my samples</label>
+    <label style="display:flex;gap:8px;align-items:flex-start;font-weight:400"><input type="checkbox" id="cloneConsent" style="width:auto;margin-top:4px"> This is my own voice, or I have the speaker's written permission to clone it.</label>
+    <div class="row" style="margin-top:10px"><button type="button" class="btn" id="cloneBtn">Create my voice</button></div>
+    <div class="status" id="cloneStatus"></div>
   </form>
 </dialog>
 
@@ -361,8 +398,8 @@ function lockSteps(){
 $("#steps").addEventListener("click", e => { const b = e.target.closest("button"); if(b && !b.disabled) show(b.dataset.step); });
 
 /* ---------- settings dialog ---------- */
-const keyFields = {keyClaude:"claude", keyEleven:"eleven", voiceA:"voiceA", voiceB:"voiceB", voiceC:"voiceC", themeSel:"theme"};
-$("#settingsBtn").onclick = () => { for(const [id,k] of Object.entries(keyFields)) $("#"+id).value = settings[k] || ""; $("#settings").showModal(); };
+const keyFields = {keyClaude:"claude", keyEleven:"eleven", ttsModel:"ttsModel", themeSel:"theme"};
+$("#settingsBtn").onclick = () => { for(const [id,k] of Object.entries(keyFields)) $("#"+id).value = settings[k] || $("#"+id).options?.[0]?.value || ""; $("#settings").showModal(); };
 $("#saveSettings").onclick = () => { for(const [id,k] of Object.entries(keyFields)) settings[k] = $("#"+id).value.trim(); store.set("settings", settings); applyTheme(); };
 $("#newBtn").onclick = () => { if(project && !confirm("Start a new show? The current one will be cleared from this browser.")) return; project = null; audio = {}; save(); lockSteps(); show("source"); };
 
@@ -542,7 +579,7 @@ async function writeEpisode(i, onProgress){
   const others = p.episodes.map((x,j) => `${j+1}. ${x.title}${j===i ? "  ← this one" : ""}`).join("\n");
   let chars = 0;
   const text = await ask({
-    system:`You are a podcast scriptwriter. You write scripts that sound like real people talking: contractions, short sentences, reactions ("Right!", "Wait, really?"), the occasional light joke, and clear takeaways. Never use stage directions, sound-effect cues, markdown or emoji inside spoken lines. Only use facts from the fact sheet.`,
+    system:`You are a podcast scriptwriter. You write scripts that sound like real people talking: contractions, short sentences, reactions ("Right!", "Wait, really?"), the occasional light joke, and clear takeaways. ${isV3() ? 'You may add a few voice cues in square brackets that a voice actor would perform, such as [laughs], [chuckles], [sighs], [excited], [thoughtful], [whispers] — at most one every few lines, never other stage directions.' : 'Never use stage directions or bracketed cues.'} Never use sound-effect cues, markdown or emoji inside spoken lines. Only use facts from the fact sheet.`,
     output_config:{effort:"medium", format:{type:"json_schema", schema:EP_SCHEMA}},
     messages:[{role:"user", content:
 `Show: ${p.show.title} — ${p.show.tagline}
@@ -621,7 +658,10 @@ function renderStudio(){
   const a = audio[current];
   $("#epAudio").classList.toggle("hidden", !a); $("#mp3Link").classList.toggle("hidden", !a);
   if(a){ $("#epAudio").src = a.url; $("#mp3Link").href = a.url; $("#mp3Link").download = fileName(current); }
-  $("#audioNote").textContent = settings.eleven ? "" : "Add an ElevenLabs key in Settings to make MP3s.";
+  if(settings.eleven){
+    const vs = allVoices(), ids = hostVoiceIds();
+    $("#audioNote").textContent = "MP3 voices: " + project.hosts.map((h,i) => `${h} = ${(vs.find(v => v.id===ids[i])?.name || "custom voice").replace("⭐ ","")}`).join(", ") + " (change in 🎙 Voices)";
+  } else $("#audioNote").textContent = "Add an ElevenLabs key in Settings to make MP3s, or to clone your voice.";
 }
 function autoGrow(t){ t.style.height = "auto"; t.style.height = (t.scrollHeight+2)+"px"; }
 $("#epSide").addEventListener("click", e => { const b = e.target.closest("[data-i]"); if(!b) return; stopSpeech(); current = +b.dataset.i; renderStudio(); });
@@ -679,7 +719,7 @@ $("#playBtn").onclick = () => {
     $$(".line").forEach((x,k) => x.classList.toggle("playing", k===j));
     $(`.line[data-j="${j}"]`)?.scrollIntoView({block:"nearest", behavior:"smooth"});
     const l = e.lines[j++];
-    const u = new SpeechSynthesisUtterance(l.text);
+    const u = new SpeechSynthesisUtterance(stripTags(l.text));
     if(voices[l.s]) u.voice = voices[l.s];
     u.lang = voices[l.s]?.lang || project.opts.lang;
     u.pitch = [1, 0.85, 1.1][l.s] ?? 1; u.rate = 1.02;
@@ -692,12 +732,15 @@ if("speechSynthesis" in window) speechSynthesis.onvoiceschanged = () => {};
 
 /* ElevenLabs MP3 */
 const DEFAULT_VOICES = ["21m00Tcm4TlvDq8ikWAM","pNInz6obpgDQGcFmaJgB","EXAVITQu4vr4xnSDxMaL"];
+const isV3 = () => settings.ttsModel === "eleven_v3";
+const stripTags = t => t.replace(/\[[^\]]{1,30}\]\s*/g, "");
 function fileName(i){ return `episode-${i+1}.mp3`; }
 async function tts(text, voice, prev, nextText){
   const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voice)}?output_format=mp3_44100_128`, {
     method:"POST", headers:{"xi-api-key":settings.eleven, "Content-Type":"application/json", "Accept":"audio/mpeg"},
-    body: JSON.stringify({text, model_id:"eleven_multilingual_v2", previous_text: prev || undefined, next_text: nextText || undefined,
-      voice_settings:{stability:0.45, similarity_boost:0.8, style:0.25, use_speaker_boost:true}})
+    body: JSON.stringify(isV3() ? {text, model_id:"eleven_v3", voice_settings:{stability:0.5}} :
+      {text, model_id:"eleven_multilingual_v2", previous_text: prev || undefined, next_text: nextText || undefined,
+       voice_settings:{stability:0.45, similarity_boost:0.8, style:0.25, use_speaker_boost:true}})
   });
   if(!r.ok){
     let msg = r.status===401 ? "Your ElevenLabs key was not accepted." : `ElevenLabs error ${r.status}`;
@@ -714,7 +757,7 @@ $("#renderBtn").onclick = async () => {
   const st = $("#studioStatus"), bar = $("#renderProg"); st.className = "status";
   if(!settings.eleven){ $("#settingsBtn").click(); st.className="status err"; st.textContent="Add your ElevenLabs API key in Settings to make MP3s."; return; }
   const i = current, e = project.episodes[i]; if(!e.lines.length) return;
-  const voices = [settings.voiceA, settings.voiceB, settings.voiceC].map((v,k) => v || DEFAULT_VOICES[k]);
+  const voices = hostVoiceIds();
   $("#renderBtn").disabled = true; bar.classList.remove("hidden");
   try{
     const parts = new Array(e.lines.length); let done = 0;
@@ -736,6 +779,137 @@ $("#renderBtn").onclick = async () => {
     renderStudio();
   }catch(err){ st.className="status err"; st.textContent = err.message; }
   finally{ $("#renderBtn").disabled = false; bar.classList.add("hidden"); }
+};
+
+/* ---------- voices: pick per host, clone your own ---------- */
+const PREMADE = [{id:"21m00Tcm4TlvDq8ikWAM", name:"Rachel (AI, calm)"}, {id:"pNInz6obpgDQGcFmaJgB", name:"Adam (AI, deep)"}, {id:"EXAVITQu4vr4xnSDxMaL", name:"Sarah (AI, warm)"}];
+const HOST_KEYS = ["voiceA","voiceB","voiceC"];
+function hostVoiceIds(){ return HOST_KEYS.map((k,i) => settings[k] || DEFAULT_VOICES[i]); }
+function allVoices(){
+  const seen = new Set(), out = [];
+  for(const v of [...(settings.myVoices||[]).map(v => ({...v, name:"⭐ "+v.name})), ...(settings.accountVoices||[]), ...PREMADE]) if(!seen.has(v.id)){ seen.add(v.id); out.push(v); }
+  return out;
+}
+function hostNames(){ const h = project?.hosts || []; return [0,1,2].map(i => h[i] || `Host ${i+1}`); }
+function renderVoices(){
+  const vs = allVoices(), names = hostNames(), ids = hostVoiceIds();
+  $("#hostVoices").innerHTML = names.map((n,i) => `
+    <div class="row" style="margin-bottom:6px">
+      <span style="min-width:110px;font-weight:650;color:var(--host-${"abc"[i]})">${esc(n)}</span>
+      <select data-hv="${i}" style="flex:1;min-width:160px">${vs.map(v => `<option value="${esc(v.id)}" ${v.id===ids[i]?"selected":""}>${esc(v.name)}</option>`).join("")}</select>
+      <button type="button" class="btn ghost small" data-prev="${i}">▶ Try</button>
+    </div>`).join("");
+  $("#cloneFor").innerHTML = names.map((n,i) => `<option value="${i}">${esc(n)}</option>`).join("") + '<option value="-1">Just save it</option>';
+}
+$("#voicesBtn").onclick = () => { renderVoices(); renderSamples(); $("#voices").showModal(); };
+$("#hostVoices").addEventListener("change", e => { const i = e.target.dataset.hv; if(i==null) return; settings[HOST_KEYS[+i]] = e.target.value; store.set("settings", settings); audio = {}; });
+let previewEl = null;
+$("#hostVoices").addEventListener("click", async e => {
+  const b = e.target.closest("[data-prev]"); if(!b) return;
+  const st = $("#hostVoiceStatus"); st.className = "status";
+  if(!settings.eleven){ st.className="status err"; st.textContent="Add your ElevenLabs key in Settings first."; return; }
+  const i = +b.dataset.prev, name = hostNames()[i];
+  b.disabled = true; st.innerHTML = '<span class="spin"></span>Making a sample…';
+  try{
+    const mp3 = await tts(`Hi, I'm ${name}. ${isV3() ? "[excited] " : ""}Welcome to the show. I'm so glad you're listening today!`, hostVoiceIds()[i]);
+    previewEl?.pause(); previewEl = new Audio(URL.createObjectURL(new Blob([mp3],{type:"audio/mpeg"}))); previewEl.play().catch(() => {}); st.textContent = "";
+  }catch(err){ st.className="status err"; st.textContent = err.message; }
+  finally{ b.disabled = false; }
+});
+$("#loadVoicesBtn").onclick = async () => {
+  const st = $("#hostVoiceStatus"); st.className = "status";
+  if(!settings.eleven){ st.className="status err"; st.textContent="Add your ElevenLabs key in Settings first."; return; }
+  st.innerHTML = '<span class="spin"></span>Loading…';
+  try{
+    const r = await fetch("https://api.elevenlabs.io/v1/voices", {headers:{"xi-api-key":settings.eleven}});
+    if(!r.ok) throw new Error(r.status===401 ? "Your ElevenLabs key was not accepted." : "ElevenLabs error "+r.status);
+    const j = await r.json();
+    settings.accountVoices = (j.voices||[]).map(v => ({id:v.voice_id, name: v.name + (v.category==="cloned"||v.category==="professional" ? " (your clone)" : "")}));
+    store.set("settings", settings); renderVoices(); st.className="status ok"; st.textContent = `Loaded ${settings.accountVoices.length} voices.`;
+  }catch(err){ st.className="status err"; st.textContent = err.message; }
+};
+
+/* recording + samples */
+let samples = [];      // {name, blob, url, seconds}
+let rec = null, recStream = null, recChunks = [], recStart = 0, recTimer = null;
+const MAX_TAKE = 120;  // seconds per take, keeps each file a safe upload size
+function renderSamples(){
+  const total = samples.reduce((a,x) => a + (x.seconds||0), 0);
+  $("#samples").innerHTML = samples.map((x,i) => `<div class="row" style="margin-bottom:4px"><audio controls src="${x.url}" style="height:34px;flex:1;min-width:180px"></audio><span class="note">${esc(x.name)}${x.seconds ? " · "+fmtSec(x.seconds) : ""}</span><button type="button" class="btn ghost small" data-rm="${i}">Remove</button></div>`).join("")
+    + (samples.length ? `<p class="note">Total: ${fmtSec(total)}${total < 60 ? " — aim for at least 1 minute" : " — good"}</p>` : "");
+}
+const fmtSec = s => `${Math.floor(s/60)}:${String(Math.round(s%60)).padStart(2,"0")}`;
+$("#samples").addEventListener("click", e => { const b = e.target.closest("[data-rm]"); if(!b) return; URL.revokeObjectURL(samples[+b.dataset.rm].url); samples.splice(+b.dataset.rm,1); renderSamples(); });
+// Turn any recording into a mono 16-bit WAV so the upload format is always accepted.
+async function toWav(blob){
+  const ac = new (window.AudioContext||window.webkitAudioContext)();
+  const buf = await ac.decodeAudioData(await blob.arrayBuffer()); ac.close();
+  const rate = 32000, len = Math.ceil(buf.duration*rate);
+  const off = new OfflineAudioContext(1, len, rate); const src = off.createBufferSource(); src.buffer = buf; src.connect(off.destination); src.start();
+  const d = (await off.startRendering()).getChannelData(0);
+  const out = new DataView(new ArrayBuffer(44 + d.length*2));
+  const w = (o,str) => [...str].forEach((c,i) => out.setUint8(o+i, c.charCodeAt(0)));
+  w(0,"RIFF"); out.setUint32(4, 36+d.length*2, true); w(8,"WAVE"); w(12,"fmt "); out.setUint32(16,16,true); out.setUint16(20,1,true); out.setUint16(22,1,true);
+  out.setUint32(24,rate,true); out.setUint32(28,rate*2,true); out.setUint16(32,2,true); out.setUint16(34,16,true); w(36,"data"); out.setUint32(40,d.length*2,true);
+  for(let i=0;i<d.length;i++){ const v = Math.max(-1, Math.min(1, d[i])); out.setInt16(44+i*2, v<0 ? v*0x8000 : v*0x7fff, true); }
+  return {blob: new Blob([out], {type:"audio/wav"}), seconds: buf.duration};
+}
+async function stopRec(){ if(rec && rec.state !== "inactive") rec.stop(); }
+$("#recBtn").onclick = async () => {
+  const st = $("#cloneStatus"); st.className = "status";
+  if(rec && rec.state === "recording"){ stopRec(); return; }
+  try{
+    recStream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false, noiseSuppression:false, autoGainControl:true, channelCount:1}});
+  }catch{ st.className="status err"; st.textContent = "I couldn't use your microphone. Allow microphone access for this page and try again."; return; }
+  recChunks = []; rec = new MediaRecorder(recStream);
+  rec.ondataavailable = e => e.data.size && recChunks.push(e.data);
+  rec.onstop = async () => {
+    clearInterval(recTimer); recStream.getTracks().forEach(t => t.stop());
+    $("#recBtn").textContent = "● Record"; $("#recTime").textContent = "";
+    try{
+      const {blob, seconds} = await toWav(new Blob(recChunks, {type: rec.mimeType}));
+      if(seconds < 3){ st.textContent = "That take was too short."; return; }
+      samples.push({name:`Take ${samples.length+1}.wav`, blob, url:URL.createObjectURL(blob), seconds}); renderSamples();
+    }catch(err){ st.className="status err"; st.textContent = "Couldn't read that recording: " + err.message; }
+  };
+  rec.start(1000); recStart = Date.now();
+  $("#recBtn").textContent = "■ Stop";
+  recTimer = setInterval(() => { const t = (Date.now()-recStart)/1000; $("#recTime").textContent = "Recording " + fmtSec(t) + " (max 2:00 per take)"; if(t >= MAX_TAKE) stopRec(); }, 250);
+};
+$("#cloneFiles").onchange = async e => {
+  for(const f of e.target.files){
+    let seconds = 0; try{ seconds = (await toWav(f)).seconds; }catch{}
+    samples.push({name:f.name, blob:f, url:URL.createObjectURL(f), seconds});
+  }
+  e.target.value = ""; renderSamples();
+};
+$("#cloneBtn").onclick = async () => {
+  const st = $("#cloneStatus"); st.className = "status err";
+  if(!settings.eleven){ st.textContent = "Add your ElevenLabs API key in Settings first."; return; }
+  if(!samples.length){ st.textContent = "Record or upload at least one sample."; return; }
+  if(!$("#cloneConsent").checked){ st.textContent = "Please confirm this is your voice, or that you have permission."; return; }
+  const name = $("#cloneName").value.trim() || "My voice";
+  const fd = new FormData();
+  fd.append("name", name);
+  fd.append("description", "Cloned in Pathway Pod Studio for podcast narration");
+  fd.append("remove_background_noise", $("#cloneNoise").checked ? "true" : "false");
+  samples.forEach(x => fd.append("files", x.blob, x.name));
+  $("#cloneBtn").disabled = true; st.className = "status"; st.innerHTML = '<span class="spin"></span>Creating your voice (this can take a minute)…';
+  try{
+    const r = await fetch("https://api.elevenlabs.io/v1/voices/add", {method:"POST", headers:{"xi-api-key":settings.eleven}, body:fd});
+    let j = {}; try{ j = await r.json(); }catch{}
+    if(!r.ok){
+      const m = j.detail?.message || (typeof j.detail === "string" ? j.detail : "");
+      throw new Error(r.status===401 ? "Your ElevenLabs key was not accepted." : /subscription|plan|tier|permission/i.test(m) ? "Your ElevenLabs plan doesn't include voice cloning. Instant Voice Cloning needs the Starter plan or higher. " + m : `ElevenLabs error ${r.status}${m ? ": "+m : ""}`);
+    }
+    settings.myVoices = [{id:j.voice_id, name}, ...(settings.myVoices||[]).filter(v => v.id !== j.voice_id)];
+    const forHost = +$("#cloneFor").value;
+    if(forHost >= 0) settings[HOST_KEYS[forHost]] = j.voice_id;
+    store.set("settings", settings); audio = {}; renderVoices();
+    st.className = "status ok";
+    st.textContent = `"${name}" is ready${forHost >= 0 ? " and speaks for " + hostNames()[forHost] : ""}. Press ▶ Try to hear it, then make your MP3s in step 3.` + (j.requires_verification ? " ElevenLabs asks you to verify this voice in your ElevenLabs account before using it." : "");
+  }catch(err){ st.className="status err"; st.textContent = err.message; }
+  finally{ $("#cloneBtn").disabled = false; }
 };
 
 /* ---------- step 4: cover + social ---------- */
