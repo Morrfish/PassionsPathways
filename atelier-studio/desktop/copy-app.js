@@ -15,7 +15,7 @@ fs.copyFileSync(path.join(src, 'assets', 'icon.ico'), path.join(__dirname, 'buil
 fs.writeFileSync(path.join(__dirname, 'build', 'license.txt'),
   'Atelier Studio - sketch, color and see fashion designs in 3D. By Passions Pathways.\r\n\r\n' +
   'Atelier Studio includes these open-source parts:\r\n' +
-  ' - three.js, MIT License\r\n - Electron, MIT License\r\n\r\n' +
+  ' - three.js, MIT License\r\n - jsPDF, MIT License\r\n - fflate, MIT License\r\n - Gradio JavaScript client, ISC License\r\n - Electron, MIT License\r\n\r\n' +
   'Their full license texts are installed with the app (licenses folder).\r\n\r\n' +
   'Your designs are kept on this computer. Use "Save design file" to keep a copy you can move to another computer.\r\n');
 console.log('app copied');

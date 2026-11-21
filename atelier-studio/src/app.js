@@ -8,6 +8,11 @@ import { STARTERS, drawStarter } from './starters.js';
 import { fileToCanvas, imageToCanvas, processSketch, colorAmount, contentBox } from './imageproc.js';
 import * as store from './store.js';
 import { icon, fillIcons } from './icons.js';
+import { garmentFacts, gradeFacts, draft, fabricPlan, supplies as listSupplies, sewingSteps, nearbySizes, FABRIC_PRICE, SUPPLY_PRICE, bbox } from './pattern.js';
+import { buildPDF, buildSVG, buildDXF, arrange } from './patternpdf.js';
+import { openWindowShopping } from './portfolio.js';
+import { startRunway } from './runway.js';
+import { AI_MODELS, makeAIModel } from './ai3d.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -73,7 +78,7 @@ $('#customBody').addEventListener('change', (e) => {
   bodyChanged();
 });
 $('#customReset').addEventListener('click', () => { body.custom = null; $('#customBody').innerHTML = ''; bodyChanged(); });
-function bodyChanged() { applyBody(true); scheduleSave(); }
+function bodyChanged() { viewerFresh = false; applyBody(true); scheduleSave(); }
 
 // ---------- measurements ----------
 function fmtNum(cm) { return units === 'in' ? (Math.round(cm / 2.54 * 4) / 4).toString() : (Math.round(cm * 2) / 2).toString(); }
@@ -204,9 +209,12 @@ function setMode(m) {
   LS.set('mode', m);
 }
 $$('.mode button').forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode)));
+// viewerFresh: the 3D garment matches the current drawings (so pictures of it are up to date).
+let viewerFresh = false;
 function refresh3D() {
   viewer.setFit(fit());
   viewer.setDesign(board.textureAtlas(), board.alphaGrid());
+  viewerFresh = true;
   renderMeasurements();
 }
 $('#viewBtns').addEventListener('click', (e) => {
@@ -243,16 +251,39 @@ viewer.setBackground(LS.get('bg', BGS[0]));
 // ---------- saving ----------
 let saveTimer = null;
 function scheduleSave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveNow, 1200); }
-async function saveNow() {
-  clearTimeout(saveTimer); if (!design) return;
-  design.updated = Date.now(); design.body = { ...body };
-  design.name = $('#designName').value.trim() || 'Untitled design';
-  const layers = await board.layerBlobs();
-  const thumb = await new Promise((r) => board.composite(360).toBlob(r, 'image/jpeg', 0.85));
-  try { await store.saveDesign({ ...design, layers, thumb, fills: { ...board.fillFabric }, fit: { ...fit() } }); LS.set('last', design.id); }
-  catch (e) { console.error(e); toast('Could not save on this device: ' + (e.message || e)); }
+// Saves run one at a time, and each one takes everything it needs at the moment it starts
+// (the design, its name and copies of the drawings) so switching designs mid-save is safe.
+let saving = Promise.resolve();
+function saveNow() {
+  clearTimeout(saveTimer); saveTimer = null;
+  if (!design) return saving;
+  const d = design;
+  d.updated = Date.now(); d.body = { ...body };
+  d.name = $('#designName').value.trim() || 'Untitled design';
+  const snap = board.snapshotLayers(), thumbCanvas = board.composite(360), fills = { ...board.fillFabric }, fitNow = { ...fit() };
+  // Portfolio pictures of the finished look, while the 3D garment is up to date.
+  let lookCanvases = null;
+  if (viewerFresh && viewer.measure) {
+    d.summary = { measure: { ...viewer.measure }, fabrics: designFabrics() };
+    if (d.portfolio) lookCanvases = [viewer.renderLook({ angle: 0 }), viewer.renderLook({ angle: Math.PI })];
+  }
+  const png = (c, type = 'image/png', q) => new Promise((r) => c.toBlob(r, type, q));
+  saving = saving.then(async () => {
+    const layers = await board.layerBlobs(snap), thumb = await png(thumbCanvas, 'image/jpeg', 0.85);
+    if (lookCanvases) { d.look = await png(lookCanvases[0]); d.lookBack = await png(lookCanvases[1]); }
+    await store.saveDesign({ ...d, layers, thumb, fills, fit: fitNow });
+    if (design === d) LS.set('last', d.id);
+  }).catch((e) => { console.error(e); toast('Could not save on this device: ' + (e.message || e)); });
+  return saving;
 }
-board.onChange = () => { scheduleSave(); updateWelcome(); renderSideBar(); };
+board.onChange = () => { viewerFresh = false; scheduleSave(); updateWelcome(); renderSideBar(); };
+function designFabrics() {
+  const pd = viewer.patternData; if (!pd) return [];
+  const ids = [...new Set([pd.fabrics.bodice, pd.fabrics.lower, pd.fabrics.sleeve, pd.fabrics.leg, ...viewer.cloths.map((c) => c.fabric)].filter(Boolean))];
+  return ids.map((id) => FABRIC_BY_ID[id]?.name || id);
+}
+// Build the 3D garment for the current design even if the 3D view is not open.
+function ensure3D() { if (!viewerFresh) { if (!board.hasColor() && board.hasLines()) { const was = board.side; board.useSide('front'); board.autoFillGarment(); board.useSide(was); } refresh3D(); } return !!viewer.patternData && !!viewer.measure; }
 $('#designName').addEventListener('change', scheduleSave);
 $('#designName').addEventListener('keydown', (e) => { if (e.key === 'Enter') e.target.blur(); });
 window.addEventListener('beforeunload', () => { if (saveTimer) saveNow(); });
@@ -262,6 +293,7 @@ async function newDesign() {
   if (saveTimer) await saveNow();
   design = { id: store.newId(), name: 'Untitled design', created: Date.now(), updated: Date.now(), body: { ...body }, portfolio: false, fit: {} };
   welcomeDismissed = false;
+  viewerFresh = false; viewer.clearAIModel(); updateAIRow();
   $('#designName').value = design.name;
   await board.loadLayers({});
   renderSideBar();
@@ -269,7 +301,8 @@ async function newDesign() {
 }
 async function openDesign(rec) {
   if (saveTimer) await saveNow();
-  design = { id: rec.id, name: rec.name, created: rec.created, updated: rec.updated, body: rec.body, portfolio: !!rec.portfolio, notes: rec.notes || '', fit: { ...(rec.fit || {}) } };
+  design = { id: rec.id, name: rec.name, created: rec.created, updated: rec.updated, body: rec.body, portfolio: !!rec.portfolio, notes: rec.notes || '', fit: { ...(rec.fit || {}) }, summary: rec.summary, look: rec.look, lookBack: rec.lookBack, aiModel: rec.aiModel };
+  viewerFresh = false; viewer.clearAIModel(); updateAIRow();
   if (rec.body) { body = { ...defaultBodySettings(), ...rec.body }; applyBody(false); }
   $('#designName').value = rec.name;
   await board.loadLayers({ ...(rec.layers || {}), fills: rec.fills });
@@ -283,9 +316,149 @@ function updatePortfolioBtn() {
   b.classList.toggle('starred', on); b.querySelector('.i').innerHTML = icon(on ? 'starFill' : 'star');
   b.title = on ? 'In your portfolio (click to remove)' : 'Add this design to your portfolio';
 }
-$('#btnPortfolio').addEventListener('click', () => {
-  if (!design) return; design.portfolio = !design.portfolio; updatePortfolioBtn(); saveNow();
-  toast(design.portfolio ? 'Added to your portfolio.' : 'Removed from your portfolio.');
+$('#btnPortfolio').addEventListener('click', async () => {
+  if (!design) return; design.portfolio = !design.portfolio; updatePortfolioBtn();
+  if (design.portfolio && board.hasColor()) await busy('Taking pictures for your portfolio…', async () => { ensure3D(); await saveNow(); });
+  else saveNow();
+  toast(design.portfolio ? 'Added to your portfolio. See it in Window Shopping.' : 'Removed from your portfolio.');
+});
+
+// ---------- portfolio: window shopping and runway ----------
+async function portfolioList() {
+  if (design?.portfolio && board.hasColor()) await busy('Updating your portfolio…', async () => { ensure3D(); await saveNow(); });
+  else if (saveTimer) await saveNow();
+  await saving;
+  return (await store.listDesigns()).filter((d) => d.portfolio).sort((a, b) => a.created - b.created);
+}
+async function showWindowShopping() {
+  const list = await portfolioList();
+  openWindowShopping(list, {
+    fmt,
+    onOpen: async (d) => { await openDesign(await store.getDesign(d.id)); setMode('3d'); },
+    onRunway: (l) => showRunway(l),
+    onNotes: async (d) => { const rec = await store.getDesign(d.id); if (rec) { rec.notes = d.notes; await store.saveDesign(rec); } if (design?.id === d.id) design.notes = d.notes; },
+  });
+}
+async function showRunway(list) {
+  list = list || await portfolioList();
+  if (!list.length) { toast('Add designs to your portfolio (the star) to put on a show.'); return; }
+  const was3d = mode === '3d'; viewer.setVisible(false);
+  const show = await startRunway(list, { Viewer, Board, fmtFabrics: (d) => (d.summary?.fabrics || []).join(' · ') });
+  const back = () => { if (was3d) viewer.setVisible(true); };
+  if (show) { const ex = show.exit; show.exit = () => { ex(); back(); }; }
+  const watch = setInterval(() => { if (!document.querySelector('.runway')) { clearInterval(watch); back(); } }, 500);
+}
+$('#designWindow').addEventListener('click', () => { closeModal('#designsModal'); showWindowShopping(); });
+$('#designRunway').addEventListener('click', () => { closeModal('#designsModal'); showRunway(); });
+
+// ---------- sewing pattern ----------
+let pat = null;
+const PRICES_KEY = 'prices';
+function roleColor(role) {
+  const pd = viewer.patternData, s = pd.spec, F = board.sides.front.cx.color;
+  const at = { bodice: [0, s.y.bust], lower: [0, (s.y.waist + (pd.bottom?.y ?? s.y.hip)) / 2], sleeve: [viewer.armPoint(1, s.H * 0.1).x, viewer.armPoint(1, s.H * 0.1).y], leg: [-s.legX, s.y.knee] }[role];
+  if (!at) return null;
+  const [px, py] = viewer.toBoard(at[0], at[1]), d = F.getImageData(Math.round(px), Math.round(py), 1, 1).data;
+  return d[3] > 20 ? rgbToHex(d[0], d[1], d[2]) : null;
+}
+function buildPatternJob() {
+  const pd = viewer.patternData, F = garmentFacts(pd, viewer.measure, body, (x, y) => viewer.opaque(x, y));
+  const pieces = draft(F);
+  const plan = fabricPlan(pieces, F);
+  for (const g of plan) { const role = g.pieces[0].role; g.color = roleColor(role === 'band' ? 'lower' : role); }
+  const colors = [...new Set(plan.map((g) => g.color).filter(Boolean))];
+  const sets = [{ label: body.custom ? 'Custom' : body.size, pieces }];
+  if ($('#patSizes').checked && !body.custom) for (const b of nearbySizes(body)) sets.push({ label: b.size, pieces: draft(gradeFacts(F, b)) });
+  return { F, pieces, plan, sets, colors, supplies: listSupplies(F, plan, colors), steps: sewingSteps(F, plan) };
+}
+function drawPatternPreview(job) {
+  const c = $('#patCanvas'), w = c.clientWidth || 480, h = c.clientHeight || 520, dpr = Math.min(2, window.devicePixelRatio || 1);
+  c.width = w * dpr; c.height = h * dpr;
+  const x = c.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, w, h);
+  const arr = arrange(job.sets, 700), k = Math.min((w - 16) / arr.W, (h - 16) / arr.H);
+  x.translate(8, 8); x.scale(k, k);
+  const colors = ['#2b2228', '#1e5aaa', '#288c5a', '#c87814', '#783ca0'];
+  for (const g of arr.groups) {
+    const ox = g.x + 12 - g.b.x0 * 10, oy = g.y + 12 - g.b.y0 * 10;
+    job.sets.forEach((set, si) => {
+      const p = set.pieces[g.i]; if (!p) return;
+      x.beginPath(); p.cutLine.forEach(([px, py], i) => x[i ? 'lineTo' : 'moveTo'](ox + px * 10, oy + py * 10)); x.closePath();
+      if (si === 0) { x.fillStyle = '#fbf6f0'; x.fill(); }
+      x.lineWidth = 1.2 / k; x.strokeStyle = colors[si % colors.length]; x.stroke();
+      if (si) return;
+      x.setLineDash([4 / k, 3 / k]); x.beginPath(); p.outline.pts.forEach(([px, py], i) => x[i ? 'lineTo' : 'moveTo'](ox + px * 10, oy + py * 10)); x.closePath(); x.strokeStyle = '#a89a8f'; x.lineWidth = 0.8 / k; x.stroke(); x.setLineDash([]);
+      const b = bbox(p.outline.pts); x.fillStyle = '#2b2228'; x.font = `${13 / k}px system-ui, sans-serif`; x.textAlign = 'center';
+      x.fillText(p.name.split(' (')[0], ox + (b.x0 + b.x1) * 5, oy + (b.y0 + b.h * 0.45) * 10);
+    });
+  }
+}
+function renderPatternPanel() {
+  const job = pat = buildPatternJob(), u = units === 'in', y = (r) => u ? `${r.yards} yd` : `${r.meters} m`;
+  $('#patKind').textContent = `${job.F.kind[0].toUpperCase() + job.F.kind.slice(1)} · size ${body.custom ? 'custom' : body.size} · seam allowance ${u ? '5/8"' : '1.5 cm'} included`;
+  $('#patPieces').innerHTML = job.pieces.map((p) => `<div class="pat-piece"><b>${p.name}</b><span>${p.cut.fold ? `Cut ${p.cut.count} on fold` : `Cut ${p.cut.count}`}</span></div>`).join('');
+  $('#patFabric').innerHTML = `<tr><th>Fabric</th><th>45" wide</th><th>60" wide</th></tr>` + job.plan.map((g) => `<tr><td><span class="sw" style="background-image:url(${swatchURL(g.fabric, g.color || '#cccccc')})"></span>${g.name}</td><td>${y(g.w45)}</td><td>${y(g.w60)}</td></tr>`).join('');
+  $('#patSupplies').innerHTML = job.supplies.map((s) => `<li>${s.name}${s.qty > 1 && s.key !== 'lining' && s.key !== 'interfacing' ? ' × ' + s.qty : ''}</li>`).join('');
+  const prices = LS.get(PRICES_KEY, {});
+  if (!$('#patPrices').contains(document.activeElement)) $('#patPrices').innerHTML = [...job.plan.map((g) => [g.fabric, g.name + ' ($ per yd)', prices[g.fabric] ?? FABRIC_PRICE[g.fabric] ?? 10]), ...job.supplies.map((s) => ['supply:' + s.key, s.name.split(',')[0].split('(')[0] + ' ($)', prices['supply:' + s.key] ?? SUPPLY_PRICE[s.key] ?? 0])].map(([k, l, v]) => `<label>${l}<input type="number" min="0" step="0.5" data-k="${k}" value="${v}"></label>`).join('');
+  requestAnimationFrame(() => drawPatternPreview(job));
+}
+async function openPattern() {
+  if (!board.hasColor() && !board.hasLines()) { toast('Draw or color a design first.'); return; }
+  const ok = await busy('Drafting your pattern…', () => ensure3D());
+  if (!ok) { toast('Nothing to make a pattern from yet.'); return; }
+  openModal('#patternModal');
+  renderPatternPanel();
+}
+$('#btnPattern3d').addEventListener('click', openPattern);
+$('#patPaper').addEventListener('click', (e) => { const v = e.target.closest('button')?.dataset.v; if (!v) return; $$('#patPaper button').forEach((b) => b.classList.toggle('on', b.dataset.v === v)); });
+$('#patSizes').addEventListener('change', renderPatternPanel);
+$('#patPrices').addEventListener('change', (e) => { const k = e.target.dataset.k; if (!k) return; const p = LS.get(PRICES_KEY, {}); p[k] = +e.target.value; LS.set(PRICES_KEY, p); });
+function patternJobFull() {
+  const job = pat, frontImg = board.composite(900, '#ffffff', 'front').toDataURL('image/jpeg', 0.88);
+  let backImg;
+  if (board.backLinked) { const f = board.composite(900, '#ffffff', 'front'), b = document.createElement('canvas'); b.width = f.width; b.height = f.height; const x = b.getContext('2d'); x.translate(f.width, 0); x.scale(-1, 1); x.drawImage(f, 0, 0); backImg = b.toDataURL('image/jpeg', 0.88); }
+  else backImg = board.composite(900, '#ffffff', 'back').toDataURL('image/jpeg', 0.88);
+  const look = viewer.renderLook({ transparent: false, bg: '#ffffff' }).toDataURL('image/jpeg', 0.9);
+  const m = measurementsFor(body);
+  return {
+    ...job, paper: $('#patPaper .on')?.dataset.v || 'letter', units, prices: LS.get(PRICES_KEY, {}),
+    images: { front: frontImg, back: backImg, look }, measure: viewer.measure,
+    design: { name: $('#designName').value.trim() || 'Untitled design', notes: design?.notes || '' },
+    bodyLabel: `${body.type[0].toUpperCase() + body.type.slice(1)} ${body.custom ? 'custom' : body.size} (${Math.round(m.height)} cm)`,
+  };
+}
+$('#patPDF').addEventListener('click', async () => { try { const blob = await busy('Making the pattern PDF…', () => buildPDF(patternJobFull())); download(blob, safeName() + '-pattern.pdf'); } catch (e) { console.error(e); toast('Could not make the PDF: ' + (e.message || e)); } });
+$('#patSVG').addEventListener('click', () => download(buildSVG(patternJobFull()), safeName() + '-pattern.svg'));
+$('#patDXF').addEventListener('click', () => download(buildDXF(patternJobFull()), safeName() + '-pattern.dxf'));
+
+// ---------- AI 3D (online) ----------
+$('#aiModelSel').innerHTML = AI_MODELS.map((m) => `<option value="${m.id}">${m.name}</option>`).join('');
+$('#aiToken').value = LS.get('hfToken', '');
+function updateAIRow() { $('#aiRow').hidden = !design?.aiModel; $('#aiToggle').textContent = viewer.aiModel ? 'Show my mannequin' : 'Show the AI model'; }
+$('#aiToggle').addEventListener('click', async () => {
+  if (viewer.aiModel) viewer.clearAIModel(); else if (design?.aiModel) { try { await viewer.showAIModel(design.aiModel); } catch (e) { toast('Could not open the AI model: ' + (e.message || e)); } }
+  updateAIRow();
+});
+function drawingForAI() {
+  const c = board.composite(1536, '#ffffff', 'front'), b = contentBox(board.sides.front.color, board.sides.front.lines), k = c.width / BW, pad = 30;
+  const x0 = Math.max(0, (b.x - pad) * k), y0 = Math.max(0, (b.y - pad) * k), w = Math.min(c.width - x0, (b.w + pad * 2) * k), h = Math.min(c.height - y0, (b.h + pad * 2) * k);
+  const s = Math.min(1, 768 / Math.max(w, h)), o = document.createElement('canvas'); o.width = Math.round(w * s); o.height = Math.round(h * s);
+  const x = o.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, o.width, o.height); x.drawImage(c, x0, y0, w, h, 0, 0, o.width, o.height);
+  return new Promise((r) => o.toBlob(r, 'image/png'));
+}
+$('#aiGo').addEventListener('click', async () => {
+  if (!board.hasColor('front') && !board.hasLines('front')) { $('#aiStatus').textContent = 'Draw or color the front first.'; return; }
+  const token = $('#aiToken').value.trim(); LS.set('hfToken', token);
+  const btn = $('#aiGo'); btn.disabled = true;
+  try {
+    const blob = await makeAIModel({ image: await drawingForAI(), modelId: $('#aiModelSel').value, token, status: (s) => { $('#aiStatus').textContent = s; } });
+    design.aiModel = blob; await saveNow();
+    closeModal('#aiModal'); setMode('3d'); await viewer.showAIModel(blob); updateAIRow();
+    toast('Here is your AI 3D model. Use "Show my mannequin" in the Scene panel to switch back.', 5000);
+  } catch (e) {
+    console.error(e);
+    $('#aiStatus').textContent = 'That did not work: ' + (e.message || e) + ' You can try again in a little while.';
+  } finally { btn.disabled = false; }
 });
 
 // ---------- welcome card ----------
@@ -400,7 +573,7 @@ async function renderDesigns() {
     <div class="card-acts"><button data-a="star" title="${d.portfolio ? 'Remove from portfolio' : 'Add to portfolio'}">${icon(d.portfolio ? 'starFill' : 'star')}</button><button data-a="copy" title="Make a copy">${icon('copy')}</button><button data-a="file" title="Save design file">${icon('download')}</button><button data-a="del" title="Delete">${icon('trash')}</button></div></div>`).join('');
 }
 const escapeHTML = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-$('#btnDesigns').addEventListener('click', async () => { if (saveTimer) await saveNow(); openModal('#designsModal'); renderDesigns(); });
+$('#btnDesigns').addEventListener('click', async () => { if (saveTimer) saveNow(); await saving; openModal('#designsModal'); renderDesigns(); });
 $('#designFilter').addEventListener('click', (e) => { const v = e.target.closest('button')?.dataset.v; if (!v) return; designFilter = v; $$('#designFilter button').forEach((b) => b.classList.toggle('on', b.dataset.v === v)); renderDesigns(); });
 $('#designNew').addEventListener('click', async () => { closeModal('#designsModal'); await newDesign(); });
 $('#designCards').addEventListener('click', async (e) => {
@@ -436,12 +609,16 @@ $('#moreMenu').addEventListener('click', async (e) => {
   const a = e.target.closest('[data-act]')?.dataset.act; if (!a) return; $('#moreMenu').hidden = true;
   if (a === 'new') await newDesign();
   else if (a === 'open') $('#fileProject').click();
-  else if (a === 'save') { await saveNow(); download(await store.toProjectFile({ ...design, body, layers: await board.layerBlobs(), fills: { ...board.fillFabric } }), safeName() + '.atelier'); }
+  else if (a === 'save') { await saveNow(); download(await store.toProjectFile({ ...design, body, layers: await board.layerBlobs(), fills: { ...board.fillFabric }, fit: { ...fit() } }), safeName() + '.atelier'); }
   else if (a === 'png') { const c = board.composite(BH, '#ffffff', board.side); c.toBlob((b) => download(b, safeName() + (board.side === 'back' ? '-back' : '') + '-sketch.png'), 'image/png'); }
   else if (a === 'shot') { if (mode !== '3d') setMode('3d'); setTimeout(async () => download(await (await fetch(viewer.screenshot())).blob(), safeName() + '-3d.png'), 120); }
   else if (a === 'glb') { if (mode !== '3d') setMode('3d'); try { download(await busy('Building the 3D model…', () => viewer.exportGLB()), safeName() + '.glb'); } catch (err) { toast('Could not export the 3D model: ' + (err.message || err)); } }
   else if (a === 'clear') { if (confirm('Clear everything on the board? You can undo this.')) { board.clearAll(); if (mode === '3d') refresh3D(); } }
   else if (a === 'about') openModal('#aboutModal');
+  else if (a === 'pattern') openPattern();
+  else if (a === 'window') showWindowShopping();
+  else if (a === 'runway') showRunway();
+  else if (a === 'ai') { $('#aiStatus').textContent = navigator.onLine ? '' : 'You are offline right now.'; openModal('#aiModal'); }
 });
 
 // ---------- phone panel ----------
@@ -486,4 +663,4 @@ window.addEventListener('keyup', (e) => { if (e.key === ' ') { board.spaceDown =
 })();
 
 // For tests and debugging.
-window.atelier = { board, viewer, get body() { return body; }, setMode, useStarter, hexToRgb };
+window.atelier = { board, viewer, get body() { return body; }, setMode, useStarter, hexToRgb, openPattern, showWindowShopping, showRunway, get pat() { return pat; }, patternJobFull, buildPDF, saveNow };

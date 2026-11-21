@@ -41,9 +41,23 @@ Everything works offline and designs are saved on the device.
 - **My designs and portfolio:** autosave, a gallery, star designs into the portfolio,
   copy, delete, and `.atelier` design files to move work between computers.
 - **Export:** sketch PNG, 3D picture PNG, 3D model (GLB).
+- **Sewing patterns:** drafted from the 3D garment and its measurements: bodice blocks with
+  darts, skirt panels worked out from the real skirt shape (pencil to full circle), set-in
+  sleeves, trousers with a crotch curve, waistbands. Seam allowance (5/8" / 1.5 cm) and hem
+  allowance, grainlines, notches and fold lines. The PDF has a tech pack, fabric to buy for
+  45" and 60" fabric, a cutting layout, supplies, a cost estimate, step-by-step sewing
+  instructions and tips for each fabric, then the full-size pattern tiled onto Letter or A4
+  pages (with a test square and page map) or as one big sheet for a print shop. Optional nested
+  sizes. Also SVG and DXF files for pattern software and cutting machines.
+- **Portfolio, Window Shopping:** every starred design stands in its own boutique window
+  along a street; tap one for front/back/sketch views, fabrics, measurements and notes.
+- **Portfolio, Runway:** a 3D show: each look walks the runway, poses, twirls and walks back
+  with lights, an audience, camera flashes, a name card and music (made in the browser).
+- **AI 3D (online, optional):** sends the front drawing to the Hunyuan3D-2 model on Hugging
+  Face and shows the free-form 3D model it makes. Saved with the design, so it can be viewed
+  offline afterwards. A Hugging Face token can be added for more free tries.
 
-Coming next (see the design document): sewing pattern export with yardage and cutting
-layouts, Window Shopping and Runway portfolio modes, and an optional online AI 3D button.
+Everything except AI 3D works without the internet.
 
 ## Building
 
@@ -65,7 +79,12 @@ To try the desktop app locally: `cd desktop && npm ci && npm start`.
 - `src/fabrics.js` - the fabric library (each fabric is a small generated tile)
 - `src/body.js` - size charts and the mannequin's shape
 - `src/viewer3d.js` - the 3D mannequin and the garment built from the drawing
-- `src/cloth.js` - the cloth simulation for skirts and dresses
+- `src/cloth.js` - the cloth simulation
+- `src/pattern.js` - drafting pattern pieces, yardage, supplies and sewing steps
+- `src/patternpdf.js` - the pattern PDF, SVG and DXF files
+- `src/portfolio.js` - Window Shopping
+- `src/runway.js` - the Runway show
+- `src/ai3d.js` - the optional online AI 3D model
 - `src/starters.js` - starter outlines
 - `src/store.js` - saving designs on the device and design files
 - `desktop/` - the Windows app (Electron)

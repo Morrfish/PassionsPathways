@@ -31,6 +31,11 @@
         <button data-act="open"><span class="i" data-i="folder"></span>Open design file…</button>
         <button data-act="save"><span class="i" data-i="save"></span>Save design file (.atelier)</button>
         <hr>
+        <button data-act="pattern"><span class="i" data-i="scissors"></span>Sewing pattern (PDF, SVG, DXF)…</button>
+        <button data-act="window"><span class="i" data-i="store"></span>Portfolio: Window Shopping</button>
+        <button data-act="runway"><span class="i" data-i="spin"></span>Portfolio: Runway show</button>
+        <button data-act="ai"><span class="i" data-i="sparkle"></span>AI 3D model (online)…</button>
+        <hr>
         <button data-act="png"><span class="i" data-i="image"></span>Export sketch picture (PNG)</button>
         <button data-act="shot"><span class="i" data-i="image"></span>Export 3D picture (PNG)</button>
         <button data-act="glb"><span class="i" data-i="cube"></span>Export 3D model (GLB)</button>
@@ -152,6 +157,12 @@
     <details class="sec three-only" data-sec="scene"><summary>Scene</summary>
       <div class="sub">Background</div>
       <div class="chips" id="bgChips"></div>
+      <div id="aiRow" hidden>
+        <div class="sub">AI model</div>
+        <button class="btn small" id="aiToggle">Show the AI model</button>
+      </div>
+      <div class="sub">Make it</div>
+      <button class="btn small" id="btnPattern3d"><span class="i" data-i="scissors"></span>Sewing pattern…</button>
     </details>
   </aside>
 </main>
@@ -199,6 +210,8 @@
     <div class="dialog-head">
       <h2>My designs</h2>
       <div class="seg" id="designFilter"><button data-v="all" class="on">All designs</button><button data-v="portfolio">Portfolio</button></div>
+      <button class="btn" id="designWindow"><span class="i" data-i="store"></span>Window Shopping</button>
+      <button class="btn" id="designRunway"><span class="i" data-i="spin"></span>Runway</button>
       <button class="btn primary" id="designNew"><span class="i" data-i="plus"></span>New design</button>
     </div>
     <div class="cards" id="designCards"></div>
@@ -214,12 +227,55 @@
   </div>
 </div>
 
+<div class="modal" id="patternModal" hidden>
+  <div class="dialog wide tall">
+    <div class="dialog-head"><h2>Sewing pattern</h2><span class="note" id="patKind"></span></div>
+    <div class="pat-body">
+      <div class="pat-preview"><canvas id="patCanvas"></canvas><p class="note">Pieces at a glance (seam allowance included). Grey dashed lines are the sewing lines.</p></div>
+      <div class="pat-side">
+        <div class="sub">Pieces</div>
+        <div id="patPieces"></div>
+        <div class="sub">Fabric to buy</div>
+        <table class="meas" id="patFabric"></table>
+        <div class="sub">Supplies</div>
+        <ul class="pat-list" id="patSupplies"></ul>
+        <div class="sub">Print on</div>
+        <div class="seg" id="patPaper"><button data-v="letter" class="on">Letter</button><button data-v="a4">A4</button><button data-v="large">One big sheet</button></div>
+        <label class="check"><input type="checkbox" id="patSizes"> Also print the next sizes up and down (nested)</label>
+        <details class="custom"><summary>Prices for the cost estimate</summary><div class="custom-grid" id="patPrices"></div></details>
+        <p class="note">This is a starting pattern made from your 3D design. Make a practice version in cheap fabric first and adjust the fit.</p>
+      </div>
+    </div>
+    <div class="dialog-btns">
+      <button class="btn" data-close>Close</button>
+      <button class="btn" id="patSVG">SVG</button>
+      <button class="btn" id="patDXF">DXF (cutting machines)</button>
+      <button class="btn primary" id="patPDF"><span class="i" data-i="download"></span>Pattern PDF</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="aiModal" hidden>
+  <div class="dialog">
+    <h2>AI 3D model <span class="badge">online</span></h2>
+    <p>Sends a picture of your front drawing to an AI that builds a free-form 3D model from it. It is a different look from the mannequin view: good for unusual shapes and accessories.</p>
+    <p class="note">Needs the internet. Your drawing is sent to Hugging Face (huggingface.co) to be processed. Busy times can mean a wait or a "try again later".</p>
+    <label class="field">AI model <select id="aiModelSel"></select></label>
+    <label class="field">Hugging Face token (optional, gives you more free tries) <input type="password" id="aiToken" placeholder="hf_…" autocomplete="off"></label>
+    <p class="note" id="aiStatus"></p>
+    <div class="dialog-btns">
+      <button class="btn" data-close>Close</button>
+      <button class="btn primary" id="aiGo"><span class="i" data-i="sparkle"></span>Make the 3D model</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal" id="aboutModal" hidden>
   <div class="dialog">
     <h2>Atelier Studio</h2>
     <p>Sketch, color and see your fashion designs in 3D. Atelier is French for a designer's workshop.</p>
     <p class="note">Your designs are saved on this device and work without the internet. Use <b>Save design file</b> to keep a copy you can move to another computer.</p>
-    <p class="note">Made with three.js (MIT License).</p>
+    <p class="note">Made with three.js (MIT), jsPDF (MIT) and the Gradio client (ISC).</p>
     <div class="dialog-btns"><button class="btn primary" data-close>Close</button></div>
   </div>
 </div>

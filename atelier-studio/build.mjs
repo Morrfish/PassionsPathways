@@ -2,7 +2,9 @@
 import * as esbuild from 'esbuild';
 import { copyFileSync, readFileSync, writeFileSync } from 'node:fs';
 
-await esbuild.build({ entryPoints: ['src/app.js'], outfile: 'app.js', bundle: true, format: 'esm', target: 'es2020', minify: true, legalComments: 'eof', logLevel: 'info' });
+await esbuild.build({ entryPoints: ['src/app.js'], outfile: 'app.js', bundle: true, format: 'esm', target: 'es2020', minify: true, legalComments: 'eof', logLevel: 'info',
+  // jsPDF's HTML and SVG-image helpers are not used; leave their libraries out.
+  external: ['html2canvas', 'dompurify', 'canvg'] });
 copyFileSync('src/style.css', 'style.css');
 copyFileSync('src/index.html', 'index.html');
 copyFileSync('src/manifest.webmanifest', 'manifest.webmanifest');

@@ -8,7 +8,9 @@
     "build": "node build.mjs"
   },
   "devDependencies": {
+    "@gradio/client": "2.7.1",
     "esbuild": "0.25.10",
+    "jspdf": "4.2.1",
     "three": "0.180.0"
   }
 }

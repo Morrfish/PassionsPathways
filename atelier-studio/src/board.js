@@ -462,10 +462,16 @@ export class Board {
     x.drawImage(L.color, 0, 0, c.width, c.height); x.drawImage(L.lines, 0, 0, c.width, c.height);
     return c;
   }
-  async layerBlobs() {
-    const b = (c) => new Promise((r) => c.toBlob(r, 'image/png'));
-    const F = this.sides.front, B = this.sides.back, out = { color: await b(F.color), mat: await b(F.mat), lines: await b(F.lines) };
-    if (!this.backLinked) { out.bcolor = await b(B.color); out.bmat = await b(B.mat); out.blines = await b(B.lines); }
+  // Copies of the layers taken right now, so a save is not mixed up by later changes.
+  snapshotLayers() {
+    const copy = (c) => { const o = mk(c.width, c.height); o.getContext('2d').drawImage(c, 0, 0); return o; };
+    const F = this.sides.front, B = this.sides.back, out = { color: copy(F.color), mat: copy(F.mat), lines: copy(F.lines) };
+    if (!this.backLinked) { out.bcolor = copy(B.color); out.bmat = copy(B.mat); out.blines = copy(B.lines); }
+    return out;
+  }
+  async layerBlobs(snap = this.snapshotLayers()) {
+    const b = (c) => new Promise((r) => c.toBlob(r, 'image/png')), out = {};
+    for (const [k, c] of Object.entries(snap)) out[k] = await b(c);
     return out;
   }
   async loadLayers(src) {

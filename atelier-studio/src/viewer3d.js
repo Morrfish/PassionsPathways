@@ -74,7 +74,7 @@ function loft(rings, pointFn, { capStart = false, capEnd = false, texFn = null, 
 export class Viewer {
   constructor(host) {
     this.host = host;
-    const r = this.renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+    const r = this.renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: true });
     r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
     r.outputColorSpace = THREE.SRGBColorSpace;
     r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.05;
@@ -103,7 +103,8 @@ export class Viewer {
     this.garmentGroup = new THREE.Group(); this.figure.add(this.garmentGroup);
     this.clothGroup = new THREE.Group(); scene.add(this.clothGroup);
     this.cloths = [];
-    this.move = { angle: 0, x: 0, spin: false, sway: false, breeze: false, twirl: null, home: null, t: 0 };
+    this.move = { angle: 0, x: 0, z: 0, spin: false, sway: false, breeze: false, twirl: null, home: null, t: 0 };
+    this.driver = null; // optional function(dt, move) that moves the figure (the runway uses it)
     this.last = performance.now();
     this.skinMat = new THREE.MeshStandardMaterial({ color: '#efe8dc', roughness: 0.55 });
     this.colorTex = null; this.matTex = null;
@@ -376,7 +377,7 @@ export class Viewer {
       const old = oldCloths.find((c) => c.key === key);
       if (old) { old.meshes.forEach((m, i) => { m.material = this.garmentMats[i]; }); this.cloths.push(old); return; }
       const cloth = new Cloth({ rings, uvMap, ...opts, phys });
-      cloth.frame = { angle: this.move.angle, x: this.move.x, z: 0 };
+      cloth.frame = { angle: this.move.angle, x: this.move.x, z: this.move.z };
       cloth.wind = this.move.breeze ? 2.2 : 0;
       cloth.settle(opts.settle || 90); cloth.sync();
       const meshes = this.garmentMats.map((mat, i) => { const m = new THREE.Mesh(cloth.geometry, mat); m.castShadow = i === 1; m.receiveShadow = true; m.renderOrder = 1 + i; m.userData.garment = true; m.frustumCulled = false; this.clothGroup.add(m); return m; });
@@ -398,6 +399,7 @@ export class Viewer {
       addCloth('center', resample(center.slice(cTop, botIdx + 1)), { pointFn: ell, texFn: ellTex, collide: this.makeCollider(true) });
     }
     const geos = [];
+    let patLeg = null, patSleeve = null;
     if (rigid.length > 1) geos.push(loft(rigid, ell, { texFn: ellTex, uvMap }));
     const skirtAt = (y) => hemY !== null && y >= hemY - stepY;
 
@@ -429,6 +431,7 @@ export class Viewer {
         for (const r of lrows) if (r.o.y < cr) { r.y = Math.max(0.01, cr - (cr - r.o.y) * k); const lg = legAt(r.y); if (lg && r.a < lg.r + eps) { r.a = lg.r + eps; r.b = Math.max(r.b, r.a * 0.96); } }
       }
       if (last >= 0) legMeasure.push(lrows[last].y);
+      if (side === 1) patLeg = { rows: lrows, last, texFn: (r, c) => legTex(r, c) };
       const legTex = (r, c) => [r.o.cx + r.o.a * c * 0.975, r.o.y];
       const flared = lrows.some((r) => r.hit && r.a - r.base > 0.015);
       if (flared && last >= 3) addCloth('leg' + side, resample(lrows.slice(0, last + 1)), { pointFn: legPt, texFn: legTex, centerFn: (r) => [r.cx, r.y, 0], collide: this.makeCollider(true), settle: 70, phys: { hang: 0.97 } });
@@ -453,6 +456,7 @@ export class Viewer {
         for (const r of arows) { r.d = r.o.d * k; r.y = this.armPoint(side, r.d).y; }
       }
       if (side === 1 && last >= 0 && arows[last].d > 0.03) sleeveLen = arows[last].d;
+      if (side === 1) patSleeve = { rows: arows, last, texFn: (r, c) => armTex(r, c) };
       const armPt = (r, c, s) => { const p = this.armPoint(side, r.d), cx = p.x + px * r.off, cy = p.y + py * r.off; return [cx + px * r.a * c, cy + py * r.a * c, r.b * s]; };
       const armTex = (r, c) => { const o = r.o, p = this.armPoint(side, o.d), t = o.off + o.a * c * 0.975; return [p.x + px * t, p.y + py * t]; };
       // Only long, flared sleeves flow (bell and bishop sleeves); short sleeves stay fitted.
@@ -466,6 +470,23 @@ export class Viewer {
     }
     finish();
     this.lastRows = center;
+    // Everything the sewing pattern needs to know about this garment.
+    const fabricOver = (rows, texFn) => rows && rows.length ? this.dominantFabric(rows, texFn) : null;
+    const coveredRows = center.filter(covered);
+    const waistI = coveredRows.findIndex((r) => r.o.y <= spec.y.waist);
+    this.patternData = {
+      spec, center, covered, hemY, trousers,
+      top: coveredRows[0] || null, bottom: coveredRows[coveredRows.length - 1] || null,
+      sleeve: patSleeve && patSleeve.last >= 0 && patSleeve.rows[patSleeve.last].d > 0.03 ? patSleeve : null,
+      leg: patLeg && patLeg.last >= 0 ? patLeg : null,
+      fabrics: {
+        bodice: fabricOver(coveredRows.filter((r) => r.o.y >= spec.y.waist), ellTex),
+        lower: fabricOver(waistI >= 0 ? coveredRows.slice(waistI) : [], ellTex),
+        sleeve: patSleeve ? fabricOver(patSleeve.rows.slice(0, patSleeve.last + 1), patSleeve.texFn) : null,
+        leg: patLeg ? fabricOver(patLeg.rows.slice(0, patLeg.last + 1), patLeg.texFn) : null,
+      },
+      shoulderCovered: this.opaque(spec.half.shoulder * 0.75, spec.y.shoulder - 0.01) || this.opaque(-spec.half.shoulder * 0.75, spec.y.shoulder - 0.01),
+    };
     this.measure = this.measureGarment(center, covered, legMeasure, sleeveLen);
   }
 
@@ -563,25 +584,27 @@ export class Viewer {
     const m = this.move;
     m.t += dt;
     let angle = m.angle, x = 0;
-    if (m.twirl) {
+    if (this.driver) { this.driver(dt, m); angle = m.angle; x = m.x; }
+    else if (m.twirl) {
       const T = 2.6, u = Math.min(1, (m.twirl.t += dt) / T), e = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
       angle = m.twirl.from + e * Math.PI * 4;
       if (u >= 1) m.twirl = null;
     } else if (m.spin) angle += dt * 0.7;
     else if (m.home !== null) { const d = m.home - angle; angle += d * Math.min(1, dt * 5); if (Math.abs(d) < 0.002) { angle = m.home; m.home = null; } }
-    if (m.sway) {
+    if (m.sway && !this.driver) {
       const w = Math.sin(m.t * Math.PI * 2 / 1.4);
       x = 0.035 * w; angle += 0.012 * Math.cos(m.t * Math.PI * 2 / 1.4);
     }
     m.angle = angle; m.x = x;
-    this.figure.rotation.y = angle; this.figure.position.x = x;
+    this.figure.rotation.y = angle; this.figure.position.x = x; this.figure.position.z = m.z;
+    if (this.aiModel) { this.aiModel.rotation.y = angle; }
     if (!this.cloths.length) return;
-    const busy = m.spin || m.sway || m.breeze || m.twirl || m.home !== null;
+    const busy = m.spin || m.sway || m.breeze || m.twirl || m.home !== null || !!this.driver;
     if (busy) this.clothAwake = 240;
     if (this.clothAwake > 0) {
       let moved = 0;
       for (const { cloth: c } of this.cloths) {
-        c.setFrame(angle, x, 0);
+        c.setFrame(angle, x, m.z);
         for (let k = 0; k < 2; k++) moved = Math.max(moved, c.step(Math.max(1 / 240, dt / 2)));
         c.sync();
       }
@@ -589,6 +612,44 @@ export class Viewer {
     }
   }
   setBackground(hex) { this.scene.background = new THREE.Color(hex); }
+
+  // A finished picture of the look (front or back), for the portfolio and tech pack.
+  // transparent: no background or platform.
+  renderLook({ w = 600, h = 900, angle = 0, transparent = true, bg = '#f4eee7' } = {}) {
+    const spec = this.spec, cam = new THREE.PerspectiveCamera(22, w / h, 0.05, 50), d = spec.H * 3.05;
+    cam.position.set(Math.sin(angle) * d, spec.H * 0.56, Math.cos(angle) * d); cam.lookAt(0, spec.H * 0.5, 0);
+    const r = this.renderer, oldBg = this.scene.background, size = r.getSize(new THREE.Vector2()), ratio = r.getPixelRatio();
+    const fig = { rot: this.figure.rotation.y, x: this.figure.position.x, z: this.figure.position.z };
+    // Pose the cloth facing forward for the picture.
+    this.figure.rotation.y = 0; this.figure.position.set(0, 0, 0);
+    const frames = this.cloths.map(({ cloth }) => { const f = cloth.frame; cloth.frame = { angle: 0, x: 0, z: 0 }; cloth.sync(); return f; });
+    this.scene.background = transparent ? null : new THREE.Color(bg); this.stage.visible = !transparent;
+    r.setPixelRatio(1); r.setSize(w, h, false); r.setClearColor(0x000000, 0); r.clear();
+    r.render(this.scene, cam);
+    const c = document.createElement('canvas'); c.width = w; c.height = h; c.getContext('2d').drawImage(r.domElement, 0, 0, w, h);
+    this.scene.background = oldBg; this.stage.visible = true;
+    r.setPixelRatio(ratio); r.setSize(size.x, size.y, false);
+    this.figure.rotation.y = fig.rot; this.figure.position.set(fig.x, 0, fig.z);
+    this.cloths.forEach(({ cloth }, i) => { cloth.frame = frames[i]; cloth.sync(); });
+    return c;
+  }
+
+  // A 3D model made by the online AI service, shown standing on the platform instead of the mannequin.
+  async showAIModel(blob) {
+    const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader.js');
+    const gltf = await new GLTFLoader().parseAsync(await blob.arrayBuffer(), '');
+    this.clearAIModel();
+    const obj = gltf.scene, box = new THREE.Box3().setFromObject(obj), size = box.getSize(new THREE.Vector3());
+    const k = (this.spec?.H || 1.7) * 0.92 / Math.max(size.y, 1e-6), center = box.getCenter(new THREE.Vector3());
+    const holder = new THREE.Group(); obj.position.set(-center.x, -box.min.y, -center.z); holder.add(obj); holder.scale.setScalar(k);
+    holder.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+    this.aiModel = holder; this.scene.add(holder);
+    this.figure.visible = false; this.clothGroup.visible = false;
+  }
+  clearAIModel() {
+    if (this.aiModel) { this.scene.remove(this.aiModel); this.aiModel.traverse((o) => { o.geometry?.dispose?.(); }); this.aiModel = null; }
+    this.figure.visible = true; this.clothGroup.visible = true;
+  }
 
   screenshot() { this.tick(); return this.renderer.domElement.toDataURL('image/png'); }
 
