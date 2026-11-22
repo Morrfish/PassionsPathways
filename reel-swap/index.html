@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shelf Swap</title>
+<meta name="description" content="Track your VHS, DVD, Blu-ray and other physical media, then swap with friends.">
+<meta name="theme-color" content="#16141a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+<script src="config.js"></script>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <span class="logo" aria-hidden="true"></span>
+    <div>
+      <h1 id="appName">Shelf Swap</h1>
+      <p id="tagline" class="muted small"></p>
+    </div>
+  </div>
+  <button class="btn primary" id="addBtn">+ Add</button>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" data-tab="shelf" class="active">Collection</button>
+  <button role="tab" data-tab="want">Wantlist</button>
+  <button role="tab" data-tab="swap">Swap</button>
+  <button role="tab" data-tab="stats">Stats</button>
+  <button role="tab" data-tab="settings">Settings</button>
+</nav>
+
+<div id="viewBanner" class="banner hidden"></div>
+
+<main>
+  <!-- COLLECTION -->
+  <section id="tab-shelf" class="tab active">
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="Search title, distributor, tag, barcode…">
+      <select id="fmtFilter"><option value="">All formats</option></select>
+      <select id="sortBy">
+        <option value="title">Title A–Z</option>
+        <option value="year">Year</option>
+        <option value="added">Recently added</option>
+        <option value="value">Value (high → low)</option>
+        <option value="format">Format</option>
+      </select>
+      <div class="seg" id="viewSeg">
+        <button data-view="shelf" class="active" title="3D shelf">Shelf</button>
+        <button data-view="grid" title="Grid">Grid</button>
+        <button data-view="list" title="List">List</button>
+      </div>
+    </div>
+    <div class="chips" id="quickChips">
+      <button class="chip" data-quick="trade">For swap</button>
+      <button class="chip" data-quick="sealed">Sealed</button>
+      <button class="chip" data-quick="nophoto">No photo</button>
+      <button class="chip" data-quick="novalue">No value set</button>
+    </div>
+    <p id="countLine" class="muted small"></p>
+    <div id="collectionView"></div>
+    <div id="emptyShelf" class="empty hidden">
+      <p>Your shelf is empty.</p>
+      <p class="muted">Tap <b>+ Add</b> to log your first tape or disc, or load the sample shelf to look around.</p>
+      <button class="btn" id="sampleBtn">Load sample shelf</button>
+    </div>
+  </section>
+
+  <!-- WANTLIST -->
+  <section id="tab-want" class="tab">
+    <form id="wantForm" class="card row-form">
+      <input name="title" required placeholder="Title you want">
+      <select name="format"></select>
+      <input name="maxPrice" type="number" min="0" step="0.01" placeholder="Max price">
+      <select name="priority">
+        <option value="3">Grail</option>
+        <option value="2" selected>Want</option>
+        <option value="1">Maybe</option>
+      </select>
+      <button class="btn primary">Add to wantlist</button>
+    </form>
+    <div id="wantList"></div>
+  </section>
+
+  <!-- SWAP -->
+  <section id="tab-swap" class="tab">
+    <div class="grid2">
+      <div class="card">
+        <h2>1. Share your swap card</h2>
+        <p class="muted small">Your swap card lists everything you've marked <b>For swap</b> plus your wantlist. Send it to a friend. Photos aren't included.</p>
+        <p id="myCardSummary" class="small"></p>
+        <div class="btnrow">
+          <button class="btn primary" id="copyCardLink">Copy swap link</button>
+          <button class="btn" id="copyCardCode">Copy swap code</button>
+          <button class="btn" id="copyShelfLink">Copy view-only shelf link</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>2. Load a friend's card</h2>
+        <p class="muted small">Paste their swap link or code. You'll see what matches.</p>
+        <textarea id="friendCode" rows="3" placeholder="Paste a swap link or code here"></textarea>
+        <div class="btnrow"><button class="btn primary" id="loadFriend">Find matches</button></div>
+        <div id="friendList" class="small"></div>
+      </div>
+    </div>
+    <div id="matchArea"></div>
+    <div class="card">
+      <h2>Swap history</h2>
+      <div id="tradeLog" class="small muted">No swaps yet.</div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section id="tab-stats" class="tab">
+    <div id="statTiles" class="tiles"></div>
+    <div class="grid2">
+      <div class="card"><h2>By format</h2><div id="fmtBars"></div></div>
+      <div class="card"><h2>By decade</h2><div id="decadeBars"></div></div>
+    </div>
+    <div class="card"><h2>Most valuable</h2><div id="topValue"></div></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="tab-settings" class="tab">
+    <form id="settingsForm" class="card settings">
+      <label>App name <input name="appName"></label>
+      <label>Tagline <input name="tagline"></label>
+      <label>Your collector name <input name="collectorName"></label>
+      <label>Accent color <input name="accent" type="color"></label>
+      <label>Currency symbol <input name="currency" maxlength="3"></label>
+      <label>Fair swap range (%) <input name="fairTradePercent" type="number" min="0" max="100"></label>
+      <label>Theme
+        <select name="theme"><option value="">Match device</option><option value="dark">Dark</option><option value="light">Light</option></select>
+      </label>
+      <div class="btnrow"><button class="btn primary">Save settings</button><button type="button" class="btn" id="resetSettings">Reset to config.js</button></div>
+      <p class="muted small">Formats, conditions, case styles and price links are set in <code>reel-swap/config.js</code>.</p>
+    </form>
+    <div class="card">
+      <h2>Backup &amp; move</h2>
+      <div class="btnrow">
+        <button class="btn" id="exportJson">Download backup (.json)</button>
+        <button class="btn" id="exportCsv">Download spreadsheet (.csv)</button>
+        <label class="btn">Restore / import<input type="file" id="importFile" accept=".json,.csv" hidden></label>
+      </div>
+      <p class="muted small">Everything is saved on this device only. Download a backup before clearing your browser.</p>
+      <button class="btn danger" id="wipeAll">Erase everything</button>
+    </div>
+  </section>
+</main>
+
+<!-- ADD / EDIT ITEM -->
+<dialog id="itemDlg">
+  <form id="itemForm" method="dialog">
+    <h2 id="itemDlgTitle">Add to collection</h2>
+    <div class="scanrow">
+      <button type="button" class="btn" id="scanBtn">Scan barcode</button>
+      <video id="scanVideo" playsinline muted class="hidden"></video>
+    </div>
+    <div class="formgrid">
+      <label class="span2">Title <input name="title" required></label>
+      <label>Format <select name="format"></select></label>
+      <label>Year <input name="year" type="number" min="1900" max="2100"></label>
+      <label>Distributor / studio <input name="distributor"></label>
+      <label>Barcode / UPC <input name="barcode" inputmode="numeric"></label>
+      <label>Condition <select name="condition"></select></label>
+      <label>Case <select name="caseType"></select></label>
+      <label>Paid <input name="paid" type="number" min="0" step="0.01"></label>
+      <label>Value <input name="value" type="number" min="0" step="0.01"></label>
+      <label class="span2">Tags (comma separated) <input name="tags" placeholder="horror, Disney, first print"></label>
+      <label class="span2">Notes <textarea name="notes" rows="2"></textarea></label>
+      <label class="span2">Spine color <input name="spine" type="color"></label>
+      <label class="check span2"><input type="checkbox" name="forTrade"> Available for swap</label>
+    </div>
+    <div class="photos">
+      <label class="photo-slot"><span>Front</span><img id="pFront" alt=""><input type="file" accept="image/*" data-slot="front" hidden></label>
+      <label class="photo-slot"><span>Spine</span><img id="pSpine" alt=""><input type="file" accept="image/*" data-slot="spine" hidden></label>
+      <label class="photo-slot"><span>Back</span><img id="pBack" alt=""><input type="file" accept="image/*" data-slot="back" hidden></label>
+    </div>
+    <p class="muted small">Photos are shrunk and have location data removed before saving.</p>
+    <p class="small" id="priceLinks"></p>
+    <div class="btnrow end">
+      <button type="button" class="btn danger hidden" id="deleteItem">Delete</button>
+      <button type="button" class="btn" id="cancelItem">Cancel</button>
+      <button class="btn primary" id="saveItem" value="save">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- 3D VIEWER -->
+<dialog id="viewDlg" class="viewer">
+  <button class="btn close" id="closeView" aria-label="Close">✕</button>
+  <div class="stage3d" id="stage3d"><div class="case3d" id="case3d"></div></div>
+  <div id="viewInfo"></div>
+</dialog>
+
+<div id="toast" class="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>

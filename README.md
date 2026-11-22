@@ -9,3 +9,4 @@
 - [Wild Tag](animal-tag/): a third-person animal tag game. 22 animals and 10 mythical creatures, each with its own ability; gems to buy patterns, wearables and bonus abilities; play solo against bots or online with friends.
 - [OTA 1050 Study Hub](ota-study/): kinesiology study site for occupational therapy assistant students, with a table of contents, search, flashcards, quizzes, timed practice exams and review games.
 - [Atelier Studio](atelier-studio/): a fashion design studio. Snapshot or upload a drawing, color it with fabrics, and see it on a 3D mannequin in different sizes. Works offline; also builds as a Windows app.
+- [Shelf Swap](reel-swap/): track a VHS, DVD and Blu-ray collection on a 3D shelf, keep a wantlist, and swap with friends using shareable swap cards. Settings are in `reel-swap/config.js`.
