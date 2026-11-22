@@ -112,7 +112,7 @@ $('#units').addEventListener('click', (e) => { const v = e.target.closest('butto
 $$('#units button').forEach((b) => b.classList.toggle('on', b.dataset.v === units));
 
 // ---------- paint: color + fabric ----------
-let recent = LS.get('recent', ['#e85d8a', '#1d3a8a', '#ffffff', '#1a1a1a', '#d4af37']);
+let recent = LS.get('recent', ['#b07a74', '#bda274', '#efe6d8', '#141015', '#8a5552']);
 const picker = new ColorPicker($('#colorPicker'), (hex, final) => { setColor(hex, final, true); });
 function setColor(hex, addRecent = true, fromPicker = false) {
   board.paint.color = hex;

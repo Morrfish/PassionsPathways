@@ -20,6 +20,7 @@ export const STARTERS = [
   { id: 'coat', name: 'Long coat', icon: 'jacket' },
   { id: 'wideleg', name: 'Wide-leg trousers', icon: 'pants' },
   { id: 'pleated', name: 'Pleated skirt', icon: 'skirt' },
+  { id: 'drape', name: 'Draped gown (like the logo)', icon: 'gown' },
 ];
 
 // Draw a smooth line through points (quadratic curves through midpoints).
@@ -121,6 +122,25 @@ const legs = (g) => { const L = g.spec.leg; return { thigh: g.spec.legX + L[1].r
 const top = (g, { neck = 2, shoulder = 0.8, armDrop = 0.03 } = {}) => [[-g.h.neck * neck, g.y.neckBase + 0.003], [-g.h.shoulder * shoulder, g.y.shoulder]];
 
 const EXTRA = {
+  // One-shoulder gown with a diagonal drape and a sweeping high-low hem, like the Atelier Studio logo.
+  drape(g) {
+    const { P, y, h, ctx } = g, hemR = y.knee - 0.08, hemL = y.knee + 0.1;
+    const pts = [
+      [-h.bust - 0.004, y.armpit - 0.01], [-h.bust * 0.3, y.bust + 0.03], [h.neck * 1.3, y.neckBase + 0.002], [h.shoulder * 0.72, y.shoulder],
+      [h.bust + 0.008, y.armpit - 0.02], [h.bust + 0.012, y.bust], [h.waist + 0.012, y.waist], [h.hip + 0.03, y.hip],
+      [h.hip + 0.16, (y.hip + hemR) / 2], [h.hip + 0.3, hemR + 0.02], [h.hip * 0.3, hemR + 0.04], [-h.hip * 0.6, hemL - 0.01], [-h.hip - 0.07, hemL],
+      [-h.hip - 0.025, y.hip], [-h.waist - 0.012, y.waist], [-h.bust - 0.012, y.bust],
+    ].map(([a, b]) => P(a, b));
+    ctx.beginPath(); smooth(ctx, pts, true); ctx.stroke();
+    // Drape folds: from the shoulder across the bodice, then cascading down one side.
+    ctx.save(); ctx.lineWidth = 2.5;
+    const fold = (a, c, b) => { const p = P(...a), q = P(...c), r = P(...b); ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.quadraticCurveTo(q[0], q[1], r[0], r[1]); ctx.stroke(); };
+    fold([h.shoulder * 0.55, y.shoulder - 0.02], [0, y.bust - 0.02], [-h.waist * 0.6, y.waist + 0.01]);
+    fold([h.bust * 0.7, y.armpit - 0.03], [h.bust * 0.1, y.bust - 0.07], [-h.waist * 0.2, y.waist - 0.01]);
+    fold([h.waist * 0.3, y.waist], [h.hip * 0.9, y.hip - 0.05], [h.hip + 0.2, hemR + 0.04]);
+    fold([h.waist * 0.6, y.waist], [h.hip * 1.1, y.hip], [h.hip + 0.27, hemR + 0.06]);
+    ctx.restore();
+  },
   mini(g) {
     const { y, h, H } = g, hem = y.crotch - 0.07 * H;
     shape(g, [...top(g), [-h.bust - 0.004, y.armpit - 0.015], [-h.bust - 0.012, y.bust], [-h.waist - 0.012, y.waist], [-h.hip - 0.02, y.hip], [-h.hip - 0.06, hem]], { neckDepth: 0.06, round: true });

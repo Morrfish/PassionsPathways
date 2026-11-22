@@ -77,19 +77,21 @@ export class Viewer {
     const r = this.renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: true });
     r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
     r.outputColorSpace = THREE.SRGBColorSpace;
-    r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.05;
+    r.toneMapping = THREE.NeutralToneMapping; r.toneMappingExposure = 1.0; // keeps fabric colors true
     r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
     host.appendChild(r.domElement);
     const scene = this.scene = new THREE.Scene();
     scene.background = new THREE.Color('#efe9e2');
     const pmrem = new THREE.PMREMGenerator(r);
-    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-    scene.environmentIntensity = 0.7;
-    const key = this.key = new THREE.DirectionalLight('#fff6ec', 1.6);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.12).texture; // soft, blurred reflections like studio fabric
+    scene.environmentIntensity = 0.6;
+    // Studio lighting like the logo: warm golden key light, rose rim light behind, soft fill.
+    const key = this.key = new THREE.DirectionalLight('#fff1e4', 1.75);
     key.position.set(1.2, 3, 2.2); key.castShadow = true; key.shadow.mapSize.set(2048, 2048);
-    Object.assign(key.shadow.camera, { left: -1.2, right: 1.2, top: 2.4, bottom: -0.2, near: 0.5, far: 8 }); key.shadow.bias = -0.0005; key.shadow.normalBias = 0.02;
+    Object.assign(key.shadow.camera, { left: -1.2, right: 1.2, top: 2.4, bottom: -0.2, near: 0.5, far: 8 }); key.shadow.bias = -0.0005; key.shadow.normalBias = 0.02; key.shadow.radius = 4;
     scene.add(key);
-    const rim = new THREE.DirectionalLight('#dfe8ff', 0.7); rim.position.set(-2, 2, -2.5); scene.add(rim);
+    const rim = new THREE.DirectionalLight('#f6c9cf', 1.1); rim.position.set(-2, 2.2, -2.5); scene.add(rim);
+    const rim2 = new THREE.DirectionalLight('#f3dcb2', 0.6); rim2.position.set(2.4, 1.6, -1.8); scene.add(rim2);
     scene.add(new THREE.HemisphereLight('#ffffff', '#b8a99a', 0.35));
     // Platform the mannequin stands on.
     const stage = this.stage = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.58, 0.04, 96), new THREE.MeshStandardMaterial({ color: '#f7f3ee', roughness: 0.45 }));
@@ -227,7 +229,8 @@ export class Viewer {
       this.colorTex.anisotropy = this.renderer.capabilities.getMaxAnisotropy();
       this.matTex = new THREE.CanvasTexture(atlas.mat);
       this.garmentMats.forEach((m) => m.dispose());
-      const mk = (side) => new THREE.MeshPhysicalMaterial({ map: this.colorTex, roughnessMap: this.matTex, metalnessMap: this.matTex, roughness: 1, metalness: 1, transparent: true, alphaTest: 0.04, side });
+      // Cloth sheen (the soft glow along folds of velvet, satin and silk) takes each fabric's own color.
+      const mk = (side) => new THREE.MeshPhysicalMaterial({ map: this.colorTex, roughnessMap: this.matTex, metalnessMap: this.matTex, roughness: 1, metalness: 1, transparent: true, alphaTest: 0.04, side, sheen: 0.85, sheenRoughness: 0.42, sheenColorMap: this.colorTex, sheenColor: new THREE.Color(1, 1, 1) });
       this.garmentMats = [mk(THREE.BackSide), mk(THREE.FrontSide)];
     }
     this.colorTex.needsUpdate = true; this.matTex.needsUpdate = true;

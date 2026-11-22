@@ -1,6 +1,6 @@
 :root {
   --bg: #f4eee7; --surface: #fffdfa; --surface-2: #f8f3ed; --ink: #2b2228; --ink-2: #6d6066; --line: #e3d9cf;
-  --accent: #b4466e; --accent-ink: #ffffff; --accent-soft: #f6e3ea; --gold: #b8913a;
+  --accent: #a05a62; --accent-ink: #ffffff; --accent-soft: #f4e4e3; --gold: #bda274; --night: #141015;
   --shadow: 0 6px 24px rgba(60, 35, 40, .12); --r: 12px;
   --serif: "Didot", "Bodoni 72", "Bodoni MT", "Playfair Display", Georgia, "Times New Roman", serif;
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -16,17 +16,17 @@ input, select { font: inherit; color: inherit; }
 .i svg { width: 100%; height: 100%; }
 
 /* ---------- top bar ---------- */
-.top { height: var(--top-h); display: flex; align-items: center; gap: 12px; padding: 0 14px; background: var(--ink); color: #f8efe6; position: relative; z-index: 5; }
+.top { height: var(--top-h); display: flex; align-items: center; gap: 12px; padding: 0 14px; background: radial-gradient(ellipse at 12% -40%, #4a3a2a 0%, transparent 55%), var(--night); color: #f3eadf; position: relative; z-index: 5; border-bottom: 1px solid #3a2f26; }
 .brand { display: flex; align-items: center; gap: 9px; flex: none; }
 .brand-mark { width: 30px; height: 30px; }
 .brand-name { font: 600 21px/1 var(--serif); letter-spacing: .02em; white-space: nowrap; }
-.brand-name em { font-style: italic; color: #e9b8c9; font-weight: 400; }
+.brand-name em { font-style: italic; color: var(--gold); font-weight: 400; }
 .design-name { min-width: 80px; width: 210px; background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 6px 8px; color: #f8efe6; }
 .design-name:hover { border-color: rgba(255,255,255,.2); }
 .design-name:focus { outline: none; border-color: #e9b8c9; background: rgba(255,255,255,.06); }
 .mode { display: flex; background: rgba(255,255,255,.1); border-radius: 999px; padding: 3px; margin: 0 auto; }
 .mode button { display: flex; align-items: center; gap: 6px; border: 0; background: transparent; padding: 7px 16px; border-radius: 999px; color: #e8dcd2; font-weight: 600; }
-.mode button.on { background: #f8efe6; color: var(--ink); }
+.mode button.on { background: #f3eadf; color: var(--night); }
 .actions { display: flex; align-items: center; gap: 6px; }
 .top .btn { background: rgba(255,255,255,.08); border-color: transparent; color: #f8efe6; }
 .top .btn:hover { background: rgba(255,255,255,.16); }
@@ -63,6 +63,9 @@ input, select { font: inherit; color: inherit; }
 
 .welcome { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(560px, calc(100% - 32px)); background: var(--surface); border-radius: 18px; box-shadow: var(--shadow); padding: 26px; text-align: center; border: 1px solid var(--line); }
 .welcome h2 { font: 600 28px/1.1 var(--serif); margin: 0 0 6px; }
+.welcome-logo { width: calc(100% + 52px); margin: -26px -26px 16px; display: block; border-radius: 18px 18px 0 0; aspect-ratio: 3 / 1.55; object-fit: cover; object-position: 50% 30%; }
+.about-logo { width: calc(100% + 44px); margin: -22px -22px 14px; display: block; border-radius: 18px 18px 0 0; }
+.brand-mark { border-radius: 50%; box-shadow: 0 0 0 1px rgba(189,162,116,.6), 0 0 10px rgba(189,162,116,.35); }
 .welcome p { color: var(--ink-2); margin: 0 0 18px; }
 .welcome-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .big { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 18px 10px; border: 1px solid var(--line); background: var(--surface-2); border-radius: 14px; font-weight: 600; }

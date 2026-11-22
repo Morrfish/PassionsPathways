@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>Atelier Studio</title>
 <meta name="description" content="Sketch, color and see your fashion designs in 3D.">
-<meta name="theme-color" content="#2b2228">
+<meta name="theme-color" content="#141015">
 <link rel="icon" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/icon-256.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -13,7 +13,7 @@
 </head>
 <body>
 <header class="top">
-  <div class="brand"><img src="assets/logo-mark.svg" alt="" class="brand-mark"><span class="brand-name">Atelier <em>Studio</em></span></div>
+  <div class="brand"><img src="assets/logo-mark.png" alt="" class="brand-mark"><span class="brand-name">Atelier <em>Studio</em></span></div>
   <input id="designName" class="design-name" value="Untitled design" aria-label="Design name" spellcheck="false">
   <div class="mode" role="tablist" aria-label="View">
     <button role="tab" data-mode="sketch" class="on" aria-selected="true"><span class="i" data-i="pencil"></span><span>Sketch</span></button>
@@ -76,6 +76,7 @@
     </div>
     <div class="view3d" id="view3d" hidden></div>
     <div class="welcome" id="welcome" hidden>
+      <img class="welcome-logo" src="assets/logo-full.jpg" alt="Atelier Studio">
       <h2>Start a design</h2>
       <p>Bring in a drawing, or start from an outline that fits the mannequin.</p>
       <div class="welcome-btns">
@@ -272,7 +273,7 @@
 
 <div class="modal" id="aboutModal" hidden>
   <div class="dialog">
-    <h2>Atelier Studio</h2>
+    <img class="about-logo" src="assets/logo-full.jpg" alt="Atelier Studio">
     <p>Sketch, color and see your fashion designs in 3D. Atelier is French for a designer's workshop.</p>
     <p class="note">Your designs are saved on this device and work without the internet. Use <b>Save design file</b> to keep a copy you can move to another computer.</p>
     <p class="note">Made with three.js (MIT), jsPDF (MIT) and the Gradio client (ISC).</p>

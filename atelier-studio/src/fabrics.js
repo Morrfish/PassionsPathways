@@ -61,12 +61,12 @@ function nearest(pts, x, y) {
 
 const GEN = {
   cotton: () => make(({ lum, rough }) => { const n = fbm(11); each((x, y, i) => { lum[i] = 0.94 + n[i] * 0.08; rough[i] = 0.9; }); }),
-  satin: () => make(({ lum, rough }) => { const n = fbm(12, [2, 4], [0.7, 0.3]); each((x, y, i) => { const s = Math.sin(TAU * (x + y) / TILE + n[i] * 2.5); lum[i] = 0.95 + 0.07 * s * s; rough[i] = 0.2; }); }),
-  silk: () => make(({ lum, rough }) => { const n = fbm(13, [2, 4, 8], [0.6, 0.3, 0.1]); each((x, y, i) => { lum[i] = 0.95 + 0.06 * Math.sin(TAU * (x / TILE + n[i] * 0.8)); rough[i] = 0.3; }); }),
+  satin: () => make(({ lum, rough }) => { const n = fbm(12, [2, 4], [0.7, 0.3]); each((x, y, i) => { const s = Math.sin(TAU * (x + y) / TILE + n[i] * 2.5); lum[i] = 0.985 + 0.012 * s * s; rough[i] = 0.36; }); }),
+  silk: () => make(({ lum, rough }) => { const n = fbm(13, [2, 4, 8], [0.6, 0.3, 0.1]); each((x, y, i) => { lum[i] = 0.95 + 0.06 * Math.sin(TAU * (x / TILE + n[i] * 0.8)); rough[i] = 0.38; }); }),
   linen: () => make(({ lum, rough }) => { const n = fbm(14, [16, 32, 64], [0.5, 0.3, 0.2]), slub = noiseField(8, 5); each((x, y, i) => { const w = Math.sin(TAU * x * 24 / TILE) * 0.5 + Math.sin(TAU * y * 24 / TILE) * 0.5; lum[i] = 0.86 + 0.06 * w + 0.1 * n[i] - 0.05 * slub[i]; rough[i] = 0.95; }); }),
   denim: () => make(({ lum, rough }) => { const n = fbm(15, [16, 32, 64], [0.4, 0.3, 0.3]), r = rng(77); each((x, y, i) => { const tw = ((x + y) % 6) < 3 ? 1 : 0; lum[i] = 0.74 + 0.14 * tw + 0.12 * n[i] + (r() < 0.03 ? 0.18 : 0); rough[i] = 0.95; }); }),
   corduroy: () => make(({ lum, rough }) => { const n = fbm(16, [8, 16], [0.6, 0.4]); each((x, y, i) => { const rib = Math.pow(Math.abs(Math.sin(Math.PI * x * 10 / TILE)), 0.6); lum[i] = 0.55 + 0.45 * rib + 0.06 * n[i]; rough[i] = 0.85; }); }),
-  velvet: () => make(({ lum, rough }) => { const n = fbm(17, [2, 4, 8], [0.5, 0.3, 0.2]), f = fbm(18, [32, 64], [0.5, 0.5]); each((x, y, i) => { lum[i] = 0.7 + 0.3 * n[i] + 0.05 * f[i]; rough[i] = 0.55; }); }),
+  velvet: () => make(({ lum, rough }) => { const n = fbm(17, [2, 4, 8], [0.5, 0.3, 0.2]), f = fbm(18, [32, 64], [0.5, 0.5]); each((x, y, i) => { lum[i] = 0.9 + 0.08 * n[i] + 0.04 * f[i]; rough[i] = 0.62; }); }),
   taffeta: () => make(({ lum, rough, metal }) => { const n = fbm(19, [2, 4], [0.6, 0.4]); each((x, y, i) => { const c = Math.sin(TAU * x * 32 / TILE) * Math.sin(TAU * y * 32 / TILE); lum[i] = 0.9 + 0.05 * c + 0.18 * (n[i] - 0.5); rough[i] = 0.35; metal[i] = 0.15; }); }),
   lame: () => make(({ lum, rough, metal }) => { const n = fbm(20, [4, 8, 16, 32], [0.3, 0.3, 0.25, 0.15]); each((x, y, i) => { const v = Math.abs(n[i] - 0.5) * 2; lum[i] = 0.75 + 0.55 * (1 - v); rough[i] = 0.25 + 0.2 * v; metal[i] = 0.9; }); }),
   leather: () => make(({ lum, rough }) => { const pts = spots(14, 21, 0.9, false), n = fbm(22, [8, 16], [0.6, 0.4]); each((x, y, i) => { const { d, d2 } = nearest(pts, x, y); const crease = Math.min(1, (d2 - d) / 2.5); lum[i] = 0.78 + 0.16 * crease + 0.08 * n[i]; rough[i] = 0.5 + 0.2 * (1 - crease); }); }),
@@ -204,6 +204,7 @@ export function swatchURL(id, hex) {
 }
 
 export const PALETTES = [
+  { name: 'Atelier (from the logo)', colors: ['#b07a74', '#9e6a64', '#8a5552', '#d8aaa4', '#efe6d8', '#bda274', '#e3cfa8', '#141015'] },
   { name: 'Pastels', colors: ['#f8c8d4', '#fbd9b5', '#fff1b0', '#c9ebc4', '#bfe0f2', '#d6c8f0', '#f3d1e8', '#e8e3d9'] },
   { name: 'Jewel tones', colors: ['#7a1236', '#0f5e4f', '#1d3a8a', '#5a1d7a', '#b8860b', '#a31621', '#0b6e99', '#2e1a47'] },
   { name: 'Brights', colors: ['#ff2e63', '#ff8a00', '#ffd400', '#2ecc71', '#00b4ff', '#7b2ff7', '#ff4fd8', '#00e0c6'] },
