@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#14102b">
+<title>Morris Mayhem</title>
+<link rel="icon" href="icon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<section id="title" class="screen show">
+  <div class="logo"><span>MORRIS</span><b>MAYHEM</b></div>
+  <p class="tag">The family brawl · 2 to 4 players</p>
+  <div class="menu">
+    <button class="big" data-go="select">▶ Play</button>
+    <button data-go="howto">How to play</button>
+    <button data-go="roster">Meet the family</button>
+  </div>
+  <p class="foot">Plug in controllers any time · <span id="padcount">no controllers yet</span></p>
+</section>
+
+<section id="select" class="screen">
+  <header><button class="back" data-go="title">◀</button><h2>Pick your fighters</h2></header>
+  <div id="slots"></div>
+  <div id="roster" class="grid"></div>
+  <div class="row options">
+    <label>Stage <select id="stage"></select></label>
+    <label>Lives <select id="stocks"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></label>
+    <button id="fight" class="big">FIGHT!</button>
+  </div>
+</section>
+
+<section id="howto" class="screen">
+  <header><button class="back" data-go="title">◀</button><h2>How to play</h2></header>
+  <div class="howto">
+    <p><b>Knock everyone off the stage.</b> Every hit raises a player's damage %. The higher it is, the farther they fly. Fly past the edge of the screen and you lose a life. Last one standing wins.</p>
+    <table>
+      <tr><th></th><th>Keyboard 1</th><th>Keyboard 2</th><th>Controller</th></tr>
+      <tr><td>Move</td><td>A D</td><td>← →</td><td>Stick / D-pad</td></tr>
+      <tr><td>Jump (3 jumps)</td><td>W or Space</td><td>↑ or Num 0</td><td>A or Y</td></tr>
+      <tr><td>Attack</td><td>F</td><td>Num 1 or K</td><td>X</td></tr>
+      <tr><td>Special</td><td>G</td><td>Num 2 or L</td><td>B</td></tr>
+      <tr><td>Dodge</td><td>H</td><td>Num 3 or ;</td><td>Bumpers / triggers</td></tr>
+      <tr><td>Pause</td><td>Esc</td><td>Backspace</td><td>Start</td></tr>
+    </table>
+    <p><b>Attacks change with direction.</b> Attack alone, or hold left/right, up or down while pressing it. It works on the ground and in the air.</p>
+    <p><b>Every fighter has 4 specials</b>: Special alone, side + Special, up + Special (also gets you back to the stage), and down + Special.</p>
+    <p><b>Dodge</b> to be untouchable for a moment. Hold a direction to roll or air-dodge that way. Press down on a floating platform to drop through it. Press down in the air to fall fast.</p>
+  </div>
+</section>
+
+<section id="family" class="screen">
+  <header><button class="back" data-go="title">◀</button><h2>Meet the family</h2></header>
+  <div id="cards" class="cards"></div>
+</section>
+
+<section id="pause" class="screen dim">
+  <h2>Paused</h2>
+  <div class="menu"><button class="big" id="resume">Resume</button><button id="quit">Quit match</button></div>
+</section>
+
+<section id="results" class="screen dim">
+  <h2 id="winner"></h2>
+  <div id="stats" class="stats"></div>
+  <div class="menu row"><button class="big" id="rematch">Rematch</button><button data-go="select">Change fighters</button><button data-go="title">Title</button></div>
+</section>
+
+<div id="touch"></div>
+
+<script src="js/data.js"></script>
+<script src="js/input.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/render.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>

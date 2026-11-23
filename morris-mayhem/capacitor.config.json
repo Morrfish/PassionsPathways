@@ -1,0 +1,6 @@
+{
+  "appId": "org.passionspathways.morrismayhem",
+  "appName": "Morris Mayhem",
+  "webDir": "www",
+  "android": { "backgroundColor": "#14102b" }
+}

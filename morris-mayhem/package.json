@@ -1,0 +1,17 @@
+{
+  "name": "morris-mayhem",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Morris Mayhem: a 2-4 player family platform fighter.",
+  "scripts": {
+    "build": "node build.mjs",
+    "serve": "node build.mjs && npx --yes http-server www -p 8080 -c-1"
+  },
+  "dependencies": {
+    "@capacitor/core": "^8.6.2"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/cli": "^8.6.2"
+  }
+}
