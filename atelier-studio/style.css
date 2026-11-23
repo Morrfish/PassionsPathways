@@ -18,7 +18,7 @@ input, select { font: inherit; color: inherit; }
 /* ---------- top bar ---------- */
 .top { height: var(--top-h); display: flex; align-items: center; gap: 12px; padding: 0 14px; background: radial-gradient(ellipse at 12% -40%, #4a3a2a 0%, transparent 55%), var(--night); color: #f3eadf; position: relative; z-index: 5; border-bottom: 1px solid #3a2f26; }
 .brand { display: flex; align-items: center; gap: 9px; flex: none; }
-.brand-mark { width: 30px; height: 30px; }
+.brand-logo { height: calc(var(--top-h) - 6px); width: auto; display: block; border-radius: 6px; }
 .brand-name { font: 600 21px/1 var(--serif); letter-spacing: .02em; white-space: nowrap; }
 .brand-name em { font-style: italic; color: var(--gold); font-weight: 400; }
 .design-name { min-width: 80px; width: 210px; background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 6px 8px; color: #f8efe6; }
@@ -63,7 +63,7 @@ input, select { font: inherit; color: inherit; }
 
 .welcome { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(560px, calc(100% - 32px)); background: var(--surface); border-radius: 18px; box-shadow: var(--shadow); padding: 26px; text-align: center; border: 1px solid var(--line); }
 .welcome h2 { font: 600 28px/1.1 var(--serif); margin: 0 0 6px; }
-.welcome-logo { width: calc(100% + 52px); margin: -26px -26px 16px; display: block; border-radius: 18px 18px 0 0; aspect-ratio: 3 / 1.55; object-fit: cover; object-position: 50% 30%; }
+.welcome-logo { width: calc(100% + 52px); margin: -26px -26px 16px; display: block; border-radius: 18px 18px 0 0; aspect-ratio: 3 / 2; object-fit: contain; background: #000; }
 .about-logo { width: calc(100% + 44px); margin: -22px -22px 14px; display: block; border-radius: 18px 18px 0 0; }
 .brand-mark { border-radius: 50%; box-shadow: 0 0 0 1px rgba(189,162,116,.6), 0 0 10px rgba(189,162,116,.35); }
 .welcome p { color: var(--ink-2); margin: 0 0 18px; }
@@ -204,7 +204,8 @@ input, select { font: inherit; color: inherit; }
 @media (max-width: 760px) {
   :root { --top-h: 54px; }
   .top { gap: 6px; padding: 0 8px; }
-  .brand-name, .design-name { display: none; }
+  .design-name { display: none; }
+  .brand-logo { height: 44px; }
   .mode { margin: 0; }
   .mode button { padding: 7px 12px; }
   .actions { margin-left: auto; gap: 4px; }
