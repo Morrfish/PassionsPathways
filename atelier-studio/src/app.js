@@ -50,6 +50,8 @@ function applyBody(rebuildGarment = true) {
   spec = viewer.setBody(body, BW, BH);
   board.guides.front = viewer.renderGuide(BW / 2, BH / 2, 'front');
   board.guides.back = viewer.renderGuide(BW / 2, BH / 2, 'back');
+  board.guides.left = viewer.renderGuide(BW / 2, BH / 2, 'left');
+  board.guides.right = viewer.renderGuide(BW / 2, BH / 2, 'right');
   board.dirty = true;
   if (rebuildGarment && mode === '3d') refresh3D();
   renderBodyUI(); renderMeasurements();
@@ -176,18 +178,44 @@ $('#starters2').addEventListener('click', (e) => { const s = e.target.closest('[
 function setSide(side) {
   if (board.side === side) return;
   if (board.place) { $('#placeBar').hidden = true; }
+  $('#cropBar').hidden = true;
   board.setSide(side);
   renderSideBar();
 }
 function renderSideBar() {
   $$('#sideSeg button').forEach((b) => b.classList.toggle('on', b.dataset.v === board.side));
-  const back = board.side === 'back';
-  $('#sideNote').hidden = !back;
-  $('#sideNote').textContent = board.backLinked ? 'The back matches the front. Draw or color here to change it.' : 'The back has its own design.';
-  $('#btnMatchFront').hidden = !back || board.backLinked;
+  const s = board.side, isBack = s === 'back', isSide = s === 'left' || s === 'right', linked = board.linked[s];
+  $('#sideNote').hidden = s === 'front';
+  $('#sideNote').textContent = isBack ? (linked ? 'The back matches the front. Draw or color here to change it.' : 'The back has its own design.')
+    : isSide ? (linked ? `This is how the ${s} side looks in 3D now. Add fabric or color here to change it.` : `The ${s} side has its own design.`) : '';
+  $('#btnMatchFront').hidden = s === 'front' || linked;
+  $('#btnMatchFront').textContent = isBack ? 'Match front' : 'Match 3D again';
 }
+// A linked left/right side starts as the 3D garment seen from that side.
+board.sideSource = (side) => { if (!board.hasColor('front')) return null; ensure3D(); return viewer.renderSide(side); };
 $('#sideSeg').addEventListener('click', (e) => { const v = e.target.closest('button')?.dataset.v; if (v) setSide(v); });
-$('#btnMatchFront').addEventListener('click', () => { if (confirm('Make the back match the front again? The back design will be replaced.')) { board.linkBack(); renderSideBar(); } });
+$('#btnMatchFront').addEventListener('click', () => {
+  const s = board.side; if (s === 'front') return;
+  const msg = s === 'back' ? 'Make the back match the front again? The back design will be replaced.' : `Go back to the 3D look for the ${s} side? This side's design will be replaced.`;
+  if (!confirm(msg)) return;
+  if (s !== 'back') { board.linked[s] = true; viewerFresh = false; ensure3D(); }
+  board.linkSide(s); renderSideBar();
+});
+
+// ---------- layers: the sketch stays separate from the fabric ----------
+const eye = (btn, on) => { btn.classList.toggle('on', on); btn.textContent = on ? 'Shown' : 'Hidden'; };
+$('#lySketchEye').addEventListener('click', (e) => { board.showLines = !board.showLines; eye(e.currentTarget, board.showLines); board.dirty = true; });
+$('#lyColorEye').addEventListener('click', (e) => { board.showColor = !board.showColor; eye(e.currentTarget, board.showColor); board.dirty = true; });
+$('#lySketchOpacity').addEventListener('input', (e) => { board.linesOpacity = +e.target.value; board.dirty = true; });
+$('#lyErase').addEventListener('click', () => {
+  setTool('eraser'); board.eraseTarget = 'lines';
+  $$('#eraseTarget button').forEach((b) => b.classList.toggle('on', b.dataset.v === 'lines'));
+  toast('The eraser now erases only the sketch lines.');
+});
+$('#lyClear').addEventListener('click', () => { if (confirm('Remove the whole sketch on this side? Your colors and fabrics stay. You can undo this.')) board.clearSketch(); });
+$('#lyCrop').addEventListener('click', () => { if (mode !== 'sketch') return; board.startCrop(); $('#cropBar').hidden = false; });
+$('#cropCancel').addEventListener('click', () => { board.cancelCrop(); $('#cropBar').hidden = true; });
+$('#cropOk').addEventListener('click', () => { const ok = board.applyCrop(); $('#cropBar').hidden = true; toast(ok ? 'Sketch cropped. Undo brings it back.' : 'Drag a box first.'); });
 
 // ---------- sketch <-> 3D ----------
 function setMode(m) {
@@ -234,6 +262,8 @@ $('#viewBtns').addEventListener('click', (e) => {
     if (!down) return; const d = down; down = null;
     if (Math.hypot(e.clientX - d.x, e.clientY - d.y) > 6 || performance.now() - d.t > 600) return;
     const hit = viewer.pick(e.clientX, e.clientY); if (!hit) return;
+    // On a side with its own design, only fabric (not empty space) can be refilled.
+    if ((hit.side === 'left' || hit.side === 'right') && board.sides[hit.side].cx.color.getImageData(hit.x, hit.y, 1, 1).data[3] < 20) return;
     // While the back matches the front, tapping the back changes the front (mirrored).
     let side = hit.side, x = hit.x;
     if (side === 'back' && board.backLinked) { side = 'front'; x = BW - 1 - x; }

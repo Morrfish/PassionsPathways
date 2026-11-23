@@ -22,7 +22,7 @@ export async function listDesigns() {
 }
 export const newId = () => 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
-const LAYER_KEYS = ['color', 'mat', 'lines', 'bcolor', 'bmat', 'blines'];
+const LAYER_KEYS = ['color', 'mat', 'lines', 'bcolor', 'bmat', 'blines', 'lcolor', 'lmat', 'llines', 'rcolor', 'rmat', 'rlines'];
 // Project file (.atelier): JSON with the layers as PNG data URLs, so it can move between computers.
 const toDataURL = (blob) => new Promise((r) => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(blob); });
 const fromDataURL = async (u) => (await fetch(u)).blob();

@@ -26,6 +26,12 @@ Everything works offline and designs are saved on the device.
   body, and swing when the mannequin moves.
   Each fabric drapes its own way (chiffon soft and floaty, taffeta full and crisp, denim
   and leather heavy). **Twirl**, **Sway** and **Breeze** buttons show the movement.
+- **Sketch layer:** a drawing's lines come in on their own layer. Show or hide it, make it
+  see-through, erase only the sketch, crop it to the part to keep, or clear it. Fill uses the
+  lines as edges, but the sketch never shows on the fabric in 3D.
+- **Left and right sides:** Left and Right tabs next to Front and Back. A side starts as the 3D
+  garment seen from that side; once she adds fabric or color there it is its own design, and in
+  3D the garment's sides show it (sleeves keep the front and back colors).
 - **Front and back:** a Front/Back switch on the sketch board. The back matches the front
   (mirrored) until she draws or colors on it, then it is its own design (open backs, bows,
   different fabric). Pictures can be placed on either side. In 3D each side shows its drawing.
