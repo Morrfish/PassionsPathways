@@ -14,6 +14,16 @@ The user (Courtnee) is a teacher, not a developer. Speak plainly, show screensho
 technical detail out of the final message unless asked. Keep content family-friendly: it's their real
 family, so jokes are affectionate, never mean.
 
+## Where the family info lives
+Courtnee works out the family details with ChatGPT. The shared source of truth is her Google Drive folder
+**"Morris Mayhem (family fighting game)"** (folder id `1IkLvScrsMOngzETPGYWHJ2Hu8jN7T3GE`):
+- Doc **"Morris Mayhem - Family Fighters (fill this in)"** (id `157WX7olQfRaXnhOyR-zpXnydPu7ntIfHvex-MLdab1o`):
+  one templated section per person with a STATUS line. Build fighters marked **READY**, then change their
+  status to **IN GAME** (needs the Google Docs connector; if it isn't on, tell her instead of making a copy).
+- Subfolder **"Photos and art"** (id `1yIfBH_4MyfGRpqaA0XolfcBACCmoja97`): pictures named `<id>-face.png`, `<id>-body.png`.
+Read the doc with the Drive connector's `read_file_content` and download pictures with `download_file_content`.
+If it isn't reachable, ask her to paste the info and attach the pictures in chat.
+
 ## Code map
 | File | What's in it |
 |---|---|
