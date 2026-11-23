@@ -63,7 +63,7 @@ input, select { font: inherit; color: inherit; }
 
 .welcome { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(560px, calc(100% - 32px)); background: var(--surface); border-radius: 18px; box-shadow: var(--shadow); padding: 26px; text-align: center; border: 1px solid var(--line); }
 .welcome h2 { font: 600 28px/1.1 var(--serif); margin: 0 0 6px; }
-.welcome-logo { width: calc(100% + 52px); margin: -26px -26px 16px; display: block; border-radius: 18px 18px 0 0; aspect-ratio: 3 / 2; object-fit: contain; background: #000; }
+.welcome-logo { width: calc(100% + 52px); margin: -26px -26px 16px; display: block; border-radius: 18px 18px 0 0; aspect-ratio: 3 / 2; object-fit: contain; background: #fff; border-bottom: 1px solid var(--line); }
 .about-logo { width: calc(100% + 44px); margin: -22px -22px 14px; display: block; border-radius: 18px 18px 0 0; }
 .brand-mark { border-radius: 50%; box-shadow: 0 0 0 1px rgba(189,162,116,.6), 0 0 10px rgba(189,162,116,.35); }
 .welcome p { color: var(--ink-2); margin: 0 0 18px; }
