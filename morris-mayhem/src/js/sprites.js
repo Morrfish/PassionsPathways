@@ -7,6 +7,7 @@ MM.SPRITES = MM.SPRITES || {};
 MM.SPRITES['patty'] = {
   src: 'img/patty-atlas.webp',
   standH: 184,
+  fscale: {},
   frames: {
     'idle2': [0, 0, 88, 186, 42.7, 186.0],
     'idle1': [92, 0, 87, 185, 46.3, 185.4],
@@ -79,6 +80,7 @@ MM.SPRITES['patty'] = {
 MM.SPRITES['jeffery'] = {
   src: 'img/jeffery-atlas.webp',
   standH: 154,
+  fscale: {},
   frames: {
     'idle1': [0, 0, 61, 155, 32.2, 155.0],
     'idle2': [65, 0, 62, 155, 32.6, 155.0],
@@ -136,6 +138,7 @@ MM.SPRITES['jeffery'] = {
 MM.SPRITES['jadden'] = {
   src: 'img/jadden-atlas.webp',
   standH: 154,
+  fscale: {},
   frames: {
     'idle1': [0, 0, 63, 155, 29.2, 155.0],
     'idle2': [67, 0, 63, 155, 27.3, 155.0],
@@ -209,6 +212,7 @@ MM.SPRITES['jadden'] = {
 MM.SPRITES['courtnee'] = {
   src: 'img/courtnee-atlas.webp',
   standH: 153,
+  fscale: {"asm3": 1.177, "asm0": 1.177, "asm1": 1.177, "asm2": 1.177, "ult1": 1.177, "ult0": 1.177, "ult3": 1.177, "ult2": 1.177, "ret0": 1.177, "ret1": 1.177, "ret2": 1.177, "ret3": 1.177, "pers0": 1.177, "pers1": 1.177, "pers2": 1.177, "pers3": 1.177, "ent": 1.177, "taunt": 1.177, "win": 1.177, "lose": 1.177},
   frames: {
     'idle2': [0, 0, 56, 155, 27.4, 155.0],
     'idle1': [60, 0, 56, 154, 27.5, 154.4],
@@ -321,6 +325,7 @@ MM.SPRITES['courtnee'] = {
 MM.SPRITES['courtnee-super'] = {
   src: 'img/courtnee-super-atlas.webp',
   standH: 159,
+  fscale: {},
   frames: {
     'idle2': [0, 0, 71, 161, 36.8, 160.6],
     'idle0': [75, 0, 69, 159, 37.4, 159.3],
@@ -409,6 +414,7 @@ MM.SPRITES['courtnee-super'] = {
 MM.SPRITES['megan'] = {
   src: 'img/megan-atlas.webp',
   standH: 157,
+  fscale: {"ret0": 0.762, "ret2": 0.762, "ret3": 0.762, "ret1": 0.762, "ult1": 0.762, "ult2": 0.762, "ult3": 0.762, "ult0": 0.762, "pers1": 0.762, "pers0": 0.762, "pers2": 0.762, "pers3": 0.762, "ent": 0.762, "taunt": 0.762, "win": 0.762, "lose": 0.762},
   frames: {
     'idle0': [0, 0, 66, 157, 30.6, 156.9],
     'idle1': [70, 0, 65, 157, 30.8, 156.9],
@@ -517,6 +523,7 @@ MM.SPRITES['megan'] = {
 MM.SPRITES['mandi-witch'] = {
   src: 'img/mandi-witch-atlas.webp',
   standH: 159,
+  fscale: {},
   frames: {
     'idle0': [0, 0, 67, 159, 38.2, 159.3],
     'idle2': [71, 0, 66, 159, 35.9, 159.3],
@@ -575,6 +582,7 @@ MM.SPRITES['mandi-witch'] = {
 MM.SPRITES['mandi-mermaid'] = {
   src: 'img/mandi-mermaid-atlas.webp',
   standH: 153,
+  fscale: {},
   frames: {
     'idle2': [0, 0, 56, 154, 27.2, 154.4],
     'idle0': [60, 0, 60, 153, 30.2, 153.1],
@@ -629,7 +637,7 @@ MM.SPRITES['mandi-mermaid'] = {
   moves: {"jab": "shell", "side": "shell", "down": "dive", "up": "tide", "nair": "fin", "fair": "fin", "uair": "tide", "dair": "dive", "neutral": "bubble", "sideSpecial": "wave", "upSpecial": "surface", "downSpecial": "whirl", "airRow": "fin", "upRow": "tide", "uairRow": "tide", "riseLate": "surface2"},
 };
 
-MM.SPRITES['patty-ult'] = { src: 'img/patty-ult-atlas.webp', standH: 184, frames: {
+MM.SPRITES['patty-ult'] = { src: 'img/patty-ult-atlas.webp', standH: 184, fscale: {"ult0": 0.92, "ult1": 0.92, "ult2": 0.92, "ult3": 0.92, "ent": 0.92, "taunt": 0.92, "win": 0.92, "lose": 0.92}, frames: {
     'ult0': [0, 0, 166, 224, 91.6, 223.8],
     'ult1': [170, 0, 280, 251, 173.6, 251.1],
     'ult2': [454, 0, 243, 221, 131.0, 221.3],
@@ -640,7 +648,7 @@ MM.SPRITES['patty-ult'] = { src: 'img/patty-ult-atlas.webp', standH: 184, frames
     'lose': [1647, 0, 264, 198, 110.1, 197.8]
 } };
 
-MM.SPRITES['jeffery-ult'] = { src: 'img/jeffery-ult-atlas.webp', standH: 154, frames: {
+MM.SPRITES['jeffery-ult'] = { src: 'img/jeffery-ult-atlas.webp', standH: 154, fscale: {"ult0": 0.811, "ult1": 0.811, "ult2": 0.811, "ult3": 0.811, "ent": 0.811, "taunt": 0.811, "win": 0.811, "lose": 0.811}, frames: {
     'ult0': [0, 0, 128, 195, 66.7, 194.7],
     'ult1': [132, 0, 151, 196, 74.1, 195.9],
     'ult2': [287, 0, 338, 185, 150.2, 185.4],
@@ -651,7 +659,7 @@ MM.SPRITES['jeffery-ult'] = { src: 'img/jeffery-ult-atlas.webp', standH: 154, fr
     'lose': [1414, 0, 237, 166, 93.7, 166.2]
 } };
 
-MM.SPRITES['jadden-ult'] = { src: 'img/jadden-ult-atlas.webp', standH: 154, frames: {
+MM.SPRITES['jadden-ult'] = { src: 'img/jadden-ult-atlas.webp', standH: 154, fscale: {"ult0": 0.837, "ult1": 0.837, "ult2": 0.837, "ult3": 0.837, "ent": 0.837, "taunt": 0.837, "win": 0.837, "lose": 0.837}, frames: {
     'ult0': [0, 0, 176, 203, 87.3, 202.7],
     'ult1': [180, 0, 194, 195, 109.2, 194.7],
     'ult2': [378, 0, 263, 180, 99.8, 173.0],
@@ -662,7 +670,7 @@ MM.SPRITES['jadden-ult'] = { src: 'img/jadden-ult-atlas.webp', standH: 154, fram
     'lose': [1434, 0, 183, 133, 78.2, 132.7]
 } };
 
-MM.SPRITES['mandi-witch-ult'] = { src: 'img/mandi-witch-ult-atlas.webp', standH: 159, frames: {
+MM.SPRITES['mandi-witch-ult'] = { src: 'img/mandi-witch-ult-atlas.webp', standH: 159, fscale: {"ult0": 1.262, "ult1": 1.262, "ult2": 1.262, "ult3": 1.262, "ent": 1.262, "taunt": 1.262, "win": 1.262, "lose": 1.262}, frames: {
     'ult0': [0, 0, 100, 140, 45.5, 139.5],
     'ult1': [104, 0, 185, 146, 75.6, 146.3],
     'ult2': [293, 0, 173, 146, 86.1, 146.3],
@@ -673,7 +681,7 @@ MM.SPRITES['mandi-witch-ult'] = { src: 'img/mandi-witch-ult-atlas.webp', standH:
     'lose': [1043, 0, 144, 117, 68.4, 117.2]
 } };
 
-MM.SPRITES['mandi-mermaid-ult'] = { src: 'img/mandi-mermaid-ult-atlas.webp', standH: 153, frames: {
+MM.SPRITES['mandi-mermaid-ult'] = { src: 'img/mandi-mermaid-ult-atlas.webp', standH: 153, fscale: {"ult0": 1.33, "ult1": 1.33, "ult2": 1.33, "ult3": 1.33, "ent": 1.33, "taunt": 1.33, "win": 1.33, "lose": 1.33}, frames: {
     'ult0': [0, 0, 69, 133, 34.4, 133.3],
     'ult1': [73, 0, 175, 126, 68.6, 125.9],
     'ult2': [252, 0, 200, 140, 105.8, 140.1],

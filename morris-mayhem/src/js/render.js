@@ -21,6 +21,7 @@ window.MM = window.MM || {};
   // Pick the pose for what the fighter is doing right now.
   function pickFrame(f, S) {
     const a = f.act, M = S.moves;
+    if (f.float > 0) return 'idle' + (Math.floor(f.anim / 16) % 4); // coming back after a KO: stand on the respawn spot
     if (f.hitstun > 0) return f.ground ? 'hurt' + (f.hitstun > 6 ? 1 : 0) : 'hurt2';
     if (f.jsq > 0) return 'jump0';
     if (a) {
@@ -89,7 +90,7 @@ window.MM = window.MM || {};
       for (const [t, p] of ua.poses) if (f.act.t >= t) frameName = p;
     }
     const { S, im } = sh, fr = S.frames[frameName] || S.frames.idle0;
-    const k = (f.h * 1.15) / S.standH;
+    const k = ((f.h * 1.15) / S.standH) * ((S.fscale && S.fscale[frameName]) || 1); // per-pose size fix (see build_sprites_js.py)
     const fsh = f.def.sprite && sheet(f.def.sprite);
     const da = f.act && f.act.type === 'special' && f.act.sp.trail && f.act.t >= 4 && f.act.t < 6 + f.act.sp.dur + 6 ? f.act : null;
     if (da && fsh && fsh.S.frames[da.sp.trail]) { // e.g. Pixel Rush: the pixel trail streams out behind him
