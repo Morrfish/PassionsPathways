@@ -73,7 +73,9 @@ window.MM = window.MM || {};
     const u = def.ultimate, sh = u && u.sprite && sheet(u.sprite), fr = sh && sh.S.frames[frame];
     if (!fr) return null;
     const c = document.createElement('canvas'); c.width = c.height = size; const g = c.getContext('2d');
-    const k = Math.min((size * 0.96) / fr[2], (size * 0.96) / fr[3]);
+    // same scale as in a match: a standing fighter is ~70% of the card (Courtnee tallest), so sitting/lose poses stay small
+    let k = ((size * 0.7) / 1.15) * ((def.stats && def.stats.size) || 1) / sh.S.standH * ((sh.S.fscale && sh.S.fscale[frame]) || 1);
+    k = Math.min(k, (size * 0.98) / fr[2], (size * 0.98) / fr[3]);
     g.drawImage(sh.im, fr[0], fr[1], fr[2], fr[3], (size - fr[2] * k) / 2, size - fr[3] * k, fr[2] * k, fr[3] * k);
     return c.toDataURL();
   };

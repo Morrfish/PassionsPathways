@@ -212,7 +212,7 @@ MM.SPRITES['jadden'] = {
 MM.SPRITES['courtnee'] = {
   src: 'img/courtnee-atlas.webp',
   standH: 153,
-  fscale: {"asm3": 2.001, "asm0": 1.177, "asm1": 1.177, "asm2": 1.53, "ult1": 2.001, "ult0": 2.001, "ult3": 2.001, "ult2": 2.001, "ret0": 1.883, "ret1": 1.471, "ret2": 1.177, "ret3": 1.177, "pers0": 1.177, "pers1": 1.177, "pers2": 1.177, "pers3": 1.177, "ent": 1.177, "taunt": 1.177, "win": 1.177, "lose": 1.177},
+  fscale: {"asm3": 2.001, "asm0": 1.177, "asm1": 1.177, "asm2": 1.53, "ult1": 2.001, "ult0": 2.001, "ult3": 2.001, "ult2": 2.001, "ret0": 1.883, "ret1": 1.471, "ret2": 1.177, "ret3": 1.177, "pers0": 1.177, "pers1": 1.177, "pers2": 1.177, "pers3": 1.177, "ent": 1.177, "taunt": 1.177, "win": 1.177, "lose": 1.177, "saiyan2": 1.2, "saiyan3": 1.2, "saiyan0": 1.2, "saiyan1": 1.2},
   frames: {
     'idle2': [0, 0, 56, 155, 27.4, 155.0],
     'idle1': [60, 0, 56, 154, 27.5, 154.4],
@@ -414,7 +414,7 @@ MM.SPRITES['courtnee-super'] = {
 MM.SPRITES['megan'] = {
   src: 'img/megan-atlas.webp',
   standH: 157,
-  fscale: {"ret0": 0.762, "ret2": 0.762, "ret3": 0.762, "ret1": 0.762, "ult1": 0.762, "ult2": 0.762, "ult3": 0.762, "ult0": 0.762, "pers1": 0.762, "pers0": 0.762, "pers2": 0.762, "pers3": 0.762, "ent": 0.762, "taunt": 0.762, "win": 0.762, "lose": 0.762},
+  fscale: {"ret0": 1.219, "ret2": 1.219, "ret3": 1.219, "ret1": 1.219, "ult1": 0.762, "ult2": 0.762, "ult3": 0.762, "ult0": 0.762, "pers1": 0.762, "pers0": 0.762, "pers2": 0.594, "pers3": 0.594, "ent": 0.762, "taunt": 0.762, "win": 0.594, "lose": 0.594, "def0": 0.8, "def1": 0.8, "def2": 0.8, "def3": 0.8, "bair1": 0.8, "bair0": 0.8, "bair2": 0.8, "bair3": 0.8, "nap0": 1.25, "nap3": 1.25, "nap1": 1.25, "nap2": 1.25},
   frames: {
     'idle0': [0, 0, 66, 157, 30.6, 156.9],
     'idle1': [70, 0, 65, 157, 30.8, 156.9],
@@ -523,7 +523,7 @@ MM.SPRITES['megan'] = {
 MM.SPRITES['siren'] = {
   src: 'img/siren-atlas.webp',
   standH: 156,
-  fscale: {"ult1": 0.739, "ult3": 0.739, "ult0": 0.739, "ult2": 0.739, "pers0": 0.739, "pers1": 0.739, "pers2": 0.739, "pers3": 0.739, "ent": 0.739, "taunt": 0.739, "win": 0.739, "lose": 0.739},
+  fscale: {"ult1": 0.739, "ult3": 0.739, "ult0": 0.739, "ult2": 0.739, "pers0": 0.739, "pers1": 0.739, "pers2": 0.739, "pers3": 0.739, "ent": 0.739, "taunt": 0.739, "win": 0.739, "lose": 0.739, "def0": 0.75, "def2": 0.75, "def1": 0.75, "def3": 0.75, "bair0": 0.8, "bair1": 0.8, "bair2": 0.8, "bair3": 0.8, "mac0": 1.3, "mac1": 1.3, "mac2": 1.3, "mac3": 1.3, "note0": 1.16, "note1": 1.16, "note2": 1.16, "note3": 1.16, "blitz2": 1.1, "blitz3": 1.1, "blitz0": 1.1, "blitz1": 1.1},
   frames: {
     'idle1': [0, 0, 51, 157, 22.4, 157.5],
     'idle2': [55, 0, 51, 157, 22.0, 157.5],
@@ -631,7 +631,7 @@ MM.SPRITES['siren'] = {
 MM.SPRITES['mandi-witch'] = {
   src: 'img/mandi-witch-atlas.webp',
   standH: 159,
-  fscale: {},
+  fscale: {"whirl0": 1.3, "whirl1": 1.3, "whirl2": 1.3, "whirl3": 1.3, "salon3": 1.15, "salon1": 1.15, "salon2": 1.15, "salon0": 1.15},
   frames: {
     'idle0': [0, 0, 67, 159, 38.2, 159.3],
     'idle2': [71, 0, 66, 159, 35.9, 159.3],
@@ -778,7 +778,7 @@ MM.SPRITES['jadden-ult'] = { src: 'img/jadden-ult-atlas.webp', standH: 154, fsca
     'lose': [1434, 0, 183, 133, 78.2, 132.7]
 } };
 
-MM.SPRITES['mandi-witch-ult'] = { src: 'img/mandi-witch-ult-atlas.webp', standH: 159, fscale: {"ult0": 1.262, "ult1": 1.262, "ult2": 1.262, "ult3": 1.262, "ent": 1.262, "taunt": 1.262, "win": 1.262, "lose": 1.262}, frames: {
+MM.SPRITES['mandi-witch-ult'] = { src: 'img/mandi-witch-ult-atlas.webp', standH: 159, fscale: {"ult0": 1.098, "ult1": 1.098, "ult2": 1.098, "ult3": 1.098, "ent": 1.098, "taunt": 1.098, "win": 1.098, "lose": 1.098}, frames: {
     'ult0': [0, 0, 100, 140, 45.5, 139.5],
     'ult1': [104, 0, 185, 146, 75.6, 146.3],
     'ult2': [293, 0, 173, 146, 86.1, 146.3],
@@ -789,7 +789,7 @@ MM.SPRITES['mandi-witch-ult'] = { src: 'img/mandi-witch-ult-atlas.webp', standH:
     'lose': [1043, 0, 144, 117, 68.4, 117.2]
 } };
 
-MM.SPRITES['mandi-mermaid-ult'] = { src: 'img/mandi-mermaid-ult-atlas.webp', standH: 153, fscale: {"ult0": 1.33, "ult1": 1.33, "ult2": 1.33, "ult3": 1.33, "ent": 1.33, "taunt": 1.33, "win": 1.33, "lose": 1.33}, frames: {
+MM.SPRITES['mandi-mermaid-ult'] = { src: 'img/mandi-mermaid-ult-atlas.webp', standH: 153, fscale: {"ult0": 1.131, "ult1": 1.131, "ult2": 1.131, "ult3": 1.131, "ent": 1.131, "taunt": 1.131, "win": 1.131, "lose": 1.131}, frames: {
     'ult0': [0, 0, 69, 133, 34.4, 133.3],
     'ult1': [73, 0, 175, 126, 68.6, 125.9],
     'ult2': [252, 0, 200, 140, 105.8, 140.1],

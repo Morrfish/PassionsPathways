@@ -65,7 +65,7 @@ If it isn't reachable, ask her to paste the info and attach the pictures in chat
   (The Boss), then secret Patty. Fights with relatives not yet in MM.FIGHTERS show "coming soon" and are
   skipped (never substitute someone else); a hero is playable once that kid is a fighter. Saves per hero in
   `mm_story_v1_<hero>`. Story ids map `jeff` → `jeffery`; route places map to stage ids by name prefix.
-- Pose sizes: ultimate/personality sheets are drawn at other scales; build_sprites_js.py writes `fscale` per frame (taunt pose height = idle height) and render.js applies it. Check new fighters with a size lineup.
+- Pose sizes: ultimate/personality sheets are drawn at other scales; build_sprites_js.py writes `fscale` per frame (taunt pose height = idle height) and render.js applies it. Whole move groups drawn bigger/smaller on their sheet get a multiplier in `GROUP_SCALE`. Audit every new fighter: draw all frames at in-game scale side by side and compare standing poses to idle. The results screen (`MM.posePicture`) uses the same in-game scale, never fit-to-box.
 - Entrance / taunt / victory (built): personality row of each ult atlas (frames ent, taunt, win, lose). Entrances play
   for MM.ENTRANCE frames before the countdown; Taunt input (Q · Num6/O · pad Back) 0.65 s, ground only, a hit
   cancels it; winners hold the win pose; results cards show win/lose stills (MM.posePicture).
