@@ -94,15 +94,11 @@ window.MM = window.MM || {};
     const im = MM.photos[def.id];
     ctx.save();
     if (im && im.complete && im.naturalWidth) {
-      ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.closePath();
-      ctx.save(); ctx.clip();
-      ctx.fillStyle = opts.color || def.color; ctx.fillRect(x - r, y - r, r * 2, r * 2);
-      const k = Math.max((r * 2) / im.naturalWidth, (r * 2) / im.naturalHeight);
+      // full cutout portrait (head and shoulders), no circle
+      const k = Math.min((r * 2.3) / im.naturalWidth, (r * 2.3) / im.naturalHeight);
       const w = im.naturalWidth * k, h = im.naturalHeight * k;
       if (opts.flip) { ctx.translate(x, 0); ctx.scale(-1, 1); ctx.translate(-x, 0); }
       ctx.drawImage(im, x - w / 2, y - h / 2, w, h);
-      ctx.restore();
-      ctx.lineWidth = Math.max(2, r * 0.1); ctx.strokeStyle = opts.outline || '#1b1b2a'; ctx.stroke();
     } else {
       // cartoon placeholder face
       ctx.fillStyle = def.skin || '#e8b48a';
@@ -128,9 +124,8 @@ window.MM = window.MM || {};
     const c = document.createElement('canvas'); c.width = c.height = size;
     const g = c.getContext('2d');
     const im = MM.photos[def.id];
-    if (im && im.complete && im.naturalWidth) { // artwork portraits already have shoulders: show the whole picture
-      g.fillStyle = def.color; g.beginPath(); g.arc(size / 2, size / 2, size / 2, 0, TAU); g.fill();
-      g.save(); g.beginPath(); g.arc(size / 2, size / 2, size / 2 - 3, 0, TAU); g.clip(); g.drawImage(im, 0, 0, size, size); g.restore();
+    if (im && im.complete && im.naturalWidth) { // artwork portraits: the full cutout, no circle
+      g.drawImage(im, 0, 0, size, size);
       return c.toDataURL();
     }
     g.fillStyle = def.color; g.beginPath(); g.arc(size / 2, size * 1.05, size * 0.48, 0, TAU); g.fill();
@@ -368,7 +363,7 @@ window.MM = window.MM || {};
       g.fillStyle = 'rgba(26,11,46,.82)'; rr(g, x, y0, cw, chh, 14); g.fill();
       g.strokeStyle = MM.PLAYER_COLORS[f.slot]; g.lineWidth = 3; g.stroke();
       const r = chh * 0.36;
-      g.fillStyle = f.color; g.beginPath(); g.arc(x + r + 10, y0 + chh / 2, r + 3, 0, TAU); g.fill();
+      if (!f.def.photo) { g.fillStyle = f.color; g.beginPath(); g.arc(x + r + 10, y0 + chh / 2, r + 3, 0, TAU); g.fill(); }
       MM.drawHead(g, f.def, x + r + 10, y0 + chh / 2, r, { hurt: f.hitstun > 0 });
       const tx = x + r * 2 + 22;
       g.fillStyle = '#fff'; g.textAlign = 'left'; g.textBaseline = 'top';
