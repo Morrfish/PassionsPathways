@@ -26,6 +26,9 @@ select { background: var(--panel); border: 2px solid var(--line); border-radius:
 @media (max-width: 760px) { #slots { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .slot { background: var(--panel); border: 3px solid var(--line); border-radius: 16px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 230px; }
 .slot.off { opacity: .55; }
+.slot .team { font-weight: 900; padding: 4px 14px; border-radius: 999px; border: 2px solid #fff6; }
+.slot .team.A { background: #ff5a5a; } .slot .team.B { background: #3c8dff; }
+.options input[type=checkbox] { width: 18px; height: 18px; vertical-align: middle; }
 .slot.active { box-shadow: 0 0 0 3px #fff; }
 .slot .pn { font-weight: 900; font-size: 1.2em; }
 .slot img { width: 110px; height: 110px; }

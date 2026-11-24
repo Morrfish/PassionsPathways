@@ -48,16 +48,20 @@ window.MM = window.MM || {};
   MM.volume = 0.6;
 
   // ---------- match setup ----------
-  MM.newGame = function (players, stageId, stocks) {
+  MM.TEAM_COLORS = { A: '#ff5a5a', B: '#3c8dff' };
+  // opts: { teams: true for 2v2 (players carry team 'A'/'B'), ff: friendly fire, time: seconds (0 = no limit) }
+  MM.newGame = function (players, stageId, stocks, opts = {}) {
     const stage = MM.STAGES.find((s) => s.id === stageId) || MM.STAGES[0];
-    const G = { stage, fighters: [], projs: [], traps: [], parts: [], frame: 0, shake: 0, over: false, endT: 0, freeze: 0, countdown: 150, slowmo: 0 };
+    const G = { stage, fighters: [], teams: !!opts.teams, ff: !!opts.ff, timeLeft: (opts.time || 0) * 60, projs: [], traps: [], parts: [], frame: 0, shake: 0, over: false, endT: 0, freeze: 0, countdown: 150, slowmo: 0 };
     const used = {};
     const n = players.length, span = Math.min(stage.main.right - stage.main.left - 200, 260 * (n - 1));
     players.forEach((p, i) => {
       const def = MM.FIGHTERS.find((d) => d.id === p.fighter) || MM.FIGHTERS[0];
       const alt = used[def.id] = (used[def.id] || 0) + 1;
       const x = n === 1 ? 0 : -span / 2 + (span * i) / (n - 1);
-      G.fighters.push(makeFighter(p, def, x, alt > 1, stocks));
+      const f = makeFighter(p, def, x, alt > 1, stocks);
+      f.team = G.teams ? p.team || (p.slot % 2 ? 'B' : 'A') : null;
+      G.fighters.push(f);
     });
     G.fighters.forEach((f) => { f.face = f.x > 0 ? -1 : 1; });
     return G;
@@ -138,7 +142,18 @@ window.MM = window.MM || {};
     if (G.shake > 0) G.shake *= 0.85;
     if (!G.over) {
       const left = G.fighters.filter((f) => !f.out);
-      if (left.length <= 1 && G.fighters.length > 1) { G.over = true; G.endT = 150; G.winner = left[0] || null; G.slowmo = 60; }
+      const end = (winner, team) => { G.over = true; G.endT = 150; G.winner = winner; G.winTeam = team; G.slowmo = 60; };
+      if (G.teams) { // a team is out only when every member is out
+        const teamsLeft = [...new Set(left.map((f) => f.team))];
+        if (teamsLeft.length <= 1) end(null, teamsLeft[0] || null);
+      } else if (left.length <= 1 && G.fighters.length > 1) end(left[0] || null, null);
+      if (!G.over && G.timeLeft > 0 && G.countdown <= 0 && --G.timeLeft === 0) { // time up: most lives, then least damage
+        const score = (fs) => [fs.reduce((n, f) => n + Math.max(0, f.stocks), 0), -fs.reduce((n, f) => n + (f.out ? 0 : f.damage), 0)];
+        const groups = G.teams ? ['A', 'B'].map((t) => ({ t, s: score(G.fighters.filter((f) => f.team === t)) })) : G.fighters.map((f) => ({ f, s: score([f]) }));
+        groups.sort((a, b) => b.s[0] - a.s[0] || b.s[1] - a.s[1]);
+        const tie = groups.length > 1 && groups[0].s[0] === groups[1].s[0] && groups[0].s[1] === groups[1].s[1];
+        end(tie ? null : groups[0].f || null, tie ? null : groups[0].t || null); G.timeUp = true;
+      }
     } else if (G.endT > 0) G.endT--;
   };
 
@@ -531,8 +546,10 @@ window.MM = window.MM || {};
     }
   }
 
+  MM.sameTeam = (G, a, b) => G.teams && a && b && a !== b && a.team === b.team;
   function applyHit(G, att, def, h, hx, hy, proj) {
     if (def.invuln > 0 || def.dead || def.out) return false;
+    if (MM.sameTeam(G, att, def) && !G.ff) return false; // no friendly fire
     const da = def.act;
     if (da && da.counter) { // counter!
       if (proj) { proj.owner = def; proj.vx = -proj.vx * 1.2; proj.dir = -proj.dir; proj.hit = new Set(); proj.life = 90; }

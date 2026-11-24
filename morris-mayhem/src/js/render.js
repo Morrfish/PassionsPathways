@@ -64,7 +64,7 @@ window.MM = window.MM || {};
     if (f.act && f.act.type === 'dodge') g.globalAlpha *= 0.55;
     if (f.buff) { g.save(); g.fillStyle = f.buff.color; g.globalAlpha *= 0.3; g.beginPath(); g.ellipse(0, -f.h * 0.55, f.w * 1.4, f.h * 0.75, 0, 0, TAU); g.fill(); g.restore(); }
     // player-color ring at the feet (keeps two of the same fighter apart without recoloring the art)
-    if (f.ground) { g.save(); g.strokeStyle = MM.PLAYER_COLORS[f.slot]; g.lineWidth = 4; g.globalAlpha *= 0.85; g.beginPath(); g.ellipse(0, -2, f.w * 0.9, 8, 0, 0, TAU); g.stroke(); g.restore(); }
+    if (f.ground) { g.save(); g.strokeStyle = f.team ? MM.TEAM_COLORS[f.team] : MM.PLAYER_COLORS[f.slot]; g.lineWidth = 4; g.globalAlpha *= 0.85; g.beginPath(); g.ellipse(0, -2, f.w * 0.9, 8, 0, 0, TAU); g.stroke(); g.restore(); }
     g.scale(f.face * k, k);
     g.drawImage(im, fr[0], fr[1], fr[2], fr[3], -fr[4], -fr[5], fr[2], fr[3]);
     g.restore();
@@ -314,10 +314,10 @@ window.MM = window.MM || {};
     }
     // player tag
     const tagY = f.y - f.h - 34 * s;
-    g.fillStyle = MM.PLAYER_COLORS[f.slot];
+    g.fillStyle = f.team ? MM.TEAM_COLORS[f.team] : MM.PLAYER_COLORS[f.slot];
     g.beginPath(); g.moveTo(f.x - 9, tagY); g.lineTo(f.x + 9, tagY); g.lineTo(f.x, tagY + 11); g.fill();
     g.font = 'bold 20px system-ui'; g.textAlign = 'center'; g.textBaseline = 'bottom';
-    g.fillText(f.cpu ? 'CPU' : 'P' + (f.slot + 1), f.x, tagY - 2);
+    g.fillText((f.cpu ? 'CPU' : 'P' + (f.slot + 1)) + (f.team ? ' · ' + f.team : ''), f.x, tagY - 2);
     if (f.bubble) {
       g.font = 'bold 22px system-ui'; const tw = g.measureText(f.bubble.text).width + 24;
       g.fillStyle = '#fff'; rr(g, f.x - tw / 2, tagY - 70, tw, 38, 12); g.fill(); g.beginPath(); g.moveTo(f.x - 8, tagY - 33); g.lineTo(f.x, tagY - 22); g.lineTo(f.x + 8, tagY - 33); g.fill();
@@ -375,13 +375,14 @@ window.MM = window.MM || {};
       const x = x0 + i * (cw + 14);
       g.globalAlpha = f.out ? 0.45 : 1;
       g.fillStyle = 'rgba(26,11,46,.82)'; rr(g, x, y0, cw, chh, 14); g.fill();
-      g.strokeStyle = MM.PLAYER_COLORS[f.slot]; g.lineWidth = 3; g.stroke();
+      g.strokeStyle = f.team ? MM.TEAM_COLORS[f.team] : MM.PLAYER_COLORS[f.slot]; g.lineWidth = f.team ? 5 : 3; g.stroke();
+      if (f.team) { g.fillStyle = MM.TEAM_COLORS[f.team]; rr(g, x + cw - 34, y0 + 6, 28, 24, 6); g.fill(); g.fillStyle = '#fff'; g.font = `900 ${Math.round(chh * 0.2)}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(f.team, x + cw - 20, y0 + 18); }
       const r = chh * 0.36;
       if (!f.def.photo) { g.fillStyle = f.color; g.beginPath(); g.arc(x + r + 10, y0 + chh / 2, r + 3, 0, TAU); g.fill(); }
       MM.drawHead(g, f.def, x + r + 10, y0 + chh / 2, r, { hurt: f.hitstun > 0 });
       const tx = x + r * 2 + 22;
       g.fillStyle = '#fff'; g.textAlign = 'left'; g.textBaseline = 'top';
-      g.font = `bold ${Math.round(chh * 0.17)}px system-ui`; g.fillText(`${f.cpu ? 'CPU' : 'P' + (f.slot + 1)} · ${f.def.name}`, tx, y0 + 8, cw - (tx - x) - 6);
+      g.font = `bold ${Math.round(chh * 0.17)}px system-ui`; g.fillText(`${f.cpu ? 'CPU' : 'P' + (f.slot + 1)} · ${f.def.name}`, tx, y0 + 8, cw - (tx - x) - (f.team ? 40 : 6));
       const dmg = Math.round(f.damage), heat = Math.min(1, f.damage / 160);
       g.fillStyle = `rgb(255,${Math.round(255 - heat * 200)},${Math.round(255 - heat * 230)})`;
       g.font = `900 ${Math.round(chh * 0.42)}px system-ui`; g.lineWidth = 4; g.strokeStyle = '#000';
@@ -422,11 +423,16 @@ window.MM = window.MM || {};
     g.setTransform(1, 0, 0, 1, 0, 0);
     offscreen(g, G, W, H, scale);
     hud(g, G, W, H);
+    if (G.timeLeft > 0 || G.timeUp) { // match clock
+      const s = Math.ceil(Math.max(0, G.timeLeft) / 60), txt = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+      g.font = `900 ${Math.round(H * 0.05)}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'top'; g.lineWidth = 6; g.strokeStyle = '#1a0b2e';
+      g.strokeText(txt, W / 2, H * 0.02); g.fillStyle = s <= 10 ? '#ff4b4b' : '#fff'; g.fillText(txt, W / 2, H * 0.02);
+    }
     // big center text
     let big = null;
     if (G.countdown > 0) big = G.countdown > 120 ? '3' : G.countdown > 80 ? '2' : G.countdown > 40 ? '1' : 'GO!';
     else if (G.frame < 30 && !G.over) big = null;
-    if (G.over) big = 'GAME!';
+    if (G.over) big = G.timeUp ? 'TIME!' : 'GAME!';
     if (big) {
       g.font = `italic 900 ${Math.round(H * 0.18)}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle';
       g.lineWidth = 12; g.strokeStyle = '#1b1b2a'; g.strokeText(big, W / 2, H * 0.42);

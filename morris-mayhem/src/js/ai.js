@@ -12,7 +12,7 @@ window.MM = window.MM || {};
     if (f.float > 0) { if (ai.t % 60 === 0) inp.x = f.x > 0 ? -1 : 1; return inp; }
 
     // pick a target: closest fighter still in, preferring the one we already chase
-    const others = G.fighters.filter((o) => o !== f && !o.out && !o.dead);
+    const others = G.fighters.filter((o) => o !== f && !o.out && !o.dead && !MM.sameTeam(G, f, o));
     if (!others.length) return inp;
     if (!ai.target || ai.target.out || ai.target.dead || ai.t % 240 === 0) {
       others.sort((a, b) => Math.hypot(a.x - f.x, a.y - f.y) - Math.hypot(b.x - f.x, b.y - f.y));

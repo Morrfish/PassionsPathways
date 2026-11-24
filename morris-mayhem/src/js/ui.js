@@ -24,7 +24,8 @@ window.MM = window.MM || {};
     { type: 'off', dev: 'p0', fighter: ids[2 % ids.length], level: 2 },
     { type: 'off', dev: 'p1', fighter: ids[3 % ids.length], level: 2 },
   ];
-  slots.forEach((s) => { if (!ids.includes(s.fighter)) s.fighter = ids[0]; });
+  slots.forEach((s, i) => { if (!ids.includes(s.fighter)) s.fighter = ids[0]; if (!s.team) s.team = i % 2 ? 'B' : 'A'; });
+  const teamMode = () => $('#mode').value === 'teams';
   let activeSlot = 0;
 
   // ---------- screens ----------
@@ -62,6 +63,7 @@ window.MM = window.MM || {};
       const f = fighterById(s.fighter);
       return `<div class="slot ${s.type === 'off' ? 'off' : ''} ${i === activeSlot ? 'active' : ''}" data-slot="${i}" style="border-color:${MM.PLAYER_COLORS[i]}">
         <div class="pn" style="color:${MM.PLAYER_COLORS[i]}">P${i + 1}</div>
+        ${teamMode() && s.type !== 'off' ? `<button class="team ${s.team}" data-k="team" title="Change team">Team ${s.team}</button>` : ''}
         <select data-k="type"><option value="human" ${s.type === 'human' ? 'selected' : ''}>Player</option><option value="cpu" ${s.type === 'cpu' ? 'selected' : ''}>Computer</option><option value="off" ${s.type === 'off' ? 'selected' : ''}>Empty</option></select>
         ${s.type === 'off' ? '<div class="ttl">Press Attack on a free controller to join</div>' : `
         <div class="pick"><button data-k="prev">◀</button><img src="${portrait(s.fighter)}" alt=""><button data-k="next">▶</button></div>
@@ -72,12 +74,14 @@ window.MM = window.MM || {};
     $('#roster').innerHTML = MM.FIGHTERS.map((f) => `<button data-f="${f.id}"><img src="${portrait(f.id)}" alt="">${f.name}</button>`).join('');
     $('#stage').innerHTML = MM.STAGES.map((s) => `<option value="${s.id}">${s.name}</option>`).join('');
     $('#stage').value = load('stage', MM.STAGES[0].id); $('#stocks').value = load('stocks', 3);
+    $('#ffWrap').hidden = !teamMode();
   }
   $('#slots').addEventListener('click', (e) => {
     const el = e.target.closest('.slot'); if (!el) return;
     const i = +el.dataset.slot, k = e.target.dataset.k;
     activeSlot = i;
     if (k === 'prev' || k === 'next') cycle(i, k === 'next' ? 1 : -1);
+    else if (k === 'team') { slots[i].team = slots[i].team === 'A' ? 'B' : 'A'; MM.sfx('select'); save('slots', slots); drawSelect(); }
     else if (!k) drawSelect();
     else if (e.target.tagName !== 'SELECT') drawSelect();
   });
@@ -87,6 +91,8 @@ window.MM = window.MM || {};
     if (k === 'dev') slots.forEach((s, j) => { if (j !== i && s.type === 'human' && s.dev === e.target.value) s.type = 'off'; });
     save('slots', slots); drawSelect();
   });
+  $('#mode').value = load('mode', 'ffa'); $('#time').value = load('time', '0');
+  $('#mode').addEventListener('change', () => { save('mode', $('#mode').value); if (teamMode() && $('#time').value === '0') $('#time').value = '180'; drawSelect(); });
   $('#roster').addEventListener('click', (e) => {
     const b = e.target.closest('[data-f]'); if (!b) return;
     if (slots[activeSlot].type === 'off') slots[activeSlot].type = 'human';
@@ -131,13 +137,19 @@ window.MM = window.MM || {};
   $('#fight').addEventListener('click', () => {
     const players = slots.map((s, i) => ({ ...s, slot: i })).filter((s) => s.type !== 'off').map((s) => ({ slot: s.slot, fighter: s.fighter, dev: s.dev, cpu: s.type === 'cpu', level: s.level }));
     if (players.length < 2) { alert('You need at least 2 fighters. Set another slot to Player or Computer.'); return; }
+    if (teamMode()) {
+      players.forEach((p) => { p.team = slots[p.slot].team; });
+      const teams = new Set(players.map((p) => p.team));
+      if (teams.size < 2) { $('#fight').textContent = 'Put someone on each team'; setTimeout(() => ($('#fight').textContent = 'FIGHT!'), 1800); return; }
+    }
     save('stage', $('#stage').value); save('stocks', +$('#stocks').value);
-    lastSetup = { players, stage: $('#stage').value, stocks: +$('#stocks').value };
+    save('mode', $('#mode').value); save('time', $('#time').value);
+    lastSetup = { players, stage: $('#stage').value, stocks: +$('#stocks').value, opts: { teams: teamMode(), ff: $('#ff').checked, time: +$('#time').value } };
     startMatch();
   });
   function startMatch() {
     demo = null; MM.muted = false; MM.resetCamera();
-    G = MM.newGame(lastSetup.players, lastSetup.stage, lastSetup.stocks);
+    G = MM.newGame(lastSetup.players, lastSetup.stage, lastSetup.stocks, lastSetup.opts || {});
     paused = false; show('match');
   }
   function togglePause() {
@@ -155,10 +167,11 @@ window.MM = window.MM || {};
   });
 
   function showResults() {
-    const fs = [...G.fighters].sort((a, b) => (b === G.winner) - (a === G.winner) || b.stocks - a.stocks || b.kos - a.kos);
-    $('#winner').textContent = G.winner ? `${G.winner.def.name} wins!` : 'Draw!';
-    $('#stats').innerHTML = fs.map((f) => `<div class="stat ${f === G.winner ? 'win' : ''}" style="border-color:${MM.PLAYER_COLORS[f.slot]}">
-      <img src="${portrait(f.def.id)}" alt=""><div><b>${f.cpu ? 'CPU' : 'P' + (f.slot + 1)} · ${f.def.name}</b></div>
+    const won = (f) => f === G.winner || (G.winTeam && f.team === G.winTeam);
+    const fs = [...G.fighters].sort((a, b) => won(b) - won(a) || b.stocks - a.stocks || b.kos - a.kos);
+    $('#winner').textContent = G.winTeam ? `Team ${G.winTeam} wins!` : G.winner ? `${G.winner.def.name} wins!` : 'Draw!';
+    $('#stats').innerHTML = fs.map((f) => `<div class="stat ${won(f) ? 'win' : ''}" style="border-color:${f.team ? MM.TEAM_COLORS[f.team] : MM.PLAYER_COLORS[f.slot]}">
+      <img src="${portrait(f.def.id)}" alt=""><div><b>${f.cpu ? 'CPU' : 'P' + (f.slot + 1)} · ${f.def.name}${f.team ? ' · Team ' + f.team : ''}</b></div>
       <div>KOs: ${f.kos} · Falls: ${f.falls}</div><div>Damage dealt: ${Math.round(f.dealt)}%</div></div>`).join('');
     show('results');
   }

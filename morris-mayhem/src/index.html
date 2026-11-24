@@ -29,6 +29,9 @@
   <div id="roster" class="grid"></div>
   <div class="row options">
     <label>Stage <select id="stage"></select></label>
+    <label>Mode <select id="mode"><option value="ffa">Free-for-all</option><option value="teams">2v2 Teams</option></select></label>
+    <label id="ffWrap" hidden><input type="checkbox" id="ff"> Friendly fire</label>
+    <label>Time <select id="time"><option value="0">No limit</option><option value="120">2 min</option><option value="180">3 min</option><option value="300">5 min</option></select></label>
     <label>Lives <select id="stocks"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select></label>
     <button id="fight" class="big">FIGHT!</button>
   </div>
