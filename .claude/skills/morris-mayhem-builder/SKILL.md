@@ -52,6 +52,12 @@ If it isn't reachable, ask her to paste the info and attach the pictures in chat
   `applyForm()` swaps look/stats/moves; the `transform` ability kind (down-special, also the Switch input:
   R / Num 4·J / pad Y / touch ⇄) is a 0.65 s vulnerable spin, cancelled by a hit, 2 s cooldown; cooldowns
   (`f.cd`) are shared across forms. Each form has its own `sprite` atlas.
+- Mess Meter forms (Codee): `def.mess = { action, hit, cleanFrames }`. Form 0 moves add `action` at frame 6 and
+  `hit` once per move that lands (projectiles carry `cast`); full → Switch input starts a 0.55 s `cleanup` act
+  (poses cup0-3, a hit stops it, meter kept), then form 1 for cleanFrames; `cleanTick` then plays `backwork`
+  (back0-3) to form 0, meter 0 (waits for an ultimate to finish). KO resets form + meter. render.js paints mud and
+  grass on his own pixels by meter level (`dirtFor`), and the HUD shows the Mess Meter / clean time over the
+  ultimate meter. Sheets without name tags under poses use `rowbands` in slice_sprites.py (see codee).
 - 2v2: `MM.newGame(players, stage, stocks, { teams, ff, time })`; players carry `team: 'A'|'B'`; `MM.sameTeam`
   blocks friendly fire in `applyHit` and AI targeting; team out only when all members out; timer tiebreak =
   lives, then lower damage, else draw.

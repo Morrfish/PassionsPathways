@@ -111,6 +111,48 @@ CHARACTERS = {
         },
         'props': [('bubbleball', 'specials.png', (968, 128))],
     },
+    # Codee: no name tags under poses (labels on the left), so rows are given by hand. Shared sheets
+    # (defense, transformation, ultimate) give each form its own rows.
+    'codee': {
+        'scale': 0.62, 'cols': [215, 470, 780, 1080, 9999],
+        'sheets': {
+            'codee-land-movement.png': ['idle', 'run', 'jump', 'hurt'],
+            'codee-land-attacks.png': ['whack', 'rake', 'sod', 'yard'],
+            'codee-land-aerials.png': ['hedge', 'branch', 'bootp', 'yspin'],
+            'codee-land-specials.png': ['mulch', 'mow', 'leaf', 'mud'],
+            'codee-defense.png': ['def', None, 'bair', None],
+            'codee-transformation.png': ['mess', 'cup', None, 'ovl'],
+            'codee-ultimate.png': ['ult', None, 'pers', None],
+            'codee-props.png': {'rows': ['tool', 'ctool', 'fx', 'door'], 'cols': [20, 380, 730, 1080, 9999]},
+        },
+        'props': [],
+        'cutrows': {'codee-land-specials.png': [846], 'codee-props.png': [1041]},  # leaf-blower boots touch the mud row; labels touch the door art
+        'rowbands': {s: [(100, 362), (362, 610), (610, 846), (846, 1086)] for s in (
+            'codee-land-movement.png', 'codee-land-attacks.png', 'codee-land-aerials.png', 'codee-land-specials.png',
+            'codee-defense.png', 'codee-ultimate.png')} | {
+            'codee-transformation.png': [(100, 395), (395, 649), (649, 919), (919, 1086)],
+            'codee-props.png': [(95, 322), (363, 588), (628, 776), (818, 1043)]},
+    },
+    'codee-clean': {
+        'scale': 0.62, 'cols': [215, 470, 780, 1080, 9999],
+        'sheets': {
+            'codee-clean-movement.png': ['idle', 'run', 'jump', 'hurt'],
+            'codee-clean-attacks.png': ['sweep', 'duster', 'mop', 'trash'],
+            'codee-clean-aerials.png': ['dbust', 'hdust', 'squeak', 'polish'],
+            'codee-clean-specials.png': ['suds', 'patrol', 'vac', 'wet'],
+            'codee-defense.png': [None, 'def', None, 'bair'],
+            'codee-transformation.png': [None, None, 'back', None],
+            'codee-ultimate.png': [None, 'ult', None, 'pers'],
+            'codee-props.png': {'rows': ['tool', 'ctool', 'fx', 'door'], 'cols': [20, 380, 730, 1080, 9999]},  # foam/water patch live here too
+        },
+        'props': [],
+        'cutrows': {'codee-props.png': [1041]},
+        'rowbands': {s: [(100, 362), (362, 610), (610, 846), (846, 1086)] for s in (
+            'codee-clean-movement.png', 'codee-clean-attacks.png', 'codee-clean-aerials.png', 'codee-clean-specials.png',
+            'codee-defense.png', 'codee-ultimate.png')} | {
+            'codee-transformation.png': [(100, 395), (395, 649), (649, 919), (919, 1086)],
+            'codee-props.png': [(95, 322), (363, 588), (628, 776), (818, 1043)]},
+    },
 }
 
 CUTROWS = {}

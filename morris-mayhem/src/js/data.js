@@ -200,6 +200,49 @@ MM.FIGHTERS = [
       desc: 'draws in her sketchbook, a block concert stage rises, then a rainbow paint wave sweeps straight ahead',
       poses: [[0, 'ult0'], [36, 'ult1'], [66, 'ult2'], [120, 'ult3']] },
   },
+  {
+    // Codee Morris, "The Dirty Work Perfectionist": hard worker, ran a landscaping business, likes everything clean.
+    // Landscaping moves fill his Mess Meter (grass and mud build up on his clothes). When it's full, Switch form
+    // (R / Num 4 / controller Y) cleans him up into the Clean Freak for 12 s: cleaning tools, +10% power, +8% speed.
+    // Moves/numbers from ChatGPT's CODEE_HANDOFF (proposed, editable). Art: ChatGPT sheets.
+    id: 'codee', name: 'Codee Morris', title: 'The Dirty Work Perfectionist', photo: 'img/codee.png',
+    stats: { speed: 6.8, air: 6.2, jump: 15, weight: 1.06, power: 1.02, size: 1.05 },
+    taunt: 'Time to clean this up!',
+    mess: { action: 4, hit: 6, cleanFrames: 720 }, // Mess Meter: +4 per landscaping move, +6 once per move that lands
+    forms: [
+      {
+        form: 'land', formName: 'BACK TO WORK!', title: 'Landscaping', sprite: 'codee',
+        color: '#b8742e', accent: '#5fae3a', skin: '#e8b996', hair: '#5a3a22',
+        stats: { speed: 6.8, air: 6.2, jump: 15, weight: 1.06, power: 1.02, size: 1.05 },
+        attackNames: { jab: 'Weed Whack', side: 'Yard Waste', up: 'Rake Raise', down: 'Sod Stomp', air: 'Trim the Hedge, High Branch, Boot Print, Yard Spin' },
+        specials: {
+          neutral: { kind: 'projectile', name: 'Mulch Madness', thing: 'a clump of mulch', sprite: 'fx0', scale: 0.45, speed: 11, vy: -3, grav: 0.25, dmg: 6, kb: 5, kbg: 0.06, r: 18, life: 70, cd: 84 },
+          side: { kind: 'dash', name: 'Mow Down', ride: true, speed: 13, dur: 26, dmg: 8, kb: 7.5, kbg: 0.11, ang: 30, cd: 180, box: [-10, -95, 120, 95] },
+          up: { kind: 'rise', name: 'Leaf Lift', power: 18.5, forward: 4, dmg: 5, kb: 6, kbg: 0.06 },
+          down: { kind: 'trap', name: 'Mud Patch', thing: 'a mud patch that slows anyone who steps in it', sprite: 'fx1', scale: 0.7, slowOnly: true, slow: { mul: 0.75, t: 36 }, life: 90, cd: 180 },
+        },
+        // 2.8 s: checks his watch, opens the front door, a giant broom sweeps everyone in front of him, door slams
+        ultimate: { name: 'Time to Go', sprite: 'codee', type: 'catch', ahead: 3.5, dur: 168, catchAt: 54, finishAt: 102, dmg: 28, kbMul: 1.5,
+          desc: 'checks his watch, opens the front door, sweeps everyone in front of him out with a giant broom and slams the door: HOUSE CLOSED',
+          poses: [[0, 'ult0'], [27, 'ult1'], [54, 'ult2'], [102, 'ult3']] },
+      },
+      {
+        form: 'clean', formName: 'CLEAN FREAK!', title: 'Clean Freak', sprite: 'codee-clean',
+        color: '#e9f1f7', accent: '#4aa8e8', skin: '#e8b996', hair: '#5a3a22',
+        stats: { speed: 7.34, air: 6.7, jump: 15, weight: 1.06, power: 1.12, size: 1.05 },
+        attackNames: { jab: 'Sweep It Up', side: 'Take Out the Trash', up: 'Ceiling Check', down: 'Spotless Sweep', air: 'Dust Buster, High Duster, Squeaky Stomp, Polish Spin' },
+        specials: {
+          neutral: { kind: 'projectile', name: 'Suds Delivery', thing: 'a cloud of soap foam', sprite: 'fx2', scale: 0.45, speed: 9, dmg: 6, kb: 5, kbg: 0.06, r: 20, life: 60, cd: 84 },
+          side: { kind: 'dash', name: 'Floor Patrol', ride: true, speed: 13, dur: 26, dmg: 8, kb: 7.5, kbg: 0.11, ang: 30, cd: 180, box: [-10, -95, 120, 95] },
+          up: { kind: 'rise', name: 'Vacuum Lift', power: 18.5, forward: 4, dmg: 5, kb: 6, kbg: 0.06 },
+          down: { kind: 'trap', name: 'Wet Floor', thing: 'a slippery wet patch that slows anyone who steps in it', sprite: 'fx3', scale: 0.7, slowOnly: true, slow: { mul: 0.8, t: 30 }, life: 90, cd: 180 },
+        },
+        ultimate: { name: 'Time to Go', sprite: 'codee-clean', type: 'catch', ahead: 3.5, dur: 168, catchAt: 54, finishAt: 102, dmg: 28, kbMul: 1.5,
+          desc: 'checks his watch, opens the front door, sweeps everyone in front of him out with a giant broom and slams the door: HOUSE CLOSED',
+          poses: [[0, 'ult0'], [27, 'ult1'], [54, 'ult2'], [102, 'ult3']] },
+      },
+    ],
+  },
 ];
 
 // Stages. Units are world pixels; y grows downward; the main floor top is y = 0.

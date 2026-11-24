@@ -27,7 +27,9 @@ window.MM = window.MM || {};
     if (a) {
       if (a.type === 'powerdown') return 'down' + Math.min(3, Math.floor(a.t / 10));
       if (a.type === 'lag') return a.countered && M.counterHit ? M.counterHit : 'jump0';
-      if (a.type === 'dodge') return f.ground ? 'idle0' : 'jump2';
+      if (a.type === 'dodge') return M.defRow && f.ground ? M.defRow + (a.roll ? (a.t < 10 ? 2 : 3) : a.t < 8 ? 0 : 1) : f.ground ? 'idle0' : 'jump2';
+      if (a.type === 'cleanup') return 'cup' + Math.min(3, Math.floor(a.t / 8.25)); // Codee: brush off the mess, into the lab coat
+      if (a.type === 'backwork') return 'back' + Math.min(3, Math.floor(a.t / 5.25));
       if (a.type === 'normal') {
         const row = M[a.name], m = a.m, before = a.t < m.start, during = a.t < m.start + m.active;
         if (a.name === 'up' && M.upRow) return M.upRow + (before ? 0 : during ? (a.t < m.start + m.active / 2 ? 1 : 2) : 3);
@@ -81,6 +83,32 @@ window.MM = window.MM || {};
   };
 
   const sp_startup = (a) => a.sp.startup || 24;
+  // Codee's Mess Meter on his clothes: mud and grass painted only on his own pixels (so it moves with every
+  // pose), from the boots up as the meter fills; the face stays clean. Cached per pose and level.
+  const dirtCache = {};
+  function dirtFor(sh, name, fr, lvl) {
+    const key = sh.S.src + name + lvl;
+    if (dirtCache[key]) return dirtCache[key];
+    const c = document.createElement('canvas'); c.width = fr[2]; c.height = fr[3]; const d = c.getContext('2d');
+    d.drawImage(sh.im, fr[0], fr[1], fr[2], fr[3], 0, 0, fr[2], fr[3]);
+    d.globalCompositeOperation = 'source-atop';
+    let seed = 0; for (const ch of name) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
+    const rnd = () => ((seed = (seed * 1103515245 + 12345) >>> 0) / 4294967296);
+    const w = fr[2], h = fr[3], top = h * [1, 0.72, 0.45, 0.24][lvl];
+    d.fillStyle = 'rgba(70,44,20,.5)'; d.fillRect(0, h * 0.9, w, h * 0.1); // muddy boots
+    for (let i = 0; i < 14 * lvl; i++) { // mud blotches
+      const x = rnd() * w, y = top + rnd() * (h - top), r = (0.04 + rnd() * 0.07) * w;
+      d.fillStyle = `rgba(${78 + rnd() * 30 | 0},${48 + rnd() * 20 | 0},22,${0.45 + rnd() * 0.3})`;
+      d.beginPath(); d.ellipse(x, y, r, r * (0.6 + rnd() * 0.5), rnd() * 3, 0, Math.PI * 2); d.fill();
+    }
+    d.lineCap = 'round';
+    for (let i = 0; i < 10 * lvl; i++) { // grass bits
+      const x = rnd() * w, y = top + rnd() * (h - top), l = (0.05 + rnd() * 0.06) * h, an = -1.2 + rnd() * 2.4;
+      d.strokeStyle = `rgba(${60 + rnd() * 40 | 0},${140 + rnd() * 50 | 0},40,.85)`; d.lineWidth = Math.max(1.5, w * 0.012);
+      d.beginPath(); d.moveTo(x, y); d.quadraticCurveTo(x + l * 0.4, y - l * 0.5, x + Math.sin(an) * l, y - Math.cos(an) * l); d.stroke();
+    }
+    return (dirtCache[key] = c);
+  }
   function drawSpriteFighter(g, f, G) {
     let sh = f.def.sprite && sheet(f.def.sprite);
     if (!sh) return false;
@@ -113,6 +141,8 @@ window.MM = window.MM || {};
     if (f.ground) { g.save(); g.strokeStyle = f.team ? MM.TEAM_COLORS[f.team] : MM.PLAYER_COLORS[f.slot]; g.lineWidth = 4; g.globalAlpha *= 0.85; g.beginPath(); g.ellipse(0, -2, f.w * 0.9, 8, 0, 0, TAU); g.stroke(); g.restore(); }
     g.scale(f.face * k, k);
     g.drawImage(im, fr[0], fr[1], fr[2], fr[3], -fr[4], -fr[5], fr[2], fr[3]);
+    const lvl = f.def.mess && f.formIdx === 0 && !(f.act && f.act.type === 'cleanup') ? (f.mess >= 100 ? 3 : f.mess >= 66 ? 2 : f.mess >= 33 ? 1 : 0) : 0;
+    if (lvl) g.drawImage(dirtFor(sh, frameName, fr, lvl), -fr[4], -fr[5]);
     g.restore();
     const a = f.act;
     if (f.slow) { g.save(); g.globalAlpha = 0.35; g.fillStyle = '#9fe8ff'; g.beginPath(); g.ellipse(f.x, f.y - f.h / 2, f.w * 0.9, f.h * 0.6, 0, 0, TAU); g.fill(); g.restore(); }
@@ -645,6 +675,14 @@ window.MM = window.MM || {};
       const shake = f.hitstun > 0 ? (Math.random() - 0.5) * 6 : 0;
       g.strokeText(f.out ? 'OUT' : dmg + '%', tx + shake, y0 + chh * 0.3); g.fillText(f.out ? 'OUT' : dmg + '%', tx + shake, y0 + chh * 0.3);
       for (let k = 0; k < f.stocks; k++) { g.fillStyle = MM.PLAYER_COLORS[f.slot]; g.beginPath(); g.arc(tx + 8 + k * 18, y0 + chh - 12, 6, 0, TAU); g.fill(); }
+      if (!f.out && f.def.mess) { // Codee: Mess Meter (brown -> green), or the Clean Freak time left (blue)
+        const mx = tx + Math.max(60, f.stocks * 18 + 10), mw = x + cw - 10 - mx, my = y0 + chh - 27;
+        const clean = f.formIdx === 1, v = clean ? f.clean / f.def.mess.cleanFrames : (f.mess || 0) / 100, full = !clean && v >= 1;
+        g.fillStyle = '#0008'; rr(g, mx, my, mw, 7, 3); g.fill();
+        g.fillStyle = clean ? '#bfe9ff' : full ? `hsl(${100 + 20 * Math.sin(G.frame * 0.3)},70%,50%)` : '#8a5a2a';
+        if (v > 0) { rr(g, mx, my, Math.max(4, mw * Math.min(1, v)), 7, 3); g.fill(); }
+        if (full) { g.font = `900 ${Math.round(chh * 0.13)}px system-ui`; g.textAlign = 'left'; g.textBaseline = 'bottom'; g.lineWidth = 3; g.strokeStyle = '#000'; g.strokeText('CLEAN UP! (Switch)', mx, my - 1); g.fillStyle = '#bfe9ff'; g.fillText('CLEAN UP! (Switch)', mx, my - 1); }
+      }
       if (!f.out && f.def.ultimate) { // ultimate meter
         const mx = tx + Math.max(60, f.stocks * 18 + 10), mw = x + cw - 10 - mx, my = y0 + chh - 17, full = f.meter >= 100;
         g.fillStyle = '#0008'; rr(g, mx, my, mw, 10, 5); g.fill();

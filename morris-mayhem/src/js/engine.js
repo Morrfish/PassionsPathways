@@ -104,6 +104,25 @@ window.MM = window.MM || {};
     f.act = { type: 'swap', t: 0, dur: 22, pose: 'flex', noGrav: !f.ground };
     f.vy = Math.min(f.vy, 0); f.swapCd = 75;
   }
+  // Codee's Mess Meter (0-100, separate from the ultimate meter): landscaping moves add a little when they
+  // come out and a bit more once if they land. Full = he can clean up into the Clean Freak.
+  function addMess(G, f, n) {
+    if (!f.def.mess || f.formIdx !== 0 || f.mess >= 100) return;
+    f.mess = Math.min(100, (f.mess || 0) + n);
+    if (f.mess >= 100) { popText(G, f.x, f.y - f.h - 24, 'CLEAN UP!', '#bfe9ff'); MM.sfx('heal'); }
+  }
+  // Clean Freak timer: keeps running in an ultimate (that finishes in the form it started in); then back to work.
+  function cleanTick(G, f) {
+    if (f.clean > 0) { f.clean--; return; }
+    const a = f.act;
+    if (a && (a.type === 'ult' || a.type === 'backwork')) return;
+    if (!a && !f.hitstun && !f.caught) f.act = { type: 'backwork', t: 0, dur: 21, noGrav: !f.ground };
+    else if (!a || a.type !== 'normal' && a.type !== 'special') backToWork(G, f); // got hit: change right away
+  }
+  function backToWork(G, f) {
+    applyForm(f, 0); f.clean = 0; f.mess = 0;
+    burst(G, f.x, f.y - f.h / 2, '#bfe9ff', 16, 5); popText(G, f.x, f.y - f.h - 24, 'BACK TO WORK!', f.accent);
+  }
   function makeFighterBase(p, def, x, alt, stocks) {
     const s = def.stats.size || 1;
     return {
@@ -217,6 +236,7 @@ window.MM = window.MM || {};
     if (f.buff && --f.buff.t <= 0) f.buff = null;
     if (f.slow && --f.slow.t <= 0) f.slow = null;
     if (f.super) superTick(G, f);
+    if (f.def.mess && f.formIdx === 1) cleanTick(G, f);
     if (f.bubble && --f.bubble.t <= 0) f.bubble = null;
     const inp = f.inp, prev = f.prev;
     const pressed = (k) => inp[k] && !prev[k];
@@ -243,6 +263,7 @@ window.MM = window.MM || {};
       const swapNow = f.forms && pressed('swap');
       const ultNow = pressed('ult') || (inp.attack && inp.special && (pressed('attack') || pressed('special')));
       if (ultNow && f.meter >= 100 && f.def.ultimate) startUlt(G, f);
+      else if (swapNow && f.def.mess) { if (f.mess >= 100 && f.formIdx === 0) f.act = { type: 'cleanup', t: 0, dur: 33, noGrav: !f.ground }; }
       else if (swapNow) startSpecial(G, f, 'down');
       else if (pressed('taunt') && f.ground) { // taunt: ground only, a hit stops it, no protection
         f.act = { type: 'taunt', t: 0, dur: MM.TAUNT, pose: 'flex' }; f.vx = 0;
@@ -344,6 +365,7 @@ window.MM = window.MM || {};
 
   function tickAction(G, f) {
     const a = f.act; a.t++;
+    if (a.t === 6 && f.def.mess && (a.type === 'normal' || a.type === 'special')) addMess(G, f, f.def.mess.action);
     if (a.type === 'normal') {
       const m = a.m;
       if (a.t === m.start && m.lunge && f.ground) f.vx += f.face * m.lunge;
@@ -359,6 +381,16 @@ window.MM = window.MM || {};
       f.vx *= 0.7; if (a.t >= a.dur) { f.act = null; if (f.super) endSuper(G, f); }
     } else if (a.type === 'taunt') {
       f.vx *= 0.7; if (a.t >= a.dur || !f.ground) f.act = null;
+    } else if (a.type === 'cleanup') { // 0.55 s; a hit stops it and he keeps his full meter
+      f.vx *= 0.8;
+      if (a.t % 6 === 0) part(G, { x: f.x + (Math.random() - 0.5) * f.w * 2, y: f.y - Math.random() * f.h, color: '#d9f3ff', size: 10, life: 20, max: 20, type: 'smoke' });
+      if (a.t >= a.dur) {
+        f.act = null; f.mess = 0; applyForm(f, 1); f.clean = f.def.mess.cleanFrames;
+        burst(G, f.x, f.y - f.h / 2, '#ffffff', 30, 8); ring(G, f.x, f.y - f.h / 2, '#4aa8e8');
+        popText(G, f.x, f.y - f.h - 24, 'CLEAN FREAK!', '#4aa8e8'); MM.sfx('heal');
+      }
+    } else if (a.type === 'backwork') { // 0.35 s back into the work clothes
+      f.vx *= 0.8; if (a.t >= a.dur) { f.act = null; backToWork(G, f); }
     } else if (a.type === 'swap') {
       f.vx *= 0.85;
       if (a.t === 10) {
@@ -421,7 +453,7 @@ window.MM = window.MM || {};
   }
 
   function spawnProj(G, f, o) {
-    G.projs.push(Object.assign({ owner: f, x: f.x + f.face * 34 * f.s, y: f.y - 70 * f.s, vx: f.face * 10, vy: 0, r: 14, dmg: 6, kb: 5, kbg: 0.05, ang: 30, life: 70, grav: 0, color: f.accent, hit: new Set(), t: 0 }, o));
+    G.projs.push(Object.assign({ owner: f, cast: f.act, x: f.x + f.face * 34 * f.s, y: f.y - 70 * f.s, vx: f.face * 10, vy: 0, r: 14, dmg: 6, kb: 5, kbg: 0.05, ang: 30, life: 70, grav: 0, color: f.accent, hit: new Set(), t: 0 }, o));
   }
 
   // Every ability kind. start() sets it up, tick() runs every frame.
@@ -654,10 +686,12 @@ window.MM = window.MM || {};
     if (u.type === 'catch') {
       if (a.t < u.catchAt && a.t % 6 === 0) ring(G, f.x, f.y - f.h / 2, f.accent); // telegraph: you can still get away
       if (a.t === u.catchAt) {
-        const r = u.radius * f.h;
+        const r = (u.radius || 2) * f.h;
         for (const d of G.fighters) {
           if (d === f || d.dead || d.out || d.invuln > 0 || d.caught || (MM.sameTeam(G, f, d) && !G.ff)) continue;
-          if (Math.hypot(d.x - f.x, (d.y - d.h / 2) - (f.y - f.h / 2)) <= r) { d.caught = f; d.act = null; d.hitstun = 0; d.vx = d.vy = 0; a.caught.push(d); burst(G, d.x, d.y - d.h / 2, f.accent, 10, 4); }
+          const inReach = u.ahead ? (d.x - f.x) * f.face > -f.w && (d.x - f.x) * f.face < u.ahead * f.h && Math.abs((d.y - d.h / 2) - (f.y - f.h / 2)) < f.h * 1.2
+            : Math.hypot(d.x - f.x, (d.y - d.h / 2) - (f.y - f.h / 2)) <= r;
+          if (inReach) { d.caught = f; d.act = null; d.hitstun = 0; d.vx = d.vy = 0; a.caught.push(d); burst(G, d.x, d.y - d.h / 2, f.accent, 10, 4); }
         }
         part(G, { type: 'ring', x: f.x, y: f.y - f.h / 2, color: f.accent, size: r * 0.6, life: 24, max: 24 });
       }
@@ -728,6 +762,7 @@ window.MM = window.MM || {};
     if (!(da && da.type === 'ult')) def.meter = Math.min(100, def.meter + dmg * 0.35);
     if (da && da.type === 'ult') releaseUlt(da);
     if (att) { att.dealt += dmg; def.lastHit = att.slot; def.lastHitT = G.frame; }
+    if (att && att.def.mess && !MM.sameTeam(G, att, def)) { const cast = proj ? proj.cast : att.act; if (cast && cast.type !== 'ult' && !cast.messHit) { cast.messHit = true; addMess(G, att, att.def.mess.hit); } }
     burst(G, hx, hy, '#fff', 4 + (dmg | 0), 4 + dmg * 0.3);
     if (da && da.armor && dmg < 15) { MM.sfx('hit', 0.3); def.lag = 3; return true; }
     let kb = (h.kb + h.kbg * def.damage * (0.6 + dmg / 25)) / def.st.weight;
@@ -825,6 +860,7 @@ window.MM = window.MM || {};
       G.shake = 26; MM.sfx('ko');
       if (f.act && f.act.type === 'ult') releaseUlt(f.act);
       if (f.super) { f.super = null; applyForm(f, 0); }
+      if (f.def.mess) { if (f.formIdx) applyForm(f, 0); f.mess = 0; f.clean = 0; }
       f.act = null; f.hitstun = 0; f.buff = null; f.slow = null; f.vx = f.vy = 0; f.caught = null; f.meter = 0;
       if (f.stocks <= 0) { f.out = true; f.x = 0; f.y = -3000; }
       else { f.dead = 80; f.y = -3000; }

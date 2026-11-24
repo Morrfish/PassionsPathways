@@ -33,6 +33,12 @@ MOVES = {
     'mandi-mermaid': dict(jab='shell', side='shell', down='dive', up='tide', nair='fin', fair='fin', uair='tide', dair='dive',
                           neutral='bubble', sideSpecial='wave', upSpecial='surface', downSpecial='whirl',
                           airRow='fin', upRow='tide', uairRow='tide', riseLate='surface2'),
+    'codee': dict(jab='whack', side='yard', down='sod', up='rake', nair='yspin', fair='hedge', uair='branch', dair='bootp',
+                  neutral='mulch', sideSpecial='mow', upSpecial='leaf', downSpecial='mud',
+                  airRow='hedge', upRow='rake', uairRow='branch', riseLate='leaf3', defRow='def'),
+    'codee-clean': dict(jab='sweep', side='trash', down='mop', up='duster', nair='polish', fair='dbust', uair='hdust', dair='squeak',
+                        neutral='suds', sideSpecial='patrol', upSpecial='vac', downSpecial='wet',
+                        airRow='dbust', upRow='duster', uairRow='hdust', riseLate='vac3', defRow='def'),
 }
 # ultimate key poses (tools/slice_ultimates.py): drawn at the same scale as the fighter's own atlas
 ULTS = {'patty-ult': 'patty', 'jeffery-ult': 'jeffery', 'jadden-ult': 'jadden', 'mandi-witch-ult': 'mandi-witch', 'mandi-mermaid-ult': 'mandi-mermaid'}
@@ -61,7 +67,7 @@ window.MM = window.MM || {};
 MM.SPRITES = MM.SPRITES || {};
 """]
 # extra names for frames (Courtnee's personality poses live in his own atlas)
-ALIASES = {w: {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'} for w in ('courtnee', 'megan', 'siren')}
+ALIASES = {w: {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'} for w in ('courtnee', 'megan', 'siren', 'codee', 'codee-clean')}
 for who, moves in MOVES.items():
     fr = json.load(open(os.path.join(src_dir, f'{who}-frames.json')))
     for a, b in ALIASES.get(who, {}).items(): fr[a] = fr[b]

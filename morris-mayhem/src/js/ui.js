@@ -224,7 +224,7 @@ window.MM = window.MM || {};
     supersaiyan: (s) => `turns Super Saiyan for ${s.dur / 60} s: faster and ${'30'}% stronger. When it wears off he takes +${s.cost}% damage; ${s.cooldown / 60} s before he can do it again`,
     icewave: (s) => `does a retro dance, then sends ${s.thing} along the floor that slows people down`,
     transform: (s) => `spins into the ${s.into} outfit (0.65 s, you can be hit out of it; 2 s cooldown)`,
-    heal: (s) => `heals ${s.amount}% damage`, trap: (s) => `leaves ${s.thing || 'a ' + (s.emoji || 'trap')} on the ground${s.gust ? ' that blasts people away' : ''}`, buff: () => 'powers up: faster and stronger for a while',
+    heal: (s) => `heals ${s.amount}% damage`, trap: (s) => s.slowOnly ? `leaves ${s.thing}` : `leaves ${s.thing || 'a ' + (s.emoji || 'trap')} on the ground${s.gust ? ' that blasts people away' : ''}`, buff: () => 'powers up: faster and stronger for a while',
   };
   function drawFamily() {
     const bar = (label, v, max) => `<div>${label}<i><b style="width:${Math.min(100, (v / max) * 100)}%"></b></i></div>`;
@@ -367,6 +367,9 @@ window.MM = window.MM || {};
     let html = `<div class="who"><img src="${portrait(d.id)}" alt=""><div><h3>${d.name}</h3><p>${d.title || ''}</p></div></div>`;
     if (d.forms && d.forms[0].specials.down.kind === 'supersaiyan') {
       html += `<div class="note"><b>Super Saiyan!</b> ↓ + Special powers him up for 8 seconds: golden hair, faster and stronger. When it wears off he's worn out and takes +25% damage, and he has to wait 15 seconds to do it again.</div>`;
+      for (const fd of MM.formDefs(d)) html += `<h4>${fd.title}</h4>` + moveRows(fd);
+    } else if (d.mess) {
+      html += `<div class="note"><b>Mess Meter!</b> His landscaping moves cover him in grass and mud and fill the brown Mess Meter (+4 per move, +6 more when it lands). When it's full, press <b>Switch form</b> (R · Num 4 · controller Y · ⇄ on touch) to clean up into the <b>Clean Freak</b> for 12 seconds: cleaning tools, 10% more power and 8% more speed. A hit while he's cleaning up stops it, but he keeps the full meter. After 12 seconds he goes back to work with an empty meter.</div>`;
       for (const fd of MM.formDefs(d)) html += `<h4>${fd.title}</h4>` + moveRows(fd);
     } else if (d.forms) {
       html += `<div class="note"><b>Two forms!</b> Press <b>↓ + Special</b> or <b>Switch form</b> (R · Num 4 · controller Y · ⇄ on touch) for Wardrobe Whirl, which changes between ${MM.formDefs(d).map((f) => f.title.replace(' outfit', '')).join(' and ')} at any time. Each outfit has its own moves, speed and power. The spin takes a moment and a hit stops it, so pick your moment.</div>`;
