@@ -15,8 +15,7 @@
 //   sprite    (optional) id in MM.SPRITES (sprites.js): draw the fighter from artwork instead of the cartoon body
 //   normalSpeed  (optional) under 1 = slower basic attacks (for heavy hitters)
 //
-// Real family members come first. The rest are PLACEHOLDERS that show off the different kinds of
-// ability and get replaced by the Morris family one by one.
+// Only real Morris family members are in the roster.
 window.MM = window.MM || {};
 
 MM.FIGHTERS = [
@@ -162,18 +161,6 @@ MM.FIGHTERS = [
       },
     ],
   },
-  {
-    id: 'healer', name: 'Healer', title: 'Placeholder: the one who takes care of everyone', photo: null,
-    color: '#ff9a3c', accent: '#ffffff', skin: '#f3d2b3', hair: '#7a3e1d',
-    stats: { speed: 6, air: 5.8, jump: 15, weight: 1, power: 0.95, size: 0.98 },
-    specials: {
-      neutral: { kind: 'projectile', name: 'Hot Cookie', emoji: '🍪', speed: 10, dmg: 7, kb: 6, kbg: 0.07, r: 15, life: 70, grav: 0.25, vy: -5, cd: 35 },
-      side: { kind: 'dash', name: 'Mom Swoop', speed: 15, dur: 16, dmg: 9, kb: 7, kbg: 0.11, ang: 40 },
-      up: { kind: 'rise', name: 'Angel Lift', power: 20, dmg: 5, kb: 6, kbg: 0.06 },
-      down: { kind: 'heal', name: 'Band-Aid', amount: 20, cd: 720 },
-    },
-    taunt: 'Go to your room!',
-  },
 ];
 
 // Stages. Units are world pixels; y grows downward; the main floor top is y = 0.
@@ -245,5 +232,5 @@ MM.formDefs = function (def) {
 // The base entry shows form 1 on menus.
 for (const d of MM.FIGHTERS) if (d.forms) for (const k of ['color', 'accent', 'skin', 'hair', 'hat', 'photo', 'sprite', 'specials', 'taunt', 'attackNames', 'normalSpeed']) if (d[k] === undefined && d.forms[0][k] !== undefined) d[k] = d.forms[0][k];
 
-// Fighters without their own ultimate art get a simple one (placeholders).
+// Fighters without their own ultimate art yet get a simple one.
 for (const d of MM.FIGHTERS) if (!d.ultimate && !d.forms) d.ultimate = { name: 'Mayhem Burst', type: 'catch', dur: 120, catchAt: 27, finishAt: 80, radius: 2.2, dmg: 20, kbMul: 1.35, emoji: '💥', desc: 'catches everyone close, then explodes', poses: [] };

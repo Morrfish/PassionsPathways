@@ -5,9 +5,7 @@ Morris family. It runs as a **Windows app (exe)**, an **Android app (APK)**, and
 
 > **Status:** the game works end to end. **Jeffery Morris ("The Boss")**, **Patty Morris ("Mawmaw Mayhem")** and
 > **Mandi Crist ("The Big Sister", Witch ⇄ Mermaid Fangirl)** are in, drawn from their graphic-novel artwork.
-> The other 3 fighters (Speedster, Zoner, Healer) are still **placeholders** that get
-> replaced by family members as art and info come in. The shared family list is the Google Doc
-> "Morris Mayhem - Family Fighters (fill this in)" in the "Morris Mayhem (family fighting game)" Drive folder.
+> Jadden Morris and Courtnee Morris are in too. Only real family members are in the roster; more are added as their art arrives.
 
 ## How the game works
 - Hits raise a player's **damage %**. The higher it is, the farther they fly.

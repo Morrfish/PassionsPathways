@@ -32,7 +32,7 @@ If it isn't reachable, ask her to paste the info and attach the pictures in chat
   atlas image + frames `[x,y,w,h,anchorX,anchorY]` (anchor = under the head, at the feet) + `moves`
   (which pose row each attack/special uses). `render.js` `pickFrame()` maps state → pose
   (idle/run/jump/hurt rows, attack rows windup→hit→follow-through→recover). Projectiles can use
-  `sprite: '<frame>'` (e.g. the parcel, the dogs). Cartoon bodies are only for placeholders.
+  `sprite: '<frame>'` (e.g. the parcel, the dogs). Every fighter uses artwork; never add made-up placeholder fighters.
 - ChatGPT sheets come as labeled 4×4 grids (labels in the left column, title banner on top, near-invisible
   colored fringe pixels that must be dropped). `tools/slice_patty.py <art dir> <out dir>` cuts poses by
   connected components, drops labels/title, anchors each pose, scales by 0.62 and packs a WebP atlas plus
@@ -59,7 +59,7 @@ If it isn't reachable, ask her to paste the info and attach the pictures in chat
 - Ultimates (built): `def.ultimate` {name, sprite (<id>-ult atlas from tools/slice_ultimates.py), type
   'catch' (catchAt/finishAt/radius/dmg/kbMul) or 'stampede' (spawnAt/sweepDur/dmg/kbMul), poses}. Meter
   0.65/dmg dealt, 0.35/dmg taken, full → Ultimate input (E · Num5/U · stick click · touch ULT · Attack+Special).
-  A hit cancels it and releases caught fighters (`releaseUlt`). Placeholders get "Mayhem Burst".
+  A hit cancels it and releases caught fighters (`releaseUlt`). Fighters without ultimate art get a generic "Mayhem Burst".
 - Story mode (built, src/js/story.js): the 7 Morris kids are the heroes (mandi, jadden, courtnee, codee, haylie,
   sara, jorie); routes = ChatGPT's storyRoute() rule (= story-routes.json); 10 family free-for-alls, Jeff
   (The Boss), then secret Patty. Fights with relatives not yet in MM.FIGHTERS show "coming soon" and are
@@ -90,8 +90,8 @@ Scripts are classic `<script>` tags with a global `MM` namespace (not ES modules
    careful manual crop on a circle is fine because the head is clipped to a circle anyway), and save
    512×512 PNG as `src/img/<id>.png`. Never commit original full-size family photos; only the cutout.
    If they send a body photo, take the outfit colors from it for `color`/`accent`, plus `skin` and `hair`.
-2. **Entry in `MM.FIGHTERS`.** Copy an existing entry. Replace a placeholder (Brawler, Speedster,
-   Zoner, Healer; Brawler → Jeffery, Tank → Patty, Trickster → Mandi, Speedster → Jadden, Zoner → Courtnee) rather than piling on, until all placeholders are gone. Fields are documented
+2. **Entry in `MM.FIGHTERS`.** Copy an existing entry. All placeholders are gone (user doesn't want them):
+   just add the new family member to the roster. Fields are documented
    at the top of `data.js`.
 3. **Stats.** Keep within these ranges: speed 5–9, air 4.4–7, jump 13.5–16.5, weight 0.8–1.4,
    power 0.85–1.35, size 0.85–1.2. Trade-offs: fast fighters are light/weak, heavy ones are slow.
