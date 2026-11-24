@@ -22,7 +22,7 @@ window.MM = window.MM || {};
   const BGS = ['sky', 'dunkirk', 'hardin', 'williamstown', 'graceland', 'agnew'];
   const BG_NAMES = { sky: 'Plain sky', dunkirk: 'Dunkirk street', hardin: 'Hardin gym', williamstown: 'Williamstown church', graceland: 'Graceland', agnew: 'Agnew Lake' };
   let VIEW = { x: -1150, y: -760, w: 2300, h: 1200 }; // the part of the world the editor shows (grows to show the KO lines)
-  const LIMIT = { x: -2300, y: -1500, w: 4600, h: 2500 }; // pieces stay inside this
+  const LIMIT = { x: -4000, y: -3000, w: 8000, h: 6000 }; // a very large area: put pieces anywhere you like
 
   // ---------- pieces ----------
   const BASIC = { basic: true, sx0: 0, sx1: 400, sy: 0, fw: 400, fh: 100 };
@@ -66,9 +66,10 @@ window.MM = window.MM || {};
   }
   function blastOf(a) { // in the arena's own coordinates
     const m = mainOf(a), solid = a.pieces.filter(collides);
-    let l = Infinity, r = -Infinity, t = Infinity;
-    for (const p of solid) { const bob = p.role === 'bob' ? BOB.ax : 0; l = Math.min(l, p.x - bob); r = Math.max(r, p.x + p.w + bob); t = Math.min(t, p.y); }
-    return { left: Math.round(l - 650), right: Math.round(r + 650), top: Math.round(Math.min(m.y - 1050, t - 650)), bottom: Math.round(m.y + 800) };
+    let l = Infinity, r = -Infinity, t = Infinity, lo = m.y;
+    for (const p of solid) { const bob = p.role === 'bob' ? BOB.ax : 0; l = Math.min(l, p.x - bob); r = Math.max(r, p.x + p.w + bob); t = Math.min(t, p.y); lo = Math.max(lo, p.y); }
+    // the bottom KO line sits below the LOWEST platform, so pieces can go anywhere, even at the bottom of the screen
+    return { left: Math.round(l - 650), right: Math.round(r + 650), top: Math.round(Math.min(m.y - 1050, t - 650)), bottom: Math.round(lo + 800) };
   }
   function toStage(a) {
     const m = mainOf(a);
@@ -170,7 +171,7 @@ window.MM = window.MM || {};
     if (drag) return;
     const m = mainOf(A);
     let v = { x: -1150, y: -760, w: 2300, h: 1200 };
-    if (m) { const b = blastOf(A); v = { x: b.left - 40, y: b.top - 40, w: b.right - b.left + 80, h: b.bottom - b.top + 80 }; v.h = Math.min(v.h, 1500); v.y = Math.max(v.y, m.y - 1150); }
+    if (m) { const b = blastOf(A); v = { x: b.left - 40, y: b.top - 40, w: b.right - b.left + 80, h: b.bottom - b.top + 80 }; }
     VIEW = v;
     view.s = Math.min(cv.width / VIEW.w, cv.height / VIEW.h);
     view.ox = cv.width / 2 - (VIEW.x + VIEW.w / 2) * view.s; view.oy = cv.height / 2 - (VIEW.y + VIEW.h / 2) * view.s;
