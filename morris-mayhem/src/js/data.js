@@ -156,31 +156,37 @@ MM.FIGHTERS = [
 //   pic       on a platform: which prop picture to draw for it (art details in stage-art.js)
 //   move      on a platform: it sways { ax, ay (world px), period (frames) }; fighters standing on it ride along
 //   main.depth of an illustrated arena is set from its floor picture in stage-art.js.
-// The illustrated arenas were planned on a 1600 x 900 picture (stages.json in the Drive art folder):
-// world x = picture x - 800, world y = picture y - 710 (scale 1), so the main floors are 1280 wide.
 MM.STAGES = [
+  // Each illustrated arena has one solid floor along the bottom; the other platforms are props standing
+  // on it (`base: 0` = their feet rest on the floor, see stage-art.js) or floating on the water
+  // (`afloat`). spawnX = middle of the floor (where fighters start and come back); blast.left/right
+  // when the stage isn't centered.
   { id: 'dunkirk', name: 'Main Street Mayhem (Dunkirk)', theme: 'dunkirk',
     main: { left: -640, right: 640, depth: 200 },
-    plats: [{ x: -490, y: -195, w: 280, pic: 'storefront' }, { x: 210, y: -195, w: 280, pic: 'crates' }],
+    // the shop's roof (left), the railroad crossing gate arm (middle) and a pile of crates (right)
+    plats: [{ x: -600, base: 0, w: 296, pic: 'storefront' }, { x: -125, base: 0, w: 300, pic: 'gatearm' }, { x: 390, base: 0, w: 190, pic: 'crates' }],
     blast: { side: 1250, top: -1050, bottom: 800 } },
   { id: 'hardin-northern', name: 'Polar Bear Gym (Hardin Northern)', theme: 'hardin',
     main: { left: -640, right: 640, depth: 200 },
-    plats: [{ x: -510, y: -190, w: 310, pic: 'bleachers' }, { x: 200, y: -190, w: 310, pic: 'bleachers' }, { x: -150, y: -345, w: 300, pic: 'vault' }],
+    // bleachers on both sides of the court, the scoreboard hanging high in the middle
+    plats: [{ x: -610, base: 0, w: 340, pic: 'bleachers' }, { x: 270, base: 0, w: 340, pic: 'bleachers' }, { x: -150, y: -300, w: 300, pic: 'scoreboard' }],
     blast: { side: 1250, top: -1050, bottom: 800 } },
   { id: 'williamstown', name: 'Family Picnic (Williamstown)', theme: 'williamstown',
     main: { left: -640, right: 640, depth: 200 },
-    plats: [{ x: -480, y: -190, w: 300, pic: 'picnic' }, { x: 180, y: -190, w: 300, pic: 'bench' }],
+    // picnic tables on the stage, the church bell's frame in the middle (walk under it, stand on top)
+    plats: [{ x: -595, base: 0, w: 250, pic: 'picnic' }, { x: -140, base: 0, w: 280, pic: 'bell' }, { x: 345, base: 0, w: 250, pic: 'picnic' }],
     blast: { side: 1250, top: -1050, bottom: 800 } },
   { id: 'graceland', name: 'Music Gate Mix-Up (Graceland)', theme: 'graceland',
     main: { left: -640, right: 640, depth: 200 },
-    // the family van is parked on the terrace; only its flat roof is a (pass-through) platform
-    plats: [{ x: -500, y: -200, w: 300, pic: 'piano' }, { x: 200, y: -200, w: 300, pic: 'riser' }, { x: -142, y: -235, w: 324, pic: 'van' }],
+    // the family van is parked on the terrace (only its flat roof is a platform), gold stages either side
+    plats: [{ x: -615, base: 0, w: 250, pic: 'riser' }, { x: -103, base: 0, w: 270, pic: 'van' }, { x: 365, base: 0, w: 250, pic: 'riser' }],
     blast: { side: 1250, top: -1050, bottom: 800 } },
   { id: 'agnew', name: "PawPaw's Dock (Agnew Lake)", theme: 'agnew',
-    main: { left: -640, right: 640, depth: 200 },
-    // the fishing boat rocks back and forth on the lake (6 seconds per sway)
-    plats: [{ x: -500, y: -210, w: 290, pic: 'shortdock' }, { x: 150, y: -175, w: 350, pic: 'boat', move: { ax: 65, ay: 10, period: 360 } }],
-    blast: { side: 1250, top: -1050, bottom: 800 } },
+    // the dock runs out from the rocky shore on the left and ends; then open water with PawPaw's
+    // fishing boat floating in it (it bobs and drifts a little and carries whoever stands in it)
+    main: { left: -820, right: 40, depth: 200 }, spawnX: -390,
+    plats: [{ x: -700, base: 0, w: 320, pic: 'shortdock' }, { x: 165, afloat: true, w: 400, pic: 'boat', move: { ax: 22, ay: 5, period: 300 } }],
+    blast: { left: -1460, right: 1270, top: -1050, bottom: 800 } },
 ];
 
 // Normal attacks everyone shares (the specials are what make each fighter different).

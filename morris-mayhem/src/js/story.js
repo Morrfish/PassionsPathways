@@ -39,7 +39,8 @@ window.MM = window.MM || {};
   function stageFor(place, i) {
     const key = place.split('-')[0];
     const s = MM.STAGES.find((st) => st.id === place || st.id.startsWith(key) || (st.name || '').toLowerCase().includes(key));
-    return (s || MM.STAGES[Math.abs(i | 0) % MM.STAGES.length]).id;
+    const fixed = MM.STAGES.filter((st) => !st.custom); // never a home-made arena
+    return (s && !s.custom ? s : fixed[Math.abs(i | 0) % fixed.length]).id;
   }
 
   // ---------- saves (one per hero; never overwrite another hero's progress) ----------

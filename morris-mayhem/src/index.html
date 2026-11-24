@@ -20,6 +20,7 @@
     <button data-go="howto">How to play</button>
     <button data-go="moves">Move list</button>
     <button data-go="roster">Meet the family</button>
+    <button data-go="maker">Arena Maker</button>
   </div>
   <p class="foot">Plug in controllers any time · <span id="padcount">no controllers yet</span></p>
 </section>
@@ -97,6 +98,56 @@
   <div class="menu row" id="storyButtons" hidden><button class="big" id="storyContinue">Continue</button><button id="storyRetry">Try again</button><button id="storyMap">Route map</button></div>
 </section>
 
+<!-- Arena Maker (src/js/arena-maker.js) -->
+<section id="maker" class="screen">
+  <header>
+    <button class="back" id="amBack" data-go="title" title="Back to the title">◀</button>
+    <h2>Arena Maker</h2>
+    <input id="amName" maxlength="28" placeholder="Arena name" aria-label="Arena name">
+    <button id="amNew">New</button>
+    <button id="amSave" class="big">Save</button>
+    <button id="amPlay" data-go="select">Play it ▶</button>
+    <span id="amMsg" class="am-msg" role="status"></span>
+  </header>
+  <div class="am-body">
+    <div class="am-stagewrap">
+      <div class="am-canvasbox"><canvas id="amCanvas" tabindex="0" aria-label="Arena: drag pieces to move them, drag a corner to resize"></canvas></div>
+      <div class="am-tools" id="amTools">
+        <span class="am-sel" id="amSelName"></span>
+        <button id="amSmaller" title="Smaller (− key, LB/LT)">− Smaller</button>
+        <button id="amBigger" title="Bigger (+ key, RB/RT)">+ Bigger</button>
+        <button data-role="main" title="The one solid floor fighters start on">Floor (solid)</button>
+        <button data-role="plat" title="Jump up through it, stand on top">Platform</button>
+        <button data-role="bob" title="Floats and bobs, carries riders">Bobbing</button>
+        <button data-role="decor" title="Just a picture">Decoration</button>
+        <button id="amTiles" title="Lay copies side by side">Copies: 1</button>
+        <button id="amDrop" title="Rest it on what's below (D)">Drop down</button>
+        <button id="amToBack">To back</button>
+        <button id="amToFront">To front</button>
+        <button id="amNext" title="Select the next piece (Tab / N, controller A)">Next piece</button>
+        <button id="amDel" title="Delete (Del, controller X)">Delete</button>
+      </div>
+    </div>
+    <aside class="am-side">
+      <h3>Background</h3>
+      <div id="amBgs" class="am-row"></div>
+      <div class="am-row" style="margin-top:6px"><button id="amWater">Water: off</button><button id="amWaterUp" title="Water higher">Water ↑</button><button id="amWaterDown" title="Water lower">Water ↓</button><button id="amGrid">Snap: on</button></div>
+      <h3>Add a piece</h3>
+      <div id="amPalette"></div>
+      <h3>Decorations (no standing)</h3>
+      <div id="amDecor"></div>
+      <h3>Start from</h3>
+      <div id="amTemplates" class="am-row"></div>
+      <h3>My arenas</h3>
+      <div id="amList"></div>
+      <p class="am-help"><b>Mouse / touch:</b> tap a piece to pick it, drag to move, drag a corner to resize.<br>
+        <b>Keyboard:</b> arrows move (Shift = faster), + / − size, T type, D drop down, Tab next piece, Delete, Esc let go.<br>
+        <b>Controller:</b> stick / D-pad move, RB/RT bigger, LB/LT smaller, A next piece, X delete, Y type, B let go (then back), Start save.<br>
+        Gold line = solid floor, white = jump-through, blue = bobbing. Colored shapes = where fighters start; dashed circles = where they come back; red box = KO line.</p>
+    </aside>
+  </div>
+</section>
+
 <div id="touch"></div>
 
 <script src="js/data.js"></script>
@@ -106,6 +157,7 @@
 <script src="js/engine.js"></script>
 <script src="js/ai.js"></script>
 <script src="js/render.js"></script>
+<script src="js/arena-maker.js"></script>
 <script src="js/story.js"></script>
 <script src="js/menu-nav.js"></script>
 <script src="js/ui.js"></script>

@@ -52,6 +52,7 @@ window.MM = window.MM || {};
     if (id === 'moves') drawMoves();
     if (id === 'story') drawStory();
     if (id === 'arena') drawArenas();
+    if (id === 'maker' && MM.arenaMaker) MM.arenaMaker.open(); // Arena Maker (arena-maker.js)
     if ((id === 'title' || id === 'select' || id === 'arena' || id === 'howto' || id === 'family' || id === 'moves' || id === 'story') && !paused) { G = null; startDemo(); }
   }
   document.addEventListener('click', (e) => {
@@ -138,7 +139,8 @@ window.MM = window.MM || {};
           if (dv[0] === 'p') { const pad = navigator.getGamepads()[+dv.slice(1)], bb = (n) => pad && pad.buttons[n] && pad.buttons[n].pressed;
             const lb = bb(4) || bb(6), rb = bb(5) || bb(7); if (lb && !menuPrev['lb' + dv]) cycle(i, -1); if (rb && !menuPrev['rb' + dv]) cycle(i, 1); menuPrev['lb' + dv] = lb; menuPrev['rb' + dv] = rb; }
           if (press('pause')) $('#fight').click();
-        } else if (press('attack') && dv[0] === 'p') {
+        } else if (press('pause') && dv[0] === 'p') $('#fight').click(); // Start = FIGHT from any controller
+        else if (press('attack') && dv[0] === 'p') {
           const free = slots.findIndex((s) => s.type === 'off') >= 0 ? slots.findIndex((s) => s.type === 'off') : slots.findIndex((s) => s.type === 'cpu');
           if (free >= 0) { slots[free].type = 'human'; slots[free].dev = dv; MM.sfx('select'); save('slots', slots); drawSelect(); }
         }
@@ -228,8 +230,9 @@ window.MM = window.MM || {};
   // ---------- arena choice ----------
   function drawArenas() {
     const lastId = load('stage', MM.STAGES[0].id);
-    $('#arenaGrid').innerHTML = MM.STAGES.map((s) => `<button data-arena="${s.id}" class="${s.id === lastId ? 'last' : ''}"><img src="${MM.stageThumb ? MM.stageThumb(s.id) : ''}" alt=""><span>${s.name}${s.custom ? '<small>Made in Arena Maker</small>' : ''}</span></button>`).join('')
-      + `<button data-arena="random"><div class="rand">?</div><span>Random arena</span></button>`;
+    $('#arenaGrid').innerHTML = MM.STAGES.map((s) => `<button data-arena="${s.id}" class="${s.id === lastId ? 'last' : ''}" ${s.id === lastId ? 'data-autofocus' : ''}><img src="${MM.stageThumb ? MM.stageThumb(s.id) : ''}" alt=""><span>${s.name}${s.custom ? '<small>Made in Arena Maker</small>' : ''}</span></button>`).join('')
+      + `<button data-arena="random"><div class="rand">?</div><span>Random arena</span></button>`
+      + `<button data-go="maker"><div class="rand">＋</div><span>Make your own<small>Arena Maker</small></span></button>`;
   }
   $('#arenaGrid').addEventListener('click', (e) => {
     const b = e.target.closest('[data-arena]'); if (!b || !lastSetup) return;

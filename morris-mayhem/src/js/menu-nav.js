@@ -20,7 +20,7 @@ window.MM = window.MM || {};
     el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
   function current() { const a = document.activeElement; return items().includes(a) ? a : null; }
-  function first() { const list = items(); return list.find((e) => e.classList.contains('big')) || list[0]; }
+  function first() { const list = items(); return list.find((e) => e.hasAttribute('data-autofocus')) || list.find((e) => e.classList.contains('big')) || list[0]; }
 
   function move(dx, dy) {
     if (editing) { stepSelect(editing, dx || dy); return; }
@@ -82,7 +82,7 @@ window.MM = window.MM || {};
 
   // called every frame from the main loop while a menu is showing
   MM.menuNavTick = function (inMatch) {
-    if (inMatch) { editing = null; return; }
+    if (inMatch || (MM.arenaMaker && MM.arenaMaker.active)) { editing = null; return; } // the Arena Maker reads the pad itself
     const pads = navigator.getGamepads ? navigator.getGamepads() : [];
     for (let i = 0; i < 4; i++) {
       const p = pads[i]; if (!p) continue;
