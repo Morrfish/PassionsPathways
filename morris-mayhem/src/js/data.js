@@ -41,7 +41,7 @@ MM.FIGHTERS = [
   },
   {
     // Patty Morris: the secret final boss of story mode. Art: ChatGPT graphic-novel sheets (img/patty-atlas.webp).
-    id: 'patty', name: 'Patty Morris', title: 'Mawmaw Mayhem', photo: 'img/patty.png', sprite: 'patty',
+    id: 'patty', name: 'Patty Morris', title: 'The Mawmaw of Mayhem', photo: 'img/patty.png', sprite: 'patty',
     color: '#7B2CBF', accent: '#C8A2C8', skin: '#f0c49a', hair: '#ecebf3',
     // deliberate and powerful: slow, heavy, hits hard, slower basic attacks leave openings
     stats: { speed: 5.4, air: 5, jump: 14.6, weight: 1.25, power: 1.22, size: 1.05 },

@@ -3,7 +3,7 @@
 A 2–4 player platform fighter (like Brawlhalla or Smash Bros.) where every fighter is a member of the
 Morris family. It runs as a **Windows app (exe)**, an **Android app (APK)**, and in a web browser.
 
-> **Status:** the game works end to end. **Jeffery Morris ("The Boss")**, **Patty Morris ("Mawmaw Mayhem")** and
+> **Status:** the game works end to end. **Jeffery Morris ("The Boss")**, **Patty Morris ("The Mawmaw of Mayhem")** and
 > **Mandi Crist ("The Big Sister", Witch ⇄ Mermaid Fangirl)** are in, drawn from their graphic-novel artwork.
 > Jadden Morris and Courtnee Morris are in too. Only real family members are in the roster; more are added as their art arrives.
 
