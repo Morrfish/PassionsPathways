@@ -102,16 +102,24 @@ MM.FIGHTERS = [
     ],
   },
   {
-    id: 'speedster', name: 'Speedster', title: 'Placeholder: fast and light', photo: null,
-    color: '#25c4ff', accent: '#ffffff', skin: '#c98c5b', hair: '#111111',
-    stats: { speed: 8.6, air: 7, jump: 16, weight: 0.85, power: 0.9, size: 0.92 },
+    // Jadden Morris, "The Irish Powerhouse": coach, Notre Dame fan, loves Mustangs and Ice Ice Baby.
+    // Moves/numbers from ChatGPT's JADDEN_HANDOFF (proposed). Art: ChatGPT sheets.
+    id: 'jadden', name: 'Jadden Morris', title: 'The Irish Powerhouse', photo: 'img/jadden.png', sprite: 'jadden',
+    color: '#0C2340', accent: '#C99700', skin: '#f0b48e', hair: '#8a7356',
+    stats: { speed: 6.5, air: 5.8, jump: 14.5, weight: 1.18, power: 1.18, size: 1.05 },
+    attackNames: { jab: "Coach's Combo", side: "Coach's Combo", up: 'Header Hero', down: 'Cleat Sweep', air: 'Overtime Volley, Retro Roundhouse, End Zone Stomp' },
     specials: {
-      neutral: { kind: 'projectile', name: 'Boomerang', emoji: '🪃', speed: 13, dmg: 5, kb: 4, kbg: 0.05, r: 15, life: 80, boomerang: true, cd: 50 },
-      side: { kind: 'teleport', name: 'Blink', dist: 220, dmg: 6, kb: 6, kbg: 0.08 },
-      up: { kind: 'teleport', name: 'Sky Blink', dist: 260, up: true, dmg: 0 },
-      down: { kind: 'spin', name: 'Tornado', hits: 5, dur: 34, dmg: 2, kb: 7, kbg: 0.1 },
+      neutral: { kind: 'projectile', name: 'Irish Hail Mary', thing: 'a football in a long arc', sprite: 'football', speed: 11, vy: -8, grav: 0.33, dmg: 9, kb: 7, kbg: 0.09, r: 16, life: 110, cd: 40 },
+      side: { kind: 'dash', name: 'Irish Drive', speed: 16, dur: 18, dmg: 11, kb: 8.5, kbg: 0.13, ang: 32, box: [-10, -105, 110, 100] },
+      up: { kind: 'rise', name: 'Victory Leap', power: 19, dmg: 7, kb: 7, kbg: 0.08 },
+      // 0.4 s dance, one ice wave along the floor (6 dmg), slows to 70% for 0.65 s, 3 s cooldown
+      down: { kind: 'icewave', name: 'Ice Ice Jadden', thing: 'an ice wave', startup: 24, recovery: 21, cd: 180, speed: 10.5, life: 54, dmg: 6, kb: 5, kbg: 0.05, slowMul: 0.7, slowFrames: 39 },
     },
-    taunt: 'Too slow!',
+    taunt: 'Go Irish!',
+    // 2.4 s: spotlight (.45 s catch), ND backdrop, running kick, finisher at 1.75 s (25 dmg, 1.5x)
+    ultimate: { name: "Jadden's Irish Takeover", sprite: 'jadden-ult', type: 'catch', dur: 144, catchAt: 27, finishAt: 105, radius: 2.5, dmg: 25, kbMul: 1.5,
+      desc: 'a spotlight catches everyone close, then the ND backdrop, a running kick and a big finish',
+      poses: [[0, 'ult0'], [39, 'ult1'], [66, 'ult2'], [100, 'ult3']] },
   },
   {
     id: 'zoner', name: 'Zoner', title: 'Placeholder: fights from far away', photo: null,
@@ -151,18 +159,6 @@ MM.FIGHTERS = [
 // The illustrated arenas were planned on a 1600 x 900 picture (stages.json in the Drive art folder):
 // world x = picture x - 800, world y = picture y - 710 (scale 1), so the main floors are 1280 wide.
 MM.STAGES = [
-  { id: 'backyard', name: 'Backyard BBQ', theme: 'backyard',
-    main: { left: -620, right: 620, depth: 220 },
-    plats: [{ x: -360, y: -210, w: 260 }, { x: 100, y: -210, w: 260 }, { x: -130, y: -390, w: 260 }],
-    blast: { side: 1250, top: -1050, bottom: 800 } },
-  { id: 'rooftop', name: 'Rooftop Night', theme: 'rooftop',
-    main: { left: -560, right: 560, depth: 300 },
-    plats: [{ x: -480, y: -230, w: 220 }, { x: 260, y: -230, w: 220 }],
-    blast: { side: 1200, top: -1050, bottom: 800 } },
-  { id: 'table', name: 'The Dinner Table', theme: 'table',
-    main: { left: -700, right: 700, depth: 160 },
-    plats: [],
-    blast: { side: 1300, top: -1050, bottom: 800 } },
   { id: 'dunkirk', name: 'Main Street Mayhem (Dunkirk)', theme: 'dunkirk',
     main: { left: -640, right: 640, depth: 200 },
     plats: [{ x: -490, y: -195, w: 280, pic: 'storefront' }, { x: 210, y: -195, w: 280, pic: 'crates' }],

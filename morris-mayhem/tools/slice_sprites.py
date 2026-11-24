@@ -31,6 +31,17 @@ CHARACTERS = {
         # thrown/placed things: name, sheet, a point inside the thing (sheet px); removed from the pose
         'props': [('pumpkin', 'specials.png', (990, 105)), ('dryer', 'specials.png', (1200, 540))],
     },
+    'jadden': {
+        'scale': 0.62, 'cols': [165, 415, 695, 975, 9999],
+        'sheets': {
+            'move.png': ['idle', 'run', 'jump', 'hurt'],
+            'attacks.png': ['combo', 'header', 'sweep', 'volley'],
+            'aerials.png': ['uair', 'stomp', 'round', 'back'],
+            'specials.png': ['hail', 'drive', 'leap', 'ice'],
+        },
+        'props': [('football', 'specials.png', (990, 88))],
+        'cutcols': {'aerials.png': [(695, 60, 400)]},  # up-air poses touch through their glow: x, y0, y1
+    },
     'mandi-mermaid': {
         'scale': 0.62, 'cols': [165, 415, 695, 975, 9999],
         'sheets': {
@@ -60,7 +71,7 @@ def cut_tags(a, tags):
         a[b[0] - 7:b[0] - 4, :, 3] = 0
         a[b[1] + 12:b[1] + 15, :, 3] = 0
 
-def slice_sheet(path, names, cols, frames, scale, excl=()):
+def slice_sheet(path, names, cols, frames, scale, excl=(), cutcols=False):
     a = np.array(Image.open(path).convert('RGBA'))
     a[..., 3][a[..., 3] < 64] = 0
     bands = tag_bands(a)
@@ -68,10 +79,12 @@ def slice_sheet(path, names, cols, frames, scale, excl=()):
     tags = [b for b in bands if b[0] > 80]
     # rows of poses sit between the title and the first tag strip, then between tag strips
     rows, top = [], title_end
+    a[max(0, title_end - 3):title_end + 1, :, 3] = 0  # separate the title banner from poses that touch it
     for b in tags:
         rows.append((top, b[0] - 6)); top = b[1] + 20
     # a thin cut just above each tag strip separates poses that touch their tag
     cut_tags(a, tags)
+    for (cx_, y0_, y1_) in (cutcols or {}).get(path.rsplit('/', 1)[-1], []): a[y0_:y1_, cx_ - 2:cx_ + 2, 3] = 0
     m = a[..., 3] >= 128
     lab, n = nd.label(m)
     objs = nd.find_objects(lab)
@@ -129,7 +142,7 @@ if __name__ == '__main__':
     props = cfg.get('props', [])
     for sheet, names in cfg['sheets'].items():
         excl = [pt for (_, sh, pt) in props if sh == sheet and pt]
-        slice_sheet(f'{art}/{sheet}', names, cfg['cols'], frames, cfg['scale'], excl)
+        slice_sheet(f'{art}/{sheet}', names, cfg['cols'], frames, cfg['scale'], excl, cfg.get('cutcols'))
     for name, sheet, pt in props:
         if not pt: continue
         a = np.array(Image.open(f'{art}/{sheet}').convert('RGBA')); a[..., 3][a[..., 3] < 64] = 0

@@ -104,7 +104,7 @@ window.MM = window.MM || {};
 
   // ---------- helpers ----------
   const power = (f) => f.st.power * (f.buff ? f.buff.powerMul : 1);
-  const speedMul = (f) => (f.buff ? f.buff.speedMul : 1);
+  const speedMul = (f) => (f.buff ? f.buff.speedMul : 1) * (f.slow ? f.slow.mul : 1);
   MM.hurtbox = (f) => ({ x: f.x - f.w / 2, y: f.y - f.h, w: f.w, h: f.h });
   function boxFor(f, b) {
     const s = f.s;
@@ -194,6 +194,7 @@ window.MM = window.MM || {};
     for (const k in f.cd) if (f.cd[k] > 0) f.cd[k]--;
     if (f.swapCd > 0) f.swapCd--;
     if (f.buff && --f.buff.t <= 0) f.buff = null;
+    if (f.slow && --f.slow.t <= 0) f.slow = null;
     if (f.bubble && --f.bubble.t <= 0) f.bubble = null;
     const inp = f.inp, prev = f.prev;
     const pressed = (k) => inp[k] && !prev[k];
@@ -526,6 +527,18 @@ window.MM = window.MM || {};
         }
       },
     },
+    icewave: { // e.g. Jadden's Ice Ice Jadden: a dance, then one ice wave along the floor that slows whoever it hits
+      start(G, f, sp, a) { a.dur = sp.startup + sp.recovery; a.pose = 'flex'; },
+      tick(G, f, sp, a) {
+        f.vx *= 0.8; if (!f.ground) f.vy = Math.min(f.vy, 3);
+        if (a.t === sp.startup) {
+          const s = surfaceBelow(G, f.x, f.y);
+          if (s === null || s - f.y > f.h) return; // too high above the floor: the dance whiffs
+          spawnProj(G, f, { x: f.x + f.face * 40, y: s - 18, vx: f.face * sp.speed, r: 22, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: 30, life: sp.life, ground: true, dir: f.face, color: '#9fe8ff', slow: { mul: sp.slowMul, t: sp.slowFrames }, icy: true });
+          G.shake = Math.max(G.shake, 5); MM.sfx('special');
+        }
+      },
+    },
     transform: { // e.g. Mandi's Wardrobe Whirl: a vulnerable spin that ends in the other form
       start(G, f, sp, a) { a.dur = sp.dur || 39; a.pose = 'flex'; a.cdAfter = sp.cdAfter || 120; },
       tick(G, f, sp, a) {
@@ -693,6 +706,7 @@ window.MM = window.MM || {};
         if (overlap(box, MM.hurtbox(d))) {
           p.hit.add(d);
           const ok = applyHit(G, p.owner, d, { dmg: p.dmg, kb: p.kb, kbg: p.kbg, ang: p.ang, face: p.pull ? sgn(p.owner.x - d.x) : sgn(p.vx || p.dir) }, p.x, p.y, p);
+          if (ok && p.slow && (!d.slow || d.slow.mul >= p.slow.mul)) { d.slow = { mul: p.slow.mul, t: p.slow.t }; burst(G, d.x, d.y - d.h / 2, '#bff3ff', 12, 4); } // refresh, never stack
           if (ok && !p.ground) p.life = 0;
         }
       }
@@ -734,7 +748,7 @@ window.MM = window.MM || {};
       burst(G, ex, ey, MM.PLAYER_COLORS[f.slot], 40, 14);
       G.shake = 26; MM.sfx('ko');
       if (f.act && f.act.type === 'ult') releaseUlt(f.act);
-      f.act = null; f.hitstun = 0; f.buff = null; f.vx = f.vy = 0; f.caught = null; f.meter = 0;
+      f.act = null; f.hitstun = 0; f.buff = null; f.slow = null; f.vx = f.vy = 0; f.caught = null; f.meter = 0;
       if (f.stocks <= 0) { f.out = true; f.x = 0; f.y = -3000; }
       else { f.dead = 80; f.y = -3000; }
     }

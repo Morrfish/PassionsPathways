@@ -43,6 +43,7 @@ window.MM = window.MM || {};
         if (kind === 'projectile') return row + (a.t < 5 ? 0 : a.t < 9 ? 1 : a.t < 16 ? 2 : 3);
         if (kind === 'pack') return row + (a.t < 10 ? 0 : a.t < 20 ? 1 : a.t < 28 ? 2 : 3);
         if (kind === 'counter') return row + (a.t < 5 ? 0 : a.counter ? 1 : 3);
+        if (kind === 'icewave') return row + (a.t < 12 ? 0 : a.t < sp_startup(a) ? 1 : a.t < sp_startup(a) + 10 ? 2 : 3);
         if (kind === 'transform') return row + (a.t < 8 ? 0 : a.t < 20 ? 1 : a.t < 30 ? 2 : 3);
         if (kind === 'trap') return row + (a.t < 6 ? 0 : a.t < 12 ? 1 : a.t < 18 ? 2 : 3);
         if (row) return row + Math.min(3, Math.floor((a.t / a.dur) * 4));
@@ -72,6 +73,7 @@ window.MM = window.MM || {};
     return c.toDataURL();
   };
 
+  const sp_startup = (a) => a.sp.startup || 24;
   function drawSpriteFighter(g, f, G) {
     let sh = f.def.sprite && sheet(f.def.sprite);
     if (!sh) return false;
@@ -98,6 +100,7 @@ window.MM = window.MM || {};
     g.drawImage(im, fr[0], fr[1], fr[2], fr[3], -fr[4], -fr[5], fr[2], fr[3]);
     g.restore();
     const a = f.act;
+    if (f.slow) { g.save(); g.globalAlpha = 0.35; g.fillStyle = '#9fe8ff'; g.beginPath(); g.ellipse(f.x, f.y - f.h / 2, f.w * 0.9, f.h * 0.6, 0, 0, TAU); g.fill(); g.restore(); }
     if (a && a.counter) { g.strokeStyle = 'rgba(255,255,140,.9)'; g.lineWidth = 4; g.beginPath(); g.arc(f.x, f.y - f.h / 2, 72 + Math.sin(G.frame) * 4, 0, TAU); g.stroke(); }
     return true;
   }
@@ -477,7 +480,10 @@ window.MM = window.MM || {};
   function drawProj(g, p, G) {
     if (drawSpriteProj(g, p)) return;
     g.save(); g.translate(p.x, p.y);
-    if (p.ground) {
+    if (p.ground && p.icy) {
+      g.fillStyle = '#e8fbff'; g.strokeStyle = '#4cc9f0'; g.lineWidth = 3;
+      for (let i = 0; i < 4; i++) { const h = 30 + 16 * Math.sin(p.t * 0.5 + i), x0 = -p.dir * (i * 14); g.beginPath(); g.moveTo(x0 - 10 * p.dir, 18); g.lineTo(x0 + 6 * p.dir, 18 - h); g.lineTo(x0 + 16 * p.dir, 18); g.closePath(); g.fill(); g.stroke(); }
+    } else if (p.ground) {
       g.fillStyle = p.color; g.globalAlpha = 0.85;
       g.beginPath(); g.moveTo(-26 * p.dir, 18); g.quadraticCurveTo(0, -40 - Math.sin(p.t * 0.6) * 8, 26 * p.dir, 18); g.fill();
     } else if (p.emoji) {

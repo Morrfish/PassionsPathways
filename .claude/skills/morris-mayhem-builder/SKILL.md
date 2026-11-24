@@ -90,7 +90,7 @@ Scripts are classic `<script>` tags with a global `MM` namespace (not ES modules
    512×512 PNG as `src/img/<id>.png`. Never commit original full-size family photos; only the cutout.
    If they send a body photo, take the outfit colors from it for `color`/`accent`, plus `skin` and `hair`.
 2. **Entry in `MM.FIGHTERS`.** Copy an existing entry. Replace a placeholder (Brawler, Speedster,
-   Zoner, Healer; Brawler → Jeffery, Tank → Patty, Trickster → Mandi) rather than piling on, until all placeholders are gone. Fields are documented
+   Zoner, Healer; Brawler → Jeffery, Tank → Patty, Trickster → Mandi, Speedster → Jadden) rather than piling on, until all placeholders are gone. Fields are documented
    at the top of `data.js`.
 3. **Stats.** Keep within these ranges: speed 5–9, air 4.4–7, jump 13.5–16.5, weight 0.8–1.4,
    power 0.85–1.35, size 0.85–1.2. Trade-offs: fast fighters are light/weak, heavy ones are slow.

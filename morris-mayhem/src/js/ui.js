@@ -213,6 +213,7 @@ window.MM = window.MM || {};
     rise: (s) => `launches up${s.parachute ? ' and floats down on a parachute' : ''} (gets back to the stage)`, teleport: () => 'vanishes and reappears (aim it)', slam: () => 'dives down and crashes',
     spin: () => 'spins and hits again and again', counter: () => 'blocks a hit and strikes back (bounces things back too)',
     pack: (s) => `sends ${s.names ? s.names.join(', ').replace(/, ([^,]*)$/, ' and $1') : 'a pack'} running along the floor`,
+    icewave: (s) => `does a retro dance, then sends ${s.thing} along the floor that slows people down`,
     transform: (s) => `spins into the ${s.into} outfit (0.65 s, you can be hit out of it; 2 s cooldown)`,
     heal: (s) => `heals ${s.amount}% damage`, trap: (s) => `leaves ${s.thing || 'a ' + (s.emoji || 'trap')} on the ground${s.gust ? ' that blasts people away' : ''}`, buff: () => 'powers up: faster and stronger for a while',
   };
