@@ -25,17 +25,20 @@
   <p class="foot">Plug in controllers any time · <span id="padcount">no controllers yet</span></p>
 </section>
 
-<section id="select" class="screen">
-  <header><button class="back" data-go="title">◀</button><h2>Pick your fighters</h2></header>
-  <div id="slots"></div>
-  <div id="roster" class="grid"></div>
-  <div class="row options">
-    <button class="cycle" id="modeBtn"></button>
-    <button class="cycle" id="ffBtn" hidden></button>
-    <button class="cycle" id="timeBtn"></button>
-    <button class="cycle" id="livesBtn"></button>
-    <button id="fight" class="big">FIGHT!</button>
+<section id="select" class="screen css">
+  <div class="css-top">
+    <button class="back" data-go="title">◀</button>
+    <div class="css-banner">Choose your fighter</div>
+    <div class="options">
+      <button class="cycle" id="modeBtn"></button>
+      <button class="cycle" id="ffBtn" hidden></button>
+      <button class="cycle" id="timeBtn"></button>
+      <button class="cycle" id="livesBtn"></button>
+    </div>
   </div>
+  <div id="roster" class="css-roster"></div>
+  <button id="fight" class="css-fight">FIGHT!</button>
+  <div id="slots" class="css-slots"></div>
 </section>
 
 <section id="arena" class="screen">

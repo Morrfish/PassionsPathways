@@ -75,19 +75,24 @@ window.MM = window.MM || {};
   }
   function drawSelect() {
     const box = $('#slots');
+    const pcol = (i) => (teamMode() ? MM.TEAM_COLORS[slots[i].team] : MM.PLAYER_COLORS[i]);
     box.innerHTML = slots.map((s, i) => {
-      const f = fighterById(s.fighter);
-      return `<div class="slot ${s.type === 'off' ? 'off' : ''} ${i === activeSlot ? 'active' : ''}" data-slot="${i}" style="border-color:${MM.PLAYER_COLORS[i]}">
-        <div class="pn" style="color:${MM.PLAYER_COLORS[i]}">P${i + 1}</div>
-        ${teamMode() && s.type !== 'off' ? `<button class="team ${s.team}" data-k="team" title="Change team">Team ${s.team}</button>` : ''}
-        <button class="cycle" data-k="type">${TYPES[s.type]}</button>
-        ${s.type === 'off' ? '<div class="ttl">Press Attack on a free controller to join</div>' : `
-        <div class="pick"><button data-k="prev">◀</button><img src="${portrait(s.fighter)}" alt=""><button data-k="next">▶</button></div>
-        <div class="nm">${f.name}</div><div class="ttl">${f.title || ''}</div>
-        ${s.type === 'human' ? `<button class="cycle" data-k="dev">🎮 ${MM.DEVICE_NAMES[s.dev]}</button>` : `<button class="cycle" data-k="level">Level: <b>${LEVELS[s.level] || 'Normal'}</b></button>`}`}
+      const f = fighterById(s.fighter), off = s.type === 'off';
+      return `<div class="slot ${off ? 'off' : ''} ${i === activeSlot ? 'active' : ''}" data-slot="${i}" style="--pc:${pcol(i)}">
+        ${off ? '<div class="q">?</div>' : `<img class="art" src="${portrait(s.fighter)}" alt="">
+        <div class="pick"><button data-k="prev" aria-label="Previous fighter">◀</button><button data-k="next" aria-label="Next fighter">▶</button></div>`}
+        <div class="pn">P${i + 1}</div>
+        <div class="side">
+          ${teamMode() && !off ? `<button class="team ${s.team}" data-k="team" title="Change team">Team ${s.team}</button>` : ''}
+          ${off ? '<div class="join">Press X on a controller to join</div>' : `<div class="nm">${f.name}</div><div class="ttl">${f.title || ''}</div>`}
+          <button class="cycle" data-k="type">${TYPES[s.type]}</button>
+          ${off ? '' : s.type === 'human' ? `<button class="cycle" data-k="dev">🎮 ${MM.DEVICE_NAMES[s.dev]}</button>` : `<button class="cycle" data-k="level">CPU Lv: <b>${LEVELS[s.level] || 'Normal'}</b></button>`}
+        </div>
       </div>`;
     }).join('');
-    $('#roster').innerHTML = MM.FIGHTERS.map((f) => `<button data-f="${f.id}"><img src="${portrait(f.id)}" alt="">${f.name}</button>`).join('');
+    const chips = (id) => slots.map((s, i) => (s.type !== 'off' && s.fighter === id ? `<i style="background:${pcol(i)}">${s.type === 'cpu' ? 'CPU' : 'P' + (i + 1)}</i>` : '')).join('');
+    $('#roster').innerHTML = MM.FIGHTERS.map((f) => `<button data-f="${f.id}"><img src="${portrait(f.id)}" alt=""><span class="chips">${chips(f.id)}</span><span class="nm">${f.name}</span></button>`).join('')
+      + `<button data-f="random" class="rand"><span class="q">?</span><span class="nm">Random</span></button>`;
     drawOptions();
   }
   $('#slots').addEventListener('click', (e) => {
@@ -118,7 +123,7 @@ window.MM = window.MM || {};
   $('#roster').addEventListener('click', (e) => {
     const b = e.target.closest('[data-f]'); if (!b) return;
     if (slots[activeSlot].type === 'off') slots[activeSlot].type = 'human';
-    slots[activeSlot].fighter = b.dataset.f; MM.sfx('select');
+    slots[activeSlot].fighter = b.dataset.f === 'random' ? ids[Math.floor(Math.random() * ids.length)] : b.dataset.f; MM.sfx('select');
     activeSlot = (activeSlot + 1) % 4; if (slots[activeSlot].type === 'off') activeSlot = slots.findIndex((s) => s.type !== 'off');
     save('slots', slots); drawSelect();
   });

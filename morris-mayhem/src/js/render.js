@@ -91,6 +91,12 @@ window.MM = window.MM || {};
     const { S, im } = sh, fr = S.frames[frameName] || S.frames.idle0;
     const k = (f.h * 1.15) / S.standH;
     const fsh = f.def.sprite && sheet(f.def.sprite);
+    const da = f.act && f.act.type === 'special' && f.act.sp.trail && f.act.t >= 4 && f.act.t < 6 + f.act.sp.dur + 6 ? f.act : null;
+    if (da && fsh && fsh.S.frames[da.sp.trail]) { // e.g. Pixel Rush: the pixel trail streams out behind him
+      const tr = fsh.S.frames[da.sp.trail], th = f.h * 0.75, tw = (tr[2] / tr[3]) * th * 1.6, fade = Math.min(1, (6 + da.sp.dur + 6 - da.t) / 8);
+      g.save(); g.globalAlpha = 0.9 * fade; g.translate(f.x - f.face * (tw * 0.45 + 10), f.y - f.h * 0.5); g.scale(f.face, 1);
+      g.drawImage(fsh.im, tr[0], tr[1], tr[2], tr[3], -tw / 2, -th / 2, tw, th); g.restore();
+    }
     if (f.super) { const au = fsh && fsh.S.frames.aura0; if (au) { g.save(); g.globalAlpha = 0.45 + 0.15 * Math.sin(G.frame * 0.4); const kk = (f.h * 1.5) / au[3]; g.drawImage(fsh.im, au[0], au[1], au[2], au[3], f.x - (au[2] * kk) / 2, f.y - au[3] * kk + 6, au[2] * kk, au[3] * kk); g.restore(); } } // golden aura behind him
     g.save();
     let slide = 0;
@@ -110,15 +116,23 @@ window.MM = window.MM || {};
     return true;
   }
 
+  // one smooth energy beam (no tiles): soft outer glow, bright core, the art's beam tip at the end, an orb at the hands
   function drawBeam(g, f, G) {
     const b = f.act && f.act.beam; if (!b) return;
-    const sh = f.def.sprite && sheet(f.def.sprite), mid = sh && sh.S.frames.fx2, tip = sh && sh.S.frames.fx3;
+    const sh = f.def.sprite && sheet(f.def.sprite), tip = sh && sh.S.frames.fx3, orb = sh && sh.S.frames.fx0;
+    const gold = !!f.super, flick = 1 + 0.06 * Math.sin(G.frame * 1.7), th = b.th * flick;
     g.save(); g.translate(b.x, b.y); g.scale(b.dir, 1);
-    if (mid && tip) {
-      const k = b.th / mid[3], tw = tip[2] * k, segW = mid[2] * k;
-      for (let x = 0; x < b.len - tw; x += segW) g.drawImage(sh.im, mid[0], mid[1], Math.min(mid[2], (b.len - tw - x) / k), mid[3], x, -b.th / 2, Math.min(segW, b.len - tw - x), b.th);
-      g.drawImage(sh.im, tip[0], tip[1], tip[2], tip[3], b.len - tw, -b.th / 2 - (tip[3] * k - b.th) / 2, tw, tip[3] * k);
-    } else { g.fillStyle = '#7fe6ff'; g.globalAlpha = 0.85; g.fillRect(0, -b.th / 2, b.len, b.th); }
+    const tipW = tip ? Math.min(b.len * 0.35, (tip[2] / tip[3]) * th * 1.5) : 0, bodyLen = b.len - tipW * 0.6;
+    const layer = (h, color, alpha) => { g.globalAlpha = alpha; g.fillStyle = color; g.beginPath(); g.roundRect ? g.roundRect(0, -h / 2, bodyLen, h, h / 2) : g.rect(0, -h / 2, bodyLen, h); g.fill(); };
+    g.globalCompositeOperation = 'lighter';
+    layer(th * 1.6, gold ? '#ffb300' : '#1fa8ff', 0.25);
+    layer(th * 1.05, gold ? '#ffd54a' : '#33c8ff', 0.55);
+    const gr = g.createLinearGradient(0, -th / 2, 0, th / 2);
+    gr.addColorStop(0, 'rgba(160,240,255,0)'); gr.addColorStop(0.35, '#bff6ff'); gr.addColorStop(0.5, '#ffffff'); gr.addColorStop(0.65, '#bff6ff'); gr.addColorStop(1, 'rgba(160,240,255,0)');
+    g.globalAlpha = 0.95; g.fillStyle = gr; g.fillRect(0, -th * 0.42, bodyLen, th * 0.84);
+    g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+    if (tip) { const h = th * 1.5, w = (tip[2] / tip[3]) * h; g.drawImage(sh.im, tip[0], tip[1], tip[2], tip[3], bodyLen - w * 0.4, -h / 2, w, h); }
+    if (orb) { const r = th * 1.25; g.drawImage(sh.im, orb[0], orb[1], orb[2], orb[3], -r / 2, -r / 2, r, r); }
     g.restore();
   }
   function drawUltFx(g, f, G) {

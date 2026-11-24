@@ -136,7 +136,7 @@ MM.FIGHTERS = [
         attackNames: { jab: 'Combo Click', side: 'Reboot Throw', up: 'System Uppercut', down: 'Low Battery', air: 'Air Combo, Upload Kick, Crash Landing, Retro Roundhouse' },
         specials: {
           neutral: { kind: 'beam', name: 'Courtnee-Hameha!', thing: 'an energy beam (hold Special to charge it bigger)', startup: 22, active: 22, recovery: 20, maxCharge: 45, len: 520, dmg: 9, kb: 7, kbg: 0.1, cd: 50 },
-          side: { kind: 'dash', name: 'Pixel Rush', speed: 17, dur: 15, dmg: 9, kb: 7.5, kbg: 0.11, ang: 33, box: [-10, -100, 105, 95] },
+          side: { kind: 'dash', name: 'Pixel Rush', trail: 'aura2', speed: 17, dur: 18, dmg: 9, kb: 7.5, kbg: 0.11, ang: 33, box: [-10, -100, 105, 95] },
           up: { kind: 'rise', name: 'Tech Takeoff', power: 19.5, forward: 3, dmg: 5, kb: 6, kbg: 0.05 },
           down: { kind: 'supersaiyan', name: 'Super Saiyan Courtnee', dur: 480, cost: 25, cooldown: 900 },
         },
@@ -151,7 +151,7 @@ MM.FIGHTERS = [
         attackNames: { jab: 'Powered Combo Click', side: 'Powered Reboot Throw', up: 'Powered System Uppercut', down: 'Powered Low Battery', air: 'powered air attacks' },
         specials: {
           neutral: { kind: 'beam', name: 'Powered Courtnee-Hameha!', thing: 'a golden energy beam (hold Special to charge)', startup: 18, active: 24, recovery: 18, maxCharge: 45, len: 600, dmg: 9, kb: 7.5, kbg: 0.1, cd: 45 },
-          side: { kind: 'dash', name: 'Powered Pixel Rush', speed: 19, dur: 15, dmg: 9, kb: 8, kbg: 0.12, ang: 33, box: [-10, -100, 110, 95] },
+          side: { kind: 'dash', name: 'Powered Pixel Rush', trail: 'aura2', speed: 19, dur: 18, dmg: 9, kb: 8, kbg: 0.12, ang: 33, box: [-10, -100, 110, 95] },
           up: { kind: 'rise', name: 'Powered Tech Takeoff', power: 20.5, forward: 3, dmg: 6, kb: 6, kbg: 0.06 },
           down: { kind: 'supersaiyan', name: 'Super Saiyan (already on)', dur: 480, cost: 25, cooldown: 900 },
         },

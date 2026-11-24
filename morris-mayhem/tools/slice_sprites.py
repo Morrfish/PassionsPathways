@@ -127,7 +127,23 @@ def slice_sheet(path, names, cols, frames, scale, excl=(), cutcols=False):
         if r is None or c is None or r >= len(names) or names[r] is None: continue
         if any(x.start <= px_ <= x.stop and y.start <= py_ <= y.stop for (px_, py_) in excl): continue  # a prop, cut separately
         grid.setdefault((r, c), []).append((i + 1, o, s))
+    # small pieces (sparks, motion lines) belong to the nearest body in the same row, not to whichever
+    # column their middle happens to fall in
+    bodies = [((r, c), k) for (r, c), comps in grid.items() for k in comps if k[2] >= 3000]
+    for key in list(grid):
+        for k in list(grid[key]):
+            if k[2] >= 3000: continue
+            y, x = k[1]
+            def gap(b):
+                by, bx = b[1][1]
+                dx = max(bx.start - x.stop, x.start - bx.stop, 0); dy = max(by.start - y.stop, y.start - by.stop, 0)
+                return (dx * dx + dy * dy) ** 0.5
+            same_row = [b for b in bodies if b[0][0] == key[0]]
+            if not same_row: continue
+            best = min(same_row, key=gap)
+            if best[0] != key: grid[key].remove(k); grid[best[0]].append(k)
     for (r, c), comps in grid.items():
+        if not comps: continue
         keep = np.isin(lab, [k[0] for k in comps])
         y0 = min(k[1][0].start for k in comps); y1 = max(k[1][0].stop for k in comps)
         x0 = min(k[1][1].start for k in comps); x1 = max(k[1][1].stop for k in comps)
