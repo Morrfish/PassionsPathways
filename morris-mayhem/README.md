@@ -3,8 +3,9 @@
 A 2–4 player platform fighter (like Brawlhalla or Smash Bros.) where every fighter is a member of the
 Morris family. It runs as a **Windows app (exe)**, an **Android app (APK)**, and in a web browser.
 
-> **Status:** the game works end to end. **Jeffery Morris ("The Boss")** and **Patty Morris ("Mawmaw Mayhem")** are in,
-> drawn from their graphic-novel artwork. The other 4 fighters (Speedster, Zoner, Trickster, Healer) are still **placeholders** that get
+> **Status:** the game works end to end. **Jeffery Morris ("The Boss")**, **Patty Morris ("Mawmaw Mayhem")** and
+> **Mandi Crist ("The Big Sister", Witch ⇄ Mermaid Fangirl)** are in, drawn from their graphic-novel artwork.
+> The other 3 fighters (Speedster, Zoner, Healer) are still **placeholders** that get
 > replaced by family members as art and info come in. The shared family list is the Google Doc
 > "Morris Mayhem - Family Fighters (fill this in)" in the "Morris Mayhem (family fighting game)" Drive folder.
 
@@ -16,6 +17,9 @@ Morris family. It runs as a **Windows app (exe)**, an **Android app (APK)**, and
   or any USB/Bluetooth pad), and phones and tablets get on-screen touch buttons.
 - Each fighter has the same basic attacks (attack + a direction) and **4 specials of their own**
   (special alone, side + special, up + special, down + special).
+- Modes: free-for-all or **2v2 teams** (friendly fire off by default), with an optional 2/3/5-minute timer.
+- **Move List** (title screen and pause menu) shows every fighter's moves and buttons.
+- Fighters can have **forms**: Mandi's Wardrobe Whirl (↓ + Special or the Switch button) changes outfit and move set.
 - Stages: Backyard BBQ, Rooftop Night, The Dinner Table.
 
 ## Controls
@@ -26,6 +30,7 @@ Morris family. It runs as a **Windows app (exe)**, an **Android app (APK)**, and
 | Attack | F | Num 1 or K | X |
 | Special | G | Num 2 or L | B |
 | Dodge | H | Num 3 or ; | Bumpers / triggers |
+| Switch form (Mandi) | R | Num 4 or J | Y |
 | Pause | Esc | Backspace | Start |
 
 On the fighter-select screen, press **Attack on a controller** to join. Use **left/right** to change fighters

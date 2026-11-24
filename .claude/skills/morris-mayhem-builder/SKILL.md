@@ -47,6 +47,19 @@ If it isn't reachable, ask her to paste the info and attach the pictures in chat
   Quick matches: 1v1, 1v1v1, 1v1v1v1, 2v2 (teams not built yet). Every fighter name includes their real name.
   Patty's ultimate "Mawmaw's Last Laugh" and entrance/taunt/victory poses are drawn (ultimate sheet) but not wired in yet.
 
+## Forms, teams, move list (built)
+- Forms: a fighter with `forms: [...]` (see Mandi in data.js) gets one merged def per form (`MM.formDefs`).
+  `applyForm()` swaps look/stats/moves; the `transform` ability kind (down-special, also the Switch input:
+  R / Num 4·J / pad Y / touch ⇄) is a 0.65 s vulnerable spin, cancelled by a hit, 2 s cooldown; cooldowns
+  (`f.cd`) are shared across forms. Each form has its own `sprite` atlas.
+- 2v2: `MM.newGame(players, stage, stocks, { teams, ff, time })`; players carry `team: 'A'|'B'`; `MM.sameTeam`
+  blocks friendly fire in `applyHit` and AI targeting; team out only when all members out; timer tiebreak =
+  lives, then lower damage, else draw.
+- Move List screen (`#moves`) is built from each def's `attackNames` and `specials` + `KIND_TEXT` in ui.js.
+- Still to build (ChatGPT's IMPLEMENTATION_HANDOFF.md in Drive "Photos and art"): ultimates + meter,
+  entrance/taunt/victory poses (ultimate-personality sheets), story mode (story-routes.json; 7 heroes,
+  12 fights each, Jeff then secret Patty; lock routes until their fighters exist).
+
 ## Code map
 | File | What's in it |
 |---|---|
@@ -67,7 +80,7 @@ Scripts are classic `<script>` tags with a global `MM` namespace (not ES modules
    512×512 PNG as `src/img/<id>.png`. Never commit original full-size family photos; only the cutout.
    If they send a body photo, take the outfit colors from it for `color`/`accent`, plus `skin` and `hair`.
 2. **Entry in `MM.FIGHTERS`.** Copy an existing entry. Replace a placeholder (Brawler, Speedster,
-   Zoner, Trickster, Healer; Brawler → Jeffery, Tank → Patty) rather than piling on, until all placeholders are gone. Fields are documented
+   Zoner, Healer; Brawler → Jeffery, Tank → Patty, Trickster → Mandi) rather than piling on, until all placeholders are gone. Fields are documented
    at the top of `data.js`.
 3. **Stats.** Keep within these ranges: speed 5–9, air 4.4–7, jump 13.5–16.5, weight 0.8–1.4,
    power 0.85–1.35, size 0.85–1.2. Trade-offs: fast fighters are light/weak, heavy ones are slow.
