@@ -42,6 +42,31 @@ CHARACTERS = {
         'props': [('football', 'specials.png', (990, 88))],
         'cutcols': {'aerials.png': [(695, 60, 400)]},  # up-air poses touch through their glow: x, y0, y1
     },
+    'courtnee': {
+        'scale': 0.62, 'cols': [165, 415, 695, 975, 9999],
+        'sheets': {
+            'move.png': ['idle', 'run', 'jump', 'hurt'],
+            'attacks.png': ['click', 'upper', 'battery', 'reboot'],
+            'aerials.png': ['acombo', 'upload', 'crash', 'round'],
+            'specials.png': ['hameha', 'rush', 'takeoff', 'saiyan'],
+            'defense.png': ['def', None, 'bair', None],
+            'ultimate.png': ['asm', 'ult', 'ret', 'pers'],
+            'effects.png': {'rows': ['fx', None, 'tech', 'aura'], 'cols': [0, 320, 630, 970, 9999]},
+        },
+        'props': [],
+    },
+    'courtnee-super': {
+        'scale': 0.62, 'cols': [165, 415, 695, 975, 9999],
+        'sheets': {
+            'smove.png': ['idle', 'run', 'jump', 'hurt'],
+            'sattacks.png': ['click', 'upper', 'battery', 'reboot'],
+            'saerials.png': ['acombo', 'upload', 'crash', 'round'],
+            'sspecials.png': ['hameha', 'rush', 'takeoff', 'down'],
+            'defense.png': [None, 'def', None, 'bair'],
+            'effects.png': {'rows': [None, 'fx', None, 'aura'], 'cols': [0, 320, 630, 970, 9999]},
+        },
+        'props': [],
+    },
     'mandi-mermaid': {
         'scale': 0.62, 'cols': [165, 415, 695, 975, 9999],
         'sheets': {
@@ -142,7 +167,9 @@ if __name__ == '__main__':
     props = cfg.get('props', [])
     for sheet, names in cfg['sheets'].items():
         excl = [pt for (_, sh, pt) in props if sh == sheet and pt]
-        slice_sheet(f'{art}/{sheet}', names, cfg['cols'], frames, cfg['scale'], excl, cfg.get('cutcols'))
+        cols = cfg['cols']
+        if isinstance(names, dict): cols = names['cols']; names = names['rows']
+        slice_sheet(f'{art}/{sheet}', names, cols, frames, cfg['scale'], excl, cfg.get('cutcols'))
     for name, sheet, pt in props:
         if not pt: continue
         a = np.array(Image.open(f'{art}/{sheet}').convert('RGBA')); a[..., 3][a[..., 3] < 64] = 0

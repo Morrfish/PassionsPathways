@@ -24,6 +24,7 @@ window.MM = window.MM || {};
     if (f.hitstun > 0) return f.ground ? 'hurt' + (f.hitstun > 6 ? 1 : 0) : 'hurt2';
     if (f.jsq > 0) return 'jump0';
     if (a) {
+      if (a.type === 'powerdown') return 'down' + Math.min(3, Math.floor(a.t / 10));
       if (a.type === 'lag') return a.countered && M.counterHit ? M.counterHit : 'jump0';
       if (a.type === 'dodge') return f.ground ? 'idle0' : 'jump2';
       if (a.type === 'normal') {
@@ -43,6 +44,8 @@ window.MM = window.MM || {};
         if (kind === 'projectile') return row + (a.t < 5 ? 0 : a.t < 9 ? 1 : a.t < 16 ? 2 : 3);
         if (kind === 'pack') return row + (a.t < 10 ? 0 : a.t < 20 ? 1 : a.t < 28 ? 2 : 3);
         if (kind === 'counter') return row + (a.t < 5 ? 0 : a.counter ? 1 : 3);
+        if (kind === 'beam') return row + (a.t < 8 ? 0 : a.beam ? 2 : a.t < a.sp.startup ? 1 : 3);
+        if (kind === 'supersaiyan') return row + Math.min(3, Math.floor(a.t / 10));
         if (kind === 'icewave') return row + (a.t < 12 ? 0 : a.t < sp_startup(a) ? 1 : a.t < sp_startup(a) + 10 ? 2 : 3);
         if (kind === 'transform') return row + (a.t < 8 ? 0 : a.t < 20 ? 1 : a.t < 30 ? 2 : 3);
         if (kind === 'trap') return row + (a.t < 6 ? 0 : a.t < 12 ? 1 : a.t < 18 ? 2 : 3);
@@ -87,6 +90,8 @@ window.MM = window.MM || {};
     }
     const { S, im } = sh, fr = S.frames[frameName] || S.frames.idle0;
     const k = (f.h * 1.15) / S.standH;
+    const fsh = f.def.sprite && sheet(f.def.sprite);
+    if (f.super) { const au = fsh && fsh.S.frames.aura0; if (au) { g.save(); g.globalAlpha = 0.45 + 0.15 * Math.sin(G.frame * 0.4); const kk = (f.h * 1.5) / au[3]; g.drawImage(fsh.im, au[0], au[1], au[2], au[3], f.x - (au[2] * kk) / 2, f.y - au[3] * kk + 6, au[2] * kk, au[3] * kk); g.restore(); } } // golden aura behind him
     g.save();
     let slide = 0;
     if (G.countdown > 150) { const k = (G.countdown - 150) / MM.ENTRANCE; slide = -f.face * k * k * 260; g.globalAlpha = 1 - k * 0.6; }
@@ -105,7 +110,19 @@ window.MM = window.MM || {};
     return true;
   }
 
+  function drawBeam(g, f, G) {
+    const b = f.act && f.act.beam; if (!b) return;
+    const sh = f.def.sprite && sheet(f.def.sprite), mid = sh && sh.S.frames.fx2, tip = sh && sh.S.frames.fx3;
+    g.save(); g.translate(b.x, b.y); g.scale(b.dir, 1);
+    if (mid && tip) {
+      const k = b.th / mid[3], tw = tip[2] * k, segW = mid[2] * k;
+      for (let x = 0; x < b.len - tw; x += segW) g.drawImage(sh.im, mid[0], mid[1], Math.min(mid[2], (b.len - tw - x) / k), mid[3], x, -b.th / 2, Math.min(segW, b.len - tw - x), b.th);
+      g.drawImage(sh.im, tip[0], tip[1], tip[2], tip[3], b.len - tw, -b.th / 2 - (tip[3] * k - b.th) / 2, tw, tip[3] * k);
+    } else { g.fillStyle = '#7fe6ff'; g.globalAlpha = 0.85; g.fillRect(0, -b.th / 2, b.len, b.th); }
+    g.restore();
+  }
   function drawUltFx(g, f, G) {
+    drawBeam(g, f, G);
     const a = f.act; if (!a || a.type !== 'ult') return;
     if (a.u.type === 'stampede' && a.sweepX != null) {
       g.save(); g.font = '72px serif'; g.textAlign = 'center'; g.textBaseline = 'bottom';

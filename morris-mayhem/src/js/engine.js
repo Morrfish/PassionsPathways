@@ -84,6 +84,22 @@ window.MM = window.MM || {};
     f.w = W * f.s; f.h = H * f.s;
     f.color = f.alt ? d.accent : d.color; f.accent = f.alt ? d.color : d.accent;
   }
+  // Super Saiyan timer: runs during everything (even an ultimate); when it ends: power-down pose, then the
+  // normal form and the cost (rising-damage game: + sp.cost %), once. A hit during the power-down finishes it.
+  function superTick(G, f) {
+    const s = f.super, a = f.act;
+    if (s.ending) { if (!a || a.type !== 'powerdown') endSuper(G, f); return; }
+    if (--s.t > 0 || (a && a.type === 'ult')) return;
+    s.ending = true;
+    if (!a || a.type !== 'ult') f.act = { type: 'powerdown', t: 0, dur: 40, pose: 'flex' };
+  }
+  function endSuper(G, f) {
+    const sp = f.super.sp; f.super = null;
+    applyForm(f, 0);
+    f.damage = Math.min(999, f.damage + sp.cost); f.cd.down = sp.cooldown;
+    popText(G, f.x, f.y - f.h - 24, `+${sp.cost}%`, '#ff7a7a');
+    if (f.act && f.act.type === 'powerdown') f.act = null;
+  }
   function startSwap(G, f) {
     f.act = { type: 'swap', t: 0, dur: 22, pose: 'flex', noGrav: !f.ground };
     f.vy = Math.min(f.vy, 0); f.swapCd = 75;
@@ -200,6 +216,7 @@ window.MM = window.MM || {};
     if (f.swapCd > 0) f.swapCd--;
     if (f.buff && --f.buff.t <= 0) f.buff = null;
     if (f.slow && --f.slow.t <= 0) f.slow = null;
+    if (f.super) superTick(G, f);
     if (f.bubble && --f.bubble.t <= 0) f.bubble = null;
     const inp = f.inp, prev = f.prev;
     const pressed = (k) => inp[k] && !prev[k];
@@ -338,6 +355,8 @@ window.MM = window.MM || {};
       if (a.t >= a.dur) f.act = null;
     } else if (a.type === 'ult') {
       tickUlt(G, f, a);
+    } else if (a.type === 'powerdown') {
+      f.vx *= 0.7; if (a.t >= a.dur) { f.act = null; if (f.super) endSuper(G, f); }
     } else if (a.type === 'taunt') {
       f.vx *= 0.7; if (a.t >= a.dur || !f.ground) f.act = null;
     } else if (a.type === 'swap') {
@@ -532,6 +551,35 @@ window.MM = window.MM || {};
         }
       },
     },
+    beam: { // e.g. Courtnee-Hameha: gather, charge while Special is held, then a straight energy beam
+      start(G, f, sp, a) { a.charge = 0; a.charging = true; a.dur = sp.startup + sp.active + sp.recovery; a.pose = 'cast'; },
+      tick(G, f, sp, a) {
+        f.vx *= 0.8; if (!f.ground) { f.vy = Math.min(f.vy, 1); a.noGrav = a.t >= sp.startup; }
+        if (a.charging && a.t >= 8) {
+          if (f.inp.special && a.charge < sp.maxCharge) { a.charge++; a.t--; if (a.charge % 6 === 0) part(G, { x: f.x - f.face * 10, y: f.y - f.h * 0.45, color: '#7fe6ff', size: 6, life: 14, max: 14 }); }
+          else a.charging = false;
+        }
+        const k = 1 + (a.charge / sp.maxCharge) * 0.8; // a full charge = 1.8x damage and a longer beam
+        if (a.t >= sp.startup && a.t < sp.startup + sp.active) {
+          const len = sp.len * (0.75 + 0.25 * k), y = f.y - f.h * 0.62;
+          a.beam = { x: f.x + f.face * 45 * f.s, y, len, dir: f.face, th: 46 * f.s * (0.8 + 0.2 * k) };
+          a.box = { x: f.face > 0 ? a.beam.x : a.beam.x - len, y: y - a.beam.th / 2, w: len, h: a.beam.th };
+          a.hitProps = { dmg: sp.dmg * k, kb: sp.kb, kbg: sp.kbg * k, ang: 25 };
+          if (a.t === sp.startup) { G.shake = Math.max(G.shake, 6 * k); MM.sfx('special'); }
+        } else a.beam = null;
+      },
+    },
+    supersaiyan: { // e.g. Super Saiyan Courtnee: power up into the golden form for a while; costs when it wears off
+      start(G, f, sp, a) { if (f.super || !f.forms) { f.act = null; return; } a.dur = 42; a.pose = 'flex'; a.noGrav = !f.ground; },
+      tick(G, f, sp, a) {
+        f.vx *= 0.8; if (!f.ground) f.vy = Math.min(f.vy, 0.5);
+        if (a.t % 4 === 0) burst(G, f.x, f.y - f.h / 2, '#ffd23f', 4, 5);
+        if (a.t === 30) {
+          applyForm(f, 1); f.super = { t: sp.dur, sp };
+          G.shake = 10; G.flash = 4; popText(G, f.x, f.y - f.h - 24, 'SUPER SAIYAN!', '#ffd23f'); MM.sfx('go');
+        }
+      },
+    },
     icewave: { // e.g. Jadden's Ice Ice Jadden: a dance, then one ice wave along the floor that slows whoever it hits
       start(G, f, sp, a) { a.dur = sp.startup + sp.recovery; a.pose = 'flex'; },
       tick(G, f, sp, a) {
@@ -622,6 +670,14 @@ window.MM = window.MM || {};
         a.caught.length = 0;
         burst(G, f.x, f.y - f.h / 2, f.accent, 40, 12);
       }
+    } else if (u.type === 'beam') { // e.g. Maximum Morris: a giant beam straight ahead, each opponent hit once
+      if (a.t >= u.beamAt && a.t < u.beamEnd) {
+        const y = f.y - f.h * 0.75, th = 120 * f.s, x = f.x + f.face * 175 * f.s;
+        a.beam = { x, y, len: u.len, dir: f.face, th, big: true };
+        a.box = { x: f.face > 0 ? x : x - u.len, y: y - th / 2, w: u.len, h: th };
+        a.hitProps = { dmg: u.dmg, kb: 9 * u.kbMul, kbg: 0.12 * u.kbMul, ang: 30 };
+        if (a.t === u.beamAt) { G.shake = 20; G.flash = 6; }
+      } else { a.box = null; a.beam = null; }
     } else if (u.type === 'stampede') { // a herd runs across the stage; each opponent is hit once
       const t = a.t - u.spawnAt;
       if (t >= 0 && t < u.sweepDur) {
@@ -754,6 +810,7 @@ window.MM = window.MM || {};
       burst(G, ex, ey, MM.PLAYER_COLORS[f.slot], 40, 14);
       G.shake = 26; MM.sfx('ko');
       if (f.act && f.act.type === 'ult') releaseUlt(f.act);
+      if (f.super) { f.super = null; applyForm(f, 0); }
       f.act = null; f.hitstun = 0; f.buff = null; f.slow = null; f.vx = f.vy = 0; f.caught = null; f.meter = 0;
       if (f.stocks <= 0) { f.out = true; f.x = 0; f.y = -3000; }
       else { f.dead = 80; f.y = -3000; }

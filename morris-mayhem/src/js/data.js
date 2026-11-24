@@ -122,16 +122,45 @@ MM.FIGHTERS = [
       poses: [[0, 'ult0'], [39, 'ult1'], [66, 'ult2'], [100, 'ult3']] },
   },
   {
-    id: 'zoner', name: 'Zoner', title: 'Placeholder: fights from far away', photo: null,
-    color: '#8e44ec', accent: '#ff7ad9', skin: '#f1c7a1', hair: '#b5651d',
-    stats: { speed: 5.8, air: 6, jump: 15, weight: 0.95, power: 1, size: 1 },
-    specials: {
-      neutral: { kind: 'projectile', name: 'Triple Star', emoji: '⭐', speed: 12, dmg: 4, kb: 4, kbg: 0.04, r: 13, life: 60, count: 3, spread: 0.25, cd: 55 },
-      side: { kind: 'projectile', name: 'Big Bubble', emoji: '🫧', speed: 4, dmg: 9, kb: 8, kbg: 0.1, r: 30, life: 120, cd: 80 },
-      up: { kind: 'rise', name: 'Float Up', power: 17, dmg: 4, kb: 5, kbg: 0.05 },
-      down: { kind: 'trap', name: 'Banana Peel', emoji: '🍌', dmg: 7, kb: 7, kbg: 0.08, life: 600, cd: 120 },
-    },
-    taunt: 'Stay over there!',
+    // Courtnee Morris, "The Tech Titan": tech, cartoons, video games, anime. Down-special turns him Super Saiyan
+    // for 8 s (stronger); when it wears off he takes +25% damage (the game's version of "a quarter of life").
+    // Moves/numbers from ChatGPT's Courtnee pack (proposed). Art: ChatGPT sheets.
+    id: 'courtnee', name: 'Courtnee Morris', title: 'The Tech Titan', photo: 'img/courtnee.png',
+    // the tallest in the family
+    stats: { speed: 6.6, air: 6.1, jump: 15, weight: 1.05, power: 1, size: 1.15 },
+    taunt: 'Time for an upgrade!',
+    forms: [
+      {
+        form: 'normal', formName: 'NORMAL', title: 'Normal', sprite: 'courtnee',
+        color: '#d32f2f', accent: '#1fd1ef', skin: '#efc19c', hair: '#6b3f22',
+        stats: { speed: 6.6, air: 6.1, jump: 15, weight: 1, power: 1 },
+        attackNames: { jab: 'Combo Click', side: 'Reboot Throw', up: 'System Uppercut', down: 'Low Battery', air: 'Air Combo, Upload Kick, Crash Landing, Retro Roundhouse' },
+        specials: {
+          neutral: { kind: 'beam', name: 'Courtnee-Hameha!', thing: 'an energy beam (hold Special to charge it bigger)', startup: 22, active: 22, recovery: 20, maxCharge: 45, len: 520, dmg: 9, kb: 7, kbg: 0.1, cd: 50 },
+          side: { kind: 'dash', name: 'Pixel Rush', speed: 17, dur: 15, dmg: 9, kb: 7.5, kbg: 0.11, ang: 33, box: [-10, -100, 105, 95] },
+          up: { kind: 'rise', name: 'Tech Takeoff', power: 19.5, forward: 3, dmg: 5, kb: 6, kbg: 0.05 },
+          down: { kind: 'supersaiyan', name: 'Super Saiyan Courtnee', dur: 480, cost: 25, cooldown: 900 },
+        },
+        ultimate: { name: 'Maximum Morris', sprite: 'courtnee', type: 'beam', dur: 192, beamAt: 84, beamEnd: 129, len: 1500, dmg: 28, kbMul: 1.5,
+          desc: 'builds a tech mech, charges up with floating game screens and fires a giant beam straight ahead',
+          poses: [[0, 'asm0'], [12, 'asm1'], [24, 'asm2'], [38, 'asm3'], [48, 'ult0'], [64, 'ult1'], [84, 'ult2'], [129, 'ult3'], [144, 'ret0'], [156, 'ret1'], [168, 'ret2'], [180, 'ret3']] },
+      },
+      {
+        form: 'super', formName: 'SUPER SAIYAN!', title: 'Super Saiyan', sprite: 'courtnee-super',
+        color: '#d32f2f', accent: '#ffd23f', skin: '#efc19c', hair: '#ffd23f',
+        stats: { speed: 7.2, air: 6.6, jump: 15.6, weight: 1, power: 1.3 },
+        attackNames: { jab: 'Powered Combo Click', side: 'Powered Reboot Throw', up: 'Powered System Uppercut', down: 'Powered Low Battery', air: 'powered air attacks' },
+        specials: {
+          neutral: { kind: 'beam', name: 'Powered Courtnee-Hameha!', thing: 'a golden energy beam (hold Special to charge)', startup: 18, active: 24, recovery: 18, maxCharge: 45, len: 600, dmg: 9, kb: 7.5, kbg: 0.1, cd: 45 },
+          side: { kind: 'dash', name: 'Powered Pixel Rush', speed: 19, dur: 15, dmg: 9, kb: 8, kbg: 0.12, ang: 33, box: [-10, -100, 110, 95] },
+          up: { kind: 'rise', name: 'Powered Tech Takeoff', power: 20.5, forward: 3, dmg: 6, kb: 6, kbg: 0.06 },
+          down: { kind: 'supersaiyan', name: 'Super Saiyan (already on)', dur: 480, cost: 25, cooldown: 900 },
+        },
+        ultimate: { name: 'Maximum Morris', sprite: 'courtnee', type: 'beam', dur: 192, beamAt: 84, beamEnd: 129, len: 1500, dmg: 28, kbMul: 1.5,
+          desc: 'builds a tech mech and fires a giant beam straight ahead (the Super Saiyan timer keeps running)',
+          poses: [[0, 'asm0'], [12, 'asm1'], [24, 'asm2'], [38, 'asm3'], [48, 'ult0'], [64, 'ult1'], [84, 'ult2'], [129, 'ult3'], [144, 'ret0'], [156, 'ret1'], [168, 'ret2'], [180, 'ret3']] },
+      },
+    ],
   },
   {
     id: 'healer', name: 'Healer', title: 'Placeholder: the one who takes care of everyone', photo: null,

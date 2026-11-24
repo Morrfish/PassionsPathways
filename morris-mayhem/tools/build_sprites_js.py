@@ -15,6 +15,12 @@ MOVES = {
     'jadden': dict(jab='combo', side='combo', down='sweep', up='header', nair='round', fair='volley', uair='uair', dair='stomp',
                    neutral='hail', sideSpecial='drive', upSpecial='leap', downSpecial='ice',
                    airRow='volley', upRow='header', uairRow='uair', riseLate='leap2'),
+    'courtnee': dict(jab='click', side='reboot', down='battery', up='upper', nair='round', fair='acombo', uair='upload', dair='crash',
+                     neutral='hameha', sideSpecial='rush', upSpecial='takeoff', downSpecial='saiyan',
+                     airRow='acombo', upRow='upper', uairRow='upload', riseLate='takeoff3'),
+    'courtnee-super': dict(jab='click', side='reboot', down='battery', up='upper', nair='round', fair='acombo', uair='upload', dair='crash',
+                           neutral='hameha', sideSpecial='rush', upSpecial='takeoff', downSpecial='down',
+                           airRow='acombo', upRow='upper', uairRow='upload', riseLate='takeoff3'),
     'mandi-witch': dict(jab='brush', side='brush', down='rules', up='says', nair='boot', fair='boot', uair='says', dair='rules',
                         neutral='trick', sideSpecial='salon', upSpecial='broom', downSpecial='whirl',
                         airRow='boot', upRow='says', uairRow='says', riseLate='broom2'),
@@ -31,8 +37,11 @@ parts = ["""// Character art (sprite atlases) for fighters drawn from artwork in
 window.MM = window.MM || {};
 MM.SPRITES = MM.SPRITES || {};
 """]
+# extra names for frames (Courtnee's personality poses live in his own atlas)
+ALIASES = {'courtnee': {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'}}
 for who, moves in MOVES.items():
     fr = json.load(open(os.path.join(src_dir, f'{who}-frames.json')))
+    for a, b in ALIASES.get(who, {}).items(): fr[a] = fr[b]
     body = ',\n'.join(f"    '{k}': [{', '.join(str(v) for v in val)}]" for k, val in fr.items())
     parts.append(f"""
 MM.SPRITES['{who}'] = {{
