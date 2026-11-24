@@ -53,36 +53,37 @@ MM.FIGHTERS = [
     taunt: 'Mawmaw gets the last word!',
   },
   {
-    // Mandi Crist: switches between two forms in a fight with the Switch button (R / Num 4 / controller Y).
-    // Moves are PROPOSED until her details and art arrive in the family doc; she uses the cartoon body for now.
-    id: 'mandi', name: 'Mandi Crist', title: 'Witch ⇄ Mermaid Fangirl', photo: null,
-    stats: { speed: 6.4, air: 6, jump: 15.2, weight: 0.95, power: 1, size: 0.97 },
+    // Mandi Crist, "The Big Sister": two outfits that change her moves. Down-special (or the Switch button)
+    // = Wardrobe Whirl: 0.65 s spin you can be hit out of, then the other outfit; 2 s cooldown.
+    // Moves/numbers from ChatGPT's handoff (proposed, editable). Art: ChatGPT sheets.
+    id: 'mandi', name: 'Mandi Crist', title: 'The Big Sister', photo: 'img/mandi.png',
+    stats: { speed: 6.2, air: 5.8, jump: 14.4, weight: 1.08, power: 1.12, size: 1 },
+    taunt: "Big sister's in charge!",
     forms: [
       {
-        form: 'witch', formName: 'WITCH!', title: 'Witch form',
-        color: '#4b1f6f', accent: '#7CFC00', skin: '#f1c7a8', hair: '#2b1a12', hat: 'witch',
-        stats: { speed: 6, air: 6.2, jump: 15, weight: 0.95, power: 1.08 },
-        attackNames: { jab: 'Wand Flick', side: 'Broom Swat', down: 'Cauldron Kick', air: 'Spooky Spin' },
+        form: 'witch', formName: 'WITCH!', title: 'Witch outfit', sprite: 'mandi-witch',
+        color: '#ff7a1a', accent: '#2a1a2e', skin: '#f1c7a8', hair: '#8a6a4a',
+        stats: { speed: 6.2, air: 5.8, jump: 14.4, weight: 1.08, power: 1.12, size: 1 },
+        normalSpeed: 0.95,
+        attackNames: { jab: 'Brush Off', side: 'Brush Off', down: 'Ground Rules', up: 'Big Sister Says Up', air: 'Broom Boot' },
         specials: {
-          neutral: { kind: 'projectile', name: 'Potion Toss', thing: 'a bubbling potion', emoji: '🧪', speed: 9, vy: -7, grav: 0.38, dmg: 9, kb: 7, kbg: 0.09, r: 17, life: 100, cd: 40 },
-          side: { kind: 'dash', name: 'Broom Rush', speed: 16, dur: 16, dmg: 10, kb: 8, kbg: 0.12, ang: 35 },
-          up: { kind: 'rise', name: 'Broomstick Lift', power: 19, dmg: 6, kb: 6, kbg: 0.06, parachute: false },
-          down: { kind: 'trap', name: 'Spider Web', emoji: '🕸️', dmg: 6, kb: 9, kbg: 0.06, ang: 80, life: 600, cd: 110 },
+          neutral: { kind: 'projectile', name: 'Trick or Treat', thing: 'a pumpkin candy bucket', sprite: 'pumpkin', speed: 9, vy: -7, grav: 0.36, dmg: 9, kb: 7, kbg: 0.09, r: 18, life: 100, cd: 40 },
+          side: { kind: 'trap', name: 'Salon Spell', thing: 'a hairdryer', sprite: 'dryer', gust: true, dmg: 7, kb: 10, kbg: 0.09, ang: 20, life: 480, cd: 110 },
+          up: { kind: 'rise', name: 'Broom Service', power: 17, forward: 6, dmg: 6, kb: 6, kbg: 0.06 },
+          down: { kind: 'transform', name: 'Wardrobe Whirl', into: 'Mermaid Fangirl' },
         },
-        taunt: 'Double, double, toil and trouble!',
       },
       {
-        form: 'mermaid', formName: 'MERMAID!', title: 'Mermaid Fangirl form',
-        color: '#14b8a6', accent: '#ff7ad9', skin: '#f1c7a8', hair: '#e0457b', hat: 'mermaid',
-        stats: { speed: 7.2, air: 6.8, jump: 16, weight: 0.88, power: 0.95 },
-        attackNames: { jab: 'Fin Slap', side: 'Tail Whip', down: 'Splash Sweep', air: 'Flip Kick' },
+        form: 'mermaid', formName: 'MERMAID FANGIRL!', title: 'Mermaid Fangirl outfit', sprite: 'mandi-mermaid',
+        color: '#14b8a6', accent: '#7c3aed', skin: '#f1c7a8', hair: '#8a6a4a',
+        stats: { speed: 7.7, air: 6.8, jump: 15.5, weight: 1, power: 0.95, size: 1 },
+        attackNames: { jab: 'Shell Shock', side: 'Shell Shock', down: 'Deep Dive', up: 'Rising Tide', air: 'Fin Kick' },
         specials: {
-          neutral: { kind: 'projectile', name: 'Bubble Burst', thing: 'three bubbles', emoji: '🫧', speed: 10, dmg: 4, kb: 4, kbg: 0.05, r: 15, life: 70, count: 3, spread: 0.3, cd: 45 },
-          side: { kind: 'projectile', name: 'Seashell Boomerang', thing: 'a seashell that comes back', emoji: '🐚', speed: 12, dmg: 6, kb: 6, kbg: 0.07, r: 16, life: 80, boomerang: true, cd: 55 },
-          up: { kind: 'rise', name: 'Waterspout', power: 20, dmg: 7, kb: 7, kbg: 0.07 },
-          down: { kind: 'shockwave', name: 'Tidal Wave', dmg: 8, kb: 8, kbg: 0.09, speed: 10, cd: 70 },
+          neutral: { kind: 'projectile', name: 'Bubble Boss', thing: 'three bubbles', sprite: 'bubbleball', speed: 10, dmg: 3, kb: 4, kbg: 0.04, r: 14, life: 70, count: 3, spread: 0.28, cd: 45 },
+          side: { kind: 'dash', name: 'Mermaid Mischief', speed: 15, dur: 16, dmg: 9, kb: 7, kbg: 0.11, ang: 35, box: [-10, -90, 110, 90] },
+          up: { kind: 'rise', name: 'Surface Break', power: 20, dmg: 7, kb: 7, kbg: 0.07 },
+          down: { kind: 'transform', name: 'Wardrobe Whirl', into: 'Witch' },
         },
-        taunt: 'Mermaid magic, baby!',
       },
     ],
   },

@@ -177,7 +177,7 @@ window.MM = window.MM || {};
       tickAction(G, f);
     } else {
       const swapNow = f.forms && pressed('swap');
-      if (swapNow) { if (f.swapCd <= 0) startSwap(G, f); }
+      if (swapNow) startSpecial(G, f, 'down');
       else if (pressed('attack')) startNormal(G, f);
       else if (pressed('special')) startSpecial(G, f);
       else if (pressed('dodge')) startDodge(G, f);
@@ -322,9 +322,10 @@ window.MM = window.MM || {};
   }
 
   // ---------- specials ----------
-  function startSpecial(G, f) {
+  function startSpecial(G, f, forced) {
     const inp = f.inp;
-    const slot = inp.y < 0 ? 'up' : inp.y > 0 ? 'down' : inp.x ? 'side' : 'neutral';
+    const slot = forced || (inp.y < 0 ? 'up' : inp.y > 0 ? 'down' : inp.x ? 'side' : 'neutral');
+    if (forced && (!f.def.specials[slot] || f.def.specials[slot].kind !== 'transform')) return;
     const sp = f.def.specials[slot];
     if (!sp || f.cd[slot] > 0) return;
     if (slot === 'up' && f.upUsed) return;
@@ -395,7 +396,7 @@ window.MM = window.MM || {};
       start(G, f, sp, a) { a.dur = 34; a.pose = 'uppercut'; },
       tick(G, f, sp, a) {
         if (a.t < 4) { f.vx *= 0.5; f.vy = Math.min(f.vy, 0); }
-        if (a.t === 4) { f.vy = -sp.power; f.ground = null; f.vx = f.face * 2 + f.inp.x * 3; ring(G, f.x, f.y, f.accent); }
+        if (a.t === 4) { f.vy = -sp.power; f.ground = null; f.vx = f.face * (sp.forward || 2) + f.inp.x * 3; ring(G, f.x, f.y, f.accent); }
         if (a.t > 4) f.vx += clamp(f.inp.x * f.st.air - f.vx, -0.4, 0.4);
         if (a.t >= 4 && a.t < 20 && sp.dmg) {
           a.box = boxFor(f, [-34, -140, 90, 110]);
@@ -474,6 +475,19 @@ window.MM = window.MM || {};
         }
       },
     },
+    transform: { // e.g. Mandi's Wardrobe Whirl: a vulnerable spin that ends in the other form
+      start(G, f, sp, a) { a.dur = sp.dur || 39; a.pose = 'flex'; a.cdAfter = sp.cdAfter || 120; },
+      tick(G, f, sp, a) {
+        if (!f.ground) f.vy = Math.min(f.vy, 2.5);
+        f.vx *= 0.85;
+        if (a.t === 20) { burst(G, f.x, f.y - f.h / 2, f.accent, 18, 6); MM.sfx('heal'); }
+        if (a.t === a.dur - 1 && f.forms) { // completed (a hit before now cancels it and keeps the old form)
+          applyForm(f, (f.formIdx + 1) % f.forms.length);
+          f.cd.down = a.cdAfter; ring(G, f.x, f.y - f.h / 2, f.color);
+          popText(G, f.x, f.y - f.h - 24, f.def.formName || 'SWITCH!', f.accent);
+        }
+      },
+    },
     counter: {
       start(G, f, sp, a) { a.dur = sp.window + 20; a.pose = 'guard'; a.counter = true; a.window = sp.window; },
       tick(G, f, sp, a) { if (!f.ground) f.vy = Math.min(f.vy, 2); if (a.t > a.window) a.counter = false; },
@@ -491,7 +505,7 @@ window.MM = window.MM || {};
       tick(G, f, sp, a) {
         if (a.t === 10) {
           G.traps = G.traps.filter((t) => t.owner !== f);
-          G.traps.push({ owner: f, x: f.x + f.face * 40, y: f.y - 2, vy: 0, sp, life: sp.life || 600, armed: 20 });
+          G.traps.push({ owner: f, x: f.x + f.face * 40, y: f.y - 2, vy: 0, sp, life: sp.life || 600, armed: 20, dir: f.face });
         }
       },
     },
@@ -592,7 +606,7 @@ window.MM = window.MM || {};
       for (const d of G.fighters) {
         if (d === t.owner || d.dead || d.out || d.invuln > 0) continue;
         if (overlap(box, MM.hurtbox(d))) {
-          applyHit(G, t.owner, d, { dmg: t.sp.dmg, kb: t.sp.kb, kbg: t.sp.kbg, ang: t.sp.ang || 70, face: sgn(d.vx || 1) }, t.x, t.y - 15, true);
+          applyHit(G, t.owner, d, { dmg: t.sp.dmg, kb: t.sp.kb, kbg: t.sp.kbg, ang: t.sp.ang || 70, face: t.sp.gust ? t.dir : sgn(d.vx || 1) }, t.x, t.y - 15, true);
           t.life = 0; break;
         }
       }

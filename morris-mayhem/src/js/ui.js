@@ -178,7 +178,8 @@ window.MM = window.MM || {};
     rise: (s) => `launches up${s.parachute ? ' and floats down on a parachute' : ''} (gets back to the stage)`, teleport: () => 'vanishes and reappears (aim it)', slam: () => 'dives down and crashes',
     spin: () => 'spins and hits again and again', counter: () => 'blocks a hit and strikes back (bounces things back too)',
     pack: (s) => `sends ${s.names ? s.names.join(', ').replace(/, ([^,]*)$/, ' and $1') : 'a pack'} running along the floor`,
-    heal: (s) => `heals ${s.amount}% damage`, trap: (s) => `leaves a ${s.emoji || 'trap'} on the ground`, buff: () => 'powers up: faster and stronger for a while',
+    transform: (s) => `spins into the ${s.into} outfit (0.65 s, you can be hit out of it; 2 s cooldown)`,
+    heal: (s) => `heals ${s.amount}% damage`, trap: (s) => `leaves ${s.thing || 'a ' + (s.emoji || 'trap')} on the ground${s.gust ? ' that blasts people away' : ''}`, buff: () => 'powers up: faster and stronger for a while',
   };
   function drawFamily() {
     const bar = (label, v, max) => `<div>${label}<i><b style="width:${Math.min(100, (v / max) * 100)}%"></b></i></div>`;
@@ -198,7 +199,7 @@ window.MM = window.MM || {};
     const rows = [
       ['Attack', an.jab || 'Quick hit', 'Fast hit up close'],
       ['→ + Attack', an.side || 'Side attack', 'Strong hit forward. Great for knocking people off'],
-      ['↑ + Attack', 'Up attack', 'Hits above you. Launches people up'],
+      ['↑ + Attack', an.up || 'Up attack', 'Hits above you. Launches people up'],
       ['↓ + Attack', an.down || 'Low attack', 'Low hit along the floor'],
       ['Attack in the air', an.air || 'Air attacks', 'Hold a direction for forward, up and down (spike) versions'],
       ['Special', '', desc(sp.neutral)], ['→ + Special', '', desc(sp.side)],
@@ -213,7 +214,7 @@ window.MM = window.MM || {};
     const d = list.find((x) => x.id === moveId);
     let html = `<div class="who"><img src="${portrait(d.id)}" alt=""><div><h3>${d.name}</h3><p>${d.title || ''}</p></div></div>`;
     if (d.forms) {
-      html += `<div class="note"><b>Two forms!</b> Press <b>Switch form</b> (R · Num 4 · controller Y · ⇄ on touch) to change between ${MM.formDefs(d).map((f) => f.title.replace(' form', '')).join(' and ')} at any time. Each form has its own moves, speed and power.</div>`;
+      html += `<div class="note"><b>Two forms!</b> Press <b>↓ + Special</b> or <b>Switch form</b> (R · Num 4 · controller Y · ⇄ on touch) for Wardrobe Whirl, which changes between ${MM.formDefs(d).map((f) => f.title.replace(' outfit', '')).join(' and ')} at any time. Each outfit has its own moves, speed and power. The spin takes a moment and a hit stops it, so pick your moment.</div>`;
       for (const fd of MM.formDefs(d)) html += `<h4>${fd.title}</h4>` + moveRows(fd);
     } else html += moveRows(d);
     html += `<h4>Everyone</h4><table><tr><td class="in">Jump</td><td>Up to 3 jumps in a row</td></tr><tr><td class="in">Dodge</td><td>Untouchable for a moment. Hold a direction to roll or air-dodge.</td></tr><tr><td class="in">↓ in the air</td><td>Fall fast</td></tr><tr><td class="in">↓ on a platform</td><td>Drop through it</td></tr></table>`;

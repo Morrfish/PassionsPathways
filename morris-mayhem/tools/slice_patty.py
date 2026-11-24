@@ -60,10 +60,14 @@ sheets = {
     'move':     ([(75, 392), (392, 690), (690, 985), (985, 1300)], ['idle', 'run', 'jump', 'hurt']),
     'attacks':  ([(80, 385), (385, 686), (686, 988), (988, 1300)], ['ring', 'drop', 'kick', 'shove']),
     'specials': ([(80, 390), (390, 688), (688, 988), (988, 1300)], ['toss', 'cart', 'deliver', 'pack']),
+    # second batch: the attacks that were missing (no row captions on this sheet)
+    'missing': ([(75, 445), (445, 735), (735, 1090)], ['raise', 'scoop', 'markdown'], [(0, 370), (370, 720), (720, 1080), (1080, 2000)]),
 }
-for sheet, (rows, names) in sheets.items():
+for sheet, (rows, names, *cols) in sheets.items():
     a = load(sheet)
-    lab, grid = cells(a, rows, COLS)
+    if sheet == 'ultimate':  # tags sit under each pose on this sheet: cut them off
+        a[400:500, :, 3] = 0; a[800:, :, 3] = 0
+    lab, grid = cells(a, rows, cols[0] if cols else COLS)
     for (r, c), comps in grid.items():
         if sheet == 'specials' and r == 0 and c == 2:           # leave the thrown parcel out of the pose
             comps = [k for k in comps if k[1][1].start < 890]

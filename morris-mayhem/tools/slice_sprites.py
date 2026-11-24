@@ -20,6 +20,26 @@ CHARACTERS = {
         # bits that become their own projectiles: name, sheet, crop box (x0, y0, x1, y1)
         'props': [('bobber', 'attacks.png', None)],
     },
+    # Mandi's two outfits are two atlases; each also takes its own rows of the shared ultimate sheet.
+    'mandi-witch': {
+        'scale': 0.62, 'cols': [165, 415, 695, 975, 9999],
+        'sheets': {
+            'move.png': ['idle', 'run', 'jump', 'hurt'],
+            'attacks.png': ['brush', 'says', 'boot', 'rules'],
+            'specials.png': ['trick', 'salon', 'broom', 'whirl'],
+        },
+        # thrown/placed things: name, sheet, a point inside the thing (sheet px); removed from the pose
+        'props': [('pumpkin', 'specials.png', (990, 105)), ('dryer', 'specials.png', (1200, 540))],
+    },
+    'mandi-mermaid': {
+        'scale': 0.62, 'cols': [165, 415, 695, 975, 9999],
+        'sheets': {
+            'move.png': ['idle', 'run', 'jump', 'hurt'],
+            'attacks.png': ['shell', 'tide', 'fin', 'dive'],
+            'specials.png': ['bubble', 'wave', 'surface', 'whirl'],
+        },
+        'props': [('bubbleball', 'specials.png', (968, 128))],
+    },
 }
 
 def tag_bands(a):
@@ -34,7 +54,13 @@ def tag_bands(a):
         else: bands.append([r, r])
     return [b for b in bands if b[1] - b[0] > 8]
 
-def slice_sheet(path, names, cols, frames, scale):
+def cut_tags(a, tags):
+    # thin cuts just above and below each tag strip separate poses and effects that touch their tag
+    for b in tags:
+        a[b[0] - 7:b[0] - 4, :, 3] = 0
+        a[b[1] + 12:b[1] + 15, :, 3] = 0
+
+def slice_sheet(path, names, cols, frames, scale, excl=()):
     a = np.array(Image.open(path).convert('RGBA'))
     a[..., 3][a[..., 3] < 64] = 0
     bands = tag_bands(a)
@@ -45,7 +71,7 @@ def slice_sheet(path, names, cols, frames, scale):
     for b in tags:
         rows.append((top, b[0] - 6)); top = b[1] + 20
     # a thin cut just above each tag strip separates poses that touch their tag
-    for b in tags: a[b[0] - 7:b[0] - 4, :, 3] = 0
+    cut_tags(a, tags)
     m = a[..., 3] >= 128
     lab, n = nd.label(m)
     objs = nd.find_objects(lab)
@@ -55,12 +81,13 @@ def slice_sheet(path, names, cols, frames, scale):
         if s < 40: continue
         y, x = o
         cy, cx = (y.start + y.stop) / 2, (x.start + x.stop) / 2
-        if cx < cols[0]: continue                                     # row labels
+        if cx < cols[0] or y.stop < title_end + 20: continue           # row labels, title banner
         px = a[y, x][lab[y, x] == i + 1]
         if ((px[:, 0] > 200) & (px[:, 1] > 150) & (px[:, 2] < 110)).mean() > 0.3 and (y.stop - y.start) < 80: continue  # name tag
         r = next((k for k, (y0, y1) in enumerate(rows) if y0 <= cy < y1), None)
         c = next((k for k in range(4) if cols[k] <= cx < cols[k + 1]), None)
-        if r is None or c is None or r >= len(names): continue
+        if r is None or c is None or r >= len(names) or names[r] is None: continue
+        if any(x.start <= px_ <= x.stop and y.start <= py_ <= y.stop for (px_, py_) in excl): continue  # a prop, cut separately
         grid.setdefault((r, c), []).append((i + 1, o, s))
     for (r, c), comps in grid.items():
         keep = np.isin(lab, [k[0] for k in comps])
@@ -99,8 +126,23 @@ def pack(frames, out, who):
 if __name__ == '__main__':
     who, art, out = sys.argv[1:4]
     cfg = CHARACTERS[who]; frames = {}
+    props = cfg.get('props', [])
     for sheet, names in cfg['sheets'].items():
-        slice_sheet(f'{art}/{sheet}', names, cfg['cols'], frames, cfg['scale'])
+        excl = [pt for (_, sh, pt) in props if sh == sheet and pt]
+        slice_sheet(f'{art}/{sheet}', names, cfg['cols'], frames, cfg['scale'], excl)
+    for name, sheet, pt in props:
+        if not pt: continue
+        a = np.array(Image.open(f'{art}/{sheet}').convert('RGBA')); a[..., 3][a[..., 3] < 64] = 0
+        cut_tags(a, [b for b in tag_bands(a) if b[0] > 80])
+        lab, n = nd.label(a[..., 3] >= 128)
+        k = lab[pt[1], pt[0]]
+        if not k:  # nearest blob to the point
+            ys, xs = np.nonzero(lab); i = np.argmin((ys - pt[1]) ** 2 + (xs - pt[0]) ** 2); k = lab[ys[i], xs[i]]
+        y, x = nd.find_objects(lab)[k - 1]
+        img = a[y, x].copy(); img[..., 3] = np.where(lab[y, x] == k, img[..., 3], 0)
+        add(frames, name, img, img.shape[1] / 2, img.shape[0] if name == 'dryer' else img.shape[0] / 2, cfg['scale'])
+    if who != 'jeffery':
+        pack(frames, out, who); sys.exit()
     # the red bobber from the cast pose in the attacks sheet: largest red blob in that cell
     a = np.array(Image.open(f'{art}/attacks.png').convert('RGBA')); a[..., 3][a[..., 3] < 64] = 0
     red = (a[..., 0] > 180) & (a[..., 1] < 90) & (a[..., 2] < 90) & (a[..., 3] > 128)

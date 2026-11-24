@@ -28,6 +28,8 @@ window.MM = window.MM || {};
       if (a.type === 'dodge') return f.ground ? 'idle0' : 'jump2';
       if (a.type === 'normal') {
         const row = M[a.name], m = a.m, before = a.t < m.start, during = a.t < m.start + m.active;
+        if (a.name === 'up' && M.upRow) return M.upRow + (before ? 0 : during ? (a.t < m.start + m.active / 2 ? 1 : 2) : 3);
+        if (a.name === 'uair' && M.uairRow) return M.uairRow + (before ? 0 : during ? (a.t < m.start + m.active / 2 ? 1 : 2) : 3);
         if (a.name === 'up' || a.name === 'uair') return M.upPose;
         if (row === M.airRow) return row + (before ? 1 : during ? 2 : f.ground ? 3 : 1);
         if (row === 'drop') return 'drop' + (before ? 1 : during ? 2 : 3);
@@ -41,6 +43,8 @@ window.MM = window.MM || {};
         if (kind === 'projectile') return row + (a.t < 5 ? 0 : a.t < 9 ? 1 : a.t < 16 ? 2 : 3);
         if (kind === 'pack') return row + (a.t < 10 ? 0 : a.t < 20 ? 1 : a.t < 28 ? 2 : 3);
         if (kind === 'counter') return row + (a.t < 5 ? 0 : a.counter ? 1 : 3);
+        if (kind === 'transform') return row + (a.t < 8 ? 0 : a.t < 20 ? 1 : a.t < 30 ? 2 : 3);
+        if (kind === 'trap') return row + (a.t < 6 ? 0 : a.t < 12 ? 1 : a.t < 18 ? 2 : 3);
         if (row) return row + Math.min(3, Math.floor((a.t / a.dur) * 4));
       }
     }
@@ -410,7 +414,8 @@ window.MM = window.MM || {};
     g.setTransform(scale, 0, 0, scale, W / 2 - cam.x * scale + (Math.random() - 0.5) * sh, H / 2 - cam.y * scale + (Math.random() - 0.5) * sh);
     art.floor(g, G.stage, G.stage.main);
     for (const p of G.stage.plats) art.plat(g, p);
-    for (const t of G.traps) { g.globalAlpha = t.armed > 0 ? 0.5 : 1; g.font = '44px serif'; g.textAlign = 'center'; g.textBaseline = 'bottom'; g.fillText(t.sp.emoji || '⚠️', t.x, t.y + 4); g.globalAlpha = 1; }
+    for (const t of G.traps) if (t.sp.sprite) drawSpriteProj(g, { sprite: t.sp.sprite, owner: t.owner, x: t.x, y: t.y - 18, runner: true, t: 0, dir: t.dir || 1 }, G);
+    for (const t of G.traps) { if (t.sp.sprite) continue; g.globalAlpha = t.armed > 0 ? 0.5 : 1; g.font = '44px serif'; g.textAlign = 'center'; g.textBaseline = 'bottom'; g.fillText(t.sp.emoji || '⚠️', t.x, t.y + 4); g.globalAlpha = 1; }
     for (const f of G.fighters) drawFighter(g, f, G);
     for (const p of G.projs) drawProj(g, p, G);
     drawParts(g, G);
