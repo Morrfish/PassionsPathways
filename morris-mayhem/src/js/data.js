@@ -21,6 +21,22 @@ window.MM = window.MM || {};
 
 MM.FIGHTERS = [
   {
+    // Jeffery Morris, "The Boss" (PawPaw): the story mode boss before secret final boss Patty.
+    id: 'jeffery', name: 'Jeffery Morris', title: 'The Boss', photo: 'img/jeffery.png', sprite: 'jeffery',
+    color: '#5b6b3a', accent: '#a8874f', skin: '#e9b28f', hair: '#d9d9d9',
+    // quiet, stubborn, competitive: heavy and hard to move, steady hitter
+    stats: { speed: 5.8, air: 5.3, jump: 14.8, weight: 1.3, power: 1.15, size: 1.1 },
+    normalSpeed: 0.92,
+    attackNames: { jab: 'PawPaw One-Two', side: 'Big Catch', down: "Reel 'Em In", air: 'Trail Boot' },
+    specials: {
+      neutral: { kind: 'projectile', name: "Gone Fishin'", thing: 'a fishing bobber that reels people in', sprite: 'bobber', speed: 12, vy: -4, grav: 0.25, boomerang: true, pull: true, line: true, dmg: 7, kb: 6, kbg: 0.05, ang: 25, r: 16, life: 75, cd: 45 },
+      side: { kind: 'dash', name: 'Buck Stops Here', speed: 15, dur: 18, dmg: 13, kb: 9, kbg: 0.14, ang: 35, armor: true, box: [-10, -110, 110, 105] },
+      up: { kind: 'rise', name: 'Tree Stand', power: 19.5, dmg: 7, kb: 7, kbg: 0.08 },
+      down: { kind: 'counter', name: 'Camo Cover', window: 28, mult: 1.5 },
+    },
+    taunt: "PawPaw's still got it!",
+  },
+  {
     // Patty Morris: the secret final boss of story mode. Art: ChatGPT graphic-novel sheets (img/patty-atlas.webp).
     id: 'patty', name: 'Patty Morris', title: 'Mawmaw Mayhem', photo: 'img/patty.png', sprite: 'patty',
     color: '#7B2CBF', accent: '#C8A2C8', skin: '#f0c49a', hair: '#ecebf3',
@@ -35,18 +51,6 @@ MM.FIGHTERS = [
       down: { kind: 'pack', name: "Mawmaw's Pack", sprites: ['dog0', 'dog1', 'dog2'], names: ['Tippie', 'Spike', 'Poppie'], speed: 7.5, dmg: 5, kb: 6, kbg: 0.08, cd: 150 },
     },
     taunt: 'Mawmaw gets the last word!',
-  },
-  {
-    id: 'brawler', name: 'Brawler', title: 'Placeholder: all-rounder', photo: null,
-    color: '#e8452c', accent: '#ffd23f', skin: '#e0ac7e', hair: '#3b2414',
-    stats: { speed: 6.4, air: 5.6, jump: 15, weight: 1.05, power: 1.1, size: 1 },
-    specials: {
-      neutral: { kind: 'projectile', name: 'Fireball', emoji: '🔥', speed: 11, dmg: 6, kb: 5, kbg: 0.05, r: 16, life: 70, cd: 40 },
-      side: { kind: 'dash', name: 'Rocket Punch', speed: 17, dur: 14, dmg: 11, kb: 8, kbg: 0.13, ang: 30 },
-      up: { kind: 'rise', name: 'Rising Uppercut', power: 19, dmg: 9, kb: 8, kbg: 0.1 },
-      down: { kind: 'counter', name: 'Counter', window: 24, mult: 1.4 },
-    },
-    taunt: "That's how we do it!",
   },
   {
     id: 'speedster', name: 'Speedster', title: 'Placeholder: fast and light', photo: null,

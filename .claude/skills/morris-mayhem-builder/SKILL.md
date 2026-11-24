@@ -36,7 +36,11 @@ If it isn't reachable, ask her to paste the info and attach the pictures in chat
 - ChatGPT sheets come as labeled 4×4 grids (labels in the left column, title banner on top, near-invisible
   colored fringe pixels that must be dropped). `tools/slice_patty.py <art dir> <out dir>` cuts poses by
   connected components, drops labels/title, anchors each pose, scales by 0.62 and packs a WebP atlas plus
-  frames JSON; copy it for a new fighter and change the sheet/row names. Paste the JSON into `sprites.js`.
+  frames JSON. Use `tools/slice_sprites.py <id> <art dir> <out dir>` (newer sheets with yellow name tags under each
+  pose; add the character to its `CHARACTERS` config with row names). Paste the JSON into `sprites.js` with a
+  `moves` map (row per attack/special, `airRow`, `upPose`, `riseLate`, optional `counterHit`). Pose timing comes
+  from the special's `kind`, so new fighters usually need no render code. Always use the newest APPROVED
+  portrait named in the doc (e.g. patty-face-v6, jeff-face-v3); sprite sheets keep their own designs.
 - Face art → `src/img/<id>.png` 512² (used for HUD, select, family cards).
 - Story mode plan (not built yet): protagonists Mandi, Jadden, Courtnee, Codee, Haylie, Sara, Jorie fight
   through the family, beat Jeff ("The Boss"), then Patty appears as the real, harder secret final boss.
@@ -63,7 +67,7 @@ Scripts are classic `<script>` tags with a global `MM` namespace (not ES modules
    512×512 PNG as `src/img/<id>.png`. Never commit original full-size family photos; only the cutout.
    If they send a body photo, take the outfit colors from it for `color`/`accent`, plus `skin` and `hair`.
 2. **Entry in `MM.FIGHTERS`.** Copy an existing entry. Replace a placeholder (Brawler, Speedster,
-   Zoner, Trickster, Healer; Tank was replaced by Patty) rather than piling on, until all placeholders are gone. Fields are documented
+   Zoner, Trickster, Healer; Brawler → Jeffery, Tank → Patty) rather than piling on, until all placeholders are gone. Fields are documented
    at the top of `data.js`.
 3. **Stats.** Keep within these ranges: speed 5–9, air 4.4–7, jump 13.5–16.5, weight 0.8–1.4,
    power 0.85–1.35, size 0.85–1.2. Trade-offs: fast fighters are light/weak, heavy ones are slow.

@@ -1,7 +1,7 @@
 // Character art (sprite sheets) for fighters drawn from real artwork instead of the cartoon body.
 // Each frame: [x, y, width, height, anchorX, anchorY] in the atlas image; the anchor is the point
 // between the feet (under the head), so poses line up when they swap.
-// Rows (4 poses each) come from the artist's labeled sheets; tools/slice_patty.py rebuilds them.
+// Rows (4 poses each) come from the artist's labeled sheets; tools/slice_sprites.py (tools/slice_patty.py for Patty) rebuilds them.
 window.MM = window.MM || {};
 MM.SPRITES = MM.SPRITES || {};
 
@@ -64,5 +64,65 @@ MM.SPRITES.patty = {
   },
   // which pose rows each move uses (4 poses: windup, hit, follow-through, recover)
   moves: { jab: 'ring', side: 'shove', down: 'drop', up: 'drop', nair: 'kick', fair: 'kick', uair: 'drop', dair: 'kick',
-           neutral: 'toss', sideSpecial: 'cart', upSpecial: 'deliver', downSpecial: 'pack' },
+           neutral: 'toss', sideSpecial: 'cart', upSpecial: 'deliver', downSpecial: 'pack',
+           airRow: 'kick', upPose: 'drop1', riseLate: 'deliver1' },
+};
+
+MM.SPRITES.jeffery = {
+  src: 'img/jeffery-atlas.webp',
+  standH: 154,
+  frames: {
+    idle1: [0, 0, 61, 155, 32.2, 155.0],
+    idle2: [65, 0, 62, 155, 32.6, 155.0],
+    idle0: [131, 0, 61, 154, 33.2, 154.4],
+    idle3: [196, 0, 63, 153, 34.7, 152.5],
+    run2: [263, 0, 110, 120, 74.1, 120.3],
+    run1: [377, 0, 115, 127, 81.0, 127.1],
+    run3: [496, 0, 103, 128, 76.2, 127.7],
+    run0: [603, 0, 105, 126, 82.0, 125.9],
+    jump2: [712, 0, 99, 100, 54.8, 99.8],
+    jump1: [815, 0, 93, 123, 63.3, 123.4],
+    jump3: [912, 0, 110, 115, 59.2, 115.3],
+    jump0: [1026, 0, 89, 92, 67.3, 91.8],
+    hurt0: [1119, 0, 86, 122, 29.6, 121.5],
+    hurt2: [1209, 0, 153, 110, 40.9, 109.7],
+    hurt1: [1366, 0, 85, 111, 52.0, 111.0],
+    hurt3: [1455, 0, 148, 81, 49.2, 81.2],
+    onetwo0: [1607, 0, 91, 143, 49.9, 143.2],
+    onetwo3: [1702, 0, 89, 143, 55.2, 142.6],
+    onetwo1: [1795, 0, 122, 142, 60.0, 142.0],
+    onetwo2: [0, 159, 136, 142, 77.0, 142.0],
+    catch0: [140, 159, 104, 136, 67.6, 136.4],
+    catch3: [248, 159, 99, 136, 66.9, 135.8],
+    catch1: [351, 159, 162, 135, 81.0, 135.2],
+    catch2: [517, 159, 191, 133, 85.1, 133.3],
+    boot1: [712, 159, 105, 123, 78.6, 112.2],
+    boot2: [821, 159, 180, 107, 66.1, 107.3],
+    boot3: [1005, 159, 118, 115, 65.5, 114.7],
+    boot0: [1127, 159, 102, 95, 77.3, 95.5],
+    reel3: [1233, 159, 130, 147, 59.7, 146.9],
+    reel0: [1367, 159, 129, 146, 68.9, 145.7],
+    reel1: [1500, 159, 215, 144, 122.7, 143.8],
+    reel2: [1719, 159, 185, 128, 63.4, 127.7],
+    fish1: [1908, 159, 131, 151, 73.0, 150.7],
+    fish0: [0, 314, 139, 146, 31.3, 146.3],
+    fish2: [143, 314, 193, 144, 57.5, 144.5],
+    fish3: [340, 314, 155, 140, 31.5, 139.5],
+    buck2: [499, 314, 200, 126, 140.2, 126.5],
+    buck1: [703, 314, 153, 119, 93.1, 119.0],
+    buck3: [860, 314, 120, 112, 73.2, 112.2],
+    buck0: [984, 314, 102, 99, 73.5, 98.6],
+    stand2: [1090, 314, 128, 136, 77.5, 97.3],
+    stand1: [1222, 314, 113, 136, 79.4, 135.8],
+    stand0: [1339, 314, 97, 120, 68.3, 120.3],
+    stand3: [1440, 314, 159, 105, 112.7, 104.8],
+    cover1: [1603, 314, 167, 131, 54.3, 130.8],
+    cover0: [1774, 314, 102, 130, 33.9, 130.2],
+    cover2: [0, 464, 212, 126, 131.9, 126.5],
+    cover3: [216, 464, 100, 126, 58.8, 126.5],
+    bobber: [320, 464, 25, 20, 12.7, 10.2]
+  },
+  moves: { jab: 'onetwo', side: 'catch', down: 'reel', up: 'reel', nair: 'boot', fair: 'boot', uair: 'boot', dair: 'boot',
+           neutral: 'fish', sideSpecial: 'buck', upSpecial: 'stand', downSpecial: 'cover', counterHit: 'cover2',
+           airRow: 'boot', upPose: 'reel0', riseLate: 'stand2' },
 };

@@ -331,7 +331,7 @@ window.MM = window.MM || {};
           const n = sp.count || 1;
           for (let i = 0; i < n; i++) {
             const ang = n > 1 ? (i - (n - 1) / 2) * (sp.spread || 0.2) : 0;
-            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, sprite: sp.sprite, boomer: sp.boomerang, dir: f.face });
+            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, sprite: sp.sprite, boomer: sp.boomerang, pull: sp.pull, line: sp.line, dir: f.face });
           }
         }
       },
@@ -499,7 +499,7 @@ window.MM = window.MM || {};
         def.face = sgn(att.x - def.x);
         applyHit(G, def, att, { dmg: h.dmg * (da.sp.mult || 1.3) + 3, kb: 9, kbg: 0.13, ang: 40, face: def.face }, att.x, att.y - att.h / 2);
       }
-      def.act = { type: 'lag', t: 0, dur: 12, pose: 'punch' }; def.invuln = 20;
+      def.act = { type: 'lag', t: 0, dur: 14, pose: 'punch', countered: true }; def.invuln = 20;
       popText(G, def.x, def.y - def.h - 20, 'COUNTER!', '#fff36b'); MM.sfx('counter');
       return false;
     }
@@ -545,7 +545,7 @@ window.MM = window.MM || {};
         if (d === p.owner || d.dead || d.out || p.hit.has(d) || d.invuln > 0) continue;
         if (overlap(box, MM.hurtbox(d))) {
           p.hit.add(d);
-          const ok = applyHit(G, p.owner, d, { dmg: p.dmg, kb: p.kb, kbg: p.kbg, ang: p.ang, face: sgn(p.vx || p.dir) }, p.x, p.y, p);
+          const ok = applyHit(G, p.owner, d, { dmg: p.dmg, kb: p.kb, kbg: p.kbg, ang: p.ang, face: p.pull ? sgn(p.owner.x - d.x) : sgn(p.vx || p.dir) }, p.x, p.y, p);
           if (ok && !p.ground) p.life = 0;
         }
       }

@@ -3,8 +3,8 @@
 A 2–4 player platform fighter (like Brawlhalla or Smash Bros.) where every fighter is a member of the
 Morris family. It runs as a **Windows app (exe)**, an **Android app (APK)**, and in a web browser.
 
-> **Status:** the game works end to end. **Patty Morris ("Mawmaw Mayhem")** is in, drawn from her graphic-novel
-> artwork. The other 5 fighters (Brawler, Speedster, Zoner, Trickster, Healer) are still **placeholders** that get
+> **Status:** the game works end to end. **Jeffery Morris ("The Boss")** and **Patty Morris ("Mawmaw Mayhem")** are in,
+> drawn from their graphic-novel artwork. The other 4 fighters (Speedster, Zoner, Trickster, Healer) are still **placeholders** that get
 > replaced by family members as art and info come in. The shared family list is the Google Doc
 > "Morris Mayhem - Family Fighters (fill this in)" in the "Morris Mayhem (family fighting game)" Drive folder.
 
@@ -51,7 +51,7 @@ repo's **Actions** tab and download:
 - `src/js/ai.js`: computer players
 - `src/js/sprites.js`: artwork fighters (pose atlas + which pose each move uses)
 - `src/js/render.js`: stage art, fighter drawing, HUD
-- `tools/slice_patty.py`: cuts the artist's labeled pose sheets into a game atlas
+- `tools/slice_sprites.py`: cuts the artist's labeled pose sheets (with name tags) into a game atlas (`slice_patty.py` for Patty's untagged sheets)
 - `src/js/input.js`: keyboard, controllers, touch
 - `src/js/ui.js`: menus and the game loop
 - `desktop/`: Windows app shell (Electron). `www/` and `android/` are generated.

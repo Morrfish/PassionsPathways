@@ -23,21 +23,23 @@ window.MM = window.MM || {};
     if (f.hitstun > 0) return f.ground ? 'hurt' + (f.hitstun > 6 ? 1 : 0) : 'hurt2';
     if (f.jsq > 0) return 'jump0';
     if (a) {
-      if (a.type === 'lag') return 'jump0';
+      if (a.type === 'lag') return a.countered && M.counterHit ? M.counterHit : 'jump0';
       if (a.type === 'dodge') return f.ground ? 'idle0' : 'jump2';
       if (a.type === 'normal') {
         const row = M[a.name], m = a.m, before = a.t < m.start, during = a.t < m.start + m.active;
-        if (a.name === 'up' || a.name === 'uair') return 'drop1';
-        if (row === 'kick') return 'kick' + (before ? 1 : during ? 2 : f.ground ? 3 : 1);
+        if (a.name === 'up' || a.name === 'uair') return M.upPose;
+        if (row === M.airRow) return row + (before ? 1 : during ? 2 : f.ground ? 3 : 1);
         if (row === 'drop') return 'drop' + (before ? 1 : during ? 2 : 3);
         return row + (before ? 0 : during ? (a.t < m.start + m.active / 2 ? 1 : 2) : 3);
       }
       if (a.type === 'special') {
         const row = M[{ neutral: 'neutral', side: 'sideSpecial', up: 'upSpecial', down: 'downSpecial' }[a.slot]];
-        if (row === 'cart') return 'cart' + (a.t < 6 ? 0 : a.box ? 1 + ((a.t >> 2) & 1) : 3);
-        if (row === 'deliver') return 'deliver' + (a.chute ? 2 : a.t < 4 ? 0 : 1);
-        if (row === 'toss') return 'toss' + (a.t < 5 ? 0 : a.t < 9 ? 1 : a.t < 16 ? 2 : 3);
-        if (row === 'pack') return 'pack' + (a.t < 10 ? 0 : a.t < 20 ? 1 : a.t < 28 ? 2 : 3);
+        const kind = a.sp.kind;
+        if (kind === 'dash') return row + (a.t < 6 ? 0 : a.box ? 1 + ((a.t >> 2) & 1) : 3);
+        if (kind === 'rise') return a.chute ? row + 2 : a.t < 4 ? row + 0 : a.t < 12 ? row + 1 : M.riseLate;
+        if (kind === 'projectile') return row + (a.t < 5 ? 0 : a.t < 9 ? 1 : a.t < 16 ? 2 : 3);
+        if (kind === 'pack') return row + (a.t < 10 ? 0 : a.t < 20 ? 1 : a.t < 28 ? 2 : 3);
+        if (kind === 'counter') return row + (a.t < 5 ? 0 : a.counter ? 1 : 3);
         if (row) return row + Math.min(3, Math.floor((a.t / a.dur) * 4));
       }
     }
@@ -71,6 +73,11 @@ window.MM = window.MM || {};
     if (!sh) return false;
     const fr = sh.S.frames[p.sprite]; if (!fr) return false;
     const k = (p.owner.h * 1.15) / sh.S.standH;
+    if (p.line && !p.owner.dead && !p.owner.out) { // fishing line from the rod to the bobber
+      const o = p.owner;
+      g.save(); g.strokeStyle = 'rgba(30,30,30,.8)'; g.lineWidth = 2; g.beginPath();
+      g.moveTo(o.x + o.face * 70 * o.s, o.y - 120 * o.s); g.quadraticCurveTo((o.x + p.x) / 2, Math.max(o.y - 120 * o.s, p.y) + 30, p.x, p.y); g.stroke(); g.restore();
+    }
     g.save();
     if (p.runner) { g.translate(p.x, p.y + 18 - Math.abs(Math.sin(p.t * 0.5)) * 6); }
     else { g.translate(p.x, p.y); g.rotate(Math.sin(p.t * 0.25) * 0.4); }
