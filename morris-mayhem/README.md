@@ -21,6 +21,13 @@ Morris family. It runs as a **Windows app (exe)**, an **Android app (APK)**, and
 - **Move List** (title screen and pause menu) shows every fighter's moves and buttons.
 - Fighters can have **forms**: Mandi's Wardrobe Whirl (↓ + Special or the Switch button) changes outfit and move set.
 - Stages: Backyard BBQ, Rooftop Night, The Dinner Table, plus five illustrated family places: Main Street Mayhem (Dunkirk), Polar Bear Gym (Hardin Northern), Family Picnic (Williamstown), Music Gate Mix-Up (Graceland, with the family van) and PawPaw's Dock (Agnew Lake, with a rocking fishing boat).
+- Every illustrated arena has one solid floor along the bottom and platforms that stand on real things in the
+  picture (shop roof, crossing gate and crates; bleachers and a hanging scoreboard; picnic tables and the bell frame;
+  gold stages and the van roof). At Agnew Lake the dock ends at the water and PawPaw's boat floats (and bobs) past it.
+- **Arena Maker** (title screen): pick a background, add props from all five arenas (or a plain floor block), drag,
+  resize, choose floor / platform / bobbing / decoration, see the start points and KO lines, name it and save.
+  Saved arenas (browser storage, `mm_arena_*`) show up with the other stages and can be edited or deleted.
+  Works with mouse, touch, keyboard and controllers.
 
 ## Controls
 | | Keyboard 1 | Keyboard 2 | Controller |
@@ -61,6 +68,7 @@ repo's **Actions** tab and download:
 - `tools/slice_sprites.py`: cuts the artist's labeled pose sheets (with name tags) into a game atlas (`slice_patty.py` for Patty's untagged sheets)
 - `src/js/input.js`: keyboard, controllers, touch
 - `src/js/ui.js`: menus and the game loop
+- `src/js/arena-maker.js`: the Arena Maker (and loading saved custom arenas into the stage list)
 - `desktop/`: Windows app shell (Electron). `www/` and `android/` are generated.
 
 ## Developer commands

@@ -201,13 +201,15 @@ window.MM = window.MM || {};
   MM.resetCamera = () => { cam.x = 0; cam.y = -250; cam.w = 1700; };
   function updateCamera(G, cw, ch) {
     const live = G.fighters.filter((f) => !f.out && !f.dead);
-    let l = -500, r = 500, t = -400, b = 100;
+    const cx = MM.spawnX(G.stage);
+    let l = cx - 500, r = cx + 500, t = -400, b = 100;
     if (live.length) {
       l = Math.min(...live.map((f) => f.x)) - 260; r = Math.max(...live.map((f) => f.x)) + 260;
       t = Math.min(...live.map((f) => f.y - f.h)) - 200; b = Math.max(...live.map((f) => f.y)) + 160;
     }
+    for (const p of G.stage.plats) if (p.y > 0) b = Math.max(b, p.y + 230); // keep low boats above the HUD
     const bl = G.stage.blast;
-    l = Math.max(l, -bl.side - 100); r = Math.min(r, bl.side + 100);
+    l = Math.max(l, MM.blastLeft(bl) - 100); r = Math.min(r, MM.blastRight(bl) + 100);
     t = Math.max(t, bl.top - 100); b = Math.min(Math.max(b, 160), bl.bottom + 100);
     const aspect = cw / ch;
     let w = Math.max(r - l, (b - t) * aspect, 1100);
@@ -284,7 +286,16 @@ window.MM = window.MM || {};
   }
   MM.preloadStages = () => { for (const k in MM.STAGE_PICS || {}) { stageImg(MM.STAGE_PICS[k].bg); stageImg(MM.STAGE_PICS[k].props); } };
   // Draw a platform prop so its walkable top (sx0..sx1 at height sy) sits exactly on x..x+w at y.
-  function drawPlatPic(g, im, P, spec, x, y, w) {
+  function drawPlatPic(g, im, P, spec, x, y, w, G) {
+    if (spec.decorAnim) { // drawn like a decor picture (with its animation) at the same place
+      const b = MM.propBox(P, spec, x, y, w);
+      if (spec.hang) { // hung from the rafters on two chains
+        g.strokeStyle = '#2a2a30'; g.lineWidth = 5; g.setLineDash([9, 5]);
+        for (const hx of spec.hang) { g.beginPath(); g.moveTo(b.left + hx * b.k, b.top + 4); g.lineTo(b.left + hx * b.k, b.top - 2500); g.stroke(); }
+        g.setLineDash([]);
+      }
+      return drawDecor(g, im, P, { pic: spec.pic, x: b.left + b.width / 2, y: b.bottom, h: b.height, anim: spec.decorAnim }, G);
+    }
     const f = P.frames[spec.pic], r = spec.sub ? [f[0] + spec.sub[0], f[1] + spec.sub[1], spec.sub[2], spec.sub[3]] : f;
     const cols = spec.grid ? spec.grid[0] : 1, rows = spec.grid ? spec.grid[1] : 1;
     const k = w / cols / (spec.sx1 - spec.sx0), step = (r[3] - spec.sy * 2) * k;
@@ -334,36 +345,98 @@ window.MM = window.MM || {};
         g.drawImage(im, (W - iw) / 2 + ox, (H - ih) / 2 + oy, iw, ih);
       },
       floor(g, s, m, G) {
-        const im = stageImg(P.props);
+        const im = stageImg(P.props), pic = (p) => MM.platSpec(P, p.pic);
         if (P.fade) { // darken the painted ground below the floor line
           const gr = g.createLinearGradient(0, -30, 0, 400); gr.addColorStop(0, 'rgba(15,8,30,0)'); gr.addColorStop(0.25, `rgba(15,8,30,${P.fade})`); gr.addColorStop(1, `rgba(15,8,30,${Math.min(0.85, P.fade * 1.7)})`);
           g.fillStyle = gr; g.fillRect(-4000, -30, 8000, 3030);
         }
         if (!im) { g.fillStyle = '#5b3a24'; g.fillRect(m.left, 0, m.right - m.left, m.depth); return; }
         decor(g, im, 'back', G);
-        for (const p of s.plats) { const sp = P.pics[p.pic]; if (sp && sp.behind) drawPlatPic(g, im, P, Object.assign({ pic: p.pic }, sp), p.x, p.y, p.w); }
+        for (const p of s.plats) { const sp = pic(p); if (sp && sp.behind) drawPlatPic(g, im, P, sp, p.x, p.y, p.w, G); }
         drawPlatPic(g, im, P, P.main, m.left, 0, m.right - m.left);
-        for (const p of s.plats) { const sp = P.pics[p.pic]; if (sp && !sp.behind && !sp.front) drawPlatPic(g, im, P, Object.assign({ pic: p.pic }, sp), p.x, p.y, p.w); }
+        for (const p of s.plats) { const sp = pic(p); if (sp && !sp.behind && !sp.front) drawPlatPic(g, im, P, sp, p.x, p.y, p.w, G); }
         decor(g, im, 'mid', G);
       },
-      plat(g, p) {
-        const im = stageImg(P.props), sp = P.pics[p.pic];
+      plat(g, p, G) {
+        const im = stageImg(P.props), sp = MM.platSpec(P, p.pic);
         if (!im) { g.fillStyle = '#a5683a'; g.fillRect(p.x, p.y, p.w, 16); return; }
-        if (sp && sp.front) drawPlatPic(g, im, P, Object.assign({ pic: p.pic }, sp), p.x, p.y, p.w);
+        if (sp && sp.front) drawPlatPic(g, im, P, sp, p.x, p.y, p.w, G);
       },
       front(g, G) {
         const im = stageImg(P.props);
         if (im) decor(g, im, 'front', G);
-        if (P.water) { // see-through lake surface with a little ripple
-          const y = P.water.y, t = G.frame * 0.04;
-          g.fillStyle = P.water.color; g.beginPath(); g.moveTo(-4000, 3000);
-          for (let x = -4000; x <= 4000; x += 80) g.lineTo(x, y + Math.sin(x * 0.02 + t) * 5);
-          g.lineTo(4000, 3000); g.closePath(); g.fill();
-          g.strokeStyle = 'rgba(220,250,255,.55)'; g.lineWidth = 3; g.beginPath();
-          for (let x = -4000; x <= 4000; x += 80) g[x === -4000 ? 'moveTo' : 'lineTo'](x, y + Math.sin(x * 0.02 + t) * 5);
-          g.stroke();
+        drawWater(g, P.water, G);
+      },
+    };
+  }
+  function drawWater(g, water, G) {
+    if (!water) return; // see-through lake surface with a little ripple
+    const y = water.y, t = (G ? G.frame : 0) * 0.04;
+    g.fillStyle = water.color; g.beginPath(); g.moveTo(-4000, 3000);
+    for (let x = -4000; x <= 4000; x += 80) g.lineTo(x, y + Math.sin(x * 0.02 + t) * 5);
+    g.lineTo(4000, 3000); g.closePath(); g.fill();
+    g.strokeStyle = 'rgba(220,250,255,.55)'; g.lineWidth = 3; g.beginPath();
+    for (let x = -4000; x <= 4000; x += 80) g[x === -4000 ? 'moveTo' : 'lineTo'](x, y + Math.sin(x * 0.02 + t) * 5);
+    g.stroke();
+  }
+
+  // ---------- custom arenas (made in the Arena Maker, arena-maker.js) ----------
+  // stage.art = { bg: an arena key ('agnew', ...) or 'sky', water: { y, color } or null,
+  //   pieces: [{ atlas, pic, role: 'main' | 'plat' | 'bob' | 'decor', x, y, w, plat }] } in drawing order.
+  // Every piece is placed by its walkable top line (x..x+w at y); decor uses the whole picture's top edge.
+  // Moving pieces (role 'bob') follow their platform (stage.plats[plat]).
+  MM.pieceSpec = function (atlas, pic, role) {
+    const P = MM.STAGE_PICS[atlas];
+    if (!P) return null;
+    const sp = role !== 'decor' && MM.platSpec(P, pic);
+    if (sp) return sp;
+    const frame = P.frames[pic] ? pic : P.pics[pic] && P.pics[pic].pic;
+    if (!frame || !P.frames[frame]) return null;
+    return { pic: frame, sx0: 0, sx1: P.frames[frame][2], sy: 0 };
+  };
+  MM.drawPiece = function (g, pc, x, y, w, G) {
+    if (pc.atlas === 'basic') { // the plain floor block (no picture): grassy top on a stone block, 4 : 1
+      const h = w / 4, r = Math.min(18, h * 0.2);
+      g.fillStyle = '#6f6a73'; rr(g, x, y, w, h, r); g.fill();
+      g.fillStyle = '#5c5762'; for (let i = 1; i < 4; i++) g.fillRect(x + (w * i) / 4 - 2, y + h * 0.3, 4, h * 0.62);
+      g.fillStyle = '#58b947'; rr(g, x - 4, y - 4, w + 8, Math.max(12, h * 0.2), r); g.fill();
+      g.strokeStyle = '#1a0b2e'; g.lineWidth = 4; rr(g, x, y, w, h, r); g.stroke();
+      return;
+    }
+    const P = MM.STAGE_PICS[pc.atlas], sp = MM.pieceSpec(pc.atlas, pc.pic, pc.role), im = P && stageImg(P.props);
+    if (!sp) return;
+    if (!im) { g.fillStyle = '#a5683a'; g.fillRect(x, y, w, 16); return; }
+    if (pc.tiles > 1) sp.grid = [pc.tiles, 1];
+    if (pc.anim && G) { const b = MM.propBox(P, sp, x, y, w); return drawDecor(g, im, P, { pic: sp.pic, x: b.left + b.width / 2, y: b.bottom, h: b.height, anim: pc.anim }, G); }
+    drawPlatPic(g, im, P, sp, x, y, w, G);
+  };
+  MM.stageImg = stageImg;
+  function plainSky(g, W, H) {
+    const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#2f7fd8'); gr.addColorStop(0.7, '#9fd4ff'); gr.addColorStop(1, '#d9f0ff');
+    g.fillStyle = gr; g.fillRect(0, 0, W, H);
+    g.fillStyle = 'rgba(255,255,255,.85)';
+    for (const [cx, cy, r] of [[0.15, 0.18, 0.05], [0.2, 0.17, 0.04], [0.62, 0.12, 0.045], [0.68, 0.13, 0.035], [0.85, 0.3, 0.04]]) { g.beginPath(); g.arc(W * cx, H * cy, H * r, 0, TAU); g.fill(); }
+  }
+  MM.drawSky = function (g, W, H, bg, px, cam) {
+    const P = MM.STAGE_PICS[bg];
+    if (P && STAGE_ART[bg]) STAGE_ART[bg].sky(g, W, H, px, cam); else plainSky(g, W, H);
+  };
+  function customArt(stage) {
+    const A = stage.art;
+    return {
+      sky(g, W, H, px, cam) { MM.drawSky(g, W, H, A.bg, px, cam); },
+      floor(g, s, m, G) {
+        if (A.bg !== 'sky' && !A.water) { // darken the painted ground below the floor line
+          const gr = g.createLinearGradient(0, -30, 0, 400); gr.addColorStop(0, 'rgba(15,8,30,0)'); gr.addColorStop(0.25, 'rgba(15,8,30,.45)'); gr.addColorStop(1, 'rgba(15,8,30,.76)');
+          g.fillStyle = gr; g.fillRect(-4000, -30, 8000, 3030);
+        }
+        for (const pc of A.pieces) {
+          const p = pc.plat !== undefined && s.plats[pc.plat];
+          if (p) MM.drawPiece(g, pc, p.x, p.y, p.w, G); else MM.drawPiece(g, pc, pc.x, pc.y, pc.w, G);
         }
       },
+      plat() {},
+      front(g, G) { drawWater(g, A.water, G); },
     };
   }
   for (const k in MM.STAGE_PICS || {}) STAGE_ART[k] = illustrated(MM.STAGE_PICS[k]);
@@ -556,14 +629,14 @@ window.MM = window.MM || {};
   // ---------- main draw ----------
   MM.render = function (g, G, W, H) {
     updateCamera(G, W, H);
-    const art = STAGE_ART[G.stage.theme] || STAGE_ART.backyard;
+    const art = G.stage.art ? (G.stage._art = G.stage._art || customArt(G.stage)) : STAGE_ART[G.stage.theme] || STAGE_ART.backyard;
     g.setTransform(1, 0, 0, 1, 0, 0);
     art.sky(g, W, H, cam.x, cam);
     const scale = W / cam.w;
     const sh = G.shake > 0.5 ? G.shake : 0;
     g.setTransform(scale, 0, 0, scale, W / 2 - cam.x * scale + (Math.random() - 0.5) * sh, H / 2 - cam.y * scale + (Math.random() - 0.5) * sh);
     art.floor(g, G.stage, G.stage.main, G);
-    for (const p of G.stage.plats) art.plat(g, p);
+    for (const p of G.stage.plats) art.plat(g, p, G);
     for (const t of G.traps) if (t.sp.sprite) drawSpriteProj(g, { sprite: t.sp.sprite, owner: t.owner, x: t.x, y: t.y - 18, runner: true, t: 0, dir: t.dir || 1 }, G);
     for (const t of G.traps) { if (t.sp.sprite) continue; g.globalAlpha = t.armed > 0 ? 0.5 : 1; g.font = '44px serif'; g.textAlign = 'center'; g.textBaseline = 'bottom'; g.fillText(t.sp.emoji || '⚠️', t.x, t.y + 4); g.globalAlpha = 1; }
     for (const f of G.fighters) drawFighter(g, f, G);

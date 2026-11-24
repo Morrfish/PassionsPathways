@@ -62,7 +62,7 @@ window.MM = window.MM || {};
     players.forEach((p, i) => {
       const def = MM.FIGHTERS.find((d) => d.id === p.fighter) || MM.FIGHTERS[0];
       const alt = used[def.id] = (used[def.id] || 0) + 1;
-      const x = n === 1 ? 0 : -span / 2 + (span * i) / (n - 1);
+      const x = MM.spawnX(stage) + (n === 1 ? 0 : -span / 2 + (span * i) / (n - 1));
       const f = makeFighter(p, def, x, alt > 1, p.stocks || stocks);
       f.boss = p.boss || null; f.stocks0 = f.stocks;
       f.team = G.teams ? p.team || (p.slot % 2 ? 'B' : 'A') : null;
@@ -118,6 +118,11 @@ window.MM = window.MM || {};
     return best;
   }
   MM.surfaceBelow = surfaceBelow;
+  // stages that aren't centered (e.g. the Agnew dock) say where the middle of their floor is and
+  // give left/right blast lines instead of one `side`
+  MM.spawnX = (s) => (s.spawnX !== undefined ? s.spawnX : 0);
+  MM.blastLeft = (b) => (b.left !== undefined ? b.left : -b.side);
+  MM.blastRight = (b) => (b.right !== undefined ? b.right : b.side);
   function insideMain(G, x, y) { const m = G.stage.main; return x > m.left && x < m.right && y > 2 && y < m.depth; }
 
   function part(G, o) { G.parts.push(Object.assign({ vx: 0, vy: 0, life: 30, max: 30, size: 6, color: '#fff', type: 'spark' }, o)); }
@@ -234,7 +239,7 @@ window.MM = window.MM || {};
       }
       if (!f.act) move(f, inp);
       if (!f.ground && downPressed && f.vy > -4) f.ff = true;
-      if (f.ground && f.ground !== 'main' && downPressed) { f.ground = null; f.dropT = 14; f.y += 2; }
+      if (f.ground && f.ground !== 'main' && downPressed && !f.act) { f.ground = null; f.dropT = 14; f.y += 2; }
     }
     physics(G, f);
   }
@@ -724,12 +729,13 @@ window.MM = window.MM || {};
   function checkBlast(G, f) {
     if (f.dead || f.out) return;
     const b = G.stage.blast;
-    if (Math.abs(f.x) > b.side || f.y > b.bottom || (f.y < b.top && f.hitstun > 0)) {
+    const bl = MM.blastLeft(b), br = MM.blastRight(b);
+    if (f.x < bl || f.x > br || f.y > b.bottom || (f.y < b.top && f.hitstun > 0)) {
       if (f.y < b.top) f.y = b.top; // stay inside for the effect
       f.stocks--; f.falls++;
       const killer = G.fighters.find((o) => o.slot === f.lastHit && G.frame - f.lastHitT < 600 && o !== f);
       if (killer) { killer.kos++; killer.bubble = { text: killer.def.taunt || 'Yes!', t: 120 }; }
-      const ex = clamp(f.x, -b.side, b.side), ey = clamp(f.y, b.top, b.bottom);
+      const ex = clamp(f.x, bl, br), ey = clamp(f.y, b.top, b.bottom);
       G.kos = G.kos || []; G.kos.push({ x: ex, y: ey, color: MM.PLAYER_COLORS[f.slot], t: 50 });
       burst(G, ex, ey, MM.PLAYER_COLORS[f.slot], 40, 14);
       G.shake = 26; MM.sfx('ko');
@@ -742,7 +748,7 @@ window.MM = window.MM || {};
 
   function respawn(G, f) {
     const xs = [-180, 180, -60, 60];
-    f.x = xs[f.slot % 4]; f.y = -430; f.vx = f.vy = 0; f.damage = 0; f.ground = null;
+    f.x = MM.spawnX(G.stage) + xs[f.slot % 4]; f.y = -430; f.vx = f.vy = 0; f.damage = 0; f.ground = null;
     f.float = 150; f.invuln = 150; f.jumps = AIR_JUMPS; f.upUsed = false; f.sideUsed = false; f.airDodged = false;
     f.act = null; f.hitstun = 0; f.lastHit = -1;
   }

@@ -39,6 +39,7 @@ window.MM = window.MM || {};
     if (id === 'family') drawFamily();
     if (id === 'moves') drawMoves();
     if (id === 'story') drawStory();
+    if (id === 'maker' && MM.arenaMaker) MM.arenaMaker.open(); // Arena Maker (arena-maker.js)
     if ((id === 'title' || id === 'select' || id === 'howto' || id === 'family' || id === 'moves' || id === 'story') && !paused) { G = null; startDemo(); }
   }
   document.addEventListener('click', (e) => {
