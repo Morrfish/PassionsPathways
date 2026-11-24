@@ -3,8 +3,9 @@ window.MM = window.MM || {};
 (function () {
   const TAU = Math.PI * 2;
   MM.photos = {};
+  MM.allDefs = () => MM.FIGHTERS.flatMap((d) => (d.forms ? [d, ...MM.formDefs(d)] : [d]));
   MM.loadPhotos = function () {
-    for (const d of MM.FIGHTERS) if (d.photo && !MM.photos[d.id]) { const im = new Image(); im.src = d.photo; MM.photos[d.id] = im; }
+    for (const d of MM.allDefs()) if (d.photo && !MM.photos[d.id]) { const im = new Image(); im.src = d.photo; MM.photos[d.id] = im; }
   };
   // ---------- sprite (artwork) fighters ----------
   const spriteImgs = {};
@@ -15,7 +16,7 @@ window.MM = window.MM || {};
     const im = spriteImgs[id];
     return im.complete && im.naturalWidth ? { S, im } : null;
   }
-  MM.preloadSprites = () => { for (const d of MM.FIGHTERS) if (d.sprite) sheet(d.sprite); };
+  MM.preloadSprites = () => { for (const d of MM.allDefs()) if (d.sprite) sheet(d.sprite); };
 
   // Pick the pose for what the fighter is doing right now.
   function pickFrame(f, S) {
@@ -116,6 +117,15 @@ window.MM = window.MM || {};
       if (hurt) ctx.arc(x + fx * r * 0.12, y + r * 0.5, r * 0.18, Math.PI * 1.1, Math.PI * 1.9);
       else ctx.arc(x + fx * r * 0.12, y + r * 0.3, r * 0.25, 0.15 * Math.PI, 0.85 * Math.PI);
       ctx.stroke();
+      if (def.hat === 'witch') { // pointy witch hat
+        ctx.fillStyle = '#1b1030'; ctx.strokeStyle = '#1b1b2a'; ctx.lineWidth = Math.max(2, r * 0.08);
+        ctx.beginPath(); ctx.ellipse(x, y - r * 0.62, r * 1.35, r * 0.28, 0, 0, TAU); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x - r * 0.75, y - r * 0.7); ctx.lineTo(x + fx * r * 0.55, y - r * 2.2); ctx.lineTo(x + r * 0.75, y - r * 0.7); ctx.closePath(); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = def.accent || '#7CFC00'; ctx.fillRect(x - r * 0.72, y - r * 0.95, r * 1.44, r * 0.22);
+      } else if (def.hat === 'mermaid') { // seashell tiara
+        ctx.font = `${r * 0.8}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('🐚', x - r * 0.5, y - r * 0.85); ctx.fillText('⭐', x + r * 0.5, y - r * 0.85);
+      }
     }
     ctx.restore();
   };

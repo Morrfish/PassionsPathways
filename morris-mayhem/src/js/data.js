@@ -53,6 +53,40 @@ MM.FIGHTERS = [
     taunt: 'Mawmaw gets the last word!',
   },
   {
+    // Mandi Crist: switches between two forms in a fight with the Switch button (R / Num 4 / controller Y).
+    // Moves are PROPOSED until her details and art arrive in the family doc; she uses the cartoon body for now.
+    id: 'mandi', name: 'Mandi Crist', title: 'Witch ⇄ Mermaid Fangirl', photo: null,
+    stats: { speed: 6.4, air: 6, jump: 15.2, weight: 0.95, power: 1, size: 0.97 },
+    forms: [
+      {
+        form: 'witch', formName: 'WITCH!', title: 'Witch form',
+        color: '#4b1f6f', accent: '#7CFC00', skin: '#f1c7a8', hair: '#2b1a12', hat: 'witch',
+        stats: { speed: 6, air: 6.2, jump: 15, weight: 0.95, power: 1.08 },
+        attackNames: { jab: 'Wand Flick', side: 'Broom Swat', down: 'Cauldron Kick', air: 'Spooky Spin' },
+        specials: {
+          neutral: { kind: 'projectile', name: 'Potion Toss', thing: 'a bubbling potion', emoji: '🧪', speed: 9, vy: -7, grav: 0.38, dmg: 9, kb: 7, kbg: 0.09, r: 17, life: 100, cd: 40 },
+          side: { kind: 'dash', name: 'Broom Rush', speed: 16, dur: 16, dmg: 10, kb: 8, kbg: 0.12, ang: 35 },
+          up: { kind: 'rise', name: 'Broomstick Lift', power: 19, dmg: 6, kb: 6, kbg: 0.06, parachute: false },
+          down: { kind: 'trap', name: 'Spider Web', emoji: '🕸️', dmg: 6, kb: 9, kbg: 0.06, ang: 80, life: 600, cd: 110 },
+        },
+        taunt: 'Double, double, toil and trouble!',
+      },
+      {
+        form: 'mermaid', formName: 'MERMAID!', title: 'Mermaid Fangirl form',
+        color: '#14b8a6', accent: '#ff7ad9', skin: '#f1c7a8', hair: '#e0457b', hat: 'mermaid',
+        stats: { speed: 7.2, air: 6.8, jump: 16, weight: 0.88, power: 0.95 },
+        attackNames: { jab: 'Fin Slap', side: 'Tail Whip', down: 'Splash Sweep', air: 'Flip Kick' },
+        specials: {
+          neutral: { kind: 'projectile', name: 'Bubble Burst', thing: 'three bubbles', emoji: '🫧', speed: 10, dmg: 4, kb: 4, kbg: 0.05, r: 15, life: 70, count: 3, spread: 0.3, cd: 45 },
+          side: { kind: 'projectile', name: 'Seashell Boomerang', thing: 'a seashell that comes back', emoji: '🐚', speed: 12, dmg: 6, kb: 6, kbg: 0.07, r: 16, life: 80, boomerang: true, cd: 55 },
+          up: { kind: 'rise', name: 'Waterspout', power: 20, dmg: 7, kb: 7, kbg: 0.07 },
+          down: { kind: 'shockwave', name: 'Tidal Wave', dmg: 8, kb: 8, kbg: 0.09, speed: 10, cd: 70 },
+        },
+        taunt: 'Mermaid magic, baby!',
+      },
+    ],
+  },
+  {
     id: 'speedster', name: 'Speedster', title: 'Placeholder: fast and light', photo: null,
     color: '#25c4ff', accent: '#ffffff', skin: '#c98c5b', hair: '#111111',
     stats: { speed: 8.6, air: 7, jump: 16, weight: 0.85, power: 0.9, size: 0.92 },
@@ -75,18 +109,6 @@ MM.FIGHTERS = [
       down: { kind: 'trap', name: 'Banana Peel', emoji: '🍌', dmg: 7, kb: 7, kbg: 0.08, life: 600, cd: 120 },
     },
     taunt: 'Stay over there!',
-  },
-  {
-    id: 'trickster', name: 'Trickster', title: 'Placeholder: tricky and sneaky', photo: null,
-    color: '#1db37a', accent: '#202020', skin: '#e8b48a', hair: '#e8d06a',
-    stats: { speed: 7, air: 6.5, jump: 15.5, weight: 0.9, power: 1, size: 0.95 },
-    specials: {
-      neutral: { kind: 'buff', name: 'Sugar Rush', dur: 300, speedMul: 1.35, powerMul: 1.25, cd: 900 },
-      side: { kind: 'projectile', name: 'Water Balloon', emoji: '🎈', speed: 9, dmg: 8, kb: 7, kbg: 0.09, r: 18, life: 90, grav: 0.35, vy: -7, cd: 45 },
-      up: { kind: 'teleport', name: 'Poof', dist: 240, up: true, dmg: 0 },
-      down: { kind: 'trap', name: 'Whoopee Cushion', emoji: '💨', dmg: 5, kb: 10, kbg: 0.05, ang: 85, life: 600, cd: 120 },
-    },
-    taunt: 'Gotcha!',
   },
   {
     id: 'healer', name: 'Healer', title: 'Placeholder: the one who takes care of everyone', photo: null,
@@ -136,3 +158,15 @@ MM.NORMALS = {
   uair: { start: 5, active: 6, end: 12, box: [-40, -150, 80, 60], dmg: 7, kb: 6,  kbg: 0.11, ang: 85, pose: 'uppercut' },
   dair: { start: 8, active: 6, end: 18, box: [-30, -30, 60, 50], dmg: 10, kb: 6,  kbg: 0.11, ang: -75, pose: 'stomp' },
 };
+
+// Fighters with forms (e.g. Mandi): each form is a full fighter look + move set. The base entry's
+// own fields are shared, and each form overrides what it changes. formDefs() merges them once.
+MM.formDefs = function (def) {
+  if (!def._forms) def._forms = def.forms.map((fm, i) => Object.assign({}, def, fm, {
+    id: def.id + (i ? '-' + fm.form : ''), baseId: def.id, formName: fm.formName, forms: undefined,
+    stats: Object.assign({}, def.stats, fm.stats),
+  }));
+  return def._forms;
+};
+// The base entry shows form 1 on menus.
+for (const d of MM.FIGHTERS) if (d.forms) for (const k of ['color', 'accent', 'skin', 'hair', 'hat', 'photo', 'sprite', 'specials', 'taunt', 'attackNames', 'normalSpeed']) if (d[k] === undefined && d.forms[0][k] !== undefined) d[k] = d.forms[0][k];

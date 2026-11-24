@@ -35,7 +35,8 @@ window.MM = window.MM || {};
     $('#touch').classList.toggle('show', id === 'match' && !!G && G.fighters.some((f) => f.dev === 'touch' && !f.cpu));
     if (id === 'select') drawSelect();
     if (id === 'family') drawFamily();
-    if (id === 'title' || id === 'select' || id === 'howto' || id === 'family') { G = null; startDemo(); }
+    if (id === 'moves') drawMoves();
+    if ((id === 'title' || id === 'select' || id === 'howto' || id === 'family' || id === 'moves') && !paused) { G = null; startDemo(); }
   }
   document.addEventListener('click', (e) => {
     const go = e.target.closest('[data-go]');
@@ -115,8 +116,11 @@ window.MM = window.MM || {};
           if (free >= 0) { slots[free].type = 'human'; slots[free].dev = dv; MM.sfx('select'); save('slots', slots); drawSelect(); }
         }
       } else if (screen === 'title' && (press('attack') || press('pause')) && dv[0] === 'p') show('select');
+      else if (dv === 'k1') continue; // Escape is handled by the keydown listener below
       else if (screen === 'match' && G && press('pause') && G.fighters.some((f) => f.dev === dv && !f.cpu)) togglePause();
       else if (screen === 'pause' && press('pause')) togglePause();
+      else if (screen === 'moves' && press('pause')) $('#movesBack').click();
+      else if (screen === 'moves' && xPress) { const list = moveFighters(); const i = list.findIndex((d) => d.id === moveId); moveId = list[(i + inp.x + list.length) % list.length].id; drawMoves(); }
       else if (screen === 'results' && press('pause')) $('#rematch').click();
     }
     if (screen === 'match' && G && MM.touch.pause) { MM.touch.pause = false; togglePause(); }
@@ -144,7 +148,8 @@ window.MM = window.MM || {};
   $('#quit').addEventListener('click', () => { paused = false; show('select'); });
   $('#rematch').addEventListener('click', () => lastSetup && startMatch());
   addEventListener('keydown', (e) => {
-    if (e.code === 'Escape' && screen === 'pause') togglePause();
+    if (e.code === 'Escape' && (screen === 'pause' || (screen === 'match' && G && !G.over))) togglePause();
+    else if (e.code === 'Escape' && screen === 'moves') $('#movesBack').click();
     else if (e.code === 'Escape' && (screen === 'select' || screen === 'howto' || screen === 'family')) show('title');
     else if (e.code === 'Enter' && screen === 'select' && !e.repeat) $('#fight').click();
   });
@@ -182,6 +187,42 @@ window.MM = window.MM || {};
       <div class="bars">${bar('Speed', f.stats.speed, 9)}${bar('Power', f.stats.power, 1.4)}${bar('Weight', f.stats.weight, 1.4)}</div>
       <ul>${f.attackNames ? `<li><b>Attacks</b>: ${Object.values(f.attackNames).join(', ')}</li>` : ''}${['neutral', 'side', 'up', 'down'].map((k) => { const s = f.specials[k]; return s ? `<li><b>${{ neutral: 'Special', side: '→ Special', up: '↑ Special', down: '↓ Special' }[k]}: ${s.name}</b>: ${(KIND_TEXT[s.kind] || (() => ''))(s)}</li>` : ''; }).join('')}</ul></div>`).join('');
   }
+
+  // ---------- move list ----------
+  let moveId = null;
+  const moveFighters = () => (paused && G ? [...new Map(G.fighters.map((f) => [f.def.baseId || f.def.id, MM.FIGHTERS.find((d) => d.id === (f.def.baseId || f.def.id))])).values()] : MM.FIGHTERS);
+  const KEYS = '<b>Attack</b> F · Num 1 · X &nbsp; <b>Special</b> G · Num 2 · B &nbsp; <b>Jump</b> W/Space · ↑ · A &nbsp; <b>Dodge</b> H · Num 3 · bumpers &nbsp; <b>Switch form</b> R · Num 4 · Y';
+  function moveRows(d) {
+    const an = d.attackNames || {}, sp = d.specials || {};
+    const desc = (s) => (s ? `<b>${s.name}</b>: ${(KIND_TEXT[s.kind] || (() => ''))(s)}` : '');
+    const rows = [
+      ['Attack', an.jab || 'Quick hit', 'Fast hit up close'],
+      ['→ + Attack', an.side || 'Side attack', 'Strong hit forward. Great for knocking people off'],
+      ['↑ + Attack', 'Up attack', 'Hits above you. Launches people up'],
+      ['↓ + Attack', an.down || 'Low attack', 'Low hit along the floor'],
+      ['Attack in the air', an.air || 'Air attacks', 'Hold a direction for forward, up and down (spike) versions'],
+      ['Special', '', desc(sp.neutral)], ['→ + Special', '', desc(sp.side)],
+      ['↑ + Special', '', desc(sp.up) + ' <i>Use it to get back to the stage.</i>'], ['↓ + Special', '', desc(sp.down)],
+    ];
+    return `<table><tr><th>Press</th><th>Move</th><th>What it does</th></tr>${rows.map((r) => `<tr><td class="in">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</table>`;
+  }
+  function drawMoves() {
+    const list = moveFighters();
+    if (!list.some((d) => d.id === moveId)) moveId = list[0].id;
+    $('#movePicks').innerHTML = list.map((d) => `<button data-mv="${d.id}" class="${d.id === moveId ? 'on' : ''}"><img src="${portrait(d.id)}" alt="">${d.name}</button>`).join('');
+    const d = list.find((x) => x.id === moveId);
+    let html = `<div class="who"><img src="${portrait(d.id)}" alt=""><div><h3>${d.name}</h3><p>${d.title || ''}</p></div></div>`;
+    if (d.forms) {
+      html += `<div class="note"><b>Two forms!</b> Press <b>Switch form</b> (R · Num 4 · controller Y · ⇄ on touch) to change between ${MM.formDefs(d).map((f) => f.title.replace(' form', '')).join(' and ')} at any time. Each form has its own moves, speed and power.</div>`;
+      for (const fd of MM.formDefs(d)) html += `<h4>${fd.title}</h4>` + moveRows(fd);
+    } else html += moveRows(d);
+    html += `<h4>Everyone</h4><table><tr><td class="in">Jump</td><td>Up to 3 jumps in a row</td></tr><tr><td class="in">Dodge</td><td>Untouchable for a moment. Hold a direction to roll or air-dodge.</td></tr><tr><td class="in">↓ in the air</td><td>Fall fast</td></tr><tr><td class="in">↓ on a platform</td><td>Drop through it</td></tr></table>`;
+    html += `<p class="keys">${KEYS}</p>`;
+    $('#moveSheet').innerHTML = html;
+  }
+  $('#movePicks').addEventListener('click', (e) => { const b = e.target.closest('[data-mv]'); if (b) { moveId = b.dataset.mv; MM.sfx('select'); drawMoves(); } });
+  $('#movesBack').addEventListener('click', () => { if (paused && G) { show('pause'); screen = 'pause'; } else show('title'); });
+  $('#pauseMoves').addEventListener('click', () => { const me = G && G.fighters.find((f) => !f.cpu); moveId = me ? me.def.baseId || me.def.id : null; show('moves'); });
 
   // ---------- main loop ----------
   let last = performance.now(), acc = 0;

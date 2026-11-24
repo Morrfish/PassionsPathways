@@ -17,6 +17,7 @@
   <div class="menu">
     <button class="big" data-go="select">▶ Play</button>
     <button data-go="howto">How to play</button>
+    <button data-go="moves">Move list</button>
     <button data-go="roster">Meet the family</button>
   </div>
   <p class="foot">Plug in controllers any time · <span id="padcount">no controllers yet</span></p>
@@ -44,6 +45,7 @@
       <tr><td>Attack</td><td>F</td><td>Num 1 or K</td><td>X</td></tr>
       <tr><td>Special</td><td>G</td><td>Num 2 or L</td><td>B</td></tr>
       <tr><td>Dodge</td><td>H</td><td>Num 3 or ;</td><td>Bumpers / triggers</td></tr>
+      <tr><td>Switch form (Mandi)</td><td>R</td><td>Num 4 or J</td><td>Y</td></tr>
       <tr><td>Pause</td><td>Esc</td><td>Backspace</td><td>Start</td></tr>
     </table>
     <p><b>Attacks change with direction.</b> Attack alone, or hold left/right, up or down while pressing it. It works on the ground and in the air.</p>
@@ -57,9 +59,15 @@
   <div id="cards" class="cards"></div>
 </section>
 
+<section id="moves" class="screen">
+  <header><button class="back" id="movesBack">◀</button><h2>Move list</h2></header>
+  <div id="movePicks" class="grid"></div>
+  <div id="moveSheet" class="movesheet"></div>
+</section>
+
 <section id="pause" class="screen dim">
   <h2>Paused</h2>
-  <div class="menu"><button class="big" id="resume">Resume</button><button id="quit">Quit match</button></div>
+  <div class="menu"><button class="big" id="resume">Resume</button><button id="pauseMoves">Move list</button><button id="quit">Quit match</button></div>
 </section>
 
 <section id="results" class="screen dim">

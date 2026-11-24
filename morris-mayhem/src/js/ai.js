@@ -62,6 +62,7 @@ window.MM = window.MM || {};
     if (!f.ground && dy < -60 && f.vy > 0 && f.jumps > 0 && rnd() < 0.05) inp.jump = true;
     if (dy > 120 && f.ground && f.ground !== 'main' && rnd() < 0.05) inp.y = 1;
     if (lvl === 1 && ai.t % 120 < 40) inp.x = 0; // easy bots wait around sometimes
+    if (f.forms && f.swapCd <= 0 && rnd() < 0.004 * lvl) inp.swap = true; // switch forms now and then
     return inp;
   };
 })();

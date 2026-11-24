@@ -64,6 +64,22 @@ window.MM = window.MM || {};
   };
 
   function makeFighter(p, def, x, alt, stocks) {
+    const f = makeFighterBase(p, def, x, alt, stocks);
+    if (def.forms) { f.forms = MM.formDefs(def); f.formIdx = 0; f.swapCd = 0; applyForm(f, 0); }
+    return f;
+  }
+  // Switch a fighter with several forms (e.g. Mandi: Witch <-> Mermaid Fangirl) to form i.
+  function applyForm(f, i) {
+    const d = f.forms[i];
+    f.formIdx = i; f.def = d; f.st = d.stats; f.s = d.stats.size || 1;
+    f.w = W * f.s; f.h = H * f.s;
+    f.color = f.alt ? d.accent : d.color; f.accent = f.alt ? d.color : d.accent;
+  }
+  function startSwap(G, f) {
+    f.act = { type: 'swap', t: 0, dur: 22, pose: 'flex', noGrav: !f.ground };
+    f.vy = Math.min(f.vy, 0); f.swapCd = 75;
+  }
+  function makeFighterBase(p, def, x, alt, stocks) {
     const s = def.stats.size || 1;
     return {
       slot: p.slot, dev: p.dev, cpu: p.cpu ? p.level || 2 : 0, def, st: def.stats, alt,
@@ -75,7 +91,7 @@ window.MM = window.MM || {};
       kos: 0, falls: 0, dealt: 0, lastHit: -1, lastHitT: 0, anim: 0, bubble: null, ai: {},
     };
   }
-  const blankInput = () => ({ x: 0, y: 0, jump: false, attack: false, special: false, dodge: false, pause: false });
+  const blankInput = () => ({ x: 0, y: 0, jump: false, attack: false, special: false, dodge: false, swap: false, pause: false });
 
   // ---------- helpers ----------
   const power = (f) => f.st.power * (f.buff ? f.buff.powerMul : 1);
@@ -135,6 +151,7 @@ window.MM = window.MM || {};
     if (f.dodgeCd > 0) f.dodgeCd--;
     if (f.dropT > 0) f.dropT--;
     for (const k in f.cd) if (f.cd[k] > 0) f.cd[k]--;
+    if (f.swapCd > 0) f.swapCd--;
     if (f.buff && --f.buff.t <= 0) f.buff = null;
     if (f.bubble && --f.bubble.t <= 0) f.bubble = null;
     const inp = f.inp, prev = f.prev;
@@ -159,7 +176,9 @@ window.MM = window.MM || {};
     } else if (f.act) {
       tickAction(G, f);
     } else {
-      if (pressed('attack')) startNormal(G, f);
+      const swapNow = f.forms && pressed('swap');
+      if (swapNow) { if (f.swapCd <= 0) startSwap(G, f); }
+      else if (pressed('attack')) startNormal(G, f);
       else if (pressed('special')) startSpecial(G, f);
       else if (pressed('dodge')) startDodge(G, f);
       else if (pressed('jump')) {
@@ -264,6 +283,14 @@ window.MM = window.MM || {};
       if (a.t >= a.dur) f.act = null;
     } else if (a.type === 'lag') {
       if (a.t >= a.dur) f.act = null;
+    } else if (a.type === 'swap') {
+      f.vx *= 0.85;
+      if (a.t === 10) {
+        applyForm(f, (f.formIdx + 1) % f.forms.length);
+        burst(G, f.x, f.y - f.h / 2, f.accent, 26, 7); ring(G, f.x, f.y - f.h / 2, f.color);
+        popText(G, f.x, f.y - f.h - 24, f.def.formName || 'SWITCH!', f.accent); MM.sfx('heal');
+      }
+      if (a.t >= a.dur) { f.act = null; a.noGrav = false; }
     } else if (a.type === 'dodge') {
       f.invuln = a.t >= a.iv[0] && a.t <= a.iv[1] ? 2 : f.invuln;
       if (a.air) { if (a.t > 14) { a.noGrav = false; f.vx *= 0.9; } else { f.vx *= 0.93; f.vy *= 0.93; } }
