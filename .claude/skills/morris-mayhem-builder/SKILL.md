@@ -24,6 +24,25 @@ Courtnee works out the family details with ChatGPT. The shared source of truth i
 Read the doc with the Drive connector's `read_file_content` and download pictures with `download_file_content`.
 If it isn't reachable, ask her to paste the info and attach the pictures in chat.
 
+## Art direction and artwork fighters
+- Style: fun graphic novel. Brand colors (from the MM logo): purple `#8f2bd6`/`#7B2CBF`, gold `#ffc21a`,
+  orange `#ff7a00`, cyan `#1fd1ef`, dark `#1a0b2e`. Logo `src/img/logo.webp`, icon `assets/icon-only.png`.
+- ChatGPT's art IS the game art (Courtnee said: use the images as the game images, not as references).
+- Artwork fighters set `sprite: '<id>'` in `MM.FIGHTERS`; `src/js/sprites.js` holds `MM.SPRITES[id]` =
+  atlas image + frames `[x,y,w,h,anchorX,anchorY]` (anchor = under the head, at the feet) + `moves`
+  (which pose row each attack/special uses). `render.js` `pickFrame()` maps state → pose
+  (idle/run/jump/hurt rows, attack rows windup→hit→follow-through→recover). Projectiles can use
+  `sprite: '<frame>'` (e.g. the parcel, the dogs). Cartoon bodies are only for placeholders.
+- ChatGPT sheets come as labeled 4×4 grids (labels in the left column, title banner on top, near-invisible
+  colored fringe pixels that must be dropped). `tools/slice_patty.py <art dir> <out dir>` cuts poses by
+  connected components, drops labels/title, anchors each pose, scales by 0.62 and packs a WebP atlas plus
+  frames JSON; copy it for a new fighter and change the sheet/row names. Paste the JSON into `sprites.js`.
+- Face art → `src/img/<id>.png` 512² (used for HUD, select, family cards).
+- Story mode plan (not built yet): protagonists Mandi, Jadden, Courtnee, Codee, Haylie, Sara, Jorie fight
+  through the family, beat Jeff ("The Boss"), then Patty appears as the real, harder secret final boss.
+  Quick matches: 1v1, 1v1v1, 1v1v1v1, 2v2 (teams not built yet). Every fighter name includes their real name.
+  Patty's ultimate "Mawmaw's Last Laugh" and entrance/taunt/victory poses are drawn (ultimate sheet) but not wired in yet.
+
 ## Code map
 | File | What's in it |
 |---|---|
@@ -43,8 +62,8 @@ Scripts are classic `<script>` tags with a global `MM` namespace (not ES modules
    careful manual crop on a circle is fine because the head is clipped to a circle anyway), and save
    512×512 PNG as `src/img/<id>.png`. Never commit original full-size family photos; only the cutout.
    If they send a body photo, take the outfit colors from it for `color`/`accent`, plus `skin` and `hair`.
-2. **Entry in `MM.FIGHTERS`.** Copy an existing entry. Replace a placeholder (Brawler, Speedster, Tank,
-   Zoner, Trickster, Healer) rather than piling on, until all placeholders are gone. Fields are documented
+2. **Entry in `MM.FIGHTERS`.** Copy an existing entry. Replace a placeholder (Brawler, Speedster,
+   Zoner, Trickster, Healer; Tank was replaced by Patty) rather than piling on, until all placeholders are gone. Fields are documented
    at the top of `data.js`.
 3. **Stats.** Keep within these ranges: speed 5–9, air 4.4–7, jump 13.5–16.5, weight 0.8–1.4,
    power 0.85–1.35, size 0.85–1.2. Trade-offs: fast fighters are light/weak, heavy ones are slow.
@@ -52,8 +71,9 @@ Scripts are classic `<script>` tags with a global `MM` namespace (not ES modules
 4. **Specials.** Turn each move idea into an ability `kind`:
    - `projectile` (throw something; `emoji` sets the picture, plus `count`/`spread`, `grav`+`vy` for arcs, `boomerang`)
    - `shockwave` (waves along the ground both ways), `dash` (charge; `armor:true` ignores small hits)
-   - `rise` (up recovery with a hit), `teleport` (`up:true` for recovery; aims with the stick)
+   - `rise` (up recovery with a hit; `parachute:true` floats down after), `teleport` (`up:true` for recovery; aims with the stick)
    - `slam` (dive + landing wave), `spin` (multi-hit), `counter` (blocks and reflects)
+   - `pack` (several runners along the floor, e.g. Patty's dogs; `sprites`, `names`)
    - `heal` (removes damage %), `trap` (lies on the floor; `emoji`), `buff` (faster/stronger for `dur` frames)
    Every fighter must have an `up` special that recovers (`rise` or `teleport` with `up:true`).
    If an idea needs a new kind, add it to `ABILITIES` in `engine.js` with `start()` and `tick()`;

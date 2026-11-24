@@ -10,7 +10,7 @@ if (!app.requestSingleInstanceLock()) app.quit();
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1280, height: 760, minWidth: 800, minHeight: 480, backgroundColor: '#14102b', title: 'Morris Mayhem',
+    width: 1280, height: 760, minWidth: 800, minHeight: 480, backgroundColor: '#1a0b2e', title: 'Morris Mayhem',
     icon: path.join(__dirname, 'icon.png'), fullscreen: true, autoHideMenuBar: true,
     webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true, backgroundThrottling: false },
   });

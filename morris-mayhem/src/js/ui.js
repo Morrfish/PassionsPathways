@@ -10,6 +10,7 @@ window.MM = window.MM || {};
   }
   addEventListener('resize', resize); resize();
   MM.loadPhotos();
+  MM.preloadSprites();
   MM.setupTouch($('#touch'));
 
   // ---------- saved settings ----------
@@ -43,7 +44,13 @@ window.MM = window.MM || {};
 
   // ---------- character select ----------
   const portraits = {};
-  const portrait = (id) => portraits[id] || (portraits[id] = MM.portrait(MM.FIGHTERS.find((f) => f.id === id)));
+  const portrait = (id) => {
+    if (portraits[id]) return portraits[id];
+    const d = MM.FIGHTERS.find((f) => f.id === id), im = MM.photos[id], url = MM.portrait(d);
+    if (!d.photo || (im && im.complete)) portraits[id] = url; // don't keep a cartoon stand-in while a photo is loading
+    else if (im) im.addEventListener('load', () => { delete portraits[id]; if (screen === 'select') drawSelect(); else if (screen === 'family') drawFamily(); }, { once: true });
+    return url;
+  };
   const fighterById = (id) => MM.FIGHTERS.find((f) => f.id === id);
   function devOptions(sel) {
     return Object.entries(MM.DEVICE_NAMES).map(([k, v]) => `<option value="${k}" ${k === sel ? 'selected' : ''}>${v}</option>`).join('');
@@ -161,10 +168,11 @@ window.MM = window.MM || {};
 
   // ---------- family cards ----------
   const KIND_TEXT = {
-    projectile: (s) => `throws ${s.emoji || 'an energy ball'}${s.count > 1 ? ` ×${s.count}` : ''}${s.boomerang ? ' that comes back' : ''}`,
+    projectile: (s) => `throws ${s.thing || s.emoji || 'an energy ball'}${s.count > 1 ? ` ×${s.count}` : ''}${s.boomerang ? ' that comes back' : ''}`,
     shockwave: () => 'sends shockwaves along the ground both ways', dash: (s) => `charges forward${s.armor ? " and can't be stopped by small hits" : ''}`,
-    rise: () => 'launches up (gets back to the stage)', teleport: () => 'vanishes and reappears (aim it)', slam: () => 'dives down and crashes',
+    rise: (s) => `launches up${s.parachute ? ' and floats down on a parachute' : ''} (gets back to the stage)`, teleport: () => 'vanishes and reappears (aim it)', slam: () => 'dives down and crashes',
     spin: () => 'spins and hits again and again', counter: () => 'blocks a hit and strikes back (bounces things back too)',
+    pack: (s) => `sends ${s.names ? s.names.join(', ').replace(/, ([^,]*)$/, ' and $1') : 'a pack'} running along the floor`,
     heal: (s) => `heals ${s.amount}% damage`, trap: (s) => `leaves a ${s.emoji || 'trap'} on the ground`, buff: () => 'powers up: faster and stronger for a while',
   };
   function drawFamily() {
@@ -172,7 +180,7 @@ window.MM = window.MM || {};
     $('#cards').innerHTML = MM.FIGHTERS.map((f) => `<div class="card" style="border-color:${f.color}">
       <img src="${portrait(f.id)}" alt=""><h3>${f.name}</h3><small>${f.title || ''}</small>
       <div class="bars">${bar('Speed', f.stats.speed, 9)}${bar('Power', f.stats.power, 1.4)}${bar('Weight', f.stats.weight, 1.4)}</div>
-      <ul>${['neutral', 'side', 'up', 'down'].map((k) => { const s = f.specials[k]; return s ? `<li><b>${{ neutral: 'Special', side: '→ Special', up: '↑ Special', down: '↓ Special' }[k]}: ${s.name}</b>: ${(KIND_TEXT[s.kind] || (() => ''))(s)}</li>` : ''; }).join('')}</ul></div>`).join('');
+      <ul>${f.attackNames ? `<li><b>Attacks</b>: ${Object.values(f.attackNames).join(', ')}</li>` : ''}${['neutral', 'side', 'up', 'down'].map((k) => { const s = f.specials[k]; return s ? `<li><b>${{ neutral: 'Special', side: '→ Special', up: '↑ Special', down: '↓ Special' }[k]}: ${s.name}</b>: ${(KIND_TEXT[s.kind] || (() => ''))(s)}</li>` : ''; }).join('')}</ul></div>`).join('');
   }
 
   // ---------- main loop ----------

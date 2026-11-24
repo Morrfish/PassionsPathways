@@ -63,7 +63,7 @@ jobs:
         working-directory: morris-mayhem
         run: |
           npx cap add android
-          npx --yes @capacitor/assets@4.0.0 generate --android --iconBackgroundColor '#14102b' --splashBackgroundColor '#14102b'
+          npx --yes @capacitor/assets@4.0.0 generate --android --iconBackgroundColor '#1a0b2e' --splashBackgroundColor '#1a0b2e'
           sed -i 's|<activity|<activity android:screenOrientation="sensorLandscape"|' android/app/src/main/AndroidManifest.xml
           npx cap sync android
       - name: Build the APK

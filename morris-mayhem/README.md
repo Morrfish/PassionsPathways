@@ -3,9 +3,10 @@
 A 2–4 player platform fighter (like Brawlhalla or Smash Bros.) where every fighter is a member of the
 Morris family. It runs as a **Windows app (exe)**, an **Android app (APK)**, and in a web browser.
 
-> **Status:** the game works end to end, but the 6 fighters are **placeholders** (Brawler, Speedster,
-> Tank, Zoner, Trickster, Healer). Each one shows off a different kind of ability. They get replaced
-> by family members as photos and info come in. See [FAMILY_SHEET.md](FAMILY_SHEET.md).
+> **Status:** the game works end to end. **Patty Morris ("Mawmaw Mayhem")** is in, drawn from her graphic-novel
+> artwork. The other 5 fighters (Brawler, Speedster, Zoner, Trickster, Healer) are still **placeholders** that get
+> replaced by family members as art and info come in. The shared family list is the Google Doc
+> "Morris Mayhem - Family Fighters (fill this in)" in the "Morris Mayhem (family fighting game)" Drive folder.
 
 ## How the game works
 - Hits raise a player's **damage %**. The higher it is, the farther they fly.
@@ -48,7 +49,9 @@ repo's **Actions** tab and download:
 - `src/js/data.js`: fighters, stages, basic attacks (most changes happen here)
 - `src/js/engine.js`: physics, hits, knockback, ability kinds, KOs, sound
 - `src/js/ai.js`: computer players
+- `src/js/sprites.js`: artwork fighters (pose atlas + which pose each move uses)
 - `src/js/render.js`: stage art, fighter drawing, HUD
+- `tools/slice_patty.py`: cuts the artist's labeled pose sheets into a game atlas
 - `src/js/input.js`: keyboard, controllers, touch
 - `src/js/ui.js`: menus and the game loop
 - `desktop/`: Windows app shell (Electron). `www/` and `android/` are generated.

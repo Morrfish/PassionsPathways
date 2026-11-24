@@ -1,23 +1,23 @@
-:root { --bg: #14102b; --panel: #221a47; --line: #3b2f74; --text: #fff; --gold: #ffd23f; --red: #ff4b4b; }
+:root { /* Morris Mayhem brand: from the MM logo */
+  --bg: #1a0b2e; --panel: #2b1150; --line: #6a2bb3; --text: #fff;
+  --purple: #8f2bd6; --gold: #ffc21a; --orange: #ff7a00; --cyan: #1fd1ef; --red: #ff4b4b; }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-family: system-ui, 'Segoe UI', sans-serif; overflow: hidden; user-select: none; -webkit-user-select: none; touch-action: none; }
 canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
 button, select { font: inherit; color: inherit; }
 button { background: var(--panel); border: 2px solid var(--line); border-radius: 12px; padding: 10px 18px; cursor: pointer; }
-button:hover, button:focus-visible { border-color: var(--gold); outline: none; }
-button.big { background: linear-gradient(#ff6b3d, #e8322c); border-color: #ffb199; font-weight: 800; font-size: 1.2em; padding: 12px 28px; }
+button:hover, button:focus-visible { border-color: var(--cyan); outline: none; }
+button.big { background: linear-gradient(#ffc21a, #ff7a00); color: #1a0b2e; border-color: #1a0b2e; box-shadow: 0 4px 0 #1a0b2e; font-weight: 800; font-size: 1.2em; padding: 12px 28px; }
 select { background: var(--panel); border: 2px solid var(--line); border-radius: 10px; padding: 6px 10px; }
 .screen { position: fixed; inset: 0; display: none; flex-direction: column; align-items: center; overflow-y: auto; padding: max(16px, env(safe-area-inset-top)) 16px 24px;
-  background: radial-gradient(ellipse at 50% 20%, rgba(58,43,133,.55), rgba(20,16,43,.82) 70%); }
+  background: radial-gradient(ellipse at 50% 20%, rgba(123,44,191,.55), rgba(26,11,46,.84) 70%); }
 .screen.show { display: flex; }
 .screen.dim { background: rgba(10, 8, 25, .78); justify-content: center; }
 .screen header { width: 100%; max-width: 1100px; display: flex; align-items: center; gap: 12px; }
-.screen h2 { margin: 8px 0; font-size: 1.6em; }
+.screen h2 { margin: 8px 0; font-size: 1.6em; font-style: italic; color: var(--gold); text-shadow: 0 3px 0 var(--purple); }
 .back { padding: 6px 14px; }
 #title { justify-content: center; text-align: center; }
-.logo { display: flex; flex-direction: column; line-height: .9; transform: rotate(-4deg); filter: drop-shadow(0 8px 0 #000a); }
-.logo span { font-size: clamp(44px, 10vw, 110px); font-weight: 900; color: var(--gold); -webkit-text-stroke: 3px #1b1b2a; letter-spacing: 4px; }
-.logo b { font-size: clamp(54px, 13vw, 150px); font-weight: 900; color: var(--red); -webkit-text-stroke: 4px #1b1b2a; letter-spacing: 2px; }
+.logo { width: min(720px, 88vw); max-height: 46vh; object-fit: contain; filter: drop-shadow(0 10px 0 #0008); }
 .tag { opacity: .85; font-size: 1.1em; margin: 18px 0; }
 .menu { display: flex; flex-direction: column; gap: 10px; min-width: 240px; }
 .menu.row, .row { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 12px; }
@@ -47,12 +47,12 @@ select { background: var(--panel); border: 2px solid var(--line); border-radius:
 .card h3 { margin: 4px 0 0; } .card small { opacity: .75; }
 .card ul { clear: both; padding-left: 18px; margin: 8px 0 0; font-size: .9em; }
 .bars { font-size: .8em; margin-top: 6px; clear: both; padding-top: 6px; }
-.bars div { display: flex; align-items: center; gap: 6px; } .bars i { flex: 1; height: 7px; background: #0006; border-radius: 4px; overflow: hidden; } .bars i b { display: block; height: 100%; background: var(--gold); }
+.bars div { display: flex; align-items: center; gap: 6px; } .bars i { flex: 1; height: 7px; background: #0006; border-radius: 4px; overflow: hidden; } .bars i b { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), var(--orange)); }
 .stats { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin: 16px 0; }
 .stat { background: var(--panel); border: 3px solid var(--line); border-radius: 16px; padding: 12px 16px; text-align: center; min-width: 150px; }
 .stat img { width: 80px; height: 80px; }
 .stat.win { border-color: var(--gold); transform: scale(1.06); }
-#winner { font-size: clamp(32px, 6vw, 64px); font-weight: 900; color: var(--gold); -webkit-text-stroke: 2px #1b1b2a; text-align: center; }
+#winner { font-size: clamp(32px, 6vw, 64px); font-weight: 900; font-style: italic; color: var(--gold); -webkit-text-stroke: 2px #1a0b2e; text-shadow: 0 5px 0 var(--purple); text-align: center; }
 #touch { position: fixed; inset: 0; pointer-events: none; display: none; }
 #touch.show { display: block; }
 #touch .stick { pointer-events: auto; position: absolute; left: max(24px, env(safe-area-inset-left)); bottom: 24px; width: 150px; height: 150px; border-radius: 50%; background: #ffffff22; border: 3px solid #ffffff55; }

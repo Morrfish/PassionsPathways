@@ -12,12 +12,30 @@
 //             up (special + up, also the recovery), down (special + down).
 //             Each one has a `kind` from the list in engine.js (ABILITIES) and its own numbers.
 //   taunt     a line shown in a speech bubble on KO
+//   sprite    (optional) id in MM.SPRITES (sprites.js): draw the fighter from artwork instead of the cartoon body
+//   normalSpeed  (optional) under 1 = slower basic attacks (for heavy hitters)
 //
-// The six below are PLACEHOLDERS that show off the different kinds of ability.
-// They get replaced by the Morris family one by one.
+// Real family members come first. The rest are PLACEHOLDERS that show off the different kinds of
+// ability and get replaced by the Morris family one by one.
 window.MM = window.MM || {};
 
 MM.FIGHTERS = [
+  {
+    // Patty Morris: the secret final boss of story mode. Art: ChatGPT graphic-novel sheets (img/patty-atlas.webp).
+    id: 'patty', name: 'Patty Morris', title: 'Mawmaw Mayhem', photo: 'img/patty.png', sprite: 'patty',
+    color: '#7B2CBF', accent: '#C8A2C8', skin: '#f0c49a', hair: '#ecebf3',
+    // deliberate and powerful: slow, heavy, hits hard, slower basic attacks leave openings
+    stats: { speed: 5.4, air: 5, jump: 14.6, weight: 1.25, power: 1.22, size: 1.05 },
+    normalSpeed: 0.85,
+    attackNames: { jab: 'Ring-a-Ding', side: 'No Cutting in Line', down: 'Price Drop', air: 'Clearance Kick' },
+    specials: {
+      neutral: { kind: 'projectile', name: 'TEMU Treasure Toss', thing: 'a TEMU parcel', sprite: 'parcel', speed: 9, vy: -7, grav: 0.38, dmg: 10, kb: 7, kbg: 0.1, r: 20, life: 110, cd: 40 },
+      side: { kind: 'dash', name: 'Garage Sale Stampede', speed: 13, dur: 24, dmg: 12, kb: 8.5, kbg: 0.13, ang: 30, armor: true, box: [0, -95, 120, 95] },
+      up: { kind: 'rise', name: 'Express Delivery', power: 18, dmg: 8, kb: 7, kbg: 0.08, parachute: true },
+      down: { kind: 'pack', name: "Mawmaw's Pack", sprites: ['dog0', 'dog1', 'dog2'], names: ['Tippie', 'Spike', 'Poppie'], speed: 7.5, dmg: 5, kb: 6, kbg: 0.08, cd: 150 },
+    },
+    taunt: 'Mawmaw gets the last word!',
+  },
   {
     id: 'brawler', name: 'Brawler', title: 'Placeholder: all-rounder', photo: null,
     color: '#e8452c', accent: '#ffd23f', skin: '#e0ac7e', hair: '#3b2414',
@@ -41,18 +59,6 @@ MM.FIGHTERS = [
       down: { kind: 'spin', name: 'Tornado', hits: 5, dur: 34, dmg: 2, kb: 7, kbg: 0.1 },
     },
     taunt: 'Too slow!',
-  },
-  {
-    id: 'tank', name: 'Tank', title: 'Placeholder: big and heavy', photo: null,
-    color: '#5a6b3a', accent: '#c9a227', skin: '#8d5a3b', hair: '#222222',
-    stats: { speed: 5, air: 4.4, jump: 13.5, weight: 1.35, power: 1.3, size: 1.15 },
-    specials: {
-      neutral: { kind: 'shockwave', name: 'Ground Quake', dmg: 9, kb: 8, kbg: 0.09, speed: 9, cd: 60 },
-      side: { kind: 'dash', name: 'Shoulder Charge', speed: 13, dur: 20, dmg: 13, kb: 9, kbg: 0.14, ang: 25, armor: true },
-      up: { kind: 'rise', name: 'Big Leap', power: 18, dmg: 7, kb: 7, kbg: 0.08 },
-      down: { kind: 'slam', name: 'Belly Flop', dmg: 15, kb: 9, kbg: 0.15 },
-    },
-    taunt: 'Nobody moves me.',
   },
   {
     id: 'zoner', name: 'Zoner', title: 'Placeholder: fights from far away', photo: null,

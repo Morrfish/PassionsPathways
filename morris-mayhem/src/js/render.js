@@ -6,6 +6,80 @@ window.MM = window.MM || {};
   MM.loadPhotos = function () {
     for (const d of MM.FIGHTERS) if (d.photo && !MM.photos[d.id]) { const im = new Image(); im.src = d.photo; MM.photos[d.id] = im; }
   };
+  // ---------- sprite (artwork) fighters ----------
+  const spriteImgs = {};
+  function sheet(id) {
+    const S = MM.SPRITES && MM.SPRITES[id];
+    if (!S) return null;
+    if (!spriteImgs[id]) { const im = new Image(); im.src = S.src; spriteImgs[id] = im; }
+    const im = spriteImgs[id];
+    return im.complete && im.naturalWidth ? { S, im } : null;
+  }
+  MM.preloadSprites = () => { for (const d of MM.FIGHTERS) if (d.sprite) sheet(d.sprite); };
+
+  // Pick the pose for what the fighter is doing right now.
+  function pickFrame(f, S) {
+    const a = f.act, M = S.moves;
+    if (f.hitstun > 0) return f.ground ? 'hurt' + (f.hitstun > 6 ? 1 : 0) : 'hurt2';
+    if (f.jsq > 0) return 'jump0';
+    if (a) {
+      if (a.type === 'lag') return 'jump0';
+      if (a.type === 'dodge') return f.ground ? 'idle0' : 'jump2';
+      if (a.type === 'normal') {
+        const row = M[a.name], m = a.m, before = a.t < m.start, during = a.t < m.start + m.active;
+        if (a.name === 'up' || a.name === 'uair') return 'drop1';
+        if (row === 'kick') return 'kick' + (before ? 1 : during ? 2 : f.ground ? 3 : 1);
+        if (row === 'drop') return 'drop' + (before ? 1 : during ? 2 : 3);
+        return row + (before ? 0 : during ? (a.t < m.start + m.active / 2 ? 1 : 2) : 3);
+      }
+      if (a.type === 'special') {
+        const row = M[{ neutral: 'neutral', side: 'sideSpecial', up: 'upSpecial', down: 'downSpecial' }[a.slot]];
+        if (row === 'cart') return 'cart' + (a.t < 6 ? 0 : a.box ? 1 + ((a.t >> 2) & 1) : 3);
+        if (row === 'deliver') return 'deliver' + (a.chute ? 2 : a.t < 4 ? 0 : 1);
+        if (row === 'toss') return 'toss' + (a.t < 5 ? 0 : a.t < 9 ? 1 : a.t < 16 ? 2 : 3);
+        if (row === 'pack') return 'pack' + (a.t < 10 ? 0 : a.t < 20 ? 1 : a.t < 28 ? 2 : 3);
+        if (row) return row + Math.min(3, Math.floor((a.t / a.dur) * 4));
+      }
+    }
+    if (!f.ground) return f.vy < -4 ? 'jump1' : f.vy < 3 ? 'jump2' : 'jump3';
+    if (Math.abs(f.vx) > 1) return 'run' + (Math.floor(f.anim / 6) % 4);
+    return 'idle' + (Math.floor(f.anim / 16) % 4);
+  }
+
+  function drawSpriteFighter(g, f, G) {
+    const sh = f.def.sprite && sheet(f.def.sprite);
+    if (!sh) return false;
+    const { S, im } = sh, fr = S.frames[pickFrame(f, S)] || S.frames.idle0;
+    const k = (f.h * 1.15) / S.standH;
+    g.save();
+    g.translate(f.x, f.y);
+    if (f.invuln > 0 && Math.floor(G.frame / 4) % 2) g.globalAlpha = 0.5;
+    if (f.act && f.act.type === 'dodge') g.globalAlpha *= 0.55;
+    if (f.buff) { g.save(); g.fillStyle = f.buff.color; g.globalAlpha *= 0.3; g.beginPath(); g.ellipse(0, -f.h * 0.55, f.w * 1.4, f.h * 0.75, 0, 0, TAU); g.fill(); g.restore(); }
+    // player-color ring at the feet (keeps two of the same fighter apart without recoloring the art)
+    if (f.ground) { g.save(); g.strokeStyle = MM.PLAYER_COLORS[f.slot]; g.lineWidth = 4; g.globalAlpha *= 0.85; g.beginPath(); g.ellipse(0, -2, f.w * 0.9, 8, 0, 0, TAU); g.stroke(); g.restore(); }
+    g.scale(f.face * k, k);
+    g.drawImage(im, fr[0], fr[1], fr[2], fr[3], -fr[4], -fr[5], fr[2], fr[3]);
+    g.restore();
+    const a = f.act;
+    if (a && a.counter) { g.strokeStyle = 'rgba(255,255,140,.9)'; g.lineWidth = 4; g.beginPath(); g.arc(f.x, f.y - f.h / 2, 72 + Math.sin(G.frame) * 4, 0, TAU); g.stroke(); }
+    return true;
+  }
+
+  function drawSpriteProj(g, p) {
+    const sh = p.sprite && p.owner.def.sprite && sheet(p.owner.def.sprite);
+    if (!sh) return false;
+    const fr = sh.S.frames[p.sprite]; if (!fr) return false;
+    const k = (p.owner.h * 1.15) / sh.S.standH;
+    g.save();
+    if (p.runner) { g.translate(p.x, p.y + 18 - Math.abs(Math.sin(p.t * 0.5)) * 6); }
+    else { g.translate(p.x, p.y); g.rotate(Math.sin(p.t * 0.25) * 0.4); }
+    g.scale((p.dir || 1) * k, k);
+    g.drawImage(sh.im, fr[0], fr[1], fr[2], fr[3], -fr[4], -fr[5], fr[2], fr[3]);
+    g.restore();
+    return true;
+  }
+
   function seeded(seed) { let s = seed; return () => ((s = (s * 16807) % 2147483647) / 2147483647); }
 
   // ---------- heads (also used for menu portraits) ----------
@@ -46,6 +120,12 @@ window.MM = window.MM || {};
   MM.portrait = function (def, size = 160) {
     const c = document.createElement('canvas'); c.width = c.height = size;
     const g = c.getContext('2d');
+    const im = MM.photos[def.id];
+    if (im && im.complete && im.naturalWidth) { // artwork portraits already have shoulders: show the whole picture
+      g.fillStyle = def.color; g.beginPath(); g.arc(size / 2, size / 2, size / 2, 0, TAU); g.fill();
+      g.save(); g.beginPath(); g.arc(size / 2, size / 2, size / 2 - 3, 0, TAU); g.clip(); g.drawImage(im, 0, 0, size, size); g.restore();
+      return c.toDataURL();
+    }
     g.fillStyle = def.color; g.beginPath(); g.arc(size / 2, size * 1.05, size * 0.48, 0, TAU); g.fill();
     MM.drawHead(g, def, size / 2, size * 0.44, size * 0.33);
     return c.toDataURL();
@@ -143,6 +223,7 @@ window.MM = window.MM || {};
     const a = f.act;
     if (a && a.hidden) return;
     const s = f.s, d = f.def, face = f.face;
+    if (!drawSpriteFighter(g, f, G)) {
     g.save();
     g.translate(f.x, f.y);
     if (f.invuln > 0 && Math.floor(G.frame / 4) % 2) g.globalAlpha = 0.5;
@@ -209,8 +290,9 @@ window.MM = window.MM || {};
     if (a && a.counter) { g.strokeStyle = 'rgba(255,255,140,.9)'; g.lineWidth = 4; g.beginPath(); g.arc(0, -56, 70 + Math.sin(G.frame) * 4, 0, TAU); g.stroke(); }
     if (a && a.armor) { g.strokeStyle = 'rgba(255,140,60,.8)'; g.lineWidth = 5; g.beginPath(); g.arc(0, -56, 66, 0, TAU); g.stroke(); }
     g.restore();
-    // swoosh trail on active attacks
-    if (a && a.box && MM.showSwoosh !== false) {
+    }
+    // swoosh trail on active attacks (cartoon fighters only; artwork has its own effects)
+    if (a && a.box && !d.sprite) {
       g.save(); g.globalAlpha = 0.35; g.fillStyle = '#fff';
       const b = a.box; g.beginPath(); g.ellipse(b.x + b.w / 2, b.y + b.h / 2, b.w / 2, b.h / 2, 0, 0, TAU); g.fill(); g.restore();
     }
@@ -235,6 +317,7 @@ window.MM = window.MM || {};
   MM.shade = shade;
 
   function drawProj(g, p, G) {
+    if (drawSpriteProj(g, p)) return;
     g.save(); g.translate(p.x, p.y);
     if (p.ground) {
       g.fillStyle = p.color; g.globalAlpha = 0.85;
@@ -275,7 +358,7 @@ window.MM = window.MM || {};
     G.fighters.forEach((f, i) => {
       const x = x0 + i * (cw + 14);
       g.globalAlpha = f.out ? 0.45 : 1;
-      g.fillStyle = 'rgba(15,15,30,.78)'; rr(g, x, y0, cw, chh, 14); g.fill();
+      g.fillStyle = 'rgba(26,11,46,.82)'; rr(g, x, y0, cw, chh, 14); g.fill();
       g.strokeStyle = MM.PLAYER_COLORS[f.slot]; g.lineWidth = 3; g.stroke();
       const r = chh * 0.36;
       g.fillStyle = f.color; g.beginPath(); g.arc(x + r + 10, y0 + chh / 2, r + 3, 0, TAU); g.fill();
@@ -328,9 +411,9 @@ window.MM = window.MM || {};
     else if (G.frame < 30 && !G.over) big = null;
     if (G.over) big = 'GAME!';
     if (big) {
-      g.font = `900 ${Math.round(H * 0.18)}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.font = `italic 900 ${Math.round(H * 0.18)}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle';
       g.lineWidth = 12; g.strokeStyle = '#1b1b2a'; g.strokeText(big, W / 2, H * 0.42);
-      g.fillStyle = big === 'GO!' ? '#5dff8f' : '#ffd23f'; g.fillText(big, W / 2, H * 0.42);
+      g.fillStyle = '#8f2bd6'; g.fillText(big, W / 2, H * 0.42 + H * 0.012); g.fillStyle = big === 'GO!' ? '#1fd1ef' : '#ffc21a'; g.fillText(big, W / 2, H * 0.42);
     }
   };
 })();

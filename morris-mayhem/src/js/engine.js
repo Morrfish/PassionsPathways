@@ -246,7 +246,9 @@ window.MM = window.MM || {};
     if (onGround) name = inp.y < 0 ? 'up' : inp.y > 0 ? 'down' : inp.x ? 'side' : 'jab';
     else name = inp.y < 0 ? 'uair' : inp.y > 0 ? 'dair' : inp.x ? 'fair' : 'nair';
     if (inp.x && (name === 'side' || name === 'fair')) f.face = inp.x;
-    const m = MM.NORMALS[name];
+    let m = MM.NORMALS[name];
+    const ns = f.def.normalSpeed || 1;
+    if (ns !== 1) m = Object.assign({}, m, { start: Math.round(m.start / ns), end: Math.round(m.end / ns) });
     f.act = { type: 'normal', name, m, t: 0, hit: new Set(), pose: m.pose, air: !onGround, dur: m.start + m.active + m.end };
     MM.sfx('swing');
   }
@@ -329,7 +331,7 @@ window.MM = window.MM || {};
           const n = sp.count || 1;
           for (let i = 0; i < n; i++) {
             const ang = n > 1 ? (i - (n - 1) / 2) * (sp.spread || 0.2) : 0;
-            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, boomer: sp.boomerang, dir: f.face });
+            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, sprite: sp.sprite, boomer: sp.boomerang, dir: f.face });
           }
         }
       },
@@ -355,7 +357,7 @@ window.MM = window.MM || {};
         if (a.t < 6) { f.vx *= 0.6; if (!f.ground) f.vy *= 0.5; }
         else if (go) {
           f.vx = f.face * sp.speed; if (!f.ground) f.vy = 0;
-          a.box = boxFor(f, [-10, -100, 70, 92]);
+          a.box = boxFor(f, sp.box || [-10, -100, 70, 92]);
           a.hitProps = { dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35 };
           if (a.t % 2 === 0) part(G, { x: f.x - f.face * 20, y: f.y - f.h * 0.5, color: f.color, size: 12, life: 14, max: 14, type: 'smoke' });
         } else { f.vx *= 0.85; a.pose = 'idle'; }
@@ -372,6 +374,12 @@ window.MM = window.MM || {};
           a.box = boxFor(f, [-34, -140, 90, 110]);
           a.hitProps = { dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: 80 };
         }
+        // parachute: float down slowly after the launch; attack, special or jump lets go
+        if (sp.parachute && a.t > 16 && f.vy > 0 && !f.ground) {
+          a.chute = true; a.maxFall = 2.4; a.dur = Math.max(a.dur, a.t + 2);
+          if (a.t > 220 || (f.inp.attack && !f.prev.attack) || (f.inp.jump && !f.prev.jump) || (f.inp.special && !f.prev.special)) { a.chute = false; f.act = null; }
+        }
+        if (!a.onLand) a.onLand = (G, f, a) => { if (a.chute) f.act = null; };
       },
     },
     teleport: {
@@ -424,6 +432,19 @@ window.MM = window.MM || {};
           a.box = boxFor(f, [-70, -110, 140, 104]);
           a.hitProps = last ? { dmg: sp.dmg + 2, kb: sp.kb, kbg: sp.kbg, ang: 50 } : { dmg: sp.dmg, kb: 2.5, kbg: 0, ang: 80, light: true };
         } else a.pose = 'idle';
+      },
+    },
+    pack: { // a pack of runners (e.g. dogs) that dash along the floor, each hitting once
+      start(G, f, sp, a) { a.dur = 36; a.pose = 'cast'; },
+      tick(G, f, sp, a) {
+        if (!f.ground) f.vy = Math.min(f.vy, 2);
+        if (a.t === 12) {
+          const n = (sp.sprites || [null]).length;
+          for (let i = 0; i < n; i++) {
+            spawnProj(G, f, { x: f.x + f.face * (20 - i * 34), y: f.y - 18, vx: f.face * (sp.speed + i * 0.7), vy: 0, r: 20, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: 45, life: sp.life || 95, ground: true, fall: true, sprite: sp.sprites && sp.sprites[i], emoji: sp.emoji, dir: f.face, runner: true });
+          }
+          MM.sfx('jump');
+        }
       },
     },
     counter: {
@@ -512,7 +533,12 @@ window.MM = window.MM || {};
       if (p.boomer && p.t > 20) { const back = sgn(p.owner.x - p.x); p.vx += back * 0.55; p.vy += clamp((p.owner.y - 70 - p.y) * 0.01, -0.4, 0.4); if (p.t > 40 && Math.hypot(p.owner.x - p.x, p.owner.y - 70 - p.y) < 50) p.life = 0; }
       p.vy += p.grav;
       p.x += p.vx; p.y += p.vy;
-      if (p.ground) { const s = surfaceBelow(G, p.x, p.y + 20); if (s === null || s > p.y + 60) p.life = 0; else p.y = s - 18; }
+      if (p.ground) {
+        const s = surfaceBelow(G, p.x, p.y + 10);
+        if (s !== null && s <= p.y + 22 + Math.max(0, p.vy)) { p.y = s - 18; p.vy = 0; }
+        else if (p.fall) p.vy += 0.6;
+        else p.life = 0;
+      }
       if (insideMain(G, p.x, p.y + p.r * 0.5)) { p.life = 0; burst(G, p.x, p.y, p.color, 6, 3); }
       const box = { x: p.x - p.r, y: p.y - p.r, w: p.r * 2, h: p.r * 2 };
       for (const d of G.fighters) {
