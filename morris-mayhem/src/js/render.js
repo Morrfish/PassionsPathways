@@ -226,6 +226,99 @@ window.MM = window.MM || {};
       plat() {},
     },
   };
+  // ---------- illustrated arenas (art in stage-art.js) ----------
+  const stageImgs = {};
+  function stageImg(src) {
+    if (!stageImgs[src]) { const im = new Image(); im.src = src; stageImgs[src] = im; }
+    const im = stageImgs[src];
+    return im.complete && im.naturalWidth ? im : null;
+  }
+  MM.preloadStages = () => { for (const k in MM.STAGE_PICS || {}) { stageImg(MM.STAGE_PICS[k].bg); stageImg(MM.STAGE_PICS[k].props); } };
+  // Draw a platform prop so its walkable top (sx0..sx1 at height sy) sits exactly on x..x+w at y.
+  function drawPlatPic(g, im, P, spec, x, y, w) {
+    const f = P.frames[spec.pic], r = spec.sub ? [f[0] + spec.sub[0], f[1] + spec.sub[1], spec.sub[2], spec.sub[3]] : f;
+    const cols = spec.grid ? spec.grid[0] : 1, rows = spec.grid ? spec.grid[1] : 1;
+    const k = w / cols / (spec.sx1 - spec.sx0), step = (r[3] - spec.sy * 2) * k;
+    for (let row = rows - 1; row >= 0; row--) for (let c = 0; c < cols; c++) {
+      g.drawImage(im, r[0], r[1], r[2], r[3], x + (c * w) / cols - spec.sx0 * k, y - spec.sy * k + row * step, r[2] * k, r[3] * k);
+    }
+  }
+  function drawDecor(g, im, P, d, G) {
+    const f = P.frames[d.pic], k = d.h / f[3], w = f[2] * k;
+    let x = d.x, y = d.y, rot = 0;
+    const T = G ? G.frame : 0;
+    if (d.anim === 'train') { // a (harmless) train rolls past behind the street now and then
+      const cyc = (T + 1200) % 2400; if (cyc > 600) return; // first pass about 20 seconds in
+      x = -1500 + (cyc / 600) * 3000;
+    }
+    if (d.anim === 'bell') rot = Math.sin(T * 0.05) * 0.03;
+    g.save(); g.translate(x, y - d.h / 2); if (rot) g.rotate(rot); if (d.flip) g.scale(-1, 1);
+    g.drawImage(im, f[0], f[1], f[2], f[3], -w / 2, -d.h / 2, w, d.h);
+    if (d.anim === 'crossing' && (T + 1240) % 2400 < 680 && Math.floor(T / 20) % 2 === 0) { // flash one light at a time
+      const side = Math.floor(T / 20) % 4 === 0 ? 0 : 1, lx = [44, 165][side], ly = 184;
+      g.fillStyle = 'rgba(255,60,40,.75)'; g.beginPath(); g.arc(-w / 2 + lx * k, -d.h / 2 + ly * k, 24 * k, 0, TAU); g.fill();
+    }
+    if (d.anim === 'scoreboard' && G) { // the blank scoreboard shows the match clock, KOs and who's left
+      const sec = Math.max(0, Math.floor((G.frame - 150) / 60)), at = (px, py) => [-w / 2 + px * k, -d.h / 2 + py * k];
+      g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#ffc21a';
+      g.font = `900 ${Math.round(46 * k)}px system-ui`; g.fillText('POLAR BEARS', ...at(268, 85));
+      g.fillStyle = '#ff6a2a'; g.font = `700 ${Math.round(56 * k)}px ui-monospace, monospace`; g.fillText(`${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`, ...at(268, 138));
+      g.fillStyle = '#fff'; g.font = `800 ${Math.round(34 * k)}px system-ui`;
+      g.fillText(`KO ${G.fighters.reduce((n, o) => n + o.falls, 0)}`, ...at(95, 211));
+      g.fillText('MORRIS', ...at(268, 211));
+      g.fillText(`IN ${G.fighters.filter((o) => !o.out).length}`, ...at(443, 211));
+    }
+    g.restore();
+  }
+  function illustrated(P) {
+    const decor = (g, im, layer, G) => { for (const d of P.decor || []) if ((d.layer || 'mid') === layer) drawDecor(g, im, P, d, G); };
+    return {
+      sky(g, W, H, px, cam) {
+        const im = stageImg(P.bg);
+        if (!im) { g.fillStyle = '#1a0b2e'; g.fillRect(0, 0, W, H); return; }
+        // cover the screen with a little room to slide (parallax) and a gentle zoom with the camera
+        const cw = cam ? cam.w : 1700, cy = cam ? cam.y : -250;
+        const zoom = 1.08 + 0.1 * Math.max(0, Math.min(1, (1700 - cw) / 600));
+        const s = Math.max(W / im.naturalWidth, H / im.naturalHeight) * zoom, iw = im.naturalWidth * s, ih = im.naturalHeight * s;
+        const ex = (iw - W) / 2, ey = (ih - H) / 2, u = W / 1700;
+        const ox = Math.max(-ex, Math.min(ex, -px * 0.08 * u)), oy = Math.max(-ey, Math.min(ey, -(cy + 250) * 0.06 * u));
+        g.drawImage(im, (W - iw) / 2 + ox, (H - ih) / 2 + oy, iw, ih);
+      },
+      floor(g, s, m, G) {
+        const im = stageImg(P.props);
+        if (P.fade) { // darken the painted ground below the floor line
+          const gr = g.createLinearGradient(0, -30, 0, 400); gr.addColorStop(0, 'rgba(15,8,30,0)'); gr.addColorStop(0.25, `rgba(15,8,30,${P.fade})`); gr.addColorStop(1, `rgba(15,8,30,${Math.min(0.85, P.fade * 1.7)})`);
+          g.fillStyle = gr; g.fillRect(-4000, -30, 8000, 3030);
+        }
+        if (!im) { g.fillStyle = '#5b3a24'; g.fillRect(m.left, 0, m.right - m.left, m.depth); return; }
+        decor(g, im, 'back', G);
+        for (const p of s.plats) { const sp = P.pics[p.pic]; if (sp && sp.behind) drawPlatPic(g, im, P, Object.assign({ pic: p.pic }, sp), p.x, p.y, p.w); }
+        drawPlatPic(g, im, P, P.main, m.left, 0, m.right - m.left);
+        for (const p of s.plats) { const sp = P.pics[p.pic]; if (sp && !sp.behind && !sp.front) drawPlatPic(g, im, P, Object.assign({ pic: p.pic }, sp), p.x, p.y, p.w); }
+        decor(g, im, 'mid', G);
+      },
+      plat(g, p) {
+        const im = stageImg(P.props), sp = P.pics[p.pic];
+        if (!im) { g.fillStyle = '#a5683a'; g.fillRect(p.x, p.y, p.w, 16); return; }
+        if (sp && sp.front) drawPlatPic(g, im, P, Object.assign({ pic: p.pic }, sp), p.x, p.y, p.w);
+      },
+      front(g, G) {
+        const im = stageImg(P.props);
+        if (im) decor(g, im, 'front', G);
+        if (P.water) { // see-through lake surface with a little ripple
+          const y = P.water.y, t = G.frame * 0.04;
+          g.fillStyle = P.water.color; g.beginPath(); g.moveTo(-4000, 3000);
+          for (let x = -4000; x <= 4000; x += 80) g.lineTo(x, y + Math.sin(x * 0.02 + t) * 5);
+          g.lineTo(4000, 3000); g.closePath(); g.fill();
+          g.strokeStyle = 'rgba(220,250,255,.55)'; g.lineWidth = 3; g.beginPath();
+          for (let x = -4000; x <= 4000; x += 80) g[x === -4000 ? 'moveTo' : 'lineTo'](x, y + Math.sin(x * 0.02 + t) * 5);
+          g.stroke();
+        }
+      },
+    };
+  }
+  for (const k in MM.STAGE_PICS || {}) STAGE_ART[k] = illustrated(MM.STAGE_PICS[k]);
+
   function rr(g, x, y, w, h, r) { g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, r) : g.rect(x, y, w, h); }
   function hills(g, W, H, off, base, color, n) { g.fillStyle = color; g.beginPath(); g.moveTo(0, H); for (let i = 0; i <= 40; i++) { const x = (i / 40) * W; g.lineTo(x, base - Math.sin(i / n * 3 + off * 0.01) * H * 0.05 - Math.sin(i * 0.7) * H * 0.02); } g.lineTo(W, H); g.fill(); }
   function city(g, W, H, off, base, color, seed) {
@@ -408,16 +501,17 @@ window.MM = window.MM || {};
     updateCamera(G, W, H);
     const art = STAGE_ART[G.stage.theme] || STAGE_ART.backyard;
     g.setTransform(1, 0, 0, 1, 0, 0);
-    art.sky(g, W, H, cam.x);
+    art.sky(g, W, H, cam.x, cam);
     const scale = W / cam.w;
     const sh = G.shake > 0.5 ? G.shake : 0;
     g.setTransform(scale, 0, 0, scale, W / 2 - cam.x * scale + (Math.random() - 0.5) * sh, H / 2 - cam.y * scale + (Math.random() - 0.5) * sh);
-    art.floor(g, G.stage, G.stage.main);
+    art.floor(g, G.stage, G.stage.main, G);
     for (const p of G.stage.plats) art.plat(g, p);
     for (const t of G.traps) if (t.sp.sprite) drawSpriteProj(g, { sprite: t.sp.sprite, owner: t.owner, x: t.x, y: t.y - 18, runner: true, t: 0, dir: t.dir || 1 }, G);
     for (const t of G.traps) { if (t.sp.sprite) continue; g.globalAlpha = t.armed > 0 ? 0.5 : 1; g.font = '44px serif'; g.textAlign = 'center'; g.textBaseline = 'bottom'; g.fillText(t.sp.emoji || '⚠️', t.x, t.y + 4); g.globalAlpha = 1; }
     for (const f of G.fighters) drawFighter(g, f, G);
     for (const p of G.projs) drawProj(g, p, G);
+    if (art.front) art.front(g, G);
     drawParts(g, G);
     g.setTransform(1, 0, 0, 1, 0, 0);
     offscreen(g, G, W, H, scale);

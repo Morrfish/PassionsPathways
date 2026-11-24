@@ -16,7 +16,7 @@ Morris family. It runs as a **Windows app (exe)**, an **Android app (APK)**, and
   or any USB/Bluetooth pad), and phones and tablets get on-screen touch buttons.
 - Each fighter has the same basic attacks (attack + a direction) and **4 specials of their own**
   (special alone, side + special, up + special, down + special).
-- Stages: Backyard BBQ, Rooftop Night, The Dinner Table.
+- Stages: Backyard BBQ, Rooftop Night, The Dinner Table, plus five illustrated family places: Main Street Mayhem (Dunkirk), Polar Bear Gym (Hardin Northern), Family Picnic (Williamstown), Music Gate Mix-Up (Graceland, with the family van) and PawPaw's Dock (Agnew Lake, with a rocking fishing boat).
 
 ## Controls
 | | Keyboard 1 | Keyboard 2 | Controller |
@@ -51,6 +51,8 @@ repo's **Actions** tab and download:
 - `src/js/ai.js`: computer players
 - `src/js/sprites.js`: artwork fighters (pose atlas + which pose each move uses)
 - `src/js/render.js`: stage art, fighter drawing, HUD
+- `src/js/stage-art.js`: pictures for the illustrated arenas (backgrounds + prop atlases in `src/img/stages/`)
+- `tools/slice_stage_props.py`: cuts an arena prop sheet (2 columns x 4 rows) into a WebP atlas
 - `tools/slice_sprites.py`: cuts the artist's labeled pose sheets (with name tags) into a game atlas (`slice_patty.py` for Patty's untagged sheets)
 - `src/js/input.js`: keyboard, controllers, touch
 - `src/js/ui.js`: menus and the game loop

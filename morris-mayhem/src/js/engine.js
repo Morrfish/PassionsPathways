@@ -49,7 +49,9 @@ window.MM = window.MM || {};
 
   // ---------- match setup ----------
   MM.newGame = function (players, stageId, stocks) {
-    const stage = MM.STAGES.find((s) => s.id === stageId) || MM.STAGES[0];
+    const def = MM.STAGES.find((s) => s.id === stageId) || MM.STAGES[0];
+    // each match gets its own copy of the platforms (some of them move)
+    const stage = Object.assign({}, def, { plats: def.plats.map((p) => Object.assign({}, p, { x0: p.x, y0: p.y, dx: 0, dy: 0 })) });
     const G = { stage, fighters: [], projs: [], traps: [], parts: [], frame: 0, shake: 0, over: false, endT: 0, freeze: 0, countdown: 150, slowmo: 0 };
     const used = {};
     const n = players.length, span = Math.min(stage.main.right - stage.main.left - 200, 260 * (n - 1));
@@ -128,6 +130,7 @@ window.MM = window.MM || {};
       f.inp = f.cpu ? MM.aiThink(G, f) : MM.readDevice(f.dev);
       if (G.countdown > 0 || G.over) f.inp = blankInput();
     }
+    movePlatforms(G);
     for (const f of G.fighters) updateFighter(G, f);
     for (const f of G.fighters) checkHits(G, f);
     updateProjectiles(G);
@@ -141,6 +144,18 @@ window.MM = window.MM || {};
       if (left.length <= 1 && G.fighters.length > 1) { G.over = true; G.endT = 150; G.winner = left[0] || null; G.slowmo = 60; }
     } else if (G.endT > 0) G.endT--;
   };
+
+  // Swaying platforms (the Agnew Lake boat). Anyone standing on one rides along.
+  function movePlatforms(G) {
+    for (const p of G.stage.plats) {
+      if (!p.move) continue;
+      const a = (G.frame / p.move.period) * Math.PI * 2;
+      const nx = p.x0 + p.move.ax * Math.sin(a), ny = p.y0 + p.move.ay * Math.sin(a * 2);
+      p.dx = nx - p.x; p.dy = ny - p.y; p.x = nx; p.y = ny;
+      for (const f of G.fighters) if (f.ground === p && !f.dead && !f.out) { f.x += p.dx; f.y = p.y; }
+      for (const t of G.traps) if (t.y === p.y - p.dy && t.x >= p.x - p.dx && t.x <= p.x - p.dx + p.w) { t.x += p.dx; t.y = p.y; }
+    }
+  }
 
   function updateFighter(G, f) {
     if (f.out) return;
@@ -230,7 +245,7 @@ window.MM = window.MM || {};
     // pass-through platforms
     if (!f.ground && f.vy >= 0 && f.dropT <= 0 && !(f.inp.y > 0 && f.hitstun <= 0 && !f.act)) {
       for (const p of G.stage.plats) {
-        if (py <= p.y + 0.5 && f.y >= p.y && f.x >= p.x && f.x <= p.x + p.w) { land(G, f, p.y, p); break; }
+        if (py <= p.y - (p.dy || 0) + 0.5 && f.y >= p.y && f.x >= p.x && f.x <= p.x + p.w) { land(G, f, p.y, p); break; }
       }
     }
     // walking off an edge
