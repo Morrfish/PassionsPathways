@@ -184,3 +184,41 @@ select.editing { outline: 4px solid var(--gold) !important; box-shadow: 0 0 18px
 #select .css-slots .slot { min-height: max(210px, 36vh); }
 #select .css-roster { grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); }
 @media (max-width: 760px) { #select .css-roster { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); } #select .css-slots .slot { min-height: 170px; } }
+
+/* ---------- ChatGPT UI art (UI_PRIORITY1_HANDOFF, img/ui/) ----------
+   Stretchable (9-slice) buttons, option pills and panels drawn with border-image; picture tiles (roster, arenas,
+   move-list picks, story heroes), touch controls and the Arena Maker toolbar keep their own look. Labels stay text. */
+:root { --ui-btn: url(img/ui/btn-secondary-normal.png); }
+button:not(.css-roster button, .arenas button, .grid button, .heroes button, #touch button, #maker button, .pick button, .back) {
+  background: none; border: 13px solid transparent; border-radius: 0; box-shadow: none; padding: 0 10px; min-height: 48px;
+  border-image: url(img/ui/btn-secondary-normal.png) 48 fill / 13px stretch; color: #fff; font-weight: 700; text-shadow: 0 2px 0 #1a0b2e; }
+button:not(.css-roster button, .arenas button, .grid button, .heroes button, #touch button, #maker button, .pick button, .back):is(:hover, :focus-visible, .padfocus) {
+  border-image-source: url(img/ui/btn-secondary-highlighted.png); outline: none !important; box-shadow: none !important; }
+button:not(.css-roster button, .arenas button, .grid button, .heroes button, #touch button, #maker button, .pick button, .back):active {
+  border-image-source: url(img/ui/btn-secondary-pressed.png); }
+button.big:not(#maker button) { border-width: 16px; padding: 0 22px; min-height: 60px; border-image: url(img/ui/btn-primary-normal.png) 48 fill / 16px stretch; color: #1a0b2e; text-shadow: none; font-weight: 900; }
+button.big:not(#maker button):is(:hover, :focus-visible, .padfocus) { border-image-source: url(img/ui/btn-primary-highlighted.png); }
+button.big:not(#maker button):active { border-image-source: url(img/ui/btn-primary-pressed.png); }
+button.big.story:not(#maker button) { border-image-source: url(img/ui/btn-secondary-normal.png); color: #fff; text-shadow: 0 2px 0 #1a0b2e; }
+button.big.story:not(#maker button):is(:hover, :focus-visible, .padfocus) { border-image-source: url(img/ui/btn-secondary-highlighted.png); }
+button.cycle:not(#maker button) { border-width: 9px 16px; min-height: 40px; padding: 0 4px; border-image: url(img/ui/chip-option-normal.png) 24 48 fill / 9px 16px stretch; }
+button.cycle:not(#maker button):is(:hover, :focus-visible, .padfocus) { border-image-source: url(img/ui/chip-option-selected.png); }
+button:disabled:not(#maker button) { filter: grayscale(.7) brightness(.8); }
+/* round back button and the little left/right arrows: fixed shape, the ◀ ▶ text is hidden behind the art */
+.back { width: 50px; height: 50px; min-height: 0; padding: 0; border: 0; border-radius: 50%; font-size: 0; flex: none;
+  background: url(img/ui/btn-back-normal.png) center / contain no-repeat; }
+.back:is(:hover, :focus-visible, .padfocus) { background-image: url(img/ui/btn-back-highlighted.png); outline: none !important; box-shadow: none !important; }
+.slot .pick button, .css-slots .slot .pick button { width: 38px; height: 38px; padding: 0; border: 0; font-size: 0; background: url(img/ui/btn-arrow-left-normal.png) center / contain no-repeat; }
+.slot .pick button[data-k=next] { background-image: url(img/ui/btn-arrow-right-normal.png); }
+.slot .pick button:is(:hover, :focus-visible, .padfocus) { background-image: url(img/ui/btn-arrow-left-highlighted.png); outline: none !important; box-shadow: none !important; }
+.slot .pick button[data-k=next]:is(:hover, :focus-visible, .padfocus) { background-image: url(img/ui/btn-arrow-right-highlighted.png); }
+/* panels: family cards, results cards (gold for the winner), pause box */
+.card, .stat { background: none; border: 22px solid transparent; border-radius: 0; padding: 2px; border-image: url(img/ui/panel.png) 40 fill / 22px stretch; }
+.stat { border-color: transparent !important; }
+.stat.win { border-image-source: url(img/ui/panel-winner.png); }
+/* backgrounds: the title gym, and the quiet purple menu backdrop for the other menu screens */
+#title { background: #1a0b2e url(img/ui/title-bg.webp) center / cover no-repeat; }
+#select, #arena, #howto, #family, #moves, #story { background: #1a0b2e url(img/ui/menu-bg.webp) center / cover no-repeat; }
+button#fight#fight { border-width: 16px; padding: 0 60px; min-height: 60px; border-image: url(img/ui/btn-primary-normal.png) 48 fill / 16px stretch; color: #1a0b2e; text-shadow: none; }
+button#fight#fight:is(:hover, :focus-visible, .padfocus) { border-image-source: url(img/ui/btn-primary-highlighted.png); }
+button#fight#fight:active { border-image-source: url(img/ui/btn-primary-pressed.png); }

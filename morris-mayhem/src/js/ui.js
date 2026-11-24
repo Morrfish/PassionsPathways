@@ -53,7 +53,7 @@ window.MM = window.MM || {};
     if (id === 'story') drawStory();
     if (id === 'arena') drawArenas();
     if (id === 'maker' && MM.arenaMaker) MM.arenaMaker.open(); // Arena Maker (arena-maker.js)
-    if ((id === 'title' || id === 'select' || id === 'arena' || id === 'howto' || id === 'family' || id === 'moves' || id === 'story') && !paused) { G = null; startDemo(); }
+    if ((id === 'title' || id === 'select' || id === 'arena' || id === 'howto' || id === 'family' || id === 'moves' || id === 'story') && !paused) { G = null; demo = null; } // menus have their own backgrounds now (no demo match behind)
   }
   document.addEventListener('click', (e) => {
     const go = e.target.closest('[data-go]');
@@ -410,7 +410,6 @@ window.MM = window.MM || {};
     requestAnimationFrame(frame);
   }
   const origSfx = MM.sfx; MM.sfx = (...a) => { if (!MM.muted) origSfx(...a); };
-  startDemo();
   requestAnimationFrame(frame);
   MM.debug = { get G() { return G; }, slots, startMatch: (setup) => { lastSetup = setup; startMatch(); } };
 })();
