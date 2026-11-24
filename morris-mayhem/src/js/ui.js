@@ -26,7 +26,18 @@ window.MM = window.MM || {};
     { type: 'off', dev: 'p1', fighter: ids[3 % ids.length], level: 2 },
   ];
   slots.forEach((s, i) => { if (!ids.includes(s.fighter)) s.fighter = ids[0]; if (!s.team) s.team = i % 2 ? 'B' : 'A'; });
-  const teamMode = () => $('#mode').value === 'teams';
+  // match options (buttons you tap to change, no dropdowns)
+  const opt = { mode: load('mode', 'ffa'), ff: !!load('ff', false), time: +load('time', 0), stocks: +load('stocks', 3) };
+  const teamMode = () => opt.mode === 'teams';
+  const TIMES = [0, 120, 180, 300], timeName = (t) => (t ? t / 60 + ' min' : 'No limit');
+  function drawOptions() {
+    $('#modeBtn').innerHTML = `Mode: <b>${teamMode() ? '2v2 Teams' : 'Free-for-all'}</b>`;
+    $('#ffBtn').innerHTML = `Friendly fire: <b>${opt.ff ? 'On' : 'Off'}</b>`; $('#ffBtn').hidden = !teamMode();
+    $('#timeBtn').innerHTML = `Time: <b>${timeName(opt.time)}</b>`;
+    $('#livesBtn').innerHTML = `Lives: <b>${opt.stocks}</b>`;
+    for (const k in opt) save(k, opt[k]);
+  }
+  const DEVS = Object.keys(MM.DEVICE_NAMES), LEVELS = { 1: 'Easy', 2: 'Normal', 3: 'Hard' }, TYPES = { human: 'Player', cpu: 'Computer', off: 'Empty' };
   let activeSlot = 0;
 
   // ---------- screens ----------
@@ -35,11 +46,13 @@ window.MM = window.MM || {};
     screen = id;
     document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('show', s.id === id));
     $('#touch').classList.toggle('show', id === 'match' && !!G && G.fighters.some((f) => f.dev === 'touch' && !f.cpu));
+    MM.menuFocusFirst && MM.menuFocusFirst();
     if (id === 'select') drawSelect();
     if (id === 'family') drawFamily();
     if (id === 'moves') drawMoves();
     if (id === 'story') drawStory();
-    if ((id === 'title' || id === 'select' || id === 'howto' || id === 'family' || id === 'moves' || id === 'story') && !paused) { G = null; startDemo(); }
+    if (id === 'arena') drawArenas();
+    if ((id === 'title' || id === 'select' || id === 'arena' || id === 'howto' || id === 'family' || id === 'moves' || id === 'story') && !paused) { G = null; startDemo(); }
   }
   document.addEventListener('click', (e) => {
     const go = e.target.closest('[data-go]');
@@ -66,23 +79,27 @@ window.MM = window.MM || {};
       return `<div class="slot ${s.type === 'off' ? 'off' : ''} ${i === activeSlot ? 'active' : ''}" data-slot="${i}" style="border-color:${MM.PLAYER_COLORS[i]}">
         <div class="pn" style="color:${MM.PLAYER_COLORS[i]}">P${i + 1}</div>
         ${teamMode() && s.type !== 'off' ? `<button class="team ${s.team}" data-k="team" title="Change team">Team ${s.team}</button>` : ''}
-        <select data-k="type"><option value="human" ${s.type === 'human' ? 'selected' : ''}>Player</option><option value="cpu" ${s.type === 'cpu' ? 'selected' : ''}>Computer</option><option value="off" ${s.type === 'off' ? 'selected' : ''}>Empty</option></select>
+        <button class="cycle" data-k="type">${TYPES[s.type]}</button>
         ${s.type === 'off' ? '<div class="ttl">Press Attack on a free controller to join</div>' : `
         <div class="pick"><button data-k="prev">◀</button><img src="${portrait(s.fighter)}" alt=""><button data-k="next">▶</button></div>
         <div class="nm">${f.name}</div><div class="ttl">${f.title || ''}</div>
-        ${s.type === 'human' ? `<select data-k="dev">${devOptions(s.dev)}</select>` : `<select data-k="level"><option value="1" ${s.level == 1 ? 'selected' : ''}>Easy</option><option value="2" ${s.level == 2 ? 'selected' : ''}>Normal</option><option value="3" ${s.level == 3 ? 'selected' : ''}>Hard</option></select>`}`}
+        ${s.type === 'human' ? `<button class="cycle" data-k="dev">🎮 ${MM.DEVICE_NAMES[s.dev]}</button>` : `<button class="cycle" data-k="level">Level: <b>${LEVELS[s.level] || 'Normal'}</b></button>`}`}
       </div>`;
     }).join('');
     $('#roster').innerHTML = MM.FIGHTERS.map((f) => `<button data-f="${f.id}"><img src="${portrait(f.id)}" alt="">${f.name}</button>`).join('');
-    $('#stage').innerHTML = MM.STAGES.map((s) => `<option value="${s.id}">${s.name}</option>`).join('');
-    $('#stage').value = load('stage', MM.STAGES[0].id); $('#stocks').value = load('stocks', 3);
-    $('#ffWrap').hidden = !teamMode();
+    drawOptions();
   }
   $('#slots').addEventListener('click', (e) => {
     const el = e.target.closest('.slot'); if (!el) return;
-    const i = +el.dataset.slot, k = e.target.dataset.k;
+    const i = +el.dataset.slot, kEl = e.target.closest("[data-k]"), k = kEl && kEl.dataset.k;
     activeSlot = i;
     if (k === 'prev' || k === 'next') cycle(i, k === 'next' ? 1 : -1);
+    else if (k === 'type') { const order = ['human', 'cpu', 'off']; slots[i].type = order[(order.indexOf(slots[i].type) + 1) % 3]; MM.sfx('select'); save('slots', slots); drawSelect(); }
+    else if (k === 'dev') { // next control that no other player is using
+      for (let n = 1; n <= DEVS.length; n++) { const d = DEVS[(DEVS.indexOf(slots[i].dev) + n) % DEVS.length]; if (!slots.some((s, j) => j !== i && s.type === 'human' && s.dev === d)) { slots[i].dev = d; break; } }
+      MM.sfx('select'); save('slots', slots); drawSelect();
+    }
+    else if (k === 'level') { slots[i].level = (slots[i].level % 3) + 1; MM.sfx('select'); save('slots', slots); drawSelect(); }
     else if (k === 'team') { slots[i].team = slots[i].team === 'A' ? 'B' : 'A'; MM.sfx('select'); save('slots', slots); drawSelect(); }
     else if (!k) drawSelect();
     else if (e.target.tagName !== 'SELECT') drawSelect();
@@ -93,8 +110,10 @@ window.MM = window.MM || {};
     if (k === 'dev') slots.forEach((s, j) => { if (j !== i && s.type === 'human' && s.dev === e.target.value) s.type = 'off'; });
     save('slots', slots); drawSelect();
   });
-  $('#mode').value = load('mode', 'ffa'); $('#time').value = load('time', '0');
-  $('#mode').addEventListener('change', () => { save('mode', $('#mode').value); if (teamMode() && $('#time').value === '0') $('#time').value = '180'; drawSelect(); });
+  $('#modeBtn').addEventListener('click', () => { opt.mode = teamMode() ? 'ffa' : 'teams'; if (teamMode() && !opt.time) opt.time = 180; MM.sfx('select'); drawSelect(); });
+  $('#ffBtn').addEventListener('click', () => { opt.ff = !opt.ff; MM.sfx('select'); drawOptions(); });
+  $('#timeBtn').addEventListener('click', () => { opt.time = TIMES[(TIMES.indexOf(opt.time) + 1) % TIMES.length]; MM.sfx('select'); drawOptions(); });
+  $('#livesBtn').addEventListener('click', () => { opt.stocks = (opt.stocks % 5) + 1; MM.sfx('select'); drawOptions(); });
   $('#roster').addEventListener('click', (e) => {
     const b = e.target.closest('[data-f]'); if (!b) return;
     if (slots[activeSlot].type === 'off') slots[activeSlot].type = 'human';
@@ -116,19 +135,18 @@ window.MM = window.MM || {};
       if (screen === 'select') {
         const i = slots.findIndex((s) => s.type === 'human' && s.dev === dv);
         if (i >= 0) {
-          if (xPress) cycle(i, inp.x);
+          if (dv[0] === 'p') { const pad = navigator.getGamepads()[+dv.slice(1)], bb = (n) => pad && pad.buttons[n] && pad.buttons[n].pressed;
+            const lb = bb(4) || bb(6), rb = bb(5) || bb(7); if (lb && !menuPrev['lb' + dv]) cycle(i, -1); if (rb && !menuPrev['rb' + dv]) cycle(i, 1); menuPrev['lb' + dv] = lb; menuPrev['rb' + dv] = rb; }
           if (press('pause')) $('#fight').click();
-          if (press('special')) { slots[i].type = 'off'; save('slots', slots); drawSelect(); }
         } else if (press('attack') && dv[0] === 'p') {
           const free = slots.findIndex((s) => s.type === 'off') >= 0 ? slots.findIndex((s) => s.type === 'off') : slots.findIndex((s) => s.type === 'cpu');
           if (free >= 0) { slots[free].type = 'human'; slots[free].dev = dv; MM.sfx('select'); save('slots', slots); drawSelect(); }
         }
-      } else if (screen === 'title' && (press('attack') || press('pause')) && dv[0] === 'p') show('select');
+      } else if (screen === 'title' && press('pause') && dv[0] === 'p') show('select');
       else if (dv === 'k1') continue; // Escape is handled by the keydown listener below
-      else if (screen === 'match' && G && press('pause') && G.fighters.some((f) => f.dev === dv && !f.cpu)) togglePause();
+      else if (screen === 'match' && G && press('pause') && (dv[0] === 'p' || G.fighters.some((f) => f.dev === dv && !f.cpu))) togglePause(); // any controller can pause
       else if (screen === 'pause' && press('pause')) togglePause();
       else if (screen === 'moves' && press('pause')) $('#movesBack').click();
-      else if (screen === 'moves' && xPress) { const list = moveFighters(); const i = list.findIndex((d) => d.id === moveId); moveId = list[(i + inp.x + list.length) % list.length].id; drawMoves(); }
       else if (screen === 'results' && press('pause')) $('#rematch').click();
     }
     if (screen === 'match' && G && MM.touch.pause) { MM.touch.pause = false; togglePause(); }
@@ -144,10 +162,8 @@ window.MM = window.MM || {};
       const teams = new Set(players.map((p) => p.team));
       if (teams.size < 2) { $('#fight').textContent = 'Put someone on each team'; setTimeout(() => ($('#fight').textContent = 'FIGHT!'), 1800); return; }
     }
-    save('stage', $('#stage').value); save('stocks', +$('#stocks').value);
-    save('mode', $('#mode').value); save('time', $('#time').value);
-    lastSetup = { players, stage: $('#stage').value, stocks: +$('#stocks').value, opts: { teams: teamMode(), ff: $('#ff').checked, time: +$('#time').value } };
-    startMatch();
+    lastSetup = { players, stage: load('stage', MM.STAGES[0].id), stocks: opt.stocks, opts: { teams: teamMode(), ff: opt.ff, time: opt.time } };
+    show('arena'); // pick the arena next
   });
   function startMatch() {
     demo = null; MM.muted = false; MM.resetCamera();
@@ -164,6 +180,7 @@ window.MM = window.MM || {};
   addEventListener('keydown', (e) => {
     if (e.code === 'Escape' && (screen === 'pause' || (screen === 'match' && G && !G.over))) togglePause();
     else if (e.code === 'Escape' && screen === 'moves') $('#movesBack').click();
+    else if (e.code === 'Escape' && screen === 'arena') show('select');
     else if (e.code === 'Escape' && (screen === 'select' || screen === 'howto' || screen === 'family')) show('title');
     else if (e.code === 'Enter' && screen === 'select' && !e.repeat) $('#fight').click();
   });
@@ -207,6 +224,20 @@ window.MM = window.MM || {};
       <ul>${f.attackNames ? `<li><b>Attacks</b>: ${Object.values(f.attackNames).join(', ')}</li>` : ''}${['neutral', 'side', 'up', 'down'].map((k) => { const s = f.specials[k]; return s ? `<li><b>${{ neutral: 'Special', side: '→ Special', up: '↑ Special', down: '↓ Special' }[k]}: ${s.name}</b>: ${(KIND_TEXT[s.kind] || (() => ''))(s)}</li>` : ''; }).join('')}</ul></div>`).join('');
   }
 
+  // ---------- arena choice ----------
+  function drawArenas() {
+    const lastId = load('stage', MM.STAGES[0].id);
+    $('#arenaGrid').innerHTML = MM.STAGES.map((s) => `<button data-arena="${s.id}" class="${s.id === lastId ? 'last' : ''}"><img src="${MM.stageThumb ? MM.stageThumb(s.id) : ''}" alt=""><span>${s.name}${s.custom ? '<small>Made in Arena Maker</small>' : ''}</span></button>`).join('')
+      + `<button data-arena="random"><div class="rand">?</div><span>Random arena</span></button>`;
+  }
+  $('#arenaGrid').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-arena]'); if (!b || !lastSetup) return;
+    let id = b.dataset.arena;
+    if (id === 'random') id = MM.STAGES[Math.floor(Math.random() * MM.STAGES.length)].id; else save('stage', id);
+    lastSetup.stage = id; MM.sfx('go'); startMatch();
+  });
+  $('#arenaBack').addEventListener('click', () => show('select'));
+
   // ---------- story mode ----------
   let storyHero = null;
   const S = MM.story;
@@ -228,7 +259,7 @@ window.MM = window.MM || {};
     body.innerHTML = `<p class="seed">${S.SEEDS[storyHero]}</p>
       <div class="row options" style="justify-content:flex-start">
         <button class="big" id="storyGo" ${next ? '' : 'disabled'}>${next ? (s.done.length ? '▶ Next fight' : '▶ Start') : s.ended ? '★ Finished!' : 'More fights coming soon'}</button>
-        <label>Difficulty <select id="storyLevel"><option value="1">Easy</option><option value="2">Normal</option><option value="3">Hard</option></select></label>
+        <button class="cycle" id="storyLevel">Difficulty: <b>${{ 1: 'Easy', 2: 'Normal', 3: 'Hard' }[s.level]}</b></button>
         ${s.revealed ? '<button id="storyReveal">Replay the reveal</button>' : ''}
         ${s.ended ? '<button id="storyEnding">Family album</button>' : ''}
         <button id="storyReset">Start over</button>
@@ -242,8 +273,7 @@ window.MM = window.MM || {};
         const tag = state === 'done' ? '✓ Won' : isNext ? 'Next' : state === 'waiting' ? 'Coming soon' : state === 'hidden' ? 'Locked' : '';
         return `<div class="node ${state} ${isNext ? 'next' : ''}"><div class="num">${n.boss ? '★' : i + 1}</div><div class="opp">${who}</div><div class="what"><b>${label}</b><span>${names}</span></div>${tag ? `<div class="tag">${tag}</div>` : ''}</div>`;
       }).join('')}</div>`;
-    $('#storyLevel').value = s.level;
-    $('#storyLevel').onchange = (e) => { const s2 = S.load(storyHero); s2.level = +e.target.value; S.save(storyHero, s2); };
+    $('#storyLevel').onclick = () => { const s2 = S.load(storyHero); s2.level = (s2.level % 3) + 1; S.save(storyHero, s2); MM.sfx('select'); drawStory(); };
     $('#storyGo').onclick = () => next && startStoryFight(storyHero, next);
     $('#storyReset').onclick = () => { const s2 = S.load(storyHero); if ($('#storyReset').dataset.sure) { S.save(storyHero, { v: 1, done: [], jeff: false, revealed: false, ended: false, level: s2.level }); drawStory(); } else { $('#storyReset').dataset.sure = 1; $('#storyReset').textContent = 'Tap again to erase this hero\'s progress'; } };
     if ($('#storyReveal')) $('#storyReveal').onclick = () => playScene(revealScene(), () => show('story'));
@@ -344,6 +374,7 @@ window.MM = window.MM || {};
   function frame(now) {
     acc += Math.min(100, now - last); last = now;
     pollMenuInput();
+    MM.menuNavTick(screen === 'match' && !!G && !paused);
     const world = G || demo;
     if (world) {
       const slow = world.slowmo > 0 ? 3 : 1;

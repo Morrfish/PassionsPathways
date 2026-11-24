@@ -553,6 +553,16 @@ window.MM = window.MM || {};
     }
   }
 
+  // a small picture of a stage for the arena choice screen
+  MM.stageThumb = function (id, w = 384, h = 216) {
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const saved = { x: cam.x, y: cam.y, w: cam.w };
+    try { const G = MM.newGame([], id, 1); G.countdown = 0; cam.x = 0; cam.y = -230; cam.w = 1500; MM.render(c.getContext('2d'), G, w, h); }
+    catch (e) { /* the arena may still be loading */ }
+    cam.x = saved.x; cam.y = saved.y; cam.w = saved.w;
+    return c.toDataURL('image/jpeg', 0.8);
+  };
+
   // ---------- main draw ----------
   MM.render = function (g, G, W, H) {
     updateCamera(G, W, H);
