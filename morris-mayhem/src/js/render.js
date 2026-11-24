@@ -53,11 +53,32 @@ window.MM = window.MM || {};
     return 'idle' + (Math.floor(f.anim / 16) % 4);
   }
 
+  // entrance (before the countdown), taunt, victory: key poses from the fighter's personality sheet
+  function presPose(f, G) {
+    const u = f.def.ultimate, sh = u && u.sprite && sheet(u.sprite);
+    if (!sh) return null;
+    let frame = null;
+    if (G.countdown > 150) frame = 'ent';
+    else if (f.act && f.act.type === 'taunt') frame = 'taunt';
+    else if (G.over && !f.out && (f === G.winner || (G.winTeam && f.team === G.winTeam))) frame = 'win';
+    return frame && sh.S.frames[frame] ? { sh, frame } : null;
+  }
+  MM.posePicture = function (def, frame, size = 160) { // a still of one pose for menus (results screen)
+    const u = def.ultimate, sh = u && u.sprite && sheet(u.sprite), fr = sh && sh.S.frames[frame];
+    if (!fr) return null;
+    const c = document.createElement('canvas'); c.width = c.height = size; const g = c.getContext('2d');
+    const k = Math.min((size * 0.96) / fr[2], (size * 0.96) / fr[3]);
+    g.drawImage(sh.im, fr[0], fr[1], fr[2], fr[3], (size - fr[2] * k) / 2, size - fr[3] * k, fr[2] * k, fr[3] * k);
+    return c.toDataURL();
+  };
+
   function drawSpriteFighter(g, f, G) {
     let sh = f.def.sprite && sheet(f.def.sprite);
     if (!sh) return false;
     let frameName = pickFrame(f, sh.S);
     const ua = f.act && f.act.type === 'ult' && f.act.u;
+    const pres = presPose(f, G);
+    if (pres) { sh = pres.sh; frameName = pres.frame; }
     if (ua && ua.sprite && sheet(ua.sprite) && ua.poses.length) { // ultimate key poses
       sh = sheet(ua.sprite); frameName = ua.poses[0][1];
       for (const [t, p] of ua.poses) if (f.act.t >= t) frameName = p;
@@ -65,7 +86,9 @@ window.MM = window.MM || {};
     const { S, im } = sh, fr = S.frames[frameName] || S.frames.idle0;
     const k = (f.h * 1.15) / S.standH;
     g.save();
-    g.translate(f.x, f.y);
+    let slide = 0;
+    if (G.countdown > 150) { const k = (G.countdown - 150) / MM.ENTRANCE; slide = -f.face * k * k * 260; g.globalAlpha = 1 - k * 0.6; }
+    g.translate(f.x + slide, f.y);
     if (f.invuln > 0 && Math.floor(G.frame / 4) % 2) g.globalAlpha = 0.5;
     if (f.act && f.act.type === 'dodge') g.globalAlpha *= 0.55;
     if (f.buff) { g.save(); g.fillStyle = f.buff.color; g.globalAlpha *= 0.3; g.beginPath(); g.ellipse(0, -f.h * 0.55, f.w * 1.4, f.h * 0.75, 0, 0, TAU); g.fill(); g.restore(); }
@@ -570,7 +593,8 @@ window.MM = window.MM || {};
     }
     // big center text
     let big = null;
-    if (G.countdown > 0) big = G.countdown > 120 ? '3' : G.countdown > 80 ? '2' : G.countdown > 40 ? '1' : 'GO!';
+    if (G.countdown > 150) big = null;
+    else if (G.countdown > 0) big = G.countdown > 120 ? '3' : G.countdown > 80 ? '2' : G.countdown > 40 ? '1' : 'GO!';
     else if (G.frame < 30 && !G.over) big = null;
     if (G.over) big = G.timeUp ? 'TIME!' : 'GAME!';
     if (big) {

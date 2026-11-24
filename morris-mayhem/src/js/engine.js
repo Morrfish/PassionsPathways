@@ -49,12 +49,14 @@ window.MM = window.MM || {};
 
   // ---------- match setup ----------
   MM.TEAM_COLORS = { A: '#ff5a5a', B: '#3c8dff' };
+  MM.ENTRANCE = 54; // frames of entrance poses before "3"
+  MM.TAUNT = 39;    // 0.65 s
   // opts: { teams: true for 2v2 (players carry team 'A'/'B'), ff: friendly fire, time: seconds (0 = no limit) }
   MM.newGame = function (players, stageId, stocks, opts = {}) {
     const def = MM.STAGES.find((s) => s.id === stageId) || MM.STAGES[0];
     // each match gets its own copy of the platforms (some of them move)
     const stage = Object.assign({}, def, { plats: def.plats.map((p) => Object.assign({}, p, { x0: p.x, y0: p.y, dx: 0, dy: 0 })) });
-    const G = { opts, stage, fighters: [], teams: !!opts.teams, ff: !!opts.ff, timeLeft: (opts.time || 0) * 60, projs: [], traps: [], parts: [], frame: 0, shake: 0, over: false, endT: 0, freeze: 0, countdown: 150, slowmo: 0 };
+    const G = { opts, stage, fighters: [], teams: !!opts.teams, ff: !!opts.ff, timeLeft: (opts.time || 0) * 60, projs: [], traps: [], parts: [], frame: 0, shake: 0, over: false, endT: 0, freeze: 0, countdown: 150 + MM.ENTRANCE, slowmo: 0 };
     const used = {};
     const n = players.length, span = Math.min(stage.main.right - stage.main.left - 200, 260 * (n - 1));
     players.forEach((p, i) => {
@@ -98,7 +100,7 @@ window.MM = window.MM || {};
       meter: 0, caught: null, kos: 0, falls: 0, dealt: 0, lastHit: -1, lastHitT: 0, anim: 0, bubble: null, ai: {},
     };
   }
-  const blankInput = () => ({ x: 0, y: 0, jump: false, attack: false, special: false, dodge: false, swap: false, ult: false, pause: false });
+  const blankInput = () => ({ x: 0, y: 0, jump: false, attack: false, special: false, dodge: false, swap: false, ult: false, taunt: false, pause: false });
 
   // ---------- helpers ----------
   const power = (f) => f.st.power * (f.buff ? f.buff.powerMul : 1);
@@ -219,6 +221,10 @@ window.MM = window.MM || {};
       const ultNow = pressed('ult') || (inp.attack && inp.special && (pressed('attack') || pressed('special')));
       if (ultNow && f.meter >= 100 && f.def.ultimate) startUlt(G, f);
       else if (swapNow) startSpecial(G, f, 'down');
+      else if (pressed('taunt') && f.ground) { // taunt: ground only, a hit stops it, no protection
+        f.act = { type: 'taunt', t: 0, dur: MM.TAUNT, pose: 'flex' }; f.vx = 0;
+        f.bubble = { text: f.def.taunt || 'Ha!', t: 70 };
+      }
       else if (pressed('attack')) startNormal(G, f);
       else if (pressed('special')) startSpecial(G, f);
       else if (pressed('dodge')) startDodge(G, f);
@@ -326,6 +332,8 @@ window.MM = window.MM || {};
       if (a.t >= a.dur) f.act = null;
     } else if (a.type === 'ult') {
       tickUlt(G, f, a);
+    } else if (a.type === 'taunt') {
+      f.vx *= 0.7; if (a.t >= a.dur || !f.ground) f.act = null;
     } else if (a.type === 'swap') {
       f.vx *= 0.85;
       if (a.t === 10) {

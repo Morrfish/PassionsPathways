@@ -88,7 +88,7 @@ button.big.story { background: linear-gradient(#8f2bd6, #5b1a9a); color: #fff; b
 .bars div { display: flex; align-items: center; gap: 6px; } .bars i { flex: 1; height: 7px; background: #0006; border-radius: 4px; overflow: hidden; } .bars i b { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), var(--orange)); }
 .stats { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin: 16px 0; }
 .stat { background: var(--panel); border: 3px solid var(--line); border-radius: 16px; padding: 12px 16px; text-align: center; min-width: 150px; }
-.stat img { width: 80px; height: 80px; }
+.stat img { width: 120px; height: 120px; object-fit: contain; }
 .stat.win { border-color: var(--gold); transform: scale(1.06); }
 #winner { font-size: clamp(32px, 6vw, 64px); font-weight: 900; font-style: italic; color: var(--gold); -webkit-text-stroke: 2px #1a0b2e; text-shadow: 0 5px 0 var(--purple); text-align: center; }
 #touch { position: fixed; inset: 0; pointer-events: none; display: none; }
@@ -101,3 +101,4 @@ button.big.story { background: linear-gradient(#8f2bd6, #5b1a9a); color: #fff; b
 #touch .tswap { pointer-events: auto; position: absolute; right: max(24px, env(safe-area-inset-right)); bottom: 196px; width: 56px; height: 56px; border-radius: 50%; font-size: 24px; background: #ffffff22; border: 3px solid #ffffff66; padding: 0; }
 #touch .tult { pointer-events: auto; position: absolute; right: calc(max(24px, env(safe-area-inset-right)) + 70px); bottom: 196px; width: 56px; height: 56px; border-radius: 50%; font-size: 13px; font-weight: 900; background: #ffc21a44; border: 3px solid #ffc21a; padding: 0; }
 #touch .tpause { pointer-events: auto; position: absolute; top: 12px; right: 12px; width: 48px; height: 48px; font-size: 18px; }
+[hidden] { display: none !important; }

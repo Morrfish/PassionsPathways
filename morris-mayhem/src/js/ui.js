@@ -176,7 +176,7 @@ window.MM = window.MM || {};
     const fs = [...G.fighters].sort((a, b) => won(b) - won(a) || b.stocks - a.stocks || b.kos - a.kos);
     $('#winner').textContent = G.winTeam ? `Team ${G.winTeam} wins!` : G.winner ? `${G.winner.def.name} wins!` : 'Draw!';
     $('#stats').innerHTML = fs.map((f) => `<div class="stat ${won(f) ? 'win' : ''}" style="border-color:${f.team ? MM.TEAM_COLORS[f.team] : MM.PLAYER_COLORS[f.slot]}">
-      <img src="${portrait(f.def.baseId || f.def.id)}" alt=""><div><b>${f.cpu ? 'CPU' : 'P' + (f.slot + 1)} · ${f.def.name}${f.team ? ' · Team ' + f.team : ''}</b></div>
+      <img src="${MM.posePicture(f.def, won(f) ? 'win' : 'lose') || portrait(f.def.baseId || f.def.id)}" alt=""><div><b>${f.cpu ? 'CPU' : 'P' + (f.slot + 1)} · ${f.def.name}${f.team ? ' · Team ' + f.team : ''}</b></div>
       <div>KOs: ${f.kos} · Falls: ${f.falls}</div><div>Damage dealt: ${Math.round(f.dealt)}%</div></div>`).join('');
     show('results');
   }
@@ -264,7 +264,7 @@ window.MM = window.MM || {};
     const won = G.winner && G.winner.slot === 0;
     const r = S.route(st.hero), node = r.find((n) => n.id === st.node);
     $('#winner').textContent = won ? (node.boss === 'secret' ? 'You beat Mawmaw!' : node.boss ? 'You beat The Boss!' : 'You won!') : 'Knocked out!';
-    $('#stats').innerHTML = G.fighters.map((f) => `<div class="stat ${f.slot === 0 && won ? 'win' : ''}"><img src="${portrait(f.def.baseId || f.def.id)}" alt=""><div><b>${f.def.name}</b></div><div>KOs: ${f.kos} · Falls: ${f.falls}</div></div>`).join('');
+    $('#stats').innerHTML = G.fighters.map((f) => `<div class="stat ${f.slot === 0 && won ? 'win' : ''}"><img src="${MM.posePicture(f.def, (f.slot === 0) === won ? 'win' : 'lose') || portrait(f.def.baseId || f.def.id)}" alt=""><div><b>${f.def.name}</b></div><div>KOs: ${f.kos} · Falls: ${f.falls}</div></div>`).join('');
     const s = S.load(st.hero);
     if (won && !s.done.includes(node.id)) { s.done.push(node.id); if (node.boss === 'apparent') s.jeff = true; if (node.boss === 'secret') s.ended = true; S.save(st.hero, s); }
     $('#storyContinue').hidden = !won; $('#storyRetry').hidden = won;
@@ -303,7 +303,7 @@ window.MM = window.MM || {};
   // ---------- move list ----------
   let moveId = null;
   const moveFighters = () => (paused && G ? [...new Map(G.fighters.map((f) => [f.def.baseId || f.def.id, MM.FIGHTERS.find((d) => d.id === (f.def.baseId || f.def.id))])).values()] : MM.FIGHTERS);
-  const KEYS = '<b>Attack</b> F · Num 1 · X &nbsp; <b>Special</b> G · Num 2 · B &nbsp; <b>Jump</b> W/Space · ↑ · A &nbsp; <b>Dodge</b> H · Num 3 · bumpers &nbsp; <b>Switch form</b> R · Num 4 · Y &nbsp; <b>Ultimate</b> E · Num 5 · stick click';
+  const KEYS = '<b>Attack</b> F · Num 1 · X &nbsp; <b>Special</b> G · Num 2 · B &nbsp; <b>Jump</b> W/Space · ↑ · A &nbsp; <b>Dodge</b> H · Num 3 · bumpers &nbsp; <b>Switch form</b> R · Num 4 · Y &nbsp; <b>Ultimate</b> E · Num 5 · stick click &nbsp; <b>Taunt</b> Q · Num 6/O · Back/Select';
   function moveRows(d) {
     const an = d.attackNames || {}, sp = d.specials || {};
     const desc = (s) => (s ? `<b>${s.name}</b>: ${(KIND_TEXT[s.kind] || (() => ''))(s)}` : '');
@@ -330,7 +330,7 @@ window.MM = window.MM || {};
     } else html += moveRows(d);
     const ults = d.forms ? MM.formDefs(d).map((fd) => fd.ultimate).filter(Boolean) : [d.ultimate].filter(Boolean);
     if (ults.length) html += `<h4>Ultimate</h4><table>${ults.map((u) => `<tr><td class="in">Meter full + E · Num 5/U · stick click · or Attack + Special together</td><td><b>${u.name}</b>: ${u.desc || ''}</td></tr>`).join('')}</table><p class="keys">The meter fills as you deal damage (and a little when you take it). A hit stops an ultimate, so pick your moment.</p>`;
-    html += `<h4>Everyone</h4><table><tr><td class="in">Jump</td><td>Up to 3 jumps in a row</td></tr><tr><td class="in">Dodge</td><td>Untouchable for a moment. Hold a direction to roll or air-dodge.</td></tr><tr><td class="in">↓ in the air</td><td>Fall fast</td></tr><tr><td class="in">↓ on a platform</td><td>Drop through it</td></tr></table>`;
+    html += `<h4>Everyone</h4><table><tr><td class="in">Jump</td><td>Up to 3 jumps in a row</td></tr><tr><td class="in">Dodge</td><td>Untouchable for a moment. Hold a direction to roll or air-dodge.</td></tr><tr><td class="in">↓ in the air</td><td>Fall fast</td></tr><tr><td class="in">↓ on a platform</td><td>Drop through it</td></tr><tr><td class="in">Taunt (Q · Num 6/O · Back/Select)</td><td>Show off on the ground. Any hit stops it!${d.taunt ? ` <i>"${d.taunt}"</i>` : ''}</td></tr></table>`;
     html += `<p class="keys">${KEYS}</p>`;
     $('#moveSheet').innerHTML = html;
   }
