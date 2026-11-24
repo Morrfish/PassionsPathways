@@ -435,7 +435,7 @@ window.MM = window.MM || {};
           const n = sp.count || 1;
           for (let i = 0; i < n; i++) {
             const ang = n > 1 ? (i - (n - 1) / 2) * (sp.spread || 0.2) : 0;
-            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, sprite: sp.sprite, scale: sp.scale, spin: sp.spin, boomer: sp.boomerang, pull: sp.pull, line: sp.line, dir: f.face });
+            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, sprite: sp.sprite, scale: sp.scale, spin: sp.spin, puddle: sp.puddle, slow: sp.slow, boomer: sp.boomerang, pull: sp.pull, line: sp.line, dir: f.face });
           }
         }
       },
@@ -755,6 +755,14 @@ window.MM = window.MM || {};
       if (p.boomer && p.t > 20) { const back = sgn(p.owner.x - p.x); p.vx += back * 0.55; p.vy += clamp((p.owner.y - 70 - p.y) * 0.01, -0.4, 0.4); if (p.t > 40 && Math.hypot(p.owner.x - p.x, p.owner.y - 70 - p.y) < 50) p.life = 0; }
       p.vy += p.grav;
       p.x += p.vx; p.y += p.vy;
+      if (p.puddle && p.vy > 0) { // lands and leaves a puddle (e.g. Siren's mac and cheese)
+        const s = surfaceBelow(G, p.x, p.y - p.vy - 2);
+        if (s !== null && p.y + p.r * 0.5 >= s) {
+          G.traps = G.traps.filter((t) => !(t.owner === p.owner && t.sp.slowOnly));
+          G.traps.push({ owner: p.owner, x: p.x, y: s, vy: 0, sp: p.puddle, life: p.puddle.life, armed: 0, dir: p.dir });
+          p.life = 0; continue;
+        }
+      }
       if (p.ground) {
         const s = surfaceBelow(G, p.x, p.y + 10);
         if (s !== null && s <= p.y + 22 + Math.max(0, p.vy)) { p.y = s - 18; p.vy = 0; }
@@ -784,6 +792,11 @@ window.MM = window.MM || {};
       if (s === null || t.y < s) { t.vy += 0.6; t.y += t.vy; if (s !== null && t.y >= s) { t.y = s; t.vy = 0; } }
       if (t.y > 1500) t.life = 0;
       if (t.armed > 0) continue;
+      if (t.sp.slowOnly) { // a puddle: slows enemies standing in it (refreshes, never stacks), no damage
+        const pb = { x: t.x - 60, y: t.y - 20, w: 120, h: 24 };
+        for (const d of G.fighters) if (d !== t.owner && !d.dead && !d.out && !MM.sameTeam(G, t.owner, d) && overlap(pb, MM.hurtbox(d)) && (!d.slow || d.slow.mul >= t.sp.slow.mul)) d.slow = { mul: t.sp.slow.mul, t: t.sp.slow.t };
+        continue;
+      }
       const box = { x: t.x - 22, y: t.y - 30, w: 44, h: 30 };
       for (const d of G.fighters) {
         if (d === t.owner || d.dead || d.out || d.invuln > 0) continue;

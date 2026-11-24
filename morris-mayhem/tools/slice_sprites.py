@@ -83,6 +83,25 @@ CHARACTERS = {
         'cutrows': {'ultimate.png': [72]},  # glows reach up into the title banner
         'mainonly': {'specials.png': ['pounce']},  # the baked cat is drawn separately as Krillin
     },
+    'siren': {
+        'scale': 0.62, 'cols': [165, 415, 695, 975, 9999],
+        'sheets': {
+            'move.png': ['idle', 'run', 'jump', 'hurt'],
+            'attacks.png': ['pop', 'rain', 'sweep', 'toss'],
+            'aerials.png': ['doodle', 'sky', 'boots', 'spin'],
+            'specials.png': ['sketch', 'blitz', 'note', 'mac'],
+            'props.png': {'rows': ['drag', 'bprop', 'aprop', 'mprop'], 'cols': [165, 420, 700, 1000, 9999]},
+            'defense.png': {'rows': ['def', 'bair'], 'cols': [220, 520, 920, 1400, 9999]},
+            'ultimate.png': {'rows': ['ult', 'pers'], 'cols': [200, 470, 860, 1395, 9999]},
+        },
+        'props': [],
+        'cutcols': {'ultimate.png': [(1395, 70, 420), (860, 70, 420)], 'specials.png': [(415, 70, 330), (695, 70, 330), (975, 70, 330)]},
+        'cutrows': {'ultimate.png': [72], 'specials.png': [68]},
+        # these two sheets have no name tags under the poses: row bands (y0, y1) given by hand
+        'rowbands': {'attacks.png': [(60, 325), (325, 600), (600, 872), (872, 1199)],
+                     'aerials.png': [(60, 325), (325, 600), (600, 872), (872, 1199)]},
+        'mainonly': {'specials.png': ['sketch']},  # the dragon is drawn separately when it springs out
+    },
     'mandi-mermaid': {
         'scale': 0.62, 'cols': [165, 415, 695, 975, 9999],
         'sheets': {
@@ -95,6 +114,7 @@ CHARACTERS = {
 }
 
 CUTROWS = {}
+ROWBANDS = {}
 
 def tag_bands(a):
     """Rows holding the yellow name tags (several separate yellow runs across the sheet)."""
@@ -122,9 +142,11 @@ def slice_sheet(path, names, cols, frames, scale, excl=(), cutcols=False, mainon
     tags = [b for b in bands if b[0] > 80]
     # rows of poses sit between the title and the first tag strip, then between tag strips
     rows, top = [], title_end
+    rb = ROWBANDS.get(path.rsplit('/', 1)[-1])
     a[max(0, title_end - 3):title_end + 1, :, 3] = 0  # separate the title banner from poses that touch it
     for b in tags:
         rows.append((top, b[0] - 6)); top = b[1] + 20
+    if rb: rows = list(rb)
     # a thin cut just above each tag strip separates poses that touch their tag
     cut_tags(a, tags)
     for (cx_, y0_, y1_) in (cutcols or {}).get(path.rsplit('/', 1)[-1], []): a[y0_:y1_, cx_ - 2:cx_ + 2, 3] = 0
@@ -202,7 +224,7 @@ if __name__ == '__main__':
     who, art, out = sys.argv[1:4]
     cfg = CHARACTERS[who]; frames = {}
     props = cfg.get('props', [])
-    CUTROWS.clear(); CUTROWS.update(cfg.get('cutrows', {}))
+    CUTROWS.clear(); CUTROWS.update(cfg.get('cutrows', {})); ROWBANDS.clear(); ROWBANDS.update(cfg.get('rowbands', {}))
     for sheet, names in cfg['sheets'].items():
         excl = [pt for (_, sh, pt) in props if sh == sheet and pt]
         cols = cfg['cols']

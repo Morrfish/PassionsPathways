@@ -140,7 +140,7 @@ MM.FIGHTERS = [
           up: { kind: 'rise', name: 'Tech Takeoff', power: 19.5, forward: 3, dmg: 5, kb: 6, kbg: 0.05 },
           down: { kind: 'supersaiyan', name: 'Super Saiyan Courtnee', dur: 480, cost: 25, cooldown: 900 },
         },
-        ultimate: { name: 'Maximum Morris', sprite: 'courtnee', type: 'beam', dur: 192, beamAt: 84, beamEnd: 129, len: 1500, dmg: 28, kbMul: 1.5,
+        ultimate: { name: 'Maximum Morris', sprite: 'courtnee', type: 'beam', dur: 192, beamAt: 84, beamEnd: 129, len: 1500, dmg: 28, kbMul: 1.5, beamX: 230, beamY: 1.1, beamTh: 170, beamX: 230, beamY: 1.1, beamTh: 170,
           desc: 'builds a tech mech, charges up with floating game screens and fires a giant beam straight ahead',
           poses: [[0, 'asm0'], [12, 'asm1'], [24, 'asm2'], [38, 'asm3'], [48, 'ult0'], [64, 'ult1'], [84, 'ult2'], [129, 'ult3'], [144, 'ret0'], [156, 'ret1'], [168, 'ret2'], [180, 'ret3']] },
       },
@@ -155,7 +155,7 @@ MM.FIGHTERS = [
           up: { kind: 'rise', name: 'Powered Tech Takeoff', power: 20.5, forward: 3, dmg: 6, kb: 6, kbg: 0.06 },
           down: { kind: 'supersaiyan', name: 'Super Saiyan (already on)', dur: 480, cost: 25, cooldown: 900 },
         },
-        ultimate: { name: 'Maximum Morris', sprite: 'courtnee', type: 'beam', dur: 192, beamAt: 84, beamEnd: 129, len: 1500, dmg: 28, kbMul: 1.5,
+        ultimate: { name: 'Maximum Morris', sprite: 'courtnee', type: 'beam', dur: 192, beamAt: 84, beamEnd: 129, len: 1500, dmg: 28, kbMul: 1.5, beamX: 230, beamY: 1.1, beamTh: 170, beamX: 230, beamY: 1.1, beamTh: 170,
           desc: 'builds a tech mech and fires a giant beam straight ahead (the Super Saiyan timer keeps running)',
           poses: [[0, 'asm0'], [12, 'asm1'], [24, 'asm2'], [38, 'asm3'], [48, 'ult0'], [64, 'ult1'], [84, 'ult2'], [129, 'ult3'], [144, 'ret0'], [156, 'ret1'], [168, 'ret2'], [180, 'ret3']] },
       },
@@ -178,6 +178,26 @@ MM.FIGHTERS = [
     // 2.8 s: open the giant book, lightstick rally, page wave with Krillin's hologram (forward only), seal the book
     ultimate: { name: 'Main Character Moment', sprite: 'megan', type: 'beam', noBeamArt: true, dur: 168, beamAt: 66, beamEnd: 102, len: 650, beamX: 60, beamY: 0.55, beamTh: 190, dmg: 26, kbMul: 1.5,
       desc: 'opens a giant storybook stage, rallies with a lightstick, then sends a wave of pages with a Krillin hologram straight ahead',
+      poses: [[0, 'ult0'], [36, 'ult1'], [66, 'ult2'], [120, 'ult3']] },
+  },
+  {
+    // Siren Morris, "The Creative Chaos" (16): art, singing, LEGO-style bricks, block games, K-pop and mac and cheese.
+    // A teen, drawn at near-adult height (0.94). Moves/numbers from ChatGPT's Siren pack (proposed). Art: ChatGPT sheets.
+    id: 'siren', name: 'Siren Morris', title: 'The Creative Chaos', photo: 'img/siren.png', sprite: 'siren',
+    color: '#e0218a', accent: '#ffd400', skin: '#f2c4a4', hair: '#7a4a2a',
+    stats: { speed: 7, air: 6.5, jump: 15.6, weight: 0.9, power: 0.97, size: 0.94 },
+    attackNames: { jab: 'Pencil Pop', side: 'Masterpiece Toss', up: 'Rising Rainbow', down: 'Color Sweep', air: 'Doodle Swipe, Sky Scribble, Brick Boots, Stage Spin' },
+    specials: {
+      neutral: { kind: 'pack', name: 'Sketch Attack', thing: 'her doodle dragon', sprites: ['drag1'], anim: ['drag1', 'drag2', 'drag3', 'drag2'], names: ['her doodle dragon'], scale: 0.62, speed: 10, life: 72, dmg: 6, kb: 6, kbg: 0.07, cd: 90 },
+      side: { kind: 'dash', name: 'Brick Blitz', ride: true, speed: 14, dur: 27, dmg: 8, kb: 7.5, kbg: 0.11, ang: 30, cd: 180, box: [-10, -95, 115, 95] },
+      up: { kind: 'rise', name: 'High Note', power: 19.5, dmg: 6, kb: 6, kbg: 0.06 },
+      down: { kind: 'projectile', name: 'Mac Attack', thing: 'a glob of mac and cheese that leaves a slippery puddle', sprite: 'mprop2', scale: 0.55, speed: 8, vy: -6, grav: 0.4, dmg: 3, kb: 4, kbg: 0.03, r: 18, life: 120, cd: 180,
+        slow: { mul: 0.75, t: 36 }, puddle: { sprite: 'mprop3', scale: 0.7, slowOnly: true, slow: { mul: 0.75, t: 36 }, life: 90 } },
+    },
+    taunt: 'Watch what I can create!',
+    // 2.8 s: sketchbook, block concert stage, paint wave straight ahead (26 dmg once each), confetti finish
+    ultimate: { name: "Siren's World", sprite: 'siren', type: 'beam', noBeamArt: true, dur: 168, beamAt: 66, beamEnd: 105, len: 650, beamX: 60, beamY: 0.55, beamTh: 190, dmg: 26, kbMul: 1.5,
+      desc: 'draws in her sketchbook, a block concert stage rises, then a rainbow paint wave sweeps straight ahead',
       poses: [[0, 'ult0'], [36, 'ult1'], [66, 'ult2'], [120, 'ult3']] },
   },
 ];

@@ -219,7 +219,7 @@ window.MM = window.MM || {};
     shockwave: () => 'sends shockwaves along the ground both ways', dash: (s) => `charges forward${s.armor ? " and can't be stopped by small hits" : ''}`,
     rise: (s) => `launches up${s.parachute ? ' and floats down on a parachute' : ''} (gets back to the stage)`, teleport: () => 'vanishes and reappears (aim it)', slam: () => 'dives down and crashes',
     spin: () => 'spins and hits again and again', counter: () => 'blocks a hit and strikes back (bounces things back too)',
-    pack: (s) => `sends ${s.names ? s.names.join(', ').replace(/, ([^,]*)$/, ' and $1') : 'a pack'} running along the floor`,
+    pack: (s) => s.names && s.names.length === 1 ? `sends ${s.names[0]} out to pounce` : `sends ${s.names ? s.names.join(', ').replace(/, ([^,]*)$/, ' and $1') : 'a pack'} running along the floor`,
     beam: (s) => `fires ${s.thing || 'an energy beam'}`,
     supersaiyan: (s) => `turns Super Saiyan for ${s.dur / 60} s: faster and ${'30'}% stronger. When it wears off he takes +${s.cost}% damage; ${s.cooldown / 60} s before he can do it again`,
     icewave: (s) => `does a retro dance, then sends ${s.thing} along the floor that slows people down`,

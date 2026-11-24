@@ -40,6 +40,7 @@ window.MM = window.MM || {};
       if (a.type === 'special') {
         const row = M[{ neutral: 'neutral', side: 'sideSpecial', up: 'upSpecial', down: 'downSpecial' }[a.slot]];
         const kind = a.sp.kind;
+        if (kind === 'dash' && a.sp.ride) return row + (a.t < 3 ? 0 : a.t < 6 ? 1 : a.box ? 2 : 3); // build the cart, ride it, hop off
         if (kind === 'dash') return row + (a.t < 6 ? 0 : a.box ? 1 + ((a.t >> 2) & 1) : 3);
         if (kind === 'rise') return a.chute ? row + 2 : a.t < 4 ? row + 0 : a.t < 12 ? row + 1 : M.riseLate;
         if (kind === 'projectile') return row + (a.t < 5 ? 0 : a.t < 9 ? 1 : a.t < 16 ? 2 : 3);
@@ -685,7 +686,7 @@ window.MM = window.MM || {};
     g.setTransform(scale, 0, 0, scale, W / 2 - cam.x * scale + (Math.random() - 0.5) * sh, H / 2 - cam.y * scale + (Math.random() - 0.5) * sh);
     art.floor(g, G.stage, G.stage.main, G);
     for (const p of G.stage.plats) art.plat(g, p, G);
-    for (const t of G.traps) if (t.sp.sprite) drawSpriteProj(g, { sprite: t.sp.sprite, owner: t.owner, x: t.x, y: t.y - 18, runner: true, t: 0, dir: t.dir || 1 }, G);
+    for (const t of G.traps) if (t.sp.sprite) drawSpriteProj(g, { sprite: t.sp.sprite, owner: t.owner, x: t.x, y: t.y - 18, runner: true, t: 0, dir: t.dir || 1, scale: t.sp.scale }, G);
     for (const t of G.traps) { if (t.sp.sprite) continue; g.globalAlpha = t.armed > 0 ? 0.5 : 1; g.font = '44px serif'; g.textAlign = 'center'; g.textBaseline = 'bottom'; g.fillText(t.sp.emoji || '⚠️', t.x, t.y + 4); g.globalAlpha = 1; }
     for (const f of G.fighters) drawFighter(g, f, G);
     for (const f of G.fighters) drawUltFx(g, f, G);
