@@ -73,6 +73,7 @@ If it isn't reachable, ask her to paste the info and attach the pictures in chat
 | `src/js/data.js` | `MM.FIGHTERS` (roster), `MM.STAGES`, `MM.NORMALS` (shared basic attacks). Most edits happen here. |
 | `src/js/engine.js` | Fixed 60 Hz sim: movement, jumps (1 + 2 air), dodge, hitboxes, knockback, `ABILITIES` (every special kind), projectiles, traps, blast zones/KOs, WebAudio sfx. |
 | `src/js/ai.js` | `MM.aiThink(G, f)` returns a controller-shaped input. Levels 1–3. |
+| `src/js/stage-art.js` | Illustrated arenas: background + prop atlas per stage (`src/img/stages/`), where each platform prop's walkable top is (`sx0`,`sx1`,`sy`), decor. Atlases come from `tools/slice_stage_props.py`. Collision stays in `MM.STAGES` (data.js; `move` makes a platform sway and carry fighters). |
 | `src/js/render.js` | Camera, procedural stage art (`STAGE_ART` keyed by stage `theme`), fighter drawing, `MM.drawHead` (photo or cartoon face), HUD, portraits. |
 | `src/js/input.js` | Devices `k1`, `k2`, `p0`–`p3` (Gamepad API), `touch`. All return `{x,y,jump,attack,special,dodge,pause}`. |
 | `src/js/ui.js` | Screens (title with a CPU demo behind it, select, how-to, family cards, pause, results), slot setup saved under `mm_*` localStorage keys, main loop. `MM.debug.startMatch(setup)` starts a match for tests. |

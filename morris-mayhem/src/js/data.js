@@ -144,6 +144,12 @@ MM.FIGHTERS = [
 //   plats     pass-through platforms (jump up through them, press down to drop)
 //   blast     how far past the floor edge you go before you're KO'd
 //   theme     which background to draw (render.js STAGE_ART)
+// Illustrated arenas (from the family's artwork) also have:
+//   pic       on a platform: which prop picture to draw for it (art details in stage-art.js)
+//   move      on a platform: it sways { ax, ay (world px), period (frames) }; fighters standing on it ride along
+//   main.depth of an illustrated arena is set from its floor picture in stage-art.js.
+// The illustrated arenas were planned on a 1600 x 900 picture (stages.json in the Drive art folder):
+// world x = picture x - 800, world y = picture y - 710 (scale 1), so the main floors are 1280 wide.
 MM.STAGES = [
   { id: 'backyard', name: 'Backyard BBQ', theme: 'backyard',
     main: { left: -620, right: 620, depth: 220 },
@@ -157,6 +163,28 @@ MM.STAGES = [
     main: { left: -700, right: 700, depth: 160 },
     plats: [],
     blast: { side: 1300, top: -1050, bottom: 800 } },
+  { id: 'dunkirk', name: 'Main Street Mayhem (Dunkirk)', theme: 'dunkirk',
+    main: { left: -640, right: 640, depth: 200 },
+    plats: [{ x: -490, y: -195, w: 280, pic: 'storefront' }, { x: 210, y: -195, w: 280, pic: 'crates' }],
+    blast: { side: 1250, top: -1050, bottom: 800 } },
+  { id: 'hardin-northern', name: 'Polar Bear Gym (Hardin Northern)', theme: 'hardin',
+    main: { left: -640, right: 640, depth: 200 },
+    plats: [{ x: -510, y: -190, w: 310, pic: 'bleachers' }, { x: 200, y: -190, w: 310, pic: 'bleachers' }, { x: -150, y: -345, w: 300, pic: 'vault' }],
+    blast: { side: 1250, top: -1050, bottom: 800 } },
+  { id: 'williamstown', name: 'Family Picnic (Williamstown)', theme: 'williamstown',
+    main: { left: -640, right: 640, depth: 200 },
+    plats: [{ x: -480, y: -190, w: 300, pic: 'picnic' }, { x: 180, y: -190, w: 300, pic: 'bench' }],
+    blast: { side: 1250, top: -1050, bottom: 800 } },
+  { id: 'graceland', name: 'Music Gate Mix-Up (Graceland)', theme: 'graceland',
+    main: { left: -640, right: 640, depth: 200 },
+    // the family van is parked on the terrace; only its flat roof is a (pass-through) platform
+    plats: [{ x: -500, y: -200, w: 300, pic: 'piano' }, { x: 200, y: -200, w: 300, pic: 'riser' }, { x: -142, y: -235, w: 324, pic: 'van' }],
+    blast: { side: 1250, top: -1050, bottom: 800 } },
+  { id: 'agnew', name: "PawPaw's Dock (Agnew Lake)", theme: 'agnew',
+    main: { left: -640, right: 640, depth: 200 },
+    // the fishing boat rocks back and forth on the lake (6 seconds per sway)
+    plats: [{ x: -500, y: -210, w: 290, pic: 'shortdock' }, { x: 150, y: -175, w: 350, pic: 'boat', move: { ax: 65, ay: 10, period: 360 } }],
+    blast: { side: 1250, top: -1050, bottom: 800 } },
 ];
 
 // Normal attacks everyone shares (the specials are what make each fighter different).
