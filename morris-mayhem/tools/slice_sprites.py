@@ -67,6 +67,22 @@ CHARACTERS = {
         },
         'props': [],
     },
+    'megan': {
+        'scale': 0.62, 'cols': [165, 415, 695, 975, 9999],
+        'sheets': {
+            'move.png': ['idle', 'run', 'jump', 'hurt'],
+            'attacks.png': ['hit', 'chapter', 'beat', 'ret'],
+            'aerials.png': ['page', 'note', 'drop', 'fan'],
+            'specials.png': ['twist', 'pounce', 'encore', 'nap'],
+            'krillin.png': {'rows': ['krun', 'kpounce', 'kstate', 'prop'], 'cols': [165, 415, 695, 975, 9999]},
+            'defense.png': {'rows': ['def', 'bair'], 'cols': [240, 600, 990, 1380, 9999]},
+            'ultimate.png': {'rows': ['ult', 'pers'], 'cols': [200, 540, 880, 1390, 9999]},
+        },
+        'props': [],
+        'cutcols': {'ultimate.png': [(870, 70, 420)]},
+        'cutrows': {'ultimate.png': [72]},  # glows reach up into the title banner
+        'mainonly': {'specials.png': ['pounce']},  # the baked cat is drawn separately as Krillin
+    },
     'mandi-mermaid': {
         'scale': 0.62, 'cols': [165, 415, 695, 975, 9999],
         'sheets': {
@@ -77,6 +93,8 @@ CHARACTERS = {
         'props': [('bubbleball', 'specials.png', (968, 128))],
     },
 }
+
+CUTROWS = {}
 
 def tag_bands(a):
     """Rows holding the yellow name tags (several separate yellow runs across the sheet)."""
@@ -96,7 +114,7 @@ def cut_tags(a, tags):
         a[b[0] - 7:b[0] - 4, :, 3] = 0
         a[b[1] + 12:b[1] + 15, :, 3] = 0
 
-def slice_sheet(path, names, cols, frames, scale, excl=(), cutcols=False):
+def slice_sheet(path, names, cols, frames, scale, excl=(), cutcols=False, mainonly=()):
     a = np.array(Image.open(path).convert('RGBA'))
     a[..., 3][a[..., 3] < 64] = 0
     bands = tag_bands(a)
@@ -110,6 +128,7 @@ def slice_sheet(path, names, cols, frames, scale, excl=(), cutcols=False):
     # a thin cut just above each tag strip separates poses that touch their tag
     cut_tags(a, tags)
     for (cx_, y0_, y1_) in (cutcols or {}).get(path.rsplit('/', 1)[-1], []): a[y0_:y1_, cx_ - 2:cx_ + 2, 3] = 0
+    for ry in CUTROWS.get(path.rsplit('/', 1)[-1], []): a[ry - 2:ry + 2, :, 3] = 0
     m = a[..., 3] >= 128
     lab, n = nd.label(m)
     objs = nd.find_objects(lab)
@@ -120,6 +139,7 @@ def slice_sheet(path, names, cols, frames, scale, excl=(), cutcols=False):
         y, x = o
         cy, cx = (y.start + y.stop) / 2, (x.start + x.stop) / 2
         if cx < cols[0] or y.stop < title_end + 20: continue           # row labels, title banner
+        if (y.stop - y.start) < 8 and (x.stop - x.start) > 150: continue  # layout rule lines
         px = a[y, x][lab[y, x] == i + 1]
         if ((px[:, 0] > 200) & (px[:, 1] > 150) & (px[:, 2] < 110)).mean() > 0.3 and (y.stop - y.start) < 80: continue  # name tag
         r = next((k for k, (y0, y1) in enumerate(rows) if y0 <= cy < y1), None)
@@ -144,6 +164,7 @@ def slice_sheet(path, names, cols, frames, scale, excl=(), cutcols=False):
             if best[0] != key: grid[key].remove(k); grid[best[0]].append(k)
     for (r, c), comps in grid.items():
         if not comps: continue
+        if names[r] in mainonly: comps = [max(comps, key=lambda k: k[2])]
         keep = np.isin(lab, [k[0] for k in comps])
         y0 = min(k[1][0].start for k in comps); y1 = max(k[1][0].stop for k in comps)
         x0 = min(k[1][1].start for k in comps); x1 = max(k[1][1].stop for k in comps)
@@ -181,11 +202,12 @@ if __name__ == '__main__':
     who, art, out = sys.argv[1:4]
     cfg = CHARACTERS[who]; frames = {}
     props = cfg.get('props', [])
+    CUTROWS.clear(); CUTROWS.update(cfg.get('cutrows', {}))
     for sheet, names in cfg['sheets'].items():
         excl = [pt for (_, sh, pt) in props if sh == sheet and pt]
         cols = cfg['cols']
         if isinstance(names, dict): cols = names['cols']; names = names['rows']
-        slice_sheet(f'{art}/{sheet}', names, cols, frames, cfg['scale'], excl, cfg.get('cutcols'))
+        slice_sheet(f'{art}/{sheet}', names, cols, frames, cfg['scale'], excl, cfg.get('cutcols'), cfg.get('mainonly', {}).get(sheet, ()))
     for name, sheet, pt in props:
         if not pt: continue
         a = np.array(Image.open(f'{art}/{sheet}').convert('RGBA')); a[..., 3][a[..., 3] < 64] = 0

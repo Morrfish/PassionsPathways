@@ -435,7 +435,7 @@ window.MM = window.MM || {};
           const n = sp.count || 1;
           for (let i = 0; i < n; i++) {
             const ang = n > 1 ? (i - (n - 1) / 2) * (sp.spread || 0.2) : 0;
-            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, sprite: sp.sprite, boomer: sp.boomerang, pull: sp.pull, line: sp.line, dir: f.face });
+            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, sprite: sp.sprite, scale: sp.scale, spin: sp.spin, boomer: sp.boomerang, pull: sp.pull, line: sp.line, dir: f.face });
           }
         }
       },
@@ -545,7 +545,7 @@ window.MM = window.MM || {};
         if (a.t === 12) {
           const n = (sp.sprites || [null]).length;
           for (let i = 0; i < n; i++) {
-            spawnProj(G, f, { x: f.x + f.face * (20 - i * 34), y: f.y - 18, vx: f.face * (sp.speed + i * 0.7), vy: 0, r: 20, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: 45, life: sp.life || 95, ground: true, fall: true, sprite: sp.sprites && sp.sprites[i], emoji: sp.emoji, dir: f.face, runner: true });
+            spawnProj(G, f, { x: f.x + f.face * (20 - i * 34), y: f.y - 18, vx: f.face * (sp.speed + i * 0.7), vy: 0, r: 20, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: 45, life: sp.life || 95, ground: true, fall: true, sprite: sp.sprites && sp.sprites[i], anim: sp.anim, scale: sp.scale, emoji: sp.emoji, dir: f.face, runner: true });
           }
           MM.sfx('jump');
         }
@@ -609,12 +609,13 @@ window.MM = window.MM || {};
       start(G, f, sp, a) { a.dur = sp.window + 20; a.pose = 'guard'; a.counter = true; a.window = sp.window; },
       tick(G, f, sp, a) { if (!f.ground) f.vy = Math.min(f.vy, 2); if (a.t > a.window) a.counter = false; },
     },
-    heal: {
-      start(G, f, sp, a) { a.dur = 50; a.pose = 'guard'; },
+    heal: { // e.g. Megan's Power Nap: sit and nap (any hit wakes her up with no healing), heal once at the end
+      start(G, f, sp, a) { if (sp.grounded && !f.ground) { f.act = null; f.cd.down = 0; return; } a.healAt = sp.channel || 40; a.dur = a.healAt + (sp.recovery || 10); a.pose = 'guard'; },
       tick(G, f, sp, a) {
         if (!f.ground) f.vy = Math.min(f.vy, 1);
-        if (a.t % 5 === 0) part(G, { type: 'text', text: '+', x: f.x + (Math.random() - 0.5) * 60, y: f.y - Math.random() * f.h, vy: -1.5, color: '#5dff8f', size: 22, life: 30, max: 30 });
-        if (a.t === 40) { const amt = Math.min(f.damage, sp.amount); f.damage -= amt; popText(G, f.x, f.y - f.h - 20, `-${Math.round(amt)}%`, '#5dff8f'); MM.sfx('heal'); }
+        f.vx *= 0.7;
+        if (a.t < a.healAt && a.t % 5 === 0) part(G, { type: 'text', text: '+', x: f.x + (Math.random() - 0.5) * 60, y: f.y - Math.random() * f.h, vy: -1.5, color: '#5dff8f', size: 22, life: 30, max: 30 });
+        if (a.t === a.healAt) { const amt = Math.min(f.damage, sp.amount); f.damage -= amt; popText(G, f.x, f.y - f.h - 20, `-${Math.round(amt)}%`, '#5dff8f'); MM.sfx('heal'); }
       },
     },
     trap: {
@@ -672,7 +673,7 @@ window.MM = window.MM || {};
       }
     } else if (u.type === 'beam') { // e.g. Maximum Morris: a giant beam straight ahead, each opponent hit once
       if (a.t >= u.beamAt && a.t < u.beamEnd) {
-        const y = f.y - f.h * 0.75, th = 120 * f.s, x = f.x + f.face * 175 * f.s;
+        const y = f.y - f.h * (u.beamY || 0.75), th = (u.beamTh || 120) * f.s, x = f.x + f.face * (u.beamX || 175) * f.s;
         a.beam = { x, y, len: u.len, dir: f.face, th, big: true };
         a.box = { x: f.face > 0 ? x : x - u.len, y: y - th / 2, w: u.len, h: th };
         a.hitProps = { dmg: u.dmg, kb: 9 * u.kbMul, kbg: 0.12 * u.kbMul, ang: 30 };

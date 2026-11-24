@@ -161,6 +161,25 @@ MM.FIGHTERS = [
       },
     ],
   },
+  {
+    // Megan Morris, "The Book & Beat Queen": books, K-pop/BTS, cats (her orange tabby Krillin) and naps.
+    // Moves/numbers from ChatGPT's Megan pack (proposed). Art: ChatGPT sheets.
+    id: 'megan', name: 'Megan Morris', title: 'The Book & Beat Queen', photo: 'img/megan.png', sprite: 'megan',
+    color: '#2e7d32', accent: '#c8a24a', skin: '#f1c2a0', hair: '#6b4226',
+    stats: { speed: 6.8, air: 6.3, jump: 15.4, weight: 0.95, power: 1, size: 0.98 },
+    attackNames: { jab: 'Hardcover Hit', side: 'Overdue Return', up: 'Rising Chapter', down: 'Beat Drop', air: 'Page Turner, High Note, Book Drop, Fan Spin' },
+    specials: {
+      neutral: { kind: 'projectile', name: 'Plot Twist', thing: 'three glowing green pages', sprite: 'prop3', scale: 0.32, speed: 11, dmg: 3, kb: 4, kbg: 0.04, r: 16, life: 60, count: 3, spread: 0.22, cd: 72 },
+      side: { kind: 'pack', name: 'Krillin Pounce', thing: 'Krillin', sprites: ['krun0'], anim: ['krun0', 'krun1', 'krun2', 'krun3'], names: ['Krillin'], scale: 0.42, speed: 9, life: 72, dmg: 6, kb: 6, kbg: 0.07, cd: 180 },
+      up: { kind: 'rise', name: 'Encore Rise', power: 19.5, dmg: 6, kb: 6, kbg: 0.06 },
+      down: { kind: 'heal', name: 'Power Nap', amount: 8, channel: 72, recovery: 21, grounded: true, cd: 600 },
+    },
+    taunt: 'Just one more chapter… then you\'re next!',
+    // 2.8 s: open the giant book, lightstick rally, page wave with Krillin's hologram (forward only), seal the book
+    ultimate: { name: 'Main Character Moment', sprite: 'megan', type: 'beam', noBeamArt: true, dur: 168, beamAt: 66, beamEnd: 102, len: 650, beamX: 60, beamY: 0.55, beamTh: 190, dmg: 26, kbMul: 1.5,
+      desc: 'opens a giant storybook stage, rallies with a lightstick, then sends a wave of pages with a Krillin hologram straight ahead',
+      poses: [[0, 'ult0'], [36, 'ult1'], [66, 'ult2'], [120, 'ult3']] },
+  },
 ];
 
 // Stages. Units are world pixels; y grows downward; the main floor top is y = 0.

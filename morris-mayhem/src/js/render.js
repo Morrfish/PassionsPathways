@@ -118,7 +118,7 @@ window.MM = window.MM || {};
 
   // one smooth energy beam (no tiles): soft outer glow, bright core, the art's beam tip at the end, an orb at the hands
   function drawBeam(g, f, G) {
-    const b = f.act && f.act.beam; if (!b) return;
+    const b = f.act && f.act.beam; if (!b || (f.act.u && f.act.u.noBeamArt)) return; // some ultimates draw their wave in the pose art
     const sh = f.def.sprite && sheet(f.def.sprite), tip = sh && sh.S.frames.fx3, orb = sh && sh.S.frames.fx0;
     const gold = !!f.super, flick = 1 + 0.06 * Math.sin(G.frame * 1.7), th = b.th * flick;
     g.save(); g.translate(b.x, b.y); g.scale(b.dir, 1);
@@ -159,8 +159,8 @@ window.MM = window.MM || {};
   function drawSpriteProj(g, p) {
     const sh = p.sprite && p.owner.def.sprite && sheet(p.owner.def.sprite);
     if (!sh) return false;
-    const fr = sh.S.frames[p.sprite]; if (!fr) return false;
-    const k = (p.owner.h * 1.15) / sh.S.standH;
+    const fr = sh.S.frames[p.anim ? p.anim[Math.floor(p.t / 5) % p.anim.length] : p.sprite]; if (!fr) return false;
+    const k = ((p.owner.h * 1.15) / sh.S.standH) * (p.scale || 1);
     if (p.line && !p.owner.dead && !p.owner.out) { // fishing line from the rod to the bobber
       const o = p.owner;
       g.save(); g.strokeStyle = 'rgba(30,30,30,.8)'; g.lineWidth = 2; g.beginPath();
