@@ -76,4 +76,5 @@ select { background: var(--panel); border: 2px solid var(--line); border-radius:
 #touch .tbtns button, #touch .tpause { width: 70px; height: 70px; border-radius: 50%; font-size: 28px; background: #ffffff22; border: 3px solid #ffffff66; padding: 0; }
 #touch button.on { background: #ffffff77; }
 #touch .tswap { pointer-events: auto; position: absolute; right: max(24px, env(safe-area-inset-right)); bottom: 196px; width: 56px; height: 56px; border-radius: 50%; font-size: 24px; background: #ffffff22; border: 3px solid #ffffff66; padding: 0; }
+#touch .tult { pointer-events: auto; position: absolute; right: calc(max(24px, env(safe-area-inset-right)) + 70px); bottom: 196px; width: 56px; height: 56px; border-radius: 50%; font-size: 13px; font-weight: 900; background: #ffc21a44; border: 3px solid #ffc21a; padding: 0; }
 #touch .tpause { pointer-events: auto; position: absolute; top: 12px; right: 12px; width: 48px; height: 48px; font-size: 18px; }

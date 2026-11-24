@@ -247,3 +247,31 @@ MM.SPRITES['mandi-mermaid'] = {
   },
   moves: {"jab": "shell", "side": "shell", "down": "dive", "up": "tide", "nair": "fin", "fair": "fin", "uair": "tide", "dair": "dive", "neutral": "bubble", "sideSpecial": "wave", "upSpecial": "surface", "downSpecial": "whirl", "airRow": "fin", "upRow": "tide", "uairRow": "tide", "riseLate": "surface2"},
 };
+
+MM.SPRITES['patty-ult'] = { src: 'img/patty-ult-atlas.webp', standH: 184, frames: {
+    'ult0': [0, 0, 166, 232, 91.6, 231.9],
+    'ult1': [170, 0, 280, 251, 173.6, 251.1],
+    'ult2': [454, 0, 252, 252, 140.3, 251.7],
+    'ult3': [710, 0, 280, 255, 151.4, 254.8]
+} };
+
+MM.SPRITES['jeffery-ult'] = { src: 'img/jeffery-ult-atlas.webp', standH: 154, frames: {
+    'ult0': [0, 0, 128, 195, 66.7, 194.7],
+    'ult1': [132, 0, 151, 196, 74.1, 195.9],
+    'ult2': [287, 0, 338, 185, 150.2, 185.4],
+    'ult3': [629, 0, 223, 205, 116.2, 204.6]
+} };
+
+MM.SPRITES['mandi-witch-ult'] = { src: 'img/mandi-witch-ult-atlas.webp', standH: 159, frames: {
+    'ult0': [0, 0, 100, 140, 45.5, 139.5],
+    'ult1': [104, 0, 185, 146, 75.6, 146.3],
+    'ult2': [293, 0, 173, 146, 86.1, 146.3],
+    'ult3': [470, 0, 188, 146, 88.2, 146.3]
+} };
+
+MM.SPRITES['mandi-mermaid-ult'] = { src: 'img/mandi-mermaid-ult-atlas.webp', standH: 153, frames: {
+    'ult0': [0, 0, 74, 136, 34.4, 135.8],
+    'ult1': [78, 0, 175, 126, 68.6, 125.9],
+    'ult2': [257, 0, 200, 140, 105.8, 140.1],
+    'ult3': [461, 0, 155, 133, 62.5, 132.7]
+} };

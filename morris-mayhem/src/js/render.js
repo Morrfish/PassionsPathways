@@ -54,9 +54,15 @@ window.MM = window.MM || {};
   }
 
   function drawSpriteFighter(g, f, G) {
-    const sh = f.def.sprite && sheet(f.def.sprite);
+    let sh = f.def.sprite && sheet(f.def.sprite);
     if (!sh) return false;
-    const { S, im } = sh, fr = S.frames[pickFrame(f, S)] || S.frames.idle0;
+    let frameName = pickFrame(f, sh.S);
+    const ua = f.act && f.act.type === 'ult' && f.act.u;
+    if (ua && ua.sprite && sheet(ua.sprite) && ua.poses.length) { // ultimate key poses
+      sh = sheet(ua.sprite); frameName = ua.poses[0][1];
+      for (const [t, p] of ua.poses) if (f.act.t >= t) frameName = p;
+    }
+    const { S, im } = sh, fr = S.frames[frameName] || S.frames.idle0;
     const k = (f.h * 1.15) / S.standH;
     g.save();
     g.translate(f.x, f.y);
@@ -71,6 +77,26 @@ window.MM = window.MM || {};
     const a = f.act;
     if (a && a.counter) { g.strokeStyle = 'rgba(255,255,140,.9)'; g.lineWidth = 4; g.beginPath(); g.arc(f.x, f.y - f.h / 2, 72 + Math.sin(G.frame) * 4, 0, TAU); g.stroke(); }
     return true;
+  }
+
+  function drawUltFx(g, f, G) {
+    const a = f.act; if (!a || a.type !== 'ult') return;
+    if (a.u.type === 'stampede' && a.sweepX != null) {
+      g.save(); g.font = '72px serif'; g.textAlign = 'center'; g.textBaseline = 'bottom';
+      const herd = a.u.emoji || ['🦌', '🐇', '🐿️', '🦌', '🐇'];
+      herd.forEach((e, i) => {
+        const x = a.sweepX - f.face * i * 70, y = f.y - Math.abs(Math.sin(G.frame * 0.4 + i)) * 26;
+        g.save(); g.translate(x, y); g.scale(-f.face, 1); g.fillText(e, 0, 0); g.restore(); // emoji animals face left; flip to run forward
+      });
+      g.restore();
+    }
+    if (a.u.type === 'catch') {
+      const k = Math.min(1, a.t / a.u.catchAt), r = a.u.radius * f.h * (a.t < a.u.catchAt ? k : 1);
+      g.save(); g.globalAlpha = 0.25 + 0.15 * Math.sin(G.frame * 0.5); g.strokeStyle = f.accent; g.lineWidth = 8;
+      g.beginPath(); g.arc(f.x, f.y - f.h / 2, r, 0, TAU); g.stroke();
+      if (!a.u.sprite && a.t > a.u.catchAt) { g.globalAlpha = 0.9; g.font = '64px serif'; g.textAlign = 'center'; for (let i = 0; i < 6; i++) { const ang = G.frame * 0.12 + (i * TAU) / 6; g.fillText(a.u.emoji || '💥', f.x + Math.cos(ang) * r * 0.7, f.y - f.h / 2 + Math.sin(ang) * r * 0.5); } }
+      g.restore();
+    }
   }
 
   function drawSpriteProj(g, p) {
@@ -389,6 +415,13 @@ window.MM = window.MM || {};
       const shake = f.hitstun > 0 ? (Math.random() - 0.5) * 6 : 0;
       g.strokeText(f.out ? 'OUT' : dmg + '%', tx + shake, y0 + chh * 0.3); g.fillText(f.out ? 'OUT' : dmg + '%', tx + shake, y0 + chh * 0.3);
       for (let k = 0; k < f.stocks; k++) { g.fillStyle = MM.PLAYER_COLORS[f.slot]; g.beginPath(); g.arc(tx + 8 + k * 18, y0 + chh - 12, 6, 0, TAU); g.fill(); }
+      if (!f.out && f.def.ultimate) { // ultimate meter
+        const mx = tx + Math.max(60, f.stocks * 18 + 10), mw = x + cw - 10 - mx, my = y0 + chh - 17, full = f.meter >= 100;
+        g.fillStyle = '#0008'; rr(g, mx, my, mw, 10, 5); g.fill();
+        g.fillStyle = full ? `hsl(${45 + 15 * Math.sin(G.frame * 0.3)},100%,${55 + 10 * Math.sin(G.frame * 0.3)}%)` : '#ffc21a';
+        if (f.meter > 0) { rr(g, mx, my, Math.max(6, (mw * f.meter) / 100), 10, 5); g.fill(); }
+        if (full) { g.font = `900 ${Math.round(chh * 0.15)}px system-ui`; g.textAlign = 'right'; g.textBaseline = 'bottom'; g.lineWidth = 3; g.strokeStyle = '#000'; g.strokeText('ULTIMATE!', x + cw - 10, my - 1); g.fillStyle = '#ffc21a'; g.fillText('ULTIMATE!', x + cw - 10, my - 1); }
+      }
       g.globalAlpha = 1;
     });
   }
@@ -418,6 +451,7 @@ window.MM = window.MM || {};
     for (const t of G.traps) if (t.sp.sprite) drawSpriteProj(g, { sprite: t.sp.sprite, owner: t.owner, x: t.x, y: t.y - 18, runner: true, t: 0, dir: t.dir || 1 }, G);
     for (const t of G.traps) { if (t.sp.sprite) continue; g.globalAlpha = t.armed > 0 ? 0.5 : 1; g.font = '44px serif'; g.textAlign = 'center'; g.textBaseline = 'bottom'; g.fillText(t.sp.emoji || '⚠️', t.x, t.y + 4); g.globalAlpha = 1; }
     for (const f of G.fighters) drawFighter(g, f, G);
+    for (const f of G.fighters) drawUltFx(g, f, G);
     for (const p of G.projs) drawProj(g, p, G);
     drawParts(g, G);
     g.setTransform(1, 0, 0, 1, 0, 0);
@@ -427,6 +461,18 @@ window.MM = window.MM || {};
       const s = Math.ceil(Math.max(0, G.timeLeft) / 60), txt = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
       g.font = `900 ${Math.round(H * 0.05)}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'top'; g.lineWidth = 6; g.strokeStyle = '#1a0b2e';
       g.strokeText(txt, W / 2, H * 0.02); g.fillStyle = s <= 10 ? '#ff4b4b' : '#fff'; g.fillText(txt, W / 2, H * 0.02);
+    }
+    if (G.flash > 0) { g.fillStyle = `rgba(255,255,255,${G.flash / 14})`; g.fillRect(0, 0, W, H); }
+    if (G.ultBanner) { // ultimate name sweeps across the screen
+      const b = G.ultBanner, k = b.t / 100, slide = k > 0.85 ? (k - 0.85) / 0.15 : k < 0.15 ? -(0.15 - k) / 0.15 : 0;
+      g.save(); g.globalAlpha = Math.min(1, k * 4);
+      g.fillStyle = 'rgba(26,11,46,.82)'; g.fillRect(0, H * 0.16, W, H * 0.14);
+      g.fillStyle = b.color; g.fillRect(0, H * 0.16, W, 6); g.fillRect(0, H * 0.30 - 6, W, 6);
+      g.font = `italic 900 ${Math.round(H * 0.075)}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle';
+      const tx2 = W / 2 + slide * W * 0.6;
+      g.lineWidth = 10; g.strokeStyle = '#1a0b2e'; g.strokeText(b.text.toUpperCase() + '!', tx2, H * 0.23);
+      g.fillStyle = '#ffc21a'; g.fillText(b.text.toUpperCase() + '!', tx2, H * 0.23);
+      g.restore();
     }
     // big center text
     let big = null;

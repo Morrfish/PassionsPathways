@@ -12,13 +12,13 @@ window.MM = window.MM || {};
   addEventListener('blur', () => keys.clear());
 
   const KEYMAPS = {
-    k1: { left: ['KeyA'], right: ['KeyD'], up: ['KeyW'], down: ['KeyS'], jump: ['Space'], attack: ['KeyF'], special: ['KeyG'], dodge: ['KeyH', 'ShiftLeft'], swap: ['KeyR'], pause: ['Escape'] },
-    k2: { left: ['ArrowLeft'], right: ['ArrowRight'], up: ['ArrowUp'], down: ['ArrowDown'], jump: ['Numpad0', 'Enter', 'NumpadEnter'], attack: ['Numpad1', 'Comma', 'KeyK'], special: ['Numpad2', 'Period', 'KeyL'], dodge: ['Numpad3', 'Slash', 'Semicolon', 'ShiftRight'], swap: ['Numpad4', 'KeyJ'], pause: ['Backspace'] },
+    k1: { left: ['KeyA'], right: ['KeyD'], up: ['KeyW'], down: ['KeyS'], jump: ['Space'], attack: ['KeyF'], special: ['KeyG'], dodge: ['KeyH', 'ShiftLeft'], swap: ['KeyR'], ult: ['KeyE'], pause: ['Escape'] },
+    k2: { left: ['ArrowLeft'], right: ['ArrowRight'], up: ['ArrowUp'], down: ['ArrowDown'], jump: ['Numpad0', 'Enter', 'NumpadEnter'], attack: ['Numpad1', 'Comma', 'KeyK'], special: ['Numpad2', 'Period', 'KeyL'], dodge: ['Numpad3', 'Slash', 'Semicolon', 'ShiftRight'], swap: ['Numpad4', 'KeyJ'], ult: ['Numpad5', 'KeyU'], pause: ['Backspace'] },
   };
   const anyKey = (list) => list.some((c) => keys.has(c));
 
   // Touch: a left-side stick and four right-side buttons (only shown when a slot uses touch).
-  const touch = { x: 0, y: 0, jump: false, attack: false, special: false, dodge: false, swap: false, pause: false };
+  const touch = { x: 0, y: 0, jump: false, attack: false, special: false, dodge: false, swap: false, ult: false, pause: false };
   MM.touch = touch;
 
   function readKeys(id) {
@@ -28,7 +28,7 @@ window.MM = window.MM || {};
       y: (anyKey(m.down) ? 1 : 0) - (anyKey(m.up) ? 1 : 0),
       // Up also jumps (like Smash/Brawlhalla); the jump key works too.
       jump: anyKey(m.jump) || anyKey(m.up),
-      attack: anyKey(m.attack), special: anyKey(m.special), dodge: anyKey(m.dodge), swap: anyKey(m.swap), pause: anyKey(m.pause),
+      attack: anyKey(m.attack), special: anyKey(m.special), dodge: anyKey(m.dodge), swap: anyKey(m.swap), ult: anyKey(m.ult), pause: anyKey(m.pause),
     };
   }
 
@@ -42,7 +42,7 @@ window.MM = window.MM || {};
     let x = dz(p.axes[0] || 0), y = dz(p.axes[1] || 0);
     if (b(14)) x = -1; if (b(15)) x = 1; if (b(12)) y = -1; if (b(13)) y = 1;
     // A = jump, X = attack, B = special, Y = switch form (jump for one-form fighters), bumpers/triggers = dodge, Start = pause.
-    return { x, y, jump: b(0) || b(3), attack: b(2), special: b(1), dodge: b(4) || b(5) || b(6) || b(7), swap: b(3), pause: b(9) };
+    return { x, y, jump: b(0) || b(3), attack: b(2), special: b(1), dodge: b(4) || b(5) || b(6) || b(7), swap: b(3), ult: b(10) || b(11), pause: b(9) };
   }
 
   MM.readDevice = function (dev) {
@@ -66,7 +66,7 @@ window.MM = window.MM || {};
   MM.setupTouch = function (el) {
     el.innerHTML = '<div class="stick"><div class="knob"></div></div>' +
       '<div class="tbtns"><button data-b="dodge">⛨</button><button data-b="special">★</button><button data-b="attack">✊</button><button data-b="jump">⤒</button></div>' +
-      '<button class="tswap" data-b="swap">⇄</button>' +
+      '<button class="tswap" data-b="swap">⇄</button><button class="tult" data-b="ult">ULT</button>' +
       '<button class="tpause" data-b="pause">❚❚</button>';
     const stick = el.querySelector('.stick'), knob = el.querySelector('.knob');
     let sid = null;

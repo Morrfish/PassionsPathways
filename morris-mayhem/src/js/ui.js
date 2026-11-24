@@ -205,7 +205,7 @@ window.MM = window.MM || {};
   // ---------- move list ----------
   let moveId = null;
   const moveFighters = () => (paused && G ? [...new Map(G.fighters.map((f) => [f.def.baseId || f.def.id, MM.FIGHTERS.find((d) => d.id === (f.def.baseId || f.def.id))])).values()] : MM.FIGHTERS);
-  const KEYS = '<b>Attack</b> F · Num 1 · X &nbsp; <b>Special</b> G · Num 2 · B &nbsp; <b>Jump</b> W/Space · ↑ · A &nbsp; <b>Dodge</b> H · Num 3 · bumpers &nbsp; <b>Switch form</b> R · Num 4 · Y';
+  const KEYS = '<b>Attack</b> F · Num 1 · X &nbsp; <b>Special</b> G · Num 2 · B &nbsp; <b>Jump</b> W/Space · ↑ · A &nbsp; <b>Dodge</b> H · Num 3 · bumpers &nbsp; <b>Switch form</b> R · Num 4 · Y &nbsp; <b>Ultimate</b> E · Num 5 · stick click';
   function moveRows(d) {
     const an = d.attackNames || {}, sp = d.specials || {};
     const desc = (s) => (s ? `<b>${s.name}</b>: ${(KIND_TEXT[s.kind] || (() => ''))(s)}` : '');
@@ -230,6 +230,8 @@ window.MM = window.MM || {};
       html += `<div class="note"><b>Two forms!</b> Press <b>↓ + Special</b> or <b>Switch form</b> (R · Num 4 · controller Y · ⇄ on touch) for Wardrobe Whirl, which changes between ${MM.formDefs(d).map((f) => f.title.replace(' outfit', '')).join(' and ')} at any time. Each outfit has its own moves, speed and power. The spin takes a moment and a hit stops it, so pick your moment.</div>`;
       for (const fd of MM.formDefs(d)) html += `<h4>${fd.title}</h4>` + moveRows(fd);
     } else html += moveRows(d);
+    const ults = d.forms ? MM.formDefs(d).map((fd) => fd.ultimate).filter(Boolean) : [d.ultimate].filter(Boolean);
+    if (ults.length) html += `<h4>Ultimate</h4><table>${ults.map((u) => `<tr><td class="in">Meter full + E · Num 5/U · stick click · or Attack + Special together</td><td><b>${u.name}</b>: ${u.desc || ''}</td></tr>`).join('')}</table><p class="keys">The meter fills as you deal damage (and a little when you take it). A hit stops an ultimate, so pick your moment.</p>`;
     html += `<h4>Everyone</h4><table><tr><td class="in">Jump</td><td>Up to 3 jumps in a row</td></tr><tr><td class="in">Dodge</td><td>Untouchable for a moment. Hold a direction to roll or air-dodge.</td></tr><tr><td class="in">↓ in the air</td><td>Fall fast</td></tr><tr><td class="in">↓ on a platform</td><td>Drop through it</td></tr></table>`;
     html += `<p class="keys">${KEYS}</p>`;
     $('#moveSheet').innerHTML = html;

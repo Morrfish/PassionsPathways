@@ -92,10 +92,10 @@ window.MM = window.MM || {};
       x, y: 0, vx: 0, vy: 0, face: 1, ground: null, jumps: AIR_JUMPS, upUsed: false, sideUsed: false, airDodged: false, ff: false,
       damage: 0, stocks, out: false, dead: 0, float: 0, act: null, hitstun: 0, lag: 0, invuln: 0, dodgeCd: 0, jsq: 0, dropT: 0,
       cd: { neutral: 0, side: 0, up: 0, down: 0 }, buff: null, inp: blankInput(), prev: blankInput(),
-      kos: 0, falls: 0, dealt: 0, lastHit: -1, lastHitT: 0, anim: 0, bubble: null, ai: {},
+      meter: 0, caught: null, kos: 0, falls: 0, dealt: 0, lastHit: -1, lastHitT: 0, anim: 0, bubble: null, ai: {},
     };
   }
-  const blankInput = () => ({ x: 0, y: 0, jump: false, attack: false, special: false, dodge: false, swap: false, pause: false });
+  const blankInput = () => ({ x: 0, y: 0, jump: false, attack: false, special: false, dodge: false, swap: false, ult: false, pause: false });
 
   // ---------- helpers ----------
   const power = (f) => f.st.power * (f.buff ? f.buff.powerMul : 1);
@@ -140,6 +140,8 @@ window.MM = window.MM || {};
     for (const p of G.parts) { p.x += p.vx; p.y += p.vy; if (p.type === 'spark') { p.vx *= 0.92; p.vy = p.vy * 0.92 + 0.15; } p.life--; }
     G.parts = G.parts.filter((p) => p.life > 0);
     if (G.shake > 0) G.shake *= 0.85;
+    if (G.ultBanner && --G.ultBanner.t <= 0) G.ultBanner = null;
+    if (G.flash > 0) G.flash--;
     if (!G.over) {
       const left = G.fighters.filter((f) => !f.out);
       const end = (winner, team) => { G.over = true; G.endT = 150; G.winner = winner; G.winTeam = team; G.slowmo = 60; };
@@ -161,6 +163,11 @@ window.MM = window.MM || {};
     if (f.out) return;
     if (f.dead > 0) { if (--f.dead === 0) respawn(G, f); return; }
     if (f.lag > 0) { f.lag--; return; }
+    if (f.caught) { // held by someone's ultimate until its finisher (or until it is cancelled)
+      const o = f.caught;
+      if (o.dead || o.out || !o.act || o.act.type !== 'ult') f.caught = null;
+      else { f.vx = 0; f.vy = 0; f.anim++; f.x += (Math.random() - 0.5) * 2; return; }
+    }
     f.anim++;
     if (f.invuln > 0) f.invuln--;
     if (f.dodgeCd > 0) f.dodgeCd--;
@@ -192,7 +199,9 @@ window.MM = window.MM || {};
       tickAction(G, f);
     } else {
       const swapNow = f.forms && pressed('swap');
-      if (swapNow) startSpecial(G, f, 'down');
+      const ultNow = pressed('ult') || (inp.attack && inp.special && (pressed('attack') || pressed('special')));
+      if (ultNow && f.meter >= 100 && f.def.ultimate) startUlt(G, f);
+      else if (swapNow) startSpecial(G, f, 'down');
       else if (pressed('attack')) startNormal(G, f);
       else if (pressed('special')) startSpecial(G, f);
       else if (pressed('dodge')) startDodge(G, f);
@@ -298,6 +307,8 @@ window.MM = window.MM || {};
       if (a.t >= a.dur) f.act = null;
     } else if (a.type === 'lag') {
       if (a.t >= a.dur) f.act = null;
+    } else if (a.type === 'ult') {
+      tickUlt(G, f, a);
     } else if (a.type === 'swap') {
       f.vx *= 0.85;
       if (a.t === 10) {
@@ -533,6 +544,55 @@ window.MM = window.MM || {};
   };
   MM.ABILITIES = ABILITIES;
 
+  // ---------- ultimates ----------
+  // def.ultimate: { name, sprite (atlas with ult0..ult3), type: 'catch' | 'stampede', dur, poses: [[frame, pose]...],
+  //   catch:  catchAt, finishAt, radius (fighter heights), dmg, kbMul
+  //   stampede: spawnAt, sweepDur, dmg, kbMul, emoji }
+  // Times are frames (60 a second). The owner is not invincible: a hit cancels it and lets everyone go.
+  function startUlt(G, f) {
+    const u = f.def.ultimate;
+    f.meter = 0; f.ff = false; f.vx = 0;
+    f.act = { type: 'ult', t: 0, u, dur: u.dur, caught: [], hit: new Set(), noGrav: true, pose: 'flex' };
+    G.ultBanner = { text: u.name, color: f.accent, by: f, t: 100 }; G.flash = 8;
+    MM.sfx('go'); MM.sfx('special');
+  }
+  function releaseUlt(a) { for (const d of a.caught) if (d.caught) d.caught = null; a.caught.length = 0; }
+  function tickUlt(G, f, a) {
+    const u = a.u; f.vx *= 0.8; if (!f.ground) f.vy = 0;
+    if (u.type === 'catch') {
+      if (a.t < u.catchAt && a.t % 6 === 0) ring(G, f.x, f.y - f.h / 2, f.accent); // telegraph: you can still get away
+      if (a.t === u.catchAt) {
+        const r = u.radius * f.h;
+        for (const d of G.fighters) {
+          if (d === f || d.dead || d.out || d.invuln > 0 || d.caught || (MM.sameTeam(G, f, d) && !G.ff)) continue;
+          if (Math.hypot(d.x - f.x, (d.y - d.h / 2) - (f.y - f.h / 2)) <= r) { d.caught = f; d.act = null; d.hitstun = 0; d.vx = d.vy = 0; a.caught.push(d); burst(G, d.x, d.y - d.h / 2, f.accent, 10, 4); }
+        }
+        part(G, { type: 'ring', x: f.x, y: f.y - f.h / 2, color: f.accent, size: r * 0.6, life: 24, max: 24 });
+      }
+      if (a.t === u.finishAt) {
+        G.shake = 24; G.flash = 6;
+        for (const d of a.caught) {
+          if (d.caught !== f || d.dead || d.out) continue;
+          d.caught = null;
+          applyHit(G, f, d, { dmg: u.dmg, kb: 9 * u.kbMul, kbg: 0.12 * u.kbMul, ang: 55, face: sgn(d.x - f.x) || f.face }, d.x, d.y - d.h / 2);
+        }
+        a.caught.length = 0;
+        burst(G, f.x, f.y - f.h / 2, f.accent, 40, 12);
+      }
+    } else if (u.type === 'stampede') { // a herd runs across the stage; each opponent is hit once
+      const t = a.t - u.spawnAt;
+      if (t >= 0 && t < u.sweepDur) {
+        a.sweepX = f.x + f.face * (60 + (t / u.sweepDur) * 1500);
+        a.box = { x: a.sweepX - 90, y: f.y - 170, w: 180, h: 175 };
+        a.hitProps = { dmg: u.dmg, kb: 9 * u.kbMul, kbg: 0.12 * u.kbMul, ang: 50 };
+        if (t % 3 === 0) part(G, { x: a.sweepX - f.face * 60, y: f.y - 10, color: 'rgba(220,190,140,.8)', size: 16, life: 22, max: 22, type: 'smoke' });
+        if (t === 0) G.shake = 12;
+      } else { a.box = null; a.sweepX = null; }
+    }
+    if (a.t >= a.dur) { releaseUlt(a); f.act = null; }
+  }
+  MM.startUlt = startUlt;
+
   // ---------- hits ----------
   function checkHits(G, f) {
     const a = f.act;
@@ -563,6 +623,10 @@ window.MM = window.MM || {};
     }
     const dmg = h.dmg * (att ? power(att) : 1);
     def.damage = Math.min(999, def.damage + dmg);
+    // ultimate meter: 0.65 per damage dealt to an opponent, 0.35 per damage taken; nothing while in an ultimate
+    if (att && att !== def && !MM.sameTeam(G, att, def) && !(att.act && att.act.type === 'ult')) att.meter = Math.min(100, att.meter + dmg * 0.65);
+    if (!(da && da.type === 'ult')) def.meter = Math.min(100, def.meter + dmg * 0.35);
+    if (da && da.type === 'ult') releaseUlt(da);
     if (att) { att.dealt += dmg; def.lastHit = att.slot; def.lastHitT = G.frame; }
     burst(G, hx, hy, '#fff', 4 + (dmg | 0), 4 + dmg * 0.3);
     if (da && da.armor && dmg < 15) { MM.sfx('hit', 0.3); def.lag = 3; return true; }
@@ -644,7 +708,8 @@ window.MM = window.MM || {};
       G.kos = G.kos || []; G.kos.push({ x: ex, y: ey, color: MM.PLAYER_COLORS[f.slot], t: 50 });
       burst(G, ex, ey, MM.PLAYER_COLORS[f.slot], 40, 14);
       G.shake = 26; MM.sfx('ko');
-      f.act = null; f.hitstun = 0; f.buff = null; f.vx = f.vy = 0;
+      if (f.act && f.act.type === 'ult') releaseUlt(f.act);
+      f.act = null; f.hitstun = 0; f.buff = null; f.vx = f.vy = 0; f.caught = null; f.meter = 0;
       if (f.stocks <= 0) { f.out = true; f.x = 0; f.y = -3000; }
       else { f.dead = 80; f.y = -3000; }
     }

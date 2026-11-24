@@ -40,6 +40,11 @@ window.MM = window.MM || {};
     // 2) dodge when the target is swinging at us
     if (t.act && t.act.box && adx < 160 && rnd() < react * 0.6 && f.dodgeCd <= 0) { inp.dodge = true; inp.x = rnd() < 0.5 ? -Math.sign(dx) : 0; return inp; }
 
+    // ultimate when it would catch someone (or anyone ahead, for a stampede)
+    if (f.meter >= 100 && f.def.ultimate && rnd() < react) {
+      const u = f.def.ultimate;
+      if ((u.type === 'catch' && Math.hypot(dx, dy) < u.radius * f.h * 0.8) || (u.type === 'stampede' && Math.abs(dy) < 120 && adx < 900)) { f.face = Math.sign(dx) || f.face; inp.ult = true; return inp; }
+    }
     // 3) attack when close
     const reach = 80 * f.s + 30;
     const press = (k) => { if (!ai[k]) { inp[k] = true; ai[k] = true; } else ai[k] = false; };

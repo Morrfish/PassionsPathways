@@ -35,6 +35,10 @@ MM.FIGHTERS = [
       down: { kind: 'counter', name: 'Camo Cover', window: 28, mult: 1.5 },
     },
     taunt: "PawPaw's still got it!",
+    // 2.4 s: deer call .4 s, woodland stampede runs across from .8 s for .9 s (22 damage once each, 1.45x), proud finish
+    ultimate: { name: 'Opening Day', sprite: 'jeffery-ult', type: 'stampede', dur: 144, spawnAt: 48, sweepDur: 54, dmg: 22, kbMul: 1.45,
+      desc: 'blows the deer call and a deer, rabbit and squirrel stampede runs across the stage',
+      poses: [[0, 'ult0'], [24, 'ult1'], [48, 'ult2'], [108, 'ult3']] },
   },
   {
     // Patty Morris: the secret final boss of story mode. Art: ChatGPT graphic-novel sheets (img/patty-atlas.webp).
@@ -51,6 +55,10 @@ MM.FIGHTERS = [
       down: { kind: 'pack', name: "Mawmaw's Pack", sprites: ['dog0', 'dog1', 'dog2'], names: ['Tippie', 'Spike', 'Poppie'], speed: 7.5, dmg: 5, kb: 6, kbg: 0.08, cd: 150 },
     },
     taunt: 'Mawmaw gets the last word!',
+    // 2.4 s: catch at .45 s, SALE sign, parcel vortex, laugh, finisher at 1.75 s (26 damage, 1.6x knockback)
+    ultimate: { name: "Mawmaw's Last Laugh", sprite: 'patty-ult', type: 'catch', dur: 144, catchAt: 27, finishAt: 105, radius: 2.6, dmg: 26, kbMul: 1.6,
+      desc: 'grabs everyone close, then SALE sign, parcel whirlwind, the dogs and an EVERYTHING MUST GO blast',
+      poses: [[0, 'ult0'], [39, 'ult1'], [78, 'ult2'], [100, 'ult3']] },
   },
   {
     // Mandi Crist, "The Big Sister": two outfits that change her moves. Down-special (or the Switch button)
@@ -72,6 +80,9 @@ MM.FIGHTERS = [
           up: { kind: 'rise', name: 'Broom Service', power: 17, forward: 6, dmg: 6, kb: 6, kbg: 0.06 },
           down: { kind: 'transform', name: 'Wardrobe Whirl', into: 'Mermaid Fangirl' },
         },
+        ultimate: { name: 'Big Sister Spell', sprite: 'mandi-witch-ult', type: 'catch', dur: 144, catchAt: 30, finishAt: 105, radius: 2.4, dmg: 24, kbMul: 1.5,
+          desc: 'a pumpkin, ghost and hairbrush vortex catches everyone close, then a big burst',
+          poses: [[0, 'ult0'], [48, 'ult1'], [72, 'ult2'], [105, 'ult3']] },
       },
       {
         form: 'mermaid', formName: 'MERMAID FANGIRL!', title: 'Mermaid Fangirl outfit', sprite: 'mandi-mermaid',
@@ -84,6 +95,9 @@ MM.FIGHTERS = [
           up: { kind: 'rise', name: 'Surface Break', power: 20, dmg: 7, kb: 7, kbg: 0.07 },
           down: { kind: 'transform', name: 'Wardrobe Whirl', into: 'Witch' },
         },
+        ultimate: { name: 'Big Sister Splash', sprite: 'mandi-mermaid-ult', type: 'catch', dur: 144, catchAt: 30, finishAt: 105, radius: 2.4, dmg: 22, kbMul: 1.4,
+          desc: 'a whirlpool pulls everyone close, then a giant shell of water bursts',
+          poses: [[0, 'ult0'], [48, 'ult1'], [72, 'ult2'], [105, 'ult3']] },
       },
     ],
   },
@@ -171,3 +185,6 @@ MM.formDefs = function (def) {
 };
 // The base entry shows form 1 on menus.
 for (const d of MM.FIGHTERS) if (d.forms) for (const k of ['color', 'accent', 'skin', 'hair', 'hat', 'photo', 'sprite', 'specials', 'taunt', 'attackNames', 'normalSpeed']) if (d[k] === undefined && d.forms[0][k] !== undefined) d[k] = d.forms[0][k];
+
+// Fighters without their own ultimate art get a simple one (placeholders).
+for (const d of MM.FIGHTERS) if (!d.ultimate && !d.forms) d.ultimate = { name: 'Mayhem Burst', type: 'catch', dur: 120, catchAt: 27, finishAt: 80, radius: 2.2, dmg: 20, kbMul: 1.35, emoji: '💥', desc: 'catches everyone close, then explodes', poses: [] };
