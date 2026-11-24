@@ -42,6 +42,29 @@ select { background: var(--panel); border: 2px solid var(--line); border-radius:
 .grid img { width: 70px; height: 70px; }
 .options { margin-top: 14px; align-items: center; }
 .howto { max-width: 760px; line-height: 1.5; }
+button.big.story { background: linear-gradient(#8f2bd6, #5b1a9a); color: #fff; border-color: #1a0b2e; }
+.storybody { width: 100%; max-width: 1000px; }
+.heroes { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; margin-top: 10px; }
+.heroes button { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px; font-weight: 800; }
+.heroes img, .heroes .sil { width: 100px; height: 100px; }
+.heroes .sil { display: grid; place-items: center; font-size: 54px; background: #0004; border-radius: 50%; color: #fff5; }
+.heroes button.locked { opacity: .55; } .heroes small { font-weight: 400; opacity: .8; }
+.seed { background: var(--panel); border: 2px solid var(--line); border-radius: 14px; padding: 12px 16px; margin: 10px 0; line-height: 1.5; }
+.routemap { display: grid; gap: 8px; margin: 12px 0; }
+.node { display: flex; align-items: center; gap: 12px; background: var(--panel); border: 2px solid var(--line); border-radius: 12px; padding: 8px 12px; }
+.node .num { font-weight: 900; width: 34px; text-align: center; color: var(--gold); }
+.node .opp { display: flex; gap: 6px; } .node .opp img, .node .opp .mini { width: 44px; height: 44px; }
+.node .opp .mini { display: grid; place-items: center; background: #0004; border-radius: 50%; font-size: 18px; color: #fff6; }
+.node .what { flex: 1; min-width: 0; } .node .what b { display: block; } .node .what span { font-size: .85em; opacity: .8; }
+.node.done { border-color: #33d17a; } .node.next { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold); }
+.node.waiting { opacity: .55; } .node.hidden { opacity: .7; border-style: dashed; }
+.node .tag { font-size: .8em; font-weight: 800; padding: 3px 8px; border-radius: 999px; background: #0005; white-space: nowrap; }
+.scenebody { max-width: 760px; width: 100%; display: grid; gap: 14px; margin-bottom: 16px; }
+.line { display: flex; gap: 14px; align-items: center; background: var(--panel); border: 3px solid var(--line); border-radius: 16px; padding: 12px; }
+.line img { width: 110px; height: 110px; flex: none; } .line .say b { color: var(--gold); display: block; font-size: 1.1em; } .line .say { font-size: 1.25em; line-height: 1.4; }
+.album { background: #f6ecd8; color: #2b1a12; border-radius: 10px; padding: 18px; box-shadow: 0 10px 0 #0006; transform: rotate(-1deg); }
+.album h3 { margin: 0 0 6px; font-size: 1.6em; } .album .pics { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 10px 0; }
+.album .pics img { width: 84px; height: 84px; background: #fff; padding: 4px; box-shadow: 0 2px 6px #0004; }
 .movesheet { width: 100%; max-width: 900px; margin-top: 12px; }
 .movesheet .who { display: flex; gap: 14px; align-items: center; }
 .movesheet .who img { width: 110px; height: 110px; }

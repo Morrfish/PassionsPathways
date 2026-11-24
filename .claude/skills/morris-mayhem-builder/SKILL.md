@@ -56,9 +56,16 @@ If it isn't reachable, ask her to paste the info and attach the pictures in chat
   blocks friendly fire in `applyHit` and AI targeting; team out only when all members out; timer tiebreak =
   lives, then lower damage, else draw.
 - Move List screen (`#moves`) is built from each def's `attackNames` and `specials` + `KIND_TEXT` in ui.js.
-- Still to build (ChatGPT's IMPLEMENTATION_HANDOFF.md in Drive "Photos and art"): ultimates + meter,
-  entrance/taunt/victory poses (ultimate-personality sheets), story mode (story-routes.json; 7 heroes,
-  12 fights each, Jeff then secret Patty; lock routes until their fighters exist).
+- Ultimates (built): `def.ultimate` {name, sprite (<id>-ult atlas from tools/slice_ultimates.py), type
+  'catch' (catchAt/finishAt/radius/dmg/kbMul) or 'stampede' (spawnAt/sweepDur/dmg/kbMul), poses}. Meter
+  0.65/dmg dealt, 0.35/dmg taken, full → Ultimate input (E · Num5/U · stick click · touch ULT · Attack+Special).
+  A hit cancels it and releases caught fighters (`releaseUlt`). Placeholders get "Mayhem Burst".
+- Story mode (built, src/js/story.js): the 7 Morris kids are the heroes (mandi, jadden, courtnee, codee, haylie,
+  sara, jorie); routes = ChatGPT's storyRoute() rule (= story-routes.json); 10 family free-for-alls, Jeff
+  (The Boss), then secret Patty. Fights with relatives not yet in MM.FIGHTERS show "coming soon" and are
+  skipped (never substitute someone else); a hero is playable once that kid is a fighter. Saves per hero in
+  `mm_story_v1_<hero>`. Story ids map `jeff` → `jeffery`; route places map to stage ids by name prefix.
+- Still to build: entrance/taunt/victory poses (row 2 of the ultimate-personality sheets).
 
 ## Code map
 | File | What's in it |

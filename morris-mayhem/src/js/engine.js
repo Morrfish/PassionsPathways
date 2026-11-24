@@ -52,14 +52,15 @@ window.MM = window.MM || {};
   // opts: { teams: true for 2v2 (players carry team 'A'/'B'), ff: friendly fire, time: seconds (0 = no limit) }
   MM.newGame = function (players, stageId, stocks, opts = {}) {
     const stage = MM.STAGES.find((s) => s.id === stageId) || MM.STAGES[0];
-    const G = { stage, fighters: [], teams: !!opts.teams, ff: !!opts.ff, timeLeft: (opts.time || 0) * 60, projs: [], traps: [], parts: [], frame: 0, shake: 0, over: false, endT: 0, freeze: 0, countdown: 150, slowmo: 0 };
+    const G = { opts, stage, fighters: [], teams: !!opts.teams, ff: !!opts.ff, timeLeft: (opts.time || 0) * 60, projs: [], traps: [], parts: [], frame: 0, shake: 0, over: false, endT: 0, freeze: 0, countdown: 150, slowmo: 0 };
     const used = {};
     const n = players.length, span = Math.min(stage.main.right - stage.main.left - 200, 260 * (n - 1));
     players.forEach((p, i) => {
       const def = MM.FIGHTERS.find((d) => d.id === p.fighter) || MM.FIGHTERS[0];
       const alt = used[def.id] = (used[def.id] || 0) + 1;
       const x = n === 1 ? 0 : -span / 2 + (span * i) / (n - 1);
-      const f = makeFighter(p, def, x, alt > 1, stocks);
+      const f = makeFighter(p, def, x, alt > 1, p.stocks || stocks);
+      f.boss = p.boss || null; f.stocks0 = f.stocks;
       f.team = G.teams ? p.team || (p.slot % 2 ? 'B' : 'A') : null;
       G.fighters.push(f);
     });
@@ -145,7 +146,8 @@ window.MM = window.MM || {};
     if (!G.over) {
       const left = G.fighters.filter((f) => !f.out);
       const end = (winner, team) => { G.over = true; G.endT = 150; G.winner = winner; G.winTeam = team; G.slowmo = 60; };
-      if (G.teams) { // a team is out only when every member is out
+      if (G.opts.heroSlot != null && G.fighters.find((f) => f.slot === G.opts.heroSlot && f.out)) end(null, null); // story: the hero is out
+      else if (G.teams) { // a team is out only when every member is out
         const teamsLeft = [...new Set(left.map((f) => f.team))];
         if (teamsLeft.length <= 1) end(null, teamsLeft[0] || null);
       } else if (left.length <= 1 && G.fighters.length > 1) end(left[0] || null, null);

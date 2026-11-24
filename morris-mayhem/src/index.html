@@ -16,6 +16,7 @@
   <p class="tag">The family brawl · 2 to 4 players</p>
   <div class="menu">
     <button class="big" data-go="select">▶ Play</button>
+    <button class="big story" data-go="story">Story</button>
     <button data-go="howto">How to play</button>
     <button data-go="moves">Move list</button>
     <button data-go="roster">Meet the family</button>
@@ -69,6 +70,16 @@
   <div id="moveSheet" class="movesheet"></div>
 </section>
 
+<section id="story" class="screen">
+  <header><button class="back" id="storyBack">◀</button><h2 id="storyTitle">Story</h2></header>
+  <div id="storyBody" class="storybody"></div>
+</section>
+
+<section id="scene" class="screen dim">
+  <div id="sceneBody" class="scenebody"></div>
+  <div class="menu row"><button class="big" id="sceneNext">Next</button><button id="sceneSkip">Skip</button></div>
+</section>
+
 <section id="pause" class="screen dim">
   <h2>Paused</h2>
   <div class="menu"><button class="big" id="resume">Resume</button><button id="pauseMoves">Move list</button><button id="quit">Quit match</button></div>
@@ -77,7 +88,8 @@
 <section id="results" class="screen dim">
   <h2 id="winner"></h2>
   <div id="stats" class="stats"></div>
-  <div class="menu row"><button class="big" id="rematch">Rematch</button><button data-go="select">Change fighters</button><button data-go="title">Title</button></div>
+  <div class="menu row" id="vsButtons"><button class="big" id="rematch">Rematch</button><button data-go="select">Change fighters</button><button data-go="title">Title</button></div>
+  <div class="menu row" id="storyButtons" hidden><button class="big" id="storyContinue">Continue</button><button id="storyRetry">Try again</button><button id="storyMap">Route map</button></div>
 </section>
 
 <div id="touch"></div>
@@ -88,6 +100,7 @@
 <script src="js/engine.js"></script>
 <script src="js/ai.js"></script>
 <script src="js/render.js"></script>
+<script src="js/story.js"></script>
 <script src="js/ui.js"></script>
 </body>
 </html>

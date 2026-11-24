@@ -37,7 +37,8 @@ window.MM = window.MM || {};
     if (id === 'select') drawSelect();
     if (id === 'family') drawFamily();
     if (id === 'moves') drawMoves();
-    if ((id === 'title' || id === 'select' || id === 'howto' || id === 'family' || id === 'moves') && !paused) { G = null; startDemo(); }
+    if (id === 'story') drawStory();
+    if ((id === 'title' || id === 'select' || id === 'howto' || id === 'family' || id === 'moves' || id === 'story') && !paused) { G = null; startDemo(); }
   }
   document.addEventListener('click', (e) => {
     const go = e.target.closest('[data-go]');
@@ -167,6 +168,9 @@ window.MM = window.MM || {};
   });
 
   function showResults() {
+    const st = lastSetup && lastSetup.story;
+    $('#vsButtons').hidden = !!st; $('#storyButtons').hidden = !st;
+    if (st) return showStoryResult(st);
     const won = (f) => f === G.winner || (G.winTeam && f.team === G.winTeam);
     const fs = [...G.fighters].sort((a, b) => won(b) - won(a) || b.stocks - a.stocks || b.kos - a.kos);
     $('#winner').textContent = G.winTeam ? `Team ${G.winTeam} wins!` : G.winner ? `${G.winner.def.name} wins!` : 'Draw!';
@@ -200,6 +204,99 @@ window.MM = window.MM || {};
       <img src="${portrait(f.id)}" alt=""><h3>${f.name}</h3><small>${f.title || ''}</small>
       <div class="bars">${bar('Speed', f.stats.speed, 9)}${bar('Power', f.stats.power, 1.4)}${bar('Weight', f.stats.weight, 1.4)}</div>
       <ul>${f.attackNames ? `<li><b>Attacks</b>: ${Object.values(f.attackNames).join(', ')}</li>` : ''}${['neutral', 'side', 'up', 'down'].map((k) => { const s = f.specials[k]; return s ? `<li><b>${{ neutral: 'Special', side: '→ Special', up: '↑ Special', down: '↓ Special' }[k]}: ${s.name}</b>: ${(KIND_TEXT[s.kind] || (() => ''))(s)}</li>` : ''; }).join('')}</ul></div>`).join('');
+  }
+
+  // ---------- story mode ----------
+  let storyHero = null;
+  const S = MM.story;
+  const pic = (id) => (S.has(id) ? `<img src="${portrait(S.ID(id))}" alt="">` : `<div class="mini">?</div>`);
+  function drawStory() {
+    const body = $('#storyBody');
+    if (!storyHero) {
+      $('#storyTitle').textContent = 'Story: pick your hero';
+      body.innerHTML = `<p class="seed">Fight your way through the whole family, beat <b>Jeff, The Boss</b>… and find out who's really in charge. More fights unlock as more family members are added to the game.</p>
+        <div class="heroes">${S.HEROES.map((h) => {
+          const ok = S.has(h), s = S.load(h);
+          return `<button data-hero="${h}" class="${ok ? '' : 'locked'}" ${ok ? '' : 'disabled'}>${ok ? `<img src="${portrait(h)}" alt="">` : '<div class="sil">?</div>'}${S.NAMES[h]}<small>${ok ? (s.ended ? '★ Finished' : s.done.length ? `${s.done.length} wins` : 'Start') : 'Coming soon'}</small></button>`;
+        }).join('')}</div>`;
+      return;
+    }
+    const s = S.load(storyHero), r = S.route(storyHero), next = S.nextNode(storyHero);
+    $('#storyTitle').textContent = `${S.NAMES[storyHero]}'s story`;
+    const waiting = r.filter((n) => S.nodeState(n, s) === 'waiting').length;
+    body.innerHTML = `<p class="seed">${S.SEEDS[storyHero]}</p>
+      <div class="row options" style="justify-content:flex-start">
+        <button class="big" id="storyGo" ${next ? '' : 'disabled'}>${next ? (s.done.length ? '▶ Next fight' : '▶ Start') : s.ended ? '★ Finished!' : 'More fights coming soon'}</button>
+        <label>Difficulty <select id="storyLevel"><option value="1">Easy</option><option value="2">Normal</option><option value="3">Hard</option></select></label>
+        ${s.revealed ? '<button id="storyReveal">Replay the reveal</button>' : ''}
+        ${s.ended ? '<button id="storyEnding">Family album</button>' : ''}
+        <button id="storyReset">Start over</button>
+      </div>
+      ${waiting ? `<p class="keys">${waiting} fight${waiting > 1 ? 's are' : ' is'} waiting for family members who aren't in the game yet. For now they're skipped; they unlock by themselves when those fighters are added.</p>` : ''}
+      <div class="routemap">${r.map((n, i) => {
+        const state = S.nodeState(n, s), isNext = next && n.id === next.id;
+        const label = n.boss === 'secret' ? (state === 'hidden' ? '???' : 'The REAL final boss') : n.boss ? 'The Boss' : n.opponents.length > 1 ? 'Free-for-all' : 'One on one';
+        const who = state === 'hidden' ? '<div class="mini">?</div>' : n.opponents.map(pic).join('');
+        const names = state === 'hidden' ? 'Someone is waiting…' : n.opponents.map((o) => S.NAMES[o] + (S.has(o) ? '' : ' (coming soon)')).join(', ');
+        const tag = state === 'done' ? '✓ Won' : isNext ? 'Next' : state === 'waiting' ? 'Coming soon' : state === 'hidden' ? 'Locked' : '';
+        return `<div class="node ${state} ${isNext ? 'next' : ''}"><div class="num">${n.boss ? '★' : i + 1}</div><div class="opp">${who}</div><div class="what"><b>${label}</b><span>${names}</span></div>${tag ? `<div class="tag">${tag}</div>` : ''}</div>`;
+      }).join('')}</div>`;
+    $('#storyLevel').value = s.level;
+    $('#storyLevel').onchange = (e) => { const s2 = S.load(storyHero); s2.level = +e.target.value; S.save(storyHero, s2); };
+    $('#storyGo').onclick = () => next && startStoryFight(storyHero, next);
+    $('#storyReset').onclick = () => { const s2 = S.load(storyHero); if ($('#storyReset').dataset.sure) { S.save(storyHero, { v: 1, done: [], jeff: false, revealed: false, ended: false, level: s2.level }); drawStory(); } else { $('#storyReset').dataset.sure = 1; $('#storyReset').textContent = 'Tap again to erase this hero\'s progress'; } };
+    if ($('#storyReveal')) $('#storyReveal').onclick = () => playScene(revealScene(), () => show('story'));
+    if ($('#storyEnding')) $('#storyEnding').onclick = () => playScene(endingScene(storyHero), () => show('story'));
+  }
+  $('#storyBody').addEventListener('click', (e) => { const b = e.target.closest('[data-hero]'); if (b && !b.disabled) { storyHero = b.dataset.hero; MM.sfx('select'); drawStory(); } });
+  $('#storyBack').addEventListener('click', () => { if (storyHero) { storyHero = null; drawStory(); } else show('title'); });
+
+  function startStoryFight(hero, node) {
+    const s = S.load(hero), p1 = slots[0];
+    const dev = p1.type === 'human' ? p1.dev : MM.isTouch ? 'touch' : 'k1';
+    const opp = node.opponents.map(S.ID);
+    const players = [{ slot: 0, fighter: hero, dev, cpu: false, stocks: 3 }].concat(opp.map((id, i) => ({ slot: i + 1, fighter: id, cpu: true, level: node.boss ? Math.max(2, s.level + (node.boss === 'secret' ? 1 : 0)) : s.level, boss: node.boss || null, stocks: node.boss ? 3 : 2 })));
+    lastSetup = { players, stage: S.stageFor(node.place, S.route(hero).findIndex((n) => n.id === node.id)), stocks: 2, opts: { heroSlot: 0 }, story: { hero, node: node.id } };
+    startMatch();
+  }
+  function showStoryResult(st) {
+    const won = G.winner && G.winner.slot === 0;
+    const r = S.route(st.hero), node = r.find((n) => n.id === st.node);
+    $('#winner').textContent = won ? (node.boss === 'secret' ? 'You beat Mawmaw!' : node.boss ? 'You beat The Boss!' : 'You won!') : 'Knocked out!';
+    $('#stats').innerHTML = G.fighters.map((f) => `<div class="stat ${f.slot === 0 && won ? 'win' : ''}"><img src="${portrait(f.def.baseId || f.def.id)}" alt=""><div><b>${f.def.name}</b></div><div>KOs: ${f.kos} · Falls: ${f.falls}</div></div>`).join('');
+    const s = S.load(st.hero);
+    if (won && !s.done.includes(node.id)) { s.done.push(node.id); if (node.boss === 'apparent') s.jeff = true; if (node.boss === 'secret') s.ended = true; S.save(st.hero, s); }
+    $('#storyContinue').hidden = !won; $('#storyRetry').hidden = won;
+    $('#storyContinue').onclick = () => {
+      if (node.boss === 'apparent') { const s2 = S.load(st.hero); s2.revealed = true; S.save(st.hero, s2); playScene(revealScene(), () => { storyHero = st.hero; show('story'); }); }
+      else if (node.boss === 'secret') playScene(endingScene(st.hero), () => { storyHero = st.hero; show('story'); });
+      else { const nx = S.nextNode(st.hero); if (nx) startStoryFight(st.hero, nx); else { storyHero = st.hero; show('story'); } }
+    };
+    $('#storyRetry').onclick = () => startMatch();
+    $('#storyMap').onclick = () => { storyHero = st.hero; show('story'); };
+    show('results');
+  }
+  // scenes: a list of pages; each page is HTML. Next goes forward, Skip ends.
+  let scenePages = [], sceneDone = null, scenePage = 0;
+  function playScene(pages, done) { scenePages = pages; sceneDone = done; scenePage = 0; drawScene(); show('scene'); }
+  function drawScene() { $('#sceneBody').innerHTML = scenePages[scenePage]; $('#sceneNext').textContent = scenePage < scenePages.length - 1 ? 'Next' : 'Continue'; }
+  $('#sceneNext').addEventListener('click', () => { MM.sfx('select'); if (++scenePage < scenePages.length) drawScene(); else sceneDone && sceneDone(); });
+  $('#sceneSkip').addEventListener('click', () => sceneDone && sceneDone());
+  const line = (id, who, text) => `<div class="line"><img src="${portrait(id)}" alt=""><div class="say"><b>${who}</b>${text}</div></div>`;
+  function revealScene() { // fictional lines from ChatGPT's handoff, not real family quotes
+    return [
+      line('jeffery', 'Jeff', '"You think I\'m the boss? Go ask your mother."'),
+      line('jeffery', 'Jeff', '"You think I\'m the boss? Go ask your mother."') + line('patty', 'Patty', '"Who do you think raised the boss?"'),
+      `<h2 style="text-align:center;font-size:2.4em;color:#ffc21a">The REAL final boss:<br>Patty Morris!</h2>`,
+    ];
+  }
+  function endingScene(hero) {
+    const fam = MM.FIGHTERS.filter((d) => d.photo).map((d) => `<img src="${portrait(d.id)}" alt="">`).join('');
+    return [
+      line('patty', 'Patty', '"Alright, alright. Everybody get in here for a picture."'),
+      `<div class="album"><h3>Family Album: ${S.NAMES[hero]}</h3><p>${S.SEEDS[hero]} After all that, the whole Morris family ended up in the same place: together.</p><div class="pics">${fam}</div><p><b>New title unlocked:</b> ${S.NAMES[hero].split(' ')[0]}, Keeper of the Family</p></div>`,
+      `<h2 style="text-align:center">Thanks for playing Morris Mayhem!</h2><p style="text-align:center">Made for the Morris family. Try another hero's story, or play again on Hard.</p>`,
+    ];
   }
 
   // ---------- move list ----------

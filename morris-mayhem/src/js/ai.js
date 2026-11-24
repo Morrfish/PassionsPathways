@@ -7,7 +7,8 @@ window.MM = window.MM || {};
     const inp = { x: 0, y: 0, jump: false, attack: false, special: false, dodge: false, pause: false };
     if (f.dead || f.out) return inp;
     const ai = f.ai, lvl = f.cpu, m = G.stage.main;
-    const react = [0, 0.05, 0.14, 0.32][lvl]; // chance per frame to act on an opening
+    let react = [0, 0.05, 0.14, 0.32][lvl]; // chance per frame to act on an opening
+    if (f.boss) react *= f.stocks < f.stocks0 * 0.4 ? 1.45 : f.stocks < f.stocks0 * 0.7 ? 1.2 : 1; // bosses press harder as the fight goes on
     ai.t = (ai.t || 0) + 1;
     if (f.float > 0) { if (ai.t % 60 === 0) inp.x = f.x > 0 ? -1 : 1; return inp; }
 
