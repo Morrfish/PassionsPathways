@@ -18,7 +18,7 @@ window.MM = window.MM || {};
   }
   // load every fighter's atlases up front, including the ultimate/victory sheets (otherwise a fighter who never
   // used their ultimate has no victory pose ready for the results screen)
-  MM.preloadSprites = () => { for (const d of MM.allDefs()) for (const id of [d.sprite, d.ultimate && d.ultimate.sprite]) if (id) { sheet(id); const S = MM.SPRITES && MM.SPRITES[id]; if (S && S.left) sheet(S.left); if (S && S.base) sheet(S.base); } for (const d of MM.allDefs()) if (d.ultimate && d.ultimate.herdSheet) sheet(d.ultimate.herdSheet); };
+  MM.preloadSprites = () => { for (const d of MM.allDefs()) for (const id of [d.sprite, d.ultimate && d.ultimate.sprite]) if (id) { sheet(id); const S = MM.SPRITES && MM.SPRITES[id]; if (S && S.left) sheet(S.left); if (S && S.base) sheet(S.base); } for (const d of MM.allDefs()) { if (d.ultimate && d.ultimate.herdSheet) sheet(d.ultimate.herdSheet); for (const fm of d.forms || [d]) for (const sp of Object.values(fm.specials || {})) if (sp && sp.sheet) sheet(sp.sheet); if (d.ultimate && d.ultimate.fxSheet) sheet(d.ultimate.fxSheet); } };
   MM.whenPoseReady = (def, cb) => { const u = def.ultimate, id = u && u.sprite; if (!id) return; sheet(id); const im = spriteImgs[id]; if (im && !(im.complete && im.naturalWidth)) im.addEventListener('load', cb, { once: true }); };
 
   // How far below the walking line the feet are drawn (world px): the floor art has a top face, so a fighter standing
@@ -27,7 +27,7 @@ window.MM = window.MM || {};
 
   // Pick the pose for what the fighter is doing right now.
   function pickFrame(f, S) {
-    const a = f.act, M = S.moves;
+    const a = f.act, M = f.def.moveRows ? Object.assign({}, S.moves, f.def.moveRows) : S.moves; // e.g. Cloe's colour rows
     if (f.phaseIn > 0 && S.frames.cup0) return 'cup' + Math.min(3, Math.floor((150 - f.phaseIn) / 32)); // story boss turning giant
     if (f.float > 0) return 'idle' + (Math.floor(f.anim / 16) % 4); // coming back after a KO: stand on the respawn spot
     if (f.hitstun > 0) return !f.ground ? 'hurt2' : f.hitstun > 5 ? 'hurt1' : f.hitstun > 2 ? 'hurt0' : S.frames.hurt3 ? 'hurt3' : 'hurt0'; // big hit, reel, then shake it off
@@ -39,7 +39,7 @@ window.MM = window.MM || {};
       if (a.type === 'dodge') return M.defRow && f.ground ? M.defRow + (a.roll ? (a.t < 10 ? 2 : 3) : a.t < 8 ? 0 : 1) : f.ground ? 'idle0' : 'jump2';
       if (a.type === 'cleanup') return 'cup' + Math.min(3, Math.floor(a.t / (a.dur / 4))); // Codee: brush off the mess, into the lab coat
       if (a.type === 'backwork') { const nb = (f.def.mess && f.def.mess.backPoses) || 4; return 'back' + Math.min(nb - 1, Math.floor(a.t / (a.dur / nb))); }
-      if (a.type === 'shirt') return 'bump' + f.formIdx;
+      if (a.type === 'shirt') return f.def.cycle === 'all' ? 'shuffle' + Math.min(3, a.t >> 2) : 'bump' + f.formIdx; // Cloe: the palette shuffle
       if (a.type === 'powerup' && S.frames.cup0) return 'cup' + Math.min(3, Math.floor(a.t / (a.dur / 4)));
       if (a.type === 'powerup') return 'idle0';
       if (a.type === 'powerend') return S.frames.back0 ? 'back' + Math.min(3, Math.floor(a.t / (a.dur / 4))) : 'idle0'; // Cole shows off the new printed shirt
@@ -67,6 +67,7 @@ window.MM = window.MM || {};
         if (kind === 'icewave') return row + (a.t < 12 ? 0 : a.t < sp_startup(a) ? 1 : a.t < sp_startup(a) + 10 ? 2 : 3);
         if (kind === 'transform') return row + (a.t < 8 ? 0 : a.t < 20 ? 1 : a.t < 30 ? 2 : 3);
         if (kind === 'trap') return row + (a.t < 6 ? 0 : a.t < 12 ? 1 : a.t < 18 ? 2 : 3);
+        if (kind === 'wheel' || kind === 'shuffle') return row ? row + Math.min(3, Math.floor(a.t / 8) % 4) : 'idle0';
         if (kind === 'drink') return row + (a.ending ? 3 : a.t < 8 ? 0 : 1 + ((a.t >> 4) & 1)); // pick up the jug, chug, wipe the mouth
         if (row) return row + Math.min(3, Math.floor((a.t / a.dur) * 4));
       }
@@ -74,6 +75,7 @@ window.MM = window.MM || {};
     if (!f.ground) return f.vy < -4 ? 'jump1' : f.vy < 3 ? 'jump2' : 'jump3';
     if (Math.abs(f.vx) > 1) return 'run' + (Math.floor(f.anim / 6) % 4);
     if (f.pieces && S.frames.build1) { let n = 0; for (let k = 0; k < 5; k++) if ((f.pieces >> k) & 1) n++; if (S.frames['build' + n]) return 'build' + n; } // Sabir wearing the pieces he has
+    if (f.tiredT > 0 && S.frames.slow0) return 'slow' + (Math.floor(f.anim / 16) % 4); // Kevin worn out after the superfan form
     return 'idle' + (Math.floor(f.anim / 16) % 4);
   }
 
@@ -208,7 +210,28 @@ window.MM = window.MM || {};
   }
   function drawUltFx(g, f, G) {
     drawBeam(g, f, G);
-    const a = f.act; if (!a || a.type !== 'ult') return;
+    const a = f.act;
+    if (a && a.type === 'special' && a.sp && a.sp.fx) { // a special's own effect art in front of her (Kevin's towel, Janelle's shields)
+      const [id, pre, n, sc] = a.sp.fx, kind = a.sp.kind;
+      const i = n === 1 ? -1 : kind === 'counter' ? (a.counter ? 2 : a.t < 4 ? 0 : 1) : Math.min(n - 1, Math.floor((a.t / (a.dur || 20)) * n));
+      const fade = kind === 'counter' && !a.counter && a.t > a.sp.window ? Math.max(0, 1 - (a.t - a.sp.window) / 8) : 1;
+      drawFx(g, id, i < 0 ? pre : pre + i, f.x + f.face * f.w * 0.9, f.y - f.h * 0.5, f.h * sc, fade);
+    }
+    if (!a || a.type !== 'ult') return;
+    if (a.u.fxSheet && a.u.fxRush && a.u.rush && a.t >= a.u.rush[0] && a.t < a.u.finishAt + 24) { // Kevin's football stampede
+      const k = a.t < a.u.catchAt ? Math.floor((a.t - a.u.rush[0]) / 8) % 2 : a.t < a.u.finishAt ? 2 : 3;
+      g.save(); g.scale(1, 1); g.translate(f.x + f.face * f.w * 0.4, f.y - f.h * 0.35); g.scale(f.face, 1);
+      drawFx(g, a.u.fxSheet, a.u.fxRush + k, 0, 0, f.h * 1.9, a.t > a.u.finishAt ? 1 - (a.t - a.u.finishAt) / 24 : 1); g.restore();
+    }
+    if (a.u.fxSheet && a.u.fxCatch && a.t >= a.u.catchAt - 30 && a.t < a.u.finishAt + 24) { // Janelle's subjects fly together and burst
+      const k = a.t < a.u.catchAt ? 0 : a.t < a.u.finishAt - 20 ? 1 : a.t < a.u.finishAt ? 2 : a.t < a.u.finishAt + 12 ? 3 : 4;
+      drawFx(g, a.u.fxSheet, a.u.fxCatch + k, f.x + f.face * f.h * (k < 2 ? 0.9 : 1.5), f.y - f.h * 0.55, f.h * 1.5);
+    }
+    if (a.u.type === 'paint' && a.u.fxSheet) { // Cloe: the colour wheel spins open over her, then bursts into paint
+      const u = a.u, cy = f.y - f.h - 80;
+      if (a.t < u.splashAt) drawFx(g, u.fxSheet, 'cloewheel', f.x, cy, 60 + Math.min(1, a.t / 20) * 120, Math.min(1, a.t / 10), a.t * 0.08);
+      else if (a.t < u.splashAt + 36) drawFx(g, u.fxSheet, 'burst' + Math.min(5, Math.floor((a.t - u.splashAt) / 6)), f.x, cy, 220);
+    }
     if (a.u.type === 'stampede' && a.sweepX != null) {
       g.save(); g.font = '72px serif'; g.textAlign = 'center'; g.textBaseline = 'bottom';
       const ash = a.u.animals && sheet(a.u.herdSheet);
@@ -253,6 +276,11 @@ window.MM = window.MM || {};
     }
   }
 
+  function drawFx(g, id, name, x, y, w, alpha = 1, rot = 0) {
+    const sh = sheet(id), fr = sh && sh.S.frames[name]; if (!fr) return false;
+    const k = w / fr[2]; g.save(); g.globalAlpha *= alpha; g.translate(x, y); if (rot) g.rotate(rot); g.scale(k, k);
+    g.drawImage(sh.im, fr[0], fr[1], fr[2], fr[3], -fr[4], -fr[5], fr[2], fr[3]); g.restore(); return true;
+  }
   function drawSpriteProj(g, p) {
     if (p.girl != null) return drawGirl(g, p);
     let sh = p.sheet ? sheet(p.sheet) : p.sprite && p.owner.def.sprite && sheet(p.owner.def.sprite);
@@ -864,8 +892,38 @@ window.MM = window.MM || {};
       g.closePath(); g.fillStyle = '#ffd34a'; g.fill(); g.lineWidth = 4; g.strokeStyle = '#7a4a00'; g.stroke();
       g.fillStyle = '#fff6c8'; g.beginPath(); g.arc(-6, -8, 4, 0, TAU); g.fill(); g.restore();
     }
-    for (const t of G.traps) if (t.sp.sprite) drawSpriteProj(g, { sprite: t.sp.sprite, owner: t.owner, x: t.x, y: t.y - 18, runner: true, t: 0, dir: t.dir || 1, scale: t.sp.scale, base: t.piece != null ? 'sabir' : null }, G);
-    for (const t of G.traps) { if (t.sp.sprite) continue; g.globalAlpha = t.armed > 0 ? 0.5 : 1; g.font = '44px serif'; g.textAlign = 'center'; g.textBaseline = 'bottom'; g.fillText(t.sp.emoji || '⚠️', t.x, t.y + 4); g.globalAlpha = 1; }
+    for (const t of G.traps) if (t.sp.sprite) drawSpriteProj(g, { sprite: t.sp.sprite, sheet: t.sp.sheet, owner: t.owner, x: t.x, y: t.y - 18, runner: true, t: 0, dir: t.dir || 1, scale: t.sp.scale, base: t.piece != null ? 'sabir' : null }, G);
+    for (const t of G.traps) if (t.sp.root) { // Cloe's paint splashes
+      if (t.sp.puddle && drawFx(g, 'kcj-fx', t.sp.puddle, t.x, t.y - 10, 140, Math.min(1, t.life / 40))) continue;
+      g.save(); g.globalAlpha = Math.min(1, t.life / 40) * 0.85; g.fillStyle = t.sp.color;
+      g.beginPath(); g.ellipse(t.x, t.y - 4, 62, 13, 0, 0, TAU); g.fill();
+      g.beginPath(); g.ellipse(t.x - 30, t.y - 10, 14, 8, 0, 0, TAU); g.ellipse(t.x + 34, t.y - 9, 12, 7, 0, 0, TAU); g.fill(); g.restore();
+    }
+    for (const f of G.fighters) { // Janelle's subject wheel while she holds Special
+      const a = f.act; if (!a || a.type !== 'special' || !a.sp || a.sp.kind !== 'wheel' || !f.forms) continue;
+      const cx = f.x, cy = f.y - f.h - 90, r = 74, n = f.forms.length;
+      if (f.def.wheelArt && drawFx(g, 'kcj-fx', f.def.wheelArt, cx, cy, r * 2 + 10)) { // ChatGPT's subject wheel, picked slice lit up
+        g.save();
+        for (let i = 0; i < n; i++) {
+          const a0 = -Math.PI / 2 + ((i - 0.5) * TAU) / n, a1 = a0 + TAU / n;
+          g.beginPath(); g.arc(cx, cy, r, a0, a1); g.arc(cx, cy, r * 0.34, a1, a0, true); g.closePath();
+          if (i === a.pick) { g.fillStyle = 'rgba(255,255,255,.28)'; g.fill(); g.lineWidth = 5; g.strokeStyle = '#ffc21a'; g.stroke(); }
+          else { g.fillStyle = 'rgba(10,5,25,.45)'; g.fill(); }
+        }
+        g.fillStyle = '#ffc21a'; g.font = '900 13px system-ui'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('◀ ▶  let go to pick', cx, cy + r + 18); g.restore();
+        continue;
+      }
+      g.save(); g.globalAlpha = 0.92;
+      for (let i = 0; i < n; i++) {
+        const a0 = -Math.PI / 2 + ((i - 0.5) * TAU) / n, a1 = a0 + TAU / n;
+        g.beginPath(); g.moveTo(cx, cy); g.arc(cx, cy, r, a0, a1); g.closePath();
+        g.fillStyle = i === a.pick ? f.forms[i].accent : '#1a0b2e'; g.fill(); g.lineWidth = 3; g.strokeStyle = '#ffc21a'; g.stroke();
+        const am = (a0 + a1) / 2; g.fillStyle = i === a.pick ? '#1a0b2e' : '#fff'; g.font = '900 12px system-ui'; g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.fillText(f.forms[i].short, cx + Math.cos(am) * r * 0.62, cy + Math.sin(am) * r * 0.62);
+      }
+      g.fillStyle = '#ffc21a'; g.font = '900 13px system-ui'; g.fillText('◀ ▶  let go to pick', cx, cy + r + 16); g.restore();
+    }
+    for (const t of G.traps) { if (t.sp.sprite || t.sp.root) continue; g.globalAlpha = t.armed > 0 ? 0.5 : 1; g.font = '44px serif'; g.textAlign = 'center'; g.textBaseline = 'bottom'; g.fillText(t.sp.emoji || '⚠️', t.x, t.y + 4); g.globalAlpha = 1; }
     for (const f of G.fighters) drawFighter(g, f, G);
     for (const f of G.fighters) drawUltFx(g, f, G);
     for (const p of G.projs) drawProj(g, p, G);

@@ -387,6 +387,44 @@ CHARACTERS = {
             'three-head-beast-ultimate-personality-v2-draft.png': ['ult', 'pers'],
         },
     },
+    # Kevin, Cloe and Janelle (ChatGPT's restyled 'style correction' sheets)
+    'kevin': {
+        'scale': 0.62, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'dropleft': 60, 'goldplates': True, 'titleband': (75, 200, 140), 'minbody': 8000,
+        'sheets': {
+            'kevin-normal-movement.png': ['idle', 'run', 'jump', 'hurt'],
+            'kevin-normal-attacks.png': ['punch', 'kick', 'spiral', 'towel'],
+            'kevin-transform-recovery.png': ['cup', 'slow', 'rally', 'fanrise'],
+        },
+    },
+    'kevin-ult': {'scale': 0.62, 'bodies': True, 'leftcut': 170, 'minbody': 8000,
+        'sheets': {'kevin-ultimate.png': ['ult', 'fult', 'pers', 'fpers']}},
+    'kevin-fan': {
+        'scale': 0.62, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'dropleft': 60, 'goldplates': True, 'titleband': (75, 200, 140), 'minbody': 8000,
+        'sheets': {
+            'kevin-superfan-movement.png': ['idle', 'run', 'jump', 'hurt'],
+            'kevin-superfan-attacks.png': ['finger', 'fspiral', 'ftowel', 'curtain'],
+        },
+    },
+    'cloe': {
+        'scale': 0.62, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'dropleft': 60, 'goldplates': True, 'titleband': (75, 200, 140), 'minbody': 8000,
+        'sheets': {
+            'cloe-movement.png': ['idle', 'run', 'jump', 'hurt'],
+            'cloe-basics-alphabet.png': ['paint', 'crayon', 'abc', 'alift'],
+            'cloe-six-color-specials.png': ['red', 'orange', 'yellow', 'green', 'blue', 'purple'],
+            'cloe-ultimate-shuffle.png': ['shuffle', 'wheel', 'release', 'pers'],
+        },
+    },
+    'janelle': {
+        'scale': 0.62, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'dropleft': 60, 'goldplates': True, 'titleband': (75, 200, 140), 'minbody': 8000,
+        'sheets': {
+            'janelle-movement.png': ['idle', 'run', 'jump', 'hurt'],
+            'janelle-basics-recovery.png': ['pencil', 'ruler', 'book', 'plift'],
+            'janelle-subject-offense.png': ['oeng', 'oread', 'omath', 'osoc', 'osci'],
+            'janelle-subject-defense.png': ['deng', 'dread', 'dmath', 'dsoc', 'dsci'],
+        },
+    },
+    'janelle-ult': {'scale': 0.62, 'bodies': True, 'leftcut': 170, 'minbody': 8000,
+        'sheets': {'janelle-wheel-ultimate.png': ['wheel', 'charge', 'ult', 'pers']}},
     'evea': {
         'scale': 0.62, 'auto': True,
         'sheets': {
@@ -693,7 +731,7 @@ def slice_bodies(path, names, frames, scale, leftcut=230, minbody=12000, keep_fx
     comps = [(i + 1, o, s) for i, (o, s) in enumerate(zip(objs, sizes))
              if s >= 30 and not texty(i + 1, o, s) and o[1].stop > leftcut and not boxy(o, s) and not (o[0].stop < 120 and o[1].stop - o[1].start > 200)
              and not (o[0].start < tb[0] and (o[1].stop - o[1].start > tb[1] or o[0].stop < tb[2]))  # fancy title banners at the top
-             and not (dropleft and o[1].start < 25 and o[1].stop - o[1].start < 200)]  # row labels at the left edge
+             and not (dropleft and o[1].start < (dropleft if dropleft is not True else 25) and o[1].stop - o[1].start < 200 and o[1].stop < 190)]  # row labels at the left edge
     def cy(k): return (k[1][0].start + k[1][0].stop) / 2
     def cx(k): return (k[1][1].start + k[1][1].stop) / 2
     bodies = sorted([k for k in comps if k[2] >= minbody and (k[1][0].stop - k[1][0].start) > 70], key=cy)

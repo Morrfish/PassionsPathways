@@ -529,6 +529,91 @@ MM.FIGHTERS = [
   }
 }
 
+// ---------- Kevin, Cloe and Janelle (ChatGPT's Nov 25 pack, restyled sheets) ----------
+{
+  // Kevin Crist, "The Steel City Superfan": Mandi's husband. A Rally bar fills as he fights; full, Switch turns him
+  // into a decked-out superfan for 8 s (+20% damage, +10% speed); when it wears off he's slower for exactly 10 s.
+  const kevinSpecials = (fan) => ({
+    neutral: { kind: 'projectile', name: 'Steel City Spiral', thing: 'a football spiral', emoji: '🏈', sheet: 'kcj-fx', sprite: 'ball1', scale: 0.183, speed: 12, vy: -3, grav: 0.12, dmg: 7, kb: 6, kbg: 0.08, r: 18, life: 70, cd: 55 },
+    side: { kind: 'dash', name: 'Terrible Towel Twister', fx: ['kcj-fx', 'towel', 4, 0.9], speed: 14, dur: 18, dmg: 9, kb: 7.5, kbg: 0.11, ang: 30, cd: 110, box: [-10, -95, 110, 95] },
+    up: { kind: 'rise', name: 'Rally Rise', power: 19.5, forward: 4, dmg: 6, kb: 6, kbg: 0.06 },
+    down: { kind: 'counter', name: 'Steel Curtain', fx: ['kcj-fx', 'curtain', 4, 1.1], window: 20, mult: 1.35 },
+  });
+  const kevinUlt = (fan) => ({ name: 'Steel City Stampede', sprite: 'kevin-ult', fxSheet: 'kcj-fx', fxRush: 'stampede', type: 'catch', ahead: 3.2, rush: [36, 66, 13], dur: 170, catchAt: 66, finishAt: 112, dmg: 28, kbMul: 1.5,
+    desc: 'raises the Terrible Towel, stadium lights flash, he rushes down the field and spikes everyone he reaches in a gold end-zone blast',
+    poses: fan ? [[0, 'fult0'], [30, 'fult1'], [60, 'fult2'], [112, 'fult3']] : [[0, 'ult0'], [30, 'ult1'], [60, 'ult2'], [112, 'ult3']] });
+  const kevinBase = { stats: { speed: 6.9, air: 6.4, jump: 15, weight: 1.08, power: 1.03, size: 1.08 } };
+  MM.FIGHTERS.push({
+    male: true, id: 'kevin', name: 'Kevin Crist', title: 'The Steel City Superfan', photo: 'img/kevin.png',
+    stats: kevinBase.stats, taunt: 'Here we go!',
+    mess: { action: 2, hit: 4, cleanFrames: 480, cupDur: 36, backDur: 20, tiredAfter: { t: 600, mul: 0.7 },
+      ready: 'RALLY READY!', go: 'SUPERFAN!', back: 'WORN OUT... (10 s)', color: '#ffc21a', goColor: '#ffc21a', bar: '#ffc21a', formBar: '#ffe27a', hue: 45 },
+    forms: [
+      { form: 'fan', formName: 'WORN OUT... (10 s)', title: 'Normal', sprite: 'kevin', color: '#1b1b1f', accent: '#ffc21a', skin: '#f0c4a4', hair: '#8a7a6a',
+        attackNames: { jab: 'Fan One-Two', side: 'End-Zone Boot', up: 'Goal-Line Lift', down: 'Towel Sweep', air: 'End-Zone Boot, Towel Sweep' },
+        specials: kevinSpecials(false), ultimate: kevinUlt(false) },
+      { form: 'superfan', formName: 'SUPERFAN!', title: 'Superfan', sprite: 'kevin-fan', color: '#ffc21a', accent: '#1b1b1f', skin: '#f0c4a4', hair: '#8a7a6a',
+        stats: Object.assign({}, kevinBase.stats, { power: 1.24, speed: 7.6 }),
+        attackNames: { jab: 'Foam Finger', side: 'Foam Finger', up: 'Spiral Toss', down: 'Rally Towel', air: 'Foam Finger, Rally Towel' },
+        specials: kevinSpecials(true), ultimate: kevinUlt(true) },
+    ],
+  });
+
+  // Cloe Crist, "The Color-Wheel Creator": preschool teacher, fingerpaint and ABC blocks. Down special (or Switch)
+  // shuffles her outfit colour, and each colour changes her main special. (Her outfit art is red in every colour for now.)
+  const colors = [
+    ['red', 'RED: APPLE ARC', '#d93a3a', { kind: 'projectile', name: 'Apple Arc', thing: 'a painted red apple', emoji: '🍎', sheet: 'kcj-fx', sprite: 'apple', scale: 0.33, speed: 10, vy: -6, grav: 0.3, dmg: 8, kb: 6.5, kbg: 0.08, r: 18, life: 80, cd: 50 }],
+    ['orange', 'ORANGE: CITRUS BOUNCE', '#ff8a1f', { kind: 'projectile', name: 'Citrus Bounce', thing: 'a painted orange that bounces once', emoji: '🍊', sheet: 'kcj-fx', sprite: 'orange', scale: 0.349, speed: 10, vy: -5, grav: 0.35, bounce: 1, dmg: 7, kb: 6, kbg: 0.07, r: 18, life: 100, cd: 50 }],
+    ['yellow', 'YELLOW: SUNSHINE PALM', '#f5c400', { kind: 'projectile', name: 'Sunshine Palm', thing: 'a short burst of painted sunshine that pushes', emoji: '☀️', sheet: 'kcj-fx', sprite: 'sun', scale: 0.521, speed: 8, dmg: 7, kb: 8, kbg: 0.09, r: 30, life: 22, cd: 50 }],
+    ['green', 'GREEN: LEAF LASSO', '#3fae4a', { kind: 'trap', name: 'Leaf Lasso', thing: 'a vine snare on the floor that holds someone still for a moment', emoji: '🌿', sheet: 'kcj-fx', sprite: 'vine', scale: 0.396, slowOnly: true, slow: { mul: 0.05, t: 30 }, life: 240, cd: 120 }],
+    ['blue', 'BLUE: BUBBLE BRUSH', '#3f8fe8', { kind: 'counter', name: 'Bubble Brush', window: 18, mult: 1.3 }],
+    ['purple', 'PURPLE: GRAPE POP', '#8a3fd1', { kind: 'projectile', name: 'Grape Pop', thing: 'three painted grapes', emoji: '🍇', sheet: 'kcj-fx', sprite: 'grapes', scale: 0.288, count: 3, spread: 0.18, speed: 11, dmg: 3, kb: 4, kbg: 0.05, r: 14, life: 40, cd: 55 }],
+  ];
+  const cloeUlt = { name: 'Color Wheel Carnival', sprite: 'cloe', fxSheet: 'kcj-fx', type: 'paint', dur: 120, splashAt: 54, root: 120, life: 360,
+    desc: 'a six-colour wheel opens and paint splashes land all over the stage: step in one and you stick for 2 seconds',
+    poses: [[0, 'wheel0'], [16, 'wheel1'], [34, 'wheel2'], [50, 'wheel3'], [54, 'release0'], [64, 'release1'], [78, 'release2'], [94, 'release3']] };
+  MM.FIGHTERS.push({
+    id: 'cloe', name: 'Cloe Crist', title: 'The Color-Wheel Creator', photo: 'img/cloe.png',
+    stats: { speed: 7.1, air: 6.6, jump: 15.3, weight: 0.95, power: 1.0, size: 1.0 }, taunt: 'Time for art!', cycle: 'all',
+    forms: colors.map(([c, label, accent, main]) => ({ form: c, formName: label, title: c[0].toUpperCase() + c.slice(1), sprite: 'cloe',
+      color: accent, accent, skin: '#f0c4a4', hair: '#4a2a1a', moveRows: { neutral: c, downSpecial: 'shuffle' },
+      attackNames: { jab: 'Fingerpaint One-Two', side: 'Paint Splash', up: 'Alphabet Pop', down: 'Crayon Sweep', air: 'Paint Splash, Alphabet Pop' },
+      specials: {
+        neutral: main,
+        side: { kind: 'projectile', name: 'ABC Burst', thing: 'three painted alphabet blocks', emoji: '🔤', sheet: 'kcj-fx', sprite: 'block0', scale: 0.31, count: 3, spread: 0.22, speed: 10, dmg: 3, kb: 4.5, kbg: 0.05, r: 16, life: 45, cd: 70 },
+        up: { kind: 'rise', name: 'Alphabet Lift', power: 19.5, forward: 4, dmg: 5, kb: 6, kbg: 0.06 },
+        down: { kind: 'shuffle', name: 'Palette Shuffle', thing: 'the next outfit colour' },
+      }, ultimate: cloeUlt })),
+  });
+
+  // Janelle Morris, "The Subject Specialist": second-grade teacher. Hold down + Special for the subject wheel (tap
+  // left/right to turn it, let go to pick); each subject has its own attack (main special) and defense (side special).
+  const subj = [
+    ['english', 'ENGLISH', 'ENG', '#e84a5f', { kind: 'projectile', name: 'Word Whirl', thing: 'a swirl of letters and pencils', emoji: '✏️', sheet: 'kcj-fx', sprite: 'eng', scale: 0.301, speed: 11, dmg: 7, kb: 6, kbg: 0.07, r: 20, life: 55, cd: 50 }, 'Grammar Guard'],
+    ['reading', 'READING', 'READ', '#c0392b', { kind: 'projectile', name: 'Page Turner', thing: 'a book that flies out and back', emoji: '📖', sheet: 'kcj-fx', sprite: 'read', scale: 0.333, speed: 12, boomerang: true, dmg: 6, kb: 5.5, kbg: 0.07, r: 20, life: 90, cd: 70 }, 'Book Cover'],
+    ['math', 'MATH', 'MATH', '#3fa7ff', { kind: 'projectile', name: 'Number Line', thing: 'a ruler wave along the floor', emoji: '📏', sheet: 'kcj-fx', sprite: 'math', scale: 0.32, speed: 10, ground: true, dmg: 8, kb: 7, kbg: 0.08, r: 22, life: 55, cd: 60 }, 'Angle Shield'],
+    ['social', 'SOCIAL STUDIES', 'SOC', '#3fae4a', { kind: 'projectile', name: 'Globe Trotter', thing: 'a rolling globe', emoji: '🌍', sheet: 'kcj-fx', sprite: 'soc', scale: 0.322, speed: 9, vy: -2, grav: 0.3, bounce: 2, dmg: 8, kb: 7, kbg: 0.08, r: 22, life: 110, cd: 65 }, 'Map Boundary'],
+    ['science', 'SCIENCE', 'SCI', '#8a3fd1', { kind: 'projectile', name: 'Bubble Experiment', thing: 'a safe coloured foam orb', emoji: '🧪', sheet: 'kcj-fx', sprite: 'sci', scale: 0.393, speed: 8, vy: -1, grav: 0.05, dmg: 9, kb: 6.5, kbg: 0.08, r: 24, life: 75, cd: 70 }, 'Lab Shield'],
+  ];
+  const rowOf = { english: 'eng', reading: 'read', math: 'math', social: 'soc', science: 'sci' };
+  const janUlt = { name: 'All Subjects, All Stars!', sprite: 'janelle-ult', fxSheet: 'kcj-fx', fxCatch: 'star', type: 'catch', ahead: 3, dur: 160, catchAt: 60, finishAt: 110, dmg: 26, kbMul: 1.45,
+    desc: 'pencils, book pages, numbers, a globe and a foamy science burst all fly forward together',
+    poses: [[0, 'charge0'], [30, 'charge2'], [60, 'ult1'], [110, 'ult3']] };
+  MM.FIGHTERS.push({
+    id: 'janelle', name: 'Janelle Morris', title: 'The Subject Specialist', photo: 'img/janelle.png',
+    stats: { speed: 6.9, air: 6.5, jump: 15.2, weight: 0.98, power: 1.0, size: 0.98 }, taunt: 'Pop quiz!',
+    forms: subj.map(([k, label, short, accent, main, guard]) => ({ form: k, formName: label, short, title: label[0] + label.slice(1).toLowerCase(), sprite: 'janelle',
+      color: '#e8b923', accent, skin: '#f0c4a4', hair: '#b88a4a', wheelArt: 'janwheel', moveRows: { neutral: 'o' + rowOf[k], sideSpecial: 'd' + rowOf[k], downSpecial: 'book' },
+      attackNames: { jab: 'Pencil Tap', side: 'Ruler Sweep', up: 'Book Lift', down: 'Ruler Sweep', air: 'Page Flutter, Book Lift' },
+      specials: {
+        neutral: main,
+        side: { kind: 'counter', name: guard, window: 18, mult: 1.3, fx: ['kcj-fx', 'sh' + rowOf[k], 1, 0.75] },
+        up: { kind: 'rise', name: 'Page Lift', power: 19.5, forward: 3, dmg: 5, kb: 6, kbg: 0.06 },
+        down: { kind: 'wheel', name: 'Subject Select', thing: 'the subject wheel (hold, tap left/right, let go)' },
+      }, ultimate: janUlt })),
+  });
+}
+
 // ---------- the giants (ChatGPT's GIANT_FORMS_AND_UNLOCKS) ----------
 // Each is unlocked with its own code in Settings (saved in the browser); once unlocked it's a normal fighter.
 // The same giants are the story's final bosses' second phase (Jeff, then the secret Patty fight).

@@ -119,6 +119,11 @@ window.MM = window.MM || {};
     if (!a && !f.hitstun && !f.caught) f.act = { type: 'backwork', t: 0, dur: f.def.mess.backDur || 21, noGrav: !f.ground };
     else if (!a || a.type !== 'normal' && a.type !== 'special') backToWork(G, f); // got hit: change right away
   }
+  function nextForm(G, f) { // Cole: Thor -> Cap -> Iron Man (never back to the plain tee); Cloe: all six colours
+    const from = f.def.cycle === 'all' ? 0 : 1;
+    applyForm(f, f.formIdx >= f.forms.length - 1 ? from : f.formIdx + 1); f.swapCd = 48;
+    f.act = { type: 'shirt', t: 0, dur: f.def.cycle === 'all' ? 18 : 15, noGrav: !f.ground }; popText(G, f.x, f.y - f.h - 24, f.def.formName, f.accent); burst(G, f.x, f.y - f.h / 2, f.accent, 12, 5); MM.sfx('special');
+  }
   // Sabir's costume pieces: a bit per piece; all of them starts the transformation right away
   function collectPiece(G, f, i) {
     const ms = f.def.mess; if (f.formIdx !== 0) return;
@@ -168,6 +173,8 @@ window.MM = window.MM || {};
     const ex = f.def.mess.exhaust; // e.g. Siren: out of ideas, can't move or act for exactly 2 s (still gets hit and knocked around)
     applyForm(f, 0); f.clean = 0; f.mess = 0; f.pieces = 0;
     if (ex) f.exhaust = ex;
+    const ta = f.def.mess.tiredAfter; // e.g. Kevin: worn out after the superfan form, slower for exactly 10 s (can still fight)
+    if (ta) { f.tiredT = ta.t; f.tiredMul = ta.mul; }
     burst(G, f.x, f.y - f.h / 2, f.def.mess.color || '#bfe9ff', 16, 5); popText(G, f.x, f.y - f.h - 24, f.def.mess.back || 'BACK TO WORK!', f.accent);
   }
   function makeFighterBase(p, def, x, alt, stocks) {
@@ -186,7 +193,7 @@ window.MM = window.MM || {};
 
   // ---------- helpers ----------
   const power = (f) => f.st.power * (f.buff ? f.buff.powerMul : 1);
-  const speedMul = (f) => (f.buff ? f.buff.speedMul : 1) * (f.slow ? f.slow.mul : 1);
+  const speedMul = (f) => (f.buff ? f.buff.speedMul : 1) * (f.slow ? f.slow.mul : 1) * (f.tiredT > 0 ? f.tiredMul : 1);
   MM.hurtbox = (f) => ({ x: f.x - f.w / 2, y: f.y - f.h, w: f.w, h: f.h });
   function boxFor(f, b) {
     const s = f.s;
@@ -278,7 +285,8 @@ window.MM = window.MM || {};
     }
     f.anim++;
     if (f.exhaust > 0) f.exhaust--;
-    if (f.phaseIn > 0) f.phaseIn--; // one fixed deadline: hits don't restart it
+    if (f.phaseIn > 0) f.phaseIn--;
+    if (f.tiredT > 0) f.tiredT--; // one fixed deadline: hits don't restart it
     if (f.invuln > 0) f.invuln--;
     if (f.dodgeCd > 0) f.dodgeCd--;
     if (f.dropT > 0) f.dropT--;
@@ -314,9 +322,7 @@ window.MM = window.MM || {};
       const swapNow = f.forms && pressed('swap');
       const ultNow = pressed('ult') || (inp.attack && inp.special && (pressed('attack') || pressed('special')));
       if (ultNow && f.meter >= 100 && f.def.ultimate) startUlt(G, f);
-      else if (swapNow && f.def.cycle) { // e.g. Cole: Thor -> Captain America -> Iron Man shirt (never back to the plain tee)
-        if (!(f.swapCd > 0)) { applyForm(f, f.formIdx >= f.forms.length - 1 ? 1 : f.formIdx + 1); f.swapCd = 48; f.act = { type: 'shirt', t: 0, dur: 15, noGrav: !f.ground }; popText(G, f.x, f.y - f.h - 24, f.def.formName, f.accent); burst(G, f.x, f.y - f.h / 2, f.accent, 12, 5); MM.sfx('special'); }
-      }
+      else if (swapNow && f.def.cycle) { if (!(f.swapCd > 0)) nextForm(G, f); } // e.g. Cole's shirts, Cloe's colours
       else if (swapNow && f.def.mess) { if (f.mess >= 100 && f.formIdx === 0) f.act = { type: 'cleanup', t: 0, dur: f.def.mess.cupDur || 33, noGrav: !f.ground }; }
       else if (swapNow && !f.def.powerup) startSpecial(G, f, 'down');
       else if (pressed('taunt') && f.ground) { // taunt: ground only, a hit stops it, no protection
@@ -535,7 +541,7 @@ window.MM = window.MM || {};
           const n = sp.count || 1;
           for (let i = 0; i < n; i++) {
             const ang = n > 1 ? (i - (n - 1) / 2) * (sp.spread || 0.2) : 0;
-            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, sprite: sp.sprite, scale: sp.scale, spin: sp.spin, puddle: sp.puddle, slow: sp.slow, bounce: sp.bounce, boomer: sp.boomerang, pull: sp.pull, line: sp.line, dir: f.face });
+            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, sprite: sp.sprite, sheet: sp.sheet, scale: sp.scale, spin: sp.spin, puddle: sp.puddle, slow: sp.slow, bounce: sp.bounce, boomer: sp.boomerang, pull: sp.pull, line: sp.line, dir: f.face });
           }
         }
       },
@@ -739,6 +745,22 @@ window.MM = window.MM || {};
         if (!n) popText(G, f.x, f.y - f.h - 20, 'NO PIECES OUT', '#ccc');
       },
     },
+    shuffle: { // e.g. Cloe's Palette Shuffle: next outfit colour (same as Switch)
+      start(G, f, sp, a) { a.dur = 20; a.pose = 'flex'; if (!(f.swapCd > 0)) nextForm(G, f); else { f.act = null; } },
+      tick() {},
+    },
+    wheel: { // e.g. Janelle's Subject Select: hold Special, tap left/right to turn the wheel, let go to pick
+      start(G, f, sp, a) { a.dur = 9999; a.pose = 'flex'; a.pick = f.formIdx; a.prevX = 0; },
+      tick(G, f, sp, a) {
+        f.vx *= 0.8; const n = f.forms.length;
+        if (f.inp.x && f.inp.x !== a.prevX) { a.pick = (a.pick + f.inp.x + n) % n; MM.sfx('select'); }
+        a.prevX = f.inp.x;
+        if (!f.inp.special || a.t > 240) {
+          if (a.pick !== f.formIdx) { applyForm(f, a.pick); popText(G, f.x, f.y - f.h - 24, f.def.formName, f.accent); burst(G, f.x, f.y - f.h / 2, f.accent, 12, 5); MM.sfx('special'); }
+          f.act = null;
+        }
+      },
+    },
     drink: {
       start(G, f, sp, a) { if (!f.ground || !f.def.mess || f.formIdx !== 0) { f.act = null; f.cd.neutral = 0; return; } a.dur = 9999; a.pose = 'flex'; },
       tick(G, f, sp, a) {
@@ -782,7 +804,11 @@ window.MM = window.MM || {};
   function releaseUlt(a) { for (const d of a.caught) if (d.caught) d.caught = null; a.caught.length = 0; }
   function tickUlt(G, f, a) {
     const u = a.u; f.vx *= 0.8; if (!f.ground) f.vy = 0;
-    if (u.rush && a.t >= u.rush[0] && a.t < u.rush[1]) f.vx = f.face * u.rush[2]; // e.g. Haylie charges in
+    if (u.rush && a.t >= u.rush[0] && a.t < u.rush[1]) { // e.g. Haylie charges in: stop on reaching someone so she doesn't run past
+      const near = G.fighters.some((d) => d !== f && !d.dead && !d.out && !(MM.sameTeam(G, f, d) && !G.ff) && (d.x - f.x) * f.face > 0 && (d.x - f.x) * f.face < f.w + 30 && Math.abs(d.y - f.y) < f.h);
+      if (near) a.rushDone = true;
+      f.vx = a.rushDone ? 0 : f.face * u.rush[2];
+    }
     if (u.say && a.t === u.say[0]) f.bubble = { text: u.say[1], t: 70 }; // e.g. "Excelsior!"
     if (u.type === 'catch') {
       if (a.t < u.catchAt && a.t % 6 === 0) ring(G, f.x, f.y - f.h / 2, f.accent); // telegraph: you can still get away
@@ -814,6 +840,16 @@ window.MM = window.MM || {};
         a.hitProps = { dmg: u.dmg, kb: 9 * u.kbMul, kbg: 0.12 * u.kbMul, ang: 30 };
         if (a.t === u.beamAt) { G.shake = 20; G.flash = 6; }
       } else { a.box = null; a.beam = null; }
+    } else if (u.type === 'paint') { // e.g. Cloe's Color Wheel Carnival
+      if (a.t === u.splashAt) {
+        const m = G.stage.main, cast = new Set(), cols = ['#ff4b4b', '#ff9a1f', '#ffd93d', '#4bd16b', '#3fa7ff', '#a35cff'];
+        G.traps = G.traps.filter((t) => !(t.owner === f && t.sp.root));
+        for (let i = 0; i < 6; i++) {
+          const x = m.left + 80 + ((m.right - m.left - 160) * (i + 0.5)) / 6 + (Math.random() - 0.5) * 60;
+          G.traps.push({ owner: f, x, y: -400 - i * 30, vy: 0, sp: { slowOnly: true, root: true, slow: { mul: 0, t: u.root }, color: cols[i], puddle: u.fxSheet && 'puddle-' + ['red', 'orange', 'yellow', 'green', 'blue', 'purple'][i], life: u.life }, life: u.life, armed: 0, age: 0, dir: 1, cast });
+        }
+        G.shake = 10; burst(G, f.x, f.y - f.h, '#fff', 30, 9);
+      }
     } else if (u.type === 'flyby') { // e.g. Sabir's Five-Star Flyby: five friends fly out from behind him and across the screen
       const i = (a.t - u.sendAt) / u.every;
       if (i >= 0 && i < u.girls && i === Math.floor(i)) {
@@ -979,7 +1015,10 @@ window.MM = window.MM || {};
       }
       if (t.sp.slowOnly) { // a puddle: slows enemies standing in it (refreshes, never stacks), no damage
         const pb = { x: t.x - 60, y: t.y - 20, w: 120, h: 24 };
-        for (const d of G.fighters) if (d !== t.owner && !d.dead && !d.out && !MM.sameTeam(G, t.owner, d) && overlap(pb, MM.hurtbox(d)) && (!d.slow || d.slow.mul >= t.sp.slow.mul)) d.slow = { mul: t.sp.slow.mul, t: t.sp.slow.t };
+        for (const d of G.fighters) if (d !== t.owner && !d.dead && !d.out && !MM.sameTeam(G, t.owner, d) && overlap(pb, MM.hurtbox(d)) && (!d.slow || d.slow.mul >= t.sp.slow.mul)) {
+          if (t.sp.root) { if (t.cast.has(d)) continue; t.cast.add(d); popText(G, d.x, d.y - d.h - 20, 'STUCK IN PAINT!', t.sp.color); } // once each per ultimate
+          d.slow = { mul: t.sp.slow.mul, t: t.sp.slow.t };
+        }
         continue;
       }
       const box = { x: t.x - 22, y: t.y - 30, w: 44, h: 30 };
@@ -1018,7 +1057,7 @@ window.MM = window.MM || {};
       G.shake = 26; MM.sfx('ko');
       if (f.act && f.act.type === 'ult') releaseUlt(f.act);
       if (f.super) { f.super = null; applyForm(f, 0); }
-      f.exhaust = 0;
+      f.exhaust = 0; f.tiredT = 0;
       if (f.def.powerup && f.formIdx) { applyForm(f, 0); f.powerT = 0; }
       if (f.def.mess) { if (f.formIdx) applyForm(f, 0); f.mess = 0; f.clean = 0; f.pieces = 0; G.traps = G.traps.filter((t) => !(t.owner === f && t.piece != null)); }
       f.act = null; f.hitstun = 0; f.buff = null; f.slow = null; f.vx = f.vy = 0; f.caught = null; f.meter = 0;

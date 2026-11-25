@@ -97,6 +97,19 @@ MOVES = {
     'triple-trouble': dict(jab='bite', side='bite', down='tsweep', up='leap', nair='tsweep', fair='bite', uair='leap', dair='tsweep',
                            neutral='tyap', sideSpecial='rush', upSpecial='leap', downSpecial='guard', counterHit='guard2',
                            upRow='leap', uairRow='leap', riseMid='leap1', riseLate='leap2'),
+    # Kevin, Cloe and Janelle
+    'kevin': dict(jab='punch', side='kick', down='towel', up='kick', nair='kick', fair='kick', uair='kick', dair='towel',
+                  neutral='spiral', sideSpecial='towel', upSpecial='rally', downSpecial='towel', counterHit='towel2',
+                  airRow='kick', upRow='kick', uairRow='kick', riseMid='rally2', riseLate='rally3'),
+    'kevin-fan': dict(jab='finger', side='finger', down='ftowel', up='fspiral', nair='finger', fair='finger', uair='fspiral', dair='ftowel',
+                      neutral='fspiral', sideSpecial='ftowel', upSpecial='fanrise', downSpecial='curtain', counterHit='curtain2',
+                      upRow='fspiral', uairRow='fspiral', riseMid='fanrise2', riseLate='fanrise3'),
+    'cloe': dict(jab='paint', side='paint', down='crayon', up='alift', nair='crayon', fair='paint', uair='alift', dair='crayon',
+                 neutral='red', sideSpecial='abc', upSpecial='alift', downSpecial='shuffle',
+                 upRow='alift', uairRow='alift', riseMid='alift2', riseLate='alift3'),
+    'janelle': dict(jab='pencil', side='ruler', down='ruler', up='book', nair='plift', fair='pencil', uair='book', dair='ruler',
+                    neutral='oeng', sideSpecial='deng', upSpecial='plift', downSpecial='book',
+                    upRow='book', uairRow='book', riseMid='plift1', riseLate='plift2'),
     'evea': dict(jab='tap', side='scoot', down='twirl', up='horn', nair='circle', fair='rvolley', uair='skysp', dair='shoe',
                  neutral='startoss', sideSpecial='express', upSpecial='rrise', downSpecial='hoof',
                  upRow='horn', uairRow='skysp', riseMid='rrise2', riseLate='rrise3'),
@@ -108,7 +121,7 @@ MOVES = {
                         airRow='dbust', upRow='duster', uairRow='hdust', riseLate='vac3', defRow='def'),
 }
 # ultimate key poses (tools/slice_ultimates.py): drawn at the same scale as the fighter's own atlas
-ULTS = {'patty-ult': 'patty', 'jeffery-ult': 'jeffery', 'jadden-ult': 'jadden', 'mandi-witch-ult': 'mandi-witch', 'mandi-mermaid-ult': 'mandi-mermaid'}
+ULTS = {'kevin-ult': 'kevin', 'janelle-ult': 'janelle', 'patty-ult': 'patty', 'jeffery-ult': 'jeffery', 'jadden-ult': 'jadden', 'mandi-witch-ult': 'mandi-witch', 'mandi-mermaid-ult': 'mandi-mermaid'}
 # The ultimate/personality sheets were drawn at a different size than each fighter's main sheet.
 # Size every pose from those sheets so the standing taunt pose is as tall as the standing idle pose.
 PERS_FRAMES = ('ult', 'asm', 'ret', 'pers', 'ent', 'taunt', 'win', 'lose')
@@ -145,12 +158,16 @@ ALIASES['sabir'].update({'build4': 'buildx0', 'build5': 'buildx1', 'fly3': 'fly0
 ALIASES['jeff-giant'] = {'ent': 'cup3', 'taunt': 'wild0', 'win': 'wild3', 'lose': 'back3'}
 ALIASES['patty-giant'] = {'ent': 'cup3', 'taunt': 'idle3', 'win': 'emg3', 'lose': 'back3'}
 ALIASES['triple-trouble'] = {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'}
+ALIASES['kevin'] = {'ent': 'cup0', 'taunt': 'rally3', 'win': 'rally3', 'lose': 'slow2'}
+ALIASES['kevin-fan'] = {'ent': 'idle0', 'taunt': 'idle1', 'win': 'curtain2', 'lose': 'hurt3'}
+ALIASES['cloe'] = {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'hurt3'}
+ALIASES['janelle'] = {'ent': 'idle0', 'taunt': 'book2', 'win': 'book2', 'lose': 'hurt3'}
 ALIASES['siren-dragon'] = {'ent': 'idle0', 'taunt': 'idle1', 'win': 'idle0', 'lose': 'hurt3'}
 ALIASES['sabir-anime'] = {'ent': 'idle0', 'taunt': 'idle3', 'win': 'idle3', 'lose': 'hurt3', 'fly3': 'fly0'}
 # fighters with their own left-facing art (drawn as-is instead of mirrored: Jaxston always kicks with his LEFT foot)
 LEFT = {'jaxston': 'jaxston-left'}
 # atlases that only hold some poses; the rest come from this atlas (Cole's printed-shirt forms)
-BASE = {'cole-thor': 'cole', 'cole-cap': 'cole', 'cole-iron': 'cole'}
+BASE = {'cole-thor': 'cole', 'cole-cap': 'cole', 'cole-iron': 'cole', 'kevin-fan': 'kevin'}
 ALIASES['jorie-rage'] = {'ent': 'xform3', 'taunt': 'xform3', 'win': 'xform3', 'lose': 'hurt3'}
 ALIASES['evea-spirit'] = {'ent': 'link2', 'taunt': 'link3', 'win': 'link3', 'lose': 'hurt3'}
 # the standing pose to size the personality sheet by, when the taunt reaches up (Jorie lifts the milk jug overhead)
@@ -189,6 +206,8 @@ MM.SPRITES['{who}'] = {{
 """)
 # an ultimate's own left-facing art (Patty's signs stay readable): sized so its first pose matches the ultimate's
 ULT_LEFT = {'patty-ult': 'patty-ult-left'}
+# ultimate sheets without a taunt pose: the standing pose to size them by
+ULT_REF = {'kevin-ult': 'ult0', 'janelle-ult': 'ult3'}
 ult_fs = {}
 for who, base in list(ULTS.items()) + [(l, ULTS[u]) for u, l in ULT_LEFT.items()]:
     fr = json.load(open(os.path.join(src_dir, f'{who}-frames.json')))
@@ -198,6 +217,8 @@ for who, base in list(ULTS.items()) + [(l, ULTS[u]) for u, l in ULT_LEFT.items()
     if src_ult:
         ofr = json.load(open(os.path.join(src_dir, f'{src_ult}-frames.json')))
         f0 = round(ult_fs[src_ult]['ult0'] * ofr['ult0'][3] / fr['ult0'][3], 3)
+    elif who in ULT_REF:  # no taunt on this sheet: size it by a pose that stands like idle
+        f0 = round(std / fr[ULT_REF[who]][3], 3)
     else:
         f0 = sheet_factor(bfr, fr)
     fs = {k: f0 for k in fr}
@@ -213,7 +234,7 @@ MM.SPRITES['{who}'] = {{ src: 'img/{who}-atlas.webp', standH: {std},{left} fscal
 }} }};
 """)
 # atlases that aren't a fighter (e.g. Jeff's Opening Day animals): frames only
-for who in ('jeff-animals',):
+for who in ('jeff-animals', 'kcj-fx'):
     fr = json.load(open(os.path.join(src_dir, f'{who}-frames.json')))
     body = ',\n'.join(f"    '{k}': [{', '.join(str(v) for v in val)}]" for k, val in fr.items())
     parts.append(f"""
