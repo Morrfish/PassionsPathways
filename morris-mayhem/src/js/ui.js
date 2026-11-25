@@ -190,9 +190,11 @@ window.MM = window.MM || {};
       if (s.type === 'human') MM.cursorDevs.add(s.dev);
       if (!el) {
         el = document.createElement('div'); el.className = 'pcur'; el.dataset.cur = i;
-        el.innerHTML = CURSOR_ART ? `<i class="halo" style="border-color:${MM.PLAYER_COLORS[i]}"></i><img class="obj" src="img/ui/cursor-p${i + 1}.png" alt=""><b style="background:${MM.PLAYER_COLORS[i]}">P${i + 1}</b>`
-          : `${CUR_SVG(MM.PLAYER_COLORS[i])}<b style="background:${MM.PLAYER_COLORS[i]}">P${i + 1}</b>`;
+        // the object picture (a glow in the player's color around it); if it can't load, a colored arrow instead
+        const src = (MM.CURSOR_DATA && MM.CURSOR_DATA[i]) || `img/ui/cursor-p${i + 1}.png`;
+        el.innerHTML = `<img class="obj" src="${src}" alt="" style="filter:drop-shadow(0 0 3px ${MM.PLAYER_COLORS[i]}) drop-shadow(0 0 2px ${MM.PLAYER_COLORS[i]}) drop-shadow(0 3px 2px #000a)">${CUR_SVG(MM.PLAYER_COLORS[i])}<b style="background:${MM.PLAYER_COLORS[i]}">P${i + 1}</b>`;
         el.classList.toggle('art', CURSOR_ART);
+        const im = el.querySelector('.obj'); im.onerror = () => { el.classList.remove('art'); im.remove(); };
         layer.appendChild(el);
       }
       if (!curs[i]) { // start over this player's fighter
