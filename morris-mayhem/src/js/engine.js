@@ -263,6 +263,9 @@ window.MM = window.MM || {};
       const swapNow = f.forms && pressed('swap');
       const ultNow = pressed('ult') || (inp.attack && inp.special && (pressed('attack') || pressed('special')));
       if (ultNow && f.meter >= 100 && f.def.ultimate) startUlt(G, f);
+      else if (swapNow && f.def.cycle) { // e.g. Cole: Thor -> Captain America -> Iron Man shirt (never back to the plain tee)
+        if (!(f.swapCd > 0)) { applyForm(f, f.formIdx >= f.forms.length - 1 ? 1 : f.formIdx + 1); f.swapCd = 48; f.act = { type: 'shirt', t: 0, dur: 15, noGrav: !f.ground }; popText(G, f.x, f.y - f.h - 24, f.def.formName, f.accent); burst(G, f.x, f.y - f.h / 2, f.accent, 12, 5); MM.sfx('special'); }
+      }
       else if (swapNow && f.def.mess) { if (f.mess >= 100 && f.formIdx === 0) f.act = { type: 'cleanup', t: 0, dur: 33, noGrav: !f.ground }; }
       else if (swapNow) startSpecial(G, f, 'down');
       else if (pressed('taunt') && f.ground) { // taunt: ground only, a hit stops it, no protection
@@ -391,6 +394,8 @@ window.MM = window.MM || {};
         burst(G, f.x, f.y - f.h / 2, '#ffffff', 30, 8); ring(G, f.x, f.y - f.h / 2, f.def.mess.goColor || '#4aa8e8');
         popText(G, f.x, f.y - f.h - 24, ms.go || 'CLEAN FREAK!', ms.goColor || '#4aa8e8'); MM.sfx('heal');
       }
+    } else if (a.type === 'shirt') { // Cole: a quarter second showing off the new shirt
+      f.vx *= 0.8; if (a.t >= a.dur) f.act = null;
     } else if (a.type === 'backwork') { // 0.35 s back into the work clothes
       f.vx *= 0.8; if (a.t >= a.dur) { f.act = null; backToWork(G, f); }
     } else if (a.type === 'swap') {
@@ -667,7 +672,7 @@ window.MM = window.MM || {};
       tick(G, f, sp, a) {
         if (a.t === 10) {
           G.traps = G.traps.filter((t) => t.owner !== f);
-          G.traps.push({ owner: f, x: f.x + f.face * 40, y: f.y - 2, vy: 0, sp, life: sp.life || 600, armed: 20, dir: f.face });
+          G.traps.push({ owner: f, x: f.x + f.face * 40, y: f.y - (sp.toss ? 60 : 2), vy: sp.toss ? -7 : 0, vx: sp.toss ? f.face * sp.toss : 0, sp, life: sp.life || 600, armed: sp.heal ? 0 : 20, age: 0, dir: f.face });
         }
       },
     },
@@ -696,6 +701,7 @@ window.MM = window.MM || {};
   function tickUlt(G, f, a) {
     const u = a.u; f.vx *= 0.8; if (!f.ground) f.vy = 0;
     if (u.rush && a.t >= u.rush[0] && a.t < u.rush[1]) f.vx = f.face * u.rush[2]; // e.g. Haylie charges in
+    if (u.say && a.t === u.say[0]) f.bubble = { text: u.say[1], t: 70 }; // e.g. "Excelsior!"
     if (u.type === 'catch') {
       if (a.t < u.catchAt && a.t % 6 === 0) ring(G, f.x, f.y - f.h / 2, f.accent); // telegraph: you can still get away
       if (a.t === u.catchAt) {
@@ -822,6 +828,7 @@ window.MM = window.MM || {};
   function updateProjectiles(G) {
     for (const p of G.projs) {
       p.t++; p.life--;
+      if (p.boomer && !p.back && p.t > 20 && sgn(p.vx) !== p.dir) { p.back = true; p.hit = new Set(); } // one hit going out, one coming back
       if (p.boomer && p.t > 20) { const back = sgn(p.owner.x - p.x); p.vx += back * 0.55; p.vy += clamp((p.owner.y - 70 - p.y) * 0.01, -0.4, 0.4); if (p.t > 40 && Math.hypot(p.owner.x - p.x, p.owner.y - 70 - p.y) < 50) p.life = 0; }
       p.vy += p.grav;
       p.x += p.vx; p.y += p.vy;
@@ -861,11 +868,17 @@ window.MM = window.MM || {};
 
   function updateTraps(G) {
     for (const t of G.traps) {
-      t.life--; if (t.armed > 0) t.armed--;
+      t.life--; t.age = (t.age || 0) + 1; if (t.armed > 0) t.armed--;
       const s = surfaceBelow(G, t.x, t.y);
-      if (s === null || t.y < s) { t.vy += 0.6; t.y += t.vy; if (s !== null && t.y >= s) { t.y = s; t.vy = 0; } }
+      if (s === null || t.y < s) { t.vy += 0.6; t.y += t.vy; t.x += t.vx || 0; if (s !== null && t.y >= s) { t.y = s; t.vy = 0; t.vx = 0; } }
       if (t.y > 1500) t.life = 0;
       if (t.armed > 0) continue;
+      if (t.sp.heal) { // a snack (e.g. Jacqi's orange slices): the first one to grab it heals; the thrower only after a second
+        const pb = { x: t.x - 30, y: t.y - 40, w: 60, h: 44 };
+        const d = G.fighters.find((o) => !o.dead && !o.out && (o !== t.owner || t.age > 60) && overlap(pb, MM.hurtbox(o)));
+        if (d) { d.damage = Math.max(0, d.damage - t.sp.heal); t.life = 0; popText(G, d.x, d.y - d.h - 20, '+' + t.sp.heal + ' SNACK!', '#ffa630'); MM.sfx('heal'); burst(G, t.x, t.y - 20, '#ffa630', 10, 4); }
+        continue;
+      }
       if (t.sp.slowOnly) { // a puddle: slows enemies standing in it (refreshes, never stacks), no damage
         const pb = { x: t.x - 60, y: t.y - 20, w: 120, h: 24 };
         for (const d of G.fighters) if (d !== t.owner && !d.dead && !d.out && !MM.sameTeam(G, t.owner, d) && overlap(pb, MM.hurtbox(d)) && (!d.slow || d.slow.mul >= t.sp.slow.mul)) d.slow = { mul: t.sp.slow.mul, t: t.sp.slow.t };

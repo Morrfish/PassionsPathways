@@ -386,6 +386,40 @@ MM.FIGHTERS = [
       },
     ],
   },
+  {
+    // Cole Harrington, "The Marvel Superfan": Cloe's husband (Mandi's family). Switch cycles his printed T-shirt:
+    // Thor (returning hammer), Captain America (ricochet shield), Iron Man (ion cannon). He starts in his black Marvel tee.
+    // Shared powers: Portal Step, Web Swing, Spider Snare, Hulk Stomp. Moves from ChatGPT's COLE handoff (numbers tuned here).
+    id: 'cole', name: 'Cole Harrington', title: 'The Marvel Superfan', photo: 'img/cole.png',
+    stats: { speed: 7.0, air: 6.5, jump: 15.2, weight: 1.05, power: 1.02, size: 1.1 },
+    taunt: 'Excelsior!',
+    cycle: true,
+    forms: [
+      { form: 'tee', formName: 'MARVEL FAN', title: 'Black Marvel tee', sprite: 'cole', color: '#1b1b1f', accent: '#e23636', skin: '#e8b48f', hair: '#5a3a22', specials: null },
+      { form: 'thor', formName: 'THOR SHIRT!', title: 'Thor shirt', sprite: 'cole-thor', color: '#5d6b7a', accent: '#d6b13c', skin: '#e8b48f', hair: '#5a3a22', specials: null },
+      { form: 'cap', formName: 'CAPTAIN AMERICA SHIRT!', title: 'Captain America shirt', sprite: 'cole-cap', color: '#22427e', accent: '#d9343f', skin: '#e8b48f', hair: '#5a3a22', specials: null },
+      { form: 'iron', formName: 'IRON MAN SHIRT!', title: 'Iron Man shirt', sprite: 'cole-iron', color: '#a5262b', accent: '#f0c23a', skin: '#e8b48f', hair: '#5a3a22', specials: null },
+    ],
+  },
+  {
+    // Jacqi Sue Morris, "The Pirate Supermom": Jadden's wife, Bluffton Pirates soccer mom. Megaphone, foam finger,
+    // a giant black SUV and halftime orange slices. Moves from ChatGPT's JACQI handoff (numbers tuned here).
+    id: 'jacqi', name: 'Jacqi Sue Morris', title: 'The Pirate Supermom', photo: 'img/jacqi.png', sprite: 'jacqi',
+    color: '#c8202a', accent: '#1b1b1f', skin: '#f0c4a4', hair: '#cdbb93',
+    stats: { speed: 6.9, air: 6.4, jump: 15, weight: 1.0, power: 1.0, size: 0.95 },
+    attackNames: { jab: 'Foam Finger Swat', side: 'Megaphone Bump', up: 'Whistle Lift', down: 'Cooler Sweep', air: 'Sideline Spin, Pirate Poke, Sky Cheer, Cooler Drop' },
+    specials: {
+      neutral: { kind: 'projectile', name: 'Pirate Pride', thing: 'megaphone sound rings', sprite: 'fxwave', scale: 0.32, speed: 10, dmg: 6, kb: 5, kbg: 0.06, r: 24, life: 45, cd: 42 },
+      side: { kind: 'dash', name: 'Soccer Mom Express', ride: true, speed: 15, dur: 33, dmg: 11, kb: 8.5, kbg: 0.12, ang: 30, cd: 150, box: [-60, -90, 170, 90] },
+      up: { kind: 'rise', name: 'Number One Lift', power: 19.5, forward: 3, dmg: 5, kb: 6, kbg: 0.06 },
+      down: { kind: 'trap', name: 'Halftime Snacks', thing: 'a bag of orange slices: the first one to grab it heals 4% (her own only after a second)', sprite: 'fxsnack', scale: 0.2, heal: 4, toss: 5, life: 240, cd: 420 },
+    },
+    taunt: 'Go Pirates!',
+    // ~2.8 s: whistle, megaphone cheer, catches everyone in front, then drives the SUV right through them in a confetti blast
+    ultimate: { name: 'Team Mom Takeover', sprite: 'jacqi', type: 'catch', ahead: 3.4, rush: [60, 98, 13], dur: 168, catchAt: 60, finishAt: 100, dmg: 24, kbMul: 1.45,
+      desc: 'blows her whistle, cheers through the megaphone and drives her SUV through everyone in front of her',
+      poses: [[0, 'ult0'], [30, 'ult1'], [60, 'ult2'], [110, 'ult3']] },
+  },
 ];
 
 {
@@ -395,7 +429,24 @@ MM.FIGHTERS = [
   const eveaUlt = { name: 'Unicorn Overload', sprite: 'evea', type: 'stampede', herd: 'fxuni', dur: 150, spawnAt: 50, sweepDur: 60, dmg: 24, kbMul: 1.45,
     desc: 'opens a rainbow portal and a herd of spectral unicorns charges across the stage',
     poses: [[0, 'ult0'], [25, 'ult1'], [50, 'ult2'], [112, 'ult3']] };
+  const coleShared = {
+    side: { kind: 'teleport', name: 'Portal Step', dist: 170, cd: 120 },
+    up: { kind: 'rise', name: 'Web Swing', power: 19.5, forward: 4, dmg: 5, kb: 6, kbg: 0.06 },
+    down: { kind: 'trap', name: 'Spider Snare', thing: 'a sticky web on the floor that slows anyone who steps in it', emoji: '🕸️', slowOnly: true, slow: { mul: 0.75, t: 36 }, life: 120, cd: 120 },
+  };
+  const hammer = { kind: 'projectile', name: 'Hammer Return', thing: 'Mjolnir, which flies back to him (one hit out, one hit back)', sprite: 'fxhammer', scale: 0.3, speed: 13, spin: true, boomerang: true, dmg: 8, kb: 6, kbg: 0.08, r: 20, life: 90, cd: 90 };
+  const coleSpecials = [
+    Object.assign({ neutral: hammer }, coleShared),
+    Object.assign({ neutral: hammer }, coleShared),
+    Object.assign({ neutral: { kind: 'projectile', name: 'Shield Ricochet', thing: 'the shield: bounces off the floor once and comes back', sprite: 'fxshield', scale: 0.28, speed: 12, boomerang: true, bounce: 1, dmg: 7, kb: 5.5, kbg: 0.07, r: 20, life: 90, cd: 90 } }, coleShared),
+    Object.assign({ neutral: { kind: 'projectile', name: 'Ion Cannon', thing: 'a blue-white ion blast', sprite: 'fxion', scale: 0.42, speed: 18, dmg: 11, kb: 8, kbg: 0.1, r: 22, life: 40, cd: 66 } }, coleShared),
+  ];
+  const coleUlt = { name: 'The Ultimate Cameo', sprite: 'cole', type: 'catch', radius: 1.6, dur: 150, catchAt: 60, finishAt: 100, dmg: 24, kbMul: 1.45, say: [62, 'Excelsior!'],
+    desc: 'a comic portal opens, a certain comic legend steps out, points up, "Excelsior!", and a gold comic burst blasts everyone close by',
+    poses: [[0, 'ult0'], [30, 'ult1'], [60, 'ult2'], [104, 'ult3']] };
   for (const d of MM.FIGHTERS) {
+    if (d.id === 'cole') d.forms.forEach((fm, i) => { fm.specials = coleSpecials[i]; fm.ultimate = coleUlt;
+      fm.attackNames = { jab: 'Comic Combo', side: 'Hero Kick', up: 'Rising Hero', down: 'Hulk Stomp', air: 'Air Spin, Web Kick, Sky Palm, Meteor Boot' }; });
     if (d.id === 'jorie') d.forms.forEach((fm) => (fm.ultimate = jorieUlt));
     if (d.id === 'evea') d.forms.forEach((fm) => (fm.ultimate = eveaUlt));
   }

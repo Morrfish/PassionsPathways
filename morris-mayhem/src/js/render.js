@@ -18,7 +18,7 @@ window.MM = window.MM || {};
   }
   // load every fighter's atlases up front, including the ultimate/victory sheets (otherwise a fighter who never
   // used their ultimate has no victory pose ready for the results screen)
-  MM.preloadSprites = () => { for (const d of MM.allDefs()) for (const id of [d.sprite, d.ultimate && d.ultimate.sprite]) if (id) { sheet(id); const S = MM.SPRITES && MM.SPRITES[id]; if (S && S.left) sheet(S.left); } };
+  MM.preloadSprites = () => { for (const d of MM.allDefs()) for (const id of [d.sprite, d.ultimate && d.ultimate.sprite]) if (id) { sheet(id); const S = MM.SPRITES && MM.SPRITES[id]; if (S && S.left) sheet(S.left); if (S && S.base) sheet(S.base); } };
   MM.whenPoseReady = (def, cb) => { const u = def.ultimate, id = u && u.sprite; if (!id) return; sheet(id); const im = spriteImgs[id]; if (im && !(im.complete && im.naturalWidth)) im.addEventListener('load', cb, { once: true }); };
 
   // Pick the pose for what the fighter is doing right now.
@@ -33,6 +33,7 @@ window.MM = window.MM || {};
       if (a.type === 'dodge') return M.defRow && f.ground ? M.defRow + (a.roll ? (a.t < 10 ? 2 : 3) : a.t < 8 ? 0 : 1) : f.ground ? 'idle0' : 'jump2';
       if (a.type === 'cleanup') return 'cup' + Math.min(3, Math.floor(a.t / 8.25)); // Codee: brush off the mess, into the lab coat
       if (a.type === 'backwork') return 'back' + Math.min(3, Math.floor(a.t / 5.25));
+      if (a.type === 'shirt') return 'bump' + f.formIdx; // Cole shows off the new printed shirt
       if (a.type === 'normal') {
         const row = M[a.name], m = a.m, before = a.t < m.start, during = a.t < m.start + m.active;
         if (a.name === 'up' && M.upRow) return M.upRow + (a.t < Math.max(1, m.start * 0.5) ? 0 : before ? 1 : a.t < m.start + m.active + Math.max(4, Math.round(m.end * 0.4)) ? 2 : 3);
@@ -125,6 +126,7 @@ window.MM = window.MM || {};
       sh = sheet(ua.sprite); frameName = ua.poses[0][1];
       for (const [t, p] of ua.poses) if (f.act.t >= t) frameName = p;
     }
+    if (!sh.S.frames[frameName] && sh.S.base) { const B = sheet(sh.S.base); if (B && B.S.frames[frameName]) sh = B; } // shared poses (Cole's shirts)
     let flip = f.face;
     if (f.face < 0 && sh.S.left) { const L = sheet(sh.S.left); if (L && L.S.frames[frameName]) { sh = L; flip = 1; } } // own left-facing art (Jaxston's left foot)
     const { S, im } = sh, fr = S.frames[frameName] || S.frames.idle0;
@@ -229,7 +231,8 @@ window.MM = window.MM || {};
   }
 
   function drawSpriteProj(g, p) {
-    const sh = p.sprite && p.owner.def.sprite && sheet(p.owner.def.sprite);
+    let sh = p.sprite && p.owner.def.sprite && sheet(p.owner.def.sprite);
+    if (sh && !sh.S.frames[p.anim ? p.anim[0] : p.sprite] && sh.S.base) sh = sheet(sh.S.base) || sh;
     if (!sh) return false;
     const fr = sh.S.frames[p.anim ? p.anim[Math.floor(p.t / 5) % p.anim.length] : p.sprite]; if (!fr) return false;
     const k = ((p.owner.h * 1.15) / sh.S.standH) * (p.scale || 1);

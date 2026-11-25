@@ -243,6 +243,66 @@ CHARACTERS = {
         },
         'erasetags': ('ultimate.png',),
     },
+    # Cole Harrington: the black Marvel tee atlas has every shared pose; each printed-shirt form (Thor, Cap, Iron Man)
+    # has its own movement poses and falls back to this atlas for the rest (see 'base' in build_sprites_js.py)
+    'cole': {
+        'scale': 0.62, 'auto': True,
+        'sheets': {
+            'move.png': ['idle', 'run', 'jump', 'hurt'],
+            'attacks.png': ['combo', 'herokick', 'rising', 'lowsweep'],
+            'aerials.png': ['airspin', 'webkick', 'skypalm', 'meteor'],
+            'shared-powers.png': ['webswing', 'portal', 'stomp', 'snare'],
+            'mode-specials.png': ['hammer', 'shield', 'ion', 'bump'],
+            'ultimate.png': ['ult', 'pers'],
+        },
+        'props': [('fxhammer', 'effects-props.png', (200, 200))],
+        'extras': {'fxshield': 'fx-shield.png', 'fxion': 'fx-ion-beam.png', 'fxshock': 'fx-ground-shockwave.png', 'fxburst': 'fx-comic-burst.png',
+                   'fxstars': 'fx-star-fade.png', 'fxweb': 'fx-web-strand.png', 'fxcomic': 'fx-comic-book.png'},
+    },
+    'cole-thor': {'scale': 0.62, 'auto': True, 'sheets': {'thor-move.png': ['idle', 'run', 'jump', 'hurt']},
+                  'props': [('fxhammer', 'effects-props.png', (200, 200))]},
+    'cole-cap': {'scale': 0.62, 'auto': True, 'sheets': {'cap-move.png': ['idle', 'run', 'jump', 'hurt']}, 'extras': {'fxshield': 'fx-shield.png'}},
+    'cole-iron': {'scale': 0.62, 'auto': True, 'sheets': {'iron-move.png': ['idle', 'run', 'jump', 'hurt']}, 'extras': {'fxion': 'fx-ion-beam.png'}},
+    # Jacqi Sue Morris: the SUV and sound wave come from her prop sheet
+    'jacqi': {
+        'scale': 0.62, 'auto': True,
+        'sheets': {
+            'move.png': ['idle', 'run', 'jump', 'hurt'],
+            'attacks.png': ['swat', 'bump', 'whistle', 'csweep'],
+            'aerials.png': ['sspin', 'poke', 'skycheer', 'cdrop'],
+            'specials.png': ['pride', 'suv', 'lift', 'snacks'],
+            'ultimate.png': ['ult', 'pers'],
+        },
+        'props': [('fxwave', 'effects-props.png', (460, 620)), ('fxsuv', 'effects-props.png', (960, 640))],
+        'rowbands': {'specials.png': [(70, 330), (330, 482), (482, 710), (710, 887)]},
+        'cutrows': {'specials.png': [482]},  # the speeding SUV touches the Number One Lift pose under it
+        'extras': {'fxsnack': 'fx-orange-snack.png', 'fxfinger': 'fx-foam-finger.png', 'fxmega': 'fx-megaphone.png', 'fxpennant': 'fx-pennant.png'},
+    },
+    # Sabir Rollerson: normal form (with the cosplay build-up standing poses) and the temporary anime form
+    'sabir': {
+        'scale': 0.62, 'auto': True,
+        'sheets': {
+            'move.png': ['idle', 'run', 'jump', 'hurt'],
+            'attacks.png': ['panel', 'rkick', 'glift', 'bag'],
+            'specials.png': ['toss', 'chord', 'hop', 'call'],
+            'aerials.png': ['tote', 'arhythm', 'strum', 'pdrop'],
+            'cosplay.png': ['build', 'buildx', 'cup'],
+            'ultimate.png': ['ult', None, 'pers'],
+        },
+        'props': [('fxheart', 'pickups.png', (180, 770)), ('fxwave', 'pickups.png', (780, 770)), ('fxsleep', 'pickups.png', (470, 770))],
+        'extras': {'fxcp0': 'fx-cp01.png', 'fxcp1': 'fx-cp02.png', 'fxcp2': 'fx-cp03.png', 'fxcp3': 'fx-cp04.png', 'fxcp4': 'fx-cp05.png'},
+    },
+    'sabir-anime': {
+        'scale': 0.62, 'auto': True,
+        'sheets': {
+            'anime-move.png': ['idle', 'run', 'jump', 'hurt'],
+            'anime-attacks.png': ['lpalm', 'ribkick', 'sreach', 'twirl'],
+            'anime-specials.png': ['letter', 'ribdash', 'skyhigh', 'guard'],
+            'anime-aerials.png': ['htwirl', 'flyrib', 'scatch', 'meteor'],
+            'ultimate.png': [None, 'back', None],
+        },
+        'props': [('fxheart', 'pickups.png', (180, 770))],
+    },
     'evea': {
         'scale': 0.62, 'auto': True,
         'sheets': {
@@ -374,6 +434,7 @@ def slice_auto(path, names, frames, scale, ncols=4, skip=(), cells=False, top=Fa
             h_, w_ = o[0].stop - o[0].start, o[1].stop - o[1].start
             if o[0].start > title_end + 10 and w_ > 80 and h_ < 60 and w_ > 2.5 * h_:
                 a[max(0, o[0].start - 5):o[0].stop + 5, max(0, o[1].start - 6):o[1].stop + 6, 3] = 0
+    for ry in CUTROWS.get(path.rsplit('/', 1)[-1], []): a[ry - 2:ry + 2, :, 3] = 0  # poses that touch the row below
     op = a[..., 3] >= 128  # thin rule lines across the sheet (they can touch a pose): rows with one very long run
     run = np.zeros(W, int); best = np.zeros(H, int)
     for yy in range(H):
