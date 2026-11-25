@@ -12,10 +12,22 @@
   },
   "build": {
     "appId": "org.passionspathways.morrismayhem",
-    "files": ["main.js", "icon.png", "web/**"],
-    "win": { "target": "portable", "icon": "icon.png", "signAndEditExecutable": false },
-    "portable": { "artifactName": "MorrisMayhem.exe" },
-    "directories": { "output": "dist" }
+    "files": [
+      "main.js",
+      "icon.png",
+      "web/**"
+    ],
+    "win": {
+      "target": "portable",
+      "icon": "icon.ico",
+      "signAndEditExecutable": true
+    },
+    "portable": {
+      "artifactName": "MorrisMayhem.exe"
+    },
+    "directories": {
+      "output": "dist"
+    }
   },
   "devDependencies": {
     "electron": "^33.0.0",

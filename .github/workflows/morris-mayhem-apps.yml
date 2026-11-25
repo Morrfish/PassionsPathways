@@ -20,7 +20,8 @@ concurrency:
 
 jobs:
   windows:
-    runs-on: ubuntu-latest
+    # built on Windows so the MM icon gets stamped onto MorrisMayhem.exe itself
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
