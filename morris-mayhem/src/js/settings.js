@@ -7,18 +7,21 @@ window.MM = window.MM || {};
   const C = MM.controls;
   const LABELS = { jump: 'Jump', attack: 'Attack', special: 'Special', dodge: 'Dodge', swap: 'Switch form', ult: 'Ultimate', taunt: 'Taunt', pause: 'Pause',
     left: 'Move left', right: 'Move right', up: 'Up (also jumps)', down: 'Down' };
-  const DEVS = ['pad', 'k1', 'k2'], DEV_NAMES = { pad: 'Controllers', k1: 'Keyboard 1', k2: 'Keyboard 2' };
-  let dev = 'pad', wait = null; // wait = { action, until, padBefore }
+  const DEVS = ['p0', 'p1', 'p2', 'p3', 'k1', 'k2'];
+  const DEV_NAMES = { p0: 'Controller 1', p1: 'Controller 2', p2: 'Controller 3', p3: 'Controller 4', k1: 'Keyboard 1', k2: 'Keyboard 2' };
+  const isPad = (d) => C.isPad(d);
+  let dev = 'p0', wait = null; // wait = { action, until, padBefore }
 
-  function rows() { return (dev === 'pad' ? [] : C.KEY_MOVES).concat(C.ACTIONS); }
+  function rows() { return (isPad(dev) ? [] : C.KEY_MOVES).concat(C.ACTIONS); }
   function draw() {
     $('#setDev').innerHTML = `Mapping: <b>${DEV_NAMES[dev]}</b>`;
-    $('#setNote').textContent = dev === 'pad'
-      ? 'One mapping for every controller. The stick and D-pad always move. Menus always use A to choose and B to go back.'
+    const on = isPad(dev) && navigator.getGamepads && navigator.getGamepads()[+dev[1]];
+    $('#setNote').textContent = isPad(dev)
+      ? `Each controller has its own buttons: press the new button on ${DEV_NAMES[dev]}${on ? '' : ' (not plugged in right now)'}. The stick and D-pad always move. Menus always use A to choose and B to go back.`
       : 'Choose Change, then press the key you want. Escape cancels.';
     $('#setRows').innerHTML = rows().map((a) => {
       const w = wait && wait.action === a;
-      return `<div class="setrow${w ? ' waiting' : ''}"><span class="act">${LABELS[a]}</span><span class="cur">${w ? (dev === 'pad' ? 'Press a controller button…' : 'Press a key…') : C.names(dev, a)}</span>`
+      return `<div class="setrow${w ? ' waiting' : ''}"><span class="act">${LABELS[a]}</span><span class="cur">${w ? (isPad(dev) ? `Press a button on ${DEV_NAMES[dev]}…` : 'Press a key…') : C.names(dev, a)}</span>`
         + `<button data-set="${a}">${w ? 'Cancel' : 'Change'}</button></div>`;
     }).join('');
     drawHowto();
@@ -27,13 +30,13 @@ window.MM = window.MM || {};
   function drawHowto() {
     const t = $('#howtoTable'); if (!t) return;
     const k = (d, list) => list.map((a) => C.names(d, a)).join(' / ');
-    const row = (label, a) => `<tr><td>${label}</td><td>${C.names('k1', a)}</td><td>${C.names('k2', a)}</td><td>${C.names('pad', a)}</td></tr>`;
-    t.innerHTML = '<tr><th></th><th>Keyboard 1</th><th>Keyboard 2</th><th>Controller</th></tr>'
+    const row = (label, a) => `<tr><td>${label}</td><td>${C.names('k1', a)}</td><td>${C.names('k2', a)}</td><td>${C.names('p0', a)}</td></tr>`;
+    t.innerHTML = '<tr><th></th><th>Keyboard 1</th><th>Keyboard 2</th><th>Controller 1</th></tr>'
       + `<tr><td>Move</td><td>${k('k1', ['left', 'right'])}</td><td>${k('k2', ['left', 'right'])}</td><td>Stick / D-pad</td></tr>`
-      + `<tr><td>Jump (3 jumps)</td><td>${C.names('k1', 'up')} or ${C.names('k1', 'jump')}</td><td>${C.names('k2', 'up')} or ${C.names('k2', 'jump')}</td><td>${C.names('pad', 'jump')}</td></tr>`
+      + `<tr><td>Jump (3 jumps)</td><td>${C.names('k1', 'up')} or ${C.names('k1', 'jump')}</td><td>${C.names('k2', 'up')} or ${C.names('k2', 'jump')}</td><td>${C.names('p0', 'jump')}</td></tr>`
       + row('Attack', 'attack') + row('Special', 'special') + row('Dodge', 'dodge') + row('Switch form', 'swap')
       + row('Ultimate (meter full)', 'ult') + row('Taunt', 'taunt') + row('Pause', 'pause')
-      + '<tr><td colspan="4" class="hint">Change any of these in Settings.</td></tr>';
+      + '<tr><td colspan="4" class="hint">Change any of these in Settings. Every controller can have its own buttons.</td></tr>';
   }
   function padsDown() {
     const out = new Set(), pads = navigator.getGamepads ? navigator.getGamepads() : [];
@@ -48,12 +51,12 @@ window.MM = window.MM || {};
   function tick() { // watch the controllers for a new press while waiting
     if (!wait) return;
     if (performance.now() > wait.until) { stop(); return; }
-    if (dev === 'pad') {
+    if (isPad(dev)) {
       const now = padsDown();
       for (const k of now) {
-        const btn = +k.split(':')[1];
-        if (wait.padBefore.has(k) || btn > 11) continue; // still held from choosing Change; D-pad/Home stay for moving
-        const a = wait.action; C.set('pad', a, btn); MM.sfx && MM.sfx('select'); stop();
+        const [pi, bs] = k.split(':'), btn = +bs;
+        if (+pi !== +dev[1] || wait.padBefore.has(k) || btn > 11) continue; // only this controller; not a button still held from choosing Change; D-pad/Home stay for moving
+        const a = wait.action; C.set(dev, a, btn); MM.sfx && MM.sfx('select'); stop();
         // wait for that button to be let go before the menus read it again
         const hold = () => { if (padsDown().has(k)) { MM.capturingInput = true; requestAnimationFrame(hold); } else MM.capturingInput = false; };
         hold(); return;
@@ -63,7 +66,7 @@ window.MM = window.MM || {};
     requestAnimationFrame(tick);
   }
   addEventListener('keydown', (e) => {
-    if (!wait || dev === 'pad') return;
+    if (!wait || isPad(dev)) return;
     e.preventDefault(); e.stopImmediatePropagation();
     if (e.code !== 'Escape') { C.set(dev, wait.action, e.code); MM.sfx && MM.sfx('select'); }
     stop();

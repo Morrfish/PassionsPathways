@@ -191,8 +191,8 @@ MM.FIGHTERS = [
       neutral: { kind: 'pack', name: 'Sketch Attack', thing: 'her doodle dragon', sprites: ['drag1'], anim: ['drag1', 'drag2', 'drag3', 'drag2'], names: ['her doodle dragon'], scale: 0.62, speed: 10, life: 72, dmg: 6, kb: 6, kbg: 0.07, cd: 90 },
       side: { kind: 'dash', name: 'Brick Blitz', ride: true, speed: 14, dur: 27, dmg: 8, kb: 7.5, kbg: 0.11, ang: 30, cd: 180, box: [-10, -95, 115, 95] },
       up: { kind: 'rise', name: 'High Note', power: 19.5, dmg: 6, kb: 6, kbg: 0.06 },
-      down: { kind: 'projectile', name: 'Mac Attack', thing: 'a glob of mac and cheese that leaves a slippery puddle', sprite: 'mprop2', scale: 0.55, speed: 8, vy: -6, grav: 0.4, dmg: 3, kb: 4, kbg: 0.03, r: 18, life: 120, cd: 180,
-        slow: { mul: 0.75, t: 36 }, puddle: { sprite: 'mprop3', scale: 0.7, slowOnly: true, slow: { mul: 0.75, t: 36 }, life: 90 } },
+      down: { kind: 'projectile', name: 'Mac Attack', thing: 'a spoonful of flying mac and cheese noodles that leaves a slippery puddle', sprite: 'fxnoodles', scale: 0.32, speed: 8, vy: -6, grav: 0.4, dmg: 3, kb: 4, kbg: 0.03, r: 18, life: 120, cd: 180,
+        slow: { mul: 0.75, t: 36 }, puddle: { sprite: 'fxpuddle', scale: 0.4, slowOnly: true, slow: { mul: 0.75, t: 36 }, life: 90 } },
     },
     taunt: 'Watch what I can create!',
     // 2.8 s: sketchbook, block concert stage, paint wave straight ahead (26 dmg once each), confetti finish

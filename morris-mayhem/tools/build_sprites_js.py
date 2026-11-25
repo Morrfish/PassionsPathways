@@ -99,7 +99,7 @@ def sheet_factor(base_fr, pers_fr):
 BIGGER = {'courtnee': {'asm2': 1.3, 'asm3': 1.7, 'ult0': 1.7, 'ult1': 1.7, 'ult2': 1.7, 'ult3': 1.7, 'ret0': 1.6, 'ret1': 1.25}}
 # whole move groups drawn at a different scale on their source sheet (found with a size audit: standing poses vs idle)
 GROUP_SCALE = {
-    'siren': {'def': 0.75, 'bair': 0.8, 'mac': 1.3, 'note': 1.16, 'blitz': 1.1},
+    'siren': {'def': 0.75, 'bair': 0.8, 'note': 1.16, 'blitz': 1.1},
     'megan': {'def': 0.8, 'bair': 0.8, 'ret': 1.6, 'nap': 1.25, 'pers2': 0.78, 'pers3': 0.78, 'win': 0.78, 'lose': 0.78},
     'mandi-witch': {'whirl': 1.3, 'salon': 1.15},
     'courtnee': {'saiyan': 1.2},
@@ -133,7 +133,7 @@ PERS_REF = {'jorie': 'pers0'}
 # standing height comes from another pose (Evea's spirit poses have Grandma floating over her: size her by Evea alone)
 STANDH_FROM = {'evea-spirit': 'link0'}
 # a move group cut from another sheet: size it so its first pose is as tall as the idle pose
-MATCH_IDLE = {'jorie': ('cup',), 'evea': ('cup',), 'sabir': ('build', 'buildx')}
+MATCH_IDLE = {'siren': ('mac',), 'jorie': ('cup',), 'evea': ('cup',), 'sabir': ('build', 'buildx')}
 for who, moves in MOVES.items():
     fr = json.load(open(os.path.join(src_dir, f'{who}-frames.json')))
     for a, b in ALIASES.get(who, {}).items(): fr[a] = fr[b]
