@@ -169,9 +169,10 @@ window.MM = window.MM || {};
   // ---------- Smash-style pointers on Choose Your Fighter ----------
   // Every human player using a controller or keyboard gets a pointer in their color. Stick / D-pad / WASD /
   // arrows move it; A (or Attack: F, Num 1, X) picks the fighter or presses the button under it. The mouse
-  // keeps working as before. ChatGPT pointer art is used if img/ui/cursor-p1..p4.png exists.
+  // keeps working as before. Drawn pointers until ChatGPT's art is in (CURSOR_ART).
   const curs = {};
   MM.cursorDevs = new Set(); MM.selectCursors = curs; // (for tests)
+  const CURSOR_ART = false; // set true once ChatGPT's img/ui/cursor-p1..p4.png are added
   const CUR_SVG = (c) => `<svg viewBox="0 0 40 48" class="hand"><path d="M6 2 L6 38 L15 29 L22 45 L29 42 L22 26 L35 26 Z" fill="${c}" stroke="#1a0b2e" stroke-width="3.5" stroke-linejoin="round"/></svg>`;
   function syncCursors() {
     const layer = $('#cursors');
@@ -183,7 +184,7 @@ window.MM = window.MM || {};
       MM.cursorDevs.add(s.dev);
       if (!el) {
         el = document.createElement('div'); el.className = 'pcur'; el.dataset.cur = i;
-        el.innerHTML = `<img src="img/ui/cursor-p${i + 1}.png" alt="" onerror="this.remove()">${CUR_SVG(MM.PLAYER_COLORS[i])}<b style="background:${MM.PLAYER_COLORS[i]}">P${i + 1}</b>`;
+        el.innerHTML = `${CURSOR_ART ? `<img src="img/ui/cursor-p${i + 1}.png" alt="">` : ''}${CUR_SVG(MM.PLAYER_COLORS[i])}<b style="background:${MM.PLAYER_COLORS[i]}">P${i + 1}</b>`;
         layer.appendChild(el);
       }
       if (!curs[i]) { // start over this player's fighter
