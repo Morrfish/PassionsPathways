@@ -569,7 +569,7 @@ MM.STAGES = [
     // bleachers on both sides of the court, the scoreboard hanging high in the middle
     plats: [{ x: -610, base: 0, w: 340, pic: 'bleachers' }, { x: 270, base: 0, w: 340, pic: 'bleachers' }, { x: -150, y: -300, w: 300, pic: 'scoreboard' }],
     blast: { side: 1250, top: -1050, bottom: 800 } },
-  { id: 'williamstown', name: 'Family Picnic (Williamstown)', theme: 'williamstown',
+  { footSink: 5, id: 'williamstown', name: 'Family Picnic (Williamstown)', theme: 'williamstown',
     main: { left: -640, right: 640, depth: 200 },
     // picnic tables on the stage, the church bell's frame in the middle (walk under it, stand on top)
     plats: [{ x: -595, base: 0, w: 250, pic: 'picnic' }, { x: -140, base: 0, w: 280, pic: 'bell' }, { x: 345, base: 0, w: 250, pic: 'picnic' }],
@@ -579,7 +579,7 @@ MM.STAGES = [
     // the family van is parked on the terrace (only its flat roof is a platform), gold stages either side
     plats: [{ x: -615, base: 0, w: 250, pic: 'riser' }, { x: -103, base: 0, w: 270, pic: 'van' }, { x: 365, base: 0, w: 250, pic: 'riser' }],
     blast: { side: 1250, top: -1050, bottom: 800 } },
-  { id: 'agnew', name: "PawPaw's Dock (Agnew Lake)", theme: 'agnew',
+  { footSink: 5, id: 'agnew', name: "PawPaw's Dock (Agnew Lake)", theme: 'agnew',
     // the dock runs out from the rocky shore on the left and ends; then open water with PawPaw's
     // fishing boat floating in it (it bobs and drifts a little and carries whoever stands in it)
     main: { left: -820, right: 40, depth: 200 }, spawnX: -390,

@@ -151,7 +151,7 @@ window.MM = window.MM || {};
     g.save();
     let slide = 0;
     if (G.countdown > 150) { const k = (G.countdown - 150) / MM.ENTRANCE; slide = -f.face * k * k * 260; g.globalAlpha = 1 - k * 0.6; }
-    g.translate(f.x + slide, f.y + MM.FOOT_SINK); // feet stand on the floor's top face, not its back edge
+    g.translate(f.x + slide, f.y + ((G && G.stage.footSink != null) ? G.stage.footSink : MM.FOOT_SINK)); // feet stand on the floor's top face, not its back edge
     if (f.invuln > 0 && Math.floor(G.frame / 4) % 2) g.globalAlpha = 0.5;
     if (f.act && f.act.type === 'dodge') g.globalAlpha *= 0.55;
     if (f.buff) { g.save(); g.fillStyle = f.buff.color; g.globalAlpha *= 0.3; g.beginPath(); g.ellipse(0, -f.h * 0.55, f.w * 1.4, f.h * 0.75, 0, 0, TAU); g.fill(); g.restore(); }
