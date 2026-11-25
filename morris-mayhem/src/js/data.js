@@ -21,7 +21,7 @@ window.MM = window.MM || {};
 MM.FIGHTERS = [
   {
     // Jeffery Morris, "The Boss" (PawPaw): the story mode boss before secret final boss Patty.
-    id: 'jeffery', name: 'Jeffery Morris', title: 'The Boss', photo: 'img/jeffery.png', sprite: 'jeffery',
+    male: true, id: 'jeffery', name: 'Jeffery Morris', title: 'The Boss', photo: 'img/jeffery.png', sprite: 'jeffery',
     color: '#5b6b3a', accent: '#a8874f', skin: '#e9b28f', hair: '#d9d9d9',
     // quiet, stubborn, competitive: heavy and hard to move, steady hitter
     stats: { speed: 5.8, air: 5.3, jump: 14.8, weight: 1.3, power: 1.15, size: 1.1 },
@@ -103,7 +103,7 @@ MM.FIGHTERS = [
   {
     // Jadden Morris, "The Irish Powerhouse": coach, Notre Dame fan, loves Mustangs and Ice Ice Baby.
     // Moves/numbers from ChatGPT's JADDEN_HANDOFF (proposed). Art: ChatGPT sheets.
-    id: 'jadden', name: 'Jadden Morris', title: 'The Irish Powerhouse', photo: 'img/jadden.png', sprite: 'jadden',
+    male: true, id: 'jadden', name: 'Jadden Morris', title: 'The Irish Powerhouse', photo: 'img/jadden.png', sprite: 'jadden',
     color: '#0C2340', accent: '#C99700', skin: '#f0b48e', hair: '#8a7356',
     stats: { speed: 6.5, air: 5.8, jump: 14.5, weight: 1.18, power: 1.18, size: 1.05 },
     attackNames: { jab: "Coach's Combo", side: "Coach's Combo", up: 'Header Hero', down: 'Cleat Sweep', air: 'Overtime Volley, Retro Roundhouse, End Zone Stomp' },
@@ -124,7 +124,7 @@ MM.FIGHTERS = [
     // Courtnee Morris, "The Tech Titan": tech, cartoons, video games, anime. Down-special turns him Super Saiyan
     // for 8 s (stronger); when it wears off he takes +25% damage (the game's version of "a quarter of life").
     // Moves/numbers from ChatGPT's Courtnee pack (proposed). Art: ChatGPT sheets.
-    id: 'courtnee', name: 'Courtnee Morris', title: 'The Tech Titan', photo: 'img/courtnee.png',
+    male: true, id: 'courtnee', name: 'Courtnee Morris', title: 'The Tech Titan', photo: 'img/courtnee.png',
     // the tallest in the family
     stats: { speed: 6.6, air: 6.1, jump: 15, weight: 1.05, power: 1, size: 1.15 },
     taunt: 'Time for an upgrade!',
@@ -205,7 +205,7 @@ MM.FIGHTERS = [
     // Landscaping moves fill his Mess Meter (grass and mud build up on his clothes). When it's full, Switch form
     // (R / Num 4 / controller Y) cleans him up into the Clean Freak for 12 s: cleaning tools, +10% power, +8% speed.
     // Moves/numbers from ChatGPT's CODEE_HANDOFF (proposed, editable). Art: ChatGPT sheets.
-    id: 'codee', name: 'Codee Morris', title: 'The Dirty Work Perfectionist', photo: 'img/codee.png',
+    male: true, id: 'codee', name: 'Codee Morris', title: 'The Dirty Work Perfectionist', photo: 'img/codee.png',
     stats: { speed: 6.8, air: 6.2, jump: 15, weight: 1.06, power: 1.02, size: 1.05 },
     taunt: 'Time to clean this up!',
     mess: { action: 4, hit: 6, cleanFrames: 720, dirt: true }, // Mess Meter: +4 per landscaping move, +6 once per move that lands
@@ -296,7 +296,7 @@ MM.FIGHTERS = [
     // Jorie Morris, "The Free Roamer": long ginger hair, camps out, rides his blue bike everywhere, lives on chocolate milk.
     // Chocolate Charge (hold Special) fills his Milk Meter; with it full, Switch turns him into Chocolate Milk Rage for 8 s
     // (stronger and heavier, a little slower), then he cools down. Moves from ChatGPT's JORIE handoff (numbers tuned here).
-    id: 'jorie', name: 'Jorie Morris', title: 'The Free Roamer', photo: 'img/jorie.png',
+    male: true, id: 'jorie', name: 'Jorie Morris', title: 'The Free Roamer', photo: 'img/jorie.png',
     stats: { speed: 7.2, air: 6.6, jump: 15.4, weight: 1.0, power: 1.0, size: 1.06 },
     taunt: 'Catch me if you can!',
     mess: { action: 0, hit: 5, cleanFrames: 480, ready: 'RAGE READY!', go: 'CHOCOLATE MILK RAGE!', back: 'COOLED DOWN', color: '#f0b070', goColor: '#ff6a1a', bar: '#7a4a2a', formBar: '#ff6a1a', hue: 25 },
@@ -332,7 +332,7 @@ MM.FIGHTERS = [
   {
     // Jaxston Morris, "The Left-Foot Legend": Jadden's son, plays soccer for the Bluffton Pirates. Kicks only, always left-footed.
     // Moves from ChatGPT's JAXSTON handoff (numbers tuned here).
-    id: 'jaxston', name: 'Jaxston Morris', title: 'The Left-Foot Legend', photo: 'img/jaxston.png', sprite: 'jaxston',
+    male: true, id: 'jaxston', name: 'Jaxston Morris', title: 'The Left-Foot Legend', photo: 'img/jaxston.png', sprite: 'jaxston',
     color: '#d52b32', accent: '#191919', skin: '#e8b58f', hair: '#8a5a32',
     stats: { speed: 7.5, air: 6.9, jump: 15.8, weight: 0.95, power: 1.0, size: 0.97 },
     attackNames: { jab: 'Left Foot First', side: 'Roundhouse', up: 'Spin Cycle', down: 'Clean Sweep', air: 'Air Spin, Sky Volley, Bicycle Kick, Meteor Cleat' },
@@ -390,7 +390,7 @@ MM.FIGHTERS = [
     // Cole Harrington, "The Marvel Superfan": Cloe's husband (Mandi's family). Switch cycles his printed T-shirt:
     // Thor (returning hammer), Captain America (ricochet shield), Iron Man (ion cannon). He starts in his black Marvel tee.
     // Shared powers: Portal Step, Web Swing, Spider Snare, Hulk Stomp. Moves from ChatGPT's COLE handoff (numbers tuned here).
-    id: 'cole', name: 'Cole Harrington', title: 'The Marvel Superfan', photo: 'img/cole.png',
+    male: true, id: 'cole', name: 'Cole Harrington', title: 'The Marvel Superfan', photo: 'img/cole.png',
     stats: { speed: 7.0, air: 6.5, jump: 15.2, weight: 1.05, power: 1.02, size: 1.1 },
     taunt: 'Excelsior!',
     cycle: true,
@@ -420,6 +420,45 @@ MM.FIGHTERS = [
       desc: 'blows her whistle, cheers through the megaphone and drives her SUV through everyone in front of her',
       poses: [[0, 'ult0'], [30, 'ult1'], [60, 'ult2'], [110, 'ult3']] },
   },
+  {
+    // Sabir Rollerson, "The Slice-of-Life Showstopper": Haylie's husband; guitar, comics and anime.
+    // Cosplay Toss throws the next of five costume pieces (bow, wig, blouse, skirt, shoes). He wears each one he
+    // picks up; anyone else who grabs one heals 4% instead. With all five he transforms (male opponents close by
+    // doze off for a moment) into his anime form for 12 s, then takes a dramatic bow and changes back.
+    // Moves from ChatGPT's SABIR handoff (numbers tuned here).
+    id: 'sabir', name: 'Sabir Rollerson', title: 'The Slice-of-Life Showstopper', photo: 'img/sabir.png', male: true,
+    stats: { speed: 6.7, air: 6.2, jump: 14.8, weight: 1.12, power: 1.04, size: 1.08 },
+    taunt: 'Peace!',
+    mess: { action: 0, hit: 0, pieces: 5, cleanFrames: 720, sleep: { radius: 1.6, t: 48 }, ready: 'ALL 5 PIECES!', go: 'ANIME FORM!', back: 'THANK YOU, THANK YOU!', color: '#9ff0d0', goColor: '#ff7ad9', bar: '#a98bd8', formBar: '#ff7ad9', hue: 300 },
+    forms: [
+      {
+        form: 'normal', formName: 'THANK YOU, THANK YOU!', title: 'Sabir', sprite: 'sabir',
+        color: '#3f6fa8', accent: '#9ff0d0', skin: '#7a4a2e', hair: '#1b1b1f',
+        stats: { speed: 6.7, air: 6.2, jump: 14.8, weight: 1.12, power: 1.04, size: 1.08 },
+        attackNames: { jab: 'Panel Push', side: 'Rhythm Kick', up: 'Guitar Lift', down: 'Bag Sweep', air: 'Tote Twirl, Air Rhythm, Sky Strum, Panel Drop' },
+        specials: {
+          neutral: { kind: 'cosplay', name: 'Cosplay Toss', thing: 'the next missing costume piece: he wears it when he picks it up; anyone else who grabs it heals 4%', scale: 0.22, life: 300, cd: 72 },
+          side: { kind: 'projectile', name: 'After School Chord', thing: 'a musical wave from his guitar', sprite: 'fxwave', scale: 0.35, speed: 11, dmg: 7, kb: 6, kbg: 0.07, r: 24, life: 50, cd: 70 },
+          up: { kind: 'rise', name: 'Star Hop', power: 19, forward: 3, dmg: 5, kb: 6, kbg: 0.06 },
+          down: { kind: 'call', name: 'Missing Piece Call', thing: 'calls his costume pieces back to him', cd: 60 },
+        },
+        ultimate: null,
+      },
+      {
+        form: 'anime', formName: 'ANIME FORM!', title: 'Anime form', sprite: 'sabir-anime',
+        color: '#2e3466', accent: '#ff7ad9', skin: '#7a4a2e', hair: '#c9a6e8',
+        stats: { speed: 7.3, air: 6.8, jump: 18.5, weight: 1.08, power: 1.12, size: 1.08 },
+        attackNames: { jab: 'Love Palm', side: 'Ribbon Kick', up: 'Star Reach', down: 'Skirt Twirl', air: 'Heart Twirl, Flying Ribbon, Star Catch, Love Meteor' },
+        specials: {
+          neutral: { kind: 'projectile', name: 'Love Letter', thing: 'a glowing heart', sprite: 'fxheart', scale: 0.3, speed: 11, dmg: 7, kb: 5.5, kbg: 0.07, r: 20, life: 66, cd: 33 },
+          side: { kind: 'dash', name: 'Ribbon Dash', speed: 15, dur: 18, dmg: 8, kb: 7.5, kbg: 0.11, ang: 30, cd: 90, box: [-10, -95, 110, 95] },
+          up: { kind: 'rise', name: 'Sky High', power: 21.5, forward: 4, dmg: 7, kb: 6.5, kbg: 0.07 },
+          down: { kind: 'counter', name: 'Heart Guard', window: 15, mult: 1.4 },
+        },
+        ultimate: null,
+      },
+    ],
+  },
 ];
 
 {
@@ -444,7 +483,11 @@ MM.FIGHTERS = [
   const coleUlt = { name: 'The Ultimate Cameo', sprite: 'cole', type: 'catch', radius: 1.6, dur: 150, catchAt: 60, finishAt: 100, dmg: 24, kbMul: 1.45, say: [62, 'Excelsior!'],
     desc: 'a comic portal opens, a certain comic legend steps out, points up, "Excelsior!", and a gold comic burst blasts everyone close by',
     poses: [[0, 'ult0'], [30, 'ult1'], [60, 'ult2'], [104, 'ult3']] };
+  const sabirUlt = { name: 'Encore, Sabir!', sprite: 'sabir', type: 'catch', ahead: 3, dur: 168, catchAt: 54, finishAt: 108, dmg: 24, kbMul: 1.45,
+    desc: 'a guitar build-up, a mint-and-pink music wave catches everyone in front, then a giant heart chord blasts them away and he takes a bow',
+    poses: [[0, 'ult0'], [27, 'ult1'], [54, 'ult2'], [120, 'ult3']] };
   for (const d of MM.FIGHTERS) {
+    if (d.id === 'sabir') d.forms.forEach((fm) => (fm.ultimate = sabirUlt));
     if (d.id === 'cole') d.forms.forEach((fm, i) => { fm.specials = coleSpecials[i]; fm.ultimate = coleUlt;
       fm.attackNames = { jab: 'Comic Combo', side: 'Hero Kick', up: 'Rising Hero', down: 'Hulk Stomp', air: 'Air Spin, Web Kick, Sky Palm, Meteor Boot' }; });
     if (d.id === 'jorie') d.forms.forEach((fm) => (fm.ultimate = jorieUlt));

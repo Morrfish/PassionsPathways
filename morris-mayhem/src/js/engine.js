@@ -119,8 +119,26 @@ window.MM = window.MM || {};
     if (!a && !f.hitstun && !f.caught) f.act = { type: 'backwork', t: 0, dur: 21, noGrav: !f.ground };
     else if (!a || a.type !== 'normal' && a.type !== 'special') backToWork(G, f); // got hit: change right away
   }
+  // Sabir's costume pieces: a bit per piece; all of them starts the transformation right away
+  function collectPiece(G, f, i) {
+    const ms = f.def.mess; if (f.formIdx !== 0) return;
+    f.pieces = (f.pieces || 0) | (1 << i);
+    let n = 0; for (let k = 0; k < ms.pieces; k++) if ((f.pieces >> k) & 1) n++;
+    f.mess = Math.round((n / ms.pieces) * 100);
+    popText(G, f.x, f.y - f.h - 24, n + ' / ' + ms.pieces, ms.color || f.accent); MM.sfx('heal'); burst(G, f.x, f.y - f.h * 0.6, ms.color || f.accent, 10, 4);
+    if (n >= ms.pieces && !f.dead && !(f.act && f.act.type === 'ult')) { f.act = { type: 'cleanup', t: 0, dur: 33, noGrav: !f.ground }; f.vy = Math.min(f.vy, 0); }
+  }
+  function sleepPulse(G, f) { // male opponents close by doze off for a moment (a hit wakes them)
+    const sl = f.def.mess.sleep, r = sl.radius * f.h;
+    for (const d of G.fighters) {
+      if (d === f || d.dead || d.out || d.invuln > 0 || !d.def.male || MM.sameTeam(G, f, d) || (d.sleepCd || 0) > G.frame) continue;
+      if (Math.hypot(d.x - f.x, (d.y - d.h / 2) - (f.y - f.h / 2)) > r) continue;
+      d.act = null; d.hitstun = Math.max(d.hitstun, sl.t); d.vx = 0; d.sleepCd = G.frame + 300;
+      popText(G, d.x, d.y - d.h - 20, 'Zzz...', '#c9b6ff');
+    }
+  }
   function backToWork(G, f) {
-    applyForm(f, 0); f.clean = 0; f.mess = 0;
+    applyForm(f, 0); f.clean = 0; f.mess = 0; f.pieces = 0;
     burst(G, f.x, f.y - f.h / 2, f.def.mess.color || '#bfe9ff', 16, 5); popText(G, f.x, f.y - f.h - 24, f.def.mess.back || 'BACK TO WORK!', f.accent);
   }
   function makeFighterBase(p, def, x, alt, stocks) {
@@ -391,6 +409,7 @@ window.MM = window.MM || {};
       if (a.t % 6 === 0) part(G, { x: f.x + (Math.random() - 0.5) * f.w * 2, y: f.y - Math.random() * f.h, color: '#d9f3ff', size: 10, life: 20, max: 20, type: 'smoke' });
       if (a.t >= a.dur) {
         f.act = null; const ms = f.def.mess; f.mess = 0; applyForm(f, 1); f.clean = ms.cleanFrames;
+        if (ms.sleep) sleepPulse(G, f);
         burst(G, f.x, f.y - f.h / 2, '#ffffff', 30, 8); ring(G, f.x, f.y - f.h / 2, f.def.mess.goColor || '#4aa8e8');
         popText(G, f.x, f.y - f.h - 24, ms.go || 'CLEAN FREAK!', ms.goColor || '#4aa8e8'); MM.sfx('heal');
       }
@@ -657,6 +676,26 @@ window.MM = window.MM || {};
         if (a.t === a.healAt) { const amt = Math.min(f.damage, sp.amount); f.damage -= amt; popText(G, f.x, f.y - f.h - 20, `-${Math.round(amt)}%`, '#5dff8f'); MM.sfx('heal'); }
       },
     },
+    cosplay: { // e.g. Sabir's Cosplay Toss: throws the next costume piece he doesn't have yet (one of each in the world)
+      start(G, f, sp, a) { a.dur = 24; a.pose = 'throw'; },
+      tick(G, f, sp, a) {
+        if (a.t !== 10) return;
+        const n = f.def.mess.pieces, have = f.pieces || 0;
+        const out = new Set(G.traps.filter((t) => t.owner === f && t.piece != null).map((t) => t.piece));
+        let i = 0; while (i < n && ((have >> i) & 1 || out.has(i))) i++;
+        if (i >= n) { popText(G, f.x, f.y - f.h - 20, 'ALL PIECES OUT!', f.accent); return; }
+        G.traps.push({ owner: f, piece: i, x: f.x + f.face * 40, y: f.y - 70, vy: -6, vx: f.face * 6, sp: { sprite: 'fxcp' + i, scale: sp.scale, heal: 4 }, life: sp.life || 300, armed: 0, age: 0, dir: f.face });
+      },
+    },
+    call: { // e.g. Sabir's Missing Piece Call: his pieces fly back to him
+      start(G, f, sp, a) { a.dur = 26; a.pose = 'flex'; },
+      tick(G, f, sp, a) {
+        if (a.t !== 12) return;
+        let n = 0;
+        for (const t of G.traps) if (t.owner === f && t.piece != null) { burst(G, t.x, t.y - 20, f.accent, 8, 4); t.x = f.x; t.y = f.y - 2; t.vy = 0; t.vx = 0; t.age = 999; n++; }
+        if (!n) popText(G, f.x, f.y - f.h - 20, 'NO PIECES OUT', '#ccc');
+      },
+    },
     drink: {
       start(G, f, sp, a) { if (!f.ground || !f.def.mess || f.formIdx !== 0) { f.act = null; f.cd.neutral = 0; return; } a.dur = 9999; a.pose = 'flex'; },
       tick(G, f, sp, a) {
@@ -876,6 +915,9 @@ window.MM = window.MM || {};
       if (t.sp.heal) { // a snack (e.g. Jacqi's orange slices): the first one to grab it heals; the thrower only after a second
         const pb = { x: t.x - 30, y: t.y - 40, w: 60, h: 44 };
         const d = G.fighters.find((o) => !o.dead && !o.out && (o !== t.owner || t.age > 60) && overlap(pb, MM.hurtbox(o)));
+        if (d && t.piece != null && d === t.owner) { collectPiece(G, d, t.piece); t.life = 0; continue; }
+        if (d && t.piece != null && d.healCd > G.frame) continue; // a piece heals the same player at most every 2 s
+        if (d && t.piece != null) d.healCd = G.frame + 120;
         if (d) { d.damage = Math.max(0, d.damage - t.sp.heal); t.life = 0; popText(G, d.x, d.y - d.h - 20, '+' + t.sp.heal + ' SNACK!', '#ffa630'); MM.sfx('heal'); burst(G, t.x, t.y - 20, '#ffa630', 10, 4); }
         continue;
       }
@@ -912,7 +954,7 @@ window.MM = window.MM || {};
       G.shake = 26; MM.sfx('ko');
       if (f.act && f.act.type === 'ult') releaseUlt(f.act);
       if (f.super) { f.super = null; applyForm(f, 0); }
-      if (f.def.mess) { if (f.formIdx) applyForm(f, 0); f.mess = 0; f.clean = 0; }
+      if (f.def.mess) { if (f.formIdx) applyForm(f, 0); f.mess = 0; f.clean = 0; f.pieces = 0; G.traps = G.traps.filter((t) => !(t.owner === f && t.piece != null)); }
       f.act = null; f.hitstun = 0; f.buff = null; f.slow = null; f.vx = f.vy = 0; f.caught = null; f.meter = 0;
       if (f.stocks <= 0) { f.out = true; f.x = 0; f.y = -3000; }
       else { f.dead = 80; f.y = -3000; }

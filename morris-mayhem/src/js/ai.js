@@ -61,6 +61,8 @@ window.MM = window.MM || {};
     if (f.act || f.hitstun > 0) { inp.x = f.hitstun > 0 ? Math.sign(MM.spawnX(G.stage) - f.x) || 1 : 0; return inp; }
     // a full meter (Codee's mess, Jorie's milk, Evea's spirit): switch into the other form
     if (f.def.mess && f.forms && f.formIdx === 0 && f.mess >= 100 && rnd() < react) { inp.swap = true; return inp; }
+    // Sabir: call his costume pieces back so he can wear them
+    if (f.def.mess && f.def.mess.pieces && f.formIdx === 0 && f.cd.down <= 0 && G.traps.some((t) => t.owner === f && t.piece != null && t.age > 40) && rnd() < 0.04) { inp.y = 1; press0(inp, 'special'); return inp; }
     // Jorie: fill the milk meter when there's room to drink
     if (f.def.specials.neutral && f.def.specials.neutral.kind === 'drink' && f.formIdx === 0 && f.ground && f.mess < 100 && adx > 420 && rnd() < 0.03) { press0(inp, 'special'); return inp; }
 

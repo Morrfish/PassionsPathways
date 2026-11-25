@@ -71,6 +71,13 @@ MOVES = {
     'jacqi': dict(jab='swat', side='bump', down='csweep', up='whistle', nair='sspin', fair='poke', uair='skycheer', dair='cdrop',
                   neutral='pride', sideSpecial='suv', upSpecial='lift', downSpecial='snacks',
                   upRow='whistle', uairRow='skycheer', riseMid='lift2', riseLate='lift3'),
+    # Sabir: normal form (cosplay build-up standing poses build0-5) and his temporary anime form
+    'sabir': dict(jab='panel', side='rkick', down='bag', up='glift', nair='tote', fair='arhythm', uair='strum', dair='pdrop',
+                  neutral='toss', sideSpecial='chord', upSpecial='hop', downSpecial='call',
+                  upRow='glift', uairRow='strum', riseMid='hop2', riseLate='hop3'),
+    'sabir-anime': dict(jab='lpalm', side='ribkick', down='twirl', up='sreach', nair='htwirl', fair='flyrib', uair='scatch', dair='meteor',
+                        neutral='letter', sideSpecial='ribdash', upSpecial='skyhigh', downSpecial='guard', counterHit='guard2',
+                        upRow='sreach', uairRow='scatch', riseMid='skyhigh2', riseLate='skyhigh3'),
     'evea': dict(jab='tap', side='scoot', down='twirl', up='horn', nair='circle', fair='rvolley', uair='skysp', dair='shoe',
                  neutral='startoss', sideSpecial='express', upSpecial='rrise', downSpecial='hoof',
                  upRow='horn', uairRow='skysp', riseMid='rrise2', riseLate='rrise3'),
@@ -110,7 +117,9 @@ window.MM = window.MM || {};
 MM.SPRITES = MM.SPRITES || {};
 """]
 # extra names for frames (Courtnee's personality poses live in his own atlas)
-ALIASES = {w: {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'} for w in ('courtnee', 'megan', 'siren', 'codee', 'codee-clean', 'haylie', 'sara', 'jorie', 'jaxston', 'jaxston-left', 'evea', 'cole', 'jacqi')}
+ALIASES = {w: {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'} for w in ('courtnee', 'megan', 'siren', 'codee', 'codee-clean', 'haylie', 'sara', 'jorie', 'jaxston', 'jaxston-left', 'evea', 'cole', 'jacqi', 'sabir')}
+ALIASES['sabir'].update({'build4': 'buildx0', 'build5': 'buildx1'})  # bow, wig, blouse, skirt, shoes: one standing pose per piece
+ALIASES['sabir-anime'] = {'ent': 'idle0', 'taunt': 'idle3', 'win': 'idle3', 'lose': 'hurt3'}
 # fighters with their own left-facing art (drawn as-is instead of mirrored: Jaxston always kicks with his LEFT foot)
 LEFT = {'jaxston': 'jaxston-left'}
 # atlases that only hold some poses; the rest come from this atlas (Cole's printed-shirt forms)
@@ -122,7 +131,7 @@ PERS_REF = {'jorie': 'pers0'}
 # standing height comes from another pose (Evea's spirit poses have Grandma floating over her: size her by Evea alone)
 STANDH_FROM = {'evea-spirit': 'link0'}
 # a move group cut from another sheet: size it so its first pose is as tall as the idle pose
-MATCH_IDLE = {'jorie': ('cup',), 'evea': ('cup',)}
+MATCH_IDLE = {'jorie': ('cup',), 'evea': ('cup',), 'sabir': ('build', 'buildx')}
 for who, moves in MOVES.items():
     fr = json.load(open(os.path.join(src_dir, f'{who}-frames.json')))
     for a, b in ALIASES.get(who, {}).items(): fr[a] = fr[b]

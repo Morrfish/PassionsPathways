@@ -64,6 +64,7 @@ window.MM = window.MM || {};
     }
     if (!f.ground) return f.vy < -4 ? 'jump1' : f.vy < 3 ? 'jump2' : 'jump3';
     if (Math.abs(f.vx) > 1) return 'run' + (Math.floor(f.anim / 6) % 4);
+    if (f.pieces && S.frames.build1) { let n = 0; for (let k = 0; k < 5; k++) if ((f.pieces >> k) & 1) n++; if (S.frames['build' + n]) return 'build' + n; } // Sabir wearing the pieces he has
     return 'idle' + (Math.floor(f.anim / 16) % 4);
   }
 
@@ -232,7 +233,7 @@ window.MM = window.MM || {};
 
   function drawSpriteProj(g, p) {
     let sh = p.sprite && p.owner.def.sprite && sheet(p.owner.def.sprite);
-    if (sh && !sh.S.frames[p.anim ? p.anim[0] : p.sprite] && sh.S.base) sh = sheet(sh.S.base) || sh;
+    if (sh && !sh.S.frames[p.anim ? p.anim[0] : p.sprite] && (sh.S.base || p.base)) sh = sheet(sh.S.base || p.base) || sh;
     if (!sh) return false;
     const fr = sh.S.frames[p.anim ? p.anim[Math.floor(p.t / 5) % p.anim.length] : p.sprite]; if (!fr) return false;
     const k = ((p.owner.h * 1.15) / sh.S.standH) * (p.scale || 1);
@@ -814,7 +815,7 @@ window.MM = window.MM || {};
     g.setTransform(scale, 0, 0, scale, W / 2 - cam.x * scale + (Math.random() - 0.5) * sh, H / 2 - cam.y * scale + (Math.random() - 0.5) * sh);
     art.floor(g, G.stage, G.stage.main, G);
     for (const p of G.stage.plats) art.plat(g, p, G);
-    for (const t of G.traps) if (t.sp.sprite) drawSpriteProj(g, { sprite: t.sp.sprite, owner: t.owner, x: t.x, y: t.y - 18, runner: true, t: 0, dir: t.dir || 1, scale: t.sp.scale }, G);
+    for (const t of G.traps) if (t.sp.sprite) drawSpriteProj(g, { sprite: t.sp.sprite, owner: t.owner, x: t.x, y: t.y - 18, runner: true, t: 0, dir: t.dir || 1, scale: t.sp.scale, base: t.piece != null ? 'sabir' : null }, G);
     for (const t of G.traps) { if (t.sp.sprite) continue; g.globalAlpha = t.armed > 0 ? 0.5 : 1; g.font = '44px serif'; g.textAlign = 'center'; g.textBaseline = 'bottom'; g.fillText(t.sp.emoji || '⚠️', t.x, t.y + 4); g.globalAlpha = 1; }
     for (const f of G.fighters) drawFighter(g, f, G);
     for (const f of G.fighters) drawUltFx(g, f, G);
