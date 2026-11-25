@@ -35,12 +35,13 @@ window.MM = window.MM || {};
       if (a.type === 'backwork') return 'back' + Math.min(3, Math.floor(a.t / 5.25));
       if (a.type === 'normal') {
         const row = M[a.name], m = a.m, before = a.t < m.start, during = a.t < m.start + m.active;
-        if (a.name === 'up' && M.upRow) return M.upRow + (before ? 0 : during ? (a.t < m.start + m.active / 2 ? 1 : 2) : 3);
-        if (a.name === 'uair' && M.uairRow) return M.uairRow + (before ? 0 : during ? (a.t < m.start + m.active / 2 ? 1 : 2) : 3);
+        if (a.name === 'up' && M.upRow) return M.upRow + (a.t < Math.max(1, m.start * 0.5) ? 0 : before ? 1 : a.t < m.start + m.active + Math.max(4, Math.round(m.end * 0.4)) ? 2 : 3);
+        if (a.name === 'uair' && M.uairRow) return M.uairRow + (a.t < Math.max(1, m.start * 0.5) ? 0 : before ? 1 : a.t < m.start + m.active + Math.max(4, Math.round(m.end * 0.4)) ? 2 : 3);
         if (a.name === 'up' || a.name === 'uair') return M.upPose;
         if (row === M.airRow) return row + (before ? 1 : during ? 2 : f.ground ? 3 : 1);
-        if (row === 'drop') return 'drop' + (before ? 1 : during ? 2 : 3);
-        return row + (before ? 0 : during ? (a.t < m.start + m.active / 2 ? 1 : 2) : 3);
+        if (row === 'drop') return 'drop' + (before ? 1 : a.t < m.start + m.active + 4 ? 2 : 3);
+        const hold = m.start + m.active + Math.max(4, Math.round(m.end * 0.4)); // the strike pose stays up long enough to see
+        return row + (a.t < Math.max(1, m.start * 0.5) ? 0 : before ? 1 : a.t < hold ? 2 : 3);
       }
       if (a.type === 'special') {
         const row = M[{ neutral: 'neutral', side: 'sideSpecial', up: 'upSpecial', down: 'downSpecial' }[a.slot]];
@@ -147,6 +148,14 @@ window.MM = window.MM || {};
     const lvl = f.def.mess && f.formIdx === 0 && !(f.act && f.act.type === 'cleanup') ? (f.mess >= 100 ? 3 : f.mess >= 66 ? 2 : f.mess >= 33 ? 1 : 0) : 0;
     if (lvl) g.drawImage(dirtFor(sh, frameName, fr, lvl), -fr[4], -fr[5]);
     g.restore();
+    if (f.def.fx && f.act && fsh) for (const e of f.def.fx) { // e.g. Sara's ink tattoo effects
+      const a = f.act, on = e.act === a.type && (!e.name || e.name === a.name) && (!e.slot || e.slot === a.slot) && a.t >= e.t[0] && a.t < e.t[1];
+      const ef = on && fsh.S.frames[e.pic]; if (!ef) continue;
+      const h = e.h * f.s, w = (ef[2] / ef[3]) * h, life = (a.t - e.t[0]) / (e.t[1] - e.t[0]);
+      g.save(); g.globalAlpha = Math.min(1, (1 - life) * 3) * (e.alpha || 1);
+      g.translate(f.x + f.face * e.x * f.s, f.y + e.y * f.s); g.scale(f.face * (1 + (e.grow || 0) * life), 1 + (e.grow || 0) * life);
+      g.drawImage(fsh.im, ef[0], ef[1], ef[2], ef[3], -w / 2, -h / 2, w, h); g.restore();
+    }
     const a = f.act;
     if (f.slow) { g.save(); g.globalAlpha = 0.35; g.fillStyle = '#9fe8ff'; g.beginPath(); g.ellipse(f.x, f.y - f.h / 2, f.w * 0.9, f.h * 0.6, 0, 0, TAU); g.fill(); g.restore(); }
     if (a && a.counter) { g.strokeStyle = 'rgba(255,255,140,.9)'; g.lineWidth = 4; g.beginPath(); g.arc(f.x, f.y - f.h / 2, 72 + Math.sin(G.frame) * 4, 0, TAU); g.stroke(); }

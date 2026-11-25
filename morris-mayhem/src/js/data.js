@@ -279,6 +279,14 @@ MM.FIGHTERS = [
       down: { kind: 'trap', name: 'Widow Watch', thing: 'a black widow web trap', sprite: 'fxweb', scale: 0.45, dmg: 8, kb: 6, kbg: 0.08, ang: 80, life: 360, cd: 180 },
     },
     taunt: 'Please hold.',
+    // her ink effect pictures, drawn while the move plays: x/y from her feet (x forward), h = height, t = frames
+    fx: [
+      { act: 'normal', name: 'jab', pic: 'fxdagger', t: [2, 14], x: 78, y: -88, h: 34 },
+      { act: 'normal', name: 'up', pic: 'fxreaper', t: [5, 18], x: 40, y: -175, h: 80, grow: 0.15 },
+      { act: 'special', slot: 'up', pic: 'fxlife', t: [2, 34], x: 6, y: -175, h: 120, alpha: 0.9 },
+      { act: 'ult', pic: 'fxsignal', t: [30, 70], x: 10, y: -150, h: 95, grow: 0.5 },
+      { act: 'ult', pic: 'fxpulse', t: [120, 170], x: 150, y: -105, h: 150, grow: 0.35 },
+    ],
     // ~3 s: headset, dispatch signal, ink release (snakes, rose, reaper, web), command pulse launches everyone caught in front
     ultimate: { name: 'All Units Respond!', sprite: 'sara', type: 'catch', ahead: 3.2, dur: 176, catchAt: 66, finishAt: 126, dmg: 27, kbMul: 1.5,
       desc: 'calls it in on her headset, sends out every tattoo at once to catch everyone in front of her, then a command pulse blasts them away',
