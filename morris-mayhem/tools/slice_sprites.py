@@ -309,7 +309,7 @@ CHARACTERS = {
     },
     # Siren's Creativity dragon (sheets with a caption under each pose): her dragon form's atlas
     'siren-dragon': {
-        'scale': 0.62, 'bodies': True,
+        'scale': 1.0, 'bodies': True,  # full size: the dragon is drawn almost twice as tall as a person
         'sheets': {
             'siren-creativity-dragon-movement-draft.png': ['idle', 'run', 'jump', 'hurt'],
             'siren-creativity-dragon-attacks-draft.png': ['tail', 'wing', 'horn', 'stomp'],
