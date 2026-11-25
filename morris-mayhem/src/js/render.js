@@ -38,7 +38,10 @@ window.MM = window.MM || {};
       if (a.type === 'dodge') return M.defRow && f.ground ? M.defRow + (a.roll ? (a.t < 10 ? 2 : 3) : a.t < 8 ? 0 : 1) : f.ground ? 'idle0' : 'jump2';
       if (a.type === 'cleanup') return 'cup' + Math.min(3, Math.floor(a.t / (a.dur / 4))); // Codee: brush off the mess, into the lab coat
       if (a.type === 'backwork') { const nb = (f.def.mess && f.def.mess.backPoses) || 4; return 'back' + Math.min(nb - 1, Math.floor(a.t / (a.dur / nb))); }
-      if (a.type === 'shirt') return 'bump' + f.formIdx; // Cole shows off the new printed shirt
+      if (a.type === 'shirt') return 'bump' + f.formIdx;
+      if (a.type === 'powerup' && S.frames.cup0) return 'cup' + Math.min(3, Math.floor(a.t / (a.dur / 4)));
+      if (a.type === 'powerup') return 'idle0';
+      if (a.type === 'powerend') return S.frames.back0 ? 'back' + Math.min(3, Math.floor(a.t / (a.dur / 4))) : 'idle0'; // Cole shows off the new printed shirt
       if (a.type === 'normal') {
         const row = M[a.name], m = a.m, before = a.t < m.start, during = a.t < m.start + m.active;
         if (a.name === 'up' && M.upRow) return M.upRow + (a.t < Math.max(1, m.start * 0.5) ? 0 : before ? 1 : a.t < m.start + m.active + Math.max(4, Math.round(m.end * 0.4)) ? 2 : 3);
@@ -851,6 +854,15 @@ window.MM = window.MM || {};
     g.setTransform(scale, 0, 0, scale, W / 2 - cam.x * scale + (Math.random() - 0.5) * sh, H / 2 - cam.y * scale + (Math.random() - 0.5) * sh);
     art.floor(g, G.stage, G.stage.main, G);
     for (const p of G.stage.plats) art.plat(g, p, G);
+    for (const it of G.items || []) { // Mayhem Star: a glowing gold star that bobs on the floor
+      const b = Math.sin(G.frame * 0.12) * 6, pulse = 1 + 0.12 * Math.sin(G.frame * 0.25);
+      g.save(); g.translate(it.x, it.y - 30 + b); g.globalAlpha = it.life < 120 && Math.floor(G.frame / 6) % 2 ? 0.4 : 1;
+      g.fillStyle = 'rgba(255,211,74,0.35)'; g.beginPath(); g.arc(0, 0, 34 * pulse, 0, TAU); g.fill();
+      g.rotate(Math.sin(G.frame * 0.05) * 0.2); g.beginPath();
+      for (let i = 0; i < 10; i++) { const r = i % 2 ? 11 : 26, an = -Math.PI / 2 + (i * Math.PI) / 5; g.lineTo(Math.cos(an) * r, Math.sin(an) * r); }
+      g.closePath(); g.fillStyle = '#ffd34a'; g.fill(); g.lineWidth = 4; g.strokeStyle = '#7a4a00'; g.stroke();
+      g.fillStyle = '#fff6c8'; g.beginPath(); g.arc(-6, -8, 4, 0, TAU); g.fill(); g.restore();
+    }
     for (const t of G.traps) if (t.sp.sprite) drawSpriteProj(g, { sprite: t.sp.sprite, owner: t.owner, x: t.x, y: t.y - 18, runner: true, t: 0, dir: t.dir || 1, scale: t.sp.scale, base: t.piece != null ? 'sabir' : null }, G);
     for (const t of G.traps) { if (t.sp.sprite) continue; g.globalAlpha = t.armed > 0 ? 0.5 : 1; g.font = '44px serif'; g.textAlign = 'center'; g.textBaseline = 'bottom'; g.fillText(t.sp.emoji || '⚠️', t.x, t.y + 4); g.globalAlpha = 1; }
     for (const f of G.fighters) drawFighter(g, f, G);

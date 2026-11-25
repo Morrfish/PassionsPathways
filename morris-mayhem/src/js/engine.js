@@ -137,6 +137,33 @@ window.MM = window.MM || {};
       popText(G, d.x, d.y - d.h - 20, 'Zzz...', '#c9b6ff');
     }
   }
+  // ---------- Mayhem Stars (power-up pickups for Jeff and Patty) ----------
+  function tickItems(G) {
+    G.items = G.items || [];
+    if (G.countdown > 0 || G.over) return;
+    const want = G.fighters.some((f) => f.def.powerup && !f.out);
+    G.itemT = (G.itemT == null ? (G.practice ? 180 : 600) : G.itemT) - 1;
+    if (want && !G.items.length && G.itemT <= 0 && !G.fighters.some((f) => f.powerT > 0)) {
+      const m = G.stage.main, x = m.left + 120 + Math.random() * (m.right - m.left - 240);
+      G.items.push({ x, y: -500, vy: 0, life: 900 });
+      G.itemT = G.practice ? 300 : 1200 + Math.floor(Math.random() * 600);
+    }
+    for (const it of G.items) {
+      it.life--;
+      const s = surfaceBelow(G, it.x, it.y);
+      if (s === null || it.y < s) { it.vy = Math.min(it.vy + 0.35, 6); it.y += it.vy; if (s !== null && it.y >= s) { it.y = s; it.vy = 0; } }
+      if (it.y > 1500) it.life = 0;
+      const box = { x: it.x - 28, y: it.y - 56, w: 56, h: 56 };
+      for (const f of G.fighters) {
+        if (!f.def.powerup || f.dead || f.out || f.formIdx || f.powerT > 0 || !overlap(box, MM.hurtbox(f))) continue;
+        it.life = 0; burst(G, it.x, it.y - 28, '#ffd34a', 16, 6);
+        if (!f.act || f.act.type === 'normal') f.act = { type: 'powerup', t: 0, dur: 36, noGrav: !f.ground }; else { applyForm(f, 1); f.powerT = f.def.powerup.frames; }
+        break;
+      }
+    }
+    G.items = G.items.filter((it) => it.life > 0);
+  }
+
   function backToWork(G, f) {
     const ex = f.def.mess.exhaust; // e.g. Siren: out of ideas, can't move or act for exactly 2 s (still gets hit and knocked around)
     applyForm(f, 0); f.clean = 0; f.mess = 0; f.pieces = 0;
@@ -198,6 +225,7 @@ window.MM = window.MM || {};
       if (G.countdown > 0 || G.over || f.exhaust > 0) f.inp = blankInput(); // exhausted: no moving or acting
     }
     movePlatforms(G);
+    tickItems(G);
     for (const f of G.fighters) updateFighter(G, f);
     if (G.practice) for (const f of G.fighters) if (!f.cpu && !(f.act && f.act.type === 'ult')) f.meter = 100; // practice: the Ultimate is always ready
     for (const f of G.fighters) checkHits(G, f);
@@ -289,7 +317,7 @@ window.MM = window.MM || {};
         if (!(f.swapCd > 0)) { applyForm(f, f.formIdx >= f.forms.length - 1 ? 1 : f.formIdx + 1); f.swapCd = 48; f.act = { type: 'shirt', t: 0, dur: 15, noGrav: !f.ground }; popText(G, f.x, f.y - f.h - 24, f.def.formName, f.accent); burst(G, f.x, f.y - f.h / 2, f.accent, 12, 5); MM.sfx('special'); }
       }
       else if (swapNow && f.def.mess) { if (f.mess >= 100 && f.formIdx === 0) f.act = { type: 'cleanup', t: 0, dur: f.def.mess.cupDur || 33, noGrav: !f.ground }; }
-      else if (swapNow) startSpecial(G, f, 'down');
+      else if (swapNow && !f.def.powerup) startSpecial(G, f, 'down');
       else if (pressed('taunt') && f.ground) { // taunt: ground only, a hit stops it, no protection
         if (G.practice && !f.cpu && f.def.mess && f.formIdx === 0) { // practice: Taunt fills the Switch meter (Sabir: all five pieces)
           if (f.def.mess.pieces) { for (let k = 0; k < f.def.mess.pieces; k++) if (!((f.pieces >> k) & 1)) { collectPiece(G, f, k); if (f.act) break; } }
@@ -421,6 +449,11 @@ window.MM = window.MM || {};
         burst(G, f.x, f.y - f.h / 2, '#ffffff', 30, 8); ring(G, f.x, f.y - f.h / 2, f.def.mess.goColor || '#4aa8e8');
         popText(G, f.x, f.y - f.h - 24, ms.go || 'CLEAN FREAK!', ms.goColor || '#4aa8e8'); MM.sfx('heal');
       }
+    } else if (a.type === 'powerup') { // Jeff / Patty: the Mayhem power-up switching on
+      f.vx *= 0.8;
+      if (a.t >= a.dur) { f.act = null; applyForm(f, 1); f.powerT = f.def.powerup ? f.def.powerup.frames : 720; burst(G, f.x, f.y - f.h / 2, '#ffd34a', 30, 8); ring(G, f.x, f.y - f.h / 2, '#ffd34a'); popText(G, f.x, f.y - f.h - 24, 'MAYHEM MODE!', '#ffd34a'); MM.sfx('heal'); }
+    } else if (a.type === 'powerend') {
+      f.vx *= 0.8; if (a.t >= a.dur) { f.act = null; applyForm(f, 0); popText(G, f.x, f.y - f.h - 24, 'MAYHEM OVER', '#ccc'); }
     } else if (a.type === 'shirt') { // Cole: a quarter second showing off the new shirt
       f.vx *= 0.8; if (a.t >= a.dur) f.act = null;
     } else if (a.type === 'backwork') { // 0.35 s back into the work clothes
@@ -923,6 +956,10 @@ window.MM = window.MM || {};
   }
 
   function updateTraps(G) {
+    // the power-up timer (Jeff / Patty Mayhem mode): runs out, then a short change back
+    for (const f of G.fighters) if (f.powerT > 0 && !f.dead && --f.powerT === 0) {
+      if (!f.act && !f.hitstun) f.act = { type: 'powerend', t: 0, dur: 24 }; else { applyForm(f, 0); popText(G, f.x, f.y - f.h - 24, 'MAYHEM OVER', '#ccc'); }
+    }
     for (const t of G.traps) {
       t.life--; t.age = (t.age || 0) + 1; if (t.armed > 0) t.armed--;
       const s = surfaceBelow(G, t.x, t.y);
@@ -972,6 +1009,7 @@ window.MM = window.MM || {};
       if (f.act && f.act.type === 'ult') releaseUlt(f.act);
       if (f.super) { f.super = null; applyForm(f, 0); }
       f.exhaust = 0;
+      if (f.def.powerup && f.formIdx) { applyForm(f, 0); f.powerT = 0; }
       if (f.def.mess) { if (f.formIdx) applyForm(f, 0); f.mess = 0; f.clean = 0; f.pieces = 0; G.traps = G.traps.filter((t) => !(t.owner === f && t.piece != null)); }
       f.act = null; f.hitstun = 0; f.buff = null; f.slow = null; f.vx = f.vy = 0; f.caught = null; f.meter = 0;
       if (f.stocks <= 0) { f.out = true; f.x = 0; f.y = -3000; }
