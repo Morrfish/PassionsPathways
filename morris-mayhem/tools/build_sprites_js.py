@@ -52,6 +52,9 @@ MOVES = {
     'jaxston': dict(jab='leftfoot', side='round', down='csweep', up='spin', nair='airspin', fair='skyvolley', uair='bicycle', dair='meteor',
                     neutral='launch', sideSpecial='cleat', upSpecial='tornado', downSpecial='clutter',
                     upRow='spin', uairRow='bicycle', riseMid='tornado2', riseLate='tornado3'),
+    'jaxston-left': dict(jab='leftfoot', side='round', down='csweep', up='spin', nair='airspin', fair='skyvolley', uair='bicycle', dair='meteor',
+                         neutral='launch', sideSpecial='cleat', upSpecial='tornado', downSpecial='clutter',
+                         upRow='spin', uairRow='bicycle', riseMid='tornado2', riseLate='tornado3'),
     'evea': dict(jab='tap', side='scoot', down='twirl', up='horn', nair='circle', fair='rvolley', uair='skysp', dair='shoe',
                  neutral='startoss', sideSpecial='express', upSpecial='rrise', downSpecial='hoof',
                  upRow='horn', uairRow='skysp', riseMid='rrise2', riseLate='rrise3'),
@@ -91,7 +94,9 @@ window.MM = window.MM || {};
 MM.SPRITES = MM.SPRITES || {};
 """]
 # extra names for frames (Courtnee's personality poses live in his own atlas)
-ALIASES = {w: {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'} for w in ('courtnee', 'megan', 'siren', 'codee', 'codee-clean', 'haylie', 'sara', 'jorie', 'jaxston', 'evea')}
+ALIASES = {w: {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'} for w in ('courtnee', 'megan', 'siren', 'codee', 'codee-clean', 'haylie', 'sara', 'jorie', 'jaxston', 'jaxston-left', 'evea')}
+# fighters with their own left-facing art (drawn as-is instead of mirrored: Jaxston always kicks with his LEFT foot)
+LEFT = {'jaxston': 'jaxston-left'}
 ALIASES['jorie-rage'] = {'ent': 'xform3', 'taunt': 'xform3', 'win': 'xform3', 'lose': 'hurt3'}
 ALIASES['evea-spirit'] = {'ent': 'link2', 'taunt': 'link3', 'win': 'link3', 'lose': 'hurt3'}
 # the standing pose to size the personality sheet by, when the taunt reaches up (Jorie lifts the milk jug overhead)
@@ -118,7 +123,7 @@ for who, moves in MOVES.items():
             if re.fullmatch(pre + r'(\d+)?', k): fs[k] = round(fs.get(k, 1) * m, 3)
     parts.append(f"""
 MM.SPRITES['{who}'] = {{
-  src: 'img/{who}-atlas.webp',
+  src: 'img/{who}-atlas.webp',{f"{chr(10)}  left: '{LEFT[who]}'," if who in LEFT else ''}
   standH: {std},
   fscale: {json.dumps(fs)},
   frames: {{

@@ -231,6 +231,18 @@ CHARACTERS = {
         'extras': {'fxball': 'fx-soccerball.png', 'fxcone': 'fx-training-cone.png', 'fxarc': 'fx-kick-arc.png', 'fximpact': 'fx-impact-burst.png',
                    'fxfire0': 'fx-fireball-01.png', 'fxfire1': 'fx-fireball-02.png', 'fxfire2': 'fx-fireball-03.png', 'fxfire3': 'fx-fireball-04.png'},
     },
+    # Jaxston facing left: drawn as-is (not mirrored) so he still kicks with his LEFT foot
+    'jaxston-left': {
+        'scale': 0.62, 'auto': True,
+        'sheets': {
+            'move.png': ['idle', 'run', 'jump', 'hurt'],
+            'attacks.png': ['leftfoot', 'round', 'spin', 'csweep'],
+            'aerials.png': ['airspin', 'skyvolley', 'bicycle', 'meteor'],
+            'specials.png': ['launch', 'cleat', 'tornado', 'clutter'],
+            'ultimate.png': ['ult', 'pers'],
+        },
+        'erasetags': ('ultimate.png',),
+    },
     'evea': {
         'scale': 0.62, 'auto': True,
         'sheets': {
@@ -345,7 +357,7 @@ def slice_sheet(path, names, cols, frames, scale, excl=(), cutcols=False, mainon
         add(frames, f'{names[r]}{c}', img, ax, ay, scale)
     return a, lab
 
-def slice_auto(path, names, frames, scale, ncols=4, skip=(), cells=False, top=False):
+def slice_auto(path, names, frames, scale, ncols=4, skip=(), cells=False, top=False, erasetags=False):
     """Sheets with the move names in yellow boxes at the left of each row (Jorie, Jaxston, Evea):
     the boxes mark where each row starts, and the poses in a row are split at the widest gaps."""
     a = np.array(Image.open(path).convert('RGBA'))
@@ -355,6 +367,13 @@ def slice_auto(path, names, frames, scale, ncols=4, skip=(), cells=False, top=Fa
     pr = np.nonzero(pur[:160].sum(1) > 300)[0]
     title_end = int(pr.max()) + 4 if len(pr) else 0
     a[max(0, title_end - 3):title_end + 1, :, 3] = 0
+    if erasetags:  # small yellow name tags that touch a pose (Jaxston's left-facing TAUNT tag sits on his hair)
+        ai = a.astype(int); yl = (ai[..., 0] > 220) & (ai[..., 1] > 170) & (ai[..., 2] < 90) & (ai[..., 3] > 200)
+        tl, _ = nd.label(nd.binary_dilation(yl, iterations=3))
+        for o in nd.find_objects(tl):
+            h_, w_ = o[0].stop - o[0].start, o[1].stop - o[1].start
+            if o[0].start > title_end + 10 and w_ > 80 and h_ < 60 and w_ > 2.5 * h_:
+                a[max(0, o[0].start - 5):o[0].stop + 5, max(0, o[1].start - 6):o[1].stop + 6, 3] = 0
     op = a[..., 3] >= 128  # thin rule lines across the sheet (they can touch a pose): rows with one very long run
     run = np.zeros(W, int); best = np.zeros(H, int)
     for yy in range(H):
@@ -388,7 +407,7 @@ def slice_auto(path, names, frames, scale, ncols=4, skip=(), cells=False, top=Fa
         px = a[y, x][lab[y, x] == i + 1]
         r_, g_, b_ = px[:, 0].astype(int), px[:, 1].astype(int), px[:, 2].astype(int)
         yel = ((r_ > 200) & (g_ > 165) & (b_ < 215) & (r_ - b_ > 30)).mean()
-        if yel > 0.4 and (y.stop - y.start) < 190 and (x.stop - x.start) > 60 and s < 40000:
+        if (yel > 0.4 and (y.stop - y.start) < 190 and (x.stop - x.start) > 60 and s < 40000) or (yel > 0.2 and (y.stop - y.start) < 75 and (x.stop - x.start) > 90 and (x.stop - x.start) > 2.2 * (y.stop - y.start)):
             if x.start < 120 and y.start > title_end + 10: starts.append((y.start, y.stop))
             labels.append(o)
             continue
@@ -504,7 +523,7 @@ if __name__ == '__main__':
         cols = cfg.get('cols')
         if isinstance(names, dict): cols = names.get('cols'); names = names['rows']
         if cfg.get('auto'):
-            slice_auto(f'{art}/{sheet}', names, frames, cfg['scale'], skip=cfg.get('skip', ()), cells=sheet in cfg.get('cells', ()), top=sheet in cfg.get('toplabels', ())); continue
+            slice_auto(f'{art}/{sheet}', names, frames, cfg['scale'], skip=cfg.get('skip', ()), cells=sheet in cfg.get('cells', ()), top=sheet in cfg.get('toplabels', ()), erasetags=sheet in cfg.get('erasetags', ())); continue
         slice_sheet(f'{art}/{sheet}', names, cols, frames, cfg['scale'], excl, cfg.get('cutcols'), cfg.get('mainonly', {}).get(sheet, ()))
     for name, sheet, pt in props:
         if not pt: continue

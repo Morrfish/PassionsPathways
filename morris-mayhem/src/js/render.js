@@ -18,7 +18,7 @@ window.MM = window.MM || {};
   }
   // load every fighter's atlases up front, including the ultimate/victory sheets (otherwise a fighter who never
   // used their ultimate has no victory pose ready for the results screen)
-  MM.preloadSprites = () => { for (const d of MM.allDefs()) { if (d.sprite) sheet(d.sprite); if (d.ultimate && d.ultimate.sprite) sheet(d.ultimate.sprite); } };
+  MM.preloadSprites = () => { for (const d of MM.allDefs()) for (const id of [d.sprite, d.ultimate && d.ultimate.sprite]) if (id) { sheet(id); const S = MM.SPRITES && MM.SPRITES[id]; if (S && S.left) sheet(S.left); } };
   MM.whenPoseReady = (def, cb) => { const u = def.ultimate, id = u && u.sprite; if (!id) return; sheet(id); const im = spriteImgs[id]; if (im && !(im.complete && im.naturalWidth)) im.addEventListener('load', cb, { once: true }); };
 
   // Pick the pose for what the fighter is doing right now.
@@ -125,6 +125,8 @@ window.MM = window.MM || {};
       sh = sheet(ua.sprite); frameName = ua.poses[0][1];
       for (const [t, p] of ua.poses) if (f.act.t >= t) frameName = p;
     }
+    let flip = f.face;
+    if (f.face < 0 && sh.S.left) { const L = sheet(sh.S.left); if (L && L.S.frames[frameName]) { sh = L; flip = 1; } } // own left-facing art (Jaxston's left foot)
     const { S, im } = sh, fr = S.frames[frameName] || S.frames.idle0;
     const k = ((f.h * 1.15) / S.standH) * ((S.fscale && S.fscale[frameName]) || 1); // per-pose size fix (see build_sprites_js.py)
     const fsh = f.def.sprite && sheet(f.def.sprite);
@@ -147,7 +149,7 @@ window.MM = window.MM || {};
     if (f.buff) { g.save(); g.fillStyle = f.buff.color; g.globalAlpha *= 0.3; g.beginPath(); g.ellipse(0, -f.h * 0.55, f.w * 1.4, f.h * 0.75, 0, 0, TAU); g.fill(); g.restore(); }
     // player-color ring at the feet (keeps two of the same fighter apart without recoloring the art)
     if (f.ground) { g.save(); g.strokeStyle = f.team ? MM.TEAM_COLORS[f.team] : MM.PLAYER_COLORS[f.slot]; g.lineWidth = 4; g.globalAlpha *= 0.85; g.beginPath(); g.ellipse(0, -2, f.w * 0.9, 8, 0, 0, TAU); g.stroke(); g.restore(); }
-    g.scale(f.face * k, k);
+    g.scale(flip * k, k);
     g.drawImage(im, fr[0], fr[1], fr[2], fr[3], -fr[4], -fr[5], fr[2], fr[3]);
     const lvl = f.def.mess && f.def.mess.dirt && f.formIdx === 0 && !(f.act && f.act.type === 'cleanup') ? (f.mess >= 100 ? 3 : f.mess >= 66 ? 2 : f.mess >= 33 ? 1 : 0) : 0;
     if (lvl) g.drawImage(dirtFor(sh, frameName, fr, lvl), -fr[4], -fr[5]);
@@ -522,7 +524,7 @@ window.MM = window.MM || {};
     for (const f of G.fighters) {
       const base = MM.FIGHTERS.find((d) => d.id === (f.def.baseId || f.def.id)) || f.def;
       const defs = base.forms ? MM.formDefs(base) : [f.def];
-      for (const d of defs) for (const id of [d.sprite, d.ultimate && d.ultimate.sprite]) if (id && MM.SPRITES && MM.SPRITES[id]) { sheet(id); if (!ok(spriteImgs[id])) return false; }
+      for (const d of defs) for (const id0 of [d.sprite, d.ultimate && d.ultimate.sprite]) for (const id of [id0, id0 && MM.SPRITES && MM.SPRITES[id0] && MM.SPRITES[id0].left]) if (id && MM.SPRITES && MM.SPRITES[id]) { sheet(id); if (!ok(spriteImgs[id])) return false; }
     }
     const P = MM.STAGE_PICS && MM.STAGE_PICS[(G.stage.art && G.stage.art.bg) || G.stage.id];
     if (P) for (const src of [P.bg, P.props]) if (src) { stageImg(src); if (!ok(stageImgs[src])) return false; }
