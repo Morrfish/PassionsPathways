@@ -78,8 +78,9 @@ window.MM = window.MM || {};
     const pcol = (i) => (teamMode() ? MM.TEAM_COLORS[slots[i].team] : MM.PLAYER_COLORS[i]);
     box.innerHTML = slots.map((s, i) => {
       const f = fighterById(s.fighter), off = s.type === 'off';
-      return `<div class="slot ${off ? 'off' : ''} ${i === activeSlot ? 'active' : ''}" data-slot="${i}" style="--pc:${pcol(i)}">
-        ${off ? '<div class="q">?</div>' : `<img class="art" src="${portrait(s.fighter)}" alt="">
+      const card = off ? 'player-card-empty' : ['player-card-p1-red', 'player-card-p2-blue', 'player-card-p3-green', 'player-card-p4-yellow'][i]; // ChatGPT cards
+      return `<div class="slot ${off ? 'off' : ''} ${i === activeSlot ? 'active' : ''}" data-slot="${i}" style="--pc:${pcol(i)};--card:url(img/ui/${card}.webp)">
+        ${off ? '' : `<img class="art" src="${portrait(s.fighter)}" alt="">
         <div class="pick"><button data-k="prev" aria-label="Previous fighter">◀</button><button data-k="next" aria-label="Next fighter">▶</button></div>`}
         <div class="pn">P${i + 1}</div>
         <div class="side">
@@ -90,9 +91,10 @@ window.MM = window.MM || {};
         </div>
       </div>`;
     }).join('');
-    const chips = (id) => slots.map((s, i) => (s.type !== 'off' && s.fighter === id ? `<i style="background:${pcol(i)}">${s.type === 'cpu' ? 'CPU' : 'P' + (i + 1)}</i>` : '')).join('');
-    $('#roster').innerHTML = MM.FIGHTERS.map((f) => `<button data-f="${f.id}"><img src="${portrait(f.id)}" alt=""><span class="chips">${chips(f.id)}</span><span class="nm">${f.name}</span></button>`).join('')
-      + `<button data-f="random" class="rand"><span class="q">?</span><span class="nm">Random</span></button>`;
+    // ChatGPT tag tokens (P1-P4 in the player's color, gray CPU) with the label written on them
+    const chips = (id) => slots.map((s, i) => (s.type !== 'off' && s.fighter === id ? `<i class="tag" style="background-image:url(img/ui/select-tag-${s.type === 'cpu' ? 'cpu' : 'p' + (i + 1)}.png)">${s.type === 'cpu' ? 'CPU' : 'P' + (i + 1)}</i>` : '')).join('');
+    $('#roster').innerHTML = MM.FIGHTERS.map((f) => `<button data-f="${f.id}" class="${slots.some((s) => s.type !== 'off' && s.fighter === f.id) ? 'sel' : ''}"><img src="${portrait(f.id)}" alt=""><span class="chips">${chips(f.id)}</span><span class="nm">${f.name}</span></button>`).join('')
+      + `<button data-f="random" class="rand"><span class="nm">Random</span></button>`;
     drawOptions();
   }
   $('#slots').addEventListener('click', (e) => {
@@ -239,8 +241,8 @@ window.MM = window.MM || {};
   function drawArenas() {
     const lastId = load('stage', MM.STAGES[0].id);
     $('#arenaGrid').innerHTML = MM.STAGES.map((s) => `<button data-arena="${s.id}" class="${s.id === lastId ? 'last' : ''}" ${s.id === lastId ? 'data-autofocus' : ''}><img src="${MM.stageThumb ? MM.stageThumb(s.id) : ''}" alt=""><span>${s.name}${s.custom ? '<small>Made in Arena Maker</small>' : ''}</span></button>`).join('')
-      + `<button data-arena="random"><div class="rand">?</div><span>Random arena</span></button>`
-      + `<button data-go="maker"><div class="rand">＋</div><span>Make your own<small>Arena Maker</small></span></button>`;
+      + `<button data-arena="random" class="own"><img src="img/ui/arena-random.webp" alt=""><span>Random arena</span></button>`
+      + `<button data-go="maker" class="own"><img src="img/ui/arena-make.webp" alt=""><span>Make your own<small>Arena Maker</small></span></button>`;
   }
   $('#arenaGrid').addEventListener('click', (e) => {
     const b = e.target.closest('[data-arena]'); if (!b || !lastSetup) return;

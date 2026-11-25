@@ -182,7 +182,7 @@ select.editing { outline: 4px solid var(--gold) !important; box-shadow: 0 0 18px
 @media (max-width: 820px), (max-height: 520px) { .am-side { width: 200px; } #maker header h2 { display: none; } #maker { font-size: 12px; } #maker button { padding: 4px 8px; } #maker button.big { padding: 4px 12px; } .am-msg { font-size: .9em; } }
 #select #slots.css-slots { max-width: none; margin: auto 0 0; }
 #select .css-slots .slot { min-height: max(210px, 36vh); }
-#select .css-roster { grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); }
+#select .css-roster { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); }
 @media (max-width: 760px) { #select .css-roster { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); } #select .css-slots .slot { min-height: 170px; } }
 
 /* ---------- ChatGPT UI art (UI_PRIORITY1_HANDOFF, img/ui/) ----------
@@ -231,3 +231,41 @@ h2.css-ttl { flex: 1; display: flex; justify-content: center; } h2.css-ttl img {
 #winner { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0 10px; }
 #winner img.wins { height: clamp(56px, 13vh, 120px); width: auto; margin: -10px 0; }
 .stat { position: relative; } .stat img.trophy { position: absolute; top: -34px; right: -22px; width: 72px; height: auto; transform: rotate(10deg); }
+/* ---------- ChatGPT select-screen art (UI select pack) ---------- */
+#select h2.css-ttl { background: url(img/ui/header-banner.png) center / 100% 70% no-repeat; padding: 0 30px; }
+/* roster tiles: portrait inside a hollow frame (purple; gold on hover/controller; orange once someone picked it) */
+.css-roster { gap: 4px; background: none; padding: 0; }
+.css-roster button::after { content: ''; position: absolute; inset: 0; pointer-events: none; border: 14px solid transparent; border-image: url(img/ui/roster-tile-normal.png) 100 / 14px stretch; z-index: 2; }
+.css-roster button.sel::after { border-image-source: url(img/ui/roster-tile-selected.png); }
+.css-roster button:hover::after, .css-roster button.padfocus::after { border-image-source: url(img/ui/roster-tile-hover.png); }
+.css-roster button:hover, .css-roster button.padfocus { outline: none !important; box-shadow: none !important; }
+.css-roster button .nm { bottom: 9px; left: 9px; right: 9px; z-index: 1; }
+.css-roster button .chips { top: 9px; left: 9px; z-index: 3; }
+.css-roster button .chips i.tag { background: center / 100% 100% no-repeat; border-radius: 0; color: #1a0b2e; text-shadow: none; width: 40px; height: 24px; padding: 0;
+  display: grid; place-items: center; font-size: .62em; line-height: 1; }
+.css-roster button.rand { background: url(img/ui/random-tile.webp) center 35% / 78% no-repeat, radial-gradient(circle at 50% 35%, #6a2bb3, #2b1150 75%); }
+/* player cards: ChatGPT's striped cards, kept at their own shape */
+#slots.css-slots { max-width: none; grid-template-columns: repeat(4, min(21vw, 32vh)); justify-content: center; gap: 14px; }
+@media (max-width: 760px) { #slots.css-slots { grid-template-columns: repeat(4, min(21vw, 32vh)); } }
+.css-slots .slot, #select .css-slots .slot { min-height: 0; aspect-ratio: 512 / 672; background: var(--card) center / 100% 100% no-repeat; border-radius: 0; overflow: visible; }
+.css-slots .slot.off { background: var(--card) center / 100% 100% no-repeat; }
+.css-slots .slot.active { box-shadow: none; filter: drop-shadow(0 0 6px #fff) drop-shadow(0 0 2px #fff); }
+.css-slots .slot .art { left: 15.6%; width: 68.8%; top: 10%; height: 67.5%; bottom: auto; object-position: 50% 100%; }
+.css-slots .slot .pn { top: 1%; right: auto; left: 50%; transform: translateX(-50%); font-size: 1.1em; }
+.css-slots .slot .pick { left: 9%; top: 11%; }
+.css-slots .slot .side { left: 9%; right: 9%; width: auto; top: auto; bottom: 1.5%; gap: 3px; justify-content: flex-end; }
+.css-slots .slot .nm { background: none; color: #fff; clip-path: none; padding: 0; font-size: clamp(9px, 1.25vw, 15px); text-shadow: 0 2px 0 #000; order: 9; line-height: 1.1; min-height: 2.6em;
+  display: flex; align-items: center; justify-content: center; }
+.css-slots .slot .ttl { display: none; }
+.css-slots .slot .cycle { font-size: clamp(9px, 1vw, 12px); min-height: 0; border-width: 6px 12px; }
+.css-slots .slot .join { position: static; pointer-events: none; margin-bottom: 4px; text-shadow: 0 2px 0 #000; font-size: clamp(9px, 1.1vw, 13px); }
+.css-slots .slot.off .side { justify-content: flex-end; }
+/* arena tiles: the screenshot inside ChatGPT's frame; Random / Make your own use their own framed pictures */
+.arenas button { position: relative; border: 0; background: none; border-image: none; }
+.arenas button:not(.own)::after { content: ''; position: absolute; left: 0; right: 0; top: 0; aspect-ratio: 16 / 9; pointer-events: none; border: 14px solid transparent;
+  border-image: url(img/ui/arena-frame.png) 88 / 14px stretch; }
+.arenas button img { border-radius: 0; }
+.arenas button.own img { object-fit: contain; background: none; }
+.arenas button:is(:hover, .padfocus) img, .arenas button.last img { filter: drop-shadow(0 0 6px var(--gold)); }
+.arenas button span { background: #2b1150cc; border-radius: 0 0 8px 8px; }
+.css-slots .slot.off .side { bottom: 9.5%; left: 13%; right: 13%; } .css-slots .slot.off .join { margin-bottom: 9%; }
