@@ -280,6 +280,8 @@ window.MM = window.MM || {};
       <img src="${MM.posePicture(f.def, won(f) ? 'win' : 'lose') || portrait(f.def.baseId || f.def.id)}" alt=""><div><b>${f.cpu ? 'CPU' : 'P' + (f.slot + 1)} · ${f.def.name}${f.team ? ' · Team ' + f.team : ''}</b></div>
       <div>KOs: ${f.kos} · Falls: ${f.falls}</div><div>Damage dealt: ${Math.round(f.dealt)}%</div></div>`).join('');
     show('results');
+    // a victory/defeat pose whose picture was still loading: swap it in as soon as it arrives
+    fs.forEach((f, k) => MM.whenPoseReady(f.def, () => { const img = document.querySelectorAll('#stats .stat > img:not(.trophy)')[k], pic = MM.posePicture(f.def, won(f) ? 'win' : 'lose'); if (img && pic) img.src = pic; }));
   }
 
   // ---------- title-screen demo (4 computers fighting in the background) ----------

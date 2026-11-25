@@ -16,7 +16,10 @@ window.MM = window.MM || {};
     const im = spriteImgs[id];
     return im.complete && im.naturalWidth ? { S, im } : null;
   }
-  MM.preloadSprites = () => { for (const d of MM.allDefs()) if (d.sprite) sheet(d.sprite); };
+  // load every fighter's atlases up front, including the ultimate/victory sheets (otherwise a fighter who never
+  // used their ultimate has no victory pose ready for the results screen)
+  MM.preloadSprites = () => { for (const d of MM.allDefs()) { if (d.sprite) sheet(d.sprite); if (d.ultimate && d.ultimate.sprite) sheet(d.ultimate.sprite); } };
+  MM.whenPoseReady = (def, cb) => { const u = def.ultimate, id = u && u.sprite; if (!id) return; sheet(id); const im = spriteImgs[id]; if (im && !(im.complete && im.naturalWidth)) im.addEventListener('load', cb, { once: true }); };
 
   // Pick the pose for what the fighter is doing right now.
   function pickFrame(f, S) {
