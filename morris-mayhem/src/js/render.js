@@ -518,7 +518,7 @@ window.MM = window.MM || {};
   // Is the art for this match on screen yet? (fighters' atlases and the arena). The countdown waits for it,
   // so a slow download never eats the 3-2-1.
   MM.artReady = (G) => {
-    const ok = (im) => !im || (im.complete && im.naturalWidth > 0);
+    const ok = (im) => !im || im.complete; // loaded, or failed (a missing picture must not hold the match forever)
     for (const f of G.fighters) {
       const base = MM.FIGHTERS.find((d) => d.id === (f.def.baseId || f.def.id)) || f.def;
       const defs = base.forms ? MM.formDefs(base) : [f.def];

@@ -251,6 +251,7 @@ window.MM = window.MM || {};
   function startMatch() {
     demo = null; MM.muted = false; MM.resetCamera();
     G = MM.newGame(lastSetup.players, lastSetup.stage, lastSetup.stocks, lastSetup.opts || {});
+    acc = 0; last = performance.now(); // start fresh: the entrances and 3-2-1 always play from the top
     paused = false; show('match');
   }
   function togglePause() {
@@ -497,11 +498,12 @@ window.MM = window.MM || {};
   let last = performance.now(), acc = 0;
   const STEP = 1000 / 60;
   function frame(now) {
-    acc += Math.min(100, now - last); last = now;
+    acc = Math.min(250, acc + Math.min(100, now - last)); last = now; // never more than a few frames of catch-up
     pollMenuInput();
     if (screen === 'select' || $('#cursors').childElementCount) syncCursors();
     MM.menuNavTick(screen === 'match' && !!G && !paused);
     const world = G || demo;
+    if (!world) acc = 0; // nothing running (menus): don't save up time for the next match to burn through
     if (world) {
       const slow = world.slowmo > 0 ? 3 : 1;
       // a new match holds on its first frame until the match screen is up and its art has loaded (max 10 s),
