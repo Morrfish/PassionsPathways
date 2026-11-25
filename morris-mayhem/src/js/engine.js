@@ -357,6 +357,7 @@ window.MM = window.MM || {};
     else name = inp.y < 0 ? 'uair' : inp.y > 0 ? 'dair' : inp.x ? 'fair' : 'nair';
     if (inp.x && (name === 'side' || name === 'fair')) f.face = inp.x;
     let m = MM.NORMALS[name];
+    if (f.def.normals && f.def.normals[name]) m = Object.assign({}, m, f.def.normals[name]);
     const ns = f.def.normalSpeed || 1;
     if (ns !== 1) m = Object.assign({}, m, { start: Math.round(m.start / ns), end: Math.round(m.end / ns) });
     f.act = { type: 'normal', name, m, t: 0, hit: new Set(), pose: m.pose, air: !onGround, dur: m.start + m.active + m.end };
@@ -371,6 +372,7 @@ window.MM = window.MM || {};
       if (a.t === m.start && m.lunge && f.ground) f.vx += f.face * m.lunge;
       a.box = a.t >= m.start && a.t < m.start + m.active ? boxFor(f, m.box) : null;
       a.hitProps = { dmg: m.dmg, kb: m.kb, kbg: m.kbg, ang: m.ang };
+      if (m.back) a.hitProps.face = -f.face; // thrown behind her
       if (a.air) move(f, f.inp);
       if (a.t >= a.dur) f.act = null;
     } else if (a.type === 'lag') {
@@ -467,7 +469,7 @@ window.MM = window.MM || {};
           const n = sp.count || 1;
           for (let i = 0; i < n; i++) {
             const ang = n > 1 ? (i - (n - 1) / 2) * (sp.spread || 0.2) : 0;
-            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, sprite: sp.sprite, scale: sp.scale, spin: sp.spin, puddle: sp.puddle, slow: sp.slow, boomer: sp.boomerang, pull: sp.pull, line: sp.line, dir: f.face });
+            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, sprite: sp.sprite, scale: sp.scale, spin: sp.spin, puddle: sp.puddle, slow: sp.slow, bounce: sp.bounce, boomer: sp.boomerang, pull: sp.pull, line: sp.line, dir: f.face });
           }
         }
       },
@@ -683,6 +685,7 @@ window.MM = window.MM || {};
   function releaseUlt(a) { for (const d of a.caught) if (d.caught) d.caught = null; a.caught.length = 0; }
   function tickUlt(G, f, a) {
     const u = a.u; f.vx *= 0.8; if (!f.ground) f.vy = 0;
+    if (u.rush && a.t >= u.rush[0] && a.t < u.rush[1]) f.vx = f.face * u.rush[2]; // e.g. Haylie charges in
     if (u.type === 'catch') {
       if (a.t < u.catchAt && a.t % 6 === 0) ring(G, f.x, f.y - f.h / 2, f.accent); // telegraph: you can still get away
       if (a.t === u.catchAt) {
@@ -790,6 +793,10 @@ window.MM = window.MM || {};
       if (p.boomer && p.t > 20) { const back = sgn(p.owner.x - p.x); p.vx += back * 0.55; p.vy += clamp((p.owner.y - 70 - p.y) * 0.01, -0.4, 0.4); if (p.t > 40 && Math.hypot(p.owner.x - p.x, p.owner.y - 70 - p.y) < 50) p.life = 0; }
       p.vy += p.grav;
       p.x += p.vx; p.y += p.vy;
+      if (p.bounce != null && p.vy > 0) { // bounces off the floor a set number of times, then it's gone
+        const s = surfaceBelow(G, p.x, p.y - p.vy - 2);
+        if (s !== null && p.y + p.r * 0.5 >= s) { if (p.bounce-- > 0) { p.y = s - p.r * 0.5; p.vy = -p.vy * 0.55; p.vx *= 0.8; } else { p.life = 0; continue; } }
+      }
       if (p.puddle && p.vy > 0) { // lands and leaves a puddle (e.g. Siren's mac and cheese)
         const s = surfaceBelow(G, p.x, p.y - p.vy - 2);
         if (s !== null && p.y + p.r * 0.5 >= s) {

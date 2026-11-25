@@ -790,7 +790,7 @@ window.MM = window.MM || {};
       const bw = Math.min(W * 0.92, H * 1.15), bh = bw / 4, by = H * 0.23 - bh * (129 / 256);
       if (bn) g.drawImage(bn, tx2 - bw / 2, by, bw, bh);
       else { g.fillStyle = 'rgba(26,11,46,.82)'; g.fillRect(0, H * 0.16, W, H * 0.14); g.fillStyle = b.color; g.fillRect(0, H * 0.16, W, 6); g.fillRect(0, H * 0.30 - 6, W, 6); }
-      const label = b.text.toUpperCase() + '!', maxW = bw * (880 / 1024);
+      const label = b.text.toUpperCase() + (b.text.endsWith('!') ? '' : '!'), maxW = bw * (880 / 1024);
       let fs = Math.round(bh * 0.36); g.font = `italic 900 ${fs}px system-ui`;
       const mwid = g.measureText(label).width; if (mwid > maxW) { fs = Math.floor(fs * maxW / mwid); g.font = `italic 900 ${fs}px system-ui`; }
       g.textAlign = 'center'; g.textBaseline = 'middle';

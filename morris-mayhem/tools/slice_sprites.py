@@ -153,6 +153,27 @@ CHARACTERS = {
             'codee-transformation.png': [(100, 395), (395, 649), (649, 919), (919, 1086)],
             'codee-props.png': [(95, 322), (363, 588), (628, 776), (818, 1043)]},
     },
+    # Haylie: labels on the left, no tags under the poses (except the ultimate sheet). The bear glows reach into
+    # neighbouring cells, so the ultimate sheet gets column cuts; the thrown loaf is cut out as its own picture.
+    'haylie': {
+        'scale': 0.62, 'cols': [175, 390, 640, 900, 9999],
+        'sheets': {
+            'move.png': ['idle', 'run', 'jump', 'hurt'],
+            'attacks.png': ['arm', 'upgo', 'step', 'grab'],
+            'aerials.png': ['reflex', 'reach', 'sky', 'feet'],
+            'specials.png': ['bread', 'coming', 'gotyou', 'babies'],
+            'ultimate.png': {'rows': ['ult', 'pers'], 'cols': [240, 540, 870, 1290, 9999]},
+        },
+        'props': [('loaf', 'specials.png', (915, 172))],
+        'mainonly': {'specials.png': ['bread']},
+        'cutrows': {'move.png': [705], 'aerials.png': [106, 114], 'ultimate.png': [470, 836]},  # touching poses / title / name tags
+        'cutcols': {'ultimate.png': [(540, 60, 470), (870, 60, 470), (1290, 60, 470)]},
+        'rowbands': {'move.png': [(105, 427), (427, 707), (707, 983), (983, 1300)],
+                     'attacks.png': [(105, 431), (431, 737), (737, 986), (986, 1300)],
+                     'aerials.png': [(105, 412), (412, 706), (706, 980), (980, 1300)],
+                     'specials.png': [(105, 426), (426, 680), (680, 1004), (1004, 1300)],
+                     'ultimate.png': [(60, 470), (470, 890)]},
+    },
 }
 
 CUTROWS = {}

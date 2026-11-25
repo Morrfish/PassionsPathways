@@ -243,6 +243,27 @@ MM.FIGHTERS = [
       },
     ],
   },
+  {
+    // Haylie Rollerson, "The Mama Bear": loves her kids, stay-at-home mom, bakes bread. Tall and slim, a little
+    // shorter than Courtnee and Codee. Fast pursuit, reaching grabs and a protective counter.
+    // Moves from ChatGPT's HAYLIE_FIGHTER handoff (numbers tuned here). Art: ChatGPT sheets.
+    id: 'haylie', name: 'Haylie Rollerson', title: 'The Mama Bear', photo: 'img/haylie.png', sprite: 'haylie',
+    color: '#c8873a', accent: '#ffb02e', skin: '#f2c2a2', hair: '#8a5a2e',
+    stats: { speed: 7.3, air: 6.6, jump: 15.4, weight: 0.94, power: 1.03, size: 1.03 },
+    attackNames: { jab: 'Mom Arm', side: 'Get Back Here!', up: 'Up You Go', down: 'Watch Your Step!', air: 'Mom Reflexes, Long Reach, Reach for the Sky, Feet First' },
+    normals: { side: { back: true, ang: 40, kb: 7, kbg: 0.13, dmg: 10, box: [10, -80, 70, 60] } }, // grabs and throws behind her
+    specials: {
+      neutral: { kind: 'projectile', name: 'Fresh Bread Delivery', thing: 'a round loaf of bread that bounces once', sprite: 'loaf', scale: 0.6, speed: 9, vy: -7, grav: 0.4, bounce: 1, dmg: 7, kb: 6, kbg: 0.07, r: 18, life: 110, cd: 70 },
+      side: { kind: 'dash', name: "Mom's Coming!", speed: 15, dur: 18, dmg: 9, kb: 7.5, kbg: 0.11, ang: 30, cd: 120, box: [-10, -95, 105, 95] },
+      up: { kind: 'rise', name: "Mama's Got You", power: 19.5, forward: 4, dmg: 7, kb: 6.5, kbg: 0.07 },
+      down: { kind: 'counter', name: 'Not My Babies!', window: 24, mult: 1.4 },
+    },
+    taunt: "Don't mess with my cubs!",
+    // ~3 s: points, rushes forward inside a spectral mama bear, bear-hugs everyone she reaches, roaring stomp
+    ultimate: { name: "Don't Make Me Come Over There!", sprite: 'haylie', type: 'catch', ahead: 2.4, rush: [30, 60, 13], dur: 180, catchAt: 60, finishAt: 122, dmg: 27, kbMul: 1.5,
+      desc: 'points, rushes forward inside a giant amber mama bear, bear-hugs everyone she reaches and stomps them away',
+      poses: [[0, 'ult0'], [30, 'ult1'], [60, 'ult2'], [122, 'ult3']] },
+  },
 ];
 
 // Stages. Units are world pixels; y grows downward; the main floor top is y = 0.
