@@ -19,8 +19,8 @@ window.MM = window.MM || {};
   const BOB = { ax: 20, ay: 5, period: 300 };
   const DECOR_NAMES = { crossing: 'RR crossing', lamp: 'Street lamp', storefront: 'Shop', gatearm: 'Crossing gate', ballrack: 'Ball rack', musicstand: 'Music stand', banquet: 'Potluck table', shortdock: 'Short dock', lifering: 'Life ring', tackle: 'Tackle box', balustrade: 'Terrace', riser: 'Gold stage', piano: 'Piano keys', stage: 'Wood stage', picnic: 'Picnic table', court: 'Gym floor', sidewalk: 'Sidewalk' };
   const WATER_COLOR = 'rgba(28,110,140,.55)';
-  const BGS = ['sky', 'dunkirk', 'hardin', 'williamstown', 'graceland', 'agnew'];
-  const BG_NAMES = { sky: 'Plain sky', dunkirk: 'Dunkirk street', hardin: 'Hardin gym', williamstown: 'Williamstown church', graceland: 'Graceland', agnew: 'Agnew Lake' };
+  const BGS = ['sky', 'dunkirk', 'hardin', 'williamstown', 'graceland', 'agnew', 'moose-christmas', 'arlington-softball', 'camp-bethany', 'uss-stein'];
+  const BG_NAMES = { sky: 'Plain sky', dunkirk: 'Dunkirk street', hardin: 'Hardin gym', williamstown: 'Williamstown church', graceland: 'Graceland', agnew: 'Agnew Lake', 'moose-christmas': 'Moose Christmas', 'arlington-softball': 'Arlington softball', 'camp-bethany': 'Camp Bethany', 'uss-stein': 'USS Stein' };
   // The editor is a fixed "slide" (like Canva): it never zooms or moves while you work, so pieces stay where you put
   // them. Roughly what the match camera shows. Pieces can go anywhere on it.
   const SLIDE = { x: -1300, y: -950, w: 2600, h: 1462 };

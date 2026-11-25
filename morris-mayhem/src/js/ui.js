@@ -172,7 +172,7 @@ window.MM = window.MM || {};
   // keeps working as before. Drawn pointers until ChatGPT's art is in (CURSOR_ART).
   const curs = {};
   MM.cursorDevs = new Set(); MM.selectCursors = curs; // (for tests)
-  const CURSOR_ART = false; // set true once ChatGPT's img/ui/cursor-p1..p4.png are added
+  const CURSOR_ART = true; // ChatGPT's object pointers: P1 Bible, P2 red Bronco, P3 Country Crock tub, P4 red cutoffs (img/ui/cursor-p1..p4.png)
   const CUR_SVG = (c) => `<svg viewBox="0 0 40 48" class="hand"><path d="M6 2 L6 38 L15 29 L22 45 L29 42 L22 26 L35 26 Z" fill="${c}" stroke="#1a0b2e" stroke-width="3.5" stroke-linejoin="round"/></svg>`;
   function syncCursors() {
     const layer = $('#cursors');
@@ -184,12 +184,14 @@ window.MM = window.MM || {};
       MM.cursorDevs.add(s.dev);
       if (!el) {
         el = document.createElement('div'); el.className = 'pcur'; el.dataset.cur = i;
-        el.innerHTML = `${CURSOR_ART ? `<img src="img/ui/cursor-p${i + 1}.png" alt="">` : ''}${CUR_SVG(MM.PLAYER_COLORS[i])}<b style="background:${MM.PLAYER_COLORS[i]}">P${i + 1}</b>`;
+        el.innerHTML = CURSOR_ART ? `<i class="halo" style="border-color:${MM.PLAYER_COLORS[i]}"></i><img class="obj" src="img/ui/cursor-p${i + 1}.png" alt=""><b style="background:${MM.PLAYER_COLORS[i]}">P${i + 1}</b>`
+          : `${CUR_SVG(MM.PLAYER_COLORS[i])}<b style="background:${MM.PLAYER_COLORS[i]}">P${i + 1}</b>`;
+        el.classList.toggle('art', CURSOR_ART);
         layer.appendChild(el);
       }
       if (!curs[i]) { // start over this player's fighter
         const t = document.querySelector(`#roster [data-f="${s.fighter}"]`), r = t && t.getBoundingClientRect();
-        curs[i] = r && r.width ? { x: r.left + r.width / 2 + (i % 2 ? 14 : -14), y: r.top + r.height * 0.6 } : { x: innerWidth * (0.2 + i * 0.2), y: innerHeight * 0.3 };
+        curs[i] = r && r.width ? { x: r.left + r.width / 2 + (i % 2 ? 14 : -14), y: r.bottom + 46 + (i % 2) * 8 } : { x: innerWidth * (0.2 + i * 0.2), y: innerHeight * 0.3 };
       }
       el.style.transform = `translate(${curs[i].x}px, ${curs[i].y}px)`;
     });

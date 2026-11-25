@@ -138,6 +138,60 @@ MM.STAGE_PICS = {
     water: { y: 130, color: 'rgba(28,110,140,.55)' },
     fade: 0,
   },
+  // ---- four arenas from ChatGPT's "Four Arenas" pack (one file per prop, packed by tools/pack_stage_props.py) ----
+  'moose-christmas': {
+    name: 'Moose Christmas',
+    bg: 'img/stages/moose-christmas-bg.webp', props: 'img/stages/moose-christmas-props.webp',
+    frames: { 'wood-floor': [0, 0, 428, 109], 'carpet-stage': [432, 0, 425, 108], bench: [861, 0, 377, 120], gifts: [1242, 0, 414, 144] },
+    main: { pic: 'wood-floor', sx0: 33, sx1: 397, sy: 4, grid: [3, 1] },
+    pics: {
+      'wood-floor': { label: 'Wood floor', sx0: 33, sx1: 397, sy: 4, w: 400 },
+      'carpet-stage': { label: 'Carpet stage', sx0: 32, sx1: 393, sy: 4, w: 330 },
+      bench: { label: 'Lodge bench', sx0: 11, sx1: 365, sy: 4, w: 300 },
+      gifts: { label: 'Pile of gifts', sx0: 50, sx1: 364, sy: 4, w: 260 },
+    },
+    decor: [{ pic: 'gifts', x: 560, y: 6, h: 84, layer: 'mid' }],
+    fade: 0.3,
+  },
+  'arlington-softball': {
+    name: 'Arlington Park Softball',
+    bg: 'img/stages/arlington-softball-bg.webp', props: 'img/stages/arlington-softball-props.webp',
+    frames: { 'dirt-floor': [0, 0, 438, 125], bleachers: [442, 0, 423, 130], 'dugout-roof': [869, 0, 441, 108], backstop: [1314, 0, 431, 193] },
+    main: { pic: 'dirt-floor', sx0: 22, sx1: 416, sy: 8, grid: [3, 1] },
+    pics: {
+      'dirt-floor': { label: 'Infield dirt', sx0: 22, sx1: 416, sy: 8, w: 400 },
+      bleachers: { label: 'Ball-field bleachers', sx0: 14, sx1: 408, sy: 4, w: 330 },
+      'dugout-roof': { label: 'Dugout roof', sx0: 39, sx1: 400, sy: 4, w: 330 },
+    },
+    decor: [{ pic: 'backstop', x: 0, y: 8, h: 150, layer: 'back' }],
+    fade: 0.3,
+  },
+  'camp-bethany': {
+    name: 'Camp Bethany',
+    bg: 'img/stages/camp-bethany-bg.webp', props: 'img/stages/camp-bethany-props.webp',
+    frames: { 'grass-floor': [0, 0, 422, 130], 'log-platform': [426, 0, 413, 121], 'picnic-table': [843, 0, 405, 167], lantern: [1252, 0, 149, 275] },
+    main: { pic: 'grass-floor', sx0: 16, sx1: 406, sy: 21, grid: [3, 1] },
+    pics: {
+      'grass-floor': { label: 'Grassy ground', sx0: 16, sx1: 406, sy: 21, w: 400 },
+      'log-platform': { label: 'Log', sx0: 29, sx1: 383, sy: 6, w: 320 },
+      'picnic-table': { label: 'Camp picnic table', sx0: 34, sx1: 368, sy: 4, w: 300 },
+    },
+    decor: [{ pic: 'lantern', x: 600, y: 6, h: 96, layer: 'mid' }],
+    fade: 0.3,
+  },
+  'uss-stein': {
+    name: "USS Stein (PawPaw's Deck)",
+    bg: 'img/stages/uss-stein-bg.webp', props: 'img/stages/uss-stein-props.webp',
+    frames: { 'deck-floor': [0, 0, 427, 134], catwalk: [431, 0, 428, 165], 'equipment-crate': [863, 0, 399, 185], 'life-ring-rope': [1266, 0, 381, 277] },
+    main: { pic: 'deck-floor', sx0: 40, sx1: 386, sy: 6, grid: [3, 1] },
+    pics: {
+      'deck-floor': { label: 'Ship deck', sx0: 40, sx1: 386, sy: 6, w: 400 },
+      catwalk: { label: 'Catwalk', sx0: 30, sx1: 397, sy: 4, w: 330 },
+      'equipment-crate': { label: 'Equipment crate', sx0: 28, sx1: 370, sy: 10, w: 280 },
+    },
+    decor: [{ pic: 'life-ring-rope', x: -600, y: 6, h: 96, layer: 'mid' }],
+    fade: 0.3,
+  },
 };
 
 // Where a platform prop's picture lands when its walkable top is x..x+w at height y:

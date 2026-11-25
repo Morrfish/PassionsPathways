@@ -352,6 +352,23 @@ MM.STAGES = [
     main: { left: -820, right: 40, depth: 200 }, spawnX: -390,
     plats: [{ x: -700, base: 0, w: 320, pic: 'shortdock' }, { x: 165, afloat: true, w: 400, pic: 'boat', move: { ax: 22, ay: 5, period: 300 } }],
     blast: { left: -1460, right: 1270, top: -1050, bottom: 800 } },
+  // ChatGPT's "Four Arenas" pack: one wide floor, one floating platform and one prop standing on the floor
+  { id: 'moose-christmas', name: 'Moose Christmas (Kenton Moose Lodge)', theme: 'moose-christmas',
+    main: { left: -650, right: 650, depth: 200 },
+    plats: [{ x: -580, y: -230, w: 330, pic: 'carpet-stage' }, { x: 230, base: 0, w: 300, pic: 'bench' }],
+    blast: { side: 1250, top: -1050, bottom: 800 } },
+  { id: 'arlington-softball', name: 'Arlington Park Softball', theme: 'arlington-softball',
+    main: { left: -650, right: 650, depth: 200 },
+    plats: [{ x: -590, base: 0, w: 330, pic: 'bleachers' }, { x: 250, y: -240, w: 330, pic: 'dugout-roof' }],
+    blast: { side: 1250, top: -1050, bottom: 800 } },
+  { id: 'camp-bethany', name: 'Camp Bethany', theme: 'camp-bethany',
+    main: { left: -650, right: 650, depth: 200 },
+    plats: [{ x: -580, y: -230, w: 320, pic: 'log-platform' }, { x: 240, base: 0, w: 300, pic: 'picnic-table' }],
+    blast: { side: 1250, top: -1050, bottom: 800 } },
+  { id: 'uss-stein', name: "USS Stein (PawPaw's Deck)", theme: 'uss-stein',
+    main: { left: -650, right: 650, depth: 200 },
+    plats: [{ x: -420, base: 0, w: 330, pic: 'catwalk' }, { x: 300, base: 0, w: 280, pic: 'equipment-crate' }, { x: -110, y: -300, w: 260, pic: 'catwalk' }],
+    blast: { side: 1250, top: -1050, bottom: 800 } },
 ];
 
 // Normal attacks everyone shares (the specials are what make each fighter different).
