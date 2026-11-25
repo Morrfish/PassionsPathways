@@ -58,6 +58,11 @@ If it isn't reachable, ask her to paste the info and attach the pictures in chat
   (back0-3) to form 0, meter 0 (waits for an ultimate to finish). KO resets form + meter. render.js paints mud and
   grass on his own pixels by meter level (`dirtFor`), and the HUD shows the Mess Meter / clean time over the
   ultimate meter. Sheets without name tags under poses use `rowbands` in slice_sprites.py (see codee).
+- UI art (ChatGPT, img/ui/): menu buttons/pills/panels via CSS border-image (styles.css end); screen titles and
+  PAUSED/wins! are <img> with alt text; in-match HUD (render.js `ui(name)` loader): damage panels per slot with the
+  portrait in the round socket, stock head icons (`STOCK` id map), ultimate meter frame/fill/ready/star, timer frame,
+  ult banner, KO flash/peak/fade, P1-P4/CPU markers, 3-slice taunt bubble, 3/2/1/GO!/GAME!/TIME! word art. Every
+  piece falls back to the old shapes/text if its image hasn't loaded.
 - 2v2: `MM.newGame(players, stage, stocks, { teams, ff, time })`; players carry `team: 'A'|'B'`; `MM.sameTeam`
   blocks friendly fire in `applyHit` and AI targeting; team out only when all members out; timer tiebreak =
   lives, then lower damage, else draw.

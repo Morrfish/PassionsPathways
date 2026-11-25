@@ -597,14 +597,27 @@ window.MM = window.MM || {};
     }
     // player tag
     const tagY = f.y - f.h - 34 * s;
-    g.fillStyle = f.team ? MM.TEAM_COLORS[f.team] : MM.PLAYER_COLORS[f.slot];
-    g.beginPath(); g.moveTo(f.x - 9, tagY); g.lineTo(f.x + 9, tagY); g.lineTo(f.x, tagY + 11); g.fill();
-    g.font = 'bold 20px system-ui'; g.textAlign = 'center'; g.textBaseline = 'bottom';
-    g.fillText((f.cpu ? 'CPU' : 'P' + (f.slot + 1)) + (f.team ? ' · ' + f.team : ''), f.x, tagY - 2);
+    const mk = ui(f.cpu ? 'hud-marker-cpu.png' : `hud-marker-p${f.slot % 4 + 1}.png`);
+    if (mk) { // ChatGPT marker: colored arrow with the tag in its white shield
+      const ms = 58; g.drawImage(mk, f.x - ms / 2, tagY + 12 - ms * (118 / 128), ms, ms);
+      g.fillStyle = '#1a0b2e'; g.font = `900 ${f.cpu ? 12 : 15}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.fillText(f.cpu ? 'CPU' : 'P' + (f.slot + 1), f.x, tagY + 12 - ms * (118 / 128) + ms * (38 / 128));
+      if (f.team) { g.fillStyle = MM.TEAM_COLORS[f.team]; g.font = '900 16px system-ui'; g.textAlign = 'left'; g.lineWidth = 4; g.strokeStyle = '#1a0b2e'; g.strokeText(f.team, f.x + ms * 0.42, tagY - 18); g.fillText(f.team, f.x + ms * 0.42, tagY - 18); }
+    } else {
+      g.fillStyle = f.team ? MM.TEAM_COLORS[f.team] : MM.PLAYER_COLORS[f.slot];
+      g.beginPath(); g.moveTo(f.x - 9, tagY); g.lineTo(f.x + 9, tagY); g.lineTo(f.x, tagY + 11); g.fill();
+      g.font = 'bold 20px system-ui'; g.textAlign = 'center'; g.textBaseline = 'bottom';
+      g.fillText((f.cpu ? 'CPU' : 'P' + (f.slot + 1)) + (f.team ? ' · ' + f.team : ''), f.x, tagY - 2);
+    }
     if (f.bubble) {
-      g.font = 'bold 22px system-ui'; const tw = g.measureText(f.bubble.text).width + 24;
-      g.fillStyle = '#fff'; rr(g, f.x - tw / 2, tagY - 70, tw, 38, 12); g.fill(); g.beginPath(); g.moveTo(f.x - 8, tagY - 33); g.lineTo(f.x, tagY - 22); g.lineTo(f.x + 8, tagY - 33); g.fill();
-      g.fillStyle = '#1b1b2a'; g.textBaseline = 'middle'; g.fillText(f.bubble.text, f.x, tagY - 51);
+      g.font = 'bold 22px system-ui'; const tw = g.measureText(f.bubble.text).width + 40, bh = 50, by = tagY - 108;
+      const bd = ui('hud-taunt-body.png'), tl = ui('hud-taunt-tail.png');
+      if (bd) { // 3 slices so the round ends keep their shape however long the line is
+        const cap = 70, ck = bh / 256, cw2 = cap * ck, bx = f.x - tw / 2;
+        g.drawImage(bd, 0, 0, cap, 256, bx, by, cw2, bh); g.drawImage(bd, cap, 0, 512 - cap * 2, 256, bx + cw2, by, tw - cw2 * 2, bh); g.drawImage(bd, 512 - cap, 0, cap, 256, bx + tw - cw2, by, cw2, bh);
+        if (tl) g.drawImage(tl, f.x - 6, by + bh - 9, 22, 22);
+      } else { g.fillStyle = '#fff'; rr(g, f.x - tw / 2, by, tw, bh, 12); g.fill(); }
+      g.fillStyle = '#1b1b2a'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(f.bubble.text, f.x, by + bh / 2);
     }
   }
 
@@ -647,49 +660,74 @@ window.MM = window.MM || {};
       const t = k.t / 50; g.globalAlpha = t; g.fillStyle = k.color;
       g.save(); g.translate(k.x, k.y); g.rotate(Math.atan2(-k.y + -200, -k.x));
       g.beginPath(); g.moveTo(0, -60 * t); g.lineTo(900, 0); g.lineTo(0, 60 * t); g.fill(); g.restore();
+      const bim = ui(k.t > 40 ? 'hud-ko-flash.png' : k.t > 18 ? 'hud-ko-peak.webp' : 'hud-ko-fade.png');
+      if (bim) {
+        const vw = cam.w / 2, vh = cam.w * g.canvas.height / g.canvas.width / 2, m = 140;
+        const bx = Math.max(cam.x - vw + m, Math.min(cam.x + vw - m, k.x)), byy = Math.max(cam.y - vh + m, Math.min(cam.y + vh - m * 1.6, k.y));
+        const sz = (k.t > 40 ? 200 + (50 - k.t) * 14 : 340) * (bim.naturalWidth > 300 ? 1.5 : 1);
+        g.globalAlpha = Math.min(1, t * 2.2);
+        g.drawImage(bim, bx - sz / 2, byy - sz * bim.naturalHeight / bim.naturalWidth / 2, sz, sz * bim.naturalHeight / bim.naturalWidth);
+      }
       g.globalAlpha = 1; k.t--;
     }
     if (G.kos) G.kos = G.kos.filter((k) => k.t > 0);
   }
 
   // ---------- HUD ----------
+  // ChatGPT's HUD art (img/ui/, UI HUD + word art pack). ui(name) is null until loaded; then code falls back to shapes.
+  const uiImgs = {};
+  function ui(n) { let im = uiImgs[n]; if (!im) { im = uiImgs[n] = new Image(); im.src = 'img/ui/' + n; } return im.complete && im.naturalWidth ? im : null; }
+  MM.uiImg = ui;
+  const PANEL = ['hud-damage-p1-red.webp', 'hud-damage-p2-blue.webp', 'hud-damage-p3-green.webp', 'hud-damage-p4-yellow.webp'];
+  const STOCK = { jeffery: 'jeff', mandi: 'mandi-witch', 'mandi-mermaid': 'mandi-mermaid', 'courtnee-super': 'courtnee', 'codee-clean': 'codee' };
+  const stockImg = (d) => ui(`stock-${STOCK[d.id] || d.baseId && STOCK[d.baseId] || d.baseId || d.id}.png`);
   const portraitCache = {};
+  // Ultimate meter: frame art with the cyan fill clipped to the meter inside it; gold glow + star when full.
+  function ultMeter(g, G, cx, y, w, v) {
+    const fr = ui('hud-ultimate-frame.png'), fill = ui('hud-ultimate-fill.png'), h = w * 192 / 512, x = cx - w / 2, k = w / 512, full = v >= 1;
+    if (!fr || !fill) { g.fillStyle = '#0008'; rr(g, x + w * 0.2, y + h * 0.4, w * 0.6, h * 0.25, 5); g.fill(); g.fillStyle = '#ffc21a'; if (v > 0) { rr(g, x + w * 0.2, y + h * 0.4, w * 0.6 * v, h * 0.25, 5); g.fill(); } return; }
+    if (full) { const rd = ui('hud-ultimate-ready.png'); if (rd) { g.save(); g.globalAlpha *= 0.6 + 0.4 * Math.sin(G.frame * 0.25); g.drawImage(rd, x, y, w, h); g.restore(); } }
+    g.drawImage(fr, x, y, w, h);
+    if (v > 0) { const ix = x + 120 * k, iy = y + 76 * k, iw = 268 * k, ih = 55 * k; g.save(); g.beginPath(); g.rect(ix, iy, iw * Math.min(1, v), ih); g.clip(); g.drawImage(fill, 4, 12, 376, 72, ix, iy, iw, ih); g.restore(); }
+    if (full) { const st = ui('hud-ultimate-star.png'); if (st) { const ss = h * 0.62 * (1 + 0.08 * Math.sin(G.frame * 0.3)); g.drawImage(st, x + 400 * k - ss / 2, y + h * 0.52 - ss / 2, ss, ss); } }
+  }
   function hud(g, G, W, H) {
-    const n = G.fighters.length, cw = Math.min(260, W / n - 16), chh = Math.min(96, H * 0.14);
-    const total = n * cw + (n - 1) * 14, x0 = (W - total) / 2, y0 = H - chh - 12;
+    const n = G.fighters.length, gap = 12, cw = Math.min(236, (W - 24) / n - gap), ph = cw * 288 / 640, k = cw / 640;
+    const mw = cw * 0.56, mh = mw * 192 / 512;
+    const total = n * cw + (n - 1) * gap, x0 = (W - total) / 2, y0 = H - ph - mh * 0.62 - 6;
     G.fighters.forEach((f, i) => {
-      const x = x0 + i * (cw + 14);
+      const x = x0 + i * (cw + gap), panel = ui(PANEL[f.slot % 4]);
       g.globalAlpha = f.out ? 0.45 : 1;
-      g.fillStyle = 'rgba(26,11,46,.82)'; rr(g, x, y0, cw, chh, 14); g.fill();
-      g.strokeStyle = f.team ? MM.TEAM_COLORS[f.team] : MM.PLAYER_COLORS[f.slot]; g.lineWidth = f.team ? 5 : 3; g.stroke();
-      if (f.team) { g.fillStyle = MM.TEAM_COLORS[f.team]; rr(g, x + cw - 34, y0 + 6, 28, 24, 6); g.fill(); g.fillStyle = '#fff'; g.font = `900 ${Math.round(chh * 0.2)}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(f.team, x + cw - 20, y0 + 18); }
-      const r = chh * 0.36;
-      if (!f.def.photo) { g.fillStyle = f.color; g.beginPath(); g.arc(x + r + 10, y0 + chh / 2, r + 3, 0, TAU); g.fill(); }
-      MM.drawHead(g, f.def, x + r + 10, y0 + chh / 2, r, { hurt: f.hitstun > 0 });
-      const tx = x + r * 2 + 22;
+      // portrait in the round socket (drawn first: the panel's rim sits on top)
+      const sx = x + 150 * k, sy = y0 + 152 * k, sr = 98 * k;
+      g.save(); g.beginPath(); g.arc(sx, sy, sr, 0, TAU); g.fillStyle = '#2b1150'; g.fill(); g.clip();
+      MM.drawHead(g, f.def, sx, sy + sr * 0.12, sr * 0.95, { hurt: f.hitstun > 0 }); g.restore();
+      if (panel) g.drawImage(panel, x, y0, cw, ph);
+      else { g.strokeStyle = MM.PLAYER_COLORS[f.slot]; g.lineWidth = 3; g.fillStyle = 'rgba(26,11,46,.82)'; rr(g, x + 270 * k, y0 + 70 * k, 350 * k, 160 * k, 10); g.fill(); g.stroke(); }
+      if (f.team) { g.fillStyle = MM.TEAM_COLORS[f.team]; rr(g, x + cw - 30 * k - 26, y0 + 2, 26, 22, 6); g.fill(); g.fillStyle = '#fff'; g.font = `900 15px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(f.team, x + cw - 30 * k - 13, y0 + 13); }
+      // name, damage, lives in the dark field
+      const tx = x + 292 * k, tw = 300 * k;
       g.fillStyle = '#fff'; g.textAlign = 'left'; g.textBaseline = 'top';
-      g.font = `bold ${Math.round(chh * 0.17)}px system-ui`; g.fillText(`${f.cpu ? 'CPU' : 'P' + (f.slot + 1)} · ${f.def.name}`, tx, y0 + 8, cw - (tx - x) - (f.team ? 40 : 6));
+      g.font = `bold ${Math.max(10, Math.round(26 * k * 1.6) / 1.6)}px system-ui`; g.fillText(`${f.cpu ? 'CPU' : 'P' + (f.slot + 1)} · ${f.def.name}`, tx, y0 + 88 * k, tw);
       const dmg = Math.round(f.damage), heat = Math.min(1, f.damage / 160);
       g.fillStyle = `rgb(255,${Math.round(255 - heat * 200)},${Math.round(255 - heat * 230)})`;
-      g.font = `900 ${Math.round(chh * 0.42)}px system-ui`; g.lineWidth = 4; g.strokeStyle = '#000';
+      g.font = `900 ${Math.round(66 * k)}px system-ui`; g.lineWidth = 4; g.strokeStyle = '#000';
       const shake = f.hitstun > 0 ? (Math.random() - 0.5) * 6 : 0;
-      g.strokeText(f.out ? 'OUT' : dmg + '%', tx + shake, y0 + chh * 0.3); g.fillText(f.out ? 'OUT' : dmg + '%', tx + shake, y0 + chh * 0.3);
-      for (let k = 0; k < f.stocks; k++) { g.fillStyle = MM.PLAYER_COLORS[f.slot]; g.beginPath(); g.arc(tx + 8 + k * 18, y0 + chh - 12, 6, 0, TAU); g.fill(); }
+      g.strokeText(f.out ? 'OUT' : dmg + '%', tx + shake, y0 + 118 * k); g.fillText(f.out ? 'OUT' : dmg + '%', tx + shake, y0 + 118 * k);
+      const si = stockImg(f.def), ss = 34 * k;
+      for (let j = 0; j < f.stocks; j++) {
+        const lx = x + 588 * k - ss - j * (ss + 3), ly = y0 + 182 * k;
+        if (si) g.drawImage(si, lx, ly, ss, ss); else { g.fillStyle = MM.PLAYER_COLORS[f.slot]; g.beginPath(); g.arc(lx + ss / 2, ly + ss / 2, ss * 0.3, 0, TAU); g.fill(); }
+      }
       if (!f.out && f.def.mess) { // Codee: Mess Meter (brown -> green), or the Clean Freak time left (blue)
-        const mx = tx + Math.max(60, f.stocks * 18 + 10), mw = x + cw - 10 - mx, my = y0 + chh - 27;
+        const mx = tx, mw2 = Math.max(20, x + 588 * k - f.stocks * (ss + 3) - 8 - mx), my = y0 + 194 * k;
         const clean = f.formIdx === 1, v = clean ? f.clean / f.def.mess.cleanFrames : (f.mess || 0) / 100, full = !clean && v >= 1;
-        g.fillStyle = '#0008'; rr(g, mx, my, mw, 7, 3); g.fill();
+        g.fillStyle = '#0008'; rr(g, mx, my, mw2, 7, 3); g.fill();
         g.fillStyle = clean ? '#bfe9ff' : full ? `hsl(${100 + 20 * Math.sin(G.frame * 0.3)},70%,50%)` : '#8a5a2a';
-        if (v > 0) { rr(g, mx, my, Math.max(4, mw * Math.min(1, v)), 7, 3); g.fill(); }
-        if (full) { g.font = `900 ${Math.round(chh * 0.13)}px system-ui`; g.textAlign = 'left'; g.textBaseline = 'bottom'; g.lineWidth = 3; g.strokeStyle = '#000'; g.strokeText('CLEAN UP! (Switch)', mx, my - 1); g.fillStyle = '#bfe9ff'; g.fillText('CLEAN UP! (Switch)', mx, my - 1); }
+        if (v > 0) { rr(g, mx, my, Math.max(4, mw2 * Math.min(1, v)), 7, 3); g.fill(); }
+        if (full) { g.font = `900 12px system-ui`; g.textAlign = 'left'; g.textBaseline = 'bottom'; g.lineWidth = 3; g.strokeStyle = '#000'; g.strokeText('CLEAN UP! (Switch)', x + 270 * k, y0 + 4); g.fillStyle = '#bfe9ff'; g.fillText('CLEAN UP! (Switch)', x + 270 * k, y0 + 4); }
       }
-      if (!f.out && f.def.ultimate) { // ultimate meter
-        const mx = tx + Math.max(60, f.stocks * 18 + 10), mw = x + cw - 10 - mx, my = y0 + chh - 17, full = f.meter >= 100;
-        g.fillStyle = '#0008'; rr(g, mx, my, mw, 10, 5); g.fill();
-        g.fillStyle = full ? `hsl(${45 + 15 * Math.sin(G.frame * 0.3)},100%,${55 + 10 * Math.sin(G.frame * 0.3)}%)` : '#ffc21a';
-        if (f.meter > 0) { rr(g, mx, my, Math.max(6, (mw * f.meter) / 100), 10, 5); g.fill(); }
-        if (full) { g.font = `900 ${Math.round(chh * 0.15)}px system-ui`; g.textAlign = 'right'; g.textBaseline = 'bottom'; g.lineWidth = 3; g.strokeStyle = '#000'; g.strokeText('ULTIMATE!', x + cw - 10, my - 1); g.fillStyle = '#ffc21a'; g.fillText('ULTIMATE!', x + cw - 10, my - 1); }
-      }
+      if (!f.out && f.def.ultimate) ultMeter(g, G, x + 440 * k, y0 + ph - mh * 0.38, mw, f.meter / 100); // ultimate meter under the field
       g.globalAlpha = 1;
     });
   }
@@ -738,19 +776,26 @@ window.MM = window.MM || {};
     hud(g, G, W, H);
     if (G.timeLeft > 0 || G.timeUp) { // match clock
       const s = Math.ceil(Math.max(0, G.timeLeft) / 60), txt = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-      g.font = `900 ${Math.round(H * 0.05)}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'top'; g.lineWidth = 6; g.strokeStyle = '#1a0b2e';
-      g.strokeText(txt, W / 2, H * 0.02); g.fillStyle = s <= 10 ? '#ff4b4b' : '#fff'; g.fillText(txt, W / 2, H * 0.02);
+      const tf = ui('hud-timer-frame.png'), fh = Math.min(H * 0.13, 96), fw = fh * 2, fy = 6;
+      if (tf) g.drawImage(tf, W / 2 - fw / 2, fy, fw, fh);
+      g.font = `900 ${Math.round(fh * 0.36)}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineWidth = 6; g.strokeStyle = '#1a0b2e';
+      const ty = fy + fh * (52 / 128);
+      g.strokeText(txt, W / 2, ty); g.fillStyle = s <= 10 ? '#ff4b4b' : '#fff'; g.fillText(txt, W / 2, ty);
     }
     if (G.flash > 0) { g.fillStyle = `rgba(255,255,255,${G.flash / 14})`; g.fillRect(0, 0, W, H); }
     if (G.ultBanner) { // ultimate name sweeps across the screen
       const b = G.ultBanner, k = b.t / 100, slide = k > 0.85 ? (k - 0.85) / 0.15 : k < 0.15 ? -(0.15 - k) / 0.15 : 0;
       g.save(); g.globalAlpha = Math.min(1, k * 4);
-      g.fillStyle = 'rgba(26,11,46,.82)'; g.fillRect(0, H * 0.16, W, H * 0.14);
-      g.fillStyle = b.color; g.fillRect(0, H * 0.16, W, 6); g.fillRect(0, H * 0.30 - 6, W, 6);
-      g.font = `italic 900 ${Math.round(H * 0.075)}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle';
-      const tx2 = W / 2 + slide * W * 0.6;
-      g.lineWidth = 10; g.strokeStyle = '#1a0b2e'; g.strokeText(b.text.toUpperCase() + '!', tx2, H * 0.23);
-      g.fillStyle = '#ffc21a'; g.fillText(b.text.toUpperCase() + '!', tx2, H * 0.23);
+      const tx2 = W / 2 + slide * W * 0.6, bn = ui('hud-ultimate-banner.webp');
+      const bw = Math.min(W * 0.92, H * 1.15), bh = bw / 4, by = H * 0.23 - bh * (129 / 256);
+      if (bn) g.drawImage(bn, tx2 - bw / 2, by, bw, bh);
+      else { g.fillStyle = 'rgba(26,11,46,.82)'; g.fillRect(0, H * 0.16, W, H * 0.14); g.fillStyle = b.color; g.fillRect(0, H * 0.16, W, 6); g.fillRect(0, H * 0.30 - 6, W, 6); }
+      const label = b.text.toUpperCase() + '!', maxW = bw * (880 / 1024);
+      let fs = Math.round(bh * 0.36); g.font = `italic 900 ${fs}px system-ui`;
+      const mwid = g.measureText(label).width; if (mwid > maxW) { fs = Math.floor(fs * maxW / mwid); g.font = `italic 900 ${fs}px system-ui`; }
+      g.textAlign = 'center'; g.textBaseline = 'middle';
+      g.lineWidth = Math.max(4, fs * 0.16); g.strokeStyle = '#1a0b2e'; g.strokeText(label, tx2, H * 0.23);
+      g.fillStyle = '#ffc21a'; g.fillText(label, tx2, H * 0.23);
       g.restore();
     }
     // big center text
@@ -759,7 +804,14 @@ window.MM = window.MM || {};
     else if (G.countdown > 0) big = G.countdown > 120 ? '3' : G.countdown > 80 ? '2' : G.countdown > 40 ? '1' : 'GO!';
     else if (G.frame < 30 && !G.over) big = null;
     if (G.over) big = G.timeUp ? 'TIME!' : 'GAME!';
-    if (big) {
+    const WORD = { '3': 'word-3.webp', '2': 'word-2.webp', '1': 'word-1.webp', 'GO!': 'word-go.webp', 'GAME!': 'word-game.webp', 'TIME!': 'word-time.webp' };
+    const wim = big && ui(WORD[big]);
+    if (wim) { // ChatGPT word art: each number pops in, then settles
+      const ph2 = G.over ? Math.min(1, (150 - (G.endT ?? 150)) / 12) : G.countdown > 40 ? ((G.countdown - 1) % 40) / 40 : G.countdown / 40;
+      const pop = G.over ? 1 + 0.3 * (1 - ph2) : 1 + 0.35 * Math.max(0, (ph2 - 0.75) / 0.25);
+      const hh = H * (wim.naturalWidth > wim.naturalHeight ? 0.34 : 0.32) * pop, ww = hh * wim.naturalWidth / wim.naturalHeight;
+      g.drawImage(wim, W / 2 - ww / 2, H * 0.42 - hh / 2, ww, hh);
+    } else if (big) {
       g.font = `italic 900 ${Math.round(H * 0.18)}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle';
       g.lineWidth = 12; g.strokeStyle = '#1b1b2a'; g.strokeText(big, W / 2, H * 0.42);
       g.fillStyle = '#8f2bd6'; g.fillText(big, W / 2, H * 0.42 + H * 0.012); g.fillStyle = big === 'GO!' ? '#1fd1ef' : '#ffc21a'; g.fillText(big, W / 2, H * 0.42);

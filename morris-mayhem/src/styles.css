@@ -222,3 +222,12 @@ button:disabled:not(#maker button) { filter: grayscale(.7) brightness(.8); }
 button#fight#fight { border-width: 16px; padding: 0 60px; min-height: 60px; border-image: url(img/ui/btn-primary-normal.png) 48 fill / 16px stretch; color: #1a0b2e; text-shadow: none; }
 button#fight#fight:is(:hover, :focus-visible, .padfocus) { border-image-source: url(img/ui/btn-primary-highlighted.png); }
 button#fight#fight:active { border-image-source: url(img/ui/btn-primary-pressed.png); }
+/* ChatGPT title / word art (UI HUD + word art pack): the words are pictures, alt text keeps them readable */
+h2.ttl { margin: 0; line-height: 0; flex: none; } h2.ttl img { height: clamp(44px, 9vh, 72px); width: auto; display: block; }
+h2.css-ttl { flex: 1; display: flex; justify-content: center; } h2.css-ttl img { height: clamp(48px, 11vh, 84px); }
+#story h2.sub { font-size: 1.2em; margin: 0 0 0 4px; }
+#maker h2.ttl img { height: 38px; }
+#pause h2.word { margin: 0 0 6px; line-height: 0; } #pause h2.word img { height: clamp(80px, 22vh, 170px); width: auto; }
+#winner { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0 10px; }
+#winner img.wins { height: clamp(56px, 13vh, 120px); width: auto; margin: -10px 0; }
+.stat { position: relative; } .stat img.trophy { position: absolute; top: -34px; right: -22px; width: 72px; height: auto; transform: rotate(10deg); }

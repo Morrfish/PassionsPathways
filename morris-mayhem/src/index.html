@@ -28,7 +28,7 @@
 <section id="select" class="screen css">
   <div class="css-top">
     <button class="back" data-go="title">◀</button>
-    <div class="css-banner">Choose your fighter</div>
+    <h2 class="ttl css-ttl"><img src="img/ui/title-choose-your-fighter.webp" alt="Choose your fighter"></h2>
     <div class="options">
       <button class="cycle" id="modeBtn"></button>
       <button class="cycle" id="ffBtn" hidden></button>
@@ -42,12 +42,12 @@
 </section>
 
 <section id="arena" class="screen">
-  <header><button class="back" id="arenaBack">◀</button><h2>Pick an arena</h2></header>
+  <header><button class="back" id="arenaBack">◀</button><h2 class="ttl"><img src="img/ui/title-pick-an-arena.webp" alt="Pick an arena"></h2></header>
   <div id="arenaGrid" class="arenas"></div>
 </section>
 
 <section id="howto" class="screen">
-  <header><button class="back" data-go="title">◀</button><h2>How to play</h2></header>
+  <header><button class="back" data-go="title">◀</button><h2 class="ttl"><img src="img/ui/title-how-to-play.webp" alt="How to play"></h2></header>
   <div class="howto">
     <p><b>Knock everyone off the stage.</b> Every hit raises a player's damage %. The higher it is, the farther they fly. Fly past the edge of the screen and you lose a life. Last one standing wins.</p>
     <table>
@@ -69,18 +69,18 @@
 </section>
 
 <section id="family" class="screen">
-  <header><button class="back" data-go="title">◀</button><h2>Meet the family</h2></header>
+  <header><button class="back" data-go="title">◀</button><h2 class="ttl"><img src="img/ui/title-meet-the-family.webp" alt="Meet the family"></h2></header>
   <div id="cards" class="cards"></div>
 </section>
 
 <section id="moves" class="screen">
-  <header><button class="back" id="movesBack">◀</button><h2>Move list</h2></header>
+  <header><button class="back" id="movesBack">◀</button><h2 class="ttl"><img src="img/ui/title-move-list.webp" alt="Move list"></h2></header>
   <div id="movePicks" class="grid"></div>
   <div id="moveSheet" class="movesheet"></div>
 </section>
 
 <section id="story" class="screen">
-  <header><button class="back" id="storyBack">◀</button><h2 id="storyTitle">Story</h2></header>
+  <header><button class="back" id="storyBack">◀</button><h2 class="ttl"><img src="img/ui/title-story.webp" alt="Story"></h2><h2 id="storyTitle" class="sub">Story</h2></header>
   <div id="storyBody" class="storybody"></div>
 </section>
 
@@ -90,7 +90,7 @@
 </section>
 
 <section id="pause" class="screen dim">
-  <h2>Paused</h2>
+  <h2 class="word"><img src="img/ui/word-paused.webp" alt="Paused"></h2>
   <div class="menu"><button class="big" id="resume">Resume</button><button id="pauseMoves">Move list</button><button id="quit">Quit match</button></div>
 </section>
 
@@ -105,7 +105,7 @@
 <section id="maker" class="screen">
   <header>
     <button class="back" id="amBack" data-go="title" title="Back to the title">◀</button>
-    <h2>Arena Maker</h2>
+    <h2 class="ttl"><img src="img/ui/title-arena-maker.webp" alt="Arena Maker"></h2>
     <input id="amName" maxlength="28" placeholder="Arena name" aria-label="Arena name">
     <button id="amNew">New</button>
     <button id="amSave" class="big">Save</button>

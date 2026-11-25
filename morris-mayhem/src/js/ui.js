@@ -198,8 +198,9 @@ window.MM = window.MM || {};
     if (st) return showStoryResult(st);
     const won = (f) => f === G.winner || (G.winTeam && f.team === G.winTeam);
     const fs = [...G.fighters].sort((a, b) => won(b) - won(a) || b.stocks - a.stocks || b.kos - a.kos);
-    $('#winner').textContent = G.winTeam ? `Team ${G.winTeam} wins!` : G.winner ? `${G.winner.def.name} wins!` : 'Draw!';
-    $('#stats').innerHTML = fs.map((f) => `<div class="stat ${won(f) ? 'win' : ''}" style="border-color:${f.team ? MM.TEAM_COLORS[f.team] : MM.PLAYER_COLORS[f.slot]}">
+    const wname = G.winTeam ? `Team ${G.winTeam}` : G.winner ? G.winner.def.name : null; // ChatGPT "wins!" word art after the runtime name
+    $('#winner').innerHTML = wname ? `<span>${wname}</span> <img class="wins" src="img/ui/word-wins.webp" alt="wins!">` : 'Draw!';
+    $('#stats').innerHTML = fs.map((f) => `<div class="stat ${won(f) ? 'win' : ''}" style="border-color:${f.team ? MM.TEAM_COLORS[f.team] : MM.PLAYER_COLORS[f.slot]}">${won(f) ? '<img class="trophy" src="img/ui/title-trophy.webp" alt="">' : ''}
       <img src="${MM.posePicture(f.def, won(f) ? 'win' : 'lose') || portrait(f.def.baseId || f.def.id)}" alt=""><div><b>${f.cpu ? 'CPU' : 'P' + (f.slot + 1)} · ${f.def.name}${f.team ? ' · Team ' + f.team : ''}</b></div>
       <div>KOs: ${f.kos} · Falls: ${f.falls}</div><div>Damage dealt: ${Math.round(f.dealt)}%</div></div>`).join('');
     show('results');
@@ -256,7 +257,7 @@ window.MM = window.MM || {};
   function drawStory() {
     const body = $('#storyBody');
     if (!storyHero) {
-      $('#storyTitle').textContent = 'Story: pick your hero';
+      $('#storyTitle').textContent = 'Pick your hero';
       body.innerHTML = `<p class="seed">Fight your way through the whole family, beat <b>Jeff, The Boss</b>… and find out who's really in charge. More fights unlock as more family members are added to the game.</p>
         <div class="heroes">${S.HEROES.map((h) => {
           const ok = S.has(h), s = S.load(h);
