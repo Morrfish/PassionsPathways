@@ -127,6 +127,12 @@ window.MM = window.MM || {};
   $('#livesBtn').addEventListener('click', () => { opt.stocks = (opt.stocks % 5) + 1; MM.sfx('select'); drawOptions(); });
   $('#roster').addEventListener('click', (e) => {
     const b = e.target.closest('[data-f]'); if (!b) return;
+    if (mouseOn && e.pointerType !== 'touch') { // the mouse is Player 1's pointer: it always picks for that player
+      const i = mouseSlot(); if (slots[i].type === 'off') slots[i].type = 'human';
+      slots[i].fighter = b.dataset.f === 'random' ? ids[Math.floor(Math.random() * ids.length)] : b.dataset.f; MM.sfx('select');
+      const pc = document.querySelector(`[data-cur="${i}"]`); if (pc) { pc.classList.remove('pop'); void pc.offsetWidth; pc.classList.add('pop'); }
+      save('slots', slots); drawSelect(); return;
+    }
     if (slots[activeSlot].type === 'off') slots[activeSlot].type = 'human';
     slots[activeSlot].fighter = b.dataset.f === 'random' ? ids[Math.floor(Math.random() * ids.length)] : b.dataset.f; MM.sfx('select');
     activeSlot = (activeSlot + 1) % 4; if (slots[activeSlot].type === 'off') activeSlot = slots.findIndex((s) => s.type !== 'off');
@@ -178,10 +184,10 @@ window.MM = window.MM || {};
     const layer = $('#cursors');
     MM.cursorDevs = new Set();
     slots.forEach((s, i) => {
-      const on = screen === 'select' && s.type === 'human' && s.dev && s.dev !== 'touch';
+      const on = screen === 'select' && ((s.type === 'human' && s.dev && s.dev !== 'touch') || (mouseOn && i === mouseSlot()));
       let el = layer.querySelector(`[data-cur="${i}"]`);
       if (!on) { if (el) el.remove(); delete curs[i]; return; }
-      MM.cursorDevs.add(s.dev);
+      if (s.type === 'human') MM.cursorDevs.add(s.dev);
       if (!el) {
         el = document.createElement('div'); el.className = 'pcur'; el.dataset.cur = i;
         el.innerHTML = CURSOR_ART ? `<i class="halo" style="border-color:${MM.PLAYER_COLORS[i]}"></i><img class="obj" src="img/ui/cursor-p${i + 1}.png" alt=""><b style="background:${MM.PLAYER_COLORS[i]}">P${i + 1}</b>`
@@ -196,6 +202,15 @@ window.MM = window.MM || {};
       el.style.transform = `translate(${curs[i].x}px, ${curs[i].y}px)`;
     });
   }
+  // The mouse (or touchpad) moves Player 1's pointer (the first human player); the system arrow is hidden there.
+  let mouseOn = false;
+  const mouseSlot = () => { const h = slots.findIndex((s) => s.type === 'human'); return h >= 0 ? h : 0; };
+  addEventListener('pointermove', (e) => {
+    if (screen !== 'select' || e.pointerType === 'touch') return;
+    mouseOn = true; $('#select').classList.add('mousecur');
+    curs[mouseSlot()] = { x: e.clientX, y: e.clientY };
+  });
+  addEventListener('pointerdown', (e) => { if (e.pointerType === 'touch') { mouseOn = false; $('#select').classList.remove('mousecur'); } });
   function moveCursor(i, dv, inp, press) {
     const c = curs[i]; if (!c) return;
     let dx = inp.x, dy = inp.y;
