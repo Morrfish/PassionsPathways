@@ -11,9 +11,48 @@ window.MM = window.MM || {};
   addEventListener('keyup', (e) => keys.delete(e.code));
   addEventListener('blur', () => keys.clear());
 
-  const KEYMAPS = {
+  const KEY_DEFAULTS = {
     k1: { left: ['KeyA'], right: ['KeyD'], up: ['KeyW'], down: ['KeyS'], jump: ['Space'], attack: ['KeyF'], special: ['KeyG'], dodge: ['KeyH', 'ShiftLeft'], swap: ['KeyR'], ult: ['KeyE'], taunt: ['KeyQ'], pause: ['Escape'] },
     k2: { left: ['ArrowLeft'], right: ['ArrowRight'], up: ['ArrowUp'], down: ['ArrowDown'], jump: ['Numpad0', 'Enter', 'NumpadEnter'], attack: ['Numpad1', 'Comma', 'KeyK'], special: ['Numpad2', 'Period', 'KeyL'], dodge: ['Numpad3', 'Slash', 'Semicolon', 'ShiftRight'], swap: ['Numpad4', 'KeyJ'], ult: ['Numpad5', 'KeyU'], taunt: ['Numpad6', 'KeyO'], pause: ['Backspace'] },
+  };
+  // Controller buttons (standard layout): 0 A, 1 B, 2 X, 3 Y, 4 LB, 5 RB, 6 LT, 7 RT, 8 Back, 9 Start, 10/11 stick clicks.
+  // Y jumps too (for fighters with one form) and switches form for fighters with two.
+  const PAD_DEFAULT = { jump: [0, 3], attack: [2], special: [1], dodge: [4, 5, 6, 7], swap: [3], ult: [10, 11], taunt: [8], pause: [9] };
+  // Button mapping from Settings, saved in this browser (one mapping for every controller; one per keyboard)
+  const loadMap = (k, d) => { try { const v = JSON.parse(localStorage.getItem('mm_' + k)); return v && typeof v === 'object' ? Object.assign(JSON.parse(JSON.stringify(d)), v) : JSON.parse(JSON.stringify(d)); } catch (e) { return JSON.parse(JSON.stringify(d)); } };
+  const saveMap = (k, v) => { try { localStorage.setItem('mm_' + k, JSON.stringify(v)); } catch (e) {} };
+  let padMap = loadMap('padmap', PAD_DEFAULT);
+  const KEYMAPS = { k1: loadMap('keymap_k1', KEY_DEFAULTS.k1), k2: loadMap('keymap_k2', KEY_DEFAULTS.k2) };
+  MM.controls = {
+    ACTIONS: ['jump', 'attack', 'special', 'dodge', 'swap', 'ult', 'taunt', 'pause'],
+    KEY_MOVES: ['left', 'right', 'up', 'down'],
+    get: (dev) => (dev === 'pad' ? padMap : KEYMAPS[dev]),
+    // set one action to one button/key; it comes off any other action that had it
+    set(dev, action, code) {
+      const m = this.get(dev);
+      for (const a in m) if (a !== action) m[a] = m[a].filter((c) => c !== code);
+      m[action] = [code];
+      saveMap(dev === 'pad' ? 'padmap' : 'keymap_' + dev, m);
+    },
+    reset(dev) {
+      if (dev === 'pad') { padMap = JSON.parse(JSON.stringify(PAD_DEFAULT)); saveMap('padmap', padMap); }
+      else { KEYMAPS[dev] = JSON.parse(JSON.stringify(KEY_DEFAULTS[dev])); saveMap('keymap_' + dev, KEYMAPS[dev]); }
+    },
+    PAD_NAMES: ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Back / Select', 'Start', 'Left stick click', 'Right stick click'],
+    keyName(c) {
+      const named = { Space: 'Space', Escape: 'Esc', Backspace: 'Backspace', Enter: 'Enter', NumpadEnter: 'Num Enter', ShiftLeft: 'Left Shift', ShiftRight: 'Right Shift', ControlLeft: 'Left Ctrl', ControlRight: 'Right Ctrl', AltLeft: 'Left Alt', AltRight: 'Right Alt', Tab: 'Tab',
+        ArrowLeft: '←', ArrowRight: '→', ArrowUp: '↑', ArrowDown: '↓', Comma: ',', Period: '.', Slash: '/', Semicolon: ';', Quote: "'", BracketLeft: '[', BracketRight: ']', Backslash: '\\', Minus: '-', Equal: '=', Backquote: '`' };
+      if (named[c]) return named[c];
+      if (/^Key[A-Z]$/.test(c)) return c.slice(3);
+      if (/^Digit\d$/.test(c)) return c.slice(5);
+      if (/^Numpad/.test(c)) return 'Num ' + c.slice(6);
+      return c;
+    },
+    names(dev, action) {
+      const list = this.get(dev)[action] || [];
+      if (!list.length) return '(none)';
+      return list.map((c) => (dev === 'pad' ? this.PAD_NAMES[c] || 'Button ' + c : this.keyName(c))).join(' or ');
+    },
   };
   const anyKey = (list) => list.some((c) => keys.has(c));
 
@@ -41,8 +80,9 @@ window.MM = window.MM || {};
     const dz = (v) => (Math.abs(v) < 0.4 ? 0 : Math.sign(v));
     let x = dz(p.axes[0] || 0), y = dz(p.axes[1] || 0);
     if (b(14)) x = -1; if (b(15)) x = 1; if (b(12)) y = -1; if (b(13)) y = 1;
-    // A = jump, X = attack, B = special, Y = switch form (jump for one-form fighters), bumpers/triggers = dodge, Start = pause.
-    return { x, y, jump: b(0) || b(3), attack: b(2), special: b(1), dodge: b(4) || b(5) || b(6) || b(7), swap: b(3), ult: b(10) || b(11), taunt: b(8), pause: b(9) };
+    // buttons from Settings (default: A jump, X attack, B special, Y switch form, bumpers/triggers dodge, Start pause)
+    const any = (a) => (padMap[a] || []).some(b);
+    return { x, y, jump: any('jump'), attack: any('attack'), special: any('special'), dodge: any('dodge'), swap: any('swap'), ult: any('ult'), taunt: any('taunt'), pause: any('pause') };
   }
 
   MM.readDevice = function (dev) {

@@ -83,6 +83,7 @@ window.MM = window.MM || {};
   // called every frame from the main loop while a menu is showing
   MM.menuNavTick = function (inMatch) {
     if (inMatch || (MM.arenaMaker && MM.arenaMaker.active)) { editing = null; return; } // the Arena Maker reads the pad itself
+    if (MM.capturingInput) { const pads = navigator.getGamepads ? navigator.getGamepads() : []; for (let i = 0; i < 4; i++) { const p = pads[i]; if (p) prev[i] = { dir: 'held', a: true, b: true }; } return; } // Settings is waiting for a button press
     const pads = navigator.getGamepads ? navigator.getGamepads() : [];
     for (let i = 0; i < 4; i++) {
       const p = pads[i]; if (!p) continue;
@@ -103,7 +104,7 @@ window.MM = window.MM || {};
   };
   // keyboard arrows on menus (a focused dropdown keeps its own arrow behaviour unless you're editing it with a pad)
   addEventListener('keydown', (e) => {
-    const s = screenEl(); if (!s || s.id === 'match') return;
+    const s = screenEl(); if (!s || s.id === 'match' || MM.capturingInput) return;
     if (s.id === 'select' && MM.cursorDevs && MM.cursorDevs.has('k2')) return; // arrows drive player 2's pointer
     const a = document.activeElement;
     const arrows = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };

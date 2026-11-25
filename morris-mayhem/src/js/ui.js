@@ -53,8 +53,9 @@ window.MM = window.MM || {};
     if (id === 'story') drawStory();
     if (id === 'arena') drawArenas();
     if (id === 'practice') drawPractice();
+    if (id === 'settings' && MM.drawSettings) MM.drawSettings();
     if (id === 'maker' && MM.arenaMaker) MM.arenaMaker.open(); // Arena Maker (arena-maker.js)
-    if ((id === 'title' || id === 'select' || id === 'arena' || id === 'practice' || id === 'howto' || id === 'family' || id === 'moves' || id === 'story') && !paused) { G = null; demo = null; } // menus have their own backgrounds now (no demo match behind)
+    if ((id === 'title' || id === 'select' || id === 'arena' || id === 'practice' || id === 'settings' || id === 'howto' || id === 'family' || id === 'moves' || id === 'story') && !paused) { G = null; demo = null; } // menus have their own backgrounds now (no demo match behind)
   }
   document.addEventListener('click', (e) => {
     const go = e.target.closest('[data-go]');
