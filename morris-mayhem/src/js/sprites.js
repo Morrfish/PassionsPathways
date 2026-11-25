@@ -523,7 +523,7 @@ MM.SPRITES['megan'] = {
 MM.SPRITES['siren'] = {
   src: 'img/siren-atlas.webp',
   standH: 156,
-  fscale: {"ult1": 0.739, "ult3": 0.739, "ult0": 0.739, "ult2": 0.739, "pers0": 0.739, "pers1": 0.739, "pers2": 0.739, "pers3": 0.739, "ent": 0.739, "taunt": 0.739, "win": 0.739, "lose": 0.739, "mac0": 0.624, "mac1": 0.624, "mac2": 0.624, "mac3": 0.624, "cup0": 0.808, "cup1": 0.808, "cup2": 0.808, "cup3": 0.808, "tired0": 0.808, "tired1": 0.808, "tired2": 0.808, "tired3": 0.808, "def0": 0.75, "def2": 0.75, "def1": 0.75, "def3": 0.75, "bair0": 0.8, "bair1": 0.8, "bair2": 0.8, "bair3": 0.8, "note0": 1.16, "note1": 1.16, "note2": 1.16, "note3": 1.16, "blitz2": 1.1, "blitz3": 1.1, "blitz0": 1.1, "blitz1": 1.1},
+  fscale: {"ult1": 0.739, "ult3": 0.739, "ult0": 0.739, "ult2": 0.739, "pers0": 0.739, "pers1": 0.739, "pers2": 0.739, "pers3": 0.739, "ent": 0.739, "taunt": 0.739, "win": 0.739, "lose": 0.739, "mac0": 0.562, "mac1": 0.562, "mac2": 0.562, "mac3": 0.562, "cup0": 0.808, "cup1": 0.808, "cup2": 0.808, "cup3": 0.808, "tired0": 0.703, "tired1": 0.703, "tired2": 0.703, "tired3": 0.703, "def0": 0.75, "def2": 0.75, "def1": 0.75, "def3": 0.75, "bair0": 0.664, "bair1": 0.664, "bair2": 0.664, "bair3": 0.664, "note0": 1.16, "note1": 1.16, "note2": 1.16, "note3": 1.16, "blitz2": 1.1, "blitz3": 1.1, "blitz0": 1.1, "blitz1": 1.1, "toss2": 0.87, "toss3": 0.87, "toss1": 0.87, "toss0": 0.87, "doodle0": 0.8, "doodle1": 0.8, "doodle2": 0.8, "doodle3": 0.8, "sky2": 0.83, "sky1": 0.83, "sky0": 0.83, "sky3": 0.83, "boots2": 0.83, "boots0": 0.83, "boots1": 0.83, "boots3": 0.83, "spin0": 0.83, "spin1": 0.83, "spin3": 0.83, "spin2": 0.83},
   frames: {
     'idle1': [0, 0, 51, 157, 22.4, 157.5],
     'idle2': [55, 0, 51, 157, 22.0, 157.5],

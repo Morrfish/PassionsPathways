@@ -323,6 +323,18 @@ CHARACTERS = {
         'scale': 0.62, 'bodies': True, 'leftcut': 10, 'cols': [0, 390, 890, 1295, 9999],
         'sheets': {'patty-normal-ultimate-left-text-safe-v2-draft.png': ['ult', None]},
     },
+    # Jeff's six Opening Day animals (one atlas for all of them)
+    'jeff-animals': {
+        'scale': 0.62, 'bodies': True, 'minbody': 4000,
+        'sheets': {
+            'jeff-summon-buck-draft.png': ['buckidle', 'buckrun', 'buckleap', 'buckatk'],
+            'jeff-summon-rabbit-draft.png': ['rabbitidle', 'rabbitrun', 'rabbitleap', 'rabbitatk'],
+            'jeff-summon-squirrel-draft.png': ['squirrelidle', 'squirrelrun', 'squirrelleap', 'squirrelatk'],
+            'jeff-summon-turkey-draft.png': ['turkeyidle', 'turkeyrun', 'turkeyflap', 'turkeyatk'],
+            'jeff-summon-duck-draft.png': ['duckwalk', 'duckfly', 'duckdive', 'duckatk'],
+            'jeff-summon-bass-draft.png': ['bassswim', 'bassleap', 'bassdash', 'basshover'],
+        },
+    },
     'evea': {
         'scale': 0.62, 'auto': True,
         'sheets': {
@@ -673,7 +685,7 @@ if __name__ == '__main__':
         cols = cfg.get('cols')
         if isinstance(names, dict): cols = names.get('cols'); names = names['rows']
         if cfg.get('bodies'):
-            slice_bodies(f'{art}/{sheet}', names, frames, cfg['scale'], keep_fx=cfg.get('keep_fx'), leftcut=cfg.get('leftcut', 230), cols=cfg.get('cols')); continue
+            slice_bodies(f'{art}/{sheet}', names, frames, cfg['scale'], keep_fx=cfg.get('keep_fx'), leftcut=cfg.get('leftcut', 230), cols=cfg.get('cols'), minbody=cfg.get('minbody', 12000)); continue
         if cfg.get('auto'):
             slice_auto(f'{art}/{sheet}', names, frames, cfg['scale'], skip=cfg.get('skip', ()), cells=sheet in cfg.get('cells', ()), top=sheet in cfg.get('toplabels', ()), erasetags=sheet in cfg.get('erasetags', ()), **cfg.get('alpha', {}).get(sheet, {})); continue
         slice_sheet(f'{art}/{sheet}', names, cols, frames, cfg['scale'], excl, cfg.get('cutcols'), cfg.get('mainonly', {}).get(sheet, ()))

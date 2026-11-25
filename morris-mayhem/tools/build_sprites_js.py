@@ -102,7 +102,9 @@ def sheet_factor(base_fr, pers_fr):
 BIGGER = {'courtnee': {'asm2': 1.3, 'asm3': 1.7, 'ult0': 1.7, 'ult1': 1.7, 'ult2': 1.7, 'ult3': 1.7, 'ret0': 1.6, 'ret1': 1.25}}
 # whole move groups drawn at a different scale on their source sheet (found with a size audit: standing poses vs idle)
 GROUP_SCALE = {
-    'siren': {'def': 0.75, 'bair': 0.8, 'note': 1.16, 'blitz': 1.1},
+    # Siren: her toss, aerial, noodle-throw and tired poses were drawn bigger than her standing pose (head-size check)
+    'siren': {'def': 0.75, 'bair': 0.8 * 0.83, 'note': 1.16, 'blitz': 1.1, 'toss': 0.87, 'doodle': 0.8, 'sky': 0.83, 'boots': 0.83,
+              'spin': 0.83, 'mac': 0.9, 'tired': 0.87},
     'megan': {'def': 0.8, 'bair': 0.8, 'ret': 1.6, 'nap': 1.25, 'pers2': 0.78, 'pers3': 0.78, 'win': 0.78, 'lose': 0.78},
     'mandi-witch': {'whirl': 1.3, 'salon': 1.15},
     'courtnee': {'saiyan': 1.2},
