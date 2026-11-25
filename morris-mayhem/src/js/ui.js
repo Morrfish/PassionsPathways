@@ -278,6 +278,7 @@ window.MM = window.MM || {};
         ${s.ended ? '<button id="storyEnding">Family album</button>' : ''}
         <button id="storyReset">Start over</button>
       </div>
+      ${storyMap(r, s, next)}
       ${waiting ? `<p class="keys">${waiting} fight${waiting > 1 ? 's are' : ' is'} waiting for family members who aren't in the game yet. For now they're skipped; they unlock by themselves when those fighters are added.</p>` : ''}
       <div class="routemap">${r.map((n, i) => {
         const state = S.nodeState(n, s), isNext = next && n.id === next.id;
@@ -296,6 +297,21 @@ window.MM = window.MM || {};
   $('#storyBody').addEventListener('click', (e) => { const b = e.target.closest('[data-hero]'); if (b && !b.disabled) { storyHero = b.dataset.hero; MM.sfx('select'); drawStory(); } });
   $('#storyBack').addEventListener('click', () => { if (storyHero) { storyHero = null; drawStory(); } else show('title'); });
 
+  // ChatGPT's story map: 8 stops. The family fights are grouped into 6 chapters, then Jeff (stop 7) and the
+  // secret Patty fight (stop 8, a lock until the reveal). The full fight list stays below the map.
+  const MAP_STOPS = [[0.144, 0.91], [0.287, 0.801], [0.424, 0.706], [0.583, 0.622], [0.404, 0.51], [0.459, 0.335], [0.668, 0.263], [0.895, 0.225]];
+  function storyMap(r, s, next) {
+    const fights = r.filter((n) => !n.boss), chapters = [[], [], [], [], [], [], [], []];
+    fights.forEach((n, i) => chapters[Math.min(5, Math.floor((i * 6) / Math.max(1, fights.length)))].push(n));
+    for (const n of r) if (n.boss === 'apparent') chapters[6].push(n); else if (n.boss === 'secret') chapters[7].push(n);
+    return `<div class="smap"><img src="img/ui/story-map.webp" alt="Story map">${chapters.map((ch, i) => {
+      const states = ch.map((n) => S.nodeState(n, s)), hasNext = next && ch.some((n) => n.id === next.id);
+      const allDone = ch.length && states.every((st) => st === 'done' || st === 'waiting') && states.includes('done');
+      const st = i === 7 && !states.includes('done') && states.every((x) => x === 'hidden') ? 'locked' : allDone ? 'cleared' : hasNext ? 'open' : i === 7 ? 'boss-patty' : 'locked';
+      const title = i === 7 ? (st === 'locked' ? '???' : 'The real final boss') : i === 6 ? 'The Boss' : `Chapter ${i + 1}`;
+      return `<div class="stop ${st} ${hasNext ? 'next' : ''}" style="left:${MAP_STOPS[i][0] * 100}%;top:${MAP_STOPS[i][1] * 100}%" title="${title}"><img src="img/ui/map-stop-${st}.png" alt="${title}"><span>${i < 6 ? i + 1 : i === 6 ? 'Jeff' : st === 'locked' ? '?' : 'Mawmaw'}</span></div>`;
+    }).join('')}</div>`;
+  }
   function startStoryFight(hero, node) {
     const s = S.load(hero), p1 = slots[0];
     const dev = p1.type === 'human' ? p1.dev : MM.isTouch ? 'touch' : 'k1';
@@ -348,17 +364,29 @@ window.MM = window.MM || {};
   let moveId = null;
   const moveFighters = () => (paused && G ? [...new Map(G.fighters.map((f) => [f.def.baseId || f.def.id, MM.FIGHTERS.find((d) => d.id === (f.def.baseId || f.def.id))])).values()] : MM.FIGHTERS);
   const KEYS = '<b>Attack</b> F · Num 1 · X &nbsp; <b>Special</b> G · Num 2 · B &nbsp; <b>Jump</b> W/Space · ↑ · A &nbsp; <b>Dodge</b> H · Num 3 · bumpers &nbsp; <b>Switch form</b> R · Num 4 · Y &nbsp; <b>Ultimate</b> E · Num 5 · stick click &nbsp; <b>Taunt</b> Q · Num 6/O · Back/Select';
+  // ChatGPT direction + move icons in the Move List, with the words kept beside them
+  const icon = (f, alt) => `<img class="mvi" src="img/ui/${f}.png" alt="${alt}">`;
+  function press(dir, act, words) {
+    const d = dir === 'jump' ? icon('move-jump', 'in the air') : icon('direction-' + dir, dir === 'neutral' ? '' : dir);
+    return `<span class="mvp">${d}<i>+</i>${icon('move-' + act, act)}</span><span class="mvw">${words}</span>`;
+  }
+  // controller buttons drawn from ChatGPT's blank caps with the letter on top
+  const cap = (f, t) => `<span class="cap" style="background-image:url(img/ui/${f}.png)">${t}</span>`;
+  const PADKEYS = `<div class="padkeys"><span>${icon('move-attack', '')}<b>Attack</b>${cap('input-face-x', 'X')}</span><span>${icon('move-special', '')}<b>Special</b>${cap('input-face-b', 'B')}</span>`
+    + `<span>${icon('move-jump', '')}<b>Jump</b>${cap('input-face-a', 'A')}</span><span>${icon('move-dodge', '')}<b>Dodge</b>${cap('input-lb', 'LB')}${cap('input-rb', 'RB')}</span>`
+    + `<span>${icon('move-swap', '')}<b>Switch form</b>${cap('input-face-y', 'Y')}</span><span>${icon('move-ultimate', '')}<b>Ultimate</b><img class="mvi" src="img/ui/input-stick-click.png" alt="stick click"></span>`
+    + `<span>${icon('move-taunt', '')}<b>Taunt</b><img class="mvi" src="img/ui/input-back.png" alt="Back"></span><span><img class="mvi" src="img/ui/input-left-stick.png" alt=""><b>Move</b><img class="mvi" src="img/ui/dpad.png" alt="D-pad"></span></div>`;
   function moveRows(d) {
     const an = d.attackNames || {}, sp = d.specials || {};
     const desc = (s) => (s ? `<b>${s.name}</b>: ${(KIND_TEXT[s.kind] || (() => ''))(s)}` : '');
     const rows = [
-      ['Attack', an.jab || 'Quick hit', 'Fast hit up close'],
-      ['→ + Attack', an.side || 'Side attack', 'Strong hit forward. Great for knocking people off'],
-      ['↑ + Attack', an.up || 'Up attack', 'Hits above you. Launches people up'],
-      ['↓ + Attack', an.down || 'Low attack', 'Low hit along the floor'],
-      ['Attack in the air', an.air || 'Air attacks', 'Hold a direction for forward, up and down (spike) versions'],
-      ['Special', '', desc(sp.neutral)], ['→ + Special', '', desc(sp.side)],
-      ['↑ + Special', '', desc(sp.up) + ' <i>Use it to get back to the stage.</i>'], ['↓ + Special', '', desc(sp.down)],
+      [press('neutral', 'attack', 'Attack'), an.jab || 'Quick hit', 'Fast hit up close'],
+      [press('side', 'attack', 'Side Attack'), an.side || 'Side attack', 'Strong hit forward. Great for knocking people off'],
+      [press('up', 'attack', 'Up Attack'), an.up || 'Up attack', 'Hits above you. Launches people up'],
+      [press('down', 'attack', 'Down Attack'), an.down || 'Low attack', 'Low hit along the floor'],
+      [press('jump', 'attack', 'In the air'), an.air || 'Air attacks', 'Hold a direction for forward, up and down (spike) versions'],
+      [press('neutral', 'special', 'Special'), '', desc(sp.neutral)], [press('side', 'special', 'Side Special'), '', desc(sp.side)],
+      [press('up', 'special', 'Up Special'), '', desc(sp.up) + ' <i>Use it to get back to the stage.</i>'], [press('down', 'special', 'Down Special'), '', desc(sp.down)],
     ];
     return `<table><tr><th>Press</th><th>Move</th><th>What it does</th></tr>${rows.map((r) => `<tr><td class="in">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</table>`;
   }
@@ -381,7 +409,7 @@ window.MM = window.MM || {};
     const ults = d.forms ? MM.formDefs(d).map((fd) => fd.ultimate).filter(Boolean) : [d.ultimate].filter(Boolean);
     if (ults.length) html += `<h4>Ultimate</h4><table>${ults.map((u) => `<tr><td class="in">Meter full + E · Num 5/U · stick click · or Attack + Special together</td><td><b>${u.name}</b>: ${u.desc || ''}</td></tr>`).join('')}</table><p class="keys">The meter fills as you deal damage (and a little when you take it). A hit stops an ultimate, so pick your moment.</p>`;
     html += `<h4>Everyone</h4><table><tr><td class="in">Jump</td><td>Up to 3 jumps in a row</td></tr><tr><td class="in">Dodge</td><td>Untouchable for a moment. Hold a direction to roll or air-dodge.</td></tr><tr><td class="in">↓ in the air</td><td>Fall fast</td></tr><tr><td class="in">↓ on a platform</td><td>Drop through it</td></tr><tr><td class="in">Taunt (Q · Num 6/O · Back/Select)</td><td>Show off on the ground. Any hit stops it!${d.taunt ? ` <i>"${d.taunt}"</i>` : ''}</td></tr></table>`;
-    html += `<p class="keys">${KEYS}</p>`;
+    html += `<h4>Controller</h4>${PADKEYS}<p class="keys">${KEYS}</p>`;
     $('#moveSheet').innerHTML = html;
   }
   $('#movePicks').addEventListener('click', (e) => { const b = e.target.closest('[data-mv]'); if (b) { moveId = b.dataset.mv; MM.sfx('select'); drawMoves(); } });
@@ -407,6 +435,10 @@ window.MM = window.MM || {};
         if (world === demo && demo.over) { demo = null; startDemo(); break; }
       }
       if (world === G && G.over && G.endT <= 0 && screen === 'match') showResults();
+      if (world === G && screen === 'match') { // touch: glowing Ultimate button when full; Switch only for fighters who can switch
+        const tf = G.fighters.find((f) => f.dev === 'touch' && !f.cpu);
+        if (tf) { $('#touch .tult').classList.toggle('ready', tf.meter >= 100); $('#touch .tswap').hidden = !(tf.forms || tf.def.mess); }
+      }
       MM.render(g, world, W, H);
       if (world === demo) { g.fillStyle = 'rgba(10,8,25,.55)'; g.fillRect(0, 0, W, H); }
     }

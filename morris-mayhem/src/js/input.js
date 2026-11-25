@@ -18,7 +18,7 @@ window.MM = window.MM || {};
   const anyKey = (list) => list.some((c) => keys.has(c));
 
   // Touch: a left-side stick and four right-side buttons (only shown when a slot uses touch).
-  const touch = { x: 0, y: 0, jump: false, attack: false, special: false, dodge: false, swap: false, ult: false, pause: false };
+  const touch = { x: 0, y: 0, jump: false, attack: false, special: false, dodge: false, swap: false, ult: false, taunt: false, pause: false };
   MM.touch = touch;
 
   function readKeys(id) {
@@ -64,17 +64,18 @@ window.MM = window.MM || {};
 
   // Build the on-screen touch controls once.
   MM.setupTouch = function (el) {
+    // ChatGPT touch art (img/ui/touch-*.png); the labels stay for screen readers
+    const b = (k, cls, label) => `<button class="${cls}" data-b="${k}" aria-label="${label}"><img src="img/ui/touch-${k === 'ult' ? 'ultimate' : k}.png" alt=""></button>`;
     el.innerHTML = '<div class="stick"><div class="knob"></div></div>' +
-      '<div class="tbtns"><button data-b="dodge">⛨</button><button data-b="special">★</button><button data-b="attack">✊</button><button data-b="jump">⤒</button></div>' +
-      '<button class="tswap" data-b="swap">⇄</button><button class="tult" data-b="ult">ULT</button>' +
-      '<button class="tpause" data-b="pause">❚❚</button>';
+      `<div class="tbtns">${b('dodge', '', 'Dodge')}${b('special', '', 'Special')}${b('attack', '', 'Attack')}${b('jump', '', 'Jump')}</div>` +
+      b('swap', 'tswap', 'Switch form') + b('ult', 'tult', 'Ultimate') + b('taunt', 'ttaunt', 'Taunt') + b('pause', 'tpause', 'Pause');
     const stick = el.querySelector('.stick'), knob = el.querySelector('.knob');
     let sid = null;
     const moveStick = (t) => {
       const r = stick.getBoundingClientRect();
       let dx = (t.clientX - (r.left + r.width / 2)) / (r.width / 2), dy = (t.clientY - (r.top + r.height / 2)) / (r.height / 2);
       const len = Math.hypot(dx, dy); if (len > 1) { dx /= len; dy /= len; }
-      knob.style.transform = `translate(${dx * 40}px, ${dy * 40}px)`;
+      knob.style.transform = `translate(${dx * 42}px, ${dy * 42}px)`;
       touch.x = Math.abs(dx) > 0.35 ? Math.sign(dx) : 0;
       touch.y = Math.abs(dy) > 0.45 ? Math.sign(dy) : 0;
     };

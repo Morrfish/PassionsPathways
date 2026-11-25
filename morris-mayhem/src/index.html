@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div id="loading" role="status" aria-label="Loading"><img src="img/ui/loading.webp" alt=""><span>Loading the family…</span></div>
+<script>addEventListener('load', () => { const l = document.getElementById('loading'); l.classList.add('gone'); setTimeout(() => l.remove(), 400); });</script>
 <canvas id="game"></canvas>
 
 <section id="title" class="screen show">

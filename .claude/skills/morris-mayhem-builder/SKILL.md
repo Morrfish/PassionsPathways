@@ -67,6 +67,10 @@ If it isn't reachable, ask her to paste the info and attach the pictures in chat
   the side panel and drop them where you want; drag to move, corners to resize; pick per piece Picture only /
   Platform / Main floor (any picture can be a platform: its top edge is walkable); Undo (Ctrl+Z), Copy (Ctrl+D).
   Nothing ever moves except the piece being edited. No dark shading under custom arenas (editor = match look).
+- Final UI pack (all 45 groups delivered): story-bg/story-map (8 stops: 6 chapters of family fights, Jeff, secret
+  Patty; `storyMap()` in ui.js), hero cards and dialogue box via border-image, Move List direction/move/controller
+  icons, touch controls (touch-*.png, ult-ready swap), Arena Maker toolbar icons, loading overlay (loading.webp),
+  app icon/splash in assets/ (Capacitor assets generate) and desktop/icon.png + icon.ico.
 - 2v2: `MM.newGame(players, stage, stocks, { teams, ff, time })`; players carry `team: 'A'|'B'`; `MM.sameTeam`
   blocks friendly fire in `applyHit` and AI targeting; team out only when all members out; timer tiebreak =
   lives, then lower damage, else draw.

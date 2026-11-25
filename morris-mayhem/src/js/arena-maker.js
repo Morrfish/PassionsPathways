@@ -242,13 +242,15 @@ window.MM = window.MM || {};
     });
     tools.querySelectorAll('button:not([data-role])').forEach((b) => { b.disabled = !pc; });
     $('#amTiles').textContent = 'Longer: ' + ((pc && pc.tiles) || 1);
-    $('#amWater').textContent = 'Water: ' + (A.water === null ? 'off' : 'on');
+    setWords($('#amWater'), 'Water: ' + (A.water === null ? 'off' : 'on'));
+    const wi = $('#amWater img'); if (wi) wi.src = `img/ui/maker-water-${A.water === null ? 'off' : 'on'}.png`;
     $('#amWater').setAttribute('aria-pressed', A.water === null ? 'false' : 'true');
-    $('#amGrid').textContent = 'Snap: ' + (snap ? 'on' : 'off');
+    setWords($('#amGrid'), 'Snap: ' + (snap ? 'on' : 'off'));
     $('#amGrid').setAttribute('aria-pressed', snap ? 'true' : 'false');
     document.querySelectorAll('#amBgs [data-bg]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.bg === A.bg ? 'true' : 'false'));
     $('#amName').value = A.name;
   }
+  function setWords(b, t) { const n = [...b.childNodes].find((x) => x.nodeType === 3 && x.textContent.trim()); if (n) n.textContent = ' ' + t; else b.append(' ' + t); }
   function canCollide(pc) { return pc.atlas === 'basic' || !!MM.STAGE_PICS[pc.atlas]; } // any picture can be stood on (its top edge)
   function changed() { dirty = true; refreshTools(); }
   // undo: a copy of the arena before each change
@@ -540,6 +542,10 @@ window.MM = window.MM || {};
     if (wired) return; wired = true;
     cv = $('#amCanvas'); g = cv.getContext('2d');
     buildPanel();
+    // ChatGPT toolbar icons in front of each button's words
+    const ICONS = { amSmaller: 'smaller', amBigger: 'bigger', amDup: 'copies', amToBack: 'to-back', amToFront: 'to-front', amDel: 'delete', amNext: 'next-piece',
+      amWater: 'water-off', amWaterUp: 'water-up', amWaterDown: 'water-down', amGrid: 'snap-grid', amNew: 'new', amSave: 'save', amPlay: 'play' };
+    for (const id in ICONS) { const b = $('#' + id); if (b && !b.querySelector('img')) { const im = document.createElement('img'); im.className = 'am-ic'; im.src = `img/ui/maker-${ICONS[id]}.png`; im.alt = ''; b.prepend(im); } }
     cv.addEventListener('pointerdown', onDown); cv.addEventListener('pointermove', onMove);
     cv.addEventListener('pointerup', onUp); cv.addEventListener('pointercancel', onUp);
     addEventListener('keydown', onKey);
