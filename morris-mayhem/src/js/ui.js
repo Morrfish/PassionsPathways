@@ -18,6 +18,7 @@ window.MM = window.MM || {};
   const load = (k, d) => { try { return JSON.parse(localStorage.getItem('mm_' + k)) ?? d; } catch (e) { return d; } };
   const save = (k, v) => { try { localStorage.setItem('mm_' + k, JSON.stringify(v)); } catch (e) {} };
   const ids = MM.FIGHTERS.map((f) => f.id);
+  MM.rosterChanged = () => { ids.length = 0; ids.push(...MM.FIGHTERS.map((f) => f.id)); };
   let slots = load('slots', null);
   if (!slots || slots.length !== 4) slots = [
     { type: 'human', dev: MM.isTouch ? 'touch' : 'k1', fighter: ids[0], level: 2 },

@@ -529,11 +529,82 @@ MM.FIGHTERS = [
   }
 }
 
+// ---------- the giants (ChatGPT's GIANT_FORMS_AND_UNLOCKS) ----------
+// Each is unlocked with its own code in Settings (saved in the browser); once unlocked it's a normal fighter.
+// The same giants are the story's final bosses' second phase (Jeff, then the secret Patty fight).
+MM.GIANTS = [
+  {
+    id: 'jeff_giant', unlock: 'WILDPAWPAW', male: true, family: 'Jeff & Patty', name: 'Wild Mayhem Beast', title: "Jeff's giant woodland form", photo: 'img/jeff-giant.png', sprite: 'jeff-giant',
+    color: '#6b4a2a', accent: '#7ccf3f', skin: '#c9a27a', hair: '#6b4a2a', giant: true,
+    stats: { speed: 6.2, air: 5.8, jump: 14.5, weight: 1.6, power: 1.2, size: 2.0 },
+    attackNames: { jab: 'Claw Rend', side: 'Antler Charge', up: 'Antler Lift', down: 'Squirrel Tail Sweep', air: 'Rabbit Pounce, Reverse Tail, Antler Lift' },
+    specials: {
+      neutral: { kind: 'projectile', name: 'Woodland Call', thing: 'a swirl of leaves and feathers', emoji: '🍂', speed: 10, dmg: 9, kb: 7, kbg: 0.09, r: 30, life: 70, cd: 60 },
+      side: { kind: 'dash', name: 'Antler Charge', speed: 13, dur: 22, dmg: 13, kb: 9, kbg: 0.13, ang: 35, cd: 120, box: [-20, -200, 160, 200] },
+      up: { kind: 'rise', name: 'Sky Bound', power: 20, forward: 4, dmg: 9, kb: 7, kbg: 0.08 },
+      down: { kind: 'projectile', name: 'Lake Maw', thing: 'a blast of lake water', emoji: '🌊', speed: 12, dmg: 11, kb: 8, kbg: 0.1, r: 34, life: 50, cd: 90 },
+    },
+    taunt: 'RRRAAAWR!',
+    ultimate: { name: 'Wild Mayhem', sprite: 'jeff-giant', type: 'stampede', herdSheet: 'jeff-animals', dur: 150, spawnAt: 48, sweepDur: 56, dmg: 26, kbMul: 1.5,
+      animals: [['buckrun', 1.15, 0], ['turkeyrun', 0.55, 0], ['rabbitrun', 0.36, 0], ['duckdive', 0.42, 0.75], ['squirrelrun', 0.3, 0], ['bassleap', 0.45, 0.35]],
+      desc: 'roars, its antlers glow, and every animal of the woods stampedes across the stage',
+      poses: [[0, 'wild0'], [24, 'wild1'], [48, 'wild2'], [110, 'wild3']] },
+  },
+  {
+    id: 'patty_giant', unlock: 'MAYHEMMAMA', family: 'Jeff & Patty', name: 'Giant Mayhem Mama', title: "Patty's giant parcel-titan form", photo: 'img/patty-giant.png', sprite: 'patty-giant',
+    color: '#7a2a9a', accent: '#ff9a1f', skin: '#f0c4a4', hair: '#eeeeee', giant: true,
+    stats: { speed: 5.9, air: 5.6, jump: 14, weight: 1.7, power: 1.22, size: 2.0 },
+    attackNames: { jab: 'Package One Two', side: 'Double Delivery Slam', up: 'Package One Two', down: 'Parcel Stomp', air: 'Express Crush, Parcel Stomp' },
+    specials: {
+      neutral: { kind: 'projectile', name: 'Parcel Rain', thing: 'three parcels', emoji: '📦', count: 3, spread: 0.25, speed: 9, vy: -7, grav: 0.35, dmg: 6, kb: 6, kbg: 0.07, r: 26, life: 90, cd: 70 },
+      side: { kind: 'dash', name: 'Express Crush', speed: 13, dur: 22, dmg: 13, kb: 9, kbg: 0.13, ang: 35, cd: 120, box: [-20, -200, 170, 200] },
+      up: { kind: 'rise', name: 'Parcel Lift', power: 19.5, forward: 3, dmg: 9, kb: 7, kbg: 0.08 },
+      down: { kind: 'pack', name: 'Triple Trouble', thing: 'her three-headed dog, who charges while she catches her breath', sheet: 'triple-trouble', sprites: ['run0'], anim: ['run0', 'run1', 'run2', 'run3'], scale: 0.55, speed: 11, life: 80, dmg: 11, kb: 8, kbg: 0.1, cd: 240, heal: 6 },
+    },
+    taunt: 'Everything must go!',
+    ultimate: { name: 'Everything Must Go', sprite: 'patty-giant', type: 'catch', ahead: 2.6, dur: 160, catchAt: 54, finishAt: 108, dmg: 27, kbMul: 1.5,
+      desc: 'throws parcels everywhere, grabs everyone in front of her and launches them with a giant TEMU punch',
+      poses: [[0, 'emg0'], [27, 'emg1'], [54, 'emg2'], [108, 'emg3']] },
+  },
+  {
+    id: 'triple_trouble', unlock: 'TRIPLETAILS', family: 'Jeff & Patty', name: 'Triple Trouble', title: 'The three-headed Chihuahua', photo: 'img/triple-trouble.png', sprite: 'triple-trouble',
+    color: '#4a1f5e', accent: '#ffcf3a', skin: '#e9a6c4', hair: '#4a1f5e', giant: true,
+    stats: { speed: 7.8, air: 6.8, jump: 15.5, weight: 0.95, power: 1.0, size: 1.0 },
+    attackNames: { jab: 'Triple Bite', side: 'Triple Bite', up: 'Head Lift', down: 'Tail Sweep', air: 'Triple Bite, Tail Sweep' },
+    specials: {
+      neutral: { kind: 'projectile', name: 'Triple Yap', thing: 'a purple-and-gold bark wave', emoji: '💢', speed: 13, dmg: 7, kb: 6, kbg: 0.08, r: 24, life: 40, cd: 50 },
+      side: { kind: 'dash', name: 'Pack Rush', speed: 16, dur: 18, dmg: 9, kb: 7.5, kbg: 0.11, ang: 30, cd: 110, box: [-10, -90, 110, 90] },
+      up: { kind: 'rise', name: "Three's a Leap", power: 20, forward: 4, dmg: 6, kb: 6, kbg: 0.06 },
+      down: { kind: 'counter', name: 'Three Head Guard', window: 18, mult: 1.3 },
+    },
+    taunt: 'Yap yap YAP!',
+    ultimate: { name: "Three's a Crowd", sprite: 'triple-trouble', type: 'catch', ahead: 2.2, rush: [30, 50, 12], dur: 150, catchAt: 50, finishAt: 100, dmg: 25, kbMul: 1.45,
+      desc: 'all three heads howl, it charges forward, grabs everyone it reaches and blasts them with a triple sonic yap',
+      poses: [[0, 'ult0'], [24, 'ult1'], [40, 'ult2'], [105, 'ult3']] },
+  },
+];
+// story bosses: Jeff and Patty turn into these when first knocked out (bigger than the unlockable versions)
+MM.BOSS_FORMS = {
+  jeffery: Object.assign({}, MM.GIANTS[0], { id: 'jeff_boss', stats: Object.assign({}, MM.GIANTS[0].stats, { size: 2.5, weight: 1.9 }), unlock: null }),
+  patty: Object.assign({}, MM.GIANTS[1], { id: 'patty_boss', stats: Object.assign({}, MM.GIANTS[1].stats, { size: 2.5, weight: 2.0 }), unlock: null }),
+};
+MM.unlocks = (() => { try { return JSON.parse(localStorage.getItem('mm_unlocks')) || {}; } catch (e) { return {}; } })();
+MM.tryCode = function (code) { // returns 'ok:<name>', 'already:<name>' or 'bad'
+  const c = String(code || '').trim().toUpperCase(); const g = MM.GIANTS.find((x) => x.unlock === c);
+  if (!g) return 'bad';
+  if (MM.unlocks[g.id]) return 'already:' + g.name;
+  MM.unlocks[g.id] = true; try { localStorage.setItem('mm_unlocks', JSON.stringify(MM.unlocks)); } catch (e) {}
+  if (!MM.FIGHTERS.includes(g)) MM.FIGHTERS.push(g);
+  if (MM.rosterChanged) MM.rosterChanged();
+  return 'ok:' + g.name;
+};
+for (const g of MM.GIANTS) if (MM.unlocks[g.id]) MM.FIGHTERS.push(g);
+
 // Families, for grouping fighters on Choose Your Fighter and Meet the Family. Families go from the grandparents,
 // then the Morris kids oldest to youngest (Mandi, Jadden, Courtnee, Codee, Haylie, Sara, Jorie); inside a family,
 // oldest to youngest. Ids of relatives who aren't fighters yet are listed so they drop into the right spot later.
 MM.FAMILIES = [
-  { name: 'Jeff & Patty', ids: ['jeffery', 'patty'] },
+  { name: 'Jeff & Patty', ids: ['jeffery', 'patty', 'jeff_giant', 'patty_giant', 'triple_trouble'] },
   { name: "Mandi's family", ids: ['mandi', 'kevin', 'chelsea', 'austin', 'bella', 'emmie', 'colten', 'danielle', 'cloe', 'cole'] },
   { name: "Jadden's family", ids: ['jadden', 'jacqi', 'jaicelynn', 'jaxston'] },
   { name: "Courtnee's family", ids: ['courtnee', 'megan', 'siren'] },

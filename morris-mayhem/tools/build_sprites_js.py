@@ -87,6 +87,16 @@ MOVES = {
     'patty-mayhem': dict(jab='ring', side='cut', down='price', up='kick', nair='kick', fair='kick', uair='kick', dair='price',
                          neutral='toss', sideSpecial='cart', upSpecial='deliver', downSpecial='pack',
                          airRow='kick', upRow='kick', uairRow='kick', riseLate='deliver2'),
+    # the giants (unlockable; Jeff's and Patty's are also the story bosses' second phase)
+    'jeff-giant': dict(jab='claw', side='antler', down='tail', up='alift', nair='rtail', fair='pounce', uair='alift', dair='pounce',
+                       neutral='flock', sideSpecial='antler', upSpecial='sky', downSpecial='maw',
+                       upRow='alift', uairRow='alift', riseMid='sky1', riseLate='sky2'),
+    'patty-giant': dict(jab='one2', side='slam', down='pstomp', up='one2', nair='crush', fair='crush', uair='one2', dair='pstomp',
+                        neutral='rain', sideSpecial='crush', upSpecial='plift', downSpecial='rest',
+                        upRow='one2', uairRow='one2', riseMid='plift1', riseLate='plift3'),
+    'triple-trouble': dict(jab='bite', side='bite', down='tsweep', up='leap', nair='tsweep', fair='bite', uair='leap', dair='tsweep',
+                           neutral='tyap', sideSpecial='rush', upSpecial='leap', downSpecial='guard', counterHit='guard2',
+                           upRow='leap', uairRow='leap', riseMid='leap1', riseLate='leap2'),
     'evea': dict(jab='tap', side='scoot', down='twirl', up='horn', nair='circle', fair='rvolley', uair='skysp', dair='shoe',
                  neutral='startoss', sideSpecial='express', upSpecial='rrise', downSpecial='hoof',
                  upRow='horn', uairRow='skysp', riseMid='rrise2', riseLate='rrise3'),
@@ -132,6 +142,9 @@ MM.SPRITES = MM.SPRITES || {};
 # extra names for frames (Courtnee's personality poses live in his own atlas)
 ALIASES = {w: {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'} for w in ('courtnee', 'megan', 'siren', 'codee', 'codee-clean', 'haylie', 'sara', 'jorie', 'jaxston', 'jaxston-left', 'evea', 'cole', 'jacqi', 'sabir')}
 ALIASES['sabir'].update({'build4': 'buildx0', 'build5': 'buildx1', 'fly3': 'fly0'})  # fly3 caught the shooting stars: he just stands  # bow, wig, blouse, skirt, shoes: one standing pose per piece
+ALIASES['jeff-giant'] = {'ent': 'cup3', 'taunt': 'wild0', 'win': 'wild3', 'lose': 'back3'}
+ALIASES['patty-giant'] = {'ent': 'cup3', 'taunt': 'idle3', 'win': 'emg3', 'lose': 'back3'}
+ALIASES['triple-trouble'] = {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'}
 ALIASES['siren-dragon'] = {'ent': 'idle0', 'taunt': 'idle1', 'win': 'idle0', 'lose': 'hurt3'}
 ALIASES['sabir-anime'] = {'ent': 'idle0', 'taunt': 'idle3', 'win': 'idle3', 'lose': 'hurt3', 'fly3': 'fly0'}
 # fighters with their own left-facing art (drawn as-is instead of mirrored: Jaxston always kicks with his LEFT foot)

@@ -3,7 +3,7 @@ window.MM = window.MM || {};
 (function () {
   const TAU = Math.PI * 2;
   MM.photos = {};
-  MM.allDefs = () => MM.FIGHTERS.flatMap((d) => (d.forms ? [d, ...MM.formDefs(d)] : [d]));
+  MM.allDefs = () => MM.FIGHTERS.concat(Object.values(MM.BOSS_FORMS || {})).flatMap((d) => (d.forms ? [d, ...MM.formDefs(d)] : [d]));
   MM.loadPhotos = function () {
     for (const d of MM.allDefs()) if (d.photo && !MM.photos[d.id]) { const im = new Image(); im.src = d.photo; MM.photos[d.id] = im; }
   };
@@ -28,6 +28,7 @@ window.MM = window.MM || {};
   // Pick the pose for what the fighter is doing right now.
   function pickFrame(f, S) {
     const a = f.act, M = S.moves;
+    if (f.phaseIn > 0 && S.frames.cup0) return 'cup' + Math.min(3, Math.floor((150 - f.phaseIn) / 32)); // story boss turning giant
     if (f.float > 0) return 'idle' + (Math.floor(f.anim / 16) % 4); // coming back after a KO: stand on the respawn spot
     if (f.hitstun > 0) return !f.ground ? 'hurt2' : f.hitstun > 5 ? 'hurt1' : f.hitstun > 2 ? 'hurt0' : S.frames.hurt3 ? 'hurt3' : 'hurt0'; // big hit, reel, then shake it off
     if (f.exhaust > 0 && S.frames.tired0) return f.hitstun > 0 ? 'tired2' : f.exhaust < 16 ? 'tired3' : 'tired0'; // Siren worn out after the dragon
@@ -254,7 +255,7 @@ window.MM = window.MM || {};
 
   function drawSpriteProj(g, p) {
     if (p.girl != null) return drawGirl(g, p);
-    let sh = p.sprite && p.owner.def.sprite && sheet(p.owner.def.sprite);
+    let sh = p.sheet ? sheet(p.sheet) : p.sprite && p.owner.def.sprite && sheet(p.owner.def.sprite);
     if (sh && !sh.S.frames[p.anim ? p.anim[0] : p.sprite] && (sh.S.base || p.base)) sh = sheet(sh.S.base || p.base) || sh;
     if (!sh) return false;
     const fr = sh.S.frames[p.anim ? p.anim[Math.floor(p.t / 5) % p.anim.length] : p.sprite]; if (!fr) return false;
@@ -764,7 +765,7 @@ window.MM = window.MM || {};
   function ui(n) { let im = uiImgs[n]; if (!im) { im = uiImgs[n] = new Image(); im.src = 'img/ui/' + n; } return im.complete && im.naturalWidth ? im : null; }
   MM.uiImg = ui;
   const PANEL = ['hud-damage-p1-red.webp', 'hud-damage-p2-blue.webp', 'hud-damage-p3-green.webp', 'hud-damage-p4-yellow.webp'];
-  const STOCK = { jeffery: 'jeff', mandi: 'mandi-witch', 'mandi-mermaid': 'mandi-mermaid', 'courtnee-super': 'courtnee', 'codee-clean': 'codee' };
+  const STOCK = { jeff_boss: 'jeff_giant', patty_boss: 'patty_giant', jeffery: 'jeff', mandi: 'mandi-witch', 'mandi-mermaid': 'mandi-mermaid', 'courtnee-super': 'courtnee', 'codee-clean': 'codee' };
   const stockImg = (d) => ui(`stock-${STOCK[d.id] || d.baseId && STOCK[d.baseId] || d.baseId || d.id}.png`);
   const portraitCache = {};
   // Ultimate meter: frame art with the cyan fill clipped to the meter inside it; gold glow + star when full.

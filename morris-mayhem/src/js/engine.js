@@ -277,7 +277,8 @@ window.MM = window.MM || {};
       else { f.vx = 0; f.vy = 0; f.anim++; f.x += (Math.random() - 0.5) * 2; return; }
     }
     f.anim++;
-    if (f.exhaust > 0) f.exhaust--; // one fixed deadline: hits don't restart it
+    if (f.exhaust > 0) f.exhaust--;
+    if (f.phaseIn > 0) f.phaseIn--; // one fixed deadline: hits don't restart it
     if (f.invuln > 0) f.invuln--;
     if (f.dodgeCd > 0) f.dodgeCd--;
     if (f.dropT > 0) f.dropT--;
@@ -644,8 +645,9 @@ window.MM = window.MM || {};
         if (a.t === 12) {
           const n = (sp.sprites || [null]).length;
           for (let i = 0; i < n; i++) {
-            spawnProj(G, f, { x: f.x + f.face * (20 - i * 34), y: f.y - 18, vx: f.face * (sp.speed + i * 0.7), vy: 0, r: 20, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: 45, life: sp.life || 95, ground: true, fall: true, sprite: sp.sprites && sp.sprites[i], anim: sp.anim, scale: sp.scale, emoji: sp.emoji, dir: f.face, runner: true });
+            spawnProj(G, f, { x: f.x + f.face * (20 - i * 34), y: f.y - 18, vx: f.face * (sp.speed + i * 0.7), vy: 0, r: 20, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: 45, life: sp.life || 95, ground: true, fall: true, sprite: sp.sprites && sp.sprites[i], anim: sp.anim, scale: sp.scale, emoji: sp.emoji, sheet: sp.sheet, dir: f.face, runner: true });
           }
+          if (sp.heal) { f.damage = Math.max(0, f.damage - sp.heal); popText(G, f.x, f.y - f.h - 20, '+' + sp.heal + ' REST', '#9ff0d0'); } // e.g. Giant Patty catches her breath while the dog charges
           MM.sfx('jump');
         }
       },
@@ -1000,6 +1002,14 @@ window.MM = window.MM || {};
     if (f.x < bl || f.x > br || f.y > b.bottom || (f.y < b.top && f.hitstun > 0)) {
       if (f.y < b.top) f.y = b.top; // stay inside for the effect
       if (!G.practice) f.stocks--; f.falls++; // practice: nobody runs out of lives
+      // story bosses: the first time they're out, they turn giant instead (once)
+      if (f.boss && f.stocks <= 0 && !f.phased && MM.BOSS_FORMS && MM.BOSS_FORMS[f.def.baseId || f.def.id]) {
+        f.phased = true; f.stocks = 2; f.stocks0 = 2;
+        G.bossPhase = { f, t: 0, from: f.def };
+        const gd = MM.BOSS_FORMS[f.def.baseId || f.def.id]; f.def = gd; f.forms = null; f.formIdx = 0; f.st = gd.stats; f.s = gd.stats.size; f.w = W * f.s; f.h = H * f.s;
+        f.color = gd.color; f.accent = gd.accent; f.powerT = 0;
+        G.ultBanner = { text: gd.name.toUpperCase() + '!', color: gd.accent, by: f, t: 120 }; f.phaseIn = 150; // shows the transformation while coming back
+      }
       const killer = G.fighters.find((o) => o.slot === f.lastHit && G.frame - f.lastHitT < 600 && o !== f);
       if (killer) { killer.kos++; killer.bubble = { text: killer.def.taunt || 'Yes!', t: 120 }; }
       const ex = clamp(f.x, bl, br), ey = clamp(f.y, b.top, b.bottom);

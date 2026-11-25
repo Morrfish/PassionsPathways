@@ -79,6 +79,16 @@ window.MM = window.MM || {};
     if (e.target.closest('#setReset')) { if (wait) stop(); C.reset(dev); MM.sfx && MM.sfx('select'); draw(); return; }
     if (e.target.closest('#settings .back')) { if (wait) stop(); }
   });
+  // secret codes unlock the giants (data.js: MM.tryCode)
+  function tryCode() {
+    const r = MM.tryCode($('#codeIn').value), msg = $('#codeMsg');
+    if (r === 'bad') { msg.textContent = 'That code didn\'t work.'; MM.sfx && MM.sfx('dodge'); }
+    else if (r.startsWith('already:')) msg.textContent = r.slice(8) + ' is already unlocked.';
+    else { msg.textContent = 'Unlocked: ' + r.slice(3) + '! Find them in Jeff & Patty\'s family.'; MM.sfx && MM.sfx('heal'); }
+    $('#codeIn').value = '';
+  }
+  document.addEventListener('click', (e) => { if (e.target.closest('#codeGo')) tryCode(); });
+  addEventListener('keydown', (e) => { if (e.key === 'Enter' && document.activeElement && document.activeElement.id === 'codeIn') { e.preventDefault(); tryCode(); } });
   MM.drawSettings = draw;
   addEventListener('load', drawHowto);
   drawHowto();

@@ -354,6 +354,39 @@ CHARACTERS = {
             'patty-mayhem-powerup-transform-ultimate-draft.png': ['cup', 'mult', 'back'],
         },
     },
+    # the giants (unlockable, and the story's final boss phases): kept at full size, they're drawn huge
+    'jeff-giant': {
+        'scale': 1.0, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'wipeyellow': True,
+        'sheets': {
+            'jeff-giant-beast-movement-draft.png': ['idle', 'run', 'jump', 'hurt'],
+            'jeff-giant-beast-attacks-draft.png': ['claw', 'antler', 'pounce', 'tail'],
+            'jeff-giant-beast-summons-draft.png': ['call', 'flock', 'maw', 'wild'],
+            'jeff-giant-playable-recovery-extras-draft.png': ['sky', 'alift', 'rtail'],
+            'jeff-giant-beast-phase-transition-draft.png': ['cup', 'back'],
+        },
+        'cutx': {'jeff-giant-playable-recovery-extras-draft.png': 160}, 'titleband': (70, 200, 130),
+    },
+    'patty-giant': {
+        'scale': 1.0, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'goldplates': True, 'dropleft': True,
+        'cutx': {'patty-giant-mayhem-mama-attacks-draft.png': 150},
+        'sheets': {
+            'patty-giant-mayhem-mama-movement-draft.png': ['idle', 'run', 'jump', 'hurt'],
+            'patty-giant-mayhem-mama-attacks-draft.png': ['one2', 'slam', 'pstomp', 'crush'],
+            'patty-giant-mayhem-mama-specials-draft.png': ['rain', 'triple', 'tape', 'emg'],
+            'patty-giant-recovery-rest-heal-draft.png': ['plift', 'rest', 'irest'],
+            'patty-giant-mayhem-mama-phase-transition-draft.png': ['cup', 'back'],
+        },
+    },
+    'triple-trouble': {
+        'scale': 0.8, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'goldplates': True,
+        'cuty': {'three-head-beast-ultimate-personality-v2-draft.png': [(0, 309), (680, 756)]},
+        'sheets': {
+            'patty-three-head-beast-movement-draft.png': ['idle', 'run', 'jump', 'hurt'],
+            'three-head-beast-attacks-summon-draft.png': ['bite', 'yap', 'tsweep', 'summon'],
+            'three-head-beast-playable-specials-v2-draft.png': ['tyap', 'rush', 'leap', 'guard'],
+            'three-head-beast-ultimate-personality-v2-draft.png': ['ult', 'pers'],
+        },
+    },
     'evea': {
         'scale': 0.62, 'auto': True,
         'sheets': {
@@ -606,12 +639,25 @@ def slice_auto(path, names, frames, scale, ncols=4, skip=(), cells=False, top=Fa
             ay = my.stop - y0
             add(frames, f'{names[r]}{c}', img, ax, ay, scale)
 
-def slice_bodies(path, names, frames, scale, leftcut=230, minbody=12000, keep_fx=None, cols=None, equalcols=None, wipeyellow=False):
+def slice_bodies(path, names, frames, scale, leftcut=230, minbody=12000, keep_fx=None, cols=None, equalcols=None, wipeyellow=False, cutx=0, cuty=(), goldplates=False, dropleft=False, tb=(60, 250, 95)):
     """Sheets with a caption under every pose and art labels on the left (Siren's dragon, the giants):
     each pose is found by its big solid body; small pieces next to it (sparkles, beams, cubes) come along,
     captions under the body are left out. Rows come from where the bodies are."""
     a = np.array(Image.open(path).convert('RGBA'))
     a[..., 3][a[..., 3] < 64] = 0
+    if cutx: a[:, :cutx, 3] = 0  # a row label that touches a pose: cut along the label column's edge
+    for y0c, y1c in cuty: a[y0c:y1c, :, 3] = 0  # title / section banners given by hand
+    if goldplates:  # dark caption plates with a gold border that touch the poses: found by their straight gold edges
+        ai = a.astype(int); gold = (ai[..., 0] > 190) & (ai[..., 1] > 130) & (ai[..., 2] < 110) & (ai[..., 3] > 200)
+        runs = []  # (y, x0, x1) of long straight horizontal gold lines
+        for y in range(a.shape[0]):
+            r = np.concatenate([[0], gold[y].astype(int), [0]]); d = np.diff(r); st, en = np.nonzero(d == 1)[0], np.nonzero(d == -1)[0]
+            for x0r, x1r in zip(st, en):
+                if x1r - x0r >= 70: runs.append((y, x0r, x1r))
+        for y, x0r, x1r in runs:  # a top edge with a matching bottom edge 18-60 px below
+            for y2, x02, x12 in runs:
+                if 18 <= y2 - y <= 60 and abs(x02 - x0r) < 14 and abs(x12 - x1r) < 14:
+                    a[y - 3:y2 + 4, max(0, x0r - 16):x1r + 16, 3] = 0; break
     def boxy(o, s):  # a caption plate or the title banner: wide, short and mostly filled
         h, w = o[0].stop - o[0].start, o[1].stop - o[1].start
         return h < 70 and w > 80 and w > 2 * h and s / (h * w) > 0.45
@@ -621,9 +667,9 @@ def slice_bodies(path, names, frames, scale, leftcut=230, minbody=12000, keep_fx
     def platey(i, o):  # plates are pale blue or yellow (cubes and pencils are other colours)
         px = a[o][lab[o] == i].astype(int); r, g, b = px[:, 0], px[:, 1], px[:, 2]
         return (((r > 160) & (g > 200) & (b > 215)) | ((r > 215) & (g > 165) & (b < 110))).mean() > 0.35
-    plates = sorted((o[0].start, o[0].stop) for i, (o, s) in enumerate(zip(objs, sizes))
+    plates = sorted((o[0].start, o[0].stop, o[1].start, o[1].stop) for i, (o, s) in enumerate(zip(objs, sizes))
                     if o[0].stop >= 120 and o[1].start > leftcut - 60 and boxy(o, s) and o[1].stop - o[1].start < 500 and platey(i + 1, o))
-    for y0p, y1p in plates: a[max(0, y0p - 3):y1p + 3, max(0, leftcut - 40):, 3] = 0
+    for y0p, y1p, x0p, x1p in plates: a[max(0, y0p - 3):y1p + 3, max(0, x0p - 30):x1p + 30, 3] = 0  # just that plate
     if wipeyellow:  # yellow caption plates that touch the poses: whole rows of strong yellow, wiped
         ai = a.astype(int); yel = (ai[..., 0] > 225) & (ai[..., 1] > 170) & (ai[..., 2] < 70) & (ai[..., 3] > 200)
         cnt = yel[:, leftcut:].sum(1); hot = cnt > 0.1 * (a.shape[1] - leftcut)
@@ -646,7 +692,8 @@ def slice_bodies(path, names, frames, scale, leftcut=230, minbody=12000, keep_fx
         px = a[o][lab[o] == i]; return (px[:, :3].astype(int).sum(1) < 260).mean() > 0.55
     comps = [(i + 1, o, s) for i, (o, s) in enumerate(zip(objs, sizes))
              if s >= 30 and not texty(i + 1, o, s) and o[1].stop > leftcut and not boxy(o, s) and not (o[0].stop < 120 and o[1].stop - o[1].start > 200)
-             and not (o[0].start < 60 and (o[1].stop - o[1].start > 250 or o[0].stop < 95))]  # fancy title banners at the top
+             and not (o[0].start < tb[0] and (o[1].stop - o[1].start > tb[1] or o[0].stop < tb[2]))  # fancy title banners at the top
+             and not (dropleft and o[1].start < 25 and o[1].stop - o[1].start < 200)]  # row labels at the left edge
     def cy(k): return (k[1][0].start + k[1][0].stop) / 2
     def cx(k): return (k[1][1].start + k[1][1].stop) / 2
     bodies = sorted([k for k in comps if k[2] >= minbody and (k[1][0].stop - k[1][0].start) > 70], key=cy)
@@ -729,7 +776,8 @@ if __name__ == '__main__':
         if isinstance(names, dict): cols = names.get('cols'); names = names['rows']
         if cfg.get('bodies'):
             slice_bodies(f'{art}/{sheet}', names, frames, cfg['scale'], keep_fx=cfg.get('keep_fx'), leftcut=cfg.get('leftcut', 230), cols=cfg.get('cols'), minbody=cfg.get('minbody', 12000),
-                          equalcols=cfg.get('equalcols'), wipeyellow=cfg.get('wipeyellow', False)); continue
+                          equalcols=cfg.get('equalcols'), wipeyellow=cfg.get('wipeyellow', False), cutx=cfg.get('cutx', {}).get(sheet, 0),
+                          cuty=cfg.get('cuty', {}).get(sheet, ()), goldplates=cfg.get('goldplates', False), dropleft=cfg.get('dropleft', False), tb=cfg.get('titleband', (60, 250, 95))); continue
         if cfg.get('auto'):
             slice_auto(f'{art}/{sheet}', names, frames, cfg['scale'], skip=cfg.get('skip', ()), cells=sheet in cfg.get('cells', ()), top=sheet in cfg.get('toplabels', ()), erasetags=sheet in cfg.get('erasetags', ()), **cfg.get('alpha', {}).get(sheet, {})); continue
         slice_sheet(f'{art}/{sheet}', names, cols, frames, cfg['scale'], excl, cfg.get('cutcols'), cfg.get('mainonly', {}).get(sheet, ()))
