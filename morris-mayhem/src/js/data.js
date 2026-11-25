@@ -208,7 +208,7 @@ MM.FIGHTERS = [
     id: 'codee', name: 'Codee Morris', title: 'The Dirty Work Perfectionist', photo: 'img/codee.png',
     stats: { speed: 6.8, air: 6.2, jump: 15, weight: 1.06, power: 1.02, size: 1.05 },
     taunt: 'Time to clean this up!',
-    mess: { action: 4, hit: 6, cleanFrames: 720 }, // Mess Meter: +4 per landscaping move, +6 once per move that lands
+    mess: { action: 4, hit: 6, cleanFrames: 720, dirt: true }, // Mess Meter: +4 per landscaping move, +6 once per move that lands
     forms: [
       {
         form: 'land', formName: 'BACK TO WORK!', title: 'Landscaping', sprite: 'codee',
@@ -292,7 +292,114 @@ MM.FIGHTERS = [
       desc: 'calls it in on her headset, sends out every tattoo at once to catch everyone in front of her, then a command pulse blasts them away',
       poses: [[0, 'ult0'], [33, 'ult1'], [66, 'ult2'], [126, 'ult3']] },
   },
+  {
+    // Jorie Morris, "The Free Roamer": long ginger hair, camps out, rides his blue bike everywhere, lives on chocolate milk.
+    // Chocolate Charge (hold Special) fills his Milk Meter; with it full, Switch turns him into Chocolate Milk Rage for 8 s
+    // (stronger and heavier, a little slower), then he cools down. Moves from ChatGPT's JORIE handoff (numbers tuned here).
+    id: 'jorie', name: 'Jorie Morris', title: 'The Free Roamer', photo: 'img/jorie.png',
+    stats: { speed: 7.2, air: 6.6, jump: 15.4, weight: 1.0, power: 1.0, size: 1.06 },
+    taunt: 'Catch me if you can!',
+    mess: { action: 0, hit: 5, cleanFrames: 480, ready: 'RAGE READY!', go: 'CHOCOLATE MILK RAGE!', back: 'COOLED DOWN', color: '#f0b070', goColor: '#ff6a1a', bar: '#7a4a2a', formBar: '#ff6a1a', hue: 25 },
+    forms: [
+      {
+        form: 'roam', formName: 'COOLED DOWN', title: 'Free Roamer', sprite: 'jorie',
+        color: '#303039', accent: '#2874c8', skin: '#f0c4a4', hair: '#c65c20',
+        stats: { speed: 7.2, air: 6.6, jump: 15.4, weight: 1.0, power: 1.0, size: 1.06 },
+        attackNames: { jab: 'Gallon Bonk', side: 'Road Kick', up: 'Hair Whip', down: 'Camp Sweep', air: 'Gallon Orbit, Road Volley, Sky Whip, Trail Stomp' },
+        specials: {
+          neutral: { kind: 'drink', name: 'Chocolate Charge', thing: 'a jug of chocolate milk (hold Special to keep drinking and fill the Milk Meter)', windup: 18, max: 300, cd: 30 },
+          side: { kind: 'dash', name: 'Pedal Power', ride: true, speed: 14, dur: 24, dmg: 8, kb: 7.5, kbg: 0.11, ang: 30, cd: 150, box: [-10, -95, 120, 95] },
+          up: { kind: 'rise', name: 'Bunny Hop', power: 19, forward: 4, dmg: 6, kb: 6, kbg: 0.06 },
+          down: { kind: 'counter', name: 'Blue Tent Hide', window: 24, mult: 1.35 },
+        },
+        ultimate: null,
+      },
+      {
+        form: 'rage', formName: 'CHOCOLATE MILK RAGE!', title: 'Chocolate Milk Rage', sprite: 'jorie-rage',
+        color: '#303039', accent: '#ff6a1a', skin: '#f0c4a4', hair: '#c65c20',
+        stats: { speed: 6.62, air: 6.2, jump: 15.2, weight: 1.15, power: 1.25, size: 1.12 },
+        attackNames: { jab: 'Gallon Smash', side: 'Gallon Smash', up: 'Rage Clap', down: 'Rage Clap', air: 'Gallon Smash, Rage Clap' },
+        specials: {
+          neutral: { kind: 'projectile', name: 'Rage Clap', thing: 'a chocolate-milk shockwave', sprite: 'fxshock', scale: 0.35, speed: 10, dmg: 9, kb: 7, kbg: 0.09, r: 26, life: 45, cd: 60 },
+          side: { kind: 'dash', name: 'Gallon Smash', speed: 14, dur: 18, dmg: 12, kb: 9, kbg: 0.13, ang: 35, cd: 120, box: [-10, -95, 110, 95] },
+          up: { kind: 'rise', name: 'Rage Leap', power: 19.5, forward: 4, dmg: 8, kb: 7, kbg: 0.08 },
+          down: { kind: 'shockwave', name: 'Ground Pound', speed: 9, dmg: 9, kb: 7, kbg: 0.1, cd: 120 },
+        },
+        ultimate: null,
+      },
+    ],
+  },
+  {
+    // Jaxston Morris, "The Left-Foot Legend": Jadden's son, plays soccer for the Bluffton Pirates. Kicks only, always left-footed.
+    // Moves from ChatGPT's JAXSTON handoff (numbers tuned here).
+    id: 'jaxston', name: 'Jaxston Morris', title: 'The Left-Foot Legend', photo: 'img/jaxston.png', sprite: 'jaxston',
+    color: '#d52b32', accent: '#191919', skin: '#e8b58f', hair: '#8a5a32',
+    stats: { speed: 7.5, air: 6.9, jump: 15.8, weight: 0.95, power: 1.0, size: 0.97 },
+    attackNames: { jab: 'Left Foot First', side: 'Roundhouse', up: 'Spin Cycle', down: 'Clean Sweep', air: 'Air Spin, Sky Volley, Bicycle Kick, Meteor Cleat' },
+    specials: {
+      neutral: { kind: 'projectile', name: 'Left-Foot Launch', thing: 'a soccer ball that bounces once', sprite: 'fxball', scale: 0.13, speed: 12, vy: -2, grav: 0.15, bounce: 1, dmg: 7, kb: 6, kbg: 0.07, r: 16, life: 75, cd: 60 },
+      side: { kind: 'dash', name: 'Cleat Express', speed: 15, dur: 18, dmg: 9, kb: 7.5, kbg: 0.11, ang: 25, cd: 120, box: [-10, -60, 110, 60] },
+      up: { kind: 'rise', name: 'Tornado Lift', power: 19.5, forward: 3, dmg: 7, kb: 6.5, kbg: 0.07 },
+      down: { kind: 'projectile', name: 'Kick the Clutter', thing: 'a training cone', sprite: 'fxcone', scale: 0.16, speed: 10, vy: -6, grav: 0.35, spin: true, dmg: 8, kb: 7, kbg: 0.09, r: 18, life: 80, cd: 100 },
+    },
+    taunt: 'Left foot. Lights out!',
+    // ~2.8 s: lines up the ball, strikes it, then a dozen flaming balls fly straight ahead; the last one launches
+    ultimate: { name: 'Pirate Fireball Frenzy', sprite: 'jaxston', type: 'barrage', dur: 168, fireAt: 50, count: 12, every: 7, speed: 15, dmg: 3, kbMul: 1.45,
+      ball: 'fxfire0', anim: ['fxfire0', 'fxfire1', 'fxfire2', 'fxfire3'], ballScale: 0.32,
+      desc: 'lines up a shot and kicks a dozen flaming soccer balls straight ahead; the last one launches whoever it hits',
+      poses: [[0, 'ult0'], [25, 'ult1'], [50, 'ult2'], [136, 'ult3']] },
+  },
+  {
+    // Evea Morris, "The Unicorn Spirit": Codee's little girl, unicorns, rainbows and cowboy boots. Small and quick.
+    // Her Spirit Meter fills when her moves land (and a little when she's hit); with it full, Switch links her with
+    // Grandma Worst's spirit for 8 s. Moves from ChatGPT's EVEA handoff (numbers tuned here).
+    id: 'evea', name: 'Evea Morris', title: 'The Unicorn Spirit', photo: 'img/evea.png',
+    stats: { speed: 7.0, air: 6.8, jump: 15.6, weight: 0.82, power: 0.95, size: 0.8 },
+    taunt: 'Rainbow power!',
+    mess: { action: 0, hit: 12, hurt: 5, cleanFrames: 480, ready: 'SPIRIT READY!', go: 'SPIRIT LINK!', back: 'SPIRIT FADES', color: '#84e7ff', goColor: '#84e7ff', bar: '#a977d8', formBar: '#84e7ff', hue: 190 },
+    forms: [
+      {
+        form: 'unicorn', formName: 'SPIRIT FADES', title: 'Unicorn Spirit', sprite: 'evea',
+        color: '#a977d8', accent: '#ff7ad9', skin: '#f2c8a8', hair: '#9a6a3a',
+        stats: { speed: 7.0, air: 6.8, jump: 15.6, weight: 0.82, power: 0.95, size: 0.8 },
+        attackNames: { jab: 'Sparkle Tap', side: 'Boot Scoot', up: 'Horn Pop', down: 'Rainbow Twirl', air: 'Star Circle, Rainbow Volley, Sky Sparkle, Horseshoe Drop' },
+        specials: {
+          neutral: { kind: 'projectile', name: 'Starlight Toss', thing: 'a rainbow star', sprite: 'fxstar', scale: 0.3, speed: 11, vy: -1, grav: 0.05, dmg: 6, kb: 5.5, kbg: 0.07, r: 16, life: 60, cd: 50 },
+          side: { kind: 'dash', name: 'Unicorn Express', ride: true, speed: 14, dur: 24, dmg: 8, kb: 7.5, kbg: 0.11, ang: 30, cd: 150, box: [-10, -95, 120, 95] },
+          up: { kind: 'rise', name: 'Rainbow Rise', power: 19.5, forward: 3, dmg: 6, kb: 6, kbg: 0.06 },
+          down: { kind: 'trap', name: 'Hoof Print', thing: 'a glowing horseshoe trap', sprite: 'fxhoof', scale: 0.3, dmg: 7, kb: 6, kbg: 0.08, ang: 75, life: 360, cd: 180 },
+        },
+        ultimate: null,
+      },
+      {
+        form: 'spirit', formName: 'SPIRIT LINK!', title: 'Spirit Link (with Grandma Worst)', sprite: 'evea-spirit',
+        color: '#84e7ff', accent: '#a977d8', skin: '#f2c8a8', hair: '#9a6a3a',
+        stats: { speed: 7.3, air: 7.4, jump: 16, weight: 0.9, power: 1.15, size: 0.8 },
+        attackNames: { jab: 'Ancestral Pulse', side: 'Haunting Sweep', up: 'Spirit Lift', down: 'Grandma Says No', air: 'Spirit Glide, Spirit Lift' },
+        specials: {
+          neutral: { kind: 'projectile', name: 'Ancestral Pulse', thing: "a ball of Grandma's spirit light", sprite: 'fxorb', scale: 0.3, speed: 10, dmg: 8, kb: 6.5, kbg: 0.08, r: 20, life: 70, cd: 50 },
+          side: { kind: 'projectile', name: 'Haunting Sweep', thing: 'a spirit wave', sprite: 'fxwave', scale: 0.45, speed: 12, dmg: 9, kb: 7.5, kbg: 0.1, r: 26, life: 50, cd: 90 },
+          up: { kind: 'rise', name: 'Spirit Lift', power: 20.5, forward: 3, dmg: 7, kb: 6.5, kbg: 0.07 },
+          down: { kind: 'counter', name: 'Grandma Says No!', window: 26, mult: 1.5 },
+        },
+        ultimate: null,
+      },
+    ],
+  },
 ];
+
+{
+  const jorieUlt = { name: 'Cardboard Checkout', sprite: 'jorie', type: 'decoy', dur: 160, placeAt: 40, burstAt: 104, decoyX: -10, rush: [62, 96, 11], radius: 2.2, dmg: 27, kbMul: 1.5,
+    desc: 'stands up a life-size cardboard Jorie, runs off, and the cutout bursts on everyone near it',
+    poses: [[0, 'ult0'], [30, 'ult1'], [60, 'ult2'], [100, 'idle0']] };
+  const eveaUlt = { name: 'Unicorn Overload', sprite: 'evea', type: 'stampede', herd: 'fxuni', dur: 150, spawnAt: 50, sweepDur: 60, dmg: 24, kbMul: 1.45,
+    desc: 'opens a rainbow portal and a herd of spectral unicorns charges across the stage',
+    poses: [[0, 'ult0'], [25, 'ult1'], [50, 'ult2'], [112, 'ult3']] };
+  for (const d of MM.FIGHTERS) {
+    if (d.id === 'jorie') d.forms.forEach((fm) => (fm.ultimate = jorieUlt));
+    if (d.id === 'evea') d.forms.forEach((fm) => (fm.ultimate = eveaUlt));
+  }
+}
 
 // Families, for grouping fighters on Choose Your Fighter and Meet the Family. Families go from the grandparents,
 // then the Morris kids oldest to youngest (Mandi, Jadden, Courtnee, Codee, Haylie, Sara, Jorie); inside a family,

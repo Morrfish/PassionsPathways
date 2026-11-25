@@ -109,7 +109,7 @@ window.MM = window.MM || {};
   function addMess(G, f, n) {
     if (!f.def.mess || f.formIdx !== 0 || f.mess >= 100) return;
     f.mess = Math.min(100, (f.mess || 0) + n);
-    if (f.mess >= 100) { popText(G, f.x, f.y - f.h - 24, 'CLEAN UP!', '#bfe9ff'); MM.sfx('heal'); }
+    if (f.mess >= 100) { popText(G, f.x, f.y - f.h - 24, f.def.mess.ready || 'CLEAN UP!', f.def.mess.color || '#bfe9ff'); MM.sfx('heal'); }
   }
   // Clean Freak timer: keeps running in an ultimate (that finishes in the form it started in); then back to work.
   function cleanTick(G, f) {
@@ -121,7 +121,7 @@ window.MM = window.MM || {};
   }
   function backToWork(G, f) {
     applyForm(f, 0); f.clean = 0; f.mess = 0;
-    burst(G, f.x, f.y - f.h / 2, '#bfe9ff', 16, 5); popText(G, f.x, f.y - f.h - 24, 'BACK TO WORK!', f.accent);
+    burst(G, f.x, f.y - f.h / 2, f.def.mess.color || '#bfe9ff', 16, 5); popText(G, f.x, f.y - f.h - 24, f.def.mess.back || 'BACK TO WORK!', f.accent);
   }
   function makeFighterBase(p, def, x, alt, stocks) {
     const s = def.stats.size || 1;
@@ -366,7 +366,7 @@ window.MM = window.MM || {};
 
   function tickAction(G, f) {
     const a = f.act; a.t++;
-    if (a.t === 6 && f.def.mess && (a.type === 'normal' || a.type === 'special')) addMess(G, f, f.def.mess.action);
+    if (a.t === 6 && f.def.mess && f.def.mess.action && (a.type === 'normal' || a.type === 'special')) addMess(G, f, f.def.mess.action);
     if (a.type === 'normal') {
       const m = a.m;
       if (a.t === m.start && m.lunge && f.ground) f.vx += f.face * m.lunge;
@@ -387,9 +387,9 @@ window.MM = window.MM || {};
       f.vx *= 0.8;
       if (a.t % 6 === 0) part(G, { x: f.x + (Math.random() - 0.5) * f.w * 2, y: f.y - Math.random() * f.h, color: '#d9f3ff', size: 10, life: 20, max: 20, type: 'smoke' });
       if (a.t >= a.dur) {
-        f.act = null; f.mess = 0; applyForm(f, 1); f.clean = f.def.mess.cleanFrames;
-        burst(G, f.x, f.y - f.h / 2, '#ffffff', 30, 8); ring(G, f.x, f.y - f.h / 2, '#4aa8e8');
-        popText(G, f.x, f.y - f.h - 24, 'CLEAN FREAK!', '#4aa8e8'); MM.sfx('heal');
+        f.act = null; const ms = f.def.mess; f.mess = 0; applyForm(f, 1); f.clean = ms.cleanFrames;
+        burst(G, f.x, f.y - f.h / 2, '#ffffff', 30, 8); ring(G, f.x, f.y - f.h / 2, f.def.mess.goColor || '#4aa8e8');
+        popText(G, f.x, f.y - f.h - 24, ms.go || 'CLEAN FREAK!', ms.goColor || '#4aa8e8'); MM.sfx('heal');
       }
     } else if (a.type === 'backwork') { // 0.35 s back into the work clothes
       f.vx *= 0.8; if (a.t >= a.dur) { f.act = null; backToWork(G, f); }
@@ -652,6 +652,16 @@ window.MM = window.MM || {};
         if (a.t === a.healAt) { const amt = Math.min(f.damage, sp.amount); f.damage -= amt; popText(G, f.x, f.y - f.h - 20, `-${Math.round(amt)}%`, '#5dff8f'); MM.sfx('heal'); }
       },
     },
+    drink: {
+      start(G, f, sp, a) { if (!f.ground || !f.def.mess || f.formIdx !== 0) { f.act = null; f.cd.neutral = 0; return; } a.dur = 9999; a.pose = 'flex'; },
+      tick(G, f, sp, a) {
+        f.vx *= 0.7;
+        const hold = f.inp.special && f.ground && f.mess < 100 && a.t < (sp.max || 240);
+        if (a.t > (sp.windup || 18) && a.t % 3 === 0 && hold) addMess(G, f, 1); // 20 a second
+        if (!hold && a.t > (sp.windup || 18) && !a.ending) { a.ending = true; a.dur = a.t + 10; }
+        if (a.t >= a.dur) f.act = null;
+      },
+    },
     trap: {
       start(G, f, sp, a) { a.dur = 22; a.pose = 'throw'; },
       tick(G, f, sp, a) {
@@ -716,6 +726,27 @@ window.MM = window.MM || {};
         a.hitProps = { dmg: u.dmg, kb: 9 * u.kbMul, kbg: 0.12 * u.kbMul, ang: 30 };
         if (a.t === u.beamAt) { G.shake = 20; G.flash = 6; }
       } else { a.box = null; a.beam = null; }
+    } else if (u.type === 'barrage') { // e.g. Jaxston's Pirate Fireball Frenzy: a string of flaming balls kicked straight ahead
+      const t = a.t - u.fireAt;
+      if (t >= 0 && t < u.count * u.every && t % u.every === 0) {
+        const i = t / u.every, last = i === u.count - 1;
+        spawnProj(G, f, { x: f.x + f.face * 60 * f.s, y: f.y - (40 + (i % 3) * 30) * f.s, vx: f.face * u.speed, vy: ((i % 3) - 1) * 0.6, r: 22,
+          dmg: last ? u.dmg * 2 : u.dmg, kb: last ? 9 * u.kbMul : 3, kbg: last ? 0.12 * u.kbMul : 0.02, ang: last ? 40 : 15, life: 70,
+          sprite: u.ball, anim: u.anim, scale: u.ballScale || 0.4, dir: f.face });
+        G.shake = Math.max(G.shake, 4);
+      }
+    } else if (u.type === 'decoy') { // e.g. Jorie's Cardboard Checkout: set up a cutout, run off, and it bursts on whoever is near it
+      if (a.t === u.placeAt) a.decoy = { x: f.x + f.face * (u.decoyX || 0) * f.s, y: f.y, face: f.face };
+      if (a.decoy && a.t === u.burstAt) {
+        const r = (u.radius || 2) * f.h;
+        G.shake = 22; G.flash = 6; burst(G, a.decoy.x, a.decoy.y - f.h / 2, '#ffb02e', 40, 12);
+        part(G, { type: 'ring', x: a.decoy.x, y: a.decoy.y - f.h / 2, color: '#ffb02e', size: r * 0.6, life: 24, max: 24 });
+        for (const d of G.fighters) {
+          if (d === f || d.dead || d.out || d.invuln > 0 || (MM.sameTeam(G, f, d) && !G.ff)) continue;
+          if (Math.hypot(d.x - a.decoy.x, (d.y - d.h / 2) - (a.decoy.y - f.h / 2)) <= r)
+            applyHit(G, f, d, { dmg: u.dmg, kb: 9 * u.kbMul, kbg: 0.12 * u.kbMul, ang: 55, face: sgn(d.x - a.decoy.x) || f.face }, d.x, d.y - d.h / 2);
+        }
+      }
     } else if (u.type === 'stampede') { // a herd runs across the stage; each opponent is hit once
       const t = a.t - u.spawnAt;
       if (t >= 0 && t < u.sweepDur) {
@@ -765,6 +796,7 @@ window.MM = window.MM || {};
     if (!(da && da.type === 'ult')) def.meter = Math.min(100, def.meter + dmg * 0.35);
     if (da && da.type === 'ult') releaseUlt(da);
     if (att) { att.dealt += dmg; def.lastHit = att.slot; def.lastHitT = G.frame; }
+    if (def.def.mess && def.def.mess.hurt && att && att !== def) addMess(G, def, def.def.mess.hurt);
     if (att && att.def.mess && !MM.sameTeam(G, att, def)) { const cast = proj ? proj.cast : att.act; if (cast && cast.type !== 'ult' && !cast.messHit) { cast.messHit = true; addMess(G, att, att.def.mess.hit); } }
     burst(G, hx, hy, '#fff', 4 + (dmg | 0), 4 + dmg * 0.3);
     if (da && da.armor && dmg < 15) { MM.sfx('hit', 0.3); def.lag = 3; return true; }

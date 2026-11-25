@@ -4,7 +4,7 @@
 #
 # usage: python3 -I tools/slice_sprites.py <character> <art dir> <out dir>
 # Output: <out>/<character>-atlas.webp and <out>/<character>-frames.json (paste into src/js/sprites.js).
-import sys, json, numpy as np
+import os, sys, json, numpy as np
 from PIL import Image
 from scipy import ndimage as nd
 
@@ -196,9 +196,69 @@ CHARACTERS = {
         'extras': {'fxrose': 'fx-rose-shot.png', 'fxfang': 'fx-twin-fang.png', 'fxweb': 'fx-widow-web.png', 'fxlife': 'fx-lifeline.png',
                    'fxsignal': 'fx-dispatch-signal.png', 'fxpulse': 'fx-command-pulse.png', 'fxreaper': 'fx-reaper-rise.png', 'fxdagger': 'fx-rose-dagger.png'},
     },
+    # Jorie, Jaxston, Evea: name boxes at the left of each row, found automatically
+    'jorie': {
+        'scale': 0.62, 'auto': True,
+        'sheets': {
+            'move.png': ['idle', 'run', 'jump', 'hurt'],
+            'attacks.png': ['bonk', 'roadkick', 'whip', 'sweep'],
+            'aerials.png': ['orbit', 'volley', 'skywhip', 'stomp'],
+            'specials.png': ['drink', 'pedal', 'hop', 'tent'],
+            'ultimate.png': ['ult', 'pers'],
+            'rage-actions.png': ['cup', None, None, None],  # the transformation plays in his normal atlas
+        },
+        'extras': {'fxshock': 'fx-rage-shockwave.png', 'fxaura': 'fx-rage-aura.png', 'fxmilk': 'fx-milk-meter-icon.png',
+                   'fxjug': 'fx-chocolate-milk-jug.png', 'fxdecoy': 'fx-cardboard-decoy.png', 'fxburst': 'fx-cardboard-burst.png',
+                   'fxtent': 'fx-blue-tent.png', 'fxbike': 'fx-blue-bike.png'},
+    },
+    'jorie-rage': {
+        'scale': 0.62, 'auto': True,
+        'sheets': {
+            'rage-move.png': ['idle', 'run', 'jump', 'hurt'],
+            'rage-actions.png': ['xform', 'smash', 'clap', 'back'],
+        },
+        'extras': {'fxshock': 'fx-rage-shockwave.png', 'fxaura': 'fx-rage-aura.png'},
+    },
+    'jaxston': {
+        'scale': 0.62, 'auto': True,
+        'sheets': {
+            'move.png': ['idle', 'run', 'jump', 'hurt'],
+            'attacks.png': ['leftfoot', 'round', 'spin', 'csweep'],
+            'aerials.png': ['airspin', 'skyvolley', 'bicycle', 'meteor'],
+            'specials.png': ['launch', 'cleat', 'tornado', 'clutter'],
+            'ultimate.png': ['ult', 'pers'],
+        },
+        'extras': {'fxball': 'fx-soccerball.png', 'fxcone': 'fx-training-cone.png', 'fxarc': 'fx-kick-arc.png', 'fximpact': 'fx-impact-burst.png',
+                   'fxfire0': 'fx-fireball-01.png', 'fxfire1': 'fx-fireball-02.png', 'fxfire2': 'fx-fireball-03.png', 'fxfire3': 'fx-fireball-04.png'},
+    },
+    'evea': {
+        'scale': 0.62, 'auto': True,
+        'sheets': {
+            'move.png': ['idle', 'run', 'jump', 'hurt'],
+            'attacks.png': ['tap', 'twirl', 'scoot', 'horn'],
+            'aerials.png': ['circle', 'rvolley', 'skysp', 'shoe'],
+            'specials.png': ['startoss', 'express', 'rrise', 'hoof'],
+            'ultimate.png': ['ult', 'pers'],
+            'spirit-link.png': ['cup', None, None, None],  # Spirit Awakens plays in her normal atlas
+        },
+        'toplabels': ('spirit-link.png',), 'cells': ('spirit-link.png',),
+        'extras': {'fxuni': 'fx-unicorn.png', 'fxstar': 'fx-rainbow-star.png', 'fxportal': 'fx-rainbow-portal.png', 'fxhoof': 'fx-hoof-trap.png'},
+    },
+    'evea-spirit': {
+        'scale': 0.62, 'auto': True,
+        'sheets': {
+            'spirit-link.png': ['link', 'idle', 'run', 'back'],  # trance idle, spirit glide, spirit fades
+            'spirit-specials.png': ['pulse', 'haunt', 'slift', 'grandma'],
+            'spirit-air-hurt.png': ['jump', 'hurt'],
+        },
+        'toplabels': ('spirit-link.png',),
+        'cells': ('spirit-link.png', 'spirit-specials.png', 'spirit-air-hurt.png'),
+        'extras': {'fxwave': 'fx-spirit-wave.png', 'fxshield': 'fx-spirit-shield.png', 'fxorb': 'fx-spirit-orb.png', 'fxsaura': 'fx-spirit-aura.png'},
+    },
 }
 
 CUTROWS = {}
+DEBUG = os.environ.get('SLICE_DEBUG')
 ROWBANDS = {}
 
 def tag_bands(a):
@@ -285,6 +345,135 @@ def slice_sheet(path, names, cols, frames, scale, excl=(), cutcols=False, mainon
         add(frames, f'{names[r]}{c}', img, ax, ay, scale)
     return a, lab
 
+def slice_auto(path, names, frames, scale, ncols=4, skip=(), cells=False, top=False):
+    """Sheets with the move names in yellow boxes at the left of each row (Jorie, Jaxston, Evea):
+    the boxes mark where each row starts, and the poses in a row are split at the widest gaps."""
+    a = np.array(Image.open(path).convert('RGBA'))
+    a[..., 3][a[..., 3] < 64] = 0
+    H, W = a.shape[:2]
+    pur = (a[..., 0] > 60) & (a[..., 0] < 150) & (a[..., 1] < 60) & (a[..., 2] > 100) & (a[..., 3] > 128)
+    pr = np.nonzero(pur[:160].sum(1) > 300)[0]
+    title_end = int(pr.max()) + 4 if len(pr) else 0
+    a[max(0, title_end - 3):title_end + 1, :, 3] = 0
+    op = a[..., 3] >= 128  # thin rule lines across the sheet (they can touch a pose): rows with one very long run
+    run = np.zeros(W, int); best = np.zeros(H, int)
+    for yy in range(H):
+        r = op[yy].astype(int); d = np.diff(np.concatenate([[0], r, [0]])); st, en = np.nonzero(d == 1)[0], np.nonzero(d == -1)[0]
+        best[yy] = (en - st).max() if len(st) else 0
+    wide = best > 0.4 * W
+    for yy in np.nonzero(wide)[0]:
+        if yy > title_end and not (wide[max(0, yy - 6)] and wide[min(H - 1, yy + 6)]): a[max(0, yy - 1):yy + 2, :, 3] = 0
+    m = a[..., 3] >= 128
+    if cells:  # glowing poses touch each other: find them by their solid middles, then cut whole cells
+        m = nd.binary_erosion(a[..., 3] >= 235, iterations=3)
+        l0, _ = nd.label(a[..., 3] >= 128); bx = []
+        for o in nd.find_objects(l0):
+            if o is None: continue
+            y, x = o
+            if x.start >= 120 or y.start <= title_end + 10 or not (40 < y.stop - y.start < 190) or x.stop - x.start < 60: continue
+            px = a[y, x].reshape(-1, 4); px = px[px[:, 3] > 128].astype(int)
+            if ((px[:, 0] > 200) & (px[:, 1] > 165) & (px[:, 2] < 215) & (px[:, 0] - px[:, 2] > 30)).mean() > 0.4: bx.append(y.start - 26 if top else (y.start + y.stop) // 2)
+        bx.sort()
+        cutsy = bx[1:] if top else [(bx[k] + bx[k + 1]) // 2 for k in range(len(bx) - 1)]
+        for cy_ in cutsy: m[cy_ - 2:cy_ + 2] = False
+    lab, n = nd.label(m)
+    objs = nd.find_objects(lab)
+    sizes = nd.sum(m, lab, range(1, n + 1))
+    comps, starts, labels = [], [], []
+    for i, (o, s) in enumerate(zip(objs, sizes)):
+        if s < 40: continue
+        y, x = o
+        if y.stop <= title_end + 2: continue
+        if (y.stop - y.start) < 18 and (x.stop - x.start) > 200: continue  # title underline
+        px = a[y, x][lab[y, x] == i + 1]
+        r_, g_, b_ = px[:, 0].astype(int), px[:, 1].astype(int), px[:, 2].astype(int)
+        yel = ((r_ > 200) & (g_ > 165) & (b_ < 215) & (r_ - b_ > 30)).mean()
+        if yel > 0.4 and (y.stop - y.start) < 190 and (x.stop - x.start) > 60 and s < 40000:
+            if x.start < 120 and y.start > title_end + 10: starts.append((y.start, y.stop))
+            labels.append(o)
+            continue
+        comps.append((i + 1, o, s))
+    starts.sort(key=lambda t: t[0])
+    if starts and ((cells and not top) or starts[0][0] > title_end + 150):  # name boxes in the middle of their rows: split halfway between them
+        mids = [(starts[k][0] + starts[k][1] + starts[k + 1][0] + starts[k + 1][1]) // 4 for k in range(len(starts) - 1)]
+        edges = [title_end] + mids + [H]
+    else:
+        edges = [title_end] + [st[0] - 6 for st in starts[1:]] + [H]
+    rows = [(edges[k], edges[k + 1]) for k in range(len(edges) - 1)]
+    if len(rows) < len(names):  # no name boxes at the left: equal rows
+        step = (H - title_end) / len(names)
+        rows = [(round(title_end + k * step), round(title_end + (k + 1) * step)) for k in range(len(names))]
+    rb = ROWBANDS.get(path.rsplit('/', 1)[-1])
+    if rb: rows = list(rb)
+    if DEBUG: print(path, 'title', title_end, 'rows', rows, 'comps', len(comps), 'big', sorted(int(k[2]) for k in comps if k[2] >= 2500)[-12:])
+    for r, (y0r, y1r) in enumerate(rows):
+        if r >= len(names) or names[r] is None: continue
+        inrow = [k for k in comps if y0r <= (k[1][0].start + k[1][0].stop) / 2 < y1r]
+        bodies = sorted([k for k in inrow if k[2] >= 2500], key=lambda k: (k[1][1].start + k[1][1].stop) / 2)
+        if not bodies: continue
+        cxs = [(k[1][1].start + k[1][1].stop) / 2 for k in bodies]
+        if cells:  # poses stacked over each other (grandma over Evea): group by overlapping columns
+            groups = []
+            for k in sorted(bodies, key=lambda k: k[1][1].start):
+                if groups and k[1][1].start < max(g[1][1].stop for g in groups[-1]) + 10: groups[-1].append(k)
+                else: groups.append([k])
+            while len(groups) > ncols:
+                j = min(range(1, len(groups)), key=lambda j: min(k[1][1].start for k in groups[j]) - max(k[1][1].stop for k in groups[j - 1]))
+                groups[j - 1] += groups.pop(j)
+        else:
+            gaps = sorted(range(1, len(bodies)), key=lambda j: cxs[j] - cxs[j - 1], reverse=True)[:ncols - 1]
+            cuts = sorted(gaps); groups, last = [], 0
+            for j in cuts + [len(bodies)]: groups.append(bodies[last:j]); last = j
+        owner = {k[0]: g for g, grp in enumerate(groups) for k in grp}
+        members = [list(grp) for grp in groups]
+        for k in inrow:
+            if k[0] in owner: continue
+            y, x = k[1]
+            def gap(b):
+                by, bx = b[1]
+                dx = max(bx.start - x.stop, x.start - bx.stop, 0); dy = max(by.start - y.stop, y.start - by.stop, 0)
+                return dx * dx + dy * dy
+            best = min(bodies, key=gap)
+            if gap(best) < 90 ** 2: members[owner[best[0]]].append(k)
+        if cells:
+            members = [list(g) for g in groups]  # whole cells: loose bits come with the cell, only solid bodies count
+            lab_cut = a[..., 3].copy()
+            for (ly, lx) in labels: lab_cut[max(0, ly.start - 8):ly.stop + 8, max(0, lx.start - 8):lx.stop + 8] = 0
+            ext = [(min(k[1][1].start for k in g), max(k[1][1].stop for k in g)) for g in members]
+            xcuts = [0] + [(ext[k][1] + ext[k + 1][0]) // 2 for k in range(len(ext) - 1)] + [W]
+            for c, grp in enumerate(members):
+                if (names[r], c) in skip: continue
+                gy0 = max(title_end + 2, min(k[1][0].start for k in grp) - 8); gy1 = min(H, max(k[1][0].stop for k in grp) + 8)
+                y0r_, y1r_ = gy0, gy1
+                cell = lab_cut[y0r_:y1r_, xcuts[c]:xcuts[c + 1]] >= 64
+                cl, _ = nd.label(cell)  # keep only the parts joined to this pose (drops boots poking in from the row above)
+                mine = np.isin(lab[y0r_:y1r_, xcuts[c]:xcuts[c + 1]], [k[0] for k in grp])
+                ids = np.unique(cl[mine & (cl > 0)])
+                cell = np.isin(cl, ids)
+                gtop = min(k[1][0].start for k in grp) - 4 - y0r_  # solid bits above the pose belong to the row above
+                if gtop > 0: cell[:gtop] &= lab_cut[y0r_:y0r_ + gtop, xcuts[c]:xcuts[c + 1]] < 200
+                ys, xs = np.nonzero(cell)
+                if not len(ys): continue
+                y0, y1 = y0r_ + ys.min(), y0r_ + ys.max() + 1; x0, x1 = xcuts[c] + xs.min(), xcuts[c] + xs.max() + 1
+                img = a[y0:y1, x0:x1].copy(); img[..., 3] = np.where(cell[y0 - y0r_:y1 - y0r_, x0 - xcuts[c]:x1 - xcuts[c]], img[..., 3], 0)
+                main = max(grp, key=lambda k: k[2]); my, mx = main[1]
+                bot = max(k[1][0].stop for k in grp)
+                add(frames, f'{names[r]}{c}', img, (mx.start + mx.stop) / 2 - x0, min(y1, bot + 3) - y0, scale)
+            continue
+        for c, grp in enumerate(members):
+            if (names[r], c) in skip: continue
+            keep = np.isin(lab, [k[0] for k in grp])
+            y0 = min(k[1][0].start for k in grp); y1 = max(k[1][0].stop for k in grp)
+            x0 = min(k[1][1].start for k in grp); x1 = max(k[1][1].stop for k in grp)
+            img = a[y0:y1, x0:x1].copy()
+            img[..., 3] = np.where(keep[y0:y1, x0:x1], img[..., 3], 0)
+            main = max(grp, key=lambda k: k[2]); my, mx = main[1]
+            mm = lab[my, mx] == main[0]
+            xs = np.nonzero(mm[: max(1, int(mm.shape[0] * 0.22))])[1]
+            ax = mx.start + (xs.mean() if len(xs) else mm.shape[1] / 2) - x0
+            ay = my.stop - y0
+            add(frames, f'{names[r]}{c}', img, ax, ay, scale)
+
 def add(frames, name, img, ax, ay, scale):
     im = Image.fromarray(img)
     w, h = im.size
@@ -312,8 +501,10 @@ if __name__ == '__main__':
     CUTROWS.clear(); CUTROWS.update(cfg.get('cutrows', {})); ROWBANDS.clear(); ROWBANDS.update(cfg.get('rowbands', {}))
     for sheet, names in cfg['sheets'].items():
         excl = [pt for (_, sh, pt) in props if sh == sheet and pt]
-        cols = cfg['cols']
-        if isinstance(names, dict): cols = names['cols']; names = names['rows']
+        cols = cfg.get('cols')
+        if isinstance(names, dict): cols = names.get('cols'); names = names['rows']
+        if cfg.get('auto'):
+            slice_auto(f'{art}/{sheet}', names, frames, cfg['scale'], skip=cfg.get('skip', ()), cells=sheet in cfg.get('cells', ()), top=sheet in cfg.get('toplabels', ())); continue
         slice_sheet(f'{art}/{sheet}', names, cols, frames, cfg['scale'], excl, cfg.get('cutcols'), cfg.get('mainonly', {}).get(sheet, ()))
     for name, sheet, pt in props:
         if not pt: continue

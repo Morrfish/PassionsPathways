@@ -5,6 +5,7 @@ window.MM = window.MM || {};
   const rnd = Math.random;
   // Everything a fighter can stand on: the solid floor and every platform (the floor may not span the
   // stage, e.g. the Agnew dock ends at the water and the boat floats past it).
+  function press0(inp, k) { inp[k] = true; }
   function surfaces(G) { const m = G.stage.main; return [{ x: m.left, w: m.right - m.left, y: 0, main: true }].concat(G.stage.plats); }
   // Where to recover to: the nearest surface (a little bonus for the way we're already moving).
   function recoverPoint(G, f) {
@@ -55,7 +56,13 @@ window.MM = window.MM || {};
       return inp;
     }
     ai.jumpHeld = false;
+    // keep drinking (Jorie's Chocolate Charge) while nobody is close
+    if (f.act && f.act.type === 'special' && f.act.sp && f.act.sp.kind === 'drink' && adx > 260) { inp.special = true; return inp; }
     if (f.act || f.hitstun > 0) { inp.x = f.hitstun > 0 ? Math.sign(MM.spawnX(G.stage) - f.x) || 1 : 0; return inp; }
+    // a full meter (Codee's mess, Jorie's milk, Evea's spirit): switch into the other form
+    if (f.def.mess && f.forms && f.formIdx === 0 && f.mess >= 100 && rnd() < react) { inp.swap = true; return inp; }
+    // Jorie: fill the milk meter when there's room to drink
+    if (f.def.specials.neutral && f.def.specials.neutral.kind === 'drink' && f.formIdx === 0 && f.ground && f.mess < 100 && adx > 420 && rnd() < 0.03) { press0(inp, 'special'); return inp; }
 
     // 2) dodge when the target is swinging at us
     if (t.act && t.act.box && adx < 160 && rnd() < react * 0.6 && f.dodgeCd <= 0) { inp.dodge = true; inp.x = rnd() < 0.5 ? -Math.sign(dx) : 0; return inp; }
@@ -63,7 +70,10 @@ window.MM = window.MM || {};
     // ultimate when it would catch someone (or anyone ahead, for a stampede)
     if (f.meter >= 100 && f.def.ultimate && rnd() < react) {
       const u = f.def.ultimate;
-      if ((u.type === 'catch' && Math.hypot(dx, dy) < u.radius * f.h * 0.8) || (u.type === 'stampede' && Math.abs(dy) < 120 && adx < 900)) { f.face = Math.sign(dx) || f.face; inp.ult = true; return inp; }
+      const near = u.type === 'catch' ? (u.ahead ? adx < u.ahead * f.h * 0.8 && Math.abs(dy) < f.h : Math.hypot(dx, dy) < (u.radius || 2) * f.h * 0.8)
+        : u.type === 'decoy' ? adx < (u.radius || 2) * f.h && Math.abs(dy) < f.h
+        : Math.abs(dy) < 120 && adx < 900; // stampede, beam, barrage: anyone ahead on the same level
+      if (near) { f.face = Math.sign(dx) || f.face; inp.ult = true; return inp; }
     }
     // 3) attack when close
     const reach = 80 * f.s + 30;

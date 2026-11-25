@@ -42,6 +42,22 @@ MOVES = {
     'sara': dict(jab='edge', side='restraint', down='sweep', up='reaper', nair='halo', fair='lunge', uair='reach', dair='wdrop',
                  neutral='roseshot', sideSpecial='fang', upSpecial='lifeline', downSpecial='widow',
                  upRow='reaper', uairRow='reach', riseMid='lifeline2', riseLate='lifeline3'),
+    # Jorie, "The Free Roamer"; his Chocolate Milk Rage form; Jaxston (kicks only, left-footed); Evea and her Spirit Link form
+    'jorie': dict(jab='bonk', side='roadkick', down='sweep', up='whip', nair='orbit', fair='volley', uair='skywhip', dair='stomp',
+                  neutral='drink', sideSpecial='pedal', upSpecial='hop', downSpecial='tent', counterHit='tent2',
+                  upRow='whip', uairRow='skywhip', riseMid='hop2', riseLate='hop3'),
+    'jorie-rage': dict(jab='smash', side='smash', down='clap', up='clap', nair='smash', fair='smash', uair='clap', dair='smash',
+                       neutral='clap', sideSpecial='smash', upSpecial='jump', downSpecial='clap',
+                       upRow='clap', uairRow='clap', riseLate='jump2'),
+    'jaxston': dict(jab='leftfoot', side='round', down='csweep', up='spin', nair='airspin', fair='skyvolley', uair='bicycle', dair='meteor',
+                    neutral='launch', sideSpecial='cleat', upSpecial='tornado', downSpecial='clutter',
+                    upRow='spin', uairRow='bicycle', riseMid='tornado2', riseLate='tornado3'),
+    'evea': dict(jab='tap', side='scoot', down='twirl', up='horn', nair='circle', fair='rvolley', uair='skysp', dair='shoe',
+                 neutral='startoss', sideSpecial='express', upSpecial='rrise', downSpecial='hoof',
+                 upRow='horn', uairRow='skysp', riseMid='rrise2', riseLate='rrise3'),
+    'evea-spirit': dict(jab='pulse', side='haunt', down='grandma', up='slift', nair='run', fair='haunt', uair='slift', dair='jump',
+                        neutral='pulse', sideSpecial='haunt', upSpecial='slift', downSpecial='grandma', counterHit='grandma2',
+                        upRow='slift', uairRow='slift', riseMid='slift2', riseLate='slift3'),
     'codee-clean': dict(jab='sweep', side='trash', down='mop', up='duster', nair='polish', fair='dbust', uair='hdust', dair='squeak',
                         neutral='suds', sideSpecial='patrol', upSpecial='vac', downSpecial='wet',
                         airRow='dbust', upRow='duster', uairRow='hdust', riseLate='vac3', defRow='def'),
@@ -75,23 +91,35 @@ window.MM = window.MM || {};
 MM.SPRITES = MM.SPRITES || {};
 """]
 # extra names for frames (Courtnee's personality poses live in his own atlas)
-ALIASES = {w: {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'} for w in ('courtnee', 'megan', 'siren', 'codee', 'codee-clean', 'haylie', 'sara')}
+ALIASES = {w: {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'} for w in ('courtnee', 'megan', 'siren', 'codee', 'codee-clean', 'haylie', 'sara', 'jorie', 'jaxston', 'evea')}
+ALIASES['jorie-rage'] = {'ent': 'xform3', 'taunt': 'xform3', 'win': 'xform3', 'lose': 'hurt3'}
+ALIASES['evea-spirit'] = {'ent': 'link2', 'taunt': 'link3', 'win': 'link3', 'lose': 'hurt3'}
+# the standing pose to size the personality sheet by, when the taunt reaches up (Jorie lifts the milk jug overhead)
+PERS_REF = {'jorie': 'pers0'}
+# standing height comes from another pose (Evea's spirit poses have Grandma floating over her: size her by Evea alone)
+STANDH_FROM = {'evea-spirit': 'link0'}
+# a move group cut from another sheet: size it so its first pose is as tall as the idle pose
+MATCH_IDLE = {'jorie': ('cup',), 'evea': ('cup',)}
 for who, moves in MOVES.items():
     fr = json.load(open(os.path.join(src_dir, f'{who}-frames.json')))
     for a, b in ALIASES.get(who, {}).items(): fr[a] = fr[b]
     body = ',\n'.join(f"    '{k}': [{', '.join(str(v) for v in val)}]" for k, val in fr.items())
     fs = {}
     if 'taunt' in fr:
-        f0 = sheet_factor(fr, fr)
+        f0 = sheet_factor(fr, fr) if who not in PERS_REF else round(fr['idle0'][3] / fr[PERS_REF[who]][3], 3)
         fs = {k: f0 for k in fr if k.startswith(PERS_FRAMES)}
     for k, m in BIGGER.get(who, {}).items(): fs[k] = round(fs.get(k, 1) * m, 3)
+    std = fr[STANDH_FROM.get(who, 'idle0')][3]
+    for pre in MATCH_IDLE.get(who, ()):
+        for k in fr:
+            if re.fullmatch(pre + r'\d+', k): fs[k] = round(fs.get(k, 1) * std / fr[pre + '0'][3], 3)
     for pre, m in GROUP_SCALE.get(who, {}).items():
         for k in fr:
             if re.fullmatch(pre + r'(\d+)?', k): fs[k] = round(fs.get(k, 1) * m, 3)
     parts.append(f"""
 MM.SPRITES['{who}'] = {{
   src: 'img/{who}-atlas.webp',
-  standH: {fr['idle0'][3]},
+  standH: {std},
   fscale: {json.dumps(fs)},
   frames: {{
 {body}

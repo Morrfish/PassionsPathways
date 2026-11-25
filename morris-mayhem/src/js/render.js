@@ -57,6 +57,7 @@ window.MM = window.MM || {};
         if (kind === 'icewave') return row + (a.t < 12 ? 0 : a.t < sp_startup(a) ? 1 : a.t < sp_startup(a) + 10 ? 2 : 3);
         if (kind === 'transform') return row + (a.t < 8 ? 0 : a.t < 20 ? 1 : a.t < 30 ? 2 : 3);
         if (kind === 'trap') return row + (a.t < 6 ? 0 : a.t < 12 ? 1 : a.t < 18 ? 2 : 3);
+        if (kind === 'drink') return row + (a.ending ? 3 : a.t < 8 ? 0 : 1 + ((a.t >> 4) & 1)); // pick up the jug, chug, wipe the mouth
         if (row) return row + Math.min(3, Math.floor((a.t / a.dur) * 4));
       }
     }
@@ -145,7 +146,7 @@ window.MM = window.MM || {};
     if (f.ground) { g.save(); g.strokeStyle = f.team ? MM.TEAM_COLORS[f.team] : MM.PLAYER_COLORS[f.slot]; g.lineWidth = 4; g.globalAlpha *= 0.85; g.beginPath(); g.ellipse(0, -2, f.w * 0.9, 8, 0, 0, TAU); g.stroke(); g.restore(); }
     g.scale(f.face * k, k);
     g.drawImage(im, fr[0], fr[1], fr[2], fr[3], -fr[4], -fr[5], fr[2], fr[3]);
-    const lvl = f.def.mess && f.formIdx === 0 && !(f.act && f.act.type === 'cleanup') ? (f.mess >= 100 ? 3 : f.mess >= 66 ? 2 : f.mess >= 33 ? 1 : 0) : 0;
+    const lvl = f.def.mess && f.def.mess.dirt && f.formIdx === 0 && !(f.act && f.act.type === 'cleanup') ? (f.mess >= 100 ? 3 : f.mess >= 66 ? 2 : f.mess >= 33 ? 1 : 0) : 0;
     if (lvl) g.drawImage(dirtFor(sh, frameName, fr, lvl), -fr[4], -fr[5]);
     g.restore();
     if (f.def.fx && f.act && fsh) for (const e of f.def.fx) { // e.g. Sara's ink tattoo effects
@@ -186,12 +187,32 @@ window.MM = window.MM || {};
     const a = f.act; if (!a || a.type !== 'ult') return;
     if (a.u.type === 'stampede' && a.sweepX != null) {
       g.save(); g.font = '72px serif'; g.textAlign = 'center'; g.textBaseline = 'bottom';
-      const herd = a.u.emoji || ['🦌', '🐇', '🐿️', '🦌', '🐇'];
+      const herd = a.u.herd ? [] : a.u.emoji || ['🦌', '🐇', '🐿️', '🦌', '🐇'];
       herd.forEach((e, i) => {
         const x = a.sweepX - f.face * i * 70, y = f.y - Math.abs(Math.sin(G.frame * 0.4 + i)) * 26;
         g.save(); g.translate(x, y); g.scale(-f.face, 1); g.fillText(e, 0, 0); g.restore(); // emoji animals face left; flip to run forward
       });
       g.restore();
+    }
+    if (a.u.herd && a.sweepX != null) { // e.g. Evea's spectral unicorns: pictures instead of emoji
+      const sh = sheet(a.u.sprite || f.def.sprite), fr = sh && sh.S.frames[a.u.herd];
+      if (fr) {
+        const h = f.h * 1.35, w = (fr[2] / fr[3]) * h;
+        for (let i = 0; i < 3; i++) {
+          const x = a.sweepX - f.face * i * 120, y = f.y - Math.abs(Math.sin(G.frame * 0.35 + i)) * 22 - i * 30;
+          g.save(); g.globalAlpha = 0.75; g.translate(x, y); g.scale(f.face, 1);
+          g.drawImage(sh.im, fr[0], fr[1], fr[2], fr[3], -w / 2, -h, w, h); g.restore();
+        }
+      }
+    }
+    if (a.decoy) { // Jorie's Cardboard Checkout: the cutout stands there, then bursts
+      const sh = sheet(f.def.ultimate.sprite || f.def.sprite), burst = a.t >= a.u.burstAt;
+      const fr = sh && sh.S.frames[burst ? 'ult3' : (a.u.decoyPic || 'fxdecoy')];
+      if (fr) {
+        const k = burst ? 1 + Math.min(0.5, (a.t - a.u.burstAt) / 30) : 1, h = f.h * (burst ? 1.5 : 1.05) * k, w = (fr[2] / fr[3]) * h;
+        g.save(); if (burst) g.globalAlpha = Math.max(0, 1 - (a.t - a.u.burstAt - 18) / 20);
+        g.translate(a.decoy.x, a.decoy.y + (burst ? h * 0.15 : 0)); g.scale(a.decoy.face, 1); g.drawImage(sh.im, fr[0], fr[1], fr[2], fr[3], -w / 2, -h, w, h); g.restore();
+      }
     }
     if (a.u.type === 'catch') {
       const k = Math.min(1, a.t / a.u.catchAt), r = a.u.radius * f.h * (a.t < a.u.catchAt ? k : 1);
@@ -731,9 +752,9 @@ window.MM = window.MM || {};
         const mx = tx, mw2 = Math.max(20, x + 588 * k - f.stocks * (ss + 3) - 8 - mx), my = y0 + 194 * k;
         const clean = f.formIdx === 1, v = clean ? f.clean / f.def.mess.cleanFrames : (f.mess || 0) / 100, full = !clean && v >= 1;
         g.fillStyle = '#0008'; rr(g, mx, my, mw2, 7, 3); g.fill();
-        g.fillStyle = clean ? '#bfe9ff' : full ? `hsl(${100 + 20 * Math.sin(G.frame * 0.3)},70%,50%)` : '#8a5a2a';
+        const MC = f.def.mess; g.fillStyle = clean ? (MC.formBar || '#bfe9ff') : full ? `hsl(${(MC.hue ?? 100) + 20 * Math.sin(G.frame * 0.3)},70%,55%)` : (MC.bar || '#8a5a2a');
         if (v > 0) { rr(g, mx, my, Math.max(4, mw2 * Math.min(1, v)), 7, 3); g.fill(); }
-        if (full) { g.font = `900 12px system-ui`; g.textAlign = 'left'; g.textBaseline = 'bottom'; g.lineWidth = 3; g.strokeStyle = '#000'; g.strokeText('CLEAN UP! (Switch)', x + 270 * k, y0 + 4); g.fillStyle = '#bfe9ff'; g.fillText('CLEAN UP! (Switch)', x + 270 * k, y0 + 4); }
+        if (full) { g.font = `900 12px system-ui`; g.textAlign = 'left'; g.textBaseline = 'bottom'; g.lineWidth = 3; g.strokeStyle = '#000'; const rt = (MC.ready || 'CLEAN UP!') + ' (Switch)'; g.strokeText(rt, x + 270 * k, y0 + 4); g.fillStyle = MC.color || '#bfe9ff'; g.fillText(rt, x + 270 * k, y0 + 4); }
       }
       if (!f.out && f.def.ultimate) ultMeter(g, G, x + 440 * k, y0 + ph - mh * 0.38, mw, f.meter / 100); // ultimate meter under the field
       g.globalAlpha = 1;
