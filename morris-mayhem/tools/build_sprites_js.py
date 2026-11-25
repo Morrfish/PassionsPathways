@@ -78,7 +78,8 @@ MOVES = {
     'sabir-anime': dict(jab='lpalm', side='ribkick', down='twirl', up='sreach', nair='htwirl', fair='flyrib', uair='scatch', dair='meteor',
                         neutral='letter', sideSpecial='ribdash', upSpecial='skyhigh', downSpecial='guard', counterHit='guard2',
                         upRow='sreach', uairRow='scatch', riseMid='skyhigh2', riseLate='skyhigh3'),
-    'siren-dragon': dict(jab='tail', side='tail', down='stomp', up='horn', nair='wing', fair='wing', uair='horn', dair='stomp',
+    'siren-dragon': dict(jab='atk', side='atk', down='stomp', up='horn', nair='atk', fair='atk',  # atk/idle/run/jump/hurt/prism/tired: hi-res
+                         uair='horn', dair='stomp',
                          neutral='prism', sideSpecial='barrage', upSpecial='soar', downSpecial='shield', counterHit='shield2',
                          upRow='horn', uairRow='horn', riseMid='soar2', riseLate='soar3'),
     'jeffery-mayhem': dict(jab='reel', side='rush', down='reel', up='boot', nair='boot', fair='boot', uair='boot', dair='boot',
@@ -193,6 +194,10 @@ for who, moves in MOVES.items():
     for pre, m in GROUP_SCALE.get(who, {}).items():
         for k in fr:
             if re.fullmatch(pre + r'(\d+)?', k): fs[k] = round(fs.get(k, 1) * m, 3)
+    extra = os.path.join(src_dir, f'{who}-fscale.json')  # per-pose sizes written by an art tool (e.g. add_dragon_hires.py)
+    if os.path.exists(extra):
+        for k, m in json.load(open(extra)).items():
+            if k in fr: fs[k] = round(fs.get(k, 1) * m, 3)
     parts.append(f"""
 MM.SPRITES['{who}'] = {{
   src: 'img/{who}-atlas.webp',{f"{chr(10)}  left: '{LEFT[who]}'," if who in LEFT else ''}{f"{chr(10)}  base: '{BASE[who]}'," if who in BASE else ''}
@@ -234,7 +239,7 @@ MM.SPRITES['{who}'] = {{ src: 'img/{who}-atlas.webp', standH: {std},{left} fscal
 }} }};
 """)
 # atlases that aren't a fighter (e.g. Jeff's Opening Day animals): frames only
-for who in ('jeff-animals', 'kcj-fx'):
+for who in ('jeff-animals', 'kcj-fx', 'fx10'):
     fr = json.load(open(os.path.join(src_dir, f'{who}-frames.json')))
     body = ',\n'.join(f"    '{k}': [{', '.join(str(v) for v in val)}]" for k, val in fr.items())
     parts.append(f"""

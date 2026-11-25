@@ -541,7 +541,7 @@ window.MM = window.MM || {};
           const n = sp.count || 1;
           for (let i = 0; i < n; i++) {
             const ang = n > 1 ? (i - (n - 1) / 2) * (sp.spread || 0.2) : 0;
-            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, sprite: sp.sprite, sheet: sp.sheet, scale: sp.scale, spin: sp.spin, puddle: sp.puddle, slow: sp.slow, bounce: sp.bounce, boomer: sp.boomerang, pull: sp.pull, line: sp.line, dir: f.face });
+            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, sprite: sp.sprites ? sp.sprites[i % sp.sprites.length] : sp.sprite, sheet: sp.sheet, anim: sp.anim, animOnce: sp.animOnce, px: sp.px, scale: sp.scale, spin: sp.spin, puddle: sp.puddle, slow: sp.slow, bounce: sp.bounce, boomer: sp.boomerang, pull: sp.pull, line: sp.line, dir: f.face });
           }
         }
       },
@@ -818,7 +818,7 @@ window.MM = window.MM || {};
           if (d === f || d.dead || d.out || d.invuln > 0 || d.caught || (MM.sameTeam(G, f, d) && !G.ff)) continue;
           const inReach = u.ahead ? (d.x - f.x) * f.face > -f.w && (d.x - f.x) * f.face < u.ahead * f.h && Math.abs((d.y - d.h / 2) - (f.y - f.h / 2)) < f.h * 1.2
             : Math.hypot(d.x - f.x, (d.y - d.h / 2) - (f.y - f.h / 2)) <= r;
-          if (inReach) { d.caught = f; d.act = null; d.hitstun = 0; d.vx = d.vy = 0; a.caught.push(d); burst(G, d.x, d.y - d.h / 2, f.accent, 10, 4); }
+          if (inReach) { d.caught = f; d.act = null; d.hitstun = 0; d.vx = d.vy = 0; a.caught.push(d); burst(G, d.x, d.y - d.h / 2, f.accent, 10, 4); part(G, { type: 'fx', img: 'catchring', x: d.x, y: d.y - d.h / 2, size: d.h * 1.6, grow: true, life: 30, max: 30 }); }
         }
         part(G, { type: 'ring', x: f.x, y: f.y - f.h / 2, color: f.accent, size: r * 0.6, life: 24, max: 24 });
       }
@@ -931,6 +931,8 @@ window.MM = window.MM || {};
     if (def.def.mess && def.def.mess.hurt && att && att !== def) addMess(G, def, def.def.mess.hurt);
     if (att && att.def.mess && !MM.sameTeam(G, att, def)) { const cast = proj ? proj.cast : att.act; if (cast && cast.type !== 'ult' && !cast.messHit) { cast.messHit = true; addMess(G, att, att.def.mess.hit); } }
     burst(G, hx, hy, '#fff', 4 + (dmg | 0), 4 + dmg * 0.3);
+    const big = dmg >= 12 || (h.kb || 0) > 11; // ChatGPT's hit art: a small spark, or a big burst for heavy hits
+    part(G, { type: 'fx', img: big ? 'hitbig' : 'hitsmall', x: hx, y: hy, size: big ? 150 : 70, grow: true, rot: Math.random() * 6.28, life: big ? 16 : 11, max: big ? 16 : 11 });
     if (da && da.armor && dmg < 15) { MM.sfx('hit', 0.3); def.lag = 3; return true; }
     let kb = (h.kb + h.kbg * def.damage * (0.6 + dmg / 25)) / def.st.weight;
     if (h.light) kb = h.kb;

@@ -473,7 +473,7 @@ MM.FIGHTERS = [
   const coleShared = {
     side: { kind: 'teleport', name: 'Portal Step', dist: 170, cd: 120 },
     up: { kind: 'rise', name: 'Web Swing', power: 19.5, forward: 4, dmg: 5, kb: 6, kbg: 0.06 },
-    down: { kind: 'trap', name: 'Spider Snare', thing: 'a sticky web on the floor that slows anyone who steps in it', emoji: '🕸️', slowOnly: true, slow: { mul: 0.75, t: 36 }, life: 120, cd: 120 },
+    down: { kind: 'trap', name: 'Spider Snare', thing: 'a sticky web on the floor that slows anyone who steps in it', emoji: '🕸️', sheet: 'fx10', sprite: 'web', px: 130, slowOnly: true, slow: { mul: 0.75, t: 36 }, life: 120, cd: 120 },
   };
   const hammer = { kind: 'projectile', name: 'Hammer Return', thing: 'Mjolnir, which flies back to him (one hit out, one hit back)', sprite: 'fxhammer', scale: 0.3, speed: 13, spin: true, boomerang: true, dmg: 8, kb: 6, kbg: 0.08, r: 20, life: 90, cd: 90 };
   const coleSpecials = [
@@ -500,7 +500,7 @@ MM.FIGHTERS = [
       attackNames: { jab: 'Tail Brush', side: 'Tail Brush', up: 'Pencil Horn Lift', down: 'Block Stomp', air: 'Wing Swipe, Pencil Horn Lift, Block Stomp' },
       specials: {
         neutral: { kind: 'beam', name: 'Prism Breath', thing: 'a rainbow breath (hold Special to make it bigger)', startup: 16, active: 18, recovery: 18, maxCharge: 30, len: 430, dmg: 8, kb: 7, kbg: 0.1, cd: 60 },
-        side: { kind: 'projectile', name: 'Block Barrage', thing: 'three toy blocks', sprite: 'fxcubes', scale: 0.38, speed: 12, dmg: 9, kb: 7, kbg: 0.09, r: 26, life: 55, cd: 90 },
+        side: { kind: 'projectile', name: 'Block Barrage', thing: 'three toy blocks', sprite: 'fxcubes', scale: 0.77, speed: 12, dmg: 9, kb: 7, kbg: 0.09, r: 26, life: 55, cd: 90 },
         up: { kind: 'rise', name: 'Canvas Soar', power: 20, forward: 4, dmg: 6, kb: 6, kbg: 0.06 },
         down: { kind: 'counter', name: 'Sketch Shield', window: 18, mult: 1.3 },
       },
@@ -624,10 +624,10 @@ MM.GIANTS = [
     stats: { speed: 6.2, air: 5.8, jump: 14.5, weight: 1.6, power: 1.2, size: 2.0 },
     attackNames: { jab: 'Claw Rend', side: 'Antler Charge', up: 'Antler Lift', down: 'Squirrel Tail Sweep', air: 'Rabbit Pounce, Reverse Tail, Antler Lift' },
     specials: {
-      neutral: { kind: 'projectile', name: 'Woodland Call', thing: 'a swirl of leaves and feathers', emoji: '🍂', speed: 10, dmg: 9, kb: 7, kbg: 0.09, r: 30, life: 70, cd: 60 },
+      neutral: { kind: 'projectile', name: 'Woodland Call', thing: 'a swirl of leaves and feathers', emoji: '🍂', sheet: 'fx10', anim: ['woodland0', 'woodland1', 'woodland2', 'woodland3'], px: 95, speed: 10, dmg: 9, kb: 7, kbg: 0.09, r: 30, life: 70, cd: 60 },
       side: { kind: 'dash', name: 'Antler Charge', speed: 13, dur: 22, dmg: 13, kb: 9, kbg: 0.13, ang: 35, cd: 120, box: [-20, -200, 160, 200] },
       up: { kind: 'rise', name: 'Sky Bound', power: 20, forward: 4, dmg: 9, kb: 7, kbg: 0.08 },
-      down: { kind: 'projectile', name: 'Lake Maw', thing: 'a blast of lake water', emoji: '🌊', speed: 12, dmg: 11, kb: 8, kbg: 0.1, r: 34, life: 50, cd: 90 },
+      down: { kind: 'projectile', name: 'Lake Maw', thing: 'a blast of lake water', emoji: '🌊', sheet: 'fx10', anim: ['lakemaw0', 'lakemaw1', 'lakemaw2', 'lakemaw3'], animOnce: true, px: 110, speed: 12, dmg: 11, kb: 8, kbg: 0.1, r: 34, life: 50, cd: 90 },
     },
     taunt: 'RRRAAAWR!',
     ultimate: { name: 'Wild Mayhem', sprite: 'jeff-giant', type: 'stampede', herdSheet: 'jeff-animals', dur: 150, spawnAt: 48, sweepDur: 56, dmg: 26, kbMul: 1.5,
@@ -641,7 +641,7 @@ MM.GIANTS = [
     stats: { speed: 5.9, air: 5.6, jump: 14, weight: 1.7, power: 1.22, size: 2.0 },
     attackNames: { jab: 'Package One Two', side: 'Double Delivery Slam', up: 'Package One Two', down: 'Parcel Stomp', air: 'Express Crush, Parcel Stomp' },
     specials: {
-      neutral: { kind: 'projectile', name: 'Parcel Rain', thing: 'three parcels', emoji: '📦', count: 3, spread: 0.25, speed: 9, vy: -7, grav: 0.35, dmg: 6, kb: 6, kbg: 0.07, r: 26, life: 90, cd: 70 },
+      neutral: { kind: 'projectile', name: 'Parcel Rain', thing: 'three parcels', emoji: '📦', sheet: 'fx10', sprites: ['parcel0', 'parcel1', 'parcel2'], px: 70, count: 3, spread: 0.25, speed: 9, vy: -7, grav: 0.35, dmg: 6, kb: 6, kbg: 0.07, r: 26, life: 90, cd: 70 },
       side: { kind: 'dash', name: 'Express Crush', speed: 13, dur: 22, dmg: 13, kb: 9, kbg: 0.13, ang: 35, cd: 120, box: [-20, -200, 170, 200] },
       up: { kind: 'rise', name: 'Parcel Lift', power: 19.5, forward: 3, dmg: 9, kb: 7, kbg: 0.08 },
       down: { kind: 'pack', name: 'Triple Trouble', thing: 'her three-headed dog, who charges while she catches her breath', sheet: 'triple-trouble', sprites: ['run0'], anim: ['run0', 'run1', 'run2', 'run3'], scale: 0.55, speed: 11, life: 80, dmg: 11, kb: 8, kbg: 0.1, cd: 240, heal: 6 },
@@ -657,7 +657,7 @@ MM.GIANTS = [
     stats: { speed: 7.8, air: 6.8, jump: 15.5, weight: 0.95, power: 1.0, size: 1.0 },
     attackNames: { jab: 'Triple Bite', side: 'Triple Bite', up: 'Head Lift', down: 'Tail Sweep', air: 'Triple Bite, Tail Sweep' },
     specials: {
-      neutral: { kind: 'projectile', name: 'Triple Yap', thing: 'a purple-and-gold bark wave', emoji: '💢', speed: 13, dmg: 7, kb: 6, kbg: 0.08, r: 24, life: 40, cd: 50 },
+      neutral: { kind: 'projectile', name: 'Triple Yap', thing: 'a purple-and-gold bark wave', emoji: '💢', sheet: 'fx10', anim: ['yap0', 'yap1', 'yap2', 'yap3'], px: 70, speed: 13, dmg: 7, kb: 6, kbg: 0.08, r: 24, life: 40, cd: 50 },
       side: { kind: 'dash', name: 'Pack Rush', speed: 16, dur: 18, dmg: 9, kb: 7.5, kbg: 0.11, ang: 30, cd: 110, box: [-10, -90, 110, 90] },
       up: { kind: 'rise', name: "Three's a Leap", power: 20, forward: 4, dmg: 6, kb: 6, kbg: 0.06 },
       down: { kind: 'counter', name: 'Three Head Guard', window: 18, mult: 1.3 },

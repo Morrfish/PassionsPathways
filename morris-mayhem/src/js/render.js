@@ -18,7 +18,7 @@ window.MM = window.MM || {};
   }
   // load every fighter's atlases up front, including the ultimate/victory sheets (otherwise a fighter who never
   // used their ultimate has no victory pose ready for the results screen)
-  MM.preloadSprites = () => { for (const d of MM.allDefs()) for (const id of [d.sprite, d.ultimate && d.ultimate.sprite]) if (id) { sheet(id); const S = MM.SPRITES && MM.SPRITES[id]; if (S && S.left) sheet(S.left); if (S && S.base) sheet(S.base); } for (const d of MM.allDefs()) { if (d.ultimate && d.ultimate.herdSheet) sheet(d.ultimate.herdSheet); for (const fm of d.forms || [d]) for (const sp of Object.values(fm.specials || {})) if (sp && sp.sheet) sheet(sp.sheet); if (d.ultimate && d.ultimate.fxSheet) sheet(d.ultimate.fxSheet); } };
+  MM.preloadSprites = () => { sheet('fx10'); for (const d of MM.allDefs()) for (const id of [d.sprite, d.ultimate && d.ultimate.sprite]) if (id) { sheet(id); const S = MM.SPRITES && MM.SPRITES[id]; if (S && S.left) sheet(S.left); if (S && S.base) sheet(S.base); } for (const d of MM.allDefs()) { if (d.ultimate && d.ultimate.herdSheet) sheet(d.ultimate.herdSheet); for (const fm of d.forms || [d]) for (const sp of Object.values(fm.specials || {})) if (sp && sp.sheet) sheet(sp.sheet); if (d.ultimate && d.ultimate.fxSheet) sheet(d.ultimate.fxSheet); } };
   MM.whenPoseReady = (def, cb) => { const u = def.ultimate, id = u && u.sprite; if (!id) return; sheet(id); const im = spriteImgs[id]; if (im && !(im.complete && im.naturalWidth)) im.addEventListener('load', cb, { once: true }); };
 
   // How far below the walking line the feet are drawn (world px): the floor art has a top face, so a fighter standing
@@ -31,6 +31,8 @@ window.MM = window.MM || {};
     if (f.phaseIn > 0 && S.frames.cup0) return 'cup' + Math.min(3, Math.floor((150 - f.phaseIn) / 32)); // story boss turning giant
     if (f.float > 0) return 'idle' + (Math.floor(f.anim / 16) % 4); // coming back after a KO: stand on the respawn spot
     if (f.hitstun > 0) return !f.ground ? 'hurt2' : f.hitstun > 5 ? 'hurt1' : f.hitstun > 2 ? 'hurt0' : S.frames.hurt3 ? 'hurt3' : 'hurt0'; // big hit, reel, then shake it off
+    if (f.formIdx > 0 && f.def.mess && f.def.mess.exhaust && f.clean > 0 && f.clean < 120 && !a && f.ground && Math.abs(f.vx) < 1 && S.frames.tired0) // the dragon tires in her last 2 s
+      return f.clean < 30 ? 'tired1' : 'tired' + (Math.floor(f.anim / 20) % 2 ? 3 : 0); // droop, then sit down just before she changes back
     if (f.exhaust > 0 && S.frames.tired0) return f.hitstun > 0 ? 'tired2' : f.exhaust < 16 ? 'tired3' : 'tired0'; // Siren worn out after the dragon
     if (f.jsq > 0) return 'jump0';
     if (a) {
@@ -183,10 +185,22 @@ window.MM = window.MM || {};
   }
 
   // one smooth energy beam (no tiles): soft outer glow, bright core, the art's beam tip at the end, an orb at the hands
+  MM.BEAM_ART_K = 3.4; // the beam art is this many times as tall as the beam's hit thickness
   function drawBeam(g, f, G) {
     const b = f.act && f.act.beam; if (!b || (f.act.u && f.act.u.noBeamArt)) return; // some ultimates draw their wave in the pose art
     const sh = f.def.sprite && sheet(f.def.sprite), tip = sh && sh.S.frames.fx3, orb = sh && sh.S.frames.fx0;
     const gold = !!f.super, flick = 1 + 0.06 * Math.sin(G.frame * 1.7), th = b.th * flick;
+    const fx = f.def.rainbowBeam && sheet('fx10'), bst = fx && fx.S.frames.beamstart, bmd = fx && fx.S.frames.beammid;
+    if (bst && bmd) { // Siren's dragon: ChatGPT's rainbow beam, the start piece then the middle piece repeated to the end
+      const k = (th * MM.BEAM_ART_K) / bst[3], sw = bst[2] * k, mw = bmd[2] * k;
+      g.save(); g.translate(b.x, b.y); g.scale(b.dir, 1);
+      g.drawImage(fx.im, bst[0], bst[1], bst[2], bst[3], 0, -bst[5] * k, sw, bst[3] * k);
+      for (let x = sw - 1; x < b.len; x += mw - 1) {
+        const w = Math.min(mw, b.len - x), sw2 = (w / mw) * bmd[2];
+        g.drawImage(fx.im, bmd[0], bmd[1], sw2, bmd[3], x, -bmd[5] * k, w, bmd[3] * k);
+      }
+      g.restore(); return;
+    }
     g.save(); g.translate(b.x, b.y); g.scale(b.dir, 1);
     const tipW = tip ? Math.min(b.len * 0.35, (tip[2] / tip[3]) * th * 1.5) : 0, bodyLen = b.len - tipW * 0.6;
     const layer = (h, color, alpha) => { g.globalAlpha = alpha; g.fillStyle = color; g.beginPath(); g.roundRect ? g.roundRect(0, -h / 2, bodyLen, h, h / 2) : g.rect(0, -h / 2, bodyLen, h); g.fill(); };
@@ -286,8 +300,9 @@ window.MM = window.MM || {};
     let sh = p.sheet ? sheet(p.sheet) : p.sprite && p.owner.def.sprite && sheet(p.owner.def.sprite);
     if (sh && !sh.S.frames[p.anim ? p.anim[0] : p.sprite] && (sh.S.base || p.base)) sh = sheet(sh.S.base || p.base) || sh;
     if (!sh) return false;
-    const fr = sh.S.frames[p.anim ? p.anim[Math.floor(p.t / 5) % p.anim.length] : p.sprite]; if (!fr) return false;
-    const k = ((p.owner.h * 1.15) / sh.S.standH) * (p.scale || 1);
+    const ai = p.anim && (p.animOnce ? Math.min(p.anim.length - 1, Math.floor((p.t / (p.t + p.life)) * p.anim.length)) : Math.floor(p.t / 5) % p.anim.length);
+    const fr = sh.S.frames[p.anim ? p.anim[ai] : p.sprite]; if (!fr) return false;
+    const k = p.px ? p.px / Math.max(fr[2], fr[3]) : ((p.owner.h * 1.15) / sh.S.standH) * (p.scale || 1); // px: drawn this many pixels across
     if (p.line && !p.owner.dead && !p.owner.out) { // fishing line from the rod to the bobber
       const o = p.owner;
       g.save(); g.strokeStyle = 'rgba(30,30,30,.8)'; g.lineWidth = 2; g.beginPath();
@@ -765,6 +780,8 @@ window.MM = window.MM || {};
       const k = p.life / p.max;
       g.globalAlpha = Math.max(0, Math.min(1, k * 1.5));
       if (p.type === 'text') { g.fillStyle = p.color; g.font = `900 ${p.size}px system-ui`; g.textAlign = 'center'; g.lineWidth = 5; g.strokeStyle = '#1b1b2a'; g.strokeText(p.text, p.x, p.y); g.fillText(p.text, p.x, p.y); }
+      else if (p.type === 'fx' && drawFx(g, 'fx10', p.img, p.x, p.y, p.size * (p.grow ? 0.6 + 0.6 * (1 - k) : 1), Math.min(1, k * 2), p.rot || 0)) { /* hit spark, big burst, catch ring */ }
+      else if (p.type === 'fx') { /* art not loaded yet */ }
       else if (p.type === 'ring') { g.strokeStyle = p.color; g.lineWidth = 4 * k + 1; g.beginPath(); g.arc(p.x, p.y, p.size + (1 - k) * 60, 0, TAU); g.stroke(); }
       else if (p.type === 'smoke') { g.fillStyle = p.color; g.beginPath(); g.arc(p.x, p.y, p.size * (1.6 - k), 0, TAU); g.fill(); }
       else { g.fillStyle = p.color; g.beginPath(); g.arc(p.x, p.y, p.size * k, 0, TAU); g.fill(); }
@@ -885,14 +902,16 @@ window.MM = window.MM || {};
     for (const p of G.stage.plats) art.plat(g, p, G);
     for (const it of G.items || []) { // Mayhem Star: a glowing gold star that bobs on the floor
       const b = Math.sin(G.frame * 0.12) * 6, pulse = 1 + 0.12 * Math.sin(G.frame * 0.25);
-      g.save(); g.translate(it.x, it.y - 30 + b); g.globalAlpha = it.life < 120 && Math.floor(G.frame / 6) % 2 ? 0.4 : 1;
+      const blink = it.life < 120 && Math.floor(G.frame / 6) % 2 ? 0.4 : 1;
+      if (drawFx(g, 'fx10', 'star' + (Math.floor(G.frame / 7) % 4), it.x, it.y - 34 + b, 78 * pulse, blink)) continue; // ChatGPT's star
+      g.save(); g.translate(it.x, it.y - 30 + b); g.globalAlpha = blink;
       g.fillStyle = 'rgba(255,211,74,0.35)'; g.beginPath(); g.arc(0, 0, 34 * pulse, 0, TAU); g.fill();
       g.rotate(Math.sin(G.frame * 0.05) * 0.2); g.beginPath();
       for (let i = 0; i < 10; i++) { const r = i % 2 ? 11 : 26, an = -Math.PI / 2 + (i * Math.PI) / 5; g.lineTo(Math.cos(an) * r, Math.sin(an) * r); }
       g.closePath(); g.fillStyle = '#ffd34a'; g.fill(); g.lineWidth = 4; g.strokeStyle = '#7a4a00'; g.stroke();
       g.fillStyle = '#fff6c8'; g.beginPath(); g.arc(-6, -8, 4, 0, TAU); g.fill(); g.restore();
     }
-    for (const t of G.traps) if (t.sp.sprite) drawSpriteProj(g, { sprite: t.sp.sprite, sheet: t.sp.sheet, owner: t.owner, x: t.x, y: t.y - 18, runner: true, t: 0, dir: t.dir || 1, scale: t.sp.scale, base: t.piece != null ? 'sabir' : null }, G);
+    for (const t of G.traps) if (t.sp.sprite) drawSpriteProj(g, { sprite: t.sp.sprite, sheet: t.sp.sheet, px: t.sp.px, owner: t.owner, x: t.x, y: t.y - 18, runner: true, t: 0, dir: t.dir || 1, scale: t.sp.scale, base: t.piece != null ? 'sabir' : null }, G);
     for (const t of G.traps) if (t.sp.root) { // Cloe's paint splashes
       if (t.sp.puddle && drawFx(g, 'kcj-fx', t.sp.puddle, t.x, t.y - 10, 140, Math.min(1, t.life / 40))) continue;
       g.save(); g.globalAlpha = Math.min(1, t.life / 40) * 0.85; g.fillStyle = t.sp.color;
