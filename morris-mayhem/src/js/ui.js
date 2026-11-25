@@ -52,8 +52,9 @@ window.MM = window.MM || {};
     if (id === 'moves') drawMoves();
     if (id === 'story') drawStory();
     if (id === 'arena') drawArenas();
+    if (id === 'practice') drawPractice();
     if (id === 'maker' && MM.arenaMaker) MM.arenaMaker.open(); // Arena Maker (arena-maker.js)
-    if ((id === 'title' || id === 'select' || id === 'arena' || id === 'howto' || id === 'family' || id === 'moves' || id === 'story') && !paused) { G = null; demo = null; } // menus have their own backgrounds now (no demo match behind)
+    if ((id === 'title' || id === 'select' || id === 'arena' || id === 'practice' || id === 'howto' || id === 'family' || id === 'moves' || id === 'story') && !paused) { G = null; demo = null; } // menus have their own backgrounds now (no demo match behind)
   }
   document.addEventListener('click', (e) => {
     const go = e.target.closest('[data-go]');
@@ -259,7 +260,32 @@ window.MM = window.MM || {};
     paused = !paused; show(paused ? 'pause' : 'match'); screen = paused ? 'pause' : 'match';
   }
   $('#resume').addEventListener('click', togglePause);
-  $('#quit').addEventListener('click', () => { paused = false; show('select'); });
+  $('#quit').addEventListener('click', () => { const prac = G && G.practice; paused = false; show(prac ? 'practice' : 'select'); });
+
+  // ---------- practice ----------
+  // one player against a training dummy that stands still (or fights back); nobody runs out of lives, the
+  // Ultimate is always ready and Taunt fills the Switch meter (engine.js: G.practice)
+  const prac = { dummy: load('pracDummy', 'still'), who: load('pracWho', 'jeffery'), arena: load('stage', MM.STAGES[0].id) };
+  function drawPractice() {
+    if (!MM.FIGHTERS.some((f) => f.id === prac.who)) prac.who = MM.FIGHTERS[0].id;
+    if (!MM.STAGES.some((s) => s.id === prac.arena)) prac.arena = MM.STAGES[0].id;
+    $('#pracDummy').innerHTML = `Dummy: <b>${prac.dummy === 'still' ? 'Stands still' : 'Fights back'}</b>`;
+    $('#pracWho').innerHTML = `Dummy is: <b>${fighterById(prac.who).name.split(' ')[0]}</b>`;
+    $('#pracArena').innerHTML = `Arena: <b>${(MM.STAGES.find((s) => s.id === prac.arena) || {}).name || ''}</b>`;
+    $('#pracRoster').innerHTML = MM.familyGroups().map((g) => `<div class="pfam"><div class="pfamname">${g.name}</div><div class="ptiles">${g.fighters.map((f) =>
+      `<button data-prac="${f.id}"><img src="${portrait(f.id)}" alt=""><span>${f.name}</span></button>`).join('')}</div></div>`).join('');
+  }
+  const cycleIn = (list, cur) => list[(list.indexOf(cur) + 1) % list.length];
+  $('#pracDummy').addEventListener('click', () => { prac.dummy = prac.dummy === 'still' ? 'cpu' : 'still'; save('pracDummy', prac.dummy); MM.sfx('select'); drawPractice(); });
+  $('#pracWho').addEventListener('click', () => { prac.who = cycleIn(MM.FIGHTERS.map((f) => f.id), prac.who); save('pracWho', prac.who); MM.sfx('select'); drawPractice(); });
+  $('#pracArena').addEventListener('click', () => { prac.arena = cycleIn(MM.STAGES.map((s) => s.id), prac.arena); MM.sfx('select'); drawPractice(); });
+  $('#pracRoster').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-prac]'); if (!b) return;
+    const me = slots.find((s) => s.type === 'human') || slots[0];
+    lastSetup = { players: [{ slot: 0, fighter: b.dataset.prac, dev: me.dev || 'kb1' }, { slot: 1, fighter: prac.who, cpu: true, level: 2, dummy: prac.dummy === 'still' }],
+      stage: prac.arena, stocks: 3, opts: { practice: true } };
+    MM.sfx('go'); startMatch();
+  });
   $('#rematch').addEventListener('click', () => lastSetup && startMatch());
   addEventListener('keydown', (e) => {
     if (e.code === 'Escape' && (screen === 'pause' || (screen === 'match' && G && !G.over))) togglePause();

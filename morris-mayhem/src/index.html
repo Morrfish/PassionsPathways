@@ -19,6 +19,7 @@
   <div class="menu">
     <button class="big" data-go="select">▶ Play</button>
     <button class="big story" data-go="story">Story</button>
+    <button data-go="practice">Practice</button>
     <button data-go="howto">How to play</button>
     <button data-go="moves">Move list</button>
     <button data-go="roster">Meet the family</button>
@@ -90,6 +91,21 @@
 <section id="scene" class="screen dim">
   <div id="sceneBody" class="scenebody"></div>
   <div class="menu row"><button class="big" id="sceneNext">Next</button><button id="sceneSkip">Skip</button></div>
+</section>
+
+<!-- Practice: pick a fighter and try every move on a training dummy -->
+<section id="practice" class="screen css">
+  <div class="css-top">
+    <button class="back" data-go="title">◀</button>
+    <h2 class="ttl practice-ttl">Practice</h2>
+    <div class="options">
+      <button class="cycle" id="pracDummy"></button>
+      <button class="cycle" id="pracWho"></button>
+      <button class="cycle" id="pracArena"></button>
+    </div>
+  </div>
+  <p class="prac-tip">Pick who you want to practice with. In practice nobody runs out of lives, your Ultimate is always ready, and Taunt fills your Switch meter. Pause any time for the move list.</p>
+  <div id="pracRoster"></div>
 </section>
 
 <section id="pause" class="screen dim">

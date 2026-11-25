@@ -746,6 +746,11 @@ window.MM = window.MM || {};
     const n = G.fighters.length, gap = 12, cw = Math.min(236, (W - 24) / n - gap), ph = cw * 288 / 640, k = cw / 640;
     const mw = cw * 0.56, mh = mw * 192 / 512;
     const total = n * cw + (n - 1) * gap, x0 = (W - total) / 2, y0 = H - ph - mh * 0.62 - 6;
+    if (G.practice) { // practice reminder above the damage panels
+      g.save(); g.textAlign = 'center'; g.textBaseline = 'bottom'; g.font = '900 16px system-ui'; g.lineWidth = 4; g.strokeStyle = '#1a0b2e'; g.fillStyle = '#ffc21a';
+      const tip = 'PRACTICE  ·  Ultimate always ready  ·  Taunt fills your Switch meter  ·  Pause for the move list';
+      g.strokeText(tip, W / 2, y0 - 8); g.fillText(tip, W / 2, y0 - 8); g.restore();
+    }
     G.fighters.forEach((f, i) => {
       const x = x0 + i * (cw + gap), panel = ui(PANEL[f.slot % 4]);
       g.globalAlpha = f.out ? 0.45 : 1;

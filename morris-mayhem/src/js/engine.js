@@ -56,7 +56,7 @@ window.MM = window.MM || {};
     const def = MM.STAGES.find((s) => s.id === stageId) || MM.STAGES[0];
     // each match gets its own copy of the platforms (some of them move)
     const stage = Object.assign({}, def, { plats: def.plats.map((p) => Object.assign({}, p, { x0: p.x, y0: p.y, dx: 0, dy: 0 })) });
-    const G = { opts, stage, fighters: [], teams: !!opts.teams, ff: !!opts.ff, timeLeft: (opts.time || 0) * 60, projs: [], traps: [], parts: [], frame: 0, shake: 0, over: false, endT: 0, freeze: 0, countdown: 150 + MM.ENTRANCE, slowmo: 0 };
+    const G = { practice: !!opts.practice, opts, stage, fighters: [], teams: !!opts.teams, ff: !!opts.ff, timeLeft: (opts.time || 0) * 60, projs: [], traps: [], parts: [], frame: 0, shake: 0, over: false, endT: 0, freeze: 0, countdown: 150 + MM.ENTRANCE, slowmo: 0 };
     const used = {};
     const n = players.length, span = Math.min(stage.main.right - stage.main.left - 200, 260 * (n - 1));
     players.forEach((p, i) => {
@@ -64,7 +64,7 @@ window.MM = window.MM || {};
       const alt = used[def.id] = (used[def.id] || 0) + 1;
       const x = MM.spawnX(stage) + (n === 1 ? 0 : -span / 2 + (span * i) / (n - 1));
       const f = makeFighter(p, def, x, alt > 1, p.stocks || stocks);
-      f.boss = p.boss || null; f.stocks0 = f.stocks;
+      f.boss = p.boss || null; f.stocks0 = f.stocks; f.dummy = !!p.dummy;
       f.team = G.teams ? p.team || (p.slot % 2 ? 'B' : 'A') : null;
       G.fighters.push(f);
     });
@@ -192,11 +192,12 @@ window.MM = window.MM || {};
     if (G.freeze > 0) { G.freeze--; return; }
     for (const f of G.fighters) {
       f.prev = f.inp;
-      f.inp = f.cpu ? MM.aiThink(G, f) : MM.readDevice(f.dev);
+      f.inp = f.dummy ? blankInput() : f.cpu ? MM.aiThink(G, f) : MM.readDevice(f.dev); // practice dummy: stands still
       if (G.countdown > 0 || G.over) f.inp = blankInput();
     }
     movePlatforms(G);
     for (const f of G.fighters) updateFighter(G, f);
+    if (G.practice) for (const f of G.fighters) if (!f.cpu && !(f.act && f.act.type === 'ult')) f.meter = 100; // practice: the Ultimate is always ready
     for (const f of G.fighters) checkHits(G, f);
     updateProjectiles(G);
     updateTraps(G);
@@ -287,6 +288,10 @@ window.MM = window.MM || {};
       else if (swapNow && f.def.mess) { if (f.mess >= 100 && f.formIdx === 0) f.act = { type: 'cleanup', t: 0, dur: 33, noGrav: !f.ground }; }
       else if (swapNow) startSpecial(G, f, 'down');
       else if (pressed('taunt') && f.ground) { // taunt: ground only, a hit stops it, no protection
+        if (G.practice && !f.cpu && f.def.mess && f.formIdx === 0) { // practice: Taunt fills the Switch meter (Sabir: all five pieces)
+          if (f.def.mess.pieces) { for (let k = 0; k < f.def.mess.pieces; k++) if (!((f.pieces >> k) & 1)) { collectPiece(G, f, k); if (f.act) break; } }
+          else { f.mess = 100; popText(G, f.x, f.y - f.h - 24, (f.def.mess.ready || 'READY!') + ' (Switch)', f.def.mess.color || f.accent); }
+        }
         f.act = { type: 'taunt', t: 0, dur: MM.TAUNT, pose: 'flex' }; f.vx = 0;
         f.bubble = { text: f.def.taunt || 'Ha!', t: 70 };
       }
@@ -945,7 +950,7 @@ window.MM = window.MM || {};
     const bl = MM.blastLeft(b), br = MM.blastRight(b);
     if (f.x < bl || f.x > br || f.y > b.bottom || (f.y < b.top && f.hitstun > 0)) {
       if (f.y < b.top) f.y = b.top; // stay inside for the effect
-      f.stocks--; f.falls++;
+      if (!G.practice) f.stocks--; f.falls++; // practice: nobody runs out of lives
       const killer = G.fighters.find((o) => o.slot === f.lastHit && G.frame - f.lastHitT < 600 && o !== f);
       if (killer) { killer.kos++; killer.bubble = { text: killer.def.taunt || 'Yes!', t: 120 }; }
       const ex = clamp(f.x, bl, br), ey = clamp(f.y, b.top, b.bottom);
