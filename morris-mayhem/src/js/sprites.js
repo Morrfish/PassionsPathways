@@ -2205,7 +2205,7 @@ MM.SPRITES['codee-clean'] = {
   moves: {"jab": "sweep", "side": "trash", "down": "mop", "up": "duster", "nair": "polish", "fair": "dbust", "uair": "hdust", "dair": "squeak", "neutral": "suds", "sideSpecial": "patrol", "upSpecial": "vac", "downSpecial": "wet", "airRow": "dbust", "upRow": "duster", "uairRow": "hdust", "riseLate": "vac3", "defRow": "def"},
 };
 
-MM.SPRITES['patty-ult'] = { src: 'img/patty-ult-atlas.webp', standH: 184, fscale: {"ult0": 0.92, "ult1": 0.92, "ult2": 0.92, "ult3": 0.92, "ent": 0.92, "taunt": 0.92, "win": 0.92, "lose": 0.92}, frames: {
+MM.SPRITES['patty-ult'] = { src: 'img/patty-ult-atlas.webp', standH: 184, left: 'patty-ult-left', fscale: {"ult0": 0.92, "ult1": 0.92, "ult2": 0.92, "ult3": 0.92, "ent": 0.92, "taunt": 0.92, "win": 0.92, "lose": 0.92}, frames: {
     'ult0': [0, 0, 166, 224, 91.6, 223.8],
     'ult1': [170, 0, 280, 251, 173.6, 251.1],
     'ult2': [454, 0, 243, 221, 131.0, 221.3],
@@ -2258,4 +2258,11 @@ MM.SPRITES['mandi-mermaid-ult'] = { src: 'img/mandi-mermaid-ult-atlas.webp', sta
     'taunt': [767, 0, 81, 115, 36.5, 115.3],
     'win': [852, 0, 88, 119, 34.7, 119.0],
     'lose': [944, 0, 105, 100, 39.5, 99.8]
+} };
+
+MM.SPRITES['patty-ult-left'] = { src: 'img/patty-ult-left-atlas.webp', standH: 184, fscale: {"ult0": 0.888, "ult1": 0.888, "ult2": 0.888, "ult3": 0.888}, frames: {
+    'ult0': [0, 0, 192, 232, 63.2, 232.5],
+    'ult1': [196, 0, 294, 262, 144.2, 261.6],
+    'ult2': [494, 0, 229, 232, 97.0, 232.5],
+    'ult3': [727, 0, 281, 258, 140.7, 257.9]
 } };

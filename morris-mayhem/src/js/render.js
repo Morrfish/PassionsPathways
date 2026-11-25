@@ -21,6 +21,10 @@ window.MM = window.MM || {};
   MM.preloadSprites = () => { for (const d of MM.allDefs()) for (const id of [d.sprite, d.ultimate && d.ultimate.sprite]) if (id) { sheet(id); const S = MM.SPRITES && MM.SPRITES[id]; if (S && S.left) sheet(S.left); if (S && S.base) sheet(S.base); } };
   MM.whenPoseReady = (def, cb) => { const u = def.ultimate, id = u && u.sprite; if (!id) return; sheet(id); const im = spriteImgs[id]; if (im && !(im.complete && im.naturalWidth)) im.addEventListener('load', cb, { once: true }); };
 
+  // How far below the walking line the feet are drawn (world px): the floor art has a top face, so a fighter standing
+  // exactly on the line looks like they're floating at its back edge. Only the picture moves, not the hitboxes.
+  MM.FOOT_SINK = 16;
+
   // Pick the pose for what the fighter is doing right now.
   function pickFrame(f, S) {
     const a = f.act, M = S.moves;
@@ -147,7 +151,7 @@ window.MM = window.MM || {};
     g.save();
     let slide = 0;
     if (G.countdown > 150) { const k = (G.countdown - 150) / MM.ENTRANCE; slide = -f.face * k * k * 260; g.globalAlpha = 1 - k * 0.6; }
-    g.translate(f.x + slide, f.y);
+    g.translate(f.x + slide, f.y + MM.FOOT_SINK); // feet stand on the floor's top face, not its back edge
     if (f.invuln > 0 && Math.floor(G.frame / 4) % 2) g.globalAlpha = 0.5;
     if (f.act && f.act.type === 'dodge') g.globalAlpha *= 0.55;
     if (f.buff) { g.save(); g.fillStyle = f.buff.color; g.globalAlpha *= 0.3; g.beginPath(); g.ellipse(0, -f.h * 0.55, f.w * 1.4, f.h * 0.75, 0, 0, TAU); g.fill(); g.restore(); }

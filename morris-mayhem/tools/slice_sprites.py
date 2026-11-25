@@ -318,6 +318,11 @@ CHARACTERS = {
         },
         'keep_fx': {('barrage', 1): 'fxcubes'},
     },
+    # Patty's ultimate facing left, with the SALE / EVERYTHING MUST GO! signs readable (drawn as-is, not mirrored)
+    'patty-ult-left': {
+        'scale': 0.62, 'bodies': True, 'leftcut': 10, 'cols': [0, 390, 890, 1295, 9999],
+        'sheets': {'patty-normal-ultimate-left-text-safe-v2-draft.png': ['ult', None]},
+    },
     'evea': {
         'scale': 0.62, 'auto': True,
         'sheets': {
@@ -570,7 +575,7 @@ def slice_auto(path, names, frames, scale, ncols=4, skip=(), cells=False, top=Fa
             ay = my.stop - y0
             add(frames, f'{names[r]}{c}', img, ax, ay, scale)
 
-def slice_bodies(path, names, frames, scale, leftcut=230, minbody=12000, keep_fx=None):
+def slice_bodies(path, names, frames, scale, leftcut=230, minbody=12000, keep_fx=None, cols=None):
     """Sheets with a caption under every pose and art labels on the left (Siren's dragon, the giants):
     each pose is found by its big solid body; small pieces next to it (sparkles, beams, cubes) come along,
     captions under the body are left out. Rows come from where the bodies are."""
@@ -618,8 +623,13 @@ def slice_bodies(path, names, frames, scale, leftcut=230, minbody=12000, keep_fx
         for c, grp in enumerate(groups):
             btop = min(k[1][0].start for k in grp); bot = max(k[1][0].stop for k in grp)
             ids = {k[0] for k in grp}
-            for k in comps:  # extras in this cell that reach into the body's height (not captions above or below it)
-                if k[0] in ids or not (edges[c] <= cx(k) < edges[c + 1]): continue
+            def gapx(k, g):  # side-to-side distance from a piece to a pose
+                return max(min(b[1][1].start for b in g) - k[1][1].stop, k[1][1].start - max(b[1][1].stop for b in g), 0)
+            for k in comps:  # extras nearest this pose that reach into its height (not captions above or below it)
+                if k[0] in ids: continue
+                if cols:  # fixed column lines given for this sheet
+                    if not (cols[c] <= cx(k) < cols[c + 1]): continue
+                elif min(range(len(groups)), key=lambda j: gapx(k, groups[j])) != c: continue
                 if k[1][0].stop > btop + 5 and k[1][0].start >= btop - 70 and k[1][0].start < bot - 12 and k[1][0].stop <= bot + 30: ids.add(k[0])
             keep = np.isin(lab, list(ids)); ys, xs = np.nonzero(keep)
             y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
@@ -663,7 +673,7 @@ if __name__ == '__main__':
         cols = cfg.get('cols')
         if isinstance(names, dict): cols = names.get('cols'); names = names['rows']
         if cfg.get('bodies'):
-            slice_bodies(f'{art}/{sheet}', names, frames, cfg['scale'], keep_fx=cfg.get('keep_fx')); continue
+            slice_bodies(f'{art}/{sheet}', names, frames, cfg['scale'], keep_fx=cfg.get('keep_fx'), leftcut=cfg.get('leftcut', 230), cols=cfg.get('cols')); continue
         if cfg.get('auto'):
             slice_auto(f'{art}/{sheet}', names, frames, cfg['scale'], skip=cfg.get('skip', ()), cells=sheet in cfg.get('cells', ()), top=sheet in cfg.get('toplabels', ()), erasetags=sheet in cfg.get('erasetags', ()), **cfg.get('alpha', {}).get(sheet, {})); continue
         slice_sheet(f'{art}/{sheet}', names, cols, frames, cfg['scale'], excl, cfg.get('cutcols'), cfg.get('mainonly', {}).get(sheet, ()))

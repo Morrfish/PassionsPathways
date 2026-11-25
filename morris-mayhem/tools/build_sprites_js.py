@@ -166,18 +166,28 @@ MM.SPRITES['{who}'] = {{
   moves: {json.dumps(moves)},
 }};
 """)
-for who, base in ULTS.items():
+# an ultimate's own left-facing art (Patty's signs stay readable): sized so its first pose matches the ultimate's
+ULT_LEFT = {'patty-ult': 'patty-ult-left'}
+ult_fs = {}
+for who, base in list(ULTS.items()) + [(l, ULTS[u]) for u, l in ULT_LEFT.items()]:
     fr = json.load(open(os.path.join(src_dir, f'{who}-frames.json')))
     bfr = json.load(open(os.path.join(src_dir, f'{base}-frames.json')))
     std = bfr['idle0'][3]
-    f0 = sheet_factor(bfr, fr)
+    src_ult = next((u for u, l in ULT_LEFT.items() if l == who), None)
+    if src_ult:
+        ofr = json.load(open(os.path.join(src_dir, f'{src_ult}-frames.json')))
+        f0 = round(ult_fs[src_ult]['ult0'] * ofr['ult0'][3] / fr['ult0'][3], 3)
+    else:
+        f0 = sheet_factor(bfr, fr)
     fs = {k: f0 for k in fr}
     for pre, m in GROUP_SCALE.get(who, {}).items():
         for k in fr:
             if re.fullmatch(pre + r'(\d+)?', k): fs[k] = round(fs[k] * m, 3)
+    ult_fs[who] = fs
     body = ',\n'.join(f"    '{k}': [{', '.join(str(v) for v in val)}]" for k, val in fr.items())
+    left = f" left: '{ULT_LEFT[who]}'," if who in ULT_LEFT else ''
     parts.append(f"""
-MM.SPRITES['{who}'] = {{ src: 'img/{who}-atlas.webp', standH: {std}, fscale: {json.dumps(fs)}, frames: {{
+MM.SPRITES['{who}'] = {{ src: 'img/{who}-atlas.webp', standH: {std},{left} fscale: {json.dumps(fs)}, frames: {{
 {body}
 }} }};
 """)
