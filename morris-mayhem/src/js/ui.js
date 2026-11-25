@@ -146,6 +146,7 @@ window.MM = window.MM || {};
       if (screen === 'select') {
         const i = slots.findIndex((s) => s.type === 'human' && s.dev === dv);
         if (i >= 0) {
+          moveCursor(i, dv, inp, press);
           if (dv[0] === 'p') { const pad = navigator.getGamepads()[+dv.slice(1)], bb = (n) => pad && pad.buttons[n] && pad.buttons[n].pressed;
             const lb = bb(4) || bb(6), rb = bb(5) || bb(7); if (lb && !menuPrev['lb' + dv]) cycle(i, -1); if (rb && !menuPrev['rb' + dv]) cycle(i, 1); menuPrev['lb' + dv] = lb; menuPrev['rb' + dv] = rb; }
           if (press('pause')) $('#fight').click();
@@ -163,6 +164,56 @@ window.MM = window.MM || {};
     }
     if (screen === 'match' && G && MM.touch.pause) { MM.touch.pause = false; togglePause(); }
     const pc = MM.connectedPads().length; $('#padcount').textContent = pc ? `${pc} controller${pc > 1 ? 's' : ''} connected` : 'no controllers yet';
+  }
+
+  // ---------- Smash-style pointers on Choose Your Fighter ----------
+  // Every human player using a controller or keyboard gets a pointer in their color. Stick / D-pad / WASD /
+  // arrows move it; A (or Attack: F, Num 1, X) picks the fighter or presses the button under it. The mouse
+  // keeps working as before. ChatGPT pointer art is used if img/ui/cursor-p1..p4.png exists.
+  const curs = {};
+  MM.cursorDevs = new Set(); MM.selectCursors = curs; // (for tests)
+  const CUR_SVG = (c) => `<svg viewBox="0 0 40 48" class="hand"><path d="M6 2 L6 38 L15 29 L22 45 L29 42 L22 26 L35 26 Z" fill="${c}" stroke="#1a0b2e" stroke-width="3.5" stroke-linejoin="round"/></svg>`;
+  function syncCursors() {
+    const layer = $('#cursors');
+    MM.cursorDevs = new Set();
+    slots.forEach((s, i) => {
+      const on = screen === 'select' && s.type === 'human' && s.dev && s.dev !== 'touch';
+      let el = layer.querySelector(`[data-cur="${i}"]`);
+      if (!on) { if (el) el.remove(); delete curs[i]; return; }
+      MM.cursorDevs.add(s.dev);
+      if (!el) {
+        el = document.createElement('div'); el.className = 'pcur'; el.dataset.cur = i;
+        el.innerHTML = `<img src="img/ui/cursor-p${i + 1}.png" alt="" onerror="this.remove()">${CUR_SVG(MM.PLAYER_COLORS[i])}<b style="background:${MM.PLAYER_COLORS[i]}">P${i + 1}</b>`;
+        layer.appendChild(el);
+      }
+      if (!curs[i]) { // start over this player's fighter
+        const t = document.querySelector(`#roster [data-f="${s.fighter}"]`), r = t && t.getBoundingClientRect();
+        curs[i] = r && r.width ? { x: r.left + r.width / 2 + (i % 2 ? 14 : -14), y: r.top + r.height * 0.6 } : { x: innerWidth * (0.2 + i * 0.2), y: innerHeight * 0.3 };
+      }
+      el.style.transform = `translate(${curs[i].x}px, ${curs[i].y}px)`;
+    });
+  }
+  function moveCursor(i, dv, inp, press) {
+    const c = curs[i]; if (!c) return;
+    let dx = inp.x, dy = inp.y;
+    if (dv[0] === 'p') { const pad = navigator.getGamepads()[+dv.slice(1)]; if (pad) { const ax = pad.axes[0] || 0, ay = pad.axes[1] || 0; if (Math.hypot(ax, ay) > 0.2) { dx = ax; dy = ay; } } }
+    const sp = Math.max(6, innerWidth / 110);
+    c.x = Math.max(4, Math.min(innerWidth - 4, c.x + dx * sp)); c.y = Math.max(4, Math.min(innerHeight - 4, c.y + dy * sp));
+    const pad = dv[0] === 'p' && navigator.getGamepads()[+dv.slice(1)], a = pad ? !!(pad.buttons[0] && pad.buttons[0].pressed) : false;
+    const aPress = a && !menuPrev['a' + dv]; menuPrev['a' + dv] = a;
+    if (aPress || press('attack')) pointAndPick(i, c);
+  }
+  function pointAndPick(i, c) {
+    const layer = $('#cursors'); layer.style.display = 'none';
+    const el = document.elementFromPoint(c.x, c.y); layer.style.display = '';
+    const tile = el && el.closest('#roster [data-f]');
+    if (tile) {
+      slots[i].fighter = tile.dataset.f === 'random' ? ids[Math.floor(Math.random() * ids.length)] : tile.dataset.f;
+      MM.sfx('select'); save('slots', slots); drawSelect();
+      const pc = document.querySelector(`[data-cur="${i}"]`); if (pc) { pc.classList.remove('pop'); void pc.offsetWidth; pc.classList.add('pop'); }
+      return;
+    }
+    const btn = el && el.closest('#select button'); if (btn) { activeSlot = i; btn.click(); }
   }
 
   // ---------- matches ----------
@@ -426,6 +477,7 @@ window.MM = window.MM || {};
   function frame(now) {
     acc += Math.min(100, now - last); last = now;
     pollMenuInput();
+    if (screen === 'select' || $('#cursors').childElementCount) syncCursors();
     MM.menuNavTick(screen === 'match' && !!G && !paused);
     const world = G || demo;
     if (world) {

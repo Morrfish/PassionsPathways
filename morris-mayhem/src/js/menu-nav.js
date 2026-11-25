@@ -86,6 +86,7 @@ window.MM = window.MM || {};
     const pads = navigator.getGamepads ? navigator.getGamepads() : [];
     for (let i = 0; i < 4; i++) {
       const p = pads[i]; if (!p) continue;
+      if (MM.cursorDevs && MM.cursorDevs.has('p' + i) && screenEl() && screenEl().id === 'select') continue; // this pad drives a pointer
       const b = (n) => !!(p.buttons[n] && p.buttons[n].pressed);
       const ax = p.axes[0] || 0, ay = p.axes[1] || 0;
       const dir = b(14) || ax < -0.5 ? 'L' : b(15) || ax > 0.5 ? 'R' : b(12) || ay < -0.5 ? 'U' : b(13) || ay > 0.5 ? 'D' : null;
@@ -103,6 +104,7 @@ window.MM = window.MM || {};
   // keyboard arrows on menus (a focused dropdown keeps its own arrow behaviour unless you're editing it with a pad)
   addEventListener('keydown', (e) => {
     const s = screenEl(); if (!s || s.id === 'match') return;
+    if (s.id === 'select' && MM.cursorDevs && MM.cursorDevs.has('k2')) return; // arrows drive player 2's pointer
     const a = document.activeElement;
     const arrows = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
     if (arrows[e.key] && !(a && a.tagName === 'SELECT' && !editing) && !(a && a.tagName === 'INPUT' && a.type !== 'checkbox')) { e.preventDefault(); move(...arrows[e.key]); }
