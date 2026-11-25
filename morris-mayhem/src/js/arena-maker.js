@@ -15,14 +15,17 @@ window.MM = window.MM || {};
 (function () {
   const PREFIX = 'mm_arena_';
   const ROLES = ['main', 'plat', 'bob', 'decor'];
-  const ROLE_NAMES = { main: 'Floor (solid)', plat: 'Platform', bob: 'Bobbing', decor: 'Decoration' };
+  const ROLE_NAMES = { main: 'Main floor', plat: 'Platform', bob: 'Bobbing', decor: 'Picture only' };
   const BOB = { ax: 20, ay: 5, period: 300 };
   const DECOR_NAMES = { crossing: 'RR crossing', lamp: 'Street lamp', storefront: 'Shop', gatearm: 'Crossing gate', ballrack: 'Ball rack', musicstand: 'Music stand', banquet: 'Potluck table', shortdock: 'Short dock', lifering: 'Life ring', tackle: 'Tackle box', balustrade: 'Terrace', riser: 'Gold stage', piano: 'Piano keys', stage: 'Wood stage', picnic: 'Picnic table', court: 'Gym floor', sidewalk: 'Sidewalk' };
   const WATER_COLOR = 'rgba(28,110,140,.55)';
   const BGS = ['sky', 'dunkirk', 'hardin', 'williamstown', 'graceland', 'agnew'];
   const BG_NAMES = { sky: 'Plain sky', dunkirk: 'Dunkirk street', hardin: 'Hardin gym', williamstown: 'Williamstown church', graceland: 'Graceland', agnew: 'Agnew Lake' };
-  let VIEW = { x: -1150, y: -760, w: 2300, h: 1200 }; // the part of the world the editor shows (grows to show the KO lines)
-  const LIMIT = { x: -4000, y: -3000, w: 8000, h: 6000 }; // a very large area: put pieces anywhere you like
+  // The editor is a fixed "slide" (like Canva): it never zooms or moves while you work, so pieces stay where you put
+  // them. Roughly what the match camera shows. Pieces can go anywhere on it.
+  const SLIDE = { x: -1300, y: -950, w: 2600, h: 1462 };
+  let VIEW = SLIDE;
+  const LIMIT = SLIDE;
 
   // ---------- pieces ----------
   const BASIC = { basic: true, sx0: 0, sx1: 400, sy: 0, fw: 400, fh: 100 };
@@ -150,7 +153,7 @@ window.MM = window.MM || {};
   // ---------- the editor ----------
   const $ = (s) => document.querySelector(s);
   let prevMain = null;
-  let A = null, sel = -1, snap = true, msgT = 0, open = false, cv, g, view = { s: 1, ox: 0, oy: 0 }, drag = null, dirty = false;
+  let A = null, sel = -1, snap = false, msgT = 0, open = false, cv, g, view = { s: 1, ox: 0, oy: 0 }, drag = null, dirty = false;
   const toWorld = (px, py) => ({ x: (px - view.ox) / view.s, y: (py - view.oy) / view.s });
   const S = (v) => (snap ? Math.round(v / 10) * 10 : v);
 
@@ -167,12 +170,8 @@ window.MM = window.MM || {};
     cv.style.width = box.width + 'px'; cv.style.height = box.height + 'px';
     updateView();
   }
-  function updateView() { // fit the arena and its KO lines on screen (not while dragging, so nothing jumps)
-    if (drag) return;
-    const m = mainOf(A);
-    let v = { x: -1150, y: -760, w: 2300, h: 1200 };
-    if (m) { const b = blastOf(A); v = { x: b.left - 40, y: b.top - 40, w: b.right - b.left + 80, h: b.bottom - b.top + 80 }; }
-    VIEW = v;
+  function updateView() { // always the same slide (only the window size changes the scale)
+    VIEW = SLIDE;
     view.s = Math.min(cv.width / VIEW.w, cv.height / VIEW.h);
     view.ox = cv.width / 2 - (VIEW.x + VIEW.w / 2) * view.s; view.oy = cv.height / 2 - (VIEW.y + VIEW.h / 2) * view.s;
   }
@@ -185,10 +184,6 @@ window.MM = window.MM || {};
     MM.drawSky(g, W, H, A.bg, 0, null);
     g.setTransform(view.s, 0, 0, view.s, view.ox, view.oy);
     const m = mainOf(A);
-    if (m && A.bg !== 'sky' && A.water === null) { // darken the painted ground below the floor (as in a match)
-      const gr = g.createLinearGradient(0, m.y - 30, 0, m.y + 400); gr.addColorStop(0, 'rgba(15,8,30,0)'); gr.addColorStop(0.25, 'rgba(15,8,30,.45)'); gr.addColorStop(1, 'rgba(15,8,30,.76)');
-      g.fillStyle = gr; g.fillRect(VIEW.x - 400, m.y - 30, VIEW.w + 800, 3000);
-    }
     if (snap) { // grid
       g.strokeStyle = 'rgba(255,255,255,.08)'; g.lineWidth = 1 / view.s;
       for (let x = Math.ceil(VIEW.x / 100) * 100; x < VIEW.x + VIEW.w; x += 100) { g.beginPath(); g.moveTo(x, VIEW.y); g.lineTo(x, VIEW.y + VIEW.h); g.stroke(); }
@@ -206,7 +201,7 @@ window.MM = window.MM || {};
       g.strokeStyle = pc.role === 'main' ? '#ffc21a' : pc.role === 'bob' ? '#1fd1ef' : 'rgba(255,255,255,.9)';
       g.beginPath(); g.moveTo(pc.x, pc.y); g.lineTo(pc.x + pc.w, pc.y); g.stroke();
     }
-    // spawn points and blast zone
+    // spawn points (where fighters start) and the KO line
     if (m) {
       const sp = spawnInfo(A), b = blastOf(A);
       sp.starts.forEach((x, i) => {
@@ -216,13 +211,14 @@ window.MM = window.MM || {};
       });
       g.strokeStyle = 'rgba(255,255,255,.55)'; g.setLineDash([10, 10]); g.lineWidth = 3;
       for (const x of sp.comeback) { g.beginPath(); g.arc(x, sp.y - 430, 22, 0, Math.PI * 2); g.stroke(); }
-      g.strokeStyle = '#ff4b4b'; g.lineWidth = 6; g.setLineDash([28, 18]);
+      g.strokeStyle = 'rgba(255,75,75,.7)'; g.lineWidth = 5; g.setLineDash([28, 18]);
       g.strokeRect(b.left, b.top, b.right - b.left, b.bottom - b.top);
       g.setLineDash([]);
-      g.fillStyle = '#ff4b4b'; g.font = '800 34px system-ui'; g.textAlign = 'left'; g.textBaseline = 'top';
-      const lx = Math.max(VIEW.x + 20, b.left + 14);
-      g.fillText('KO line', lx, Math.max(VIEW.y + 20, b.top + 12));
     }
+    // the area outside the slide (only shows when the window isn't 16:9)
+    g.fillStyle = 'rgba(26,11,46,.55)';
+    g.fillRect(SLIDE.x - 5000, SLIDE.y - 5000, 10000 + SLIDE.w, 5000); g.fillRect(SLIDE.x - 5000, SLIDE.y + SLIDE.h, 10000 + SLIDE.w, 5000);
+    g.fillRect(SLIDE.x - 5000, SLIDE.y, 5000, SLIDE.h); g.fillRect(SLIDE.x + SLIDE.w, SLIDE.y, 5000, SLIDE.h);
     // the selected piece
     const pc = A.pieces[sel];
     if (pc) {
@@ -245,7 +241,7 @@ window.MM = window.MM || {};
       b.disabled = !pc || (b.dataset.role !== 'decor' && !canCollide(pc)) || (b.dataset.role === 'bob' && pc.atlas === 'basic');
     });
     tools.querySelectorAll('button:not([data-role])').forEach((b) => { b.disabled = !pc; });
-    $('#amTiles').textContent = 'Copies: ' + ((pc && pc.tiles) || 1);
+    $('#amTiles').textContent = 'Longer: ' + ((pc && pc.tiles) || 1);
     $('#amWater').textContent = 'Water: ' + (A.water === null ? 'off' : 'on');
     $('#amWater').setAttribute('aria-pressed', A.water === null ? 'false' : 'true');
     $('#amGrid').textContent = 'Snap: ' + (snap ? 'on' : 'off');
@@ -253,57 +249,69 @@ window.MM = window.MM || {};
     document.querySelectorAll('#amBgs [data-bg]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.bg === A.bg ? 'true' : 'false'));
     $('#amName').value = A.name;
   }
-  function canCollide(pc) { return pc.atlas === 'basic' || !!(MM.STAGE_PICS[pc.atlas] && MM.STAGE_PICS[pc.atlas].pics[pc.pic]); }
+  function canCollide(pc) { return pc.atlas === 'basic' || !!MM.STAGE_PICS[pc.atlas]; } // any picture can be stood on (its top edge)
   function changed() { dirty = true; refreshTools(); }
+  // undo: a copy of the arena before each change
+  const undoStack = []; let lastSnap = 0;
+  function snapshot(merge) { const now = Date.now(); if (merge && now - lastSnap < 600) { lastSnap = now; return; } lastSnap = now; undoStack.push(JSON.stringify({ pieces: A.pieces, bg: A.bg, water: A.water, sel })); if (undoStack.length > 60) undoStack.shift(); }
+  function undo() {
+    const u = undoStack.pop(); if (!u) return msg('Nothing to undo.');
+    const o = JSON.parse(u); A.pieces = o.pieces; A.bg = o.bg; A.water = o.water; sel = Math.min(o.sel, A.pieces.length - 1); changed(); msg('Undone.');
+  }
+  function duplicate() {
+    const pc = A.pieces[sel]; if (!pc) return; snapshot();
+    const c = JSON.parse(JSON.stringify(pc)); if (c.role === 'main') c.role = 'plat';
+    const b = boxOf(pc); A.pieces.push(c); setBox(c, clampX(b.left + 60, b.width), clampY(b.top + 60, b.height), b.width); round(c);
+    selectPiece(A.pieces.length - 1); changed(); msg('Copied ' + pieceName(c) + '.');
+  }
 
   // ---------- piece actions (shared by mouse, touch, keyboard and controller) ----------
-  function addPiece(atlas, pic, role) {
+  function addPiece(atlas, pic, role, at) {
+    snapshot();
     const pc = { atlas, pic, role };
     const sp = atlas === 'basic' ? null : MM.STAGE_PICS[atlas].pics[pic];
     pc.w = atlas === 'basic' ? 600 : (sp && sp.w) || 200;
     if (role === 'decor') { const f = MM.STAGE_PICS[atlas].frames[pic]; pc.w = Math.round(f[2] * (110 / f[3])); }
+    if (role === 'decor') pc.w = Math.round(pc.w * 1.4);
     if (!mainOf(A) && role !== 'decor') pc.role = 'main';
-    else if (role !== 'decor' && sp && sp.float) pc.role = 'bob';
     pc.x = 0; pc.y = 0;
-    // drop it in the middle, standing on whatever is below
-    const b = boxOf(pc); setBox(pc, -b.width / 2, -400, b.width);
-    if (pc.role === 'main') pc.y = 0; else dropDown(pc); // a new floor goes where the old one was (top at 0)
+    // exactly where it was dropped (or the middle of the slide), nothing else moves
+    const c = at || { x: SLIDE.x + SLIDE.w / 2, y: SLIDE.y + SLIDE.h * 0.45 }, b = boxOf(pc);
+    setBox(pc, clampX(c.x - b.width / 2, b.width), clampY(c.y - b.height / 2, b.height), b.width);
     round(pc);
     A.pieces.push(pc); selectPiece(A.pieces.length - 1); changed();
-    msg(`Added ${pieceName(pc)}. Drag it, or use the arrow keys / stick.`);
+    msg(`Added ${pieceName(pc)} as ${ROLE_NAMES[pc.role].toLowerCase()}. Drag it anywhere.`);
   }
   function moveSel(dx, dy) {
-    const pc = A.pieces[sel]; if (!pc) return;
+    const pc = A.pieces[sel]; if (!pc) return; snapshot(true);
     const b = boxOf(pc);
     setBox(pc, clampX(b.left + dx, b.width), clampY(b.top + dy, b.height), b.width); round(pc); dirty = true;
   }
   const clampX = (x, w) => Math.max(LIMIT.x - w / 2, Math.min(LIMIT.x + LIMIT.w - w / 2, x));
   const clampY = (y, h) => Math.max(LIMIT.y - h / 2, Math.min(LIMIT.y + LIMIT.h - h / 2, y));
   function resizeSel(f) { // bigger / smaller around the bottom middle (it keeps standing where it stood)
-    const pc = A.pieces[sel]; if (!pc) return;
+    const pc = A.pieces[sel]; if (!pc) return; snapshot(true);
     const b = boxOf(pc), nw = Math.max(40, Math.min(2400, b.width * f)), nh = b.height * (nw / b.width);
     setBox(pc, b.left + b.width / 2 - nw / 2, b.bottom - nh, nw); round(pc); changed();
   }
   function setRole(role) {
     const pc = A.pieces[sel]; if (!pc) return;
-    if (role !== 'decor' && !canCollide(pc)) return msg('That picture can only be a decoration.', true);
+    if (pc.role === role) return;
+    snapshot();
     const b = boxOf(pc), swap = (o, r) => { const ob = boxOf(o); o.role = r; setBox(o, ob.left, ob.top, ob.width); round(o); };
-    if (role === 'main') for (const o of A.pieces) if (o !== pc && o.role === 'main') { swap(o, 'plat'); prevMain = o; }
-    const wasMain = pc.role === 'main';
-    pc.role = role; setBox(pc, b.left, b.top, b.width); round(pc);
-    // the floor moved on: give it back to the piece that was the floor before (if it's still there)
-    if (wasMain && role !== 'main' && prevMain && prevMain !== pc && A.pieces.includes(prevMain) && canCollide(prevMain)) swap(prevMain, 'main');
+    if (role === 'main') for (const o of A.pieces) if (o !== pc && o.role === 'main') swap(o, 'plat');
+    pc.role = role; setBox(pc, b.left, b.top, b.width); round(pc); // the picture stays exactly where it is
     changed();
+    msg(pieceName(pc) + ': ' + ({ main: 'main floor (fighters start here, solid)', plat: 'platform (stand on its top edge)', decor: 'picture only (no standing)', bob: 'bobbing platform' })[role]);
   }
   function cycleRole() {
     const pc = A.pieces[sel]; if (!pc) return;
-    const ok = ROLES.filter((r) => r === 'decor' || (canCollide(pc) && !(r === 'bob' && pc.atlas === 'basic')));
+    const ok = ['plat', 'main', 'decor'];
     setRole(ok[(ok.indexOf(pc.role) + 1) % ok.length]);
-    msg(pieceName(pc) + ': ' + ROLE_NAMES[pc.role]);
   }
   function deleteSel() {
-    const pc = A.pieces[sel]; if (!pc) return;
-    A.pieces.splice(sel, 1); selectPiece(Math.min(sel, A.pieces.length - 1)); changed();
+    const pc = A.pieces[sel]; if (!pc) return; snapshot();
+    A.pieces.splice(sel, 1); selectPiece(-1); changed();
     msg(`Removed ${pieceName(pc)}.`);
   }
   function surfaceTopBelow(pc, b) { // highest walkable top under the piece's feet (or the water)
@@ -326,19 +334,19 @@ window.MM = window.MM || {};
     setBox(pc, b.left, b.top + (ground - b.bottom) + (sp && !sp.basic ? 2 : 0), b.width); round(pc);
   }
   function layer(d) {
-    const pc = A.pieces[sel]; if (!pc) return;
+    const pc = A.pieces[sel]; if (!pc) return; snapshot();
     const j = d > 0 ? A.pieces.length - 1 : 0;
     A.pieces.splice(sel, 1); A.pieces.splice(j, 0, pc); selectPiece(j); changed();
   }
   function tiles() {
-    const pc = A.pieces[sel]; if (!pc || pc.atlas === 'basic') return;
+    const pc = A.pieces[sel]; if (!pc || pc.atlas === 'basic') return; snapshot();
     const b = boxOf(pc); pc.tiles = ((pc.tiles || 1) % 4) + 1; if (pc.tiles === 1) delete pc.tiles;
     const nb = boxOf(pc); setBox(pc, b.left, b.bottom - nb.height * (b.width / nb.width) * (nb.width / b.width), nb.width); round(pc); changed();
   }
   function nextPiece(d = 1) { if (!A.pieces.length) return; selectPiece(((sel < 0 ? -1 : sel) + d + A.pieces.length) % A.pieces.length); msg('Selected: ' + pieceName(A.pieces[sel])); }
 
   // ---------- open / save ----------
-  function load(a) { prevMain = null; A = JSON.parse(JSON.stringify(a)); if (A.water === undefined) A.water = null; sel = -1; dirty = false; refreshTools(); drawList(); }
+  function load(a) { undoStack.length = 0; prevMain = null; A = JSON.parse(JSON.stringify(a)); if (A.water === undefined) A.water = null; sel = -1; dirty = false; refreshTools(); drawList(); }
   function doSave() {
     A.name = $('#amName').value.trim() || A.name;
     const bad = problems(A);
@@ -405,6 +413,7 @@ window.MM = window.MM || {};
     const p = pointerPos(e), h = hit(p);
     if (h.handle !== undefined) { const b = boxOf(A.pieces[sel]); const c = corners(b); drag = { type: 'size', anchor: c[3 - h.handle], ratio: b.height / b.width }; }
     else if (h.piece !== undefined) { selectPiece(h.piece); const b = boxOf(A.pieces[sel]); drag = { type: 'move', dx: p.x - b.left, dy: p.y - b.top }; }
+    if (drag) snapshot();
     else { selectPiece(-1); drag = null; }
     e.preventDefault();
   }
@@ -420,18 +429,45 @@ window.MM = window.MM || {};
   }
   function onUp() { if (drag) { drag = null; refreshTools(); } }
 
+  // ---------- dragging pictures from the panel onto the slide ----------
+  let pdrag = null, justDragged = false;
+  function onPaletteDown(e) {
+    const t = e.target.closest('.am-piece'); if (!t || e.button > 0) return;
+    pdrag = { t, x: e.clientX, y: e.clientY, ghost: null };
+  }
+  function onPaletteMove(e) {
+    if (!pdrag) return;
+    if (!pdrag.ghost && Math.hypot(e.clientX - pdrag.x, e.clientY - pdrag.y) > 6) {
+      const gh = document.createElement('div'); gh.className = 'am-ghost';
+      const src = pdrag.t.querySelector('canvas'), c = document.createElement('canvas'); c.width = src.width; c.height = src.height; c.getContext('2d').drawImage(src, 0, 0);
+      gh.appendChild(c); document.body.appendChild(gh); pdrag.ghost = gh;
+    }
+    if (pdrag.ghost) { pdrag.ghost.style.left = e.clientX + 'px'; pdrag.ghost.style.top = e.clientY + 'px'; e.preventDefault(); }
+  }
+  function onPaletteUp(e) {
+    if (!pdrag) return;
+    const d = pdrag; pdrag = null;
+    if (!d.ghost) return; // a plain click: the click handler adds it in the middle
+    d.ghost.remove(); justDragged = true; setTimeout(() => (justDragged = false), 50);
+    const r = cv.getBoundingClientRect();
+    if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) addPiece(d.t.dataset.atlas, d.t.dataset.pic, d.t.dataset.role, pointerPos(e));
+    else msg('Drop it on the arena to add it.');
+  }
+
   // ---------- keyboard ----------
   function onKey(e) {
     if (!open || e.target === $('#amName')) return;
     const k = e.key, big = e.shiftKey ? 50 : 10;
     const onCanvas = document.activeElement === cv || sel >= 0;
+    if ((e.ctrlKey || e.metaKey) && (k === 'z' || k === 'Z')) { undo(); e.preventDefault(); return; }
+    if ((e.ctrlKey || e.metaKey) && (k === 'd' || k === 'D')) { duplicate(); e.preventDefault(); return; }
     if (k === 'Escape') { if (sel >= 0) selectPiece(-1); else $('#amBack').click(); e.preventDefault(); return; }
     if (!onCanvas) return;
     const acts = {
       ArrowLeft: () => moveSel(-big, 0), ArrowRight: () => moveSel(big, 0), ArrowUp: () => moveSel(0, -big), ArrowDown: () => moveSel(0, big),
       '+': () => resizeSel(1.1), '=': () => resizeSel(1.1), '-': () => resizeSel(1 / 1.1), _: () => resizeSel(1 / 1.1),
       Delete: deleteSel, Backspace: deleteSel, t: cycleRole, T: cycleRole, y: cycleRole, n: () => nextPiece(1), N: () => nextPiece(-1),
-      Tab: () => nextPiece(e.shiftKey ? -1 : 1), d: () => { dropDown(); changed(); }, Enter: () => (sel < 0 ? nextPiece(1) : null),
+      Tab: () => nextPiece(e.shiftKey ? -1 : 1), Enter: () => (sel < 0 ? nextPiece(1) : null),
     };
     if (k === 'Tab' && document.activeElement !== cv) return; // normal Tab moves between buttons
     if (acts[k]) { acts[k](); e.preventDefault(); }
@@ -507,20 +543,22 @@ window.MM = window.MM || {};
     cv.addEventListener('pointerdown', onDown); cv.addEventListener('pointermove', onMove);
     cv.addEventListener('pointerup', onUp); cv.addEventListener('pointercancel', onUp);
     addEventListener('keydown', onKey);
+    $('#maker .am-side').addEventListener('pointerdown', onPaletteDown);
+    addEventListener('pointermove', onPaletteMove); addEventListener('pointerup', onPaletteUp); addEventListener('pointercancel', () => { if (pdrag && pdrag.ghost) pdrag.ghost.remove(); pdrag = null; });
     addEventListener('resize', () => open && fit());
     $('#maker').addEventListener('click', (e) => {
       const t = e.target.closest('button'); if (!t) return;
-      if (t.classList.contains('am-piece')) return addPiece(t.dataset.atlas, t.dataset.pic, t.dataset.role);
+      if (t.classList.contains('am-piece')) return justDragged ? null : addPiece(t.dataset.atlas, t.dataset.pic, t.dataset.role);
       if (t.dataset.role && t.closest('#amTools')) return setRole(t.dataset.role);
-      if (t.dataset.bg) { A.bg = t.dataset.bg; if (A.bg === 'agnew' && A.water === null && mainOf(A)) A.water = mainOf(A).y + 130; return changed(); }
+      if (t.dataset.bg) { snapshot(); A.bg = t.dataset.bg; if (A.bg === 'agnew' && A.water === null && mainOf(A)) A.water = mainOf(A).y + 130; return changed(); }
       if (t.dataset.tpl !== undefined) { load(t.dataset.tpl ? fromBuiltIn(t.dataset.tpl) : blank()); return msg('Started a new arena. Save it when you like it.'); }
       if (t.dataset.edit) { const a = list().find((x) => x.id === t.dataset.edit); if (a) { load(a); msg(`Editing "${a.name}".`); } return; }
       if (t.dataset.del) {
         if (t.dataset.sure !== '1') { t.dataset.sure = '1'; t.textContent = 'Delete?'; setTimeout(() => { t.dataset.sure = ''; t.textContent = '✕'; }, 3000); return; }
         const a = list().find((x) => x.id === t.dataset.del); remove(t.dataset.del); if (A && A.id === t.dataset.del) A.id = null; drawList(); return msg(`Deleted "${a ? a.name : 'arena'}".`);
       }
-      const acts = { amBigger: () => resizeSel(1.12), amSmaller: () => resizeSel(1 / 1.12), amDel: deleteSel, amDrop: () => { dropDown(); changed(); }, amToBack: () => layer(-1), amToFront: () => layer(1), amTiles: tiles, amNext: () => nextPiece(1),
-        amWater: () => { A.water = A.water === null ? (mainOf(A) ? mainOf(A).y + 130 : 130) : null; changed(); }, amWaterUp: () => { if (A.water !== null) { A.water -= 10; changed(); } }, amWaterDown: () => { if (A.water !== null) { A.water += 10; changed(); } },
+      const acts = { amUndo: undo, amDup: duplicate, amBigger: () => resizeSel(1.12), amSmaller: () => resizeSel(1 / 1.12), amDel: deleteSel, amDrop: () => { dropDown(); changed(); }, amToBack: () => layer(-1), amToFront: () => layer(1), amTiles: tiles, amNext: () => nextPiece(1),
+        amWater: () => { snapshot(); A.water = A.water === null ? (mainOf(A) ? mainOf(A).y + 130 : 130) : null; changed(); }, amWaterUp: () => { if (A.water !== null) { A.water -= 10; changed(); } }, amWaterDown: () => { if (A.water !== null) { A.water += 10; changed(); } },
         amGrid: () => { snap = !snap; refreshTools(); }, amNew: () => { load(blank()); msg('New arena.'); }, amSave: doSave };
       if (acts[t.id]) acts[t.id]();
     });

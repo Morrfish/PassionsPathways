@@ -494,10 +494,6 @@ window.MM = window.MM || {};
     return {
       sky(g, W, H, px, cam) { MM.drawSky(g, W, H, A.bg, px, cam); },
       floor(g, s, m, G) {
-        if (A.bg !== 'sky' && !A.water) { // darken the painted ground below the floor line
-          const gr = g.createLinearGradient(0, -30, 0, 400); gr.addColorStop(0, 'rgba(15,8,30,0)'); gr.addColorStop(0.25, 'rgba(15,8,30,.45)'); gr.addColorStop(1, 'rgba(15,8,30,.76)');
-          g.fillStyle = gr; g.fillRect(-4000, -30, 8000, 3030);
-        }
         for (const pc of A.pieces) {
           const p = pc.plat !== undefined && s.plats[pc.plat];
           if (p) MM.drawPiece(g, pc, p.x, p.y, p.w, G); else MM.drawPiece(g, pc, pc.x, pc.y, pc.w, G);

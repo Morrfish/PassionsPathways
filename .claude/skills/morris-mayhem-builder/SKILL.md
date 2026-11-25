@@ -63,6 +63,10 @@ If it isn't reachable, ask her to paste the info and attach the pictures in chat
   portrait in the round socket, stock head icons (`STOCK` id map), ultimate meter frame/fill/ready/star, timer frame,
   ult banner, KO flash/peak/fade, P1-P4/CPU markers, 3-slice taunt bubble, 3/2/1/GO!/GAME!/TIME! word art. Every
   piece falls back to the old shapes/text if its image hasn't loaded.
+- Arena Maker (arena-maker.js) is a Canva-style fixed "slide" (SLIDE rect, never auto-zooms): drag pictures from
+  the side panel and drop them where you want; drag to move, corners to resize; pick per piece Picture only /
+  Platform / Main floor (any picture can be a platform: its top edge is walkable); Undo (Ctrl+Z), Copy (Ctrl+D).
+  Nothing ever moves except the piece being edited. No dark shading under custom arenas (editor = match look).
 - 2v2: `MM.newGame(players, stage, stocks, { teams, ff, time })`; players carry `team: 'A'|'B'`; `MM.sameTeam`
   blocks friendly fire in `applyHit` and AI targeting; team out only when all members out; timer tiebreak =
   lives, then lower damage, else draw.

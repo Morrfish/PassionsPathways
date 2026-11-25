@@ -269,3 +269,8 @@ h2.css-ttl { flex: 1; display: flex; justify-content: center; } h2.css-ttl img {
 .arenas button:is(:hover, .padfocus) img, .arenas button.last img { filter: drop-shadow(0 0 6px var(--gold)); }
 .arenas button span { background: #2b1150cc; border-radius: 0 0 8px 8px; }
 .css-slots .slot.off .side { bottom: 9.5%; left: 13%; right: 13%; } .css-slots .slot.off .join { margin-bottom: 9%; }
+/* Arena Maker (Canva-style): drag pictures from the panel; the ghost follows the pointer */
+.am-ghost { position: fixed; z-index: 99; pointer-events: none; transform: translate(-50%, -50%) scale(1.3); filter: drop-shadow(0 4px 8px #000a); opacity: .9; }
+#maker .am-piece { touch-action: none; cursor: grab; }
+.am-tools .am-lbl { font-size: .85em; opacity: .8; } .am-tools .am-gap { width: 10px; }
+.am-side h3 small { font-weight: 400; color: #fff; opacity: .7; font-size: .8em; }
