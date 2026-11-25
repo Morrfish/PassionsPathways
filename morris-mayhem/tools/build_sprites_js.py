@@ -104,6 +104,8 @@ GROUP_SCALE = {
     'mandi-witch': {'whirl': 1.3, 'salon': 1.15},
     'courtnee': {'saiyan': 1.2},
     'haylie': {'ult1': 1.15, 'ult2': 1.3, 'ult3': 1.3},
+    # Jacqi's specials sheet was drawn ~3/4 size; her dash SUV matches the ultimate's SUV
+    'jacqi': {'pride': 1.35, 'lift': 1.35, 'snacks': 1.35, 'suv': 1.85},
     'sara': {'roseshot': 1.13, 'widow': 1.17, 'fang': 1.07, 'restraint': 1.12},  # she's drawn smaller inside the bear aura
     # Mandi's ultimate/victory sheets: her taunt leans, so taunt-height matching drew the whole sheet ~15% big
     'mandi-witch-ult': {p: 0.87 for p in ('ult', 'ent', 'taunt', 'win', 'lose')},

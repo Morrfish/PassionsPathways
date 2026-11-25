@@ -1559,7 +1559,7 @@ MM.SPRITES['cole-iron'] = {
 MM.SPRITES['jacqi'] = {
   src: 'img/jacqi-atlas.webp',
   standH: 200,
-  fscale: {"ult0": 0.881, "ult1": 0.881, "ult2": 0.881, "ult3": 0.881, "pers0": 0.881, "pers1": 0.881, "pers2": 0.881, "pers3": 0.881, "ent": 0.881, "taunt": 0.881, "win": 0.881, "lose": 0.881},
+  fscale: {"ult0": 0.881, "ult1": 0.881, "ult2": 0.881, "ult3": 0.881, "pers0": 0.881, "pers1": 0.881, "pers2": 0.881, "pers3": 0.881, "ent": 0.881, "taunt": 0.881, "win": 0.881, "lose": 0.881, "pride0": 1.35, "pride1": 1.35, "pride2": 1.35, "pride3": 1.35, "lift0": 1.35, "lift1": 1.35, "lift2": 1.35, "lift3": 1.35, "snacks0": 1.35, "snacks1": 1.35, "snacks2": 1.35, "snacks3": 1.35, "suv0": 1.85, "suv1": 1.85, "suv2": 1.85, "suv3": 1.85},
   frames: {
     'idle0': [0, 0, 76, 200, 32.3, 199.6],
     'idle1': [80, 0, 77, 200, 31.3, 200.3],

@@ -410,7 +410,7 @@ MM.FIGHTERS = [
     attackNames: { jab: 'Foam Finger Swat', side: 'Megaphone Bump', up: 'Whistle Lift', down: 'Cooler Sweep', air: 'Sideline Spin, Pirate Poke, Sky Cheer, Cooler Drop' },
     specials: {
       neutral: { kind: 'projectile', name: 'Pirate Pride', thing: 'megaphone sound rings', sprite: 'fxwave', scale: 0.32, speed: 10, dmg: 6, kb: 5, kbg: 0.06, r: 24, life: 45, cd: 42 },
-      side: { kind: 'dash', name: 'Soccer Mom Express', ride: true, speed: 15, dur: 33, dmg: 11, kb: 8.5, kbg: 0.12, ang: 30, cd: 150, box: [-60, -90, 170, 90] },
+      side: { kind: 'dash', name: 'Soccer Mom Express', ride: true, speed: 15, dur: 33, dmg: 11, kb: 8.5, kbg: 0.12, ang: 30, cd: 150, box: [-110, -100, 230, 100] },
       up: { kind: 'rise', name: 'Number One Lift', power: 19.5, forward: 3, dmg: 5, kb: 6, kbg: 0.06 },
       down: { kind: 'trap', name: 'Halftime Snacks', thing: 'a bag of orange slices: the first one to grab it heals 4% (her own only after a second)', sprite: 'fxsnack', scale: 0.2, heal: 4, toss: 5, life: 240, cd: 420 },
     },
