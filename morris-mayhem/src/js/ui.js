@@ -504,6 +504,12 @@ window.MM = window.MM || {};
     const world = G || demo;
     if (world) {
       const slow = world.slowmo > 0 ? 3 : 1;
+      // a new match holds on its first frame until the match screen is up and its art has loaded (max 10 s),
+      // so every game starts with the entrances and the 3-2-1
+      if (world === G && G.frame === 0) {
+        G.waitStart = G.waitStart || now;
+        if (screen !== 'match' || (!MM.artReady(G) && now - G.waitStart < 10000)) acc = 0;
+      }
       while (acc >= STEP * slow) {
         acc -= STEP * slow;
         if (world === G && paused) continue;
@@ -518,6 +524,7 @@ window.MM = window.MM || {};
         if (tf) { $('#touch .tult').classList.toggle('ready', tf.meter >= 100); $('#touch .tswap').hidden = !(tf.forms || tf.def.mess); }
       }
       MM.render(g, world, W, H);
+      if (world === G && G.frame === 0) { g.save(); g.fillStyle = 'rgba(10,8,25,.6)'; g.fillRect(0, 0, W, H); g.fillStyle = '#ffc21a'; g.font = '900 42px system-ui'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('Loading…', W / 2, H / 2); g.restore(); }
       if (world === demo) { g.fillStyle = 'rgba(10,8,25,.55)'; g.fillRect(0, 0, W, H); }
     }
     requestAnimationFrame(frame);

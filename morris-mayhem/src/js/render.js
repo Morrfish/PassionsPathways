@@ -128,6 +128,9 @@ window.MM = window.MM || {};
     const { S, im } = sh, fr = S.frames[frameName] || S.frames.idle0;
     const k = ((f.h * 1.15) / S.standH) * ((S.fscale && S.fscale[frameName]) || 1); // per-pose size fix (see build_sprites_js.py)
     const fsh = f.def.sprite && sheet(f.def.sprite);
+    const id0 = fsh && fsh.S.frames.idle0; // how tall the standing art is (Evea's spirit form has Grandma floating over her)
+    f.artH = id0 ? id0[3] * ((f.h * 1.15) / fsh.S.standH) * ((fsh.S.fscale && fsh.S.fscale.idle0) || 1) : 0;
+    if (f.act && (f.act.type === 'cleanup' || f.act.type === 'backwork')) f.artH = Math.max(f.artH, fr[5] * k); // switching forms: Grandma appears / fades
     const da = f.act && f.act.type === 'special' && f.act.sp.trail && f.act.t >= 4 && f.act.t < 6 + f.act.sp.dur + 6 ? f.act : null;
     if (da && fsh && fsh.S.frames[da.sp.trail]) { // e.g. Pixel Rush: the pixel trail streams out behind him
       const tr = fsh.S.frames[da.sp.trail], th = f.h * 0.75, tw = (tr[2] / tr[3]) * th * 1.6, fade = Math.min(1, (6 + da.sp.dur + 6 - da.t) / 8);
@@ -512,6 +515,19 @@ window.MM = window.MM || {};
     drawPlatPic(g, im, P, sp, x, y, w, G);
   };
   MM.stageImg = stageImg;
+  // Is the art for this match on screen yet? (fighters' atlases and the arena). The countdown waits for it,
+  // so a slow download never eats the 3-2-1.
+  MM.artReady = (G) => {
+    const ok = (im) => !im || (im.complete && im.naturalWidth > 0);
+    for (const f of G.fighters) {
+      const base = MM.FIGHTERS.find((d) => d.id === (f.def.baseId || f.def.id)) || f.def;
+      const defs = base.forms ? MM.formDefs(base) : [f.def];
+      for (const d of defs) for (const id of [d.sprite, d.ultimate && d.ultimate.sprite]) if (id && MM.SPRITES && MM.SPRITES[id]) { sheet(id); if (!ok(spriteImgs[id])) return false; }
+    }
+    const P = MM.STAGE_PICS && MM.STAGE_PICS[(G.stage.art && G.stage.art.bg) || G.stage.id];
+    if (P) for (const src of [P.bg, P.props]) if (src) { stageImg(src); if (!ok(stageImgs[src])) return false; }
+    return true;
+  };
   function plainSky(g, W, H) {
     const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#2f7fd8'); gr.addColorStop(0.7, '#9fd4ff'); gr.addColorStop(1, '#d9f0ff');
     g.fillStyle = gr; g.fillRect(0, 0, W, H);
@@ -625,7 +641,7 @@ window.MM = window.MM || {};
       const b = a.box; g.beginPath(); g.ellipse(b.x + b.w / 2, b.y + b.h / 2, b.w / 2, b.h / 2, 0, 0, TAU); g.fill(); g.restore();
     }
     // player tag
-    const tagY = f.y - f.h - 34 * s;
+    const tagY = f.y - Math.max(f.h, (f.artH || 0) * 0.9) - 44 * s; // above the head (and anything floating over it)
     const mk = ui(f.cpu ? 'hud-marker-cpu.png' : `hud-marker-p${f.slot % 4 + 1}.png`);
     if (mk) { // ChatGPT marker: colored arrow with the tag in its white shield
       const ms = 58; g.drawImage(mk, f.x - ms / 2, tagY + 12 - ms * (118 / 128), ms, ms);
