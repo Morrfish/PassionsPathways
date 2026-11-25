@@ -288,7 +288,10 @@ CHARACTERS = {
             'aerials.png': ['tote', 'arhythm', 'strum', 'pdrop'],
             'cosplay.png': ['build', 'buildx', 'cup'],
             'ultimate.png': ['ult', None, 'pers'],
+            'flyby-caster.png': ['fly', None],  # Five-Star Flyby (replaces the guitar ultimate)
+            'flyby-girls.png': ['girl0', 'girl1', 'girl2', 'girl3', 'girl4'],  # gold, pink, blue, green, purple
         },
+        'alpha': {'flyby-girls.png': {'minalpha': 30, 'solid': 60, 'clearleft': 118}},  # the last pose in each row is a fading ghost
         'props': [('fxheart', 'pickups.png', (180, 770)), ('fxwave', 'pickups.png', (780, 770)), ('fxsleep', 'pickups.png', (470, 770))],
         'extras': {'fxcp0': 'fx-cp01.png', 'fxcp1': 'fx-cp02.png', 'fxcp2': 'fx-cp03.png', 'fxcp3': 'fx-cp04.png', 'fxcp4': 'fx-cp05.png'},
     },
@@ -300,8 +303,20 @@ CHARACTERS = {
             'anime-specials.png': ['letter', 'ribdash', 'skyhigh', 'guard'],
             'anime-aerials.png': ['htwirl', 'flyrib', 'scatch', 'meteor'],
             'ultimate.png': [None, 'back', None],
+            'flyby-caster.png': [None, 'fly'],
         },
         'props': [('fxheart', 'pickups.png', (180, 770))],
+    },
+    # Siren's Creativity dragon (sheets with a caption under each pose): her dragon form's atlas
+    'siren-dragon': {
+        'scale': 0.62, 'bodies': True,
+        'sheets': {
+            'siren-creativity-dragon-movement-draft.png': ['idle', 'run', 'jump', 'hurt'],
+            'siren-creativity-dragon-attacks-draft.png': ['tail', 'wing', 'horn', 'stomp'],
+            'siren-creativity-dragon-specials-draft.png': ['prism', 'barrage', 'soar', 'shield'],
+            'siren-creativity-transform-exhaustion-draft.png': [None, 'back', None],
+        },
+        'keep_fx': {('barrage', 1): 'fxcubes'},
     },
     'evea': {
         'scale': 0.62, 'auto': True,
@@ -417,11 +432,12 @@ def slice_sheet(path, names, cols, frames, scale, excl=(), cutcols=False, mainon
         add(frames, f'{names[r]}{c}', img, ax, ay, scale)
     return a, lab
 
-def slice_auto(path, names, frames, scale, ncols=4, skip=(), cells=False, top=False, erasetags=False):
+def slice_auto(path, names, frames, scale, ncols=4, skip=(), cells=False, top=False, erasetags=False, minalpha=64, solid=128, clearleft=0):
     """Sheets with the move names in yellow boxes at the left of each row (Jorie, Jaxston, Evea):
     the boxes mark where each row starts, and the poses in a row are split at the widest gaps."""
     a = np.array(Image.open(path).convert('RGBA'))
-    a[..., 3][a[..., 3] < 64] = 0
+    a[..., 3][a[..., 3] < minalpha] = 0
+    if clearleft: a[:, :clearleft, 3] = 0  # name tags at the left that aren't yellow (e.g. Sabir's flyby girls)
     H, W = a.shape[:2]
     pur = (a[..., 0] > 60) & (a[..., 0] < 150) & (a[..., 1] < 60) & (a[..., 2] > 100) & (a[..., 3] > 128)
     pr = np.nonzero(pur[:160].sum(1) > 300)[0]
@@ -443,7 +459,7 @@ def slice_auto(path, names, frames, scale, ncols=4, skip=(), cells=False, top=Fa
     wide = best > 0.4 * W
     for yy in np.nonzero(wide)[0]:
         if yy > title_end and not (wide[max(0, yy - 6)] and wide[min(H - 1, yy + 6)]): a[max(0, yy - 1):yy + 2, :, 3] = 0
-    m = a[..., 3] >= 128
+    m = a[..., 3] >= solid
     if cells:  # glowing poses touch each other: find them by their solid middles, then cut whole cells
         m = nd.binary_erosion(a[..., 3] >= 235, iterations=3)
         l0, _ = nd.label(a[..., 3] >= 128); bx = []
@@ -554,6 +570,69 @@ def slice_auto(path, names, frames, scale, ncols=4, skip=(), cells=False, top=Fa
             ay = my.stop - y0
             add(frames, f'{names[r]}{c}', img, ax, ay, scale)
 
+def slice_bodies(path, names, frames, scale, leftcut=230, minbody=12000, keep_fx=None):
+    """Sheets with a caption under every pose and art labels on the left (Siren's dragon, the giants):
+    each pose is found by its big solid body; small pieces next to it (sparkles, beams, cubes) come along,
+    captions under the body are left out. Rows come from where the bodies are."""
+    a = np.array(Image.open(path).convert('RGBA'))
+    a[..., 3][a[..., 3] < 64] = 0
+    def boxy(o, s):  # a caption plate or the title banner: wide, short and mostly filled
+        h, w = o[0].stop - o[0].start, o[1].stop - o[1].start
+        return h < 70 and w > 80 and w > 2 * h and s / (h * w) > 0.45
+    # caption plates: wipe each whole caption row (some plates touch the feet above them)
+    m = a[..., 3] >= 128
+    lab, n = nd.label(m); objs = nd.find_objects(lab); sizes = nd.sum(m, lab, range(1, n + 1))
+    def platey(i, o):  # plates are pale blue or yellow (cubes and pencils are other colours)
+        px = a[o][lab[o] == i].astype(int); r, g, b = px[:, 0], px[:, 1], px[:, 2]
+        return (((r > 160) & (g > 200) & (b > 215)) | ((r > 215) & (g > 165) & (b < 110))).mean() > 0.35
+    plates = sorted((o[0].start, o[0].stop) for i, (o, s) in enumerate(zip(objs, sizes))
+                    if o[0].stop >= 120 and o[1].start > leftcut - 60 and boxy(o, s) and o[1].stop - o[1].start < 500 and platey(i + 1, o))
+    for y0p, y1p in plates: a[max(0, y0p - 3):y1p + 3, leftcut - 40:, 3] = 0
+    m = a[..., 3] >= 128
+    lab, n = nd.label(m); objs = nd.find_objects(lab); sizes = nd.sum(m, lab, range(1, n + 1))
+    def texty(i, o, s):  # caption lettering (dark, small) that isn't on a plate
+        if s > 1800 or o[0].stop - o[0].start > 45: return False
+        px = a[o][lab[o] == i]; return (px[:, :3].astype(int).sum(1) < 260).mean() > 0.55
+    comps = [(i + 1, o, s) for i, (o, s) in enumerate(zip(objs, sizes))
+             if s >= 30 and not texty(i + 1, o, s) and o[1].stop > leftcut and not boxy(o, s) and not (o[0].stop < 120 and o[1].stop - o[1].start > 200)]
+    def cy(k): return (k[1][0].start + k[1][0].stop) / 2
+    def cx(k): return (k[1][1].start + k[1][1].stop) / 2
+    bodies = sorted([k for k in comps if k[2] >= minbody and (k[1][0].stop - k[1][0].start) > 70], key=cy)
+    rows, cur = [], []
+    for k in bodies:  # rows: bodies whose middles are close in height
+        if cur and cy(k) - np.mean([cy(c) for c in cur]) > 90: rows.append(cur); cur = []
+        cur.append(k)
+    if cur: rows.append(cur)
+    for r, rb in enumerate(rows):
+        if r >= len(names) or names[r] is None: continue
+        rb = sorted(rb, key=cx)
+        groups = []  # bodies that overlap side to side make one pose (Siren with the dragon outline behind her)
+        for k in rb:
+            if groups and k[1][1].start < max(g[1][1].stop for g in groups[-1]) - 10: groups[-1].append(k)
+            else: groups.append([k])
+        while len(groups) > 4:
+            j = min(range(1, len(groups)), key=lambda j: min(k[1][1].start for k in groups[j]) - max(k[1][1].stop for k in groups[j - 1]))
+            groups[j - 1] += groups.pop(j)
+        edges = [leftcut] + [(max(k[1][1].stop for k in groups[j - 1]) + min(k[1][1].start for k in groups[j])) // 2 for j in range(1, len(groups))] + [a.shape[1]]
+        y0r = min(k[1][0].start for k in rb) - 60; y1r = max(k[1][0].stop for k in rb) + 4
+        for c, grp in enumerate(groups):
+            btop = min(k[1][0].start for k in grp); bot = max(k[1][0].stop for k in grp)
+            ids = {k[0] for k in grp}
+            for k in comps:  # extras in this cell that reach into the body's height (not captions above or below it)
+                if k[0] in ids or not (edges[c] <= cx(k) < edges[c + 1]): continue
+                if k[1][0].stop > btop + 5 and k[1][0].start >= btop - 70 and k[1][0].start < bot - 12 and k[1][0].stop <= bot + 30: ids.add(k[0])
+            keep = np.isin(lab, list(ids)); ys, xs = np.nonzero(keep)
+            y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
+            img = a[y0:y1, x0:x1].copy(); img[..., 3] = np.where(keep[y0:y1, x0:x1], img[..., 3], 0)
+            main = max(grp, key=lambda k: k[2]); my, mx = main[1]
+            add(frames, f'{names[r]}{c}', img, (mx.start + mx.stop) / 2 - x0, my.stop - y0, scale)
+            if keep_fx and (names[r], c) in keep_fx:  # also save the loose effect pieces on their own (e.g. the cubes)
+                fx = keep & ~np.isin(lab, [k[0] for k in grp]); ys, xs = np.nonzero(fx)
+                if len(ys):
+                    e = a[ys.min():ys.max() + 1, xs.min():xs.max() + 1].copy(); e[..., 3] = np.where(fx[ys.min():ys.max() + 1, xs.min():xs.max() + 1], e[..., 3], 0)
+                    nm = keep_fx[(names[r], c)]; add(frames, nm, e, e.shape[1] / 2, e.shape[0] / 2, scale)
+    return len(rows)
+
 def add(frames, name, img, ax, ay, scale):
     im = Image.fromarray(img)
     w, h = im.size
@@ -583,8 +662,10 @@ if __name__ == '__main__':
         excl = [pt for (_, sh, pt) in props if sh == sheet and pt]
         cols = cfg.get('cols')
         if isinstance(names, dict): cols = names.get('cols'); names = names['rows']
+        if cfg.get('bodies'):
+            slice_bodies(f'{art}/{sheet}', names, frames, cfg['scale'], keep_fx=cfg.get('keep_fx')); continue
         if cfg.get('auto'):
-            slice_auto(f'{art}/{sheet}', names, frames, cfg['scale'], skip=cfg.get('skip', ()), cells=sheet in cfg.get('cells', ()), top=sheet in cfg.get('toplabels', ()), erasetags=sheet in cfg.get('erasetags', ())); continue
+            slice_auto(f'{art}/{sheet}', names, frames, cfg['scale'], skip=cfg.get('skip', ()), cells=sheet in cfg.get('cells', ()), top=sheet in cfg.get('toplabels', ()), erasetags=sheet in cfg.get('erasetags', ()), **cfg.get('alpha', {}).get(sheet, {})); continue
         slice_sheet(f'{art}/{sheet}', names, cols, frames, cfg['scale'], excl, cfg.get('cutcols'), cfg.get('mainonly', {}).get(sheet, ()))
     for name, sheet, pt in props:
         if not pt: continue

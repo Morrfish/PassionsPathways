@@ -483,11 +483,35 @@ MM.FIGHTERS = [
   const coleUlt = { name: 'The Ultimate Cameo', sprite: 'cole', type: 'catch', radius: 1.6, dur: 150, catchAt: 60, finishAt: 100, dmg: 24, kbMul: 1.45, say: [62, 'Excelsior!'],
     desc: 'a comic portal opens, a certain comic legend steps out, points up, "Excelsior!", and a gold comic burst blasts everyone close by',
     poses: [[0, 'ult0'], [30, 'ult1'], [60, 'ult2'], [104, 'ult3']] };
-  const sabirUlt = { name: 'Encore, Sabir!', sprite: 'sabir', type: 'catch', ahead: 3, dur: 168, catchAt: 54, finishAt: 108, dmg: 24, kbMul: 1.45,
-    desc: 'a guitar build-up, a mint-and-pink music wave catches everyone in front, then a giant heart chord blasts them away and he takes a bow',
-    poses: [[0, 'ult0'], [27, 'ult1'], [54, 'ult2'], [120, 'ult3']] };
+  // Siren's Creativity: her creative moves fill the meter; full, Switch sketches her into a big doodle dragon for
+  // 12 s; when it wears off she's out of ideas and can't move or act for exactly 2 s (she can still be hit).
+  {
+    const siren = MM.FIGHTERS.find((d) => d.id === 'siren');
+    siren.mess = { action: 3, hit: 5, cleanFrames: 720, cupDur: 42, backDur: 24, backPoses: 2, exhaust: 120,
+      ready: 'CREATIVITY READY!', go: 'DRAGON!', back: 'OUT OF IDEAS... TOO TIRED!', color: '#47e6ff', goColor: '#47e6ff', bar: '#ff5fd2', formBar: '#47e6ff', hue: 300 };
+    const base = { form: 'artist', formName: 'OUT OF IDEAS...', title: 'Siren', sprite: 'siren', color: siren.color, accent: siren.accent, skin: siren.skin, hair: siren.hair,
+      stats: Object.assign({}, siren.stats), specials: siren.specials, attackNames: siren.attackNames, ultimate: siren.ultimate };
+    siren.forms = [base, {
+      form: 'dragon', formName: 'DRAGON!', title: 'Creativity dragon', sprite: 'siren-dragon', rainbowBeam: true,
+      color: '#47e6ff', accent: '#ff5fd2', skin: siren.skin, hair: siren.hair,
+      stats: Object.assign({}, siren.stats, { speed: 6.9, air: 6.6, jump: 15, weight: 1.35, power: 1.15, size: 1.75 }),
+      attackNames: { jab: 'Tail Brush', side: 'Tail Brush', up: 'Pencil Horn Lift', down: 'Block Stomp', air: 'Wing Swipe, Pencil Horn Lift, Block Stomp' },
+      specials: {
+        neutral: { kind: 'beam', name: 'Prism Breath', thing: 'a rainbow breath (hold Special to make it bigger)', startup: 16, active: 18, recovery: 18, maxCharge: 30, len: 430, dmg: 8, kb: 7, kbg: 0.1, cd: 60 },
+        side: { kind: 'projectile', name: 'Block Barrage', thing: 'three toy blocks', sprite: 'fxcubes', scale: 0.38, speed: 12, dmg: 9, kb: 7, kbg: 0.09, r: 26, life: 55, cd: 90 },
+        up: { kind: 'rise', name: 'Canvas Soar', power: 20, forward: 4, dmg: 6, kb: 6, kbg: 0.06 },
+        down: { kind: 'counter', name: 'Sketch Shield', window: 18, mult: 1.3 },
+      },
+      ultimate: Object.assign({}, siren.ultimate, { sprite: 'siren-dragon', noBeamArt: false, poses: [[0, 'prism0'], [33, 'prism1'], [66, 'prism2'], [105, 'prism3']] }),
+    }];
+  }
+  // Five-Star Flyby (replaces Encore, Sabir!): a star portal opens behind him and five friends fly out across the screen,
+  // each one hitting each opponent once (about 5% each, under 25% in all). In his anime form he casts it in that outfit.
+  const sabirUlt = { name: 'Five-Star Flyby', sprite: 'sabir', type: 'flyby', girlSheet: 'sabir', girls: 5, sendAt: 36, every: 11, speed: 17, life: 95, dur: 150, dmg: 4.4, kbMul: 1.3,
+    desc: 'opens a star portal behind him and five friends fly out of it across the screen, each one striking everyone she passes',
+    poses: [[0, 'fly0'], [24, 'fly1'], [36, 'fly2'], [110, 'fly3']] };
   for (const d of MM.FIGHTERS) {
-    if (d.id === 'sabir') d.forms.forEach((fm) => (fm.ultimate = sabirUlt));
+    if (d.id === 'sabir') d.forms.forEach((fm, i) => (fm.ultimate = i ? Object.assign({}, sabirUlt, { sprite: 'sabir-anime' }) : sabirUlt));
     if (d.id === 'cole') d.forms.forEach((fm, i) => { fm.specials = coleSpecials[i]; fm.ultimate = coleUlt;
       fm.attackNames = { jab: 'Comic Combo', side: 'Hero Kick', up: 'Rising Hero', down: 'Hulk Stomp', air: 'Air Spin, Web Kick, Sky Palm, Meteor Boot' }; });
     if (d.id === 'jorie') d.forms.forEach((fm) => (fm.ultimate = jorieUlt));

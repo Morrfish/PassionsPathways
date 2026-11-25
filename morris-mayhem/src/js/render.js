@@ -26,13 +26,14 @@ window.MM = window.MM || {};
     const a = f.act, M = S.moves;
     if (f.float > 0) return 'idle' + (Math.floor(f.anim / 16) % 4); // coming back after a KO: stand on the respawn spot
     if (f.hitstun > 0) return !f.ground ? 'hurt2' : f.hitstun > 5 ? 'hurt1' : f.hitstun > 2 ? 'hurt0' : S.frames.hurt3 ? 'hurt3' : 'hurt0'; // big hit, reel, then shake it off
+    if (f.exhaust > 0 && S.frames.tired0) return f.hitstun > 0 ? 'tired2' : f.exhaust < 16 ? 'tired3' : 'tired0'; // Siren worn out after the dragon
     if (f.jsq > 0) return 'jump0';
     if (a) {
       if (a.type === 'powerdown') return 'down' + Math.min(3, Math.floor(a.t / 10));
       if (a.type === 'lag') return a.countered && M.counterHit ? M.counterHit : 'jump0';
       if (a.type === 'dodge') return M.defRow && f.ground ? M.defRow + (a.roll ? (a.t < 10 ? 2 : 3) : a.t < 8 ? 0 : 1) : f.ground ? 'idle0' : 'jump2';
-      if (a.type === 'cleanup') return 'cup' + Math.min(3, Math.floor(a.t / 8.25)); // Codee: brush off the mess, into the lab coat
-      if (a.type === 'backwork') return 'back' + Math.min(3, Math.floor(a.t / 5.25));
+      if (a.type === 'cleanup') return 'cup' + Math.min(3, Math.floor(a.t / (a.dur / 4))); // Codee: brush off the mess, into the lab coat
+      if (a.type === 'backwork') { const nb = (f.def.mess && f.def.mess.backPoses) || 4; return 'back' + Math.min(nb - 1, Math.floor(a.t / (a.dur / nb))); }
       if (a.type === 'shirt') return 'bump' + f.formIdx; // Cole shows off the new printed shirt
       if (a.type === 'normal') {
         const row = M[a.name], m = a.m, before = a.t < m.start, during = a.t < m.start + m.active;
@@ -180,8 +181,15 @@ window.MM = window.MM || {};
     const tipW = tip ? Math.min(b.len * 0.35, (tip[2] / tip[3]) * th * 1.5) : 0, bodyLen = b.len - tipW * 0.6;
     const layer = (h, color, alpha) => { g.globalAlpha = alpha; g.fillStyle = color; g.beginPath(); g.roundRect ? g.roundRect(0, -h / 2, bodyLen, h, h / 2) : g.rect(0, -h / 2, bodyLen, h); g.fill(); };
     g.globalCompositeOperation = 'lighter';
+    if (f.def.rainbowBeam) { // e.g. Siren's dragon: Prism Breath
+      const rg = g.createLinearGradient(0, -th * 0.8, 0, th * 0.8);
+      ['#ff4b6e', '#ff9f1c', '#ffe14d', '#4be37a', '#3fb6ff', '#9b5cff'].forEach((c, i) => rg.addColorStop(i / 5, c));
+      g.globalAlpha = 0.35; g.fillStyle = rg; g.fillRect(0, -th * 0.8, bodyLen, th * 1.6);
+      g.globalAlpha = 0.9; g.fillRect(0, -th * 0.5, bodyLen, th);
+    } else {
     layer(th * 1.6, gold ? '#ffb300' : '#1fa8ff', 0.25);
     layer(th * 1.05, gold ? '#ffd54a' : '#33c8ff', 0.55);
+    }
     const gr = g.createLinearGradient(0, -th / 2, 0, th / 2);
     gr.addColorStop(0, 'rgba(160,240,255,0)'); gr.addColorStop(0.35, '#bff6ff'); gr.addColorStop(0.5, '#ffffff'); gr.addColorStop(0.65, '#bff6ff'); gr.addColorStop(1, 'rgba(160,240,255,0)');
     g.globalAlpha = 0.95; g.fillStyle = gr; g.fillRect(0, -th * 0.42, bodyLen, th * 0.84);
@@ -232,6 +240,7 @@ window.MM = window.MM || {};
   }
 
   function drawSpriteProj(g, p) {
+    if (p.girl != null) return drawGirl(g, p);
     let sh = p.sprite && p.owner.def.sprite && sheet(p.owner.def.sprite);
     if (sh && !sh.S.frames[p.anim ? p.anim[0] : p.sprite] && (sh.S.base || p.base)) sh = sheet(sh.S.base || p.base) || sh;
     if (!sh) return false;
@@ -249,6 +258,18 @@ window.MM = window.MM || {};
     g.drawImage(sh.im, fr[0], fr[1], fr[2], fr[3], -fr[4], -fr[5], fr[2], fr[3]);
     g.restore();
     return true;
+  }
+
+  // a flyby friend (Sabir's ultimate): comes out of the portal, flies, strikes as she passes someone, fades away
+  function drawGirl(g, p) {
+    const sh = sheet(p.sheet); if (!sh) return false;
+    const c = p.t < 9 ? 0 : p.life < 14 ? 3 : p.atkT != null && p.t - p.atkT < 14 ? 2 : 1;
+    const fr = sh.S.frames['girl' + p.girl + c]; if (!fr) return false;
+    const k = ((p.owner.h * 1.15) / sh.S.standH) * (p.scale || 1);
+    g.save(); g.translate(p.x, p.y + fr[5] * k * 0.5); g.scale((p.dir || 1) * k, k);
+    if (p.life < 14) g.globalAlpha = Math.max(0, p.life / 14);
+    g.drawImage(sh.im, fr[0], fr[1], fr[2], fr[3], -fr[4], -fr[5], fr[2], fr[3]);
+    g.restore(); return true;
   }
 
   function seeded(seed) { let s = seed; return () => ((s = (s * 16807) % 2147483647) / 2147483647); }

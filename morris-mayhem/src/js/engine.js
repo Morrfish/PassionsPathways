@@ -116,7 +116,7 @@ window.MM = window.MM || {};
     if (f.clean > 0) { f.clean--; return; }
     const a = f.act;
     if (a && (a.type === 'ult' || a.type === 'backwork')) return;
-    if (!a && !f.hitstun && !f.caught) f.act = { type: 'backwork', t: 0, dur: 21, noGrav: !f.ground };
+    if (!a && !f.hitstun && !f.caught) f.act = { type: 'backwork', t: 0, dur: f.def.mess.backDur || 21, noGrav: !f.ground };
     else if (!a || a.type !== 'normal' && a.type !== 'special') backToWork(G, f); // got hit: change right away
   }
   // Sabir's costume pieces: a bit per piece; all of them starts the transformation right away
@@ -126,7 +126,7 @@ window.MM = window.MM || {};
     let n = 0; for (let k = 0; k < ms.pieces; k++) if ((f.pieces >> k) & 1) n++;
     f.mess = Math.round((n / ms.pieces) * 100);
     popText(G, f.x, f.y - f.h - 24, n + ' / ' + ms.pieces, ms.color || f.accent); MM.sfx('heal'); burst(G, f.x, f.y - f.h * 0.6, ms.color || f.accent, 10, 4);
-    if (n >= ms.pieces && !f.dead && !(f.act && f.act.type === 'ult')) { f.act = { type: 'cleanup', t: 0, dur: 33, noGrav: !f.ground }; f.vy = Math.min(f.vy, 0); }
+    if (n >= ms.pieces && !f.dead && !(f.act && f.act.type === 'ult')) { f.act = { type: 'cleanup', t: 0, dur: ms.cupDur || 33, noGrav: !f.ground }; f.vy = Math.min(f.vy, 0); }
   }
   function sleepPulse(G, f) { // male opponents close by doze off for a moment (a hit wakes them)
     const sl = f.def.mess.sleep, r = sl.radius * f.h;
@@ -138,7 +138,9 @@ window.MM = window.MM || {};
     }
   }
   function backToWork(G, f) {
+    const ex = f.def.mess.exhaust; // e.g. Siren: out of ideas, can't move or act for exactly 2 s (still gets hit and knocked around)
     applyForm(f, 0); f.clean = 0; f.mess = 0; f.pieces = 0;
+    if (ex) f.exhaust = ex;
     burst(G, f.x, f.y - f.h / 2, f.def.mess.color || '#bfe9ff', 16, 5); popText(G, f.x, f.y - f.h - 24, f.def.mess.back || 'BACK TO WORK!', f.accent);
   }
   function makeFighterBase(p, def, x, alt, stocks) {
@@ -193,7 +195,7 @@ window.MM = window.MM || {};
     for (const f of G.fighters) {
       f.prev = f.inp;
       f.inp = f.dummy ? blankInput() : f.cpu ? MM.aiThink(G, f) : MM.readDevice(f.dev); // practice dummy: stands still
-      if (G.countdown > 0 || G.over) f.inp = blankInput();
+      if (G.countdown > 0 || G.over || f.exhaust > 0) f.inp = blankInput(); // exhausted: no moving or acting
     }
     movePlatforms(G);
     for (const f of G.fighters) updateFighter(G, f);
@@ -247,6 +249,7 @@ window.MM = window.MM || {};
       else { f.vx = 0; f.vy = 0; f.anim++; f.x += (Math.random() - 0.5) * 2; return; }
     }
     f.anim++;
+    if (f.exhaust > 0) f.exhaust--; // one fixed deadline: hits don't restart it
     if (f.invuln > 0) f.invuln--;
     if (f.dodgeCd > 0) f.dodgeCd--;
     if (f.dropT > 0) f.dropT--;
@@ -285,7 +288,7 @@ window.MM = window.MM || {};
       else if (swapNow && f.def.cycle) { // e.g. Cole: Thor -> Captain America -> Iron Man shirt (never back to the plain tee)
         if (!(f.swapCd > 0)) { applyForm(f, f.formIdx >= f.forms.length - 1 ? 1 : f.formIdx + 1); f.swapCd = 48; f.act = { type: 'shirt', t: 0, dur: 15, noGrav: !f.ground }; popText(G, f.x, f.y - f.h - 24, f.def.formName, f.accent); burst(G, f.x, f.y - f.h / 2, f.accent, 12, 5); MM.sfx('special'); }
       }
-      else if (swapNow && f.def.mess) { if (f.mess >= 100 && f.formIdx === 0) f.act = { type: 'cleanup', t: 0, dur: 33, noGrav: !f.ground }; }
+      else if (swapNow && f.def.mess) { if (f.mess >= 100 && f.formIdx === 0) f.act = { type: 'cleanup', t: 0, dur: f.def.mess.cupDur || 33, noGrav: !f.ground }; }
       else if (swapNow) startSpecial(G, f, 'down');
       else if (pressed('taunt') && f.ground) { // taunt: ground only, a hit stops it, no protection
         if (G.practice && !f.cpu && f.def.mess && f.formIdx === 0) { // practice: Taunt fills the Switch meter (Sabir: all five pieces)
@@ -776,6 +779,14 @@ window.MM = window.MM || {};
         a.hitProps = { dmg: u.dmg, kb: 9 * u.kbMul, kbg: 0.12 * u.kbMul, ang: 30 };
         if (a.t === u.beamAt) { G.shake = 20; G.flash = 6; }
       } else { a.box = null; a.beam = null; }
+    } else if (u.type === 'flyby') { // e.g. Sabir's Five-Star Flyby: five friends fly out from behind him and across the screen
+      const i = (a.t - u.sendAt) / u.every;
+      if (i >= 0 && i < u.girls && i === Math.floor(i)) {
+        const S = MM.SPRITES[u.girlSheet], st = S && S.frames.idle0 && S.frames.girl00 ? (S.frames.idle0[3] / S.frames.girl00[3]) * 0.95 : 1;
+        spawnProj(G, f, { x: f.x - f.face * 0.75 * f.w, y: f.y - f.h * (0.45 + 0.28 * ((i * 2) % 5) / 4), vx: f.face * u.speed, vy: 0, r: 44,
+          dmg: u.dmg, kb: 5.5 * u.kbMul, kbg: 0.06 * u.kbMul, ang: 40, life: u.life, pierce: true, girl: i, sheet: u.girlSheet, scale: st, dir: f.face });
+        part(G, { type: 'ring', x: f.x - f.face * 0.75 * f.w, y: f.y - f.h * 0.6, color: f.accent, size: 40, life: 16, max: 16 });
+      }
     } else if (u.type === 'barrage') { // e.g. Jaxston's Pirate Fireball Frenzy: a string of flaming balls kicked straight ahead
       const t = a.t - u.fireAt;
       if (t >= 0 && t < u.count * u.every && t % u.every === 0) {
@@ -894,7 +905,7 @@ window.MM = window.MM || {};
         else if (p.fall) p.vy += 0.6;
         else p.life = 0;
       }
-      if (insideMain(G, p.x, p.y + p.r * 0.5)) { p.life = 0; burst(G, p.x, p.y, p.color, 6, 3); }
+      if (!p.pierce && insideMain(G, p.x, p.y + p.r * 0.5)) { p.life = 0; burst(G, p.x, p.y, p.color, 6, 3); }
       const box = { x: p.x - p.r, y: p.y - p.r, w: p.r * 2, h: p.r * 2 };
       for (const d of G.fighters) {
         if (d === p.owner || d.dead || d.out || p.hit.has(d) || d.invuln > 0) continue;
@@ -902,7 +913,8 @@ window.MM = window.MM || {};
           p.hit.add(d);
           const ok = applyHit(G, p.owner, d, { dmg: p.dmg, kb: p.kb, kbg: p.kbg, ang: p.ang, face: p.pull ? sgn(p.owner.x - d.x) : sgn(p.vx || p.dir) }, p.x, p.y, p);
           if (ok && p.slow && (!d.slow || d.slow.mul >= p.slow.mul)) { d.slow = { mul: p.slow.mul, t: p.slow.t }; burst(G, d.x, d.y - d.h / 2, '#bff3ff', 12, 4); } // refresh, never stack
-          if (ok && !p.ground) p.life = 0;
+          if (ok && p.pierce) p.atkT = p.t; // flies on through (e.g. Sabir's flyby girls strike as they pass)
+          else if (ok && !p.ground) p.life = 0;
         }
       }
       if (Math.abs(p.x) > 3000 || p.y > 1500) p.life = 0;
@@ -959,6 +971,7 @@ window.MM = window.MM || {};
       G.shake = 26; MM.sfx('ko');
       if (f.act && f.act.type === 'ult') releaseUlt(f.act);
       if (f.super) { f.super = null; applyForm(f, 0); }
+      f.exhaust = 0;
       if (f.def.mess) { if (f.formIdx) applyForm(f, 0); f.mess = 0; f.clean = 0; f.pieces = 0; G.traps = G.traps.filter((t) => !(t.owner === f && t.piece != null)); }
       f.act = null; f.hitstun = 0; f.buff = null; f.slow = null; f.vx = f.vy = 0; f.caught = null; f.meter = 0;
       if (f.stocks <= 0) { f.out = true; f.x = 0; f.y = -3000; }
