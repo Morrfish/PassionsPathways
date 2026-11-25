@@ -38,7 +38,7 @@ MOVES = {
                   airRow='hedge', upRow='rake', uairRow='branch', riseLate='leaf3', defRow='def'),
     'haylie': dict(jab='arm', side='grab', down='step', up='upgo', nair='reflex', fair='reach', uair='sky', dair='feet',
                    neutral='bread', sideSpecial='coming', upSpecial='gotyou', downSpecial='babies', counterHit='babies2',
-                   airRow='reach', upRow='upgo', uairRow='sky', riseLate='gotyou3'),
+                   upRow='upgo', uairRow='sky', riseMid='gotyou2', riseLate='gotyou3'),  # no airRow: all 4 Long Reach poses play
     'codee-clean': dict(jab='sweep', side='trash', down='mop', up='duster', nair='polish', fair='dbust', uair='hdust', dair='squeak',
                         neutral='suds', sideSpecial='patrol', upSpecial='vac', downSpecial='wet',
                         airRow='dbust', upRow='duster', uairRow='hdust', riseLate='vac3', defRow='def'),

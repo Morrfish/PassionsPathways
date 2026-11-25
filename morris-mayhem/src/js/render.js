@@ -22,7 +22,7 @@ window.MM = window.MM || {};
   function pickFrame(f, S) {
     const a = f.act, M = S.moves;
     if (f.float > 0) return 'idle' + (Math.floor(f.anim / 16) % 4); // coming back after a KO: stand on the respawn spot
-    if (f.hitstun > 0) return f.ground ? 'hurt' + (f.hitstun > 6 ? 1 : 0) : 'hurt2';
+    if (f.hitstun > 0) return !f.ground ? 'hurt2' : f.hitstun > 5 ? 'hurt1' : f.hitstun > 2 ? 'hurt0' : S.frames.hurt3 ? 'hurt3' : 'hurt0'; // big hit, reel, then shake it off
     if (f.jsq > 0) return 'jump0';
     if (a) {
       if (a.type === 'powerdown') return 'down' + Math.min(3, Math.floor(a.t / 10));
@@ -44,7 +44,7 @@ window.MM = window.MM || {};
         const kind = a.sp.kind;
         if (kind === 'dash' && a.sp.ride) return row + (a.t < 3 ? 0 : a.t < 6 ? 1 : a.box ? 2 : 3); // build the cart, ride it, hop off
         if (kind === 'dash') return row + (a.t < 6 ? 0 : a.box ? 1 + ((a.t >> 2) & 1) : 3);
-        if (kind === 'rise') return a.chute ? row + 2 : a.t < 4 ? row + 0 : a.t < 12 ? row + 1 : M.riseLate;
+        if (kind === 'rise') return a.chute ? row + 2 : a.t < 4 ? row + 0 : a.t < (M.riseMid ? 9 : 12) ? row + 1 : M.riseMid && a.t < 30 ? M.riseMid : M.riseLate; // riseMid: e.g. Haylie's bear-aura leap
         if (kind === 'projectile') return row + (a.t < 5 ? 0 : a.t < 9 ? 1 : a.t < 16 ? 2 : 3);
         if (kind === 'pack') return row + (a.t < 10 ? 0 : a.t < 20 ? 1 : a.t < 28 ? 2 : 3);
         if (kind === 'counter') return row + (a.t < 5 ? 0 : a.counter ? 1 : 3);

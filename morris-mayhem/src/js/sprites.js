@@ -947,7 +947,7 @@ MM.SPRITES['haylie'] = {
     'win': [256, 816, 104, 220, 41.6, 220.1],
     'lose': [493, 816, 212, 153, 43.4, 153.1]
   },
-  moves: {"jab": "arm", "side": "grab", "down": "step", "up": "upgo", "nair": "reflex", "fair": "reach", "uair": "sky", "dair": "feet", "neutral": "bread", "sideSpecial": "coming", "upSpecial": "gotyou", "downSpecial": "babies", "counterHit": "babies2", "airRow": "reach", "upRow": "upgo", "uairRow": "sky", "riseLate": "gotyou3"},
+  moves: {"jab": "arm", "side": "grab", "down": "step", "up": "upgo", "nair": "reflex", "fair": "reach", "uair": "sky", "dair": "feet", "neutral": "bread", "sideSpecial": "coming", "upSpecial": "gotyou", "downSpecial": "babies", "counterHit": "babies2", "upRow": "upgo", "uairRow": "sky", "riseMid": "gotyou2", "riseLate": "gotyou3"},
 };
 
 MM.SPRITES['codee-clean'] = {
