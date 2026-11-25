@@ -94,8 +94,10 @@ window.MM = window.MM || {};
     // ChatGPT tag tokens (P1-P4 in the player's color, gray CPU) with the label written on them
     const chips = (id) => slots.map((s, i) => (s.type !== 'off' && s.fighter === id ? `<i class="tag" style="background-image:url(img/ui/select-tag-${s.type === 'cpu' ? 'cpu' : 'p' + (i + 1)}.png)">${s.type === 'cpu' ? 'CPU' : 'P' + (i + 1)}</i>` : '')).join('');
     $('#roster').style.setProperty('--n', MM.FIGHTERS.length + 1); // every tile shares one row, as big as fits
-    $('#roster').innerHTML = MM.FIGHTERS.map((f) => `<button data-f="${f.id}" class="${slots.some((s) => s.type !== 'off' && s.fighter === f.id) ? 'sel' : ''}"><img src="${portrait(f.id)}" alt=""><span class="chips">${chips(f.id)}</span><span class="nm">${f.name}</span></button>`).join('')
-      + `<button data-f="random" class="rand"><span class="nm">Random</span></button>`;
+    // grouped by family (MM.FAMILIES in data.js), oldest to youngest
+    const tile = (f) => `<button data-f="${f.id}" class="${slots.some((s) => s.type !== 'off' && s.fighter === f.id) ? 'sel' : ''}"><img src="${portrait(f.id)}" alt=""><span class="chips">${chips(f.id)}</span><span class="nm">${f.name}</span></button>`;
+    $('#roster').innerHTML = MM.familyGroups().map((g) => `<div class="fam" style="--k:${g.fighters.length}"><div class="famname">${g.name}</div><div class="famtiles">${g.fighters.map(tile).join('')}</div></div>`).join('')
+      + `<div class="fam" style="--k:1"><div class="famname">&nbsp;</div><div class="famtiles"><button data-f="random" class="rand"><span class="nm">Random</span></button></div></div>`;
     drawOptions();
   }
   $('#slots').addEventListener('click', (e) => {
@@ -232,10 +234,11 @@ window.MM = window.MM || {};
   };
   function drawFamily() {
     const bar = (label, v, max) => `<div>${label}<i><b style="width:${Math.min(100, (v / max) * 100)}%"></b></i></div>`;
-    $('#cards').innerHTML = MM.FIGHTERS.map((f) => `<div class="card" style="border-color:${f.color}">
+    const card = (f) => `<div class="card" style="border-color:${f.color}">
       <img src="${portrait(f.id)}" alt=""><h3>${f.name}</h3><small>${f.title || ''}</small>
       <div class="bars">${bar('Speed', f.stats.speed, 9)}${bar('Power', f.stats.power, 1.4)}${bar('Weight', f.stats.weight, 1.4)}</div>
-      <ul>${f.attackNames ? `<li><b>Attacks</b>: ${Object.values(f.attackNames).join(', ')}</li>` : ''}${['neutral', 'side', 'up', 'down'].map((k) => { const s = f.specials[k]; return s ? `<li><b>${{ neutral: 'Special', side: '→ Special', up: '↑ Special', down: '↓ Special' }[k]}: ${s.name}</b>: ${(KIND_TEXT[s.kind] || (() => ''))(s)}</li>` : ''; }).join('')}</ul></div>`).join('');
+      <ul>${f.attackNames ? `<li><b>Attacks</b>: ${Object.values(f.attackNames).join(', ')}</li>` : ''}${['neutral', 'side', 'up', 'down'].map((k) => { const s = f.specials[k]; return s ? `<li><b>${{ neutral: 'Special', side: '→ Special', up: '↑ Special', down: '↓ Special' }[k]}: ${s.name}</b>: ${(KIND_TEXT[s.kind] || (() => ''))(s)}</li>` : ''; }).join('')}</ul></div>`;
+    $('#cards').innerHTML = MM.familyGroups().map((g) => `<h3 class="famhead">${g.name}</h3>${g.fighters.map(card).join('')}`).join(''); // by family, oldest to youngest
   }
 
   // ---------- arena choice ----------

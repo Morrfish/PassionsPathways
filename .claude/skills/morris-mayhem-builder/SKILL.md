@@ -71,6 +71,7 @@ If it isn't reachable, ask her to paste the info and attach the pictures in chat
   Patty; `storyMap()` in ui.js), hero cards and dialogue box via border-image, Move List direction/move/controller
   icons, touch controls (touch-*.png, ult-ready swap), Arena Maker toolbar icons, loading overlay (loading.webp),
   app icon/splash in assets/ (Capacitor assets generate) and desktop/icon.png + icon.ico.
+- Families: `MM.FAMILIES` / `MM.familyGroups()` in data.js group Choose Your Fighter and Meet the Family (grandparents, then the kids oldest to youngest, each family oldest to youngest). Add every new fighter's id to its family there.
 - 2v2: `MM.newGame(players, stage, stocks, { teams, ff, time })`; players carry `team: 'A'|'B'`; `MM.sameTeam`
   blocks friendly fire in `applyHit` and AI targeting; team out only when all members out; timer tiebreak =
   lives, then lower damage, else draw.

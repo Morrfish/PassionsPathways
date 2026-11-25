@@ -264,7 +264,53 @@ MM.FIGHTERS = [
       desc: 'points, rushes forward inside a giant amber mama bear, bear-hugs everyone she reaches and stomps them away',
       poses: [[0, 'ult0'], [30, 'ult1'], [60, 'ult2'], [122, 'ult3']] },
   },
+  {
+    // Sara Morris, "The Ink Dispatcher": 911 dispatch operator; her attacks come from her tattoos (rose/dagger,
+    // reaper, collarbone snakes, black widow). Mobile mid-range fighter. Moves from ChatGPT's SARA handoff (numbers tuned here).
+    id: 'sara', name: 'Sara Morris', title: 'The Ink Dispatcher', photo: 'img/sara.png', sprite: 'sara',
+    color: '#1d1a1f', accent: '#e0262f', skin: '#e9b48f', hair: '#b08a52',
+    stats: { speed: 7.1, air: 6.6, jump: 15.2, weight: 0.96, power: 1.0, size: 1.0 },
+    attackNames: { jab: 'Rose Edge', side: 'Ink Restraint', up: 'Reaper Rise', down: 'Serpent Sweep', air: 'Thorn Halo, Rose Lunge, Reaper Reach, Widow Drop' },
+    normals: { side: { back: true, ang: 40, kb: 7, kbg: 0.13, dmg: 10, box: [10, -80, 75, 60] } }, // ink ribbon grabs and throws behind her
+    specials: {
+      neutral: { kind: 'projectile', name: 'Rose Shot', thing: 'a black ink rose', sprite: 'fxrose', scale: 0.55, speed: 12, vy: -1.5, grav: 0.08, dmg: 7, kb: 5.5, kbg: 0.07, r: 18, life: 60, cd: 60 },
+      side: { kind: 'pack', name: 'Twin Fang', thing: 'both collarbone snakes, sliding along the floor together', sprites: ['fxfang'], names: ['the twin snakes'], scale: 0.55, speed: 11, life: 60, dmg: 9, kb: 7, kbg: 0.1, cd: 180 },
+      up: { kind: 'rise', name: 'Lifeline', power: 19.5, forward: 3, dmg: 6, kb: 6, kbg: 0.06 },
+      down: { kind: 'trap', name: 'Widow Watch', thing: 'a black widow web trap', sprite: 'fxweb', scale: 0.45, dmg: 8, kb: 6, kbg: 0.08, ang: 80, life: 360, cd: 180 },
+    },
+    taunt: 'Please hold.',
+    // ~3 s: headset, dispatch signal, ink release (snakes, rose, reaper, web), command pulse launches everyone caught in front
+    ultimate: { name: 'All Units Respond!', sprite: 'sara', type: 'catch', ahead: 3.2, dur: 176, catchAt: 66, finishAt: 126, dmg: 27, kbMul: 1.5,
+      desc: 'calls it in on her headset, sends out every tattoo at once to catch everyone in front of her, then a command pulse blasts them away',
+      poses: [[0, 'ult0'], [33, 'ult1'], [66, 'ult2'], [126, 'ult3']] },
+  },
 ];
+
+// Families, for grouping fighters on Choose Your Fighter and Meet the Family. Families go from the grandparents,
+// then the Morris kids oldest to youngest (Mandi, Jadden, Courtnee, Codee, Haylie, Sara, Jorie); inside a family,
+// oldest to youngest. Ids of relatives who aren't fighters yet are listed so they drop into the right spot later.
+MM.FAMILIES = [
+  { name: 'Jeff & Patty', ids: ['jeffery', 'patty'] },
+  { name: "Mandi's family", ids: ['mandi', 'kevin', 'chelsea', 'austin', 'bella', 'emmie', 'colten', 'danielle', 'cloe', 'cole'] },
+  { name: "Jadden's family", ids: ['jadden', 'jacqi', 'jaicelynn', 'jaxston'] },
+  { name: "Courtnee's family", ids: ['courtnee', 'megan', 'siren'] },
+  { name: "Codee's family", ids: ['codee', 'janelle', 'sophia', 'harper', 'evea'] },
+  { name: "Haylie's family", ids: ['haylie', 'sabir', 'haislie', 'august', 'harley'] },
+  { name: "Sara's family", ids: ['sara'] },
+  { name: "Jorie's family", ids: ['jorie'] },
+];
+// the fighters that exist, grouped: [{ name, fighters: [def...] }]; anyone not listed goes in a last group
+MM.familyGroups = function () {
+  const used = new Set(), out = [];
+  for (const fam of MM.FAMILIES) {
+    const fighters = fam.ids.map((id) => MM.FIGHTERS.find((f) => f.id === id)).filter(Boolean);
+    fighters.forEach((f) => used.add(f.id));
+    if (fighters.length) out.push({ name: fam.name, fighters });
+  }
+  const rest = MM.FIGHTERS.filter((f) => !used.has(f.id));
+  if (rest.length) out.push({ name: 'More family', fighters: rest });
+  return out;
+};
 
 // Stages. Units are world pixels; y grows downward; the main floor top is y = 0.
 //   main      the solid floor: x from left to right, top at y 0, depth = how thick it looks

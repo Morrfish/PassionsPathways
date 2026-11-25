@@ -39,6 +39,9 @@ MOVES = {
     'haylie': dict(jab='arm', side='grab', down='step', up='upgo', nair='reflex', fair='reach', uair='sky', dair='feet',
                    neutral='bread', sideSpecial='coming', upSpecial='gotyou', downSpecial='babies', counterHit='babies2',
                    upRow='upgo', uairRow='sky', riseMid='gotyou2', riseLate='gotyou3'),  # no airRow: all 4 Long Reach poses play
+    'sara': dict(jab='edge', side='restraint', down='sweep', up='reaper', nair='halo', fair='lunge', uair='reach', dair='wdrop',
+                 neutral='roseshot', sideSpecial='fang', upSpecial='lifeline', downSpecial='widow',
+                 upRow='reaper', uairRow='reach', riseMid='lifeline2', riseLate='lifeline3'),
     'codee-clean': dict(jab='sweep', side='trash', down='mop', up='duster', nair='polish', fair='dbust', uair='hdust', dair='squeak',
                         neutral='suds', sideSpecial='patrol', upSpecial='vac', downSpecial='wet',
                         airRow='dbust', upRow='duster', uairRow='hdust', riseLate='vac3', defRow='def'),
@@ -58,7 +61,8 @@ GROUP_SCALE = {
     'megan': {'def': 0.8, 'bair': 0.8, 'ret': 1.6, 'nap': 1.25, 'pers2': 0.78, 'pers3': 0.78, 'win': 0.78, 'lose': 0.78},
     'mandi-witch': {'whirl': 1.3, 'salon': 1.15},
     'courtnee': {'saiyan': 1.2},
-    'haylie': {'ult1': 1.15, 'ult2': 1.3, 'ult3': 1.3},  # she's drawn smaller inside the bear aura
+    'haylie': {'ult1': 1.15, 'ult2': 1.3, 'ult3': 1.3},
+    'sara': {'roseshot': 1.13, 'widow': 1.17, 'fang': 1.07, 'restraint': 1.12},  # she's drawn smaller inside the bear aura
     # Mandi's ultimate/victory sheets: her taunt leans, so taunt-height matching drew the whole sheet ~15% big
     'mandi-witch-ult': {p: 0.87 for p in ('ult', 'ent', 'taunt', 'win', 'lose')},
     'mandi-mermaid-ult': {p: 0.85 for p in ('ult', 'ent', 'taunt', 'win', 'lose')},
@@ -71,7 +75,7 @@ window.MM = window.MM || {};
 MM.SPRITES = MM.SPRITES || {};
 """]
 # extra names for frames (Courtnee's personality poses live in his own atlas)
-ALIASES = {w: {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'} for w in ('courtnee', 'megan', 'siren', 'codee', 'codee-clean', 'haylie')}
+ALIASES = {w: {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'} for w in ('courtnee', 'megan', 'siren', 'codee', 'codee-clean', 'haylie', 'sara')}
 for who, moves in MOVES.items():
     fr = json.load(open(os.path.join(src_dir, f'{who}-frames.json')))
     for a, b in ALIASES.get(who, {}).items(): fr[a] = fr[b]

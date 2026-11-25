@@ -332,3 +332,13 @@ img.mvi { width: 34px; height: 34px; object-fit: contain; vertical-align: middle
 #select .css-roster button .chips { top: 14px; left: 14px; }
 #select .css-roster button.rand { background: url(img/ui/random-tile.webp) center 30% / 70% no-repeat, radial-gradient(circle at 50% 35%, #6a2bb3, #2b1150 75%); }
 #select #slots.css-slots { grid-template-columns: repeat(4, min(22vw, 40vh)); }
+/* Choose Your Fighter grouped by family: each family is a labeled box; every tile is the same width */
+#select .css-roster { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; max-width: calc(var(--n, 10) * 190px + 120px); }
+#select .css-roster .fam { flex: var(--k) 1 0; min-width: 0; display: flex; flex-direction: column; background: #0005; border: 2px solid #6a2bb388; border-radius: 10px; padding: 3px 4px 4px; }
+#select .css-roster .famname { font-size: clamp(9px, .85vw, 13px); font-weight: 900; color: var(--gold); text-transform: uppercase; letter-spacing: .04em; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px 2px; }
+#select .css-roster .famtiles { display: grid; grid-template-columns: repeat(var(--k), minmax(0, 1fr)); gap: 3px; }
+#select .css-roster .fam:last-child { background: none; border-color: transparent; }
+@media (max-width: 760px), (max-aspect-ratio: 4/3) { #select .css-roster .fam { flex: 0 0 calc(var(--k) * 92px); } }
+/* Meet the family: a heading over each family's cards */
+.cards h3.famhead { grid-column: 1 / -1; margin: 10px 0 -4px; color: var(--gold); font-size: 1.25em; font-style: italic; text-shadow: 0 2px 0 #000; border-bottom: 2px solid #6a2bb3; padding-bottom: 4px; }
+#select .css-roster .famname { white-space: normal; overflow: visible; line-height: 1.05; min-height: 2.15em; display: flex; align-items: flex-end; justify-content: center; }

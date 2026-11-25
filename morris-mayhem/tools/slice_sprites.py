@@ -174,6 +174,28 @@ CHARACTERS = {
                      'specials.png': [(105, 426), (426, 680), (680, 1004), (1004, 1300)],
                      'ultimate.png': [(60, 470), (470, 890)]},
     },
+    # Sara: labels on the left, no tags under the poses; her tattoo effects come as separate pictures (extras),
+    # so the baked-in rose / snakes / spider are dropped from the specials poses (mainonly).
+    'sara': {
+        'scale': 0.62, 'cols': [185, 390, 650, 900, 9999],
+        'sheets': {
+            'move.png': ['idle', 'run', 'jump', 'hurt'],
+            'attacks.png': {'rows': ['edge', 'reaper', 'sweep', 'restraint'], 'cols': [185, 360, 620, 1000, 9999]},
+            'aerials.png': {'rows': ['halo', 'lunge', 'reach', 'wdrop'], 'cols': [185, 380, 620, 960, 9999]},
+            'specials.png': {'rows': ['roseshot', 'fang', 'lifeline', 'widow'], 'cols': [160, 315, 545, 890, 9999]},
+            'ultimate.png': {'rows': ['ult', 'pers'], 'cols': [240, 480, 785, 1140, 9999]},
+        },
+        'props': [],
+        'mainonly': {'specials.png': ['roseshot', 'fang', 'widow']},
+        'cutcols': {'move.png': [(182, 990, 1312)]},  # her hand touches the HURT label
+        'rowbands': {'move.png': [(72, 400), (400, 700), (700, 990), (990, 1312)],
+                     'attacks.png': [(72, 400), (400, 760), (760, 1000), (1000, 1312)],
+                     'aerials.png': [(72, 343), (343, 625), (625, 950), (950, 1312)],
+                     'specials.png': [(112, 420), (420, 720), (720, 1010), (1010, 1312)],
+                     'ultimate.png': [(72, 498), (546, 975)]},
+        'extras': {'fxrose': 'fx-rose-shot.png', 'fxfang': 'fx-twin-fang.png', 'fxweb': 'fx-widow-web.png', 'fxlife': 'fx-lifeline.png',
+                   'fxsignal': 'fx-dispatch-signal.png', 'fxpulse': 'fx-command-pulse.png', 'fxreaper': 'fx-reaper-rise.png', 'fxdagger': 'fx-rose-dagger.png'},
+    },
 }
 
 CUTROWS = {}
@@ -304,6 +326,10 @@ if __name__ == '__main__':
         y, x = nd.find_objects(lab)[k - 1]
         img = a[y, x].copy(); img[..., 3] = np.where(lab[y, x] == k, img[..., 3], 0)
         add(frames, name, img, img.shape[1] / 2, img.shape[0] if name == 'dryer' else img.shape[0] / 2, cfg['scale'])
+    for name, fn in cfg.get('extras', {}).items():  # separate effect pictures: trimmed, anchored in the middle
+        im = Image.open(f'{art}/{fn}').convert('RGBA'); a = np.array(im); a[..., 3][a[..., 3] < 48] = 0
+        ys, xs = np.nonzero(a[..., 3]); img = a[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
+        add(frames, name, img, img.shape[1] / 2, img.shape[0] / 2, cfg['scale'])
     if who != 'jeffery':
         pack(frames, out, who); sys.exit()
     # the red bobber from the cast pose in the attacks sheet: largest red blob in that cell
