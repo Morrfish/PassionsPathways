@@ -93,6 +93,7 @@ window.MM = window.MM || {};
     }).join('');
     // ChatGPT tag tokens (P1-P4 in the player's color, gray CPU) with the label written on them
     const chips = (id) => slots.map((s, i) => (s.type !== 'off' && s.fighter === id ? `<i class="tag" style="background-image:url(img/ui/select-tag-${s.type === 'cpu' ? 'cpu' : 'p' + (i + 1)}.png)">${s.type === 'cpu' ? 'CPU' : 'P' + (i + 1)}</i>` : '')).join('');
+    $('#roster').style.setProperty('--n', MM.FIGHTERS.length + 1); // every tile shares one row, as big as fits
     $('#roster').innerHTML = MM.FIGHTERS.map((f) => `<button data-f="${f.id}" class="${slots.some((s) => s.type !== 'off' && s.fighter === f.id) ? 'sel' : ''}"><img src="${portrait(f.id)}" alt=""><span class="chips">${chips(f.id)}</span><span class="nm">${f.name}</span></button>`).join('')
       + `<button data-f="random" class="rand"><span class="nm">Random</span></button>`;
     drawOptions();
