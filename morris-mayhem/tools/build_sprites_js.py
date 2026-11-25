@@ -193,5 +193,14 @@ MM.SPRITES['{who}'] = {{ src: 'img/{who}-atlas.webp', standH: {std},{left} fscal
 {body}
 }} }};
 """)
+# atlases that aren't a fighter (e.g. Jeff's Opening Day animals): frames only
+for who in ('jeff-animals',):
+    fr = json.load(open(os.path.join(src_dir, f'{who}-frames.json')))
+    body = ',\n'.join(f"    '{k}': [{', '.join(str(v) for v in val)}]" for k, val in fr.items())
+    parts.append(f"""
+MM.SPRITES['{who}'] = {{ src: 'img/{who}-atlas.webp', standH: 100, fscale: {{}}, frames: {{
+{body}
+}} }};
+""")
 open(out, 'w').write(''.join(parts))
 print('wrote', out)

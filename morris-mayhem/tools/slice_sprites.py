@@ -611,7 +611,8 @@ def slice_bodies(path, names, frames, scale, leftcut=230, minbody=12000, keep_fx
         if s > 1800 or o[0].stop - o[0].start > 45: return False
         px = a[o][lab[o] == i]; return (px[:, :3].astype(int).sum(1) < 260).mean() > 0.55
     comps = [(i + 1, o, s) for i, (o, s) in enumerate(zip(objs, sizes))
-             if s >= 30 and not texty(i + 1, o, s) and o[1].stop > leftcut and not boxy(o, s) and not (o[0].stop < 120 and o[1].stop - o[1].start > 200)]
+             if s >= 30 and not texty(i + 1, o, s) and o[1].stop > leftcut and not boxy(o, s) and not (o[0].stop < 120 and o[1].stop - o[1].start > 200)
+             and not (o[0].start < 60 and (o[1].stop - o[1].start > 250 or o[0].stop < 95))]  # fancy title banners at the top
     def cy(k): return (k[1][0].start + k[1][0].stop) / 2
     def cx(k): return (k[1][1].start + k[1][1].stop) / 2
     bodies = sorted([k for k in comps if k[2] >= minbody and (k[1][0].stop - k[1][0].start) > 70], key=cy)

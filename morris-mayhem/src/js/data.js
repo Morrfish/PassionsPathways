@@ -35,7 +35,9 @@ MM.FIGHTERS = [
     },
     taunt: "PawPaw's still got it!",
     // 2.4 s: deer call .4 s, woodland stampede runs across from .8 s for .9 s (22 damage once each, 1.45x), proud finish
-    ultimate: { name: 'Opening Day', sprite: 'jeffery-ult', type: 'stampede', dur: 144, spawnAt: 48, sweepDur: 54, dmg: 22, kbMul: 1.45,
+    // the herd: Jeff's six animals (art: jeff-animals atlas), each at its natural size next to a grown-up
+    ultimate: { name: 'Opening Day', sprite: 'jeffery-ult', type: 'stampede', herdSheet: 'jeff-animals',
+      animals: [['buckrun', 1.15, 0], ['turkeyrun', 0.55, 0], ['rabbitrun', 0.36, 0], ['duckdive', 0.42, 0.75], ['squirrelrun', 0.3, 0], ['bassleap', 0.45, 0.35]], dur: 144, spawnAt: 48, sweepDur: 54, dmg: 22, kbMul: 1.45,
       desc: 'blows the deer call and a deer, rabbit and squirrel stampede runs across the stage',
       poses: [[0, 'ult0'], [24, 'ult1'], [48, 'ult2'], [108, 'ult3']] },
   },

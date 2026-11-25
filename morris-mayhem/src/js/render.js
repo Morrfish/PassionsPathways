@@ -18,7 +18,7 @@ window.MM = window.MM || {};
   }
   // load every fighter's atlases up front, including the ultimate/victory sheets (otherwise a fighter who never
   // used their ultimate has no victory pose ready for the results screen)
-  MM.preloadSprites = () => { for (const d of MM.allDefs()) for (const id of [d.sprite, d.ultimate && d.ultimate.sprite]) if (id) { sheet(id); const S = MM.SPRITES && MM.SPRITES[id]; if (S && S.left) sheet(S.left); if (S && S.base) sheet(S.base); } };
+  MM.preloadSprites = () => { for (const d of MM.allDefs()) for (const id of [d.sprite, d.ultimate && d.ultimate.sprite]) if (id) { sheet(id); const S = MM.SPRITES && MM.SPRITES[id]; if (S && S.left) sheet(S.left); if (S && S.base) sheet(S.base); } for (const d of MM.allDefs()) if (d.ultimate && d.ultimate.herdSheet) sheet(d.ultimate.herdSheet); };
   MM.whenPoseReady = (def, cb) => { const u = def.ultimate, id = u && u.sprite; if (!id) return; sheet(id); const im = spriteImgs[id]; if (im && !(im.complete && im.naturalWidth)) im.addEventListener('load', cb, { once: true }); };
 
   // How far below the walking line the feet are drawn (world px): the floor art has a top face, so a fighter standing
@@ -207,7 +207,13 @@ window.MM = window.MM || {};
     const a = f.act; if (!a || a.type !== 'ult') return;
     if (a.u.type === 'stampede' && a.sweepX != null) {
       g.save(); g.font = '72px serif'; g.textAlign = 'center'; g.textBaseline = 'bottom';
-      const herd = a.u.herd ? [] : a.u.emoji || ['🦌', '🐇', '🐿️', '🦌', '🐇'];
+      const ash = a.u.animals && sheet(a.u.herdSheet);
+      if (ash) a.u.animals.forEach(([pre, size, lift], i) => { // e.g. Jeff's deer, turkey, rabbit, duck, squirrel and bass
+        const fr = ash.S.frames[pre + (Math.floor((G.frame + i * 3) / 5) % 4)]; if (!fr) return;
+        const h = f.h * size, k = h / fr[3], x = a.sweepX - f.face * i * 105, y = f.y - f.h * lift - (lift ? Math.sin(G.frame * 0.2 + i) * 8 : 0);
+        g.save(); g.translate(x, y); g.scale(f.face * k, k); g.drawImage(ash.im, fr[0], fr[1], fr[2], fr[3], -fr[4], -fr[5], fr[2], fr[3]); g.restore();
+      });
+      const herd = a.u.herd || ash ? [] : a.u.emoji || ['🦌', '🐇', '🐿️', '🦌', '🐇'];
       herd.forEach((e, i) => {
         const x = a.sweepX - f.face * i * 70, y = f.y - Math.abs(Math.sin(G.frame * 0.4 + i)) * 26;
         g.save(); g.translate(x, y); g.scale(-f.face, 1); g.fillText(e, 0, 0); g.restore(); // emoji animals face left; flip to run forward
@@ -553,7 +559,7 @@ window.MM = window.MM || {};
     for (const f of G.fighters) {
       const base = MM.FIGHTERS.find((d) => d.id === (f.def.baseId || f.def.id)) || f.def;
       const defs = base.forms ? MM.formDefs(base) : [f.def];
-      for (const d of defs) for (const id0 of [d.sprite, d.ultimate && d.ultimate.sprite]) for (const id of [id0, id0 && MM.SPRITES && MM.SPRITES[id0] && MM.SPRITES[id0].left]) if (id && MM.SPRITES && MM.SPRITES[id]) { sheet(id); if (!ok(spriteImgs[id])) return false; }
+      for (const d of defs) for (const id0 of [d.sprite, d.ultimate && d.ultimate.sprite, d.ultimate && d.ultimate.herdSheet]) for (const id of [id0, id0 && MM.SPRITES && MM.SPRITES[id0] && MM.SPRITES[id0].left]) if (id && MM.SPRITES && MM.SPRITES[id]) { sheet(id); if (!ok(spriteImgs[id])) return false; }
     }
     const P = MM.STAGE_PICS && MM.STAGE_PICS[(G.stage.art && G.stage.art.bg) || G.stage.id];
     if (P) for (const src of [P.bg, P.props]) if (src) { stageImg(src); if (!ok(stageImgs[src])) return false; }
