@@ -998,17 +998,18 @@ window.MM = window.MM || {};
       const b = G.ultBanner, k = b.t / 100, slide = k > 0.85 ? (k - 0.85) / 0.15 : k < 0.15 ? -(0.15 - k) / 0.15 : 0;
       g.save(); g.globalAlpha = Math.min(1, k * 4);
       const tx2 = W / 2 + slide * W * 0.6, bn = ui('hud-ultimate-banner.webp');
-      const bw = Math.min(W * 0.92, H * 1.15), bh = bw / 4, by = H * 0.23 - bh * (129 / 256);
+      const BY = H * 0.11; // up top and smaller, so it doesn't cover the ultimate's animation
+      const bw = Math.min(W * 0.6, H * 0.78), bh = bw / 4, by = BY - bh * (129 / 256);
       if (bn) g.drawImage(bn, tx2 - bw / 2, by, bw, bh);
-      else { g.fillStyle = 'rgba(26,11,46,.82)'; g.fillRect(0, H * 0.16, W, H * 0.14); g.fillStyle = b.color; g.fillRect(0, H * 0.16, W, 6); g.fillRect(0, H * 0.30 - 6, W, 6); }
+      else { g.fillStyle = 'rgba(26,11,46,.82)'; g.fillRect(0, BY - H * 0.05, W, H * 0.1); g.fillStyle = b.color; g.fillRect(0, BY - H * 0.05, W, 4); g.fillRect(0, BY + H * 0.05 - 4, W, 4); }
       const label = b.text.toUpperCase() + (b.text.endsWith('!') ? '' : '!'), maxW = bw * (880 / 1024);
       let fs = Math.round(bh * 0.36); g.font = `italic 900 ${fs}px system-ui`;
       const mwid = g.measureText(label).width; if (mwid > maxW) { fs = Math.floor(fs * maxW / mwid); g.font = `italic 900 ${fs}px system-ui`; }
       const ta = b.by && b.by.def.ultimate && b.by.def.ultimate.titleArt; // e.g. Kevin's "Going Long" title art
-      if (!(ta && drawFx(g, ta[0], ta[1], tx2, H * 0.23, maxW * 0.8))) {
+      if (!(ta && drawFx(g, ta[0], ta[1], tx2, BY, maxW * 0.8))) {
         g.textAlign = 'center'; g.textBaseline = 'middle';
-        g.lineWidth = Math.max(4, fs * 0.16); g.strokeStyle = '#1a0b2e'; g.strokeText(label, tx2, H * 0.23);
-        g.fillStyle = '#ffc21a'; g.fillText(label, tx2, H * 0.23);
+        g.lineWidth = Math.max(4, fs * 0.16); g.strokeStyle = '#1a0b2e'; g.strokeText(label, tx2, BY);
+        g.fillStyle = '#ffc21a'; g.fillText(label, tx2, BY);
       }
       g.restore();
     }

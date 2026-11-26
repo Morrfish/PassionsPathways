@@ -707,9 +707,10 @@ def slice_bodies(path, names, frames, scale, leftcut=230, minbody=12000, keep_fx
     def platey(i, o):  # plates are pale blue or yellow (cubes and pencils are other colours)
         px = a[o][lab[o] == i].astype(int); r, g, b = px[:, 0], px[:, 1], px[:, 2]
         return (((r > 160) & (g > 200) & (b > 215)) | ((r > 215) & (g > 165) & (b < 110))).mean() > 0.35
-    plates = sorted((o[0].start, o[0].stop, o[1].start, o[1].stop) for i, (o, s) in enumerate(zip(objs, sizes))
-                    if o[0].stop >= 120 and o[1].start > leftcut - 60 and boxy(o, s) and o[1].stop - o[1].start < 500 and platey(i + 1, o))
-    for y0p, y1p, x0p, x1p in plates: a[max(0, y0p - 3):y1p + 3, max(0, x0p - 30):x1p + 30, 3] = 0  # just that plate
+    plates = [i + 1 for i, (o, s) in enumerate(zip(objs, sizes))
+              if o[0].stop >= 120 and o[1].start > leftcut - 60 and boxy(o, s) and o[1].stop - o[1].start < 500 and platey(i + 1, o)]
+    if plates:  # just the plates themselves plus their outline (a rectangle around them bit into Giant Jeff's tail)
+        pm = nd.binary_dilation(np.isin(lab, plates), iterations=6); a[..., 3][pm] = 0
     if wipeyellow:  # yellow caption plates that touch the poses: whole rows of strong yellow, wiped
         ai = a.astype(int); yel = (ai[..., 0] > 225) & (ai[..., 1] > 170) & (ai[..., 2] < 70) & (ai[..., 3] > 200)
         cnt = yel[:, leftcut:].sum(1); hot = cnt > 0.1 * (a.shape[1] - leftcut)
@@ -718,7 +719,9 @@ def slice_bodies(path, names, frames, scale, leftcut=230, minbody=12000, keep_fx
             if hot[y]:
                 y2 = y
                 while y2 + 1 < len(hot) and hot[y2 + 1]: y2 += 1
-                if 6 <= y2 - y <= 80: a[max(0, y - 4):y2 + 5, max(0, leftcut - 40):, 3] = 0
+                if 6 <= y2 - y <= 80:  # wipe only the columns the yellow plates span (not the whole row: Giant Jeff's tail touches his IDLE label)
+                    wcol = nd.binary_dilation(yel[y:y2 + 1].any(0), iterations=12); wcol[:max(0, leftcut - 40)] = False
+                    a[max(0, y - 4):y2 + 5, wcol, 3] = 0
                 y = y2 + 1
             else: y += 1
     if equalcols:  # row labels touching the sheet's left edge are dropped; columns come from where the poses sit (below)

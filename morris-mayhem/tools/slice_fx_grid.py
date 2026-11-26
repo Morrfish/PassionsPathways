@@ -28,6 +28,15 @@ for fn, (R, C, names, sc) in SHEETS.items():
                     edge = sl[0].start == 0 or sl[1].start == 0 or sl[0].stop == al.shape[0] or sl[1].stop == al.shape[1]
                     if edge and sz[i] < 0.15 * big:
                         arr = np.array(cell); arr[..., 3][lab == i + 1] = 0; cell = Image.fromarray(arr); al[lab == i + 1] = False
+            lab, n = ndimage.label(al)  # grey shadows of the picture above (a puddle cell had the blocks' shadow)
+            if n > 1:
+                arr = np.array(cell).astype(int); sz = ndimage.sum(al, lab, range(1, n + 1)); big = sz.max()
+                sat = (arr[..., :3].max(-1) - arr[..., :3].min(-1))
+                for i in range(n):
+                    m = lab == i + 1
+                    if sz[i] < 0.5 * big and sat[m].mean() < 40:
+                        arr[..., 3][m] = 0; al[m] = False
+                cell = Image.fromarray(arr.astype(np.uint8))
             a = Image.fromarray((al * 255).astype(np.uint8))
             bb = a.getbbox()
             if not bb: continue

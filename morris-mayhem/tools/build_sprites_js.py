@@ -137,6 +137,7 @@ GROUP_SCALE = {
               'spin': 0.83, 'mac': 0.9, 'tired': 0.87},
     'megan': {'def': 0.8, 'bair': 0.8, 'ret': 1.6, 'nap': 1.25, 'pers2': 0.78, 'pers3': 0.78, 'win': 0.78, 'lose': 0.78},
     'mandi-witch': {'whirl': 1.3, 'salon': 1.15},
+    'cloe': {'jump': 0.89},  # her jump poses were drawn ~12% bigger (face width 25 vs 22 px)
     # the giants' transformation / personality sheets were drawn bigger than their fighting poses (head-size check):
     # entrance and losing poses come from them, so without this they shrank when the fight started
     'jeff-giant': {g: 0.72 for g in ('cup', 'back', 'ent', 'lose')},
