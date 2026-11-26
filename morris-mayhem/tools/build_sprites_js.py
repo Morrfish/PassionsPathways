@@ -173,6 +173,8 @@ ALIASES['jorie-rage'] = {'ent': 'xform3', 'taunt': 'xform3', 'win': 'xform3', 'l
 ALIASES['evea-spirit'] = {'ent': 'link2', 'taunt': 'link3', 'win': 'link3', 'lose': 'hurt3'}
 # the standing pose to size the personality sheet by, when the taunt reaches up (Jorie lifts the milk jug overhead)
 PERS_REF = {'jorie': 'pers0'}
+# atlases whose personality/ultimate poses were drawn at the same scale as the fighting poses: don't resize them
+SAME_SHEET_PERS = {'jeff-giant', 'patty-giant', 'triple-trouble'}
 # standing height comes from another pose (Evea's spirit poses have Grandma floating over her: size her by Evea alone)
 STANDH_FROM = {'evea-spirit': 'link0'}
 # a move group cut from another sheet: size it so its first pose is as tall as the idle pose
@@ -182,7 +184,7 @@ for who, moves in MOVES.items():
     for a, b in ALIASES.get(who, {}).items(): fr[a] = fr[b]
     body = ',\n'.join(f"    '{k}': [{', '.join(str(v) for v in val)}]" for k, val in fr.items())
     fs = {}
-    if 'taunt' in fr:
+    if 'taunt' in fr and who not in SAME_SHEET_PERS:
         f0 = sheet_factor(fr, fr) if who not in PERS_REF else round(fr['idle0'][3] / fr[PERS_REF[who]][3], 3)
         fs = {k: f0 for k in fr if k.startswith(PERS_FRAMES)}
     for k, m in BIGGER.get(who, {}).items(): fs[k] = round(fs.get(k, 1) * m, 3)

@@ -67,7 +67,9 @@ window.MM = window.MM || {};
   const portraits = {};
   const portrait = (id) => {
     if (portraits[id]) return portraits[id];
-    const d = MM.FIGHTERS.find((f) => f.id === id), im = MM.photos[id], url = MM.portrait(d);
+    const d = MM.FIGHTERS.find((f) => f.id === id);
+    if (d.photo && !MM.photos[id]) { const nim = new Image(); nim.src = d.photo; MM.photos[id] = nim; } // e.g. a giant unlocked by code after loading
+    const im = MM.photos[id], url = MM.portrait(d);
     if (!d.photo || (im && im.complete)) portraits[id] = url; // don't keep a cartoon stand-in while a photo is loading
     else if (im) im.addEventListener('load', () => { delete portraits[id]; if (screen === 'select') drawSelect(); else if (screen === 'family') drawFamily(); }, { once: true });
     return url;
@@ -98,7 +100,7 @@ window.MM = window.MM || {};
     const chips = (id) => slots.map((s, i) => (s.type !== 'off' && s.fighter === id ? `<i class="tag" style="background-image:url(img/ui/select-tag-${s.type === 'cpu' ? 'cpu' : 'p' + (i + 1)}.png)">${s.type === 'cpu' ? 'CPU' : 'P' + (i + 1)}</i>` : '')).join('');
     $('#roster').style.setProperty('--n', MM.FIGHTERS.length + 1); // every tile shares one row, as big as fits
     // grouped by family (MM.FAMILIES in data.js), oldest to youngest
-    const tile = (f) => `<button data-f="${f.id}" class="${slots.some((s) => s.type !== 'off' && s.fighter === f.id) ? 'sel' : ''}"><img src="${portrait(f.id)}" alt=""><span class="chips">${chips(f.id)}</span><span class="nm">${f.name}</span></button>`;
+    const tile = (f) => `<button data-f="${f.id}" class="${slots.some((s) => s.type !== 'off' && s.fighter === f.id) ? 'sel' : ''}"><img src="${portrait(f.id)}" alt=""><span class="chips">${chips(f.id)}</span><span class="nm${f.name.length > 14 ? ' long' : ''}">${f.name}</span></button>`;
     $('#roster').innerHTML = MM.familyGroups().map((g) => `<div class="fam" style="--k:${g.fighters.length}"><div class="famname">${g.name}</div><div class="famtiles">${g.fighters.map(tile).join('')}</div></div>`).join('')
       + `<div class="fam" style="--k:1"><div class="famname">&nbsp;</div><div class="famtiles"><button data-f="random" class="rand"><span class="nm">Random</span></button></div></div>`;
     drawOptions();

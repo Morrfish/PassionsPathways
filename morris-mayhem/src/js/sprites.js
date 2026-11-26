@@ -2091,7 +2091,7 @@ MM.SPRITES['patty-mayhem'] = {
 MM.SPRITES['jeff-giant'] = {
   src: 'img/jeff-giant-atlas.webp',
   standH: 260,
-  fscale: {"ent": 1.092, "taunt": 1.092, "win": 1.092, "lose": 1.092},
+  fscale: {},
   frames: {
     'idle0': [0, 0, 249, 260, 124.5, 260.0],
     'idle1': [253, 0, 246, 261, 123.0, 261.0],
@@ -2172,7 +2172,7 @@ MM.SPRITES['jeff-giant'] = {
 MM.SPRITES['patty-giant'] = {
   src: 'img/patty-giant-atlas.webp',
   standH: 260,
-  fscale: {"ent": 1.004, "taunt": 1.004, "win": 1.004, "lose": 1.004},
+  fscale: {},
   frames: {
     'idle0': [0, 0, 257, 260, 128.5, 260.0],
     'idle1': [261, 0, 256, 259, 128.0, 259.0],
@@ -2251,7 +2251,7 @@ MM.SPRITES['patty-giant'] = {
 MM.SPRITES['triple-trouble'] = {
   src: 'img/triple-trouble-atlas.webp',
   standH: 178,
-  fscale: {"ult0": 0.736, "ult1": 0.736, "ult2": 0.736, "ult3": 0.736, "pers0": 0.736, "pers1": 0.736, "pers2": 0.736, "pers3": 0.736, "ent": 0.736, "taunt": 0.736, "win": 0.736, "lose": 0.736},
+  fscale: {},
   frames: {
     'idle0': [0, 0, 220, 178, 110.0, 178.4],
     'idle1': [224, 0, 220, 178, 110.0, 178.4],
