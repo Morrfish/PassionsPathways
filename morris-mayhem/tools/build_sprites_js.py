@@ -69,12 +69,13 @@ MOVES = {
                  neutral='ion', sideSpecial='portal', upSpecial='webswing', downSpecial='snare',
                  upRow='rising', uairRow='skypalm', riseMid='webswing2', riseLate='webswing3'),
     # the grandmas and Jaicelynn (Nov 26): one key pose per move (tools/slice_grid4.py)
-    'grandma_morris': dict(jab='trowel', side='rake', down='kick', up='beet', nair='jump', fair='kick', uair='beet', dair='kick',
+    # the grandmas v2 (Nov 26): real 4-frame animations from ChatGPT's 4x4 sheets (tools/build_grandmas_v2.py)
+    'grandma_morris': dict(jab='trowel', side='rake', down='kick', up='beet', nair='arake', fair='atrowel', uair='aup', dair='adrop',
                            neutral='apple', sideSpecial='basket', upSpecial='stalk', downSpecial='vines', counterHit='vines',
-                           upRow='beet', uairRow='beet', riseMid='stalk2', riseLate='stalk3'),
-    'grandma_worst': dict(jab='rose', side='palm', down='soup', up='spoon', nair='palm', fair='rose', uair='spoon', dair='soup',
-                          neutral='ladle', sideSpecial='coffee', upSpecial='whirl', downSpecial='portal', counterHit='portal',
-                          upRow='spoon', uairRow='spoon', riseMid='whirl2', riseLate='whirl3'),
+                           upRow='beet', uairRow='aup', riseMid='stalk2', riseLate='stalk3'),
+    'grandma_worst': dict(jab='rose', side='palm', down='soup', up='spoon', nair='arose', fair='aspoon', uair='aup', dair='asoup',
+                          neutral='coffee', sideSpecial='ladle', upSpecial='whirl', downSpecial='portal', counterHit='portal',
+                          upRow='spoon', uairRow='aup', riseMid='whirl2', riseLate='whirl3'),
     'jaicelynn': dict(jab='phone', side='bars', down='kick', up='wheel', nair='kick', fair='kick', uair='wheel', dair='kick',
                       neutral='flash', sideSpecial='atv', upSpecial='wheelie', downSpecial='taco',
                       upRow='wheel', uairRow='wheel', riseMid='wheelie2', riseLate='wheelie3'),
@@ -139,8 +140,7 @@ PERS_FRAMES = ('ult', 'asm', 'ret', 'pers', 'ent', 'taunt', 'win', 'lose')
 def sheet_factor(base_fr, pers_fr):
     return round(base_fr['idle0'][3] / pers_fr['taunt'][3], 3)
 # poses that are meant to be bigger than the fighter (Courtnee's mech towers over him)
-BIGGER = {'grandma_morris': {'stalk0': 1.28, 'stalk1': 1.28, 'stalk2': 1.28, 'stalk3': 1.28},  # Growing Strong: the beanstalk is in the picture, so she was drawn ~78% size
-          }  # courtnee's mech/ult/return/personality/powerup sizes now live in out/courtnee-fscale.json (hi-res v2 art)
+BIGGER = {}  # courtnee's mech/ult/return/personality/powerup sizes now live in out/courtnee-fscale.json (hi-res v2 art)
 # whole move groups drawn at a different scale on their source sheet (found with a size audit: standing poses vs idle)
 GROUP_SCALE = {
     # Siren: her toss, aerial, noodle-throw and tired poses were drawn bigger than her standing pose (head-size check)
@@ -176,6 +176,7 @@ ALIASES['jeff-giant'] = {'ent': 'cup3', 'taunt': 'wild0', 'win': 'wild3', 'lose'
 ALIASES['patty-giant'] = {'ent': 'cup3', 'taunt': 'idle3', 'win': 'emg3', 'lose': 'back3'}
 ALIASES['triple-trouble'] = {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'}
 for _w in ('grandma_morris', 'grandma_worst', 'jaicelynn'): ALIASES[_w] = {'ent': 'idle0', 'taunt': 'cheer0', 'win': 'cheer0', 'lose': 'hurt0'}
+ALIASES['grandma_worst'] = {'ent': 'pent0', 'taunt': 'ptaunt2', 'win': 'pwin2', 'lose': 'plose0'}  # her v2 personality sheet
 ALIASES['kevin'] = {'ent': 'cup0', 'taunt': 'rally3', 'win': 'rally3', 'lose': 'slow1'}  # lose: bent over, worn out
 ALIASES['kevin-fan'] = {'ent': 'idle0', 'taunt': 'idle1', 'win': 'curtain2', 'lose': 'hurt3'}
 ALIASES['cloe'] = {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'hurt2'}  # lose: knocked down
@@ -192,7 +193,7 @@ ALIASES['evea-spirit'] = {'ent': 'link2', 'taunt': 'link3', 'win': 'link3', 'los
 # the standing pose to size the personality sheet by, when the taunt reaches up (Jorie lifts the milk jug overhead)
 PERS_REF = {'jorie': 'pers0'}
 # atlases whose personality/ultimate poses were drawn at the same scale as the fighting poses: don't resize them
-SAME_SHEET_PERS = {'courtnee', 'jeff-giant', 'patty-giant', 'triple-trouble', 'kevin', 'kevin-fan', 'janelle'}
+SAME_SHEET_PERS = {'courtnee', 'grandma_morris', 'grandma_worst', 'jeff-giant', 'patty-giant', 'triple-trouble', 'kevin', 'kevin-fan', 'janelle'}
 # standing height comes from another pose (Evea's spirit poses have Grandma floating over her: size her by Evea alone)
 STANDH_FROM = {'evea-spirit': 'link0'}
 # a move group cut from another sheet: size it so its first pose is as tall as the idle pose

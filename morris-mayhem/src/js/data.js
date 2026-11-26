@@ -464,9 +464,12 @@ MM.FIGHTERS = [
 ];
 
 {
-  const jorieUlt = { name: 'Cardboard Checkout', sprite: 'jorie', type: 'decoy', dur: 160, placeAt: 40, burstAt: 104, decoyX: -10, rush: [62, 96, 11], radius: 2.2, dmg: 27, kbMul: 1.5,
-    desc: 'stands up a life-size cardboard Jorie, runs off, and the cutout bursts on everyone near it',
-    poses: [[0, 'ult0'], [30, 'ult1'], [60, 'ult2'], [100, 'idle0']] };
+  // he cuts out and stands up the cardboard Jorie (ult0, ult1 has it beside him), leaves it right there, runs the other way
+  // (plain run frames, so the cutout doesn't come along), turns round and watches it burst on whoever came close
+  const jorieUlt = { name: 'Cardboard Checkout', sprite: 'jorie', type: 'decoy', dur: 160, placeAt: 60, burstAt: 108, decoyXh: 0.16, rush: [61, 95, 11], runAway: true, turnBack: 98,
+    radius: 2.2, dmg: 27, kbMul: 1.5,
+    desc: 'stands up a life-size cardboard Jorie, runs the other way, and the cutout bursts on everyone near it',
+    poses: [[0, 'ult0'], [30, 'ult1'], [60, 'run0'], [66, 'run1'], [72, 'run2'], [78, 'run3'], [84, 'run0'], [90, 'run1'], [96, 'idle0']] };
   const eveaUlt = { name: 'Unicorn Overload', sprite: 'evea', type: 'stampede', herd: 'fxuni', dur: 150, spawnAt: 50, sweepDur: 60, dmg: 24, kbMul: 1.45,
     desc: 'opens a rainbow portal and a herd of spectral unicorns charges across the stage',
     poses: [[0, 'ult0'], [25, 'ult1'], [50, 'ult2'], [112, 'ult3']] };

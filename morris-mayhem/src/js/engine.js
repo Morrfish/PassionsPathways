@@ -844,6 +844,12 @@ window.MM = window.MM || {};
   function releaseUlt(a) { for (const d of a.caught) if (d.caught) d.caught = null; a.caught.length = 0; }
   function tickUlt(G, f, a) {
     const u = a.u; f.vx *= 0.8; if (!f.ground) f.vy = 0;
+    if (u.runAway && a.t === u.rush[0]) f.face = -f.face; // e.g. Jorie runs away from his cutout
+    if (u.turnBack && a.t === u.turnBack) f.face = -f.face; // ...and turns round to watch
+    if (u.runAway && a.t >= u.rush[0] && a.t < u.rush[1]) { // don't run off the edge of what he's standing on
+      const m = G.stage.main, g = f.ground === 'main' || !f.ground ? { x: m.left, w: m.right - m.left } : f.ground, nx = f.x + f.face * u.rush[2] * 2;
+      if (nx < g.x + 30 || nx > g.x + g.w - 30) a.rushDone = true;
+    }
     if (u.rush && a.t >= u.rush[0] && a.t < u.rush[1]) { // e.g. Haylie charges in: stop on reaching someone so she doesn't run past
       const near = G.fighters.some((d) => d !== f && !d.dead && !d.out && !(MM.sameTeam(G, f, d) && !G.ff) && (d.x - f.x) * f.face > 0 && (d.x - f.x) * f.face < f.w + 30 && Math.abs(d.y - f.y) < f.h);
       if (near) a.rushDone = true;
@@ -921,7 +927,7 @@ window.MM = window.MM || {};
         G.shake = Math.max(G.shake, 4);
       }
     } else if (u.type === 'decoy') { // e.g. Jorie's Cardboard Checkout: set up a cutout, run off, and it bursts on whoever is near it
-      if (a.t === u.placeAt) a.decoy = { x: f.x + f.face * (u.decoyX || 0) * f.s, y: f.y, face: f.face };
+      if (a.t === u.placeAt) a.decoy = { x: f.x + f.face * ((u.decoyX || 0) * f.s + (u.decoyXh || 0) * f.h), y: f.y, face: f.face };
       if (a.decoy && a.t === u.burstAt) {
         const r = (u.radius || 2) * f.h;
         G.shake = 22; G.flash = 6; burst(G, a.decoy.x, a.decoy.y - f.h / 2, '#ffb02e', 40, 12);
