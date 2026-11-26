@@ -41,7 +41,7 @@ window.MM = window.MM || {};
       if (a.type === 'dodge') return M.defRow && f.ground ? M.defRow + (a.roll ? (a.t < 10 ? 2 : 3) : a.t < 8 ? 0 : 1) : f.ground ? 'idle0' : 'jump2';
       if (a.type === 'cleanup') return 'cup' + Math.min(3, Math.floor(a.t / (a.dur / 4))); // Codee: brush off the mess, into the lab coat
       if (a.type === 'backwork') { const nb = (f.def.mess && f.def.mess.backPoses) || 4; return 'back' + Math.min(nb - 1, Math.floor(a.t / (a.dur / nb))); }
-      if (a.type === 'shirt') return f.def.cycle === 'all' ? 'shuffle' + Math.min(3, a.t >> 2) : 'bump' + f.formIdx; // Cloe: the palette shuffle
+      if (a.type === 'shirt') return f.def.cycle === 'all' ? (S.frames['swap' + f.def.form] ? 'swap' + f.def.form : 'shuffle' + Math.min(3, a.t >> 2)) : 'bump' + f.formIdx; // Cloe: waves in the colour she switched to
       if (a.type === 'powerup' && S.frames.cup0) return 'cup' + Math.min(3, Math.floor(a.t / (a.dur / 4)));
       if (a.type === 'powerup') return 'idle0';
       if (a.type === 'powerend') return S.frames.back0 ? 'back' + Math.min(3, Math.floor(a.t / (a.dur / 4))) : 'idle0'; // Cole shows off the new printed shirt
