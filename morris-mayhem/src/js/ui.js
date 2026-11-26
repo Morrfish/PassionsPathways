@@ -296,6 +296,20 @@ window.MM = window.MM || {};
     paused = !paused; show(paused ? 'pause' : 'match'); screen = paused ? 'pause' : 'match';
   }
   $('#resume').addEventListener('click', togglePause);
+  // ---------- full screen (title menu and pause menu) ----------
+  const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+  const fsLabel = () => document.querySelectorAll('.fsBtn').forEach((b) => { b.textContent = fsEl() ? '⛶ Exit full screen' : '⛶ Full screen'; });
+  const fsOK = () => !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen) && (document.fullscreenEnabled !== false || document.webkitFullscreenEnabled);
+  document.querySelectorAll('.fsBtn').forEach((b) => {
+    if (!fsOK()) { b.style.display = 'none'; return; } // e.g. iPhone Safari, or a page that doesn't allow it
+    b.addEventListener('click', () => {
+      MM.sfx('select');
+      const d = document, el = d.documentElement;
+      const p = fsEl() ? (d.exitFullscreen || d.webkitExitFullscreen).call(d) : (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
+      if (p && p.catch) p.catch(() => {});
+    });
+  });
+  document.addEventListener('fullscreenchange', fsLabel); document.addEventListener('webkitfullscreenchange', fsLabel); fsLabel();
   $('#quit').addEventListener('click', () => { const prac = G && G.practice; paused = false; show(prac ? 'practice' : 'select'); });
 
   // ---------- practice ----------

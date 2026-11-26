@@ -139,7 +139,8 @@ PERS_FRAMES = ('ult', 'asm', 'ret', 'pers', 'ent', 'taunt', 'win', 'lose')
 def sheet_factor(base_fr, pers_fr):
     return round(base_fr['idle0'][3] / pers_fr['taunt'][3], 3)
 # poses that are meant to be bigger than the fighter (Courtnee's mech towers over him)
-BIGGER = {'courtnee': {'asm2': 1.3, 'asm3': 1.7, 'ult0': 1.7, 'ult1': 1.7, 'ult2': 1.7, 'ult3': 1.7, 'ret0': 1.6, 'ret1': 1.25}}
+BIGGER = {'grandma_morris': {'jump0': 1.08, 'jump1': 1.08, 'jump2': 1.08, 'jump3': 1.08},  # her knees-up jump read small next to standing
+          'courtnee': {'asm2': 1.3, 'asm3': 1.7, 'ult0': 1.7, 'ult1': 1.7, 'ult2': 1.7, 'ult3': 1.7, 'ret0': 1.6, 'ret1': 1.25}}
 # whole move groups drawn at a different scale on their source sheet (found with a size audit: standing poses vs idle)
 GROUP_SCALE = {
     # Siren: her toss, aerial, noodle-throw and tired poses were drawn bigger than her standing pose (head-size check)

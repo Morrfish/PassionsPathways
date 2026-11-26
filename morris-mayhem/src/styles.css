@@ -452,3 +452,6 @@ img.mvi { width: 34px; height: 34px; object-fit: contain; vertical-align: middle
 #select #slots.css-slots.scenes .slot .top .nm { text-align: left; flex: 1; }
 #select #slots.css-slots.scenes .slot .cycle { line-height: 1.15; min-height: 0; padding: 3px 8px; }
 #select #slots.css-slots.scenes .slot .side { gap: 4px; }
+
+/* full-screen toggle in the title screen's corner (it's also in the pause menu) */
+#title .fsCorner { position: absolute; top: 14px; right: 14px; width: auto; min-width: 0; padding: 8px 16px; font-size: 15px; z-index: 2; }
