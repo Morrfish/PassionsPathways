@@ -535,13 +535,18 @@ MM.FIGHTERS = [
   // into a decked-out superfan for 8 s (+20% damage, +10% speed); when it wears off he's slower for exactly 10 s.
   const kevinSpecials = (fan) => ({
     neutral: { kind: 'projectile', name: 'Steel City Spiral', thing: 'a football spiral', emoji: '🏈', sheet: 'kcj-fx', sprite: 'ball1', scale: 0.183, speed: 12, vy: -3, grav: 0.12, dmg: 7, kb: 6, kbg: 0.08, r: 18, life: 70, cd: 55 },
-    side: { kind: 'dash', name: 'Terrible Towel Twister', fx: ['kcj-fx', 'towel', 4, 0.9], speed: 14, dur: 18, dmg: 9, kb: 7.5, kbg: 0.11, ang: 30, cd: 110, box: [-10, -95, 110, 95] },
-    up: { kind: 'rise', name: 'Rally Rise', power: 19.5, forward: 4, dmg: 6, kb: 6, kbg: 0.06 },
+    // Terrible Towel: thrown like a boomerang, hits once going out and once coming back
+    side: { kind: 'projectile', name: 'Terrible Towel', thing: 'his Terrible Towel, thrown like a boomerang (it comes back)', boomerang: true,
+      sheet: 'kevin-fx', anim: ['towel0', 'towel1', 'towel2', 'towel3'], px: 78, speed: 12, dmg: 6, kb: 5.5, kbg: 0.07, r: 26, life: 90, cd: 75 },
+    // Towel Helicopter: spins the towel overhead and flies up higher than a jump (steer left/right)
+    up: { kind: 'heli', name: 'Towel Helicopter', windup: 6, lift: 40, rise: 9.5, dmg: 4, kb: 5, kbg: 0.05 },
     down: { kind: 'counter', name: 'Steel Curtain', fx: ['kcj-fx', 'curtain', 4, 1.1], window: 20, mult: 1.35 },
   });
-  const kevinUlt = (fan) => ({ name: 'Steel City Stampede', sprite: 'kevin-ult', fxSheet: 'kcj-fx', fxRush: 'stampede', type: 'catch', ahead: 3.2, rush: [36, 66, 13], dur: 170, catchAt: 66, finishAt: 112, dmg: 28, kbMul: 1.5,
-    desc: 'raises the Terrible Towel, stadium lights flash, he rushes down the field and spikes everyone he reaches in a gold end-zone blast',
-    poses: fan ? [[0, 'fult0'], [30, 'fult1'], [60, 'fult2'], [112, 'fult3']] : [[0, 'ult0'], [30, 'ult1'], [60, 'ult2'], [112, 'ult3']] });
+  const kevinUlt = (fan) => ({ name: 'Going Long', sprite: 'kevin-ult', fxSheet: 'kevin-fx', titleArt: ['kevin-fx', 'titlelong'], type: 'homing', terry: true, dur: 150, lockAt: 20, throwAt: 46, throws: 3, every: 20, speed: 14, turn: 0.11, life: 110, dmg: 7, dmgLast: 12, kbMul: 1.45,
+    desc: 'Terry Bradshaw runs in, marks everyone with a target and throws three footballs at each mark: they curve in after you (outrun them!)',
+    poses: fan ? [[0, 'fult0'], [46, 'fult3']] : [[0, 'ult0'], [46, 'ult3']] });
+  // Riding the Bus: attack while running flat out, he hops on Jerome Bettis's back and they charge
+  const kevinBus = { kind: 'dash', name: 'Riding the Bus', title: ['kevin-fx', 'titlebus'], speed: 15, dur: 22, dmg: 10, kb: 8.5, kbg: 0.12, ang: 35, cd: 60, box: [-30, -150, 150, 150] };
   const kevinBase = { stats: { speed: 6.9, air: 6.4, jump: 15, weight: 1.08, power: 1.03, size: 1.08 } };
   MM.FIGHTERS.push({
     male: true, id: 'kevin', name: 'Kevin Crist', title: 'The Steel City Superfan', photo: 'img/kevin.png',
@@ -551,11 +556,11 @@ MM.FIGHTERS = [
     forms: [
       { form: 'fan', formName: 'WORN OUT... (10 s)', title: 'Normal', sprite: 'kevin', color: '#1b1b1f', accent: '#ffc21a', skin: '#f0c4a4', hair: '#8a7a6a',
         attackNames: { jab: 'Fan One-Two', side: 'End-Zone Boot', up: 'Goal-Line Lift', down: 'Towel Sweep', air: 'End-Zone Boot, Towel Sweep' },
-        specials: kevinSpecials(false), ultimate: kevinUlt(false) },
+        specials: kevinSpecials(false), dashAttack: kevinBus, ultimate: kevinUlt(false) },
       { form: 'superfan', formName: 'SUPERFAN!', title: 'Superfan', sprite: 'kevin-fan', color: '#ffc21a', accent: '#1b1b1f', skin: '#f0c4a4', hair: '#8a7a6a',
         stats: Object.assign({}, kevinBase.stats, { power: 1.24, speed: 7.6 }),
         attackNames: { jab: 'Foam Finger', side: 'Foam Finger', up: 'Spiral Toss', down: 'Rally Towel', air: 'Foam Finger, Rally Towel' },
-        specials: kevinSpecials(true), ultimate: kevinUlt(true) },
+        specials: kevinSpecials(true), dashAttack: kevinBus, ultimate: kevinUlt(true) },
     ],
   });
 

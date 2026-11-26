@@ -100,10 +100,10 @@ MOVES = {
                            upRow='leap', uairRow='leap', riseMid='leap1', riseLate='leap2'),
     # Kevin, Cloe and Janelle
     'kevin': dict(jab='punch', side='kick', down='towel', up='kick', nair='kick', fair='kick', uair='kick', dair='towel',
-                  neutral='spiral', sideSpecial='towel', upSpecial='rally', downSpecial='towel', counterHit='towel2',
+                  neutral='spiral', sideSpecial='toss', upSpecial='heli', downSpecial='towel', counterHit='towel2', dashAttack='bus',
                   airRow='kick', upRow='kick', uairRow='kick', riseMid='rally2', riseLate='rally3'),
     'kevin-fan': dict(jab='finger', side='finger', down='ftowel', up='fspiral', nair='finger', fair='finger', uair='fspiral', dair='ftowel',
-                      neutral='fspiral', sideSpecial='ftowel', upSpecial='fanrise', downSpecial='curtain', counterHit='curtain2',
+                      neutral='fspiral', sideSpecial='ftowel', upSpecial='fanrise', downSpecial='curtain', counterHit='curtain2', dashAttack='bus',
                       upRow='fspiral', uairRow='fspiral', riseMid='fanrise2', riseLate='fanrise3'),
     'cloe': dict(jab='paint', side='paint', down='crayon', up='alift', nair='crayon', fair='paint', uair='alift', dair='crayon',
                  neutral='red', sideSpecial='abc', upSpecial='alift', downSpecial='shuffle',
@@ -244,7 +244,7 @@ MM.SPRITES['{who}'] = {{ src: 'img/{who}-atlas.webp', standH: {std},{left} fscal
 }} }};
 """)
 # atlases that aren't a fighter (e.g. Jeff's Opening Day animals): frames only
-for who in ('jeff-animals', 'kcj-fx', 'fx10'):
+for who in ('jeff-animals', 'kcj-fx', 'fx10', 'kevin-fx'):
     fr = json.load(open(os.path.join(src_dir, f'{who}-frames.json')))
     body = ',\n'.join(f"    '{k}': [{', '.join(str(v) for v in val)}]" for k, val in fr.items())
     parts.append(f"""

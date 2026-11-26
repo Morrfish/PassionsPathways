@@ -2370,12 +2370,24 @@ MM.SPRITES['kevin'] = {
     'fanrise1': [266, 573, 120, 123, 60.1, 122.8],
     'fanrise2': [390, 573, 105, 133, 52.7, 133.3],
     'fanrise3': [499, 573, 107, 138, 53.3, 137.6],
+    'toss0': [0, 713, 137, 173, 68.7, 174.0],
+    'heli0': [139, 713, 118, 171, 59.1, 171.0],
+    'bus0': [259, 713, 180, 259, 90.2, 260.8],
+    'toss1': [441, 713, 202, 172, 100.8, 172.8],
+    'heli1': [645, 713, 136, 151, 68.4, 152.4],
+    'bus1': [783, 713, 223, 264, 111.5, 264.9],
+    'toss2': [1008, 713, 154, 173, 77.1, 174.6],
+    'heli2': [1164, 713, 142, 166, 71.1, 166.8],
+    'bus2': [1308, 713, 212, 266, 106.6, 267.3],
+    'toss3': [1522, 713, 119, 173, 59.4, 174.3],
+    'heli3': [1643, 713, 118, 168, 59.4, 168.9],
+    'bus3': [1763, 713, 221, 264, 110.7, 265.3],
     'ent': [581, 385, 134, 174, 67.0, 173.6],
     'taunt': [0, 573, 133, 135, 66.3, 134.5],
     'win': [0, 573, 133, 135, 66.3, 134.5],
     'lose': [1362, 385, 92, 170, 46.2, 170.5]
   },
-  moves: {"jab": "punch", "side": "kick", "down": "towel", "up": "kick", "nair": "kick", "fair": "kick", "uair": "kick", "dair": "towel", "neutral": "spiral", "sideSpecial": "towel", "upSpecial": "rally", "downSpecial": "towel", "counterHit": "towel2", "airRow": "kick", "upRow": "kick", "uairRow": "kick", "riseMid": "rally2", "riseLate": "rally3"},
+  moves: {"jab": "punch", "side": "kick", "down": "towel", "up": "kick", "nair": "kick", "fair": "kick", "uair": "kick", "dair": "towel", "neutral": "spiral", "sideSpecial": "toss", "upSpecial": "heli", "downSpecial": "towel", "counterHit": "towel2", "dashAttack": "bus", "airRow": "kick", "upRow": "kick", "uairRow": "kick", "riseMid": "rally2", "riseLate": "rally3"},
 };
 
 MM.SPRITES['kevin-fan'] = {
@@ -2421,7 +2433,7 @@ MM.SPRITES['kevin-fan'] = {
     'win': [448, 404, 164, 159, 81.8, 158.7],
     'lose': [160, 201, 180, 124, 89.9, 124.0]
   },
-  moves: {"jab": "finger", "side": "finger", "down": "ftowel", "up": "fspiral", "nair": "finger", "fair": "finger", "uair": "fspiral", "dair": "ftowel", "neutral": "fspiral", "sideSpecial": "ftowel", "upSpecial": "fanrise", "downSpecial": "curtain", "counterHit": "curtain2", "upRow": "fspiral", "uairRow": "fspiral", "riseMid": "fanrise2", "riseLate": "fanrise3"},
+  moves: {"jab": "finger", "side": "finger", "down": "ftowel", "up": "fspiral", "nair": "finger", "fair": "finger", "uair": "fspiral", "dair": "ftowel", "neutral": "fspiral", "sideSpecial": "ftowel", "upSpecial": "fanrise", "downSpecial": "curtain", "counterHit": "curtain2", "dashAttack": "bus", "upRow": "fspiral", "uairRow": "fspiral", "riseMid": "fanrise2", "riseLate": "fanrise3"},
 };
 
 MM.SPRITES['cloe'] = {
@@ -3148,4 +3160,20 @@ MM.SPRITES['fx10'] = { src: 'img/fx10-atlas.webp', standH: 100, fscale: {}, fram
     'catchring': [1130, 496, 291, 360, 145.5, 180.0],
     'beamstart': [1423, 496, 543, 256, 0, 128.0],
     'beammid': [0, 858, 177, 256, 0, 128.0]
+} };
+
+MM.SPRITES['kevin-fx'] = { src: 'img/kevin-fx-atlas.webp', standH: 100, fscale: {}, frames: {
+    'towel0': [0, 0, 160, 90, 80.0, 45.0],
+    'towel1': [162, 0, 145, 160, 72.5, 80.0],
+    'towel2': [309, 0, 130, 160, 65.0, 80.0],
+    'towel3': [441, 0, 160, 97, 80.0, 48.5],
+    'terry0': [603, 0, 91, 185, 45.8, 186.6],
+    'terry1': [696, 0, 139, 185, 69.4, 186.6],
+    'terry2': [837, 0, 174, 187, 87.0, 188.2],
+    'terry3': [1013, 0, 155, 183, 77.8, 184.3],
+    'target': [1170, 0, 200, 197, 100.0, 98.5],
+    'ball': [1372, 0, 180, 64, 90.0, 32.0],
+    'ballcurve': [1554, 0, 180, 130, 90.0, 65.0],
+    'titlebus': [0, 199, 620, 165, 310.0, 82.5],
+    'titlelong': [622, 199, 620, 179, 310.0, 89.5]
 } };

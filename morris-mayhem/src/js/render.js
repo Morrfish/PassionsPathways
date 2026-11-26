@@ -78,10 +78,11 @@ window.MM = window.MM || {};
         return row + (a.t < Math.max(1, m.start * 0.5) ? 0 : before ? 1 : a.t < hold ? 2 : 3);
       }
       if (a.type === 'special') {
-        const row = M[{ neutral: 'neutral', side: 'sideSpecial', up: 'upSpecial', down: 'downSpecial' }[a.slot]];
+        const row = M[{ neutral: 'neutral', side: 'sideSpecial', up: 'upSpecial', down: 'downSpecial', dashAtk: 'dashAttack' }[a.slot]];
         const kind = a.sp.kind;
         if (kind === 'dash' && a.sp.ride) return row + (a.t < 3 ? 0 : a.t < 6 ? 1 : a.box ? 2 : 3); // build the cart, ride it, hop off
         if (kind === 'dash') return row + (a.t < 6 ? 0 : a.box ? 1 + ((a.t >> 2) & 1) : 3);
+        if (kind === 'heli') return row + (a.t < a.sp.windup ? 0 : a.fall ? 3 : 1 + ((a.t >> 2) & 1)); // windup, spin (two poses), let go and fall
         if (kind === 'rise') return a.chute ? row + 2 : a.t < 4 ? row + 0 : a.t < (M.riseMid ? 9 : 12) ? row + 1 : M.riseMid && a.t < 30 ? M.riseMid : M.riseLate; // riseMid: e.g. Haylie's bear-aura leap
         if (kind === 'projectile') return row + (a.t < 5 ? 0 : a.t < 9 ? 1 : a.t < 16 ? 2 : 3);
         if (kind === 'pack') return row + (a.t < 10 ? 0 : a.t < 20 ? 1 : a.t < 28 ? 2 : 3);
@@ -254,6 +255,16 @@ window.MM = window.MM || {};
       drawFx(g, id, i < 0 ? pre : pre + i, f.x + f.face * f.w * 0.9, f.y - f.h * 0.5, f.h * sc, fade);
     }
     if (!a || a.type !== 'ult') return;
+    if (a.u.terry) { // Going Long: Terry Bradshaw runs in behind Kevin and throws; a gold target sits on everyone he marked
+      const u = a.u, k = a.t < 12 ? a.t / 12 : a.t > u.dur - 14 ? (u.dur - a.t) / 14 : 1, sh = sheet(u.fxSheet);
+      const tt = a.t - u.throwAt, i = tt < -16 ? 0 : tt < 0 ? 1 : tt % u.every < 6 ? 2 : tt >= u.throws * u.every ? 3 : 1;
+      const fr = sh && sh.S.frames['terry' + i];
+      if (fr) { const s = (f.h * 1.08) / fr[5]; g.save(); g.globalAlpha = k; g.translate(f.x - f.face * f.w * 1.25, f.y); g.scale(f.face * s, s); g.drawImage(sh.im, fr[0], fr[1], fr[2], fr[3], -fr[4], -fr[5], fr[2], fr[3]); g.restore(); }
+      if (a.targets) for (const d of a.targets) if (!d.dead && !d.out) {
+        const pulse = 1 + 0.08 * Math.sin(G.frame * 0.4);
+        drawFx(g, u.fxSheet, 'target', d.x, d.y - d.h * 0.55, d.h * 0.95 * pulse, 0.9, G.frame * 0.03);
+      }
+    }
     if (a.u.fxSheet && a.u.fxRush && a.u.rush && a.t >= a.u.rush[0] && a.t < a.u.finishAt + 24) { // Kevin's football stampede
       const k = a.t < a.u.catchAt ? Math.floor((a.t - a.u.rush[0]) / 8) % 2 : a.t < a.u.finishAt ? 2 : 3;
       g.save(); g.scale(1, 1); g.translate(f.x + f.face * f.w * 0.4, f.y - f.h * 0.35); g.scale(f.face, 1);
@@ -323,7 +334,7 @@ window.MM = window.MM || {};
     if (sh && !sh.S.frames[p.anim ? p.anim[0] : p.sprite] && (sh.S.base || p.base)) sh = sheet(sh.S.base || p.base) || sh;
     if (!sh) return false;
     const ai = p.anim && (p.animOnce ? Math.min(p.anim.length - 1, Math.floor((p.t / (p.t + p.life)) * p.anim.length)) : Math.floor(p.t / 5) % p.anim.length);
-    const fr = sh.S.frames[p.anim ? p.anim[ai] : p.sprite]; if (!fr) return false;
+    const fr = sh.S.frames[p.anim ? p.anim[ai] : p.curving && p.curveSprite ? p.curveSprite : p.sprite]; if (!fr) return false;
     const k = p.px ? p.px / Math.max(fr[2], fr[3]) : ((p.owner.h * 1.15) / sh.S.standH) * (p.scale || 1); // px: drawn this many pixels across
     if (p.line && !p.owner.dead && !p.owner.out) { // fishing line from the rod to the bobber
       const o = p.owner;
@@ -332,8 +343,9 @@ window.MM = window.MM || {};
     }
     g.save();
     if (p.runner) { g.translate(p.x, p.y + 18 - Math.abs(Math.sin(p.t * 0.5)) * 6); }
+    else if (p.spinAlong) { g.translate(p.x, p.y); g.rotate(Math.atan2(p.vy, p.vx)); g.scale(k, Math.cos(Math.atan2(p.vy, p.vx)) < 0 ? -k : k); } // e.g. Going Long footballs
     else { g.translate(p.x, p.y); g.rotate(Math.sin(p.t * 0.25) * 0.4); }
-    g.scale((p.dir || 1) * k, k);
+    if (!p.spinAlong) g.scale((p.dir || 1) * k, k);
     g.drawImage(sh.im, fr[0], fr[1], fr[2], fr[3], -fr[4], -fr[5], fr[2], fr[3]);
     g.restore();
     return true;
@@ -802,7 +814,7 @@ window.MM = window.MM || {};
       const k = p.life / p.max;
       g.globalAlpha = Math.max(0, Math.min(1, k * 1.5));
       if (p.type === 'text') { g.fillStyle = p.color; g.font = `900 ${p.size}px system-ui`; g.textAlign = 'center'; g.lineWidth = 5; g.strokeStyle = '#1b1b2a'; g.strokeText(p.text, p.x, p.y); g.fillText(p.text, p.x, p.y); }
-      else if (p.type === 'fx' && drawFx(g, 'fx10', p.img, p.x, p.y, p.size * (p.grow ? 0.6 + 0.6 * (1 - k) : 1), Math.min(1, k * 2), p.rot || 0)) { /* hit spark, big burst, catch ring */ }
+      else if (p.type === 'fx' && drawFx(g, p.sheet || 'fx10', p.img, p.x, p.y, p.size * (p.grow ? 0.6 + 0.6 * (1 - k) : 1), Math.min(1, k * 2), p.rot || 0)) { /* hit spark, big burst, catch ring */ }
       else if (p.type === 'fx') { /* art not loaded yet */ }
       else if (p.type === 'ring') { g.strokeStyle = p.color; g.lineWidth = 4 * k + 1; g.beginPath(); g.arc(p.x, p.y, p.size + (1 - k) * 60, 0, TAU); g.stroke(); }
       else if (p.type === 'smoke') { g.fillStyle = p.color; g.beginPath(); g.arc(p.x, p.y, p.size * (1.6 - k), 0, TAU); g.fill(); }
@@ -992,9 +1004,12 @@ window.MM = window.MM || {};
       const label = b.text.toUpperCase() + (b.text.endsWith('!') ? '' : '!'), maxW = bw * (880 / 1024);
       let fs = Math.round(bh * 0.36); g.font = `italic 900 ${fs}px system-ui`;
       const mwid = g.measureText(label).width; if (mwid > maxW) { fs = Math.floor(fs * maxW / mwid); g.font = `italic 900 ${fs}px system-ui`; }
-      g.textAlign = 'center'; g.textBaseline = 'middle';
-      g.lineWidth = Math.max(4, fs * 0.16); g.strokeStyle = '#1a0b2e'; g.strokeText(label, tx2, H * 0.23);
-      g.fillStyle = '#ffc21a'; g.fillText(label, tx2, H * 0.23);
+      const ta = b.by && b.by.def.ultimate && b.by.def.ultimate.titleArt; // e.g. Kevin's "Going Long" title art
+      if (!(ta && drawFx(g, ta[0], ta[1], tx2, H * 0.23, maxW * 0.8))) {
+        g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.lineWidth = Math.max(4, fs * 0.16); g.strokeStyle = '#1a0b2e'; g.strokeText(label, tx2, H * 0.23);
+        g.fillStyle = '#ffc21a'; g.fillText(label, tx2, H * 0.23);
+      }
       g.restore();
     }
     // big center text

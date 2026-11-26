@@ -327,6 +327,7 @@ window.MM = window.MM || {};
   const KIND_TEXT = {
     projectile: (s) => `throws ${s.thing || s.emoji || 'an energy ball'}${s.count > 1 ? ` ×${s.count}` : ''}${s.boomerang ? ' that comes back' : ''}`,
     shockwave: () => 'sends shockwaves along the ground both ways', dash: (s) => `charges forward${s.armor ? " and can't be stopped by small hits" : ''}`,
+    heli: () => 'spins his towel overhead and flies up higher than a jump (steer left and right)',
     rise: (s) => `launches up${s.parachute ? ' and floats down on a parachute' : ''} (gets back to the stage)`, teleport: () => 'vanishes and reappears (aim it)', slam: () => 'dives down and crashes',
     spin: () => 'spins and hits again and again', counter: () => 'blocks a hit and strikes back (bounces things back too)',
     pack: (s) => s.names && s.names.length === 1 ? `sends ${s.names[0]} out to pounce` : `sends ${s.names ? s.names.join(', ').replace(/, ([^,]*)$/, ' and $1') : 'a pack'} running along the floor`,
@@ -496,6 +497,7 @@ window.MM = window.MM || {};
       [press('neutral', 'special', 'Special'), '', desc(sp.neutral)], [press('side', 'special', 'Side Special'), '', desc(sp.side)],
       [press('up', 'special', 'Up Special'), '', desc(sp.up) + ' <i>Use it to get back to the stage.</i>'], [press('down', 'special', 'Down Special'), '', desc(sp.down)],
     ];
+    if (d.dashAttack) rows.splice(5, 0, [press('side', 'attack', 'Run + Attack'), d.dashAttack.name, 'Attack while running flat out: a charging hit that plows through people']);
     return `<table><tr><th>Press</th><th>Move</th><th>What it does</th></tr>${rows.map((r) => `<tr><td class="in">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</table>`;
   }
   function drawMoves() {

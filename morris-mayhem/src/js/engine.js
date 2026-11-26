@@ -416,6 +416,14 @@ window.MM = window.MM || {};
   // ---------- normal attacks ----------
   function startNormal(G, f, forceGround) {
     const inp = f.inp, onGround = f.ground || forceGround;
+    const da = f.def.dashAttack; // e.g. Kevin's Riding the Bus: attack while running flat out
+    if (da && onGround && !inp.y && inp.x && sgn(f.vx) === inp.x && Math.abs(f.vx) > f.st.speed * 0.75 && !(f.cd.dashAtk > 0)) {
+      f.cd.dashAtk = da.cd || 60; f.face = inp.x;
+      const a = { type: 'special', slot: 'dashAtk', sp: da, t: 0, dur: 30, hit: new Set(), pose: 'dash', label: da.name };
+      f.act = a; ABILITIES[da.kind].start(G, f, da, a); MM.sfx('special');
+      if (da.title) part(G, { type: 'fx', sheet: da.title[0], img: da.title[1], x: f.x, y: f.y - f.h * 1.45, vy: -0.6, size: 260, life: 50, max: 50 });
+      return;
+    }
     let name;
     if (onGround) name = inp.y < 0 ? 'up' : inp.y > 0 ? 'down' : inp.x ? 'side' : 'jab';
     else name = inp.y < 0 ? 'uair' : inp.y > 0 ? 'dair' : inp.x ? 'fair' : 'nair';
@@ -590,6 +598,18 @@ window.MM = window.MM || {};
           if (a.t > 220 || (f.inp.attack && !f.prev.attack) || (f.inp.jump && !f.prev.jump) || (f.inp.special && !f.prev.special)) { a.chute = false; f.act = null; }
         }
         if (!a.onLand) a.onLand = (G, f, a) => { if (a.chute) f.act = null; };
+      },
+    },
+    heli: { // e.g. Kevin's Towel Helicopter: spins the towel overhead and flies up higher than a jump, steering left and right
+      start(G, f, sp, a) { a.dur = sp.windup + sp.lift + 24; a.pose = 'uppercut'; },
+      tick(G, f, sp, a) {
+        if (a.t < sp.windup) { f.vx *= 0.6; f.vy = Math.min(f.vy, 0); a.noGrav = !f.ground; if (!f.ground) f.vy = 0; return; }
+        const up = a.t < sp.windup + sp.lift;
+        a.noGrav = up; f.ground = null;
+        if (up) { f.vy = -sp.rise * (a.t < sp.windup + sp.lift - 8 ? 1 : (sp.windup + sp.lift - a.t) / 8); if (a.t % 6 === 0) MM.sfx('swing', 0.4); }
+        f.vx += clamp(f.inp.x * f.st.air - f.vx, -0.6, 0.6);
+        if (up && sp.dmg) { a.box = boxFor(f, [-70, -f.h / f.s - 40, 140, 60]); a.hitProps = { dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: 75 }; } else a.box = null;
+        a.fall = !up;
       },
     },
     teleport: {
@@ -850,6 +870,19 @@ window.MM = window.MM || {};
         }
         G.shake = 10; burst(G, f.x, f.y - f.h, '#fff', 30, 9);
       }
+    } else if (u.type === 'homing') { // e.g. Kevin's Going Long: Terry Bradshaw marks everyone and throws footballs that home in on the marks
+      if (a.t === u.lockAt) a.targets = G.fighters.filter((d) => d !== f && !d.dead && !d.out && !(MM.sameTeam(G, f, d) && !G.ff));
+      const t = a.t - u.throwAt;
+      if (a.targets && t >= 0 && t < u.throws * u.every && t % u.every === 0) {
+        const i = t / u.every, last = i === u.throws - 1, hx = f.x - f.face * f.w * 0.6, hy = f.y - f.h * 1.05;
+        for (const d of a.targets) if (!d.dead && !d.out) {
+          const ang = Math.atan2(d.y - d.h * 0.6 - hy, d.x - hx) - 0.7 * sgn(d.x - hx || f.face); // thrown high, then it curves down onto the mark
+          spawnProj(G, f, { x: hx, y: hy, vx: Math.cos(ang) * u.speed, vy: Math.sin(ang) * u.speed, r: 22, homing: d, turn: u.turn, ghost: true,
+            dmg: last ? u.dmgLast : u.dmg, kb: last ? 9 * u.kbMul : 3.5, kbg: last ? 0.12 * u.kbMul : 0.03, ang: last ? 45 : 25, life: u.life,
+            sheet: u.fxSheet, sprite: 'ball', curveSprite: 'ballcurve', px: 62, spinAlong: true, dir: f.face });
+        }
+        MM.sfx('swing');
+      }
     } else if (u.type === 'flyby') { // e.g. Sabir's Five-Star Flyby: five friends fly out from behind him and across the screen
       const i = (a.t - u.sendAt) / u.every;
       if (i >= 0 && i < u.girls && i === Math.floor(i)) {
@@ -956,6 +989,14 @@ window.MM = window.MM || {};
   function updateProjectiles(G) {
     for (const p of G.projs) {
       p.t++; p.life--;
+      if (p.homing) { // steer toward the marked player, turning at most p.turn a frame (dodgeable)
+        const d = p.homing;
+        if (!d.dead && !d.out) {
+          const want = Math.atan2(d.y - d.h * 0.55 - p.y, d.x - p.x), cur = Math.atan2(p.vy, p.vx), spd = Math.hypot(p.vx, p.vy);
+          const da = ((want - cur + Math.PI * 3) % (Math.PI * 2)) - Math.PI, na = cur + clamp(da, -p.turn, p.turn);
+          p.vx = Math.cos(na) * spd; p.vy = Math.sin(na) * spd; p.curving = Math.abs(da) > 0.25;
+        }
+      }
       if (p.boomer && !p.back && p.t > 20 && sgn(p.vx) !== p.dir) { p.back = true; p.hit = new Set(); } // one hit going out, one coming back
       if (p.boomer && p.t > 20) { const back = sgn(p.owner.x - p.x); p.vx += back * 0.55; p.vy += clamp((p.owner.y - 70 - p.y) * 0.01, -0.4, 0.4); if (p.t > 40 && Math.hypot(p.owner.x - p.x, p.owner.y - 70 - p.y) < 50) p.life = 0; }
       p.vy += p.grav;
@@ -978,16 +1019,16 @@ window.MM = window.MM || {};
         else if (p.fall) p.vy += 0.6;
         else p.life = 0;
       }
-      if (!p.pierce && insideMain(G, p.x, p.y + p.r * 0.5)) { p.life = 0; burst(G, p.x, p.y, p.color, 6, 3); }
+      if (!p.pierce && !p.ghost && insideMain(G, p.x, p.y + p.r * 0.5)) { p.life = 0; burst(G, p.x, p.y, p.color, 6, 3); }
       const box = { x: p.x - p.r, y: p.y - p.r, w: p.r * 2, h: p.r * 2 };
       for (const d of G.fighters) {
-        if (d === p.owner || d.dead || d.out || p.hit.has(d) || d.invuln > 0) continue;
+        if (d === p.owner || d.dead || d.out || p.hit.has(d) || d.invuln > 0 || (p.homing && d !== p.homing)) continue; // a homing ball only hits its mark
         if (overlap(box, MM.hurtbox(d))) {
           p.hit.add(d);
           const ok = applyHit(G, p.owner, d, { dmg: p.dmg, kb: p.kb, kbg: p.kbg, ang: p.ang, face: p.pull ? sgn(p.owner.x - d.x) : sgn(p.vx || p.dir) }, p.x, p.y, p);
           if (ok && p.slow && (!d.slow || d.slow.mul >= p.slow.mul)) { d.slow = { mul: p.slow.mul, t: p.slow.t }; burst(G, d.x, d.y - d.h / 2, '#bff3ff', 12, 4); } // refresh, never stack
           if (ok && p.pierce) p.atkT = p.t; // flies on through (e.g. Sabir's flyby girls strike as they pass)
-          else if (ok && !p.ground) p.life = 0;
+          else if (ok && !p.ground && !p.boomer) p.life = 0; // a boomerang keeps going and comes back
         }
       }
       if (Math.abs(p.x) > 3000 || p.y > 1500) p.life = 0;
