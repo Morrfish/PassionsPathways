@@ -2320,7 +2320,7 @@ MM.SPRITES['triple-trouble'] = {
 MM.SPRITES['kevin'] = {
   src: 'img/kevin-atlas.webp',
   standH: 192,
-  fscale: {"ent": 1.422, "taunt": 1.422, "win": 1.422, "lose": 1.422},
+  fscale: {},
   frames: {
     'idle0': [0, 0, 91, 192, 45.6, 191.6],
     'idle1': [95, 0, 92, 193, 46.2, 193.4],
@@ -2382,7 +2382,7 @@ MM.SPRITES['kevin-fan'] = {
   src: 'img/kevin-fan-atlas.webp',
   base: 'kevin',
   standH: 196,
-  fscale: {"ent": 0.995, "taunt": 0.995, "win": 0.995, "lose": 0.995},
+  fscale: {},
   frames: {
     'idle0': [0, 0, 102, 196, 50.8, 195.9],
     'idle1': [106, 0, 101, 197, 50.5, 196.5],
@@ -2427,7 +2427,7 @@ MM.SPRITES['kevin-fan'] = {
 MM.SPRITES['cloe'] = {
   src: 'img/cloe-atlas.webp',
   standH: 193,
-  fscale: {"pers0": 0.955, "pers1": 0.955, "pers2": 0.955, "pers3": 0.955, "ent": 0.955, "taunt": 0.955, "win": 0.955, "lose": 0.955},
+  fscale: {"pers0": 0.955, "pers1": 0.955, "pers2": 0.955, "pers3": 0.955, "ent": 0.955, "taunt": 0.955, "win": 0.955, "lose": 0.955, "red0": 1.245, "red1": 1.245, "red2": 1.245, "red3": 1.245, "orange0": 1.295, "orange1": 1.295, "orange2": 1.295, "orange3": 1.295, "yellow0": 1.304, "yellow1": 1.304, "yellow2": 1.304, "yellow3": 1.304, "green0": 1.43, "green1": 1.43, "green2": 1.43, "green3": 1.43, "blue0": 1.43, "blue1": 1.43, "blue2": 1.43, "blue3": 1.43, "purple0": 1.608, "purple1": 1.608, "purple2": 1.608, "purple3": 1.608, "release0": 1.156, "release1": 1.156, "release2": 1.156, "release3": 1.156, "shuffle0": 1.072, "shuffle1": 1.072, "shuffle2": 1.072, "shuffle3": 1.072, "wheel0": 1.084, "wheel1": 1.084, "wheel2": 1.084, "wheel3": 1.084},
   frames: {
     'idle0': [0, 0, 94, 193, 47.1, 193.4],
     'idle1': [98, 0, 95, 193, 47.7, 193.4],
@@ -2512,7 +2512,7 @@ MM.SPRITES['cloe'] = {
 MM.SPRITES['janelle'] = {
   src: 'img/janelle-atlas.webp',
   standH: 196,
-  fscale: {"ent": 1.065, "taunt": 1.065, "win": 1.065, "lose": 1.065},
+  fscale: {"book0": 1.083, "book1": 1.083, "book2": 1.083, "book3": 1.083, "oeng0": 1.174, "oeng1": 1.174, "oeng2": 1.174, "oeng3": 1.174, "oread0": 1.195, "oread1": 1.195, "oread2": 1.195, "oread3": 1.195, "omath0": 1.324, "omath1": 1.324, "omath2": 1.324, "omath3": 1.324, "osoc0": 1.39, "osoc1": 1.39, "osoc2": 1.39, "osoc3": 1.39, "osci0": 1.371, "osci1": 1.371, "osci2": 1.371, "osci3": 1.371, "deng0": 1.146, "deng1": 1.146, "deng2": 1.146, "deng3": 1.146, "dread0": 1.174, "dread1": 1.174, "dread2": 1.174, "dread3": 1.174, "dmath0": 1.248, "dmath1": 1.248, "dmath2": 1.248, "dmath3": 1.248, "dsoc0": 1.225, "dsoc1": 1.225, "dsoc2": 1.225, "dsoc3": 1.225, "dsci0": 1.233, "dsci1": 1.233, "dsci2": 1.233, "dsci3": 1.233},
   frames: {
     'idle0': [0, 0, 73, 196, 36.6, 195.9],
     'idle1': [77, 0, 74, 195, 36.9, 195.3],

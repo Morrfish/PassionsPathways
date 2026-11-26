@@ -174,11 +174,14 @@ ALIASES['evea-spirit'] = {'ent': 'link2', 'taunt': 'link3', 'win': 'link3', 'los
 # the standing pose to size the personality sheet by, when the taunt reaches up (Jorie lifts the milk jug overhead)
 PERS_REF = {'jorie': 'pers0'}
 # atlases whose personality/ultimate poses were drawn at the same scale as the fighting poses: don't resize them
-SAME_SHEET_PERS = {'jeff-giant', 'patty-giant', 'triple-trouble'}
+SAME_SHEET_PERS = {'jeff-giant', 'patty-giant', 'triple-trouble', 'kevin', 'kevin-fan', 'janelle'}
 # standing height comes from another pose (Evea's spirit poses have Grandma floating over her: size her by Evea alone)
 STANDH_FROM = {'evea-spirit': 'link0'}
 # a move group cut from another sheet: size it so its first pose is as tall as the idle pose
-MATCH_IDLE = {'siren': ('mac', ('cup', 'tired3'), ('tired', 'tired3')), 'jorie': ('cup',), 'evea': ('cup',), 'sabir': ('build', 'buildx', 'fly'), 'sabir-anime': ('fly',)}
+MATCH_IDLE = {'siren': ('mac', ('cup', 'tired3'), ('tired', 'tired3')), 'jorie': ('cup',), 'evea': ('cup',), 'sabir': ('build', 'buildx', 'fly'), 'sabir-anime': ('fly',),
+              # Cloe's and Janelle's sheets were drawn smaller row by row: size each move by its standing pose
+              'cloe': tuple((c, c + '3') for c in ('red', 'orange', 'yellow', 'green', 'blue', 'purple', 'release')) + (('shuffle', 'shuffle0'), ('wheel', 'wheel0')),
+              'janelle': tuple((r, r + '0') for r in ('book', 'oeng', 'oread', 'omath', 'osoc', 'osci', 'deng', 'dread', 'dmath', 'dsoc', 'dsci'))}
 for who, moves in MOVES.items():
     fr = json.load(open(os.path.join(src_dir, f'{who}-frames.json')))
     for a, b in ALIASES.get(who, {}).items(): fr[a] = fr[b]
