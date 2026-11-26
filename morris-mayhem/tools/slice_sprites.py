@@ -42,8 +42,8 @@ CHARACTERS = {
         'props': [('football', 'specials.png', (990, 88))],
         'cutcols': {'aerials.png': [(695, 60, 400)]},  # up-air poses touch through their glow: x, y0, y1
     },
-    'courtnee': {
-        'scale': 1.0,  # full size: drawn up to 1.6x bigger than idle on a big screen, 0.62 looked blurry 'cols': [165, 415, 695, 975, 9999],
+    'courtnee': {  # cut at full size: 0.62 looked blurry when drawn 1.6x bigger on a big screen
+        'scale': 1.0, 'cols': [165, 415, 695, 975, 9999],
         'sheets': {
             'move.png': ['idle', 'run', 'jump', 'hurt'],
             'attacks.png': ['click', 'upper', 'battery', 'reboot'],
@@ -56,7 +56,7 @@ CHARACTERS = {
         'props': [],
     },
     'courtnee-super': {
-        'scale': 1.0,  # full size: drawn up to 1.6x bigger than idle on a big screen, 0.62 looked blurry 'cols': [165, 415, 695, 975, 9999],
+        'scale': 1.0, 'cols': [165, 415, 695, 975, 9999],
         'sheets': {
             'smove.png': ['idle', 'run', 'jump', 'hurt'],
             'sattacks.png': ['click', 'upper', 'battery', 'reboot'],
@@ -84,7 +84,7 @@ CHARACTERS = {
         'mainonly': {'specials.png': ['pounce']},  # the baked cat is drawn separately as Krillin
     },
     'siren': {
-        'scale': 1.0,  # full size: drawn up to 1.6x bigger than idle on a big screen, 0.62 looked blurry 'cols': [165, 415, 695, 975, 9999],
+        'scale': 1.0, 'cols': [165, 415, 695, 975, 9999],
         'sheets': {
             'move.png': ['idle', 'run', 'jump', 'hurt'],
             'attacks.png': ['pop', 'rain', 'sweep', 'toss'],

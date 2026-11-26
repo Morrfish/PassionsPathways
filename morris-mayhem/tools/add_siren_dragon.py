@@ -9,5 +9,5 @@ SCALE = ss.CHARACTERS['siren']['scale']  # same scale as the rest of her atlas
 art, out = sys.argv[1], sys.argv[2]
 L = json.load(open(f'{out}/siren-frames.json')); at = Image.open(f'{out}/siren-atlas-preview.png').convert('RGBA')
 frames = {k: (at.crop((x, y, x + w, y + h)), ax, ay) for k, (x, y, w, h, ax, ay) in L.items() if not k.startswith(('cup', 'tired'))}
-ss.slice_bodies(f'{art}/siren-creativity-transform-exhaustion-draft.png', ['cup', None, 'tired'], frames, SCALE)
+ss.slice_bodies(f'{art}/siren-creativity-transform-exhaustion-draft.png', ['cup', None, 'tired'], frames, SCALE, wipeyellow=True)  # the yellow step captions under the poses
 ss.pack(frames, out, 'siren')
