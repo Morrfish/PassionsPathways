@@ -7,13 +7,29 @@ import * as THREE from 'three';
 
 const GRAVITY = -9.8;
 
+// Which drawing each part of the way around a ring shows: viewOf(angle) -> 0 front, 1 back,
+// 2 left side, 3 right side. Returns runs of segments that show the same drawing; each run gets
+// its own vertices so the drawings meet with a clean seam.
+export function viewRuns(viewOf, n) {
+  const views = Array.from({ length: n }, (_, j) => viewOf(((j + 0.5) / n) * Math.PI * 2));
+  let start = views.findIndex((v, j) => v !== views[(j - 1 + n) % n]);
+  if (start < 0) return [{ a: 0, b: n, view: views[0] }];
+  const runs = [];
+  for (let k = 0; k < n;) {
+    const j0 = start + k, v = views[j0 % n]; let len = 0;
+    while (k + len < n && views[(j0 + len) % n] === v) len++;
+    runs.push({ a: j0, b: j0 + len, view: v }); k += len;
+  }
+  return runs;
+}
+
 export class Cloth {
   // rings: rest shape, sewn edge first, in the mannequin's own coordinates.
   // pointFn(ring, cos, sin) -> [x, y, z] on the ring; centerFn(ring) -> ring's middle.
   // texFn(ring, cos, sin) -> the drawing point it came from; uvMap(point, half) -> texture uv
   // (half 0 = front, 1 = back). phys: { hang, bend, folds, drag, weight } from the fabric.
   // collide(arr, i) pushes point i out of the body.
-  constructor({ rings, seg = 64, phys, collide, pointFn, centerFn, texFn, uvMap, seed = 1 }) {
+  constructor({ rings, seg = 64, phys, collide, pointFn, centerFn, texFn, uvMap, viewOf = (t) => (Math.sin(t) >= 0 ? 0 : 1), seed = 1 }) {
     const R = rings.length, C = seg, N = R * C;
     this.R = R; this.C = C; this.N = N; this.phys = phys; this.collide = collide;
     this.rest = new Float32Array(N * 3);     // fabric's true shape (sets the thread lengths)
@@ -62,17 +78,17 @@ export class Cloth {
       add(r, c, r + 2, c, bend * 0.8 + 0.1, bend * 0.8 + 0.1);
     }
     this.cons = new Float32Array(cons);
-    // Mesh: the front half and back half each get their own vertices (they show different
-    // drawings), so the points on the side seams are drawn twice.
-    const H = C / 2, cols = H + 1, map = [], uv = [], idx = [];
-    for (const half of [0, 1]) {
-      const base = map.length;
-      for (let r = 0; r < R; r++) for (let j = 0; j <= H; j++) {
-        const c = (half * H + j) % C, t = ((half * H + j) / C) * Math.PI * 2;
+    // Mesh: each part showing a different drawing (front, back, sides) gets its own vertices,
+    // so the points where two drawings meet are drawn twice.
+    const map = [], uv = [], idx = [];
+    for (const run of viewRuns(viewOf, C)) {
+      const base = map.length, cols = run.b - run.a + 1;
+      for (let r = 0; r < R; r++) for (let j = run.a; j <= run.b; j++) {
+        const c = j % C, t = (j / C) * Math.PI * 2;
         map.push(r * C + c);
-        const q = uvMap(texFn(rings[r], Math.cos(t), Math.sin(t)), half); uv.push(q[0], q[1]);
+        const q = uvMap(texFn(rings[r], Math.cos(t), Math.sin(t)), run.view); uv.push(q[0], q[1]);
       }
-      for (let r = 0; r < R - 1; r++) for (let j = 0; j < H; j++) {
+      for (let r = 0; r < R - 1; r++) for (let j = 0; j < cols - 1; j++) {
         const a = base + r * cols + j, b = a + 1, d = a + cols, e = d + 1;
         idx.push(a, d, b, b, d, e);
       }

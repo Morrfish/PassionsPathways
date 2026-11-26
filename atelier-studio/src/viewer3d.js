@@ -5,7 +5,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 import { bodySpec, boardBox, ellipsePerimeter, ARM_ANGLE, SKIN_TONES } from './body.js';
-import { Cloth } from './cloth.js';
+import { Cloth, viewRuns } from './cloth.js';
 import { drapeFor } from './fabrics.js';
 
 const SEG = 64; // points around each ring
@@ -28,20 +28,19 @@ function densify(keys, fields, sub) {
 // Build a tube through rings. pointFn(ring, cos, sin) returns [x, y, z].
 // With texFn (the drawing point each vertex came from) and uvMap(point, half), the front half
 // (z >= 0) and back half get their own vertices so each can show its own drawing.
-function loft(rings, pointFn, { capStart = false, capEnd = false, texFn = null, uvMap = null } = {}) {
+function loft(rings, pointFn, { capStart = false, capEnd = false, texFn = null, uvMap = null, viewOf = (t) => (Math.sin(t) >= 0 ? 0 : 1) } = {}) {
   const pos = [], uv = [], idx = [];
   if (texFn) {
-    const H = SEG / 2, cols = H + 1;
-    for (const half of [0, 1]) {
-      const base = pos.length / 3;
+    for (const run of viewRuns(viewOf, SEG)) {
+      const base = pos.length / 3, cols = run.b - run.a + 1;
       rings.forEach((r) => {
-        for (let j = 0; j <= H; j++) {
-          const t = ((half * H + j) / SEG) * Math.PI * 2, c = Math.cos(t), s = Math.sin(t), p = pointFn(r, c, s);
+        for (let j = run.a; j <= run.b; j++) {
+          const t = (j / SEG) * Math.PI * 2, c = Math.cos(t), s = Math.sin(t), p = pointFn(r, c, s);
           pos.push(p[0], p[1], p[2]);
-          const q = uvMap(texFn(r, c, s), half); uv.push(q[0], q[1]);
+          const q = uvMap(texFn(r, c, s), run.view); uv.push(q[0], q[1]);
         }
       });
-      for (let i = 0; i < rings.length - 1; i++) for (let j = 0; j < H; j++) {
+      for (let i = 0; i < rings.length - 1; i++) for (let j = 0; j < cols - 1; j++) {
         const a = base + i * cols + j, b = a + 1, c = a + cols, d = c + 1;
         idx.push(a, c, b, b, c, d);
       }
@@ -194,16 +193,18 @@ export class Viewer {
   toWorld(px, py) { const b = this.box; return [b.x0 + px / this.BW * b.w, b.y0 + (1 - py / this.BH) * b.h]; }
   uvOf(p) { const b = this.box; return [(p[0] - b.x0) / b.w, (p[1] - b.y0) / b.h]; }
 
-  // Light gray view of the mannequin from the front or back, used as the drawing guide.
+  // Camera direction for each drawing: front, back, left side (+x) and right side (-x).
+  static VIEW_POS = { front: [0, 0, 5], back: [0, 0, -5], left: [5, 0, 0], right: [-5, 0, 0] };
+  // Light gray view of the mannequin from the front, back or a side, used as the drawing guide.
   renderGuide(w, h, side = 'front') {
     const b = this.box, cam = new THREE.OrthographicCamera(b.x0, b.x0 + b.w, b.y0 + b.h, b.y0, -10, 10);
-    cam.position.set(0, 0, side === 'back' ? -5 : 5); cam.lookAt(0, 0, 0);
+    cam.position.set(...Viewer.VIEW_POS[side]); cam.lookAt(0, 0, 0);
     const oldRot = this.figure.rotation.y, oldX = this.figure.position.x; this.figure.rotation.y = 0; this.figure.position.x = 0; this.clothGroup.visible = false;
     const rt = new THREE.WebGLRenderTarget(w, h, { samples: 4 });
     const oldBg = this.scene.background, oldEnv = this.scene.environment;
     this.scene.background = null; this.scene.environment = null;
     this.garmentGroup.visible = false; this.stage.visible = false;
-    const head = new THREE.DirectionalLight('#ffffff', 2.2); head.position.set(0.3, 0.6, side === 'back' ? -3 : 3); this.scene.add(head);
+    const head = new THREE.DirectionalLight('#ffffff', 2.2); const vp = Viewer.VIEW_POS[side]; head.position.set(vp[0] * 0.6 + (vp[2] ? 0.3 : 0), 0.6, vp[2] * 0.6 + (vp[0] ? 0.3 : 0)); this.scene.add(head);
     this.scene.overrideMaterial = new THREE.MeshLambertMaterial({ color: '#c9c2bb' });
     const r = this.renderer, oldTone = r.toneMapping; r.toneMapping = THREE.NoToneMapping;
     r.setRenderTarget(rt); r.setClearColor(0x000000, 0); r.clear(); r.render(this.scene, cam); r.setRenderTarget(null);
@@ -219,10 +220,51 @@ export class Viewer {
     return c;
   }
 
+  // The 3D garment as seen from the left or right side, without lighting: what that side's
+  // drawing starts as. Returns { color, mat } canvases the size of the sketch board.
+  renderSide(side) {
+    if (!this.cloths && !this.garmentGroup.children.length) return null;
+    const b = this.box, cam = new THREE.OrthographicCamera(b.x0, b.x0 + b.w, b.y0 + b.h, b.y0, -10, 10);
+    cam.position.set(...Viewer.VIEW_POS[side]); cam.lookAt(0, 0, 0);
+    const r = this.renderer, size = r.getSize(new THREE.Vector2()), ratio = r.getPixelRatio();
+    const keep = { rot: this.figure.rotation.y, x: this.figure.position.x, z: this.figure.position.z, bg: this.scene.background, tone: r.toneMapping, out: r.outputColorSpace };
+    this.figure.rotation.y = 0; this.figure.position.set(0, 0, 0);
+    const frames = this.cloths.map(({ cloth }) => { const f = cloth.frame; cloth.frame = { angle: 0, x: 0, z: 0 }; cloth.sync(); return f; });
+    this.bodyGroup.visible = false; this.stage.visible = false; this.scene.background = null;
+    const meshes = [...this.garmentGroup.children, ...this.clothGroup.children], mats = meshes.map((m) => m.material);
+    r.setPixelRatio(1); r.setSize(this.BW, this.BH, false); r.toneMapping = THREE.NoToneMapping;
+    const shot = (map) => {
+      const flat = new THREE.MeshBasicMaterial({ map, transparent: true, alphaTest: 0.04, side: THREE.DoubleSide, toneMapped: false });
+      meshes.forEach((m) => { m.material = flat; });
+      r.setClearColor(0x000000, 0); r.clear(); r.render(this.scene, cam);
+      const c = document.createElement('canvas'); c.width = this.BW; c.height = this.BH; c.getContext('2d').drawImage(r.domElement, 0, 0, this.BW, this.BH);
+      flat.dispose(); return c;
+    };
+    const color = shot(this.colorTex);
+    r.outputColorSpace = THREE.LinearSRGBColorSpace; // the shine/metal map is stored as plain numbers
+    const mat = shot(this.matTex);
+    meshes.forEach((m, i) => { m.material = mats[i]; });
+    r.outputColorSpace = keep.out; r.toneMapping = keep.tone; r.setPixelRatio(ratio); r.setSize(size.x, size.y, false);
+    this.bodyGroup.visible = true; this.stage.visible = true; this.scene.background = keep.bg;
+    this.figure.rotation.y = keep.rot; this.figure.position.set(keep.x, 0, keep.z);
+    this.cloths.forEach(({ cloth }, i) => { cloth.frame = frames[i]; cloth.sync(); });
+    return { color, mat };
+  }
+
   // ---------- garment ----------
-  // atlas: { color, mat } canvases twice the board width: the front drawing on the left half and
-  // the back (as seen from behind) on the right half. grid: where the front drawing has fabric.
+  // atlas: { color, mat, linked } canvases four board-widths wide: front, back (seen from behind),
+  // left side, right side. linked says which of back/left/right still follow the front.
+  // grid: where the front drawing has fabric (this sets the garment's shape).
   setDesign(atlas, grid) {
+    const L = atlas.linked || { back: true, left: true, right: true };
+    this.linkedViews = L;
+    // Which drawing each direction around the body shows (sides fall back to front and back).
+    this.viewOf = (t) => {
+      const c = Math.cos(t), s = Math.sin(t);
+      let q = c > Math.abs(s) ? 2 : -c > Math.abs(s) ? 3 : s >= 0 ? 0 : 1;
+      if ((q === 2 && L.left) || (q === 3 && L.right)) q = s >= 0 ? 0 : 1;
+      return q;
+    };
     if (!this.colorTex || this.colorTex.image !== atlas.color) {
       this.colorTex?.dispose(); this.matTex?.dispose();
       this.colorTex = new THREE.CanvasTexture(atlas.color); this.colorTex.colorSpace = THREE.SRGBColorSpace;
@@ -270,7 +312,12 @@ export class Viewer {
     return false;
   }
   // Texture coordinates for a drawing point, on the front or back half of the texture.
-  texUV(p, half) { const [u, v] = this.uvOf(p); return half ? [0.5 + (1 - u) * 0.5, v] : [u * 0.5, v]; }
+  // view: 0 front, 1 back (seen from behind), 2 left side, 3 right side. p = [x, y, z].
+  texUV(p, view) {
+    const b = this.box, z = p[2] || 0;
+    const u = view === 0 ? (p[0] - b.x0) / b.w : view === 1 ? 1 - (p[0] - b.x0) / b.w : view === 2 ? (-z - b.x0) / b.w : (z - b.x0) / b.w;
+    return [(view + Math.max(0.001, Math.min(0.999, u))) / 4, (p[1] - b.y0) / b.h];
+  }
 
   buildGarment() {
     for (const m of this.garmentGroup.children) m.geometry.dispose();
@@ -370,16 +417,19 @@ export class Viewer {
       }
     }
     const ell = (r, c, s) => { const x = r.cx + r.a * c; const bz = r.a - eps > r.body * 1.2 ? 0 : spec.bulge(r.y, x - r.cx, r.body, s); return [x, r.y, r.b * s + bz]; };
-    const ellTex = (r, c) => [r.o.cx + r.o.a * c * 0.975, r.o.y];
-    const uvMap = (p, half) => this.texUV(p, half);
+    const ellTex = (r, c, s) => [r.o.cx + r.o.a * c * 0.975, r.o.y, r.o.b * s * 0.975];
+    const uvMap = (p, view) => this.texUV(p, view), viewOf = this.viewOf || ((t) => (Math.sin(t) >= 0 ? 0 : 1));
+    const linkKey = JSON.stringify(this.linkedViews || {});
+    // Limit which side drawings a part may use (a part only uses the side it is actually on).
+    const only = (allowLeft, allowRight) => (t) => { let q = viewOf(t); if ((q === 2 && !allowLeft) || (q === 3 && !allowRight)) q = Math.sin(t) >= 0 ? 0 : 1; return q; };
 
     // ---- cloth pieces ----
     const addCloth = (name, rings, opts) => {
       const fabric = this.dominantFabric(rings, opts.texFn), phys = { ...drapeFor(fabric), ...(opts.phys || {}) };
-      const key = name + '|' + fabric + '|' + rings.map((r) => [r.y, r.a, r.b, r.cx || 0, r.d || 0, r.off || 0].map((v) => v.toFixed(3)).join(',')).join(';');
+      const key = name + '|' + fabric + '|' + linkKey + '|' + rings.map((r) => [r.y, r.a, r.b, r.cx || 0, r.d || 0, r.off || 0].map((v) => v.toFixed(3)).join(',')).join(';');
       const old = oldCloths.find((c) => c.key === key);
       if (old) { old.meshes.forEach((m, i) => { m.material = this.garmentMats[i]; }); this.cloths.push(old); return; }
-      const cloth = new Cloth({ rings, uvMap, ...opts, phys });
+      const cloth = new Cloth({ rings, uvMap, viewOf, ...opts, phys });
       cloth.frame = { angle: this.move.angle, x: this.move.x, z: this.move.z };
       cloth.wind = this.move.breeze ? 2.2 : 0;
       cloth.settle(opts.settle || 90); cloth.sync();
@@ -403,7 +453,7 @@ export class Viewer {
     }
     const geos = [];
     let patLeg = null, patSleeve = null;
-    if (rigid.length > 1) geos.push(loft(rigid, ell, { texFn: ellTex, uvMap }));
+    if (rigid.length > 1) geos.push(loft(rigid, ell, { texFn: ellTex, uvMap, viewOf }));
     const skirtAt = (y) => hemY !== null && y >= hemY - stepY;
 
     // ---- legs (trousers) ----
@@ -435,10 +485,10 @@ export class Viewer {
       }
       if (last >= 0) legMeasure.push(lrows[last].y);
       if (side === 1) patLeg = { rows: lrows, last, texFn: (r, c) => legTex(r, c) };
-      const legTex = (r, c) => [r.o.cx + r.o.a * c * 0.975, r.o.y];
+      const legTex = (r, c, s) => [r.o.cx + r.o.a * c * 0.975, r.o.y, r.o.b * s * 0.975];
       const flared = lrows.some((r) => r.hit && r.a - r.base > 0.015);
-      if (flared && last >= 3) addCloth('leg' + side, resample(lrows.slice(0, last + 1)), { pointFn: legPt, texFn: legTex, centerFn: (r) => [r.cx, r.y, 0], collide: this.makeCollider(true), settle: 70, phys: { hang: 0.97 } });
-      else geos.push(loft(lrows, legPt, { texFn: legTex, uvMap }));
+      if (flared && last >= 3) addCloth('leg' + side, resample(lrows.slice(0, last + 1)), { pointFn: legPt, texFn: legTex, centerFn: (r) => [r.cx, r.y, 0], collide: this.makeCollider(true), settle: 70, phys: { hang: 0.97 }, viewOf: only(side > 0, side < 0) });
+      else geos.push(loft(lrows, legPt, { texFn: legTex, uvMap, viewOf: only(side > 0, side < 0) }));
     }
 
     // ---- sleeves ----
@@ -461,11 +511,13 @@ export class Viewer {
       if (side === 1 && last >= 0 && arows[last].d > 0.03) sleeveLen = arows[last].d;
       if (side === 1) patSleeve = { rows: arows, last, texFn: (r, c) => armTex(r, c) };
       const armPt = (r, c, s) => { const p = this.armPoint(side, r.d), cx = p.x + px * r.off, cy = p.y + py * r.off; return [cx + px * r.a * c, cy + py * r.a * c, r.b * s]; };
-      const armTex = (r, c) => { const o = r.o, p = this.armPoint(side, o.d), t = o.off + o.a * c * 0.975; return [p.x + px * t, p.y + py * t]; };
+      // Arms and sleeves take their colors from the front and back drawings.
+      const armView = only(false, false);
+      const armTex = (r, c, s) => { const o = r.o, p = this.armPoint(side, o.d), t = o.off + o.a * c * 0.975; return [p.x + px * t, p.y + py * t, o.b * s * 0.975]; };
       // Only long, flared sleeves flow (bell and bishop sleeves); short sleeves stay fitted.
       const flared = arows.some((r) => r.hit && r.a - r.base > 0.022) && arows[last]?.o.d > H * 0.16;
-      if (flared && last >= 4) addCloth('sleeve' + side, resample(arows.slice(0, last + 1)), { pointFn: armPt, texFn: armTex, centerFn: (r) => { const p = this.armPoint(side, r.d); return [p.x + px * r.off, p.y + py * r.off, 0]; }, collide: this.makeCollider(false), seg: 48, settle: 70 });
-      else geos.push(loft(arows, armPt, { texFn: armTex, uvMap }));
+      if (flared && last >= 4) addCloth('sleeve' + side, resample(arows.slice(0, last + 1)), { pointFn: armPt, texFn: armTex, centerFn: (r) => { const p = this.armPoint(side, r.d); return [p.x + px * r.off, p.y + py * r.off, 0]; }, collide: this.makeCollider(false), seg: 48, settle: 70, viewOf: armView });
+      else geos.push(loft(arows, armPt, { texFn: armTex, uvMap, viewOf: armView }));
     }
 
     for (const g of geos) for (const [i, mat] of this.garmentMats.entries()) {
@@ -564,9 +616,11 @@ export class Viewer {
     for (const h of hits) {
       if (!h.object.userData.garment) return null;
       if (!h.uv) continue;
-      const back = h.uv.x >= 0.5, x = back ? (h.uv.x - 0.5) * 2 * this.BW : h.uv.x * 2 * this.BW, y = (1 - h.uv.y) * this.BH, g = this.grid;
-      const fx = back ? this.BW - x : x, cell = g.data[Math.floor(y / g.step) * g.w + Math.floor(fx / g.step)];
-      if (cell) return { side: back ? 'back' : 'front', x: Math.round(x), y: Math.round(y) };
+      const view = Math.min(3, Math.floor(h.uv.x * 4)), x = (h.uv.x * 4 - view) * this.BW, y = (1 - h.uv.y) * this.BH, g = this.grid;
+      const side = ['front', 'back', 'left', 'right'][view];
+      if (view >= 2) return { side, x: Math.round(x), y: Math.round(y) };
+      const fx = view === 1 ? this.BW - x : x, cell = g.data[Math.floor(y / g.step) * g.w + Math.floor(fx / g.step)];
+      if (cell) return { side, x: Math.round(x), y: Math.round(y) };
     }
     return null;
   }

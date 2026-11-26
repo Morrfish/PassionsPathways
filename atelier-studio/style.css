@@ -91,6 +91,9 @@ input, select { font: inherit; color: inherit; }
 .meas-in:focus { outline: none; border-color: var(--accent); }
 .changed { color: var(--accent); font-weight: 700; }
 #fitReset { margin-top: 8px; }
+.layer-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; font-size: 13px; }
+.layer-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.btn.eye.on { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
 
 /* ---------- side panel ---------- */
 .panel { width: var(--panel-w); flex: none; background: var(--surface); border-left: 1px solid var(--line); overflow-y: auto; padding: 12px 14px 30px; }
