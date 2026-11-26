@@ -591,7 +591,12 @@ MM.FIGHTERS.push({
       ready: 'ALL 7 GEMS!', go: 'GEM SURGE!', back: 'GEMS SPENT', dropText: 'GEM!', color: '#ffe14d', goColor: '#ffd24a', bar: '#3fb6ff', formBar: '#ffd24a', hue: 50 },
     forms: [
       hzForm('normal', { formName: 'GEMS SPENT', title: 'Haislie', stats: { speed: 7.8, air: 7.0, jump: 16.0, weight: 0.86, power: 0.96, size: 0.84 }, specials: hzSpecials(1) }),
-      hzForm('surge', { formName: 'GEM SURGE!', title: 'Gem Surge', glow: '#ffd24a', stats: { speed: 10.1, air: 8.4, jump: 17.5, weight: 0.86, power: 1.2, size: 0.84 }, specials: hzSpecials(1.25) }),
+      hzForm('surge', { formName: 'GEM SURGE!', title: 'Gem Surge', sprite: 'haislie-surge', stats: { speed: 10.1, air: 8.4, jump: 17.5, weight: 0.86, power: 1.2, size: 0.84 }, specials: hzSpecials(1.25),
+        // her gold powered-up art (ChatGPT's v3 sheets): every move while the Gem Surge timer runs
+        ultimate: { name: 'Seven Gem Finale', sprite: 'haislie-surge', orbitSheet: 'haislie', type: 'catch', radius: 2.6, dur: 140, catchAt: 46, finishAt: 100, dmg: 24, kbMul: 1.45,
+          orbit: ['fxgem0', 'fxgem1', 'fxgem2', 'fxgem3', 'fxgem4', 'fxgem5', 'fxgem6'],
+          desc: 'calls all seven gems into a spinning ring around everyone close by, then they burst outward',
+          poses: [[0, 'ult0'], [24, 'ult1'], [46, 'ult2'], [100, 'ult3']] } }),
     ],
     ultimate: { name: 'Seven Gem Finale', sprite: 'haislie', type: 'catch', radius: 2.6, dur: 140, catchAt: 46, finishAt: 100, dmg: 24, kbMul: 1.45,
       orbit: ['fxgem0', 'fxgem1', 'fxgem2', 'fxgem3', 'fxgem4', 'fxgem5', 'fxgem6'],
@@ -671,6 +676,26 @@ MM.FIGHTERS.push({
       poses: [[0, 'ult0'], [24, 'ult1'], [46, 'ult2'], [100, 'ult3']] },
   });
 }
+
+// ---------- Dani (Danielle Madison, ChatGPT Nov 26): Colten's girlfriend, Mandi's family. A tattoo artist: every move is
+// tattoo flash art come to life (ink strokes, a rose, an anchor, a swallow, a tiger, a stencil shield, an ink dragon) ----------
+MM.FIGHTERS.push({
+  id: 'danielle', name: 'Dani Madison', title: 'The Living Canvas', photo: 'img/danielle.png', sprite: 'danielle',
+  color: '#2b2730', accent: '#ff3fa4', skin: '#e8b89a', hair: '#3b2416',
+  stats: { speed: 7.0, air: 6.7, jump: 15.3, weight: 0.98, power: 1.02, size: 1.0 },
+  attackNames: { jab: 'Ink Flick', side: 'Liner Lash', up: 'Rose Rise', down: 'Shader Sweep', air: 'Flash Spin, Swallow Strike, Upstroke, Anchor Drop' },
+  specials: {
+    neutral: { kind: 'projectile', name: 'Inkshot', thing: 'a cyan-and-magenta ink shot', sheet: 'danielle', anim: ['fxinkshot0', 'fxinkshot1', 'fxinkshot2', 'fxinkshot1'], px: 70, speed: 13, dmg: 6, kb: 5.5, kbg: 0.06, r: 22, life: 45, cd: 40 },
+    side: { kind: 'pack', name: 'Flash Tiger', thing: 'a traditional tattoo tiger that pounces forward', sheet: 'danielle', sprites: ['fxtiger1'], anim: ['fxtiger0', 'fxtiger1', 'fxtiger2', 'fxtiger1'], scale: 0.9, speed: 11, life: 70, dmg: 9, kb: 7.5, kbg: 0.09, cd: 120 },
+    up: { kind: 'rise', name: 'Swallow Lift', power: 21, forward: 3, dmg: 6, kb: 6, kbg: 0.06, fx: ['danielle', 'fxswallow', 4, 0.9] },
+    down: { kind: 'counter', name: 'Stencil Guard', fx: ['danielle', 'fxshield', 4, 1.0], window: 22, mult: 1.35 },
+  },
+  taunt: 'Hold still, this won\'t hurt!',
+  ultimate: { name: 'Living Canvas', sprite: 'danielle', type: 'catch', ahead: 3.6, dur: 150, catchAt: 56, finishAt: 108, dmg: 26, kbMul: 1.45,
+    show: [[0, 40, 'fxdragon0', 1.4, 1.0, 1.6], [40, 70, 'fxdragon1', 1.6, 1.0, 1.8], [70, 108, 'fxdragon2', 2.2, 0.9, 2.2], [108, 140, 'fxdragon3', 2.2, 0.9, 2.0]],
+    desc: 'sketches an ink dragon in the air; it comes to life, lunges at everyone in front of her and dissolves into roses',
+    poses: [[0, 'ult0'], [30, 'ult1'], [56, 'ult2'], [108, 'ult3']] },
+});
 
 // ---------- Kevin, Cloe and Janelle (ChatGPT's Nov 25 pack, restyled sheets) ----------
 {

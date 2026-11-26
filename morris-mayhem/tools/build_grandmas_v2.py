@@ -55,6 +55,16 @@ CFG = {
     'sophia-dorothy': {'sophia-dorothy-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt'])},
     'sophia-alice': {'sophia-alice-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt'])},
     'sophia-robin': {'sophia-robin-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt'])},
+    'haislie-surge': {'haislie-chaos-movement-4x4-v3.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
+                      'haislie-chaos-ground-4x4-v3.png': (0.92, ['spark', 'palm', 'tele', 'sweep']),
+                      'haislie-chaos-aerials-4x4-v3.png': (0.92, ['anair', 'afair', 'auair', 'adair']),
+                      'haislie-chaos-specials-4x4-v3.png': (0.95, ['rush', 'hammer', 'sky', 'flame']),
+                      'haislie-chaos-personality-4x4-v3.png': (0.94, ['pent', 'ptaunt', 'pwin', 'plose'])},
+    'danielle': {'danielle-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
+                 'danielle-ground-4x4-v2.png': (1.23, ['ink', 'liner', 'rose', 'shader']),  # Ink Flick, Liner Lash, Rose Rise, Shader Sweep
+                 'danielle-aerials-4x4-v2.png': (1.0, ['anair', 'afair', 'auair', 'adair']),
+                 'danielle-specials-4x4-v2.png': (1.02, ['inkshot', 'tiger', 'swallow', 'stencil']),
+                 'danielle-personality-4x4-v2.png': (1.32, ['pent', 'ptaunt', 'pwin', 'plose'])},
 }[sid]
 # a brand-new fighter (no old atlas to keep from): ultimate 2x2 (face size vs movement) and an effects 4x4 (rows of 4 phases)
 # fx: (sheet, frame names per row (None = skip that row), rows, cols); 'cup': a 2x2 of power-up poses -> cup0..3
@@ -63,6 +73,11 @@ NEW = {'harley': {'ult': ('harley-ultimate-2x2-v2.png', 2.27), 'fx': [('harley-s
                    'fx': [('haislie-chaos-emeralds-effects-v2.png', [['fxgem0', 'fxgem1', 'fxgem2', 'fxgem3'], ['fxgem4', 'fxgem5', 'fxgem6', 'fxgemring']], 2, 4)]},
        'harper': {'ult': ('harper-ultimate-2x2-v2.png', 1.81), 'fx': [('harper-effects-4x4-v2.png', ['fxslime', 'fxcushion', 'fxcloud', 'fxboom'], 4, 4)]},
        'sophia': {'ult': ('sophia-ultimate-2x2-v2.png', 1.71), 'fx': [('sophia-effects-4x4-v2.png', ['fxchoc', 'fxwind', 'fxcard', 'fxarrow'], 4, 4)]},
+       'haislie-surge': {'ult': ('haislie-chaos-ultimate-2x2-v3.png', 1.86), 'fx': []},
+       'danielle': {'ult': ('danielle-ultimate-2x2-v2.png', 1.53),
+                    'fx': [('danielle-basics-effects-4x4-v2.png', ['fxslash', 'fxrose', 'fxanchor', 'fxwhip'], 4, 4),
+                           ('danielle-specials-effects-4x4-v2.png', ['fxinkshot', 'fxtiger', 'fxswallow', 'fxshield'], 4, 4),
+                           ('danielle-living-canvas-effects-2x2-v2.png', [['fxdragon0', 'fxdragon1'], ['fxdragon2', 'fxdragon3']], 2, 2, 560)]},
        'august': {'ult': ('august-ultimate-2x2-v2.png', 2.0), 'cup': ('august-evolve-2x2-v2.png', 1.87),
                   'fx': [('august-partner-element-effects-4x4-v2.png', ['fxzap', 'fxvine', 'fxfire', 'fxwater'], 4, 4),
                          ('august-ball-capture-effects-4x4-v2.png', [None, None, 'fxbubble', 'fxsparkle'], 4, 4)]}}.get(sid)
@@ -103,13 +118,14 @@ if NEW:
         for i in range(4):
             c = U.crop(((i % 2) * W // 2, (i // 2) * H // 2, (i % 2 + 1) * W // 2, (i // 2 + 1) * H // 2)); c = c.crop(c.split()[3].point(lambda v: 255 if v > 24 else 0).getbbox())
             sc = base / face; assert sc <= 1; c = c.resize((round(c.width * sc), round(c.height * sc)), Image.LANCZOS); cuts.append((f'{pre}{i}', c, anchor(c), c.height))
-    for fn, names, nr, nc in NEW['fx']:
+    for fx in NEW['fx']:
+        fn, names, nr, nc = fx[:4]; fmax = fx[4] if len(fx) > 4 else 200  # e.g. Dani's ink dragon is big
         for name, row in zip(names, cells(f'{raw}/{fn}', nr=nr, nc=nc)):
             if name is None: continue
             for i, c in enumerate(row):
                 nm = name[i] if isinstance(name, list) else f'{name}{i}'
                 if nm.startswith('fxbubble'): c = unball(c)  # a plain bubble: take the capture ball off the top
-                sc = min(1, 200 / max(c.size)); c = c.resize((max(1, round(c.width * sc)), max(1, round(c.height * sc))), Image.LANCZOS); cuts.append((nm, c, c.width / 2, c.height / 2))
+                sc = min(1, fmax / max(c.size)); c = c.resize((max(1, round(c.width * sc)), max(1, round(c.height * sc))), Image.LANCZOS); cuts.append((nm, c, c.width / 2, c.height / 2))
 k_old = STAND / oldF['idle0'][3] if oldF else 1  # the kept v1 frames were cut with idle0 = this tall
 seen = {}
 for n, (x, y, w, h, ax, ay) in oldF.items():

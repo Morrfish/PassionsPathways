@@ -323,6 +323,11 @@ window.MM = window.MM || {};
         g.translate(a.decoy.x, a.decoy.y + (burst ? h * 0.15 : 0)); g.scale(a.decoy.face, 1); g.drawImage(sh.im, fr[0], fr[1], fr[2], fr[3], -w / 2, -h, w, h); g.restore();
       }
     }
+    if (a.u.show) for (const [t0, t1, name, dx, dy, w] of a.u.show) { // e.g. Dani's ink dragon: sketch -> alive -> lunge -> roses
+      if (a.t < t0 || a.t >= t1) continue;
+      const fade = Math.min(1, (a.t - t0) / 8, (t1 - a.t) / 8 + (t1 === a.u.show[a.u.show.length - 1][1] ? 0 : 1));
+      g.save(); g.translate(f.x + f.face * dx * f.h, f.y - dy * f.h); g.scale(f.face, 1); drawFx(g, a.u.showSheet || a.u.sprite || f.def.sprite, name, 0, 0, w * f.h, fade); g.restore();
+    }
     if (a.u.type === 'catch') {
       const k = Math.min(1, a.t / a.u.catchAt), r = a.u.radius * f.h * (a.t < a.u.catchAt ? k : 1);
       g.save(); g.globalAlpha = 0.25 + 0.15 * Math.sin(G.frame * 0.5); g.strokeStyle = f.accent; g.lineWidth = 8;
@@ -330,7 +335,7 @@ window.MM = window.MM || {};
       if (a.u.orbit && a.t > a.u.catchAt * 0.5) { // food circling the ring, bursting outward at the finish
         g.globalAlpha = a.t > a.u.finishAt ? Math.max(0, 1 - (a.t - a.u.finishAt) / 24) : 1;
         const out = a.t > a.u.finishAt ? 1 + (a.t - a.u.finishAt) / 12 : 1, n = a.u.orbit.length;
-        for (let i = 0; i < n; i++) { const ang = G.frame * 0.1 + (i * TAU) / n; drawFx(g, a.u.sprite || f.def.sprite, a.u.orbit[i], f.x + Math.cos(ang) * r * 0.8 * out, f.y - f.h / 2 + Math.sin(ang) * r * 0.55 * out, f.h * 0.4, 1, ang); }
+        for (let i = 0; i < n; i++) { const ang = G.frame * 0.1 + (i * TAU) / n; drawFx(g, a.u.orbitSheet || a.u.sprite || f.def.sprite, a.u.orbit[i], f.x + Math.cos(ang) * r * 0.8 * out, f.y - f.h / 2 + Math.sin(ang) * r * 0.55 * out, f.h * 0.4, 1, ang); }
       }
       if (!a.u.sprite && a.t > a.u.catchAt) { g.globalAlpha = 0.9; g.font = '64px serif'; g.textAlign = 'center'; for (let i = 0; i < 6; i++) { const ang = G.frame * 0.12 + (i * TAU) / 6; g.fillText(a.u.emoji || '💥', f.x + Math.cos(ang) * r * 0.7, f.y - f.h / 2 + Math.sin(ang) * r * 0.5); } }
       g.restore();
