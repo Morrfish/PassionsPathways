@@ -604,30 +604,58 @@ MM.FIGHTERS.push({
       poses: [[0, 'ult0'], [24, 'ult1'], [46, 'ult2'], [100, 'ult3']] },
   });
 
-  const auSpecials = (k) => ({
-    neutral: { kind: 'projectile', name: 'Element Toss', thing: 'lightning, a vine, a fireball or a splash, in turn', sheet: 'august',
-      cycle: ['fxzap2', 'fxvine2', 'fxfire2', 'fxwater2'], names: ['Zap', 'Vine', 'Flame', 'Splash'], px: 80 * k, count: k > 1 ? 3 : 1, spread: 0.18, speed: 12, dmg: 6 * k, kb: 5.5, kbg: 0.06, r: 24, life: 50, cd: 40 },
-    side: { kind: 'projectile', name: 'Catch You!', thing: 'a capture bubble: it holds whoever it hits for a moment (6 catches = evolve)', sheet: 'august', sprite: 'fxbubble1', px: 70,
-      speed: 10, dmg: 4, kb: 4, kbg: 0.04, r: 26, life: 55, cd: 90, capture: { hold: 45, cd: 120 } },
-    up: { kind: 'rise', name: 'Sky Lift', power: 19.5 + (k > 1 ? 1.5 : 0), forward: 3, dmg: 6, kb: 6, kbg: 0.06 },
-    down: { kind: 'counter', name: 'Cute Charm', fx: ['august', 'fxsparkle', 4, 1.0], window: 22, mult: 1.35 },
-  });
-  const auForm = (form, extra) => Object.assign({ form, sprite: 'august', color: '#2a4fa8', accent: '#e23b3b', skin: '#8d5a3b', hair: '#2b1a10',
-    attackNames: { jab: 'Zap Jab', side: 'Vine Whip', up: 'Flame Flick', down: 'Splash Sweep', air: 'Spin Zap, Vine Kick, Flame Up, Splash Drop' } }, extra);
+  // August (v3, Nov 26): he TRANSFORMS into his own original creature forms (ChatGPT's art). Switch = next form;
+  // with 6 catches from his August Ball, Switch = Augustral (all six at once) for 8 s, then back to the form he was in.
+  const ball = { kind: 'projectile', name: 'August Ball', thing: 'his blue-and-gold August Ball: it catches whoever it hits for a moment (6 catches = Augustral)',
+    sheet: 'august-fx', anim: ['fxball0', 'fxball1', 'fxball2', 'fxball3'], px: 56, spin: 0.25, speed: 11, vy: -2, grav: 0.12, dmg: 4, kb: 4, kbg: 0.04, r: 24, life: 55, cd: 80, capture: { hold: 45, cd: 120 } };
+  const el = (name, thing, fx, extra) => Object.assign({ kind: 'projectile', name, thing, sheet: 'august-fx', anim: [fx + '0', fx + '1', fx + '2', fx + '1'], px: 90, speed: 12, dmg: 7, kb: 6, kbg: 0.07, r: 26, life: 45, cd: 40 }, extra || {});
+  const guard = (name) => ({ kind: 'counter', name, fx: ['august-fx', 'fxguard', 4, 1.1], window: 22, mult: 1.35 });
+  const form = (key, sprite, formName, title, color, accent, stats, neutral, up, down, attackNames) => ({ form: key, sprite, formName, title, color, accent,
+    stats: Object.assign({ speed: 7.2, air: 6.8, jump: 15.6, weight: 0.8, power: 0.98, size: 0.8 }, stats), attackNames,
+    specials: { neutral, side: ball, up, down } });
+  const rise = (name, extra) => Object.assign({ kind: 'rise', name, power: 20, forward: 3, dmg: 6, kb: 6, kbg: 0.06 }, extra || {});
   MM.FIGHTERS.push({
     id: 'august', name: 'August Rollerson', title: 'The Little Charmer', photo: 'img/august.png', sprite: 'august', male: true,
     color: '#2a4fa8', accent: '#e23b3b', skin: '#8d5a3b', hair: '#2b1a10',
     stats: { speed: 7.2, air: 6.8, jump: 15.6, weight: 0.8, power: 0.95, size: 0.76 },
     taunt: "I know I'm cute!",
-    mess: { action: 0, hit: 0, catches: 6, cleanFrames: 480, cupDur: 36, backDur: 24,
-      ready: '6 CATCHES!', go: 'EVOLVED!', back: 'BACK TO NORMAL', color: '#ff6b6b', goColor: '#ffd24a', bar: '#e23b3b', formBar: '#ffd24a', hue: 0 },
+    capturePic: ['august-fx', 'fxcap2'],
+    mess: { action: 0, hit: 0, catches: 6, formCycle: 7, evolveIdx: 7, cleanFrames: 480, cupDur: 40, backDur: 24,
+      ready: '6 CATCHES! AUGUSTRAL', go: 'AUGUSTRAL!', back: 'BACK TO NORMAL', color: '#ffd24a', goColor: '#ffd24a', bar: '#2a6fd8', formBar: '#ffd24a', hue: 45 },
     forms: [
-      auForm('normal', { formName: 'BACK TO NORMAL', title: 'August', stats: { speed: 7.2, air: 6.8, jump: 15.6, weight: 0.8, power: 0.95, size: 0.76 }, specials: auSpecials(1) }),
-      auForm('evolved', { formName: 'EVOLVED!', title: 'Evolved', glow: '#7fd8ff', stats: { speed: 8.6, air: 7.6, jump: 16.8, weight: 0.86, power: 1.2, size: 0.76 }, specials: auSpecials(1.3) }),
+      form('human', 'august', 'AUGUST!', 'August', '#2a4fa8', '#e23b3b', { size: 0.76 },
+        el('Element Toss', 'a splash of water', 'fxwater'), rise('Sky Lift'), guard('Cute Charm'),
+        { jab: 'Zap Jab', side: 'Vine Whip', up: 'Flame Flick', down: 'Splash Sweep', air: 'Spin Zap, Vine Kick, Flame Up, Splash Drop' }),
+      form('river', 'august-squirgust', 'RIVERGUST!', 'Rivergust', '#1d8f8a', '#7fe3d6', { speed: 7.6 },
+        el('Water Jet', 'a jet of river water', 'fxwater', { speed: 14 }), rise('Geyser Hop'), guard('Bubble Guard'),
+        { jab: 'Paw Splash', side: 'Sliding Tackle', up: 'Tail Flick', down: 'Riverbank Sweep', air: 'Otter Spin, Splash Kick, Tail Up, Belly Flop' }),
+      form('spark', 'august-pikagust', 'SPARKGUST!', 'Sparkgust', '#5b2a9a', '#9fe7ff', { speed: 7.9 },
+        el('Quill Burst', 'crackling crystal quills', 'fxspark', { speed: 15, dmg: 6 }), rise('Static Leap'), guard('Crystal Bristle'),
+        { jab: 'Spark Paw', side: 'Quill Dash', up: 'Crystal Uppercut', down: 'Static Sweep', air: 'Quill Spin, Zap Kick, Spark Up, Crystal Drop' }),
+      form('ember', 'august-chaizagust', 'EMBERGUST!', 'Embergust', '#3a2620', '#ff8a2a', { weight: 0.95, power: 1.08, speed: 6.8 },
+        el('Ember Roll', 'a rolling ball of fire', 'fxfire', { speed: 11, dmg: 8, kb: 7 }), rise('Blast Off'), guard('Armor Up'),
+        { jab: 'Flame Punch', side: 'Fire Roll', up: 'Ember Uppercut', down: 'Lava Stomp', air: 'Ember Spin, Fire Kick, Flame Up, Explosive Landing' }),
+      form('ram', 'august-bulbagust', 'RAMGUST!', 'Ramgust', '#3f7a2a', '#b8e86a', { weight: 0.92, power: 1.04 },
+        el('Vine Grab', 'a lashing vine', 'fxleaf', { speed: 12, slow: { mul: 0.7, t: 60 } }), rise('Leaf Spring'), guard('Leaf Guard'),
+        { jab: 'Horn Bump', side: 'Ram Charge', up: 'Vine Horn Toss', down: 'Root Trap', air: 'Leaf Spin, Horn Kick, Vine Up, Root Drop' }),
+      form('owl', 'august-owlgust', 'OWLGUST!', 'Owlgust', '#22346e', '#ffcf4a', { air: 8.2, jump: 16.8 },
+        el('Gust Blades', 'sharp gusts of wind', 'fxwind', { speed: 13 }), rise('Glide Up', { power: 23 }), guard('Wing Shield'),
+        { jab: 'Wing Slap', side: 'Gust Swipe', up: 'Updraft', down: 'Talon Sweep', air: 'Wing Spin, Dive Kick, Updraft, Talon Drop' }),
+      form('frost', 'august-frostgust', 'FROSTGUST!', 'Frostgust', '#7fb0e8', '#e8f6ff', {},
+        el('Frost Breath', 'an icy cloud that slows', 'fxfrost', { speed: 10, slow: { mul: 0.6, t: 75 } }), rise('Cloud Puff'), guard('Snow Wall'),
+        { jab: 'Snow Paw', side: 'Ice Horn Charge', up: 'Snowball Toss', down: 'Ice Patch', air: 'Flurry Spin, Hoof Kick, Hail Up, Snow Drop' }),
+      Object.assign(form('augustral', 'august-augustral', 'AUGUSTRAL!', 'Augustral', '#1c3f5a', '#ffd24a', { speed: 8.8, air: 8.0, jump: 17, weight: 0.95, power: 1.25, size: 0.92 },
+        el('Six-Element Burst', 'all six elements at once', 'fxcombo', { count: 3, spread: 0.2, dmg: 7 }), rise('Owl-Wing Launch', { power: 23 }), guard('Six-Fold Guard'),
+        { jab: 'All-Element Strike', side: 'Volcanic Charge', up: 'Crystal Horn Lift', down: 'Root and Frost Sweep', air: 'Storm Spin, Volcano Kick, Wing Up, Glacier Drop' }),
+        { ultimate: { name: 'Comet Tide', sprite: 'august-augustral', showSheet: 'august-fx', type: 'beam', dur: 170, beamAt: 76, beamEnd: 122, len: 1300, beamX: 150, beamY: 0.65, beamTh: 130, dmg: 28, kbMul: 1.45,
+          beamFx: 'fxbeam', show: [[0, 34, 'fxfish', 1.3, 1.2, 1.1], [34, 60, 'fxevolve', 1.5, 1.3, 1.5], [60, 130, 'fxdragon', 1.4, 1.5, 2.0]],
+          desc: 'a comet goldfish leaps out, evolves into a leafy sea dragon and fires a huge opal beam straight ahead',
+          poses: [[0, 'ult0'], [34, 'ult1'], [76, 'ult2'], [122, 'ult3']] } }),
     ],
-    ultimate: { name: 'Tidal Blast', sprite: 'august', type: 'beam', dur: 170, beamAt: 70, beamEnd: 118, len: 1300, beamX: 120, beamY: 0.6, beamTh: 130, dmg: 26, kbMul: 1.45,
-      desc: 'gathers all four elements, then fires a huge water-and-lightning blast straight ahead',
-      poses: [[0, 'ult0'], [30, 'ult1'], [70, 'ult2'], [118, 'ult3']] },
+    ultimate: { name: 'Comet Tide', sprite: 'august', showSheet: 'august-fx', type: 'beam', dur: 170, beamAt: 76, beamEnd: 122, len: 1300, beamX: 150, beamY: 0.65, beamTh: 130, dmg: 26, kbMul: 1.45,
+      beamFx: 'fxbeam', show: [[0, 34, 'fxfish', 1.3, 1.2, 1.1], [34, 60, 'fxevolve', 1.5, 1.3, 1.5], [60, 130, 'fxdragon', 1.4, 1.5, 2.0]],
+      desc: 'a comet goldfish leaps out, evolves into a leafy sea dragon and fires a huge opal beam straight ahead',
+      poses: [[0, 'ult0'], [30, 'ult1'], [76, 'ult2'], [122, 'ult3']] },
   });
 }
 

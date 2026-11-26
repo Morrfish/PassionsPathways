@@ -201,7 +201,7 @@ window.MM = window.MM || {};
     if (lvl) g.drawImage(dirtFor(sh, frameName, fr, lvl), -fr[4], -fr[5]);
     g.restore();
     if (f.reverseT > 0) { g.save(); g.font = `900 ${Math.round(f.h * 0.22)}px system-ui`; g.textAlign = 'center'; g.lineWidth = 4; g.strokeStyle = '#000'; g.strokeText('⇄', f.x, f.y - f.h * 1.18); g.fillStyle = '#b6e35a'; g.fillText('⇄', f.x, f.y - f.h * 1.18); g.restore(); } // reversed controls
-    if (f.captured && f.captured.by) drawFx(g, f.captured.by.def.sprite, 'fxbubble1', f.x, f.y - f.h * 0.5, f.h * 1.5 * (1 + 0.04 * Math.sin(G.frame * 0.4)), 0.85); // inside August's capture bubble
+    if (f.captured && f.captured.by) drawFx(g, ...(f.captured.by.def.capturePic || [f.captured.by.def.sprite, 'fxbubble1']), f.x, f.y - f.h * 0.5, f.h * 1.5 * (1 + 0.04 * Math.sin(G.frame * 0.4)), 0.85); // inside August's capture bubble
     if (f.def.fx && f.act && fsh) for (const e of f.def.fx) { // e.g. Sara's ink tattoo effects
       const a = f.act, on = e.act === a.type && (!e.name || e.name === a.name) && (!e.slot || e.slot === a.slot) && a.t >= e.t[0] && a.t < e.t[1];
       const ef = on && fsh.S.frames[e.pic]; if (!ef) continue;
@@ -220,6 +220,11 @@ window.MM = window.MM || {};
   MM.BEAM_ART_K = 3.4; // the beam art is this many times as tall as the beam's hit thickness
   function drawBeam(g, f, G) {
     const b = f.act && f.act.beam; if (!b || (f.act.u && f.act.u.noBeamArt)) return; // some ultimates draw their wave in the pose art
+    const bu = f.act.u, bsh = bu && bu.beamFx && sheet(bu.showSheet || f.def.sprite), bfr = bsh && bsh.S.frames[bu.beamFx];
+    if (bfr) { // e.g. August's Comet Tide: the sea dragon's own beam art, stretched along the beam
+      const th = b.th * (1 + 0.05 * Math.sin(G.frame * 1.7));
+      g.save(); g.translate(b.x, b.y); g.scale(b.dir, 1); g.drawImage(bsh.im, bfr[0], bfr[1], bfr[2], bfr[3], 0, -th * 0.8, b.len, th * 1.6); g.restore(); return;
+    }
     const sh = f.def.sprite && sheet(f.def.sprite), tip = sh && sh.S.frames.fx3, orb = sh && sh.S.frames.fx0;
     const gold = !!f.super, flick = 1 + 0.06 * Math.sin(G.frame * 1.7), th = b.th * flick;
     const fx = f.def.rainbowBeam && sheet('fx10'), bst = fx && fx.S.frames.beamstart, bmd = fx && fx.S.frames.beammid;
@@ -916,7 +921,7 @@ window.MM = window.MM || {};
       }
       if (!f.out && f.def.mess) { // Codee: Mess Meter (brown -> green), or the Clean Freak time left (blue)
         const mx = tx, mw2 = Math.max(20, x + 588 * k - f.stocks * (ss + 3) - 8 - mx), my = y0 + 194 * k;
-        const clean = f.formIdx === 1, v = clean ? f.clean / f.def.mess.cleanFrames : (f.mess || 0) / 100, full = !clean && v >= 1;
+        const clean = f.formIdx === ((f.def.mess && f.def.mess.evolveIdx) || 1), v = clean ? f.clean / f.def.mess.cleanFrames : (f.mess || 0) / 100, full = !clean && v >= 1;
         g.fillStyle = '#0008'; rr(g, mx, my, mw2, 7, 3); g.fill();
         const MC = f.def.mess; g.fillStyle = clean ? (MC.formBar || '#bfe9ff') : full ? `hsl(${(MC.hue ?? 100) + 20 * Math.sin(G.frame * 0.3)},70%,55%)` : (MC.bar || '#8a5a2a');
         if (v > 0) { rr(g, mx, my, Math.max(4, mw2 * Math.min(1, v)), 7, 3); g.fill(); }

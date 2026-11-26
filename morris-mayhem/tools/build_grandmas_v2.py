@@ -77,6 +77,41 @@ CFG = {
                  'danielle-aerials-4x4-v2.png': (1.0, ['anair', 'afair', 'auair', 'adair']),
                  'danielle-specials-4x4-v2.png': (1.02, ['inkshot', 'tiger', 'swallow', 'stencil']),
                  'danielle-personality-4x4-v2.png': (1.32, ['pent', 'ptaunt', 'pwin', 'plose'])},
+    'august-squirgust': {'august-squirgust-movement-4x4-v3.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
+                   'august-squirgust-ground-4x4-v3.png': (1.0, ['zap', 'vine', 'flame', 'splash']),
+                   'august-squirgust-aerials-4x4-v3.png': (1.0, ['anair', 'afair', 'auair', 'adair']),
+                   'august-squirgust-specials-4x4-v3.png': (1.0, ['ball', 'catch', 'lift', 'charm']),  # element attack, August Ball throw, recovery, guard
+                   'august-squirgust-personality-4x4-v3.png': (1.0, ['pent', 'ptaunt', 'pwin', 'plose'])},
+    'august-pikagust': {'august-pikagust-movement-4x4-v3.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
+                   'august-pikagust-ground-4x4-v3.png': (1.0, ['zap', 'vine', 'flame', 'splash']),
+                   'august-pikagust-aerials-4x4-v3.png': (1.0, ['anair', 'afair', 'auair', 'adair']),
+                   'august-pikagust-specials-4x4-v3.png': (0.95, ['ball', 'catch', 'lift', 'charm']),  # element attack, August Ball throw, recovery, guard
+                   'august-pikagust-personality-4x4-v3.png': (1.0, ['pent', 'ptaunt', 'pwin', 'plose'])},
+    'august-chaizagust': {'august-chaizagust-movement-4x4-v3.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
+                   'august-chaizagust-ground-4x4-v3.png': (1.0, ['zap', 'vine', 'flame', 'splash']),
+                   'august-chaizagust-aerials-4x4-v3.png': (1.0, ['anair', 'afair', 'auair', 'adair']),
+                   'august-chaizagust-specials-4x4-v3.png': (1.0, ['ball', 'catch', 'lift', 'charm']),  # element attack, August Ball throw, recovery, guard
+                   'august-chaizagust-personality-4x4-v3.png': (1.0, ['pent', 'ptaunt', 'pwin', 'plose'])},
+    'august-bulbagust': {'august-bulbagust-movement-4x4-v3.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
+                   'august-bulbagust-ground-4x4-v3.png': (1.0, ['zap', 'vine', 'flame', 'splash']),
+                   'august-bulbagust-aerials-4x4-v3.png': (1.0, ['anair', 'afair', 'auair', 'adair']),
+                   'august-bulbagust-specials-4x4-v3.png': (1.0, ['ball', 'catch', 'lift', 'charm']),  # element attack, August Ball throw, recovery, guard
+                   'august-bulbagust-personality-4x4-v3.png': (1.0, ['pent', 'ptaunt', 'pwin', 'plose'])},
+    'august-owlgust': {'august-owlgust-movement-4x4-v3.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
+                   'august-owlgust-ground-4x4-v3.png': (1.0, ['zap', 'vine', 'flame', 'splash']),
+                   'august-owlgust-aerials-4x4-v3.png': (1.0, ['anair', 'afair', 'auair', 'adair']),
+                   'august-owlgust-specials-4x4-v3.png': (1.0, ['ball', 'catch', 'lift', 'charm']),  # element attack, August Ball throw, recovery, guard
+                   'august-owlgust-personality-4x4-v3.png': (1.0, ['pent', 'ptaunt', 'pwin', 'plose'])},
+    'august-frostgust': {'august-frostgust-movement-4x4-v3.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
+                   'august-frostgust-ground-4x4-v3.png': (1.0, ['zap', 'vine', 'flame', 'splash']),
+                   'august-frostgust-aerials-4x4-v3.png': (1.0, ['anair', 'afair', 'auair', 'adair']),
+                   'august-frostgust-specials-4x4-v3.png': (1.0, ['ball', 'catch', 'lift', 'charm']),  # element attack, August Ball throw, recovery, guard
+                   'august-frostgust-personality-4x4-v3.png': (1.0, ['pent', 'ptaunt', 'pwin', 'plose'])},
+    'august-augustral': {'august-augustral-movement-4x4-v3.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
+                   'august-augustral-ground-4x4-v3.png': (1.0, ['zap', 'vine', 'flame', 'splash']),
+                   'august-augustral-aerials-4x4-v3.png': (1.0, ['anair', 'afair', 'auair', 'adair']),
+                   'august-augustral-specials-4x4-v3.png': (1.0, ['ball', 'catch', 'lift', 'charm']),  # element attack, August Ball throw, recovery, guard
+                   'august-augustral-personality-4x4-v3.png': (1.0, ['pent', 'ptaunt', 'pwin', 'plose'])},
 }[sid]
 # a brand-new fighter (no old atlas to keep from): ultimate 2x2 (face size vs movement) and an effects 4x4 (rows of 4 phases)
 # fx: (sheet, frame names per row (None = skip that row), rows, cols); 'cup': a 2x2 of power-up poses -> cup0..3
@@ -90,6 +125,13 @@ NEW = {'harley': {'ult': ('harley-ultimate-2x2-v2.png', 2.27), 'fx': [('harley-s
                     'fx': [('danielle-basics-effects-4x4-v2.png', ['fxslash', 'fxrose', 'fxanchor', 'fxwhip'], 4, 4),
                            ('danielle-specials-effects-4x4-v2.png', ['fxinkshot', 'fxtiger', 'fxswallow', 'fxshield'], 4, 4),
                            ('danielle-living-canvas-effects-2x2-v2.png', [['fxdragon0', 'fxdragon1'], ['fxdragon2', 'fxdragon3']], 2, 2, 560)]},
+       'august-squirgust': {'fx': []},
+       'august-pikagust': {'fx': []},
+       'august-chaizagust': {'fx': []},
+       'august-bulbagust': {'fx': []},
+       'august-owlgust': {'fx': []},
+       'august-frostgust': {'fx': []},
+       'august-augustral': {'ult': ('august-augustral-ultimate-2x2-v3.png', 1.9), 'cup': ('august-augustral-evolution-2x2-v3.png', 1.9), 'fx': []},
        'august': {'ult': ('august-ultimate-2x2-v2.png', 2.0), 'cup': ('august-evolve-2x2-v2.png', 1.87),
                   'fx': [('august-partner-element-effects-4x4-v2.png', ['fxzap', 'fxvine', 'fxfire', 'fxwater'], 4, 4),
                          ('august-ball-capture-effects-4x4-v2.png', [None, None, 'fxbubble', 'fxsparkle'], 4, 4)]}}.get(sid)

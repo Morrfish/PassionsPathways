@@ -221,7 +221,11 @@ for _g in ('jeff-giant', 'patty-giant'): MOVES[_g + '-b'] = MOVES[_g]; BASE[_g] 
 for _r in ('charlie', 'dorothy', 'alice', 'robin'): MOVES['sophia-' + _r] = MOVES['sophia']; BASE['sophia-' + _r] = 'sophia'
 # Haislie's Gem Surge: her gold powered-up art (own atlas; the gems come from her normal one)
 MOVES['haislie-surge'] = MOVES['haislie']; BASE['haislie-surge'] = 'haislie'
-SAME_SHEET_PERS = {'danielle', 'haislie-surge', 'harper', 'sophia', 'sophia-charlie', 'sophia-dorothy', 'sophia-alice', 'sophia-robin', 'harley', 'haislie', 'august', 'jeff-giant-b', 'patty-giant-b', 'courtnee', 'grandma_morris', 'grandma_worst', 'jaicelynn', 'jeff-giant', 'patty-giant', 'triple-trouble', 'kevin', 'kevin-fan', 'janelle'}
+# August's original creature forms (Nov 26 v3): each its own atlas, same move rows as his human sheets
+for _f in ('squirgust', 'pikagust', 'chaizagust', 'bulbagust', 'owlgust', 'frostgust', 'augustral'):
+    MOVES['august-' + _f] = MOVES['august']; ALIASES['august-' + _f] = {'ent': 'pent0', 'taunt': 'ptaunt2', 'win': 'pwin2', 'lose': 'plose0'}
+ALIASES['august-augustral'].update({'back0': 'cup3', 'back1': 'cup2', 'back2': 'cup1', 'back3': 'cup0'})
+SAME_SHEET_PERS = {'august-squirgust', 'august-pikagust', 'august-chaizagust', 'august-bulbagust', 'august-owlgust', 'august-frostgust', 'august-augustral', 'danielle', 'haislie-surge', 'harper', 'sophia', 'sophia-charlie', 'sophia-dorothy', 'sophia-alice', 'sophia-robin', 'harley', 'haislie', 'august', 'jeff-giant-b', 'patty-giant-b', 'courtnee', 'grandma_morris', 'grandma_worst', 'jaicelynn', 'jeff-giant', 'patty-giant', 'triple-trouble', 'kevin', 'kevin-fan', 'janelle'}
 # standing height comes from another pose (Evea's spirit poses have Grandma floating over her: size her by Evea alone)
 STANDH_FROM = {'evea-spirit': 'link0'}
 # a move group cut from another sheet: size it so its first pose is as tall as the idle pose
@@ -295,7 +299,7 @@ MM.SPRITES['{who}'] = {{ src: 'img/{who}-atlas.webp', standH: {std},{left} fscal
 }} }};
 """)
 # atlases that aren't a fighter (e.g. Jeff's Opening Day animals): frames only
-for who in ('jeff-animals', 'kcj-fx', 'fx10', 'kevin-fx'):
+for who in ('jeff-animals', 'kcj-fx', 'fx10', 'kevin-fx', 'august-fx'):
     fr = json.load(open(os.path.join(src_dir, f'{who}-frames.json')))
     body = ',\n'.join(f"    '{k}': [{', '.join(str(v) for v in val)}]" for k, val in fr.items())
     parts.append(f"""

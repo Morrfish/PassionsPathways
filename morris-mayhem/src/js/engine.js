@@ -106,6 +106,7 @@ window.MM = window.MM || {};
   }
   // Codee's Mess Meter (0-100, separate from the ultimate meter): landscaping moves add a little when they
   // come out and a bit more once if they land. Full = he can clean up into the Clean Freak.
+  const evoIdx = (f) => (f.def.mess && f.def.mess.evolveIdx) || 1; // the power-up form (e.g. August's Augustral is his last form)
   function addMess(G, f, n) {
     if (!f.def.mess || f.formIdx !== 0 || f.mess >= 100) return;
     f.mess = Math.min(100, (f.mess || 0) + n);
@@ -155,7 +156,7 @@ window.MM = window.MM || {};
     const dmg = (h.dmg || 0) * power(att); def.damage = Math.min(999, def.damage + dmg); att.dealt += dmg; def.lastHit = att.slot; def.lastHitT = G.frame;
     att.meter = Math.min(100, att.meter + dmg * 0.65);
     const ms = att.def.mess;
-    if (ms && ms.catches && att.formIdx === 0) {
+    if (ms && ms.catches && att.formIdx !== evoIdx(att)) {
       att.catches = Math.min(ms.catches, (att.catches || 0) + 1); att.mess = Math.round((att.catches / ms.catches) * 100);
       popText(G, def.x, def.y - def.h - 24, 'CAUGHT! ' + att.catches + ' / ' + ms.catches, ms.color || att.accent);
       if (att.catches >= ms.catches) popText(G, att.x, att.y - att.h - 48, (ms.ready || 'READY!') + ' (Switch)', ms.goColor || att.accent);
@@ -205,7 +206,7 @@ window.MM = window.MM || {};
 
   function backToWork(G, f) {
     const ex = f.def.mess.exhaust; // e.g. Siren: out of ideas, can't move or act for exactly 2 s (still gets hit and knocked around)
-    applyForm(f, 0); f.clean = 0; f.mess = 0; f.pieces = 0; f.catches = 0;
+    applyForm(f, f.preEvo || 0); f.preEvo = 0; f.clean = 0; f.mess = 0; f.pieces = 0; f.catches = 0; // back to the form he was in (August)
     if (ex) f.exhaust = ex;
     const ta = f.def.mess.tiredAfter; // e.g. Kevin: worn out after the superfan form, slower for exactly 10 s (can still fight)
     if (ta) { f.tiredT = ta.t; f.tiredMul = ta.mul; }
@@ -336,7 +337,7 @@ window.MM = window.MM || {};
     if (f.buff && --f.buff.t <= 0) f.buff = null;
     if (f.slow && --f.slow.t <= 0) f.slow = null;
     if (f.super) superTick(G, f);
-    if (f.def.mess && f.formIdx === 1) cleanTick(G, f);
+    if (f.def.mess && f.formIdx === evoIdx(f)) cleanTick(G, f);
     if (f.bubble && --f.bubble.t <= 0) f.bubble = null;
     const inp = f.inp, prev = f.prev;
     const pressed = (k) => inp[k] && !prev[k];
@@ -364,6 +365,11 @@ window.MM = window.MM || {};
       const ultNow = pressed('ult') || (inp.attack && inp.special && (pressed('attack') || pressed('special')));
       if (ultNow && f.meter >= 100 && f.def.ultimate) startUlt(G, f);
       else if (swapNow && f.def.cycle) { if (!(f.swapCd > 0)) nextForm(G, f); } // e.g. Cole's shirts, Cloe's colours
+      else if (swapNow && f.def.mess && f.def.mess.formCycle) { // e.g. August: Switch = next creature form; with 6 catches = Augustral
+        if (f.formIdx === evoIdx(f)) { /* evolved: wait it out */ }
+        else if (f.mess >= 100) { f.preEvo = f.formIdx; f.act = { type: 'cleanup', t: 0, dur: f.def.mess.cupDur || 33, noGrav: !f.ground }; }
+        else if (!(f.swapCd > 0)) { const n = f.def.mess.formCycle; applyForm(f, (f.formIdx + 1) % n); f.swapCd = 30; popText(G, f.x, f.y - f.h - 24, f.def.formName || 'CHANGE!', f.accent); burst(G, f.x, f.y - f.h / 2, f.accent, 14, 5); MM.sfx('special'); }
+      }
       else if (swapNow && f.def.mess) { if (f.mess >= 100 && f.formIdx === 0) f.act = { type: 'cleanup', t: 0, dur: f.def.mess.cupDur || 33, noGrav: !f.ground }; }
       else if (swapNow && !f.def.powerup) startSpecial(G, f, 'down');
       else if (pressed('taunt') && f.ground) { // taunt: ground only, a hit stops it, no protection
@@ -500,7 +506,7 @@ window.MM = window.MM || {};
       f.vx *= 0.8;
       if (a.t % 6 === 0) part(G, { x: f.x + (Math.random() - 0.5) * f.w * 2, y: f.y - Math.random() * f.h, color: '#d9f3ff', size: 10, life: 20, max: 20, type: 'smoke' });
       if (a.t >= a.dur) {
-        f.act = null; const ms = f.def.mess; f.mess = 0; f.pieces = 0; f.catches = 0; applyForm(f, 1); f.clean = ms.cleanFrames;
+        f.act = null; const ms = f.def.mess; f.mess = 0; f.pieces = 0; f.catches = 0; applyForm(f, evoIdx(f)); f.clean = ms.cleanFrames;
         if (ms.sleep) sleepPulse(G, f);
         burst(G, f.x, f.y - f.h / 2, '#ffffff', 30, 8); ring(G, f.x, f.y - f.h / 2, f.def.mess.goColor || '#4aa8e8');
         popText(G, f.x, f.y - f.h - 24, ms.go || 'CLEAN FREAK!', ms.goColor || '#4aa8e8'); MM.sfx('heal');
@@ -1205,7 +1211,7 @@ window.MM = window.MM || {};
       if (f.def.powerup && f.formIdx) { applyForm(f, 0); f.powerT = 0; }
       if (f.captured) releaseCapture(G, f);
       f.reverseT = 0; if (f.def.spray) f.spray = 100;
-      if (f.def.mess) { if (f.formIdx) applyForm(f, 0); f.mess = 0; f.clean = 0; f.pieces = 0; f.catches = 0; G.traps = G.traps.filter((t) => !(t.owner === f && t.piece != null)); }
+      if (f.def.mess) { if (f.formIdx) applyForm(f, 0); f.preEvo = 0; f.mess = 0; f.clean = 0; f.pieces = 0; f.catches = 0; G.traps = G.traps.filter((t) => !(t.owner === f && t.piece != null)); }
       f.act = null; f.hitstun = 0; f.buff = null; f.slow = null; f.vx = f.vy = 0; f.caught = null; f.meter = 0;
       if (f.stocks <= 0) { f.out = true; f.x = 0; f.y = -3000; }
       else { f.dead = 80; f.y = -3000; }
