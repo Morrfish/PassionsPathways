@@ -23,8 +23,8 @@ from .lookup import Album, TrackInfo
 from .ripper import RipCancelled, Settings, rip_album
 
 APP_NAME = "Disc Rescue"
-BRAND_BG = "#232b3d"       # banner colours; change to match the logo
-BRAND_ACCENT = "#9fb3d9"
+BRAND_BG = "#011631"       # the logo's navy outline
+BRAND_ACCENT = "#00f7fc"   # the logo's "RESCUE" cyan
 
 
 def resource(name: str) -> str:
@@ -113,19 +113,16 @@ class App:
         banner = tk.Frame(r, bg=BRAND_BG)
         banner.pack(fill="x")
         self.logo_img = None
-        logo = resource("logo.png")
-        if os.path.exists(logo):
-            try:
-                img = Image.open(logo)
-                img.thumbnail((52, 52))
-                self.logo_img = ImageTk.PhotoImage(img)
-                tk.Label(banner, image=self.logo_img, bg=BRAND_BG).pack(side="left", padx=(12, 8), pady=8)
-            except Exception:
-                pass
-        tk.Label(banner, text=APP_NAME, bg=BRAND_BG, fg="white",
-                 font=("Segoe UI", 20, "bold")).pack(side="left", pady=8)
+        try:   # the Disc Rescue logo (shield + name); falls back to plain text
+            img = Image.open(resource("logo.png"))
+            img.thumbnail((400, 70))
+            self.logo_img = ImageTk.PhotoImage(img)
+            tk.Label(banner, image=self.logo_img, bg=BRAND_BG).pack(side="left", padx=(14, 6), pady=8)
+        except Exception:
+            tk.Label(banner, text=APP_NAME, bg=BRAND_BG, fg="white",
+                     font=("Segoe UI", 20, "bold")).pack(side="left", padx=14, pady=8)
         tk.Label(banner, text="Save your CDs, with every song name and cover",
-                 bg=BRAND_BG, fg=BRAND_ACCENT, font=("Segoe UI", 11)).pack(side="left", padx=14, pady=(14, 8))
+                 bg=BRAND_BG, fg=BRAND_ACCENT, font=("Segoe UI", 12)).pack(side="left", padx=14)
 
         top = ttk.Frame(r)
         top.pack(fill="x", **pad)
@@ -149,7 +146,7 @@ class App:
 
         left = ttk.Frame(mid)
         left.pack(side="left", fill="y")
-        self.cover_lbl = tk.Label(left, width=260, height=260, bg="#e6e6e6", text="No cover art yet",
+        self.cover_lbl = tk.Label(left, width=220, height=220, bg="#e6e6e6", text="No cover art yet",
                                   fg="#777", relief="flat", compound="center")
         self.cover_lbl.pack()
         cbtns = ttk.Frame(left)
@@ -405,15 +402,15 @@ class App:
         if data:
             try:
                 img = Image.open(io.BytesIO(data))
-                img.thumbnail((260, 260))
+                img.thumbnail((220, 220))
                 self.cover_img = ImageTk.PhotoImage(img)
-                self.cover_lbl.configure(image=self.cover_img, text="", width=260, height=260)
+                self.cover_lbl.configure(image=self.cover_img, text="", width=220, height=220)
                 return
             except Exception:
                 self.cover = None
         self.cover_img = None
         self.cover_lbl.configure(image="", text="Getting the cover…" if loading else "No cover art",
-                                 width=260, height=260)
+                                 width=220, height=220)
 
     def pick_cover(self) -> None:
         path = filedialog.askopenfilename(title="Choose the album cover",

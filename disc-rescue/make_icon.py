@@ -1,18 +1,15 @@
-"""Draws the Disc Rescue icon (icon.ico for the .exe, discrescue/icon.png for the window)."""
-from PIL import Image, ImageDraw
+"""Makes the app's icons from the logo in branding/:
+  icon.ico               the .exe and taskbar icon (the shield)
+  discrescue/icon.png    the window-corner icon (the shield)
+  discrescue/logo.png    the banner at the top of the window (shield + name)
+"""
+from PIL import Image
 
-S = 512
-im = Image.new("RGBA", (S, S), (0, 0, 0, 0))
-d = ImageDraw.Draw(im)
-d.ellipse((16, 16, S - 16, S - 16), fill="#c9d3e6", outline="#56637d", width=10)
-for r, col in [(200, "#e8ecf5"), (170, "#b9c6e2"), (140, "#d8c7ee"), (110, "#c6e3ee")]:
-    d.ellipse((S/2 - r, S/2 - r, S/2 + r, S/2 + r), outline=col, width=14)
-d.ellipse((S/2 - 70, S/2 - 70, S/2 + 70, S/2 + 70), fill="#56637d")
-d.ellipse((S/2 - 26, S/2 - 26, S/2 + 26, S/2 + 26), fill=(0, 0, 0, 0))
-# music note
-d.ellipse((300, 330, 400, 410), fill="#e0475b")
-d.rectangle((380, 150, 400, 372), fill="#e0475b")
-d.polygon([(400, 150), (470, 190), (470, 230), (400, 195)], fill="#e0475b")
-im.save("icon.ico", sizes=[(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)])
-im.resize((64, 64), Image.LANCZOS).save("discrescue/icon.png")
-im.resize((128, 128), Image.LANCZOS).save("discrescue/logo.png")
+shield = Image.open("branding/shield.png").convert("RGBA")
+shield.save("icon.ico", sizes=[(16, 16), (20, 20), (24, 24), (32, 32), (40, 40),
+                               (48, 48), (64, 64), (128, 128), (256, 256)])
+shield.resize((128, 128), Image.LANCZOS).save("discrescue/icon.png", optimize=True)
+
+logo = Image.open("branding/logo-full.png").convert("RGBA")
+logo.thumbnail((800, 140), Image.LANCZOS)   # 2x the banner size, for sharp scaling
+logo.save("discrescue/logo.png", optimize=True)

@@ -58,5 +58,6 @@ DISCRESCUE_ONLINE=1 python -m unittest discover -s tests   # also tests the real
 - `discrescue/ripper.py` encodes the MP3s (LAME) and writes the tags (ID3 v2.3).
 - `discrescue/app.py` is the window.
 - `discrescue/fake_drive.py` is a pretend drive for testing without a CD.
+- `branding/` holds the original logo. `python make_icon.py` turns it into the icons and banner image.
 
 The `.github/workflows/disc-rescue-exe.yml` workflow tests and builds `DiscRescue.exe` on Windows.
