@@ -197,7 +197,7 @@ ALIASES['jeff-giant'] = {'ent': 'cup3', 'taunt': 'wild0', 'win': 'wild3', 'lose'
 ALIASES['patty-giant'] = {'ent': 'cup3', 'taunt': 'idle3', 'win': 'emg3', 'lose': 'back3'}
 ALIASES['triple-trouble'] = {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'}
 for _w in ('grandma_morris', 'grandma_worst', 'jaicelynn'): ALIASES[_w] = {'ent': 'idle0', 'taunt': 'cheer0', 'win': 'cheer0', 'lose': 'hurt0'}
-for _w in ('grandma_morris', 'grandma_worst', 'jaicelynn', 'harley', 'haislie', 'august', 'harper', 'sophia', 'danielle', 'haislie-surge'): ALIASES[_w] = {'ent': 'pent0', 'taunt': 'ptaunt2', 'win': 'pwin2', 'lose': 'plose0'}
+for _w in ('grandma_morris', 'grandma_worst', 'jaicelynn', 'harley', 'haislie', 'august', 'harper', 'sophia', 'danielle', 'haislie-surge', 'sophia-charlie', 'sophia-dorothy', 'sophia-alice', 'sophia-robin'): ALIASES[_w] = {'ent': 'pent0', 'taunt': 'ptaunt2', 'win': 'pwin2', 'lose': 'plose0'}
 for _w in ('haislie', 'august'): ALIASES[_w].update({'back0': 'cup3', 'back1': 'cup2', 'back2': 'cup1', 'back3': 'cup0'})  # powering down plays the power-up backwards  # v2 personality sheets
 ALIASES['kevin'] = {'ent': 'cup0', 'taunt': 'rally3', 'win': 'rally3', 'lose': 'slow1'}  # lose: bent over, worn out
 ALIASES['kevin-fan'] = {'ent': 'idle0', 'taunt': 'idle1', 'win': 'curtain2', 'lose': 'hurt3'}
