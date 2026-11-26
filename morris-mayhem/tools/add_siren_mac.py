@@ -4,6 +4,7 @@ import sys, json, numpy as np
 from PIL import Image
 from scipy import ndimage as nd
 sys.path.insert(0, sys.argv[1]); import slice_sprites as ss
+SCALE = ss.CHARACTERS['siren']['scale']  # same scale as the rest of her atlas
 SP, out = sys.argv[2], sys.argv[3]
 L = json.load(open(f'{out}/siren-frames.json')); at = Image.open(f'{out}/siren-atlas-preview.png').convert('RGBA')
 frames = {k: (at.crop((x, y, x + w, y + h)), ax, ay) for k, (x, y, w, h, ax, ay) in L.items()}
@@ -23,11 +24,11 @@ for c, (x0c, x1c) in enumerate(cols):
     mo = objs[main - 1]; mm = lab[mo] == main
     tx = np.nonzero(mm[: max(1, int(mm.shape[0] * 0.22))])[1]
     ax = mo[1].start + (tx.mean() if len(tx) else mm.shape[1] / 2) - x0; ay = mo[0].stop - y0
-    ss.add(frames, f'mac{c}', img, ax, ay, 0.62)
+    ss.add(frames, f'mac{c}', img, ax, ay, SCALE)
 for name, fn in [('fxnoodles', 'fx-noodles'), ('fximpact', 'fx-impact'), ('fxpuddle', 'fx-puddle'), ('fxnoodle', 'fx-noodle')]:
     e = clean(np.array(Image.open(f'{SP}/raw/siren-mac/{fn}.png').convert('RGBA')))
     ys, xs = np.nonzero(e[..., 3]); e = e[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
-    ss.add(frames, name, e, e.shape[1] / 2, e.shape[0] / 2, 0.62)
+    ss.add(frames, name, e, e.shape[1] / 2, e.shape[0] / 2, SCALE)
 # frames cut back out of the atlas are already at game scale: add() would shrink them again
 for k, v in list(frames.items()):
     if k in L: im, ax, ay = v; frames[k] = (im, ax, ay)
