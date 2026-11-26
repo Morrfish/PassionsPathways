@@ -140,7 +140,7 @@ def sheet_factor(base_fr, pers_fr):
     return round(base_fr['idle0'][3] / pers_fr['taunt'][3], 3)
 # poses that are meant to be bigger than the fighter (Courtnee's mech towers over him)
 BIGGER = {'grandma_morris': {'stalk0': 1.28, 'stalk1': 1.28, 'stalk2': 1.28, 'stalk3': 1.28},  # Growing Strong: the beanstalk is in the picture, so she was drawn ~78% size
-          'courtnee': {'asm2': 1.3, 'asm3': 1.7, 'ult0': 1.7, 'ult1': 1.7, 'ult2': 1.7, 'ult3': 1.7, 'ret0': 1.6, 'ret1': 1.25}}
+          }  # courtnee's mech/ult/return/personality/powerup sizes now live in out/courtnee-fscale.json (hi-res v2 art)
 # whole move groups drawn at a different scale on their source sheet (found with a size audit: standing poses vs idle)
 GROUP_SCALE = {
     # Siren: her toss, aerial, noodle-throw and tired poses were drawn bigger than her standing pose (head-size check)
@@ -154,7 +154,6 @@ GROUP_SCALE = {
     'jeff-giant': {g: 0.72 for g in ('cup', 'back', 'ent', 'lose')},
     'patty-giant': {g: 0.68 for g in ('cup', 'back', 'ent', 'lose')},
     'triple-trouble': {g: 0.76 for g in ('ult', 'pers', 'ent', 'taunt', 'win', 'lose')},
-    'courtnee': {'saiyan': 1.2},
     'haylie': {'ult1': 1.15, 'ult2': 1.3, 'ult3': 1.3},
     # Jacqi's specials sheet was drawn ~3/4 size; her dash SUV matches the ultimate's SUV
     'jacqi': {'pride': 1.35, 'lift': 1.35, 'snacks': 1.35, 'suv': 1.85},
@@ -193,7 +192,7 @@ ALIASES['evea-spirit'] = {'ent': 'link2', 'taunt': 'link3', 'win': 'link3', 'los
 # the standing pose to size the personality sheet by, when the taunt reaches up (Jorie lifts the milk jug overhead)
 PERS_REF = {'jorie': 'pers0'}
 # atlases whose personality/ultimate poses were drawn at the same scale as the fighting poses: don't resize them
-SAME_SHEET_PERS = {'jeff-giant', 'patty-giant', 'triple-trouble', 'kevin', 'kevin-fan', 'janelle'}
+SAME_SHEET_PERS = {'courtnee', 'jeff-giant', 'patty-giant', 'triple-trouble', 'kevin', 'kevin-fan', 'janelle'}
 # standing height comes from another pose (Evea's spirit poses have Grandma floating over her: size her by Evea alone)
 STANDH_FROM = {'evea-spirit': 'link0'}
 # a move group cut from another sheet: size it so its first pose is as tall as the idle pose
