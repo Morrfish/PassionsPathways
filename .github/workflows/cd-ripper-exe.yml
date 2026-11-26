@@ -1,0 +1,56 @@
+# Builds CD Ripper for Windows on a Windows machine:
+#   CDRipper.exe   one file, runs without installing
+# It is kept as a build artifact on the run page: only people signed in to
+# GitHub with access to this repo can download it. Nothing is published.
+name: CD Ripper exe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, 'ccr-bcf909e3-7qtnwa']
+    paths:
+      - 'cd-ripper/**'
+      - '.github/workflows/cd-ripper-exe.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cd-ripper-exe-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: cd-ripper
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller==6.22.3
+      - name: Test
+        run: python -m unittest discover -s tests -v
+      - name: Build the exe
+        run: |
+          python make_icon.py
+          pyinstaller --noconfirm --onefile --windowed --name CDRipper --icon icon.ico `
+            --add-data "cdripper/icon.png;." CDRipper.py
+      - name: Check the exe starts
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath dist/CDRipper.exe -PassThru
+          Start-Sleep -Seconds 12
+          if ($p.HasExited) { throw "CDRipper.exe closed by itself (exit code $($p.ExitCode))" }
+          Stop-Process -Id $p.Id -Force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CDRipper-Windows
+          path: cd-ripper/dist/CDRipper.exe
+          retention-days: 90
+          compression-level: 0
