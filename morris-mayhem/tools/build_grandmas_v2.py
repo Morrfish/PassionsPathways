@@ -9,17 +9,23 @@ from PIL import Image
 sys.path.insert(0, __file__.rsplit('/', 1)[0])
 from slice_grid44 import cells
 raw, out, sid = sys.argv[1:4]
-STAND = 300  # standing (idle0) height in the atlas, like the other full-size fighters (she's drawn smaller, so it stays sharp)
+STAND = {'jaicelynn': 290}.get(sid, 300)  # her specials sheet is drawn small, so 290 keeps every sheet at or below its own size; standing (idle0) height in the atlas, like the other full-size fighters (she's drawn smaller, so it stays sharp)
 CFG = {
     'grandma_morris': {'grandma-morris-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
                        'grandma-morris-ground-4x4-v2.png': (1.04, ['trowel', 'rake', 'beet', 'kick']),
                        'grandma-morris-aerials-4x4-v2.png': (1.18, ['atrowel', 'arake', 'aup', 'adrop']),
-                       'grandma-morris-specials-4x4-v2.png': (1.10, ['apple', 'basket', 'stalk', 'vines'])},
+                       'grandma-morris-specials-4x4-v2.png': (1.10, ['apple', 'basket', 'stalk', 'vines']),
+                       'grandma-morris-personality-4x4-v2.png': (1.02, ['pent', 'ptaunt', 'pwin', 'plose'])},
     'grandma_worst': {'grandma-worst-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
                       'grandma-worst-ground-4x4-v2.png': (0.91, ['rose', 'palm', 'spoon', 'soup']),
                       'grandma-worst-aerials-4x4-v2.png': (1.07, ['arose', 'aspoon', 'aup', 'asoup']),
                       'grandma-worst-specials-4x4-v2.png': (1.10, ['coffee', 'ladle', 'whirl', 'portal']),
                       'grandma-worst-personality-4x4-v2.png': (0.95, ['pent', 'ptaunt', 'pwin', 'plose'])},
+    'jaicelynn': {'jaicelyn-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
+                  'jaicelyn-ground-4x4-v2.png': (1.04, ['phone', 'kick', 'wheel', 'sweep']),  # Phone Tap, Trail Kick, Wheel Lift, Low Sweep
+                  'jaicelyn-aerials-4x4-v2.png': (1.15, ['anair', 'afair', 'auair', 'adair']),
+                  'jaicelyn-specials-4x4-v2.png': (0.95, ['flash', 'atv', 'wheelie', 'taco']),
+                  'jaicelyn-personality-4x4-v2.png': (0.94, ['pent', 'ptaunt', 'pwin', 'plose'])},
 }[sid]
 KEEP = ('ultA', 'ultB', 'ultC', 'cheer', 'fx')
 oldF = json.load(open(f'{out}/{sid}-frames.json')); oldA = Image.open(f'{out}/{sid}-atlas.webp').convert('RGBA')

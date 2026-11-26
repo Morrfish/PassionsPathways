@@ -76,9 +76,9 @@ MOVES = {
     'grandma_worst': dict(jab='rose', side='palm', down='soup', up='spoon', nair='arose', fair='aspoon', uair='aup', dair='asoup',
                           neutral='coffee', sideSpecial='ladle', upSpecial='whirl', downSpecial='portal', counterHit='portal',
                           upRow='spoon', uairRow='aup', riseMid='whirl2', riseLate='whirl3'),
-    'jaicelynn': dict(jab='phone', side='bars', down='kick', up='wheel', nair='kick', fair='kick', uair='wheel', dair='kick',
+    'jaicelynn': dict(jab='phone', side='kick', down='sweep', up='wheel', nair='anair', fair='afair', uair='auair', dair='adair',
                       neutral='flash', sideSpecial='atv', upSpecial='wheelie', downSpecial='taco',
-                      upRow='wheel', uairRow='wheel', riseMid='wheelie2', riseLate='wheelie3'),
+                      upRow='wheel', uairRow='auair', riseMid='wheelie2', riseLate='wheelie3'),
     'jacqi': dict(jab='swat', side='bump', down='csweep', up='whistle', nair='sspin', fair='poke', uair='skycheer', dair='cdrop',
                   neutral='pride', sideSpecial='suv', upSpecial='lift', downSpecial='snacks',
                   upRow='whistle', uairRow='skycheer', riseMid='lift2', riseLate='lift3'),
@@ -176,7 +176,7 @@ ALIASES['jeff-giant'] = {'ent': 'cup3', 'taunt': 'wild0', 'win': 'wild3', 'lose'
 ALIASES['patty-giant'] = {'ent': 'cup3', 'taunt': 'idle3', 'win': 'emg3', 'lose': 'back3'}
 ALIASES['triple-trouble'] = {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'}
 for _w in ('grandma_morris', 'grandma_worst', 'jaicelynn'): ALIASES[_w] = {'ent': 'idle0', 'taunt': 'cheer0', 'win': 'cheer0', 'lose': 'hurt0'}
-ALIASES['grandma_worst'] = {'ent': 'pent0', 'taunt': 'ptaunt2', 'win': 'pwin2', 'lose': 'plose0'}  # her v2 personality sheet
+for _w in ('grandma_morris', 'grandma_worst', 'jaicelynn'): ALIASES[_w] = {'ent': 'pent0', 'taunt': 'ptaunt2', 'win': 'pwin2', 'lose': 'plose0'}  # v2 personality sheets
 ALIASES['kevin'] = {'ent': 'cup0', 'taunt': 'rally3', 'win': 'rally3', 'lose': 'slow1'}  # lose: bent over, worn out
 ALIASES['kevin-fan'] = {'ent': 'idle0', 'taunt': 'idle1', 'win': 'curtain2', 'lose': 'hurt3'}
 ALIASES['cloe'] = {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'hurt2'}  # lose: knocked down
@@ -193,7 +193,7 @@ ALIASES['evea-spirit'] = {'ent': 'link2', 'taunt': 'link3', 'win': 'link3', 'los
 # the standing pose to size the personality sheet by, when the taunt reaches up (Jorie lifts the milk jug overhead)
 PERS_REF = {'jorie': 'pers0'}
 # atlases whose personality/ultimate poses were drawn at the same scale as the fighting poses: don't resize them
-SAME_SHEET_PERS = {'courtnee', 'grandma_morris', 'grandma_worst', 'jeff-giant', 'patty-giant', 'triple-trouble', 'kevin', 'kevin-fan', 'janelle'}
+SAME_SHEET_PERS = {'courtnee', 'grandma_morris', 'grandma_worst', 'jaicelynn', 'jeff-giant', 'patty-giant', 'triple-trouble', 'kevin', 'kevin-fan', 'janelle'}
 # standing height comes from another pose (Evea's spirit poses have Grandma floating over her: size her by Evea alone)
 STANDH_FROM = {'evea-spirit': 'link0'}
 # a move group cut from another sheet: size it so its first pose is as tall as the idle pose

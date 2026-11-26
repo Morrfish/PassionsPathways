@@ -538,7 +538,7 @@ MM.FIGHTERS.push({
   id: 'jaicelynn', name: 'Jaicelyn Morris', title: 'The Four-Wheel Selfie Queen', photo: 'img/jaicelynn.png', sprite: 'jaicelynn',
   color: '#1b1b1f', accent: '#b14bff', skin: '#f0c4a4', hair: '#8a5a32',
   stats: { speed: 7.3, air: 6.8, jump: 15.4, weight: 0.92, power: 0.98, size: 0.95 },
-  attackNames: { jab: 'Phone Tap', side: 'Handlebar Bash', up: 'Wheel Lift', down: 'Trail Kick', air: 'Trail Kick, Wheel Lift' },
+  attackNames: { jab: 'Phone Tap', side: 'Trail Kick', up: 'Wheel Lift', down: 'Low Sweep', air: 'Phone Tap, Trail Kick, Wheel Lift, Low Sweep' },
   specials: {
     neutral: { kind: 'projectile', name: 'Snap Streak', thing: 'a phone-camera flash', sprite: 'fxring', px: 60, speed: 13, dmg: 6, kb: 5.5, kbg: 0.06, r: 24, life: 40, cd: 40 },
     side: { kind: 'dash', name: 'Four-Wheel Send', ride: true, speed: 15, dur: 30, dmg: 10, kb: 8.5, kbg: 0.12, ang: 30, cd: 140, box: [-100, -100, 210, 100] },
