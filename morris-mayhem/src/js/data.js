@@ -575,7 +575,7 @@ MM.FIGHTERS = [
   MM.FIGHTERS.push({
     id: 'cloe', name: 'Cloe Crist', title: 'The Color-Wheel Creator', photo: 'img/cloe.png',
     stats: { speed: 7.1, air: 6.6, jump: 15.3, weight: 0.95, power: 1.0, size: 1.0 }, taunt: 'Time for art!', cycle: 'all',
-    forms: colors.map(([c, label, accent, main]) => ({ form: c, formName: label, title: c[0].toUpperCase() + c.slice(1), sprite: 'cloe',
+    forms: colors.map(([c, label, accent, main]) => ({ form: c, formName: label, title: c[0].toUpperCase() + c.slice(1), sprite: c === 'red' ? 'cloe' : 'cloe-' + c, // her jacket stays the colour she picked
       color: accent, accent, skin: '#f0c4a4', hair: '#4a2a1a', moveRows: { neutral: c, downSpecial: 'shuffle' },
       attackNames: { jab: 'Fingerpaint One-Two', side: 'Paint Splash', up: 'Alphabet Pop', down: 'Crayon Sweep', air: 'Paint Splash, Alphabet Pop' },
       specials: {
@@ -583,7 +583,7 @@ MM.FIGHTERS = [
         side: { kind: 'projectile', name: 'ABC Burst', thing: 'three painted alphabet blocks', emoji: '🔤', sheet: 'kcj-fx', sprite: 'block0', scale: 0.31, count: 3, spread: 0.22, speed: 10, dmg: 3, kb: 4.5, kbg: 0.05, r: 16, life: 45, cd: 70 },
         up: { kind: 'rise', name: 'Alphabet Lift', power: 19.5, forward: 4, dmg: 5, kb: 6, kbg: 0.06 },
         down: { kind: 'shuffle', name: 'Palette Shuffle', thing: 'the next outfit colour' },
-      }, ultimate: cloeUlt })),
+      }, ultimate: Object.assign({}, cloeUlt, { sprite: c === 'red' ? 'cloe' : 'cloe-' + c }) })),
   });
 
   // Janelle Morris, "The Subject Specialist": second-grade teacher. Hold down + Special for the subject wheel (tap

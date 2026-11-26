@@ -9,9 +9,31 @@ window.MM = window.MM || {};
   };
   // ---------- sprite (artwork) fighters ----------
   const spriteImgs = {};
+  // Cloe's outfit colours: her red jacket and bow repainted from the red atlas (hue, saturation and brightness taken
+  // from ChatGPT's colour-swap poses), so she keeps the colour she switched to on every move
+  const CLOE_COLORS = { orange: [22.8, 0.848, 0.656], yellow: [42.4, 0.858, 0.709], green: [95.4, 0.784, 0.498], blue: [227.2, 0.871, 0.571], purple: [293.6, 0.699, 0.477] };
+  const RED = [2.9, 0.737, 0.603];
+  if (MM.SPRITES && MM.SPRITES.cloe) for (const c in CLOE_COLORS) MM.SPRITES['cloe-' + c] = Object.assign({}, MM.SPRITES.cloe, { recolorOf: 'cloe', recolor: CLOE_COLORS[c] });
+  function recolorSheet(base, to) {
+    const cv = document.createElement('canvas'); cv.width = base.naturalWidth; cv.height = base.naturalHeight;
+    const g = cv.getContext('2d', { willReadFrequently: true }); g.drawImage(base, 0, 0);
+    const img = g.getImageData(0, 0, cv.width, cv.height), d = img.data, ks = to[1] / RED[1], kv = to[2] / RED[2];
+    for (let i = 0; i < d.length; i += 4) {
+      if (d[i + 3] < 150) continue;
+      const r = d[i] / 255, gg = d[i + 1] / 255, b = d[i + 2] / 255, mx = Math.max(r, gg, b), mn = Math.min(r, gg, b), dd = mx - mn;
+      if (mx !== r || mx < 0.22 || dd / mx < 0.55) continue; // only strong reds: not her brown hair, skin or the white shirt
+      let h = ((gg - b) / dd) * 60; if (h < -14 || h > 9) continue;
+      h = (to[0] + (h - RED[0]) + 360) % 360; const sat = Math.min(1, (dd / mx) * ks), val = Math.min(1, mx * kv);
+      const c = val * sat, x = c * (1 - Math.abs(((h / 60) % 2) - 1)), m = val - c, k = Math.floor(h / 60);
+      const [r1, g1, b1] = [[c, x, 0], [x, c, 0], [0, c, x], [0, x, c], [x, 0, c], [c, 0, x]][k];
+      d[i] = (r1 + m) * 255; d[i + 1] = (g1 + m) * 255; d[i + 2] = (b1 + m) * 255;
+    }
+    g.putImageData(img, 0, 0); cv.complete = true; cv.naturalWidth = cv.width; return cv;
+  }
   function sheet(id) {
     const S = MM.SPRITES && MM.SPRITES[id];
     if (!S) return null;
+    if (S.recolorOf && !spriteImgs[id]) { const b = sheet(S.recolorOf); if (!b) return null; spriteImgs[id] = recolorSheet(b.im, S.recolor); }
     if (!spriteImgs[id]) { const im = new Image(); im.src = S.src; spriteImgs[id] = im; }
     const im = spriteImgs[id];
     return im.complete && im.naturalWidth ? { S, im } : null;
