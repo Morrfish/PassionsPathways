@@ -81,8 +81,22 @@ window.MM = window.MM || {};
   function drawSelect() {
     const box = $('#slots');
     const pcol = (i) => (teamMode() ? MM.TEAM_COLORS[slots[i].team] : MM.PLAYER_COLORS[i]);
+    box.classList.add('scenes'); // ChatGPT's scene cards: the whole 3:1 picture, controls over its right side
     box.innerHTML = slots.map((s, i) => {
       const f = fighterById(s.fighter), off = s.type === 'off';
+      if (true) {
+        const ctrl = `${teamMode() && !off ? `<button class="team ${s.team}" data-k="team" title="Change team">Team ${s.team}</button>` : ''}
+          <button class="cycle" data-k="type">${TYPES[s.type]}</button>
+          ${off ? '' : s.type === 'human' ? `<button class="cycle" data-k="dev">🎮 ${MM.DEVICE_NAMES[s.dev]}</button>` : `<button class="cycle" data-k="level">CPU Lv: <b>${LEVELS[s.level] || 'Normal'}</b></button>`}`;
+        return `<div class="slot ${off ? 'off' : ''} ${i === activeSlot ? 'active' : ''}" data-slot="${i}" style="--pc:${pcol(i)}">
+          <div class="top"><span class="pn">P${i + 1}</span><span class="nm">${off ? 'Empty' : f.name}</span>
+            ${off ? '' : '<div class="pick"><button data-k="prev" aria-label="Previous fighter">◀</button><button data-k="next" aria-label="Next fighter">▶</button></div>'}</div>
+          <div class="pic" ${off ? '' : `style="background-image:url(img/scenes/${s.fighter}.webp), url(${portrait(s.fighter)})"`}>
+            ${off ? '<div class="join">Press X on a controller to join</div>' : ''}
+            <div class="side">${ctrl}</div>
+          </div>
+        </div>`;
+      }
       const card = off ? 'player-card-empty' : ['player-card-p1-red', 'player-card-p2-blue', 'player-card-p3-green', 'player-card-p4-yellow'][i]; // ChatGPT cards
       return `<div class="slot ${off ? 'off' : ''} ${i === activeSlot ? 'active' : ''}" data-slot="${i}" style="--pc:${pcol(i)};--card:url(img/ui/${card}.webp)">
         ${off ? '' : `<img class="art" src="${portrait(s.fighter)}" alt="">

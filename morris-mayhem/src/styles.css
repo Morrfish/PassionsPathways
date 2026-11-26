@@ -424,3 +424,31 @@ img.mvi { width: 34px; height: 34px; object-fit: contain; vertical-align: middle
 #select .css-roster button .nm.long { line-height: 1; }
 #select .css-roster button .nm.long { height: auto; min-height: 3em; padding: 2px; }
 #select #slots.css-slots { grid-template-columns: repeat(4, min(14vw, 22vh)); }
+/* Choose Your Fighter scene cards (ChatGPT): a landscape card per player, the whole 3:1 scene picture,
+   Player/Computer and controller/CPU controls laid over the right side of the picture */
+#select #slots.css-slots.scenes { grid-template-columns: repeat(4, minmax(0, min(23vw, 460px))); gap: 14px; justify-content: center; }
+#select #slots.css-slots.scenes .slot { aspect-ratio: auto; min-height: 0; background: #2b1150; border: 3px solid var(--pc); border-radius: 12px; overflow: hidden;
+  display: flex; flex-direction: column; filter: none; box-shadow: 0 4px 14px #0008; }
+#select #slots.css-slots.scenes .slot.active { box-shadow: 0 0 0 3px #fff, 0 0 18px var(--pc); }
+#select #slots.css-slots.scenes .slot .top { display: flex; align-items: center; gap: 8px; padding: 4px 6px 4px 10px; background: linear-gradient(90deg, var(--pc), #2b1150 75%); min-height: 34px; }
+#select #slots.css-slots.scenes .slot .pn { position: static; transform: none; font: italic 900 clamp(14px, 1.1vw, 20px) system-ui; color: #fff; text-shadow: 0 2px 0 #000; }
+#select #slots.css-slots.scenes .slot .nm { position: static; flex: 1; min-width: 0; background: none; color: #fff; font-weight: 900; font-size: clamp(12px, 1vw, 18px); text-shadow: 0 2px 0 #000;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: none; min-height: 0; order: 0; padding: 0; clip-path: none; text-align: left; }
+#select #slots.css-slots.scenes .slot .pick { position: static; display: flex; gap: 4px; }
+#select #slots.css-slots.scenes .slot .pick button { width: 30px; height: 30px; }
+#select #slots.css-slots.scenes .slot .pic { position: relative; aspect-ratio: 3 / 1; background: #1a0b2e center / 100% 100% no-repeat; }
+#select #slots.css-slots.scenes .slot .pic::after { content: ''; position: absolute; inset: 0 0 0 42%; background: linear-gradient(90deg, transparent, #2b1150cc 45%, #2b1150e6); pointer-events: none; }
+#select #slots.css-slots.scenes .slot .side { position: absolute; z-index: 1; left: auto; right: 6px; top: 50%; bottom: auto; transform: translateY(-50%); width: 46%; gap: 6px; display: flex; flex-direction: column; justify-content: center; }
+#select #slots.css-slots.scenes .slot .cycle { font-size: clamp(10px, .8vw, 14px); padding: 4px 8px; width: 100%; }
+#select #slots.css-slots.scenes .slot.off .pic { background: repeating-linear-gradient(135deg, #3a1f63 0 14px, #331a58 14px 28px); }
+#select #slots.css-slots.scenes .slot.off .pic::after { inset: 0 0 0 50%; }
+#select #slots.css-slots.scenes .slot .join { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); width: 48%; margin: 0; color: #fff; font-weight: 800; text-align: center; font-size: clamp(10px, .85vw, 14px); text-shadow: 0 2px 0 #000; }
+@media (max-width: 760px), (max-aspect-ratio: 4/3) { #select #slots.css-slots.scenes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+#select #slots.css-slots.scenes .slot .top .pn, #select #slots.css-slots.scenes .slot .top .nm { position: static; transform: none; }
+#select #slots.css-slots.scenes .slot.off .side { left: auto; right: 6px; top: 50%; bottom: auto; }
+#select #slots.css-slots.scenes .slot .pic .side { left: auto; }
+#select #slots.css-slots.scenes .slot { align-items: stretch; padding: 0; }
+#select #slots.css-slots.scenes .slot .top, #select #slots.css-slots.scenes .slot .pic { width: 100%; align-self: stretch; }
+#select #slots.css-slots.scenes .slot .top .nm { text-align: left; flex: 1; }
+#select #slots.css-slots.scenes .slot .cycle { line-height: 1.15; min-height: 0; padding: 3px 8px; }
+#select #slots.css-slots.scenes .slot .side { gap: 4px; }
