@@ -166,13 +166,14 @@ CHARACTERS = {
         },
         'props': [('loaf', 'specials.png', (915, 172))],
         'mainonly': {'specials.png': ['bread']},
-        'cutrows': {'move.png': [705], 'aerials.png': [106, 114], 'ultimate.png': [470, 836]},  # touching poses / title / name tags
+        'notagcuts': ('ultimate.png',),  # the amber bear's glow reads as a name-tag strip and got sliced through her legs
+        'cutrows': {'move.png': [705], 'aerials.png': [106, 114], 'ultimate.png': [411, 470, 836]},  # 411: her feet and the bear stand on the caption plates  # touching poses / title / name tags
         'cutcols': {'ultimate.png': [(540, 60, 470), (870, 60, 470), (1290, 60, 470)]},
         'rowbands': {'move.png': [(105, 427), (427, 707), (707, 983), (983, 1300)],
                      'attacks.png': [(105, 431), (431, 737), (737, 986), (986, 1300)],
                      'aerials.png': [(105, 412), (412, 706), (706, 980), (980, 1300)],
                      'specials.png': [(105, 426), (426, 680), (680, 1004), (1004, 1300)],
-                     'ultimate.png': [(60, 470), (470, 890)]},
+                     'ultimate.png': [(60, 412), (470, 890)]},  # stop above the caption plates: her feet and the bear touch them
     },
     # Sara: labels on the left, no tags under the poses; her tattoo effects come as separate pictures (extras),
     # so the baked-in rose / snakes / spider are dropped from the specials poses (mainonly).
@@ -452,6 +453,7 @@ CHARACTERS = {
 }
 
 CUTROWS = {}
+NOTAGCUTS = set()  # sheets where bright yellow art (Haylie's amber bear) would be mistaken for name tags
 DEBUG = os.environ.get('SLICE_DEBUG')
 ROWBANDS = {}
 
@@ -487,7 +489,7 @@ def slice_sheet(path, names, cols, frames, scale, excl=(), cutcols=False, mainon
         rows.append((top, b[0] - 6)); top = b[1] + 20
     if rb: rows = list(rb)
     # a thin cut just above each tag strip separates poses that touch their tag
-    cut_tags(a, tags)
+    if path.rsplit('/', 1)[-1] not in NOTAGCUTS: cut_tags(a, tags)
     for (cx_, y0_, y1_) in (cutcols or {}).get(path.rsplit('/', 1)[-1], []): a[y0_:y1_, cx_ - 2:cx_ + 2, 3] = 0
     for ry in CUTROWS.get(path.rsplit('/', 1)[-1], []): a[ry - 2:ry + 2, :, 3] = 0
     m = a[..., 3] >= 128
@@ -807,7 +809,7 @@ if __name__ == '__main__':
     who, art, out = sys.argv[1:4]
     cfg = CHARACTERS[who]; frames = {}
     props = cfg.get('props', [])
-    CUTROWS.clear(); CUTROWS.update(cfg.get('cutrows', {})); ROWBANDS.clear(); ROWBANDS.update(cfg.get('rowbands', {}))
+    CUTROWS.clear(); CUTROWS.update(cfg.get('cutrows', {})); NOTAGCUTS.clear(); NOTAGCUTS.update(cfg.get('notagcuts', ())); ROWBANDS.clear(); ROWBANDS.update(cfg.get('rowbands', {}))
     for sheet, names in cfg['sheets'].items():
         excl = [pt for (_, sh, pt) in props if sh == sheet and pt]
         cols = cfg.get('cols')

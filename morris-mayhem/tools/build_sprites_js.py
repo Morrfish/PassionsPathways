@@ -137,6 +137,11 @@ GROUP_SCALE = {
               'spin': 0.83, 'mac': 0.9, 'tired': 0.87},
     'megan': {'def': 0.8, 'bair': 0.8, 'ret': 1.6, 'nap': 1.25, 'pers2': 0.78, 'pers3': 0.78, 'win': 0.78, 'lose': 0.78},
     'mandi-witch': {'whirl': 1.3, 'salon': 1.15},
+    # the giants' transformation / personality sheets were drawn bigger than their fighting poses (head-size check):
+    # entrance and losing poses come from them, so without this they shrank when the fight started
+    'jeff-giant': {g: 0.72 for g in ('cup', 'back', 'ent', 'lose')},
+    'patty-giant': {g: 0.68 for g in ('cup', 'back', 'ent', 'lose')},
+    'triple-trouble': {g: 0.76 for g in ('ult', 'pers', 'ent', 'taunt', 'win', 'lose')},
     'courtnee': {'saiyan': 1.2},
     'haylie': {'ult1': 1.15, 'ult2': 1.3, 'ult3': 1.3},
     # Jacqi's specials sheet was drawn ~3/4 size; her dash SUV matches the ultimate's SUV
