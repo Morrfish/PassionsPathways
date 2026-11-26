@@ -41,18 +41,35 @@ CFG = {
                'august-aerials-4x4-v2.png': (0.99, ['anair', 'afair', 'auair', 'adair']),
                'august-specials-4x4-v2.png': (1.01, ['ball', 'catch', 'lift', 'charm']),
                'august-personality-4x4-v2.png': (1.05, ['pent', 'ptaunt', 'pwin', 'plose'])},
+    'harper': {'harper-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
+               'harper-ground-4x4-v2.png': (1.22, ['palm', 'kick', 'upper', 'sweep']),
+               'harper-aerials-4x4-v2.png': (1.0, ['anair', 'afair', 'auair', 'adair']),
+               'harper-specials-4x4-v2.png': (1.27, ['slime', 'cushion', 'pop', 'spray']),
+               'harper-personality-4x4-v2.png': (0.94, ['pent', 'ptaunt', 'pwin', 'plose'])},
+    'sophia': {'sophia-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
+               'sophia-ground-4x4-v2.png': (1.0, ['tap', 'kick', 'upper', 'bow']),
+               'sophia-aerials-4x4-v2.png': (1.0, ['anair', 'afair', 'auair', 'adair']),
+               'sophia-specials-4x4-v2.png': (0.97, ['charlie', 'dorothy', 'alice', 'robin']),  # one row per role power
+               'sophia-personality-4x4-v2.png': (1.0, ['pent', 'ptaunt', 'pwin', 'plose'])},
+    'sophia-charlie': {'sophia-charlie-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt'])},
+    'sophia-dorothy': {'sophia-dorothy-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt'])},
+    'sophia-alice': {'sophia-alice-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt'])},
+    'sophia-robin': {'sophia-robin-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt'])},
 }[sid]
 # a brand-new fighter (no old atlas to keep from): ultimate 2x2 (face size vs movement) and an effects 4x4 (rows of 4 phases)
 # fx: (sheet, frame names per row (None = skip that row), rows, cols); 'cup': a 2x2 of power-up poses -> cup0..3
 NEW = {'harley': {'ult': ('harley-ultimate-2x2-v2.png', 2.27), 'fx': [('harley-sass-effects-4x4-v2.png', ['fxpalm', 'fxstomp', 'fxguard', 'fxtantrum'], 4, 4)]},
        'haislie': {'ult': ('haislie-ultimate-2x2-v2.png', 1.92), 'cup': ('haislie-chaos-control-2x2-v2.png', 1.87),
                    'fx': [('haislie-chaos-emeralds-effects-v2.png', [['fxgem0', 'fxgem1', 'fxgem2', 'fxgem3'], ['fxgem4', 'fxgem5', 'fxgem6', 'fxgemring']], 2, 4)]},
+       'harper': {'ult': ('harper-ultimate-2x2-v2.png', 1.81), 'fx': [('harper-effects-4x4-v2.png', ['fxslime', 'fxcushion', 'fxcloud', 'fxboom'], 4, 4)]},
+       'sophia': {'ult': ('sophia-ultimate-2x2-v2.png', 1.71), 'fx': [('sophia-effects-4x4-v2.png', ['fxchoc', 'fxwind', 'fxcard', 'fxarrow'], 4, 4)]},
        'august': {'ult': ('august-ultimate-2x2-v2.png', 2.0), 'cup': ('august-evolve-2x2-v2.png', 1.87),
                   'fx': [('august-partner-element-effects-4x4-v2.png', ['fxzap', 'fxvine', 'fxfire', 'fxwater'], 4, 4),
                          ('august-ball-capture-effects-4x4-v2.png', [None, None, 'fxbubble', 'fxsparkle'], 4, 4)]}}.get(sid)
 KEEP = ('ultA', 'ultB', 'ultC', 'cheer', 'fx')
 import os
-oldF = json.load(open(f'{out}/{sid}-frames.json')) if not NEW else {}; oldA = Image.open(f'{out}/{sid}-atlas.webp').convert('RGBA') if not NEW else None
+HAVE_OLD = not NEW and os.path.exists(f'{out}/{sid}-frames.json') and not sid.startswith('sophia-')  # Sophia's role atlases are brand new too
+oldF = json.load(open(f'{out}/{sid}-frames.json')) if HAVE_OLD else {}; oldA = Image.open(f'{out}/{sid}-atlas.webp').convert('RGBA') if HAVE_OLD else None
 grid = {fn: cells(f'{raw}/{fn}') for fn in CFG}
 first = next(iter(CFG)); base = STAND / grid[first][0][0].height
 cuts = []
@@ -80,7 +97,7 @@ for fn, (face, names) in CFG.items():
             c = c.resize((max(1, round(c.width * s)), max(1, round(c.height * s))), Image.LANCZOS)
             cuts.append((f'{name}{i}', c, anchor(c), c.height))
 if NEW:
-    for key, pre in (('ult', 'ult'), ('cup', 'cup')):
+    for key, pre in (('ult', 'ult'), ('cup', 'cup')):  # (NEW is a dict here)
         if key not in NEW: continue
         fn, face = NEW[key]; U = Image.open(f'{raw}/{fn}').convert('RGBA'); W, H = U.size
         for i in range(4):
@@ -114,7 +131,7 @@ for n, c, ax, ay in real:
     px, py = pos[n]; A.paste(c, (px, py)); F[n] = [px, py, c.width, c.height, round(float(ax), 1), round(float(ay), 1)]
 for n, c, src, _ in cuts:
     if c is None: F[n] = F[src]
-if not NEW: F['ult0'], F['ult1'], F['ult2'], F['ult3'] = F['ultA0'], F['ultB0'], F['ultC0'], F['ultC0']
+if HAVE_OLD: F['ult0'], F['ult1'], F['ult2'], F['ult3'] = F['ultA0'], F['ultB0'], F['ultC0'], F['ultC0']
 assert A.height <= 4096, A.size
 A.save(f'{out}/{sid}-atlas.webp', 'WEBP', quality=88, method=6); json.dump(F, open(f'{out}/{sid}-frames.json', 'w'))
 print(sid, A.size, len(F), 'idle', F['idle0'][2:4])

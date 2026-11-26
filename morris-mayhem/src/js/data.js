@@ -626,6 +626,52 @@ MM.FIGHTERS.push({
   });
 }
 
+// ---------- Harper and Sophia Faber (ChatGPT, Nov 26): Codee and Janelle's daughters ----------
+// Harper: a prankster. Slime balloons slow people down, whoopee cushions sit on the floor (two at a time), and her
+// Reverse Reek spray (a bar that drains while she sprays and refills after 3 s) flips opponents' left/right and up/down for 2 s.
+MM.FIGHTERS.push({
+  id: 'harper', name: 'Harper Faber', title: 'The Prank Queen', photo: 'img/harper.png', sprite: 'harper', spray: true,
+  color: '#5a3a28', accent: '#b6e35a', skin: '#f0c4a4', hair: '#6b4428',
+  stats: { speed: 7.2, air: 6.9, jump: 15.6, weight: 0.86, power: 0.95, size: 0.9 },
+  attackNames: { jab: 'Palm Prank', side: 'Sneaky Kick', up: 'Gotcha Uppercut', down: 'Lowdown Sweep', air: 'Mischief Spin, Surprise Kick, Up to Something, Prank Stomp' },
+  specials: {
+    neutral: { kind: 'projectile', name: 'Slime Surprise', thing: 'a slime water balloon (slows whoever it hits)', sheet: 'harper', sprite: 'fxslime0', px: 54, speed: 10, vy: -4, grav: 0.25, dmg: 5, kb: 4.5, kbg: 0.05, r: 22, life: 70, cd: 50, slow: { mul: 0.65, t: 90 } },
+    side: { kind: 'trap', name: 'Whoopee Welcome', thing: 'a whoopee cushion on the floor (two at a time)', sheet: 'harper', sprite: 'fxcushion1', px: 72, max: 2, dmg: 6, kb: 8, kbg: 0.08, ang: 80, life: 300, cd: 60 },
+    up: { kind: 'rise', name: 'Prank Pop', power: 22, forward: 3, dmg: 5, kb: 6, kbg: 0.06 },
+    down: { kind: 'spray', name: 'Reverse Reek', thing: 'hold to spray: anyone in the cloud gets reversed controls for 2 s (the spray bar drains)', drain: 25, reverse: 120, reach: 160, dmg: 2, cd: 20 },
+  },
+  taunt: 'Gotcha!',
+  ultimate: { name: 'Prankocalypse', sprite: 'harper', type: 'catch', radius: 2.5, dur: 140, catchAt: 46, finishAt: 100, dmg: 24, kbMul: 1.45,
+    orbit: ['fxslime0', 'fxcushion1', 'fxslime0', 'fxcushion1', 'fxslime0', 'fxcushion1'],
+    desc: 'clicks her prank remote: slime balloons and whoopee cushions rain on everyone close by, then she laughs them off',
+    poses: [[0, 'ult0'], [24, 'ult1'], [46, 'ult2'], [100, 'ult3']] },
+});
+
+// Sophia: an actress. Switch changes her role (stage outfit, then each costume); Special casts the role's power.
+{
+  const shared = { side: { kind: 'dash', name: 'Stage Cross', speed: 14, dur: 18, dmg: 8, kb: 7.5, kbg: 0.1, ang: 30, cd: 80, box: [-10, -100, 110, 100] },
+    up: { kind: 'rise', name: 'Curtain Call', power: 20, forward: 3, dmg: 6, kb: 6, kbg: 0.06 },
+    down: { kind: 'counter', name: 'Take a Bow', window: 20, mult: 1.35 } };
+  const role = (form, sprite, formName, title, neutral, row) => ({ form, sprite, formName, title, moveRows: { neutral: row }, specials: Object.assign({ neutral }, shared) });
+  MM.FIGHTERS.push({
+    id: 'sophia', name: 'Sophia Faber', title: 'The Leading Lady', photo: 'img/sophia.png', sprite: 'sophia', cycle: 'all', formName: 'ROLE CHANGE!',
+    color: '#7a1f2b', accent: '#ffd24a', skin: '#f0c4a4', hair: '#9a6a3a',
+    stats: { speed: 7.0, air: 6.7, jump: 15.4, weight: 0.95, power: 1.0, size: 0.97 },
+    attackNames: { jab: 'Stage Tap', side: 'Curtain Kick', up: 'Spotlight Uppercut', down: 'Low Bow', air: 'Stage Spin, Leading Kick, Rising Star, Downstage Stomp' },
+    taunt: 'And... scene!',
+    forms: [
+      role('stage', 'sophia', 'STAGE OUTFIT', 'Sophia', { kind: 'shuffle', name: 'Role Call', thing: 'changes to her next role (same as Switch)' }, 'charlie'),
+      role('chocolate', 'sophia-charlie', 'CANDY FACTORY KID!', 'Candy Factory Kid', { kind: 'projectile', name: 'Chocolate Rush', thing: 'a chocolate splash (sticky: slows)', sheet: 'sophia', sprite: 'fxchoc1', px: 80, speed: 12, dmg: 6, kb: 5, kbg: 0.06, r: 24, life: 50, cd: 45, slow: { mul: 0.7, t: 60 } }, 'charlie'),
+      role('dorothy', 'sophia-dorothy', 'DOROTHY!', 'Dorothy', { kind: 'projectile', name: 'Emerald Gale', thing: 'a little tornado that pushes people away', sheet: 'sophia', sprite: 'fxwind1', px: 96, speed: 8, dmg: 5, kb: 9, kbg: 0.08, ang: 55, r: 34, life: 60, cd: 55 }, 'dorothy'),
+      role('alice', 'sophia-alice', 'ALICE!', 'Alice', { kind: 'counter', name: 'Card Curtain', fx: ['sophia', 'fxcard', 4, 1.0], window: 24, mult: 1.4 }, 'alice'),
+      role('robin', 'sophia-robin', 'ROBIN HOOD!', 'Robin Hood', { kind: 'projectile', name: 'Encore Arrow', thing: 'a fast, straight arrow', sheet: 'sophia', sprite: 'fxarrow1', px: 96, speed: 19, dmg: 9, kb: 7, kbg: 0.09, r: 16, life: 50, cd: 50 }, 'robin'),
+    ],
+    ultimate: { name: 'Standing Ovation', sprite: 'sophia', type: 'catch', radius: 2.5, dur: 140, catchAt: 46, finishAt: 100, dmg: 24, kbMul: 1.45,
+      desc: 'holds up her gold award, the spotlight hits everyone close by, and she takes a bow',
+      poses: [[0, 'ult0'], [24, 'ult1'], [46, 'ult2'], [100, 'ult3']] },
+  });
+}
+
 // ---------- Kevin, Cloe and Janelle (ChatGPT's Nov 25 pack, restyled sheets) ----------
 {
   // Kevin Crist, "The Steel City Superfan": Mandi's husband. A Rally bar fills as he fights; full, Switch turns him
