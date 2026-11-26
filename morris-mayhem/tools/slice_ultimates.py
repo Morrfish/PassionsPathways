@@ -15,7 +15,7 @@ CFG = {
     'mandi-witch-ult':   [((62, 298), [165, 415, 695, 975, 9999], ULT), ((645, 866), [165, 415, 695, 975, 9999], PERS)],
     'mandi-mermaid-ult': [((362, 588), [165, 415, 695, 975, 9999], ULT), ((920, 1118), [165, 415, 695, 975, 9999], PERS)],
 }
-SCALE = 0.62
+SCALE = 1.0  # full size (0.62 looked soft on big screens)
 out = sys.argv[1]
 for arg in sys.argv[2:]:
     who, path = arg.split('=')

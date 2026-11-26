@@ -4,7 +4,7 @@ import sys, json, numpy as np
 from PIL import Image
 from scipy import ndimage as nd
 ART, OUT = sys.argv[1], sys.argv[2]
-SCALE = 0.62           # atlas px per sheet px
+SCALE = 1.0  # full size (0.62 looked soft on big screens)           # atlas px per sheet px
 PAD = 4
 
 def load(name):

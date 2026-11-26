@@ -10,7 +10,7 @@ from scipy import ndimage as nd
 
 CHARACTERS = {
     'jeffery': {
-        'scale': 0.62,
+        'scale': 1.0,
         'cols': [165, 415, 695, 975, 9999],
         'sheets': {
             'move.png': ['idle', 'run', 'jump', 'hurt'],
@@ -22,7 +22,7 @@ CHARACTERS = {
     },
     # Mandi's two outfits are two atlases; each also takes its own rows of the shared ultimate sheet.
     'mandi-witch': {
-        'scale': 0.62, 'cols': [165, 415, 695, 975, 9999],
+        'scale': 1.0, 'cols': [165, 415, 695, 975, 9999],
         'sheets': {
             'move.png': ['idle', 'run', 'jump', 'hurt'],
             'attacks.png': ['brush', 'says', 'boot', 'rules'],
@@ -32,7 +32,7 @@ CHARACTERS = {
         'props': [('pumpkin', 'specials.png', (990, 105)), ('dryer', 'specials.png', (1200, 540))],
     },
     'jadden': {
-        'scale': 0.62, 'cols': [165, 415, 695, 975, 9999],
+        'scale': 1.0, 'cols': [165, 415, 695, 975, 9999],
         'sheets': {
             'move.png': ['idle', 'run', 'jump', 'hurt'],
             'attacks.png': ['combo', 'header', 'sweep', 'volley'],
@@ -68,7 +68,7 @@ CHARACTERS = {
         'props': [],
     },
     'megan': {
-        'scale': 0.62, 'cols': [165, 415, 695, 975, 9999],
+        'scale': 1.0, 'cols': [165, 415, 695, 975, 9999],
         'sheets': {
             'move.png': ['idle', 'run', 'jump', 'hurt'],
             'attacks.png': ['hit', 'chapter', 'beat', 'ret'],
@@ -103,7 +103,7 @@ CHARACTERS = {
         'mainonly': {'specials.png': ['sketch']},  # the dragon is drawn separately when it springs out
     },
     'mandi-mermaid': {
-        'scale': 0.62, 'cols': [165, 415, 695, 975, 9999],
+        'scale': 1.0, 'cols': [165, 415, 695, 975, 9999],
         'sheets': {
             'move.png': ['idle', 'run', 'jump', 'hurt'],
             'attacks.png': ['shell', 'tide', 'fin', 'dive'],
@@ -114,7 +114,7 @@ CHARACTERS = {
     # Codee: no name tags under poses (labels on the left), so rows are given by hand. Shared sheets
     # (defense, transformation, ultimate) give each form its own rows.
     'codee': {
-        'scale': 0.62, 'cols': [215, 470, 780, 1080, 9999],
+        'scale': 1.0, 'cols': [215, 470, 780, 1080, 9999],
         'sheets': {
             'codee-land-movement.png': ['idle', 'run', 'jump', 'hurt'],
             'codee-land-attacks.png': ['whack', 'rake', 'sod', 'yard'],
@@ -134,7 +134,7 @@ CHARACTERS = {
             'codee-props.png': [(95, 322), (363, 588), (628, 776), (818, 1043)]},
     },
     'codee-clean': {
-        'scale': 0.62, 'cols': [215, 470, 780, 1080, 9999],
+        'scale': 1.0, 'cols': [215, 470, 780, 1080, 9999],
         'sheets': {
             'codee-clean-movement.png': ['idle', 'run', 'jump', 'hurt'],
             'codee-clean-attacks.png': ['sweep', 'duster', 'mop', 'trash'],
@@ -156,7 +156,7 @@ CHARACTERS = {
     # Haylie: labels on the left, no tags under the poses (except the ultimate sheet). The bear glows reach into
     # neighbouring cells, so the ultimate sheet gets column cuts; the thrown loaf is cut out as its own picture.
     'haylie': {
-        'scale': 0.62, 'cols': [175, 390, 640, 900, 9999],
+        'scale': 1.0, 'cols': [175, 390, 640, 900, 9999],
         'sheets': {
             'move.png': ['idle', 'run', 'jump', 'hurt'],
             'attacks.png': ['arm', 'upgo', 'step', 'grab'],
@@ -178,7 +178,7 @@ CHARACTERS = {
     # Sara: labels on the left, no tags under the poses; her tattoo effects come as separate pictures (extras),
     # so the baked-in rose / snakes / spider are dropped from the specials poses (mainonly).
     'sara': {
-        'scale': 0.62, 'cols': [185, 390, 650, 900, 9999],
+        'scale': 1.0, 'cols': [185, 390, 650, 900, 9999],
         'sheets': {
             'move.png': ['idle', 'run', 'jump', 'hurt'],
             'attacks.png': {'rows': ['edge', 'reaper', 'sweep', 'restraint'], 'cols': [185, 360, 620, 1000, 9999]},
@@ -199,7 +199,7 @@ CHARACTERS = {
     },
     # Jorie, Jaxston, Evea: name boxes at the left of each row, found automatically
     'jorie': {
-        'scale': 0.62, 'auto': True,
+        'scale': 1.0, 'auto': True,
         'sheets': {
             'move.png': ['idle', 'run', 'jump', 'hurt'],
             'attacks.png': ['bonk', 'roadkick', 'whip', 'sweep'],
@@ -213,7 +213,7 @@ CHARACTERS = {
                    'fxtent': 'fx-blue-tent.png', 'fxbike': 'fx-blue-bike.png'},
     },
     'jorie-rage': {
-        'scale': 0.62, 'auto': True,
+        'scale': 1.0, 'auto': True,
         'sheets': {
             'rage-move.png': ['idle', 'run', 'jump', 'hurt'],
             'rage-actions.png': ['xform', 'smash', 'clap', 'back'],
@@ -221,7 +221,7 @@ CHARACTERS = {
         'extras': {'fxshock': 'fx-rage-shockwave.png', 'fxaura': 'fx-rage-aura.png'},
     },
     'jaxston': {
-        'scale': 0.62, 'auto': True,
+        'scale': 1.0, 'auto': True,
         'sheets': {
             'move.png': ['idle', 'run', 'jump', 'hurt'],
             'attacks.png': ['leftfoot', 'round', 'spin', 'csweep'],
@@ -234,7 +234,7 @@ CHARACTERS = {
     },
     # Jaxston facing left: drawn as-is (not mirrored) so he still kicks with his LEFT foot
     'jaxston-left': {
-        'scale': 0.62, 'auto': True,
+        'scale': 1.0, 'auto': True,
         'sheets': {
             'move.png': ['idle', 'run', 'jump', 'hurt'],
             'attacks.png': ['leftfoot', 'round', 'spin', 'csweep'],
@@ -247,7 +247,7 @@ CHARACTERS = {
     # Cole Harrington: the black Marvel tee atlas has every shared pose; each printed-shirt form (Thor, Cap, Iron Man)
     # has its own movement poses and falls back to this atlas for the rest (see 'base' in build_sprites_js.py)
     'cole': {
-        'scale': 0.62, 'auto': True,
+        'scale': 1.0, 'auto': True,
         'sheets': {
             'move.png': ['idle', 'run', 'jump', 'hurt'],
             'attacks.png': ['combo', 'herokick', 'rising', 'lowsweep'],
@@ -260,13 +260,13 @@ CHARACTERS = {
         'extras': {'fxshield': 'fx-shield.png', 'fxion': 'fx-ion-beam.png', 'fxshock': 'fx-ground-shockwave.png', 'fxburst': 'fx-comic-burst.png',
                    'fxstars': 'fx-star-fade.png', 'fxweb': 'fx-web-strand.png', 'fxcomic': 'fx-comic-book.png'},
     },
-    'cole-thor': {'scale': 0.62, 'auto': True, 'sheets': {'thor-move.png': ['idle', 'run', 'jump', 'hurt']},
+    'cole-thor': {'scale': 1.0, 'auto': True, 'sheets': {'thor-move.png': ['idle', 'run', 'jump', 'hurt']},
                   'props': [('fxhammer', 'effects-props.png', (200, 200))]},
-    'cole-cap': {'scale': 0.62, 'auto': True, 'sheets': {'cap-move.png': ['idle', 'run', 'jump', 'hurt']}, 'extras': {'fxshield': 'fx-shield.png'}},
-    'cole-iron': {'scale': 0.62, 'auto': True, 'sheets': {'iron-move.png': ['idle', 'run', 'jump', 'hurt']}, 'extras': {'fxion': 'fx-ion-beam.png'}},
+    'cole-cap': {'scale': 1.0, 'auto': True, 'sheets': {'cap-move.png': ['idle', 'run', 'jump', 'hurt']}, 'extras': {'fxshield': 'fx-shield.png'}},
+    'cole-iron': {'scale': 1.0, 'auto': True, 'sheets': {'iron-move.png': ['idle', 'run', 'jump', 'hurt']}, 'extras': {'fxion': 'fx-ion-beam.png'}},
     # Jacqi Sue Morris: the SUV and sound wave come from her prop sheet
     'jacqi': {
-        'scale': 0.62, 'auto': True,
+        'scale': 1.0, 'auto': True,
         'sheets': {
             'move.png': ['idle', 'run', 'jump', 'hurt'],
             'attacks.png': ['swat', 'bump', 'whistle', 'csweep'],
@@ -281,7 +281,7 @@ CHARACTERS = {
     },
     # Sabir Rollerson: normal form (with the cosplay build-up standing poses) and the temporary anime form
     'sabir': {
-        'scale': 0.62, 'auto': True,
+        'scale': 1.0, 'auto': True,
         'sheets': {
             'move.png': ['idle', 'run', 'jump', 'hurt'],
             'attacks.png': ['panel', 'rkick', 'glift', 'bag'],
@@ -297,7 +297,7 @@ CHARACTERS = {
         'extras': {'fxcp0': 'fx-cp01.png', 'fxcp1': 'fx-cp02.png', 'fxcp2': 'fx-cp03.png', 'fxcp3': 'fx-cp04.png', 'fxcp4': 'fx-cp05.png'},
     },
     'sabir-anime': {
-        'scale': 0.62, 'auto': True,
+        'scale': 1.0, 'auto': True,
         'sheets': {
             'anime-move.png': ['idle', 'run', 'jump', 'hurt'],
             'anime-attacks.png': ['lpalm', 'ribkick', 'sreach', 'twirl'],
@@ -321,12 +321,12 @@ CHARACTERS = {
     },
     # Patty's ultimate facing left, with the SALE / EVERYTHING MUST GO! signs readable (drawn as-is, not mirrored)
     'patty-ult-left': {
-        'scale': 0.62, 'bodies': True, 'leftcut': 10, 'cols': [0, 390, 890, 1295, 9999],
+        'scale': 1.0, 'bodies': True, 'leftcut': 10, 'cols': [0, 390, 890, 1295, 9999],
         'sheets': {'patty-normal-ultimate-left-text-safe-v2-draft.png': ['ult', None]},
     },
     # Jeff's six Opening Day animals (one atlas for all of them)
     'jeff-animals': {
-        'scale': 0.62, 'bodies': True, 'minbody': 4000,
+        'scale': 1.0, 'bodies': True, 'minbody': 4000,
         'sheets': {
             'jeff-summon-buck-draft.png': ['buckidle', 'buckrun', 'buckleap', 'buckatk'],
             'jeff-summon-rabbit-draft.png': ['rabbitidle', 'rabbitrun', 'rabbitleap', 'rabbitatk'],
@@ -338,7 +338,7 @@ CHARACTERS = {
     },
     # Jeff's and Patty's Mayhem power-up looks (a pickup turns them on for a while)
     'jeffery-mayhem': {
-        'scale': 0.62, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'wipeyellow': True,
+        'scale': 1.0, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'wipeyellow': True,
         'sheets': {
             'jeff-mayhem-powerup-movement-draft.png': ['idle', 'run', 'jump', 'hurt'],
             'jeff-mayhem-powerup-attacks-draft.png': ['reel', 'boot', 'rush', 'counter'],
@@ -347,7 +347,7 @@ CHARACTERS = {
         },
     },
     'patty-mayhem': {
-        'scale': 0.62, 'bodies': True, 'equalcols': True, 'leftcut': 10,
+        'scale': 1.0, 'bodies': True, 'equalcols': True, 'leftcut': 10,
         'sheets': {
             'patty-mayhem-powerup-movement-draft.png': ['idle', 'run', 'jump', 'hurt'],
             'patty-mayhem-powerup-attacks-draft.png': ['ring', 'cut', 'price', 'kick'],
@@ -379,7 +379,7 @@ CHARACTERS = {
         },
     },
     'triple-trouble': {
-        'scale': 0.8, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'goldplates': True,
+        'scale': 1.0, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'goldplates': True,
         'cuty': {'three-head-beast-ultimate-personality-v2-draft.png': [(0, 309), (680, 756)]},
         'sheets': {
             'patty-three-head-beast-movement-draft.png': ['idle', 'run', 'jump', 'hurt'],
@@ -390,24 +390,24 @@ CHARACTERS = {
     },
     # Kevin, Cloe and Janelle (ChatGPT's restyled 'style correction' sheets)
     'kevin': {
-        'scale': 0.62, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'dropleft': 60, 'goldplates': True, 'titleband': (75, 200, 140), 'minbody': 8000,
+        'scale': 1.0, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'dropleft': 60, 'goldplates': True, 'titleband': (75, 200, 140), 'minbody': 8000,
         'sheets': {
             'kevin-normal-movement.png': ['idle', 'run', 'jump', 'hurt'],
             'kevin-normal-attacks.png': ['punch', 'kick', 'spiral', 'towel'],
             'kevin-transform-recovery.png': ['cup', 'slow', 'rally', 'fanrise'],
         },
     },
-    'kevin-ult': {'scale': 0.62, 'bodies': True, 'leftcut': 170, 'minbody': 8000,
+    'kevin-ult': {'scale': 1.0, 'bodies': True, 'leftcut': 170, 'minbody': 8000,
         'sheets': {'kevin-ultimate.png': ['ult', 'fult', 'pers', 'fpers']}},
     'kevin-fan': {
-        'scale': 0.62, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'dropleft': 60, 'goldplates': True, 'titleband': (75, 200, 140), 'minbody': 8000,
+        'scale': 1.0, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'dropleft': 60, 'goldplates': True, 'titleband': (75, 200, 140), 'minbody': 8000,
         'sheets': {
             'kevin-superfan-movement.png': ['idle', 'run', 'jump', 'hurt'],
             'kevin-superfan-attacks.png': ['finger', 'fspiral', 'ftowel', 'curtain'],
         },
     },
     'cloe': {
-        'scale': 0.62, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'dropleft': 60, 'goldplates': True, 'titleband': (75, 200, 140), 'minbody': 8000,
+        'scale': 1.0, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'dropleft': 60, 'goldplates': True, 'titleband': (75, 200, 140), 'minbody': 8000,
         'sheets': {
             'cloe-movement.png': ['idle', 'run', 'jump', 'hurt'],
             'cloe-basics-alphabet.png': ['paint', 'crayon', 'abc', 'alift'],
@@ -416,7 +416,7 @@ CHARACTERS = {
         },
     },
     'janelle': {
-        'scale': 0.62, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'dropleft': 60, 'goldplates': True, 'titleband': (75, 200, 140), 'minbody': 8000,
+        'scale': 1.0, 'bodies': True, 'equalcols': True, 'leftcut': 10, 'dropleft': 60, 'goldplates': True, 'titleband': (75, 200, 140), 'minbody': 8000,
         'sheets': {
             'janelle-movement.png': ['idle', 'run', 'jump', 'hurt'],
             'janelle-basics-recovery.png': ['pencil', 'ruler', 'book', 'plift'],
@@ -424,10 +424,10 @@ CHARACTERS = {
             'janelle-subject-defense.png': ['deng', 'dread', 'dmath', 'dsoc', 'dsci'],
         },
     },
-    'janelle-ult': {'scale': 0.62, 'bodies': True, 'leftcut': 170, 'minbody': 8000,
+    'janelle-ult': {'scale': 1.0, 'bodies': True, 'leftcut': 170, 'minbody': 8000,
         'sheets': {'janelle-wheel-ultimate.png': ['wheel', 'charge', 'ult', 'pers']}},
     'evea': {
-        'scale': 0.62, 'auto': True,
+        'scale': 1.0, 'auto': True,
         'sheets': {
             'move.png': ['idle', 'run', 'jump', 'hurt'],
             'attacks.png': ['tap', 'twirl', 'scoot', 'horn'],
@@ -440,7 +440,7 @@ CHARACTERS = {
         'extras': {'fxuni': 'fx-unicorn.png', 'fxstar': 'fx-rainbow-star.png', 'fxportal': 'fx-rainbow-portal.png', 'fxhoof': 'fx-hoof-trap.png'},
     },
     'evea-spirit': {
-        'scale': 0.62, 'auto': True,
+        'scale': 1.0, 'auto': True,
         'sheets': {
             'spirit-link.png': ['link', 'idle', 'run', 'back'],  # trance idle, spirit glide, spirit fades
             'spirit-specials.png': ['pulse', 'haunt', 'slift', 'grandma'],

@@ -6,7 +6,8 @@ usage: add_kevin_moves.py <rawdir> <outdir>"""
 import sys, os, json, shutil
 from PIL import Image
 raw, out = sys.argv[1:3]
-S_KEVIN, S_BUS, S_TERRY = 0.30, 0.41, 0.32   # the Bus art draws Kevin smaller (head 100 px vs 137)
+K = 1 / 0.62  # these sizes were set against Kevin's old 0.62 atlas; his atlas is now full size
+S_KEVIN, S_BUS, S_TERRY = 0.30 * K, 0.41 * K, 0.32 * K   # the Bus art draws Kevin smaller (head 100 px vs 137)
 S_HELI = S_KEVIN * 1.38  # the helicopter art draws Kevin smaller too, to fit the towel overhead (head-size check)
 def load(n):
     im = Image.open(f'{raw}/{n}').convert('RGBA'); bb = im.split()[3].point(lambda v: 255 if v > 10 else 0).getbbox(); return im.crop(bb), bb
