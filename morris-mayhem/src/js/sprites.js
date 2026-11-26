@@ -1573,7 +1573,7 @@ MM.SPRITES['cole-iron'] = {
 MM.SPRITES['grandma_morris'] = {
   src: 'img/grandma_morris-atlas.webp',
   standH: 300,
-  fscale: {"ultB0": 1.124, "ultB1": 1.124, "ultB2": 1.124, "ultB3": 1.124, "ultC0": 1.124, "ultC1": 1.124, "ultC2": 1.124, "ultC3": 1.124, "ultA0": 1.124, "ultA1": 1.124, "ultA2": 1.124, "ultA3": 1.124, "ult0": 1.124, "ult1": 1.124, "ult2": 1.124, "ult3": 1.124, "ent": 1.124, "taunt": 1.124, "win": 1.124, "lose": 1.124, "jump0": 1.08, "jump1": 1.08, "jump2": 1.08, "jump3": 1.08},
+  fscale: {"ultB0": 1.124, "ultB1": 1.124, "ultB2": 1.124, "ultB3": 1.124, "ultC0": 1.124, "ultC1": 1.124, "ultC2": 1.124, "ultC3": 1.124, "ultA0": 1.124, "ultA1": 1.124, "ultA2": 1.124, "ultA3": 1.124, "ult0": 1.124, "ult1": 1.124, "ult2": 1.124, "ult3": 1.124, "ent": 1.124, "taunt": 1.124, "win": 1.124, "lose": 1.124, "stalk0": 1.28, "stalk1": 1.28, "stalk2": 1.28, "stalk3": 1.28},
   frames: {
     'beet0': [0, 0, 185, 331, 92.0, 331.0],
     'beet1': [0, 0, 185, 331, 92.0, 331.0],
