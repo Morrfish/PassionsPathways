@@ -131,7 +131,41 @@ window.MM = window.MM || {};
     let n = 0; for (let k = 0; k < ms.pieces; k++) if ((f.pieces >> k) & 1) n++;
     f.mess = Math.round((n / ms.pieces) * 100);
     popText(G, f.x, f.y - f.h - 24, n + ' / ' + ms.pieces, ms.color || f.accent); MM.sfx('heal'); burst(G, f.x, f.y - f.h * 0.6, ms.color || f.accent, 10, 4);
+    if (ms.manual) { if (n >= ms.pieces) popText(G, f.x, f.y - f.h - 48, (ms.ready || 'READY!') + ' (Switch)', ms.goColor || f.accent); return; } // e.g. Haislie: the full set waits for Switch
     if (n >= ms.pieces && !f.dead && !(f.act && f.act.type === 'ult')) { f.act = { type: 'cleanup', t: 0, dur: ms.cupDur || 33, noGrav: !f.ground }; f.vy = Math.min(f.vy, 0); }
+  }
+  // Haislie's Chaos Emeralds: a real hit knocks one out of her (a colour she hasn't got yet if there is one; with all
+  // seven held she loses one of hers). One of each colour per Haislie, only she can pick them up, and they never get lost.
+  function dropGem(G, f) {
+    const ms = f.def.mess; if (f.formIdx !== 0 || (f.gemCd || 0) > G.frame) return;
+    const out = new Set(G.traps.filter((t) => t.owner === f && t.piece != null).map((t) => t.piece)), have = f.pieces || 0;
+    let pick = []; for (let k = 0; k < ms.pieces; k++) if (!((have >> k) & 1) && !out.has(k)) pick.push(k);
+    if (!pick.length) { for (let k = 0; k < ms.pieces; k++) if ((have >> k) & 1 && !out.has(k)) pick.push(k); if (!pick.length) return; }
+    const i = pick[Math.floor(Math.random() * pick.length)];
+    if ((have >> i) & 1) { f.pieces = have & ~(1 << i); let n = 0; for (let k = 0; k < ms.pieces; k++) if ((f.pieces >> k) & 1) n++; f.mess = Math.round((n / ms.pieces) * 100); }
+    f.gemCd = G.frame + 20; const dir = Math.random() < 0.5 ? -1 : 1;
+    G.traps.push({ owner: f, piece: i, ownerOnly: true, x: f.x, y: f.y - f.h * 0.6, vy: -9, vx: dir * (3 + Math.random() * 3), sp: { sheet: ms.gemSheet, sprite: ms.gemPrefix + i, px: ms.gemPx || 34, heal: 0, gem: true }, life: 1e9, armed: 0, age: 0, dir: 1 });
+    popText(G, f.x, f.y - f.h - 24, ms.dropText || 'EMERALD!', ms.color || f.accent);
+  }
+  // August's capture ball: holds one opponent briefly; only real catches count toward his evolution
+  function tryCapture(G, att, def, h, proj) {
+    if (def.captured || (def.capCd || 0) > G.frame || def.caught || (def.act && def.act.type === 'ult') || (att.capturing && att.capturing.captured && att.capturing.captured.by === att)) return false;
+    def.captured = { by: att, t: proj.capture.hold || 45 }; att.capturing = def; def.capCd = G.frame + (proj.capture.hold || 45) + (proj.capture.cd || 120);
+    def.act = null; def.hitstun = 0; def.vx = def.vy = 0;
+    const dmg = (h.dmg || 0) * power(att); def.damage = Math.min(999, def.damage + dmg); att.dealt += dmg; def.lastHit = att.slot; def.lastHitT = G.frame;
+    att.meter = Math.min(100, att.meter + dmg * 0.65);
+    const ms = att.def.mess;
+    if (ms && ms.catches && att.formIdx === 0) {
+      att.catches = Math.min(ms.catches, (att.catches || 0) + 1); att.mess = Math.round((att.catches / ms.catches) * 100);
+      popText(G, def.x, def.y - def.h - 24, 'CAUGHT! ' + att.catches + ' / ' + ms.catches, ms.color || att.accent);
+      if (att.catches >= ms.catches) popText(G, att.x, att.y - att.h - 48, (ms.ready || 'READY!') + ' (Switch)', ms.goColor || att.accent);
+    } else popText(G, def.x, def.y - def.h - 24, 'CAUGHT!', att.accent);
+    burst(G, def.x, def.y - def.h / 2, '#ffffff', 14, 5); MM.sfx('special');
+    return true;
+  }
+  function releaseCapture(G, d) {
+    const c = d.captured; if (!c) return; d.captured = null; if (c.by && c.by.capturing === d) c.by.capturing = null;
+    d.invuln = Math.max(d.invuln, 12); d.vy = -7; d.vx = (c.by ? sgn(d.x - c.by.x) || 1 : 1) * 3; burst(G, d.x, d.y - d.h / 2, '#ff5050', 12, 5);
   }
   function sleepPulse(G, f) { // male opponents close by doze off for a moment (a hit wakes them)
     const sl = f.def.mess.sleep, r = sl.radius * f.h;
@@ -171,7 +205,7 @@ window.MM = window.MM || {};
 
   function backToWork(G, f) {
     const ex = f.def.mess.exhaust; // e.g. Siren: out of ideas, can't move or act for exactly 2 s (still gets hit and knocked around)
-    applyForm(f, 0); f.clean = 0; f.mess = 0; f.pieces = 0;
+    applyForm(f, 0); f.clean = 0; f.mess = 0; f.pieces = 0; f.catches = 0;
     if (ex) f.exhaust = ex;
     const ta = f.def.mess.tiredAfter; // e.g. Kevin: worn out after the superfan form, slower for exactly 10 s (can still fight)
     if (ta) { f.tiredT = ta.t; f.tiredMul = ta.mul; }
@@ -278,6 +312,11 @@ window.MM = window.MM || {};
     if (f.out) return;
     if (f.dead > 0) { if (--f.dead === 0) respawn(G, f); return; }
     if (f.lag > 0) { f.lag--; return; }
+    if (f.captured) { // in August's capture ball: let go when it runs out, or if he is hit, KO'd or gone
+      const c = f.captured, o = c.by;
+      if (--c.t <= 0 || !o || o.dead || o.out || o.hitstun > 0 || o.caught || G.over) releaseCapture(G, f);
+      else { f.vx = 0; f.vy = 0; f.anim++; return; }
+    }
     if (f.caught) { // held by someone's ultimate until its finisher (or until it is cancelled)
       const o = f.caught;
       if (o.dead || o.out || !o.act || o.act.type !== 'ult') f.caught = null;
@@ -459,7 +498,7 @@ window.MM = window.MM || {};
       f.vx *= 0.8;
       if (a.t % 6 === 0) part(G, { x: f.x + (Math.random() - 0.5) * f.w * 2, y: f.y - Math.random() * f.h, color: '#d9f3ff', size: 10, life: 20, max: 20, type: 'smoke' });
       if (a.t >= a.dur) {
-        f.act = null; const ms = f.def.mess; f.mess = 0; applyForm(f, 1); f.clean = ms.cleanFrames;
+        f.act = null; const ms = f.def.mess; f.mess = 0; f.pieces = 0; f.catches = 0; applyForm(f, 1); f.clean = ms.cleanFrames;
         if (ms.sleep) sleepPulse(G, f);
         burst(G, f.x, f.y - f.h / 2, '#ffffff', 30, 8); ring(G, f.x, f.y - f.h / 2, f.def.mess.goColor || '#4aa8e8');
         popText(G, f.x, f.y - f.h - 24, ms.go || 'CLEAN FREAK!', ms.goColor || '#4aa8e8'); MM.sfx('heal');
@@ -547,9 +586,10 @@ window.MM = window.MM || {};
         if (!f.ground) { f.vy = Math.min(f.vy, 2); f.vx *= 0.95; }
         if (a.t === 9) {
           const n = sp.count || 1;
+          if (sp.cycle) { f.partnerI = ((f.partnerI ?? -1) + 1) % sp.cycle.length; sp = Object.assign({}, sp, { sprite: sp.cycle[f.partnerI], anim: sp.cycleAnim ? sp.cycleAnim[f.partnerI] : sp.anim }); if (sp.names) popText(G, f.x, f.y - f.h - 24, sp.names[f.partnerI] + '!', f.accent); } // e.g. August's Element Toss: next element in order
           for (let i = 0; i < n; i++) {
             const ang = n > 1 ? (i - (n - 1) / 2) * (sp.spread || 0.2) : 0;
-            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, sprite: sp.sprites ? sp.sprites[i % sp.sprites.length] : sp.sprite, sheet: sp.sheet, anim: sp.anim, animOnce: sp.animOnce, px: sp.px, scale: sp.scale, spin: sp.spin, puddle: sp.puddle, slow: sp.slow, bounce: sp.bounce, boomer: sp.boomerang, pull: sp.pull, line: sp.line, dir: f.face });
+            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, sprite: sp.sprites ? sp.sprites[i % sp.sprites.length] : sp.sprite, sheet: sp.sheet, anim: sp.anim, animOnce: sp.animOnce, px: sp.px, scale: sp.scale, spin: sp.spin, puddle: sp.puddle, slow: sp.slow, bounce: sp.bounce, boomer: sp.boomerang, pull: sp.pull, line: sp.line, capture: sp.capture, dir: f.face });
           }
         }
       },
@@ -689,9 +729,11 @@ window.MM = window.MM || {};
       tick(G, f, sp, a) {
         if (!f.ground) f.vy = Math.min(f.vy, 2);
         if (a.t === 12) {
-          const n = (sp.sprites || [null]).length;
+          let sprites = sp.sprites;
+          if (sp.cycle) { f.partnerI = ((f.partnerI ?? -1) + 1) % sp.cycle.length; sprites = [sp.cycle[f.partnerI]]; if (sp.names) popText(G, f.x, f.y - f.h - 24, sp.names[f.partnerI] + '!', f.accent); } // e.g. August's Partner Ball: next partner in order
+          const n = (sprites || [null]).length;
           for (let i = 0; i < n; i++) {
-            spawnProj(G, f, { x: f.x + f.face * (20 - i * 34), y: f.y - 18, vx: f.face * (sp.speed + i * 0.7), vy: 0, r: 20, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: 45, life: sp.life || 95, ground: true, fall: true, sprite: sp.sprites && sp.sprites[i], anim: sp.anim, scale: sp.scale, emoji: sp.emoji, sheet: sp.sheet, dir: f.face, runner: true });
+            spawnProj(G, f, { x: f.x + f.face * (20 - i * 34), y: f.y - 18, vx: f.face * (sp.speed + i * 0.7), vy: 0, r: 20, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: 45, life: sp.life || 95, ground: true, fall: true, sprite: sprites && sprites[i], anim: sp.anim, scale: sp.scale, emoji: sp.emoji, sheet: sp.sheet, dir: f.face, runner: true });
           }
           if (sp.heal) { f.damage = Math.max(0, f.damage - sp.heal); popText(G, f.x, f.y - f.h - 20, '+' + sp.heal + ' REST', '#9ff0d0'); } // e.g. Giant Patty catches her breath while the dog charges
           MM.sfx('jump');
@@ -970,6 +1012,8 @@ window.MM = window.MM || {};
     if (def.invuln > 0 || def.dead || def.out) return false;
     if (MM.sameTeam(G, att, def) && !G.ff) return false; // no friendly fire
     const da = def.act;
+    if (def.captured) releaseCapture(G, def); // a hit knocks you out of a capture ball
+    if (proj && proj.capture && !(da && da.counter) && tryCapture(G, att, def, h, proj)) return true;
     if (da && da.counter) { // counter!
       if (proj) { proj.owner = def; proj.vx = -proj.vx * 1.2; proj.dir = -proj.dir; proj.hit = new Set(); proj.life = 90; }
       else if (att) {
@@ -988,6 +1032,7 @@ window.MM = window.MM || {};
     if (da && da.type === 'ult') releaseUlt(da);
     if (att) { att.dealt += dmg; def.lastHit = att.slot; def.lastHitT = G.frame; }
     if (def.def.mess && def.def.mess.hurt && att && att !== def) addMess(G, def, def.def.mess.hurt);
+    if (def.def.mess && def.def.mess.dropOnHit && att && att !== def && dmg >= 2) dropGem(G, def);
     if (att && att.def.mess && !MM.sameTeam(G, att, def)) { const cast = proj ? proj.cast : att.act; if (cast && cast.type !== 'ult' && !cast.messHit) { cast.messHit = true; addMess(G, att, att.def.mess.hit); } }
     burst(G, hx, hy, '#fff', 4 + (dmg | 0), 4 + dmg * 0.3);
     const big = dmg >= 12 || (h.kb || 0) > 11; // ChatGPT's hit art: a small spark, or a big burst for heavy hits
@@ -1071,8 +1116,14 @@ window.MM = window.MM || {};
       t.life--; t.age = (t.age || 0) + 1; if (t.armed > 0) t.armed--;
       const s = surfaceBelow(G, t.x, t.y);
       if (s === null || t.y < s) { t.vy += 0.6; t.y += t.vy; t.x += t.vx || 0; if (s !== null && t.y >= s) { t.y = s; t.vy = 0; t.vx = 0; } }
-      if (t.y > 1500) t.life = 0;
+      if (t.ownerOnly && (t.y > 1200 || Math.abs(t.x - MM.spawnX(G.stage)) > 2600)) { const m = G.stage.main; t.x = Math.max(m.left + 80, Math.min(m.right - 80, t.owner.x)); t.y = -400; t.vy = 0; t.vx = 0; } // never lost
+      else if (t.y > 1500) t.life = 0;
       if (t.armed > 0) continue;
+      if (t.ownerOnly) { // e.g. Haislie's emeralds: only she can pick them up
+        const o = t.owner, pb = { x: t.x - 30, y: t.y - 44, w: 60, h: 48 };
+        if (t.age > 20 && !o.dead && !o.out && o.formIdx === 0 && overlap(pb, MM.hurtbox(o))) { collectPiece(G, o, t.piece); t.life = 0; }
+        continue;
+      }
       if (t.sp.heal) { // a snack (e.g. Jacqi's orange slices): the first one to grab it heals; the thrower only after a second
         const pb = { x: t.x - 30, y: t.y - 40, w: 60, h: 44 };
         const d = G.fighters.find((o) => !o.dead && !o.out && (o !== t.owner || t.age > 60) && overlap(pb, MM.hurtbox(o)));
@@ -1128,7 +1179,8 @@ window.MM = window.MM || {};
       if (f.super) { f.super = null; applyForm(f, 0); }
       f.exhaust = 0; f.tiredT = 0;
       if (f.def.powerup && f.formIdx) { applyForm(f, 0); f.powerT = 0; }
-      if (f.def.mess) { if (f.formIdx) applyForm(f, 0); f.mess = 0; f.clean = 0; f.pieces = 0; G.traps = G.traps.filter((t) => !(t.owner === f && t.piece != null)); }
+      if (f.captured) releaseCapture(G, f);
+      if (f.def.mess) { if (f.formIdx) applyForm(f, 0); f.mess = 0; f.clean = 0; f.pieces = 0; f.catches = 0; G.traps = G.traps.filter((t) => !(t.owner === f && t.piece != null)); }
       f.act = null; f.hitstun = 0; f.buff = null; f.slow = null; f.vx = f.vy = 0; f.caught = null; f.meter = 0;
       if (f.stocks <= 0) { f.out = true; f.x = 0; f.y = -3000; }
       else { f.dead = 80; f.y = -3000; }

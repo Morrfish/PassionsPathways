@@ -570,6 +570,62 @@ MM.FIGHTERS.push({
     poses: [[0, 'ult0'], [22, 'ult1'], [44, 'ult2'], [92, 'ult3']] },
 });
 
+// ---------- Haislie and August Rollerson (ChatGPT, Nov 26): Haylie and Sabir's older two. Their own body art; the gems and
+// elemental effects are ChatGPT's too. Haislie: a real hit knocks one of her 7 gems loose; collect all 7 -> Switch = Gem Surge.
+// August: his capture bubble holds someone for a moment; 6 real catches -> Switch = he evolves. ----------
+{
+  const hzSpecials = (k) => ({
+    neutral: { kind: 'projectile', name: 'Gem Ring', thing: 'a spinning golden ring', sheet: 'haislie', sprite: 'fxgemring', px: 56 * k, spin: 0.3, speed: 13, dmg: 6 * k, kb: 5.5, kbg: 0.06, r: 24, life: 45, cd: 40 },
+    side: { kind: 'dash', name: 'Blue Streak', speed: 16, dur: 18, dmg: 8 * k, kb: 7.5, kbg: 0.1, ang: 30, cd: 80, box: [-10, -100, 110, 100] },
+    up: { kind: 'rise', name: 'Sky Lift', power: 20, forward: 3, dmg: 6, kb: 6, kbg: 0.06 },
+    down: { kind: 'counter', name: 'Hot Potato', window: 20, mult: 1.35 },
+  });
+  const hzForm = (form, extra) => Object.assign({ form, sprite: 'haislie', color: '#2a49b8', accent: '#ffd24a', skin: '#8d5a3b', hair: '#2b1a10',
+    attackNames: { jab: 'Spark Jab', side: 'Palm Push', up: 'Lift Wave', down: 'Low Flame Sweep', air: 'Spin Kick, Dash Kick, Lift Wave, Drop Kick' } }, extra);
+  MM.FIGHTERS.push({
+    id: 'haislie', name: 'Haislie Rollerson', title: 'The Gem Dash Kid', photo: 'img/haislie.png', sprite: 'haislie',
+    color: '#2a49b8', accent: '#ffd24a', skin: '#8d5a3b', hair: '#2b1a10',
+    stats: { speed: 7.8, air: 7.0, jump: 16.0, weight: 0.86, power: 0.96, size: 0.84 },
+    taunt: 'Too slow!',
+    mess: { action: 0, hit: 0, pieces: 7, manual: true, dropOnHit: true, gemSheet: 'haislie', gemPrefix: 'fxgem', gemPx: 34, cleanFrames: 480, cupDur: 36, backDur: 24,
+      ready: 'ALL 7 GEMS!', go: 'GEM SURGE!', back: 'GEMS SPENT', dropText: 'GEM!', color: '#ffe14d', goColor: '#ffd24a', bar: '#3fb6ff', formBar: '#ffd24a', hue: 50 },
+    forms: [
+      hzForm('normal', { formName: 'GEMS SPENT', title: 'Haislie', stats: { speed: 7.8, air: 7.0, jump: 16.0, weight: 0.86, power: 0.96, size: 0.84 }, specials: hzSpecials(1) }),
+      hzForm('surge', { formName: 'GEM SURGE!', title: 'Gem Surge', glow: '#ffd24a', stats: { speed: 10.1, air: 8.4, jump: 17.5, weight: 0.86, power: 1.2, size: 0.84 }, specials: hzSpecials(1.25) }),
+    ],
+    ultimate: { name: 'Seven Gem Finale', sprite: 'haislie', type: 'catch', radius: 2.6, dur: 140, catchAt: 46, finishAt: 100, dmg: 24, kbMul: 1.45,
+      orbit: ['fxgem0', 'fxgem1', 'fxgem2', 'fxgem3', 'fxgem4', 'fxgem5', 'fxgem6'],
+      desc: 'calls all seven gems into a spinning ring around everyone close by, then they burst outward',
+      poses: [[0, 'ult0'], [24, 'ult1'], [46, 'ult2'], [100, 'ult3']] },
+  });
+
+  const auSpecials = (k) => ({
+    neutral: { kind: 'projectile', name: 'Element Toss', thing: 'lightning, a vine, a fireball or a splash, in turn', sheet: 'august',
+      cycle: ['fxzap2', 'fxvine2', 'fxfire2', 'fxwater2'], names: ['Zap', 'Vine', 'Flame', 'Splash'], px: 80 * k, count: k > 1 ? 3 : 1, spread: 0.18, speed: 12, dmg: 6 * k, kb: 5.5, kbg: 0.06, r: 24, life: 50, cd: 40 },
+    side: { kind: 'projectile', name: 'Catch You!', thing: 'a capture bubble: it holds whoever it hits for a moment (6 catches = evolve)', sheet: 'august', sprite: 'fxbubble1', px: 70,
+      speed: 10, dmg: 4, kb: 4, kbg: 0.04, r: 26, life: 55, cd: 90, capture: { hold: 45, cd: 120 } },
+    up: { kind: 'rise', name: 'Sky Lift', power: 19.5 + (k > 1 ? 1.5 : 0), forward: 3, dmg: 6, kb: 6, kbg: 0.06 },
+    down: { kind: 'counter', name: 'Cute Charm', fx: ['august', 'fxsparkle', 4, 1.0], window: 22, mult: 1.35 },
+  });
+  const auForm = (form, extra) => Object.assign({ form, sprite: 'august', color: '#2a4fa8', accent: '#e23b3b', skin: '#8d5a3b', hair: '#2b1a10',
+    attackNames: { jab: 'Zap Jab', side: 'Vine Whip', up: 'Flame Flick', down: 'Splash Sweep', air: 'Spin Zap, Vine Kick, Flame Up, Splash Drop' } }, extra);
+  MM.FIGHTERS.push({
+    id: 'august', name: 'August Rollerson', title: 'The Little Charmer', photo: 'img/august.png', sprite: 'august', male: true,
+    color: '#2a4fa8', accent: '#e23b3b', skin: '#8d5a3b', hair: '#2b1a10',
+    stats: { speed: 7.2, air: 6.8, jump: 15.6, weight: 0.8, power: 0.95, size: 0.76 },
+    taunt: "I know I'm cute!",
+    mess: { action: 0, hit: 0, catches: 6, cleanFrames: 480, cupDur: 36, backDur: 24,
+      ready: '6 CATCHES!', go: 'EVOLVED!', back: 'BACK TO NORMAL', color: '#ff6b6b', goColor: '#ffd24a', bar: '#e23b3b', formBar: '#ffd24a', hue: 0 },
+    forms: [
+      auForm('normal', { formName: 'BACK TO NORMAL', title: 'August', stats: { speed: 7.2, air: 6.8, jump: 15.6, weight: 0.8, power: 0.95, size: 0.76 }, specials: auSpecials(1) }),
+      auForm('evolved', { formName: 'EVOLVED!', title: 'Evolved', glow: '#7fd8ff', stats: { speed: 8.6, air: 7.6, jump: 16.8, weight: 0.86, power: 1.2, size: 0.76 }, specials: auSpecials(1.3) }),
+    ],
+    ultimate: { name: 'Tidal Blast', sprite: 'august', type: 'beam', dur: 170, beamAt: 70, beamEnd: 118, len: 1300, beamX: 120, beamY: 0.6, beamTh: 130, dmg: 26, kbMul: 1.45,
+      desc: 'gathers all four elements, then fires a huge water-and-lightning blast straight ahead',
+      poses: [[0, 'ult0'], [30, 'ult1'], [70, 'ult2'], [118, 'ult3']] },
+  });
+}
+
 // ---------- Kevin, Cloe and Janelle (ChatGPT's Nov 25 pack, restyled sheets) ----------
 {
   // Kevin Crist, "The Steel City Superfan": Mandi's husband. A Rally bar fills as he fights; full, Switch turns him

@@ -9,7 +9,7 @@ from PIL import Image
 sys.path.insert(0, __file__.rsplit('/', 1)[0])
 from slice_grid44 import cells
 raw, out, sid = sys.argv[1:4]
-STAND = {'jaicelynn': 290, 'harley': 280}.get(sid, 300)  # her specials sheet is drawn small, so 290 keeps every sheet at or below its own size; standing (idle0) height in the atlas, like the other full-size fighters (she's drawn smaller, so it stays sharp)
+STAND = {'jaicelynn': 290, 'harley': 280, 'haislie': 300, 'august': 290}.get(sid, 300)  # her specials sheet is drawn small, so 290 keeps every sheet at or below its own size; standing (idle0) height in the atlas, like the other full-size fighters (she's drawn smaller, so it stays sharp)
 CFG = {
     'grandma_morris': {'grandma-morris-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
                        'grandma-morris-ground-4x4-v2.png': (1.04, ['trowel', 'rake', 'beet', 'kick']),
@@ -31,15 +31,45 @@ CFG = {
                'harley-aerials-4x4-v2.png': (1.11, ['anair', 'afair', 'auair', 'adair']),
                'harley-specials-4x4-v2.png': (1.07, ['hand', 'temper', 'rocket', 'guard']),  # Talk to the Hand, Tiny Temper, Stomp Rocket, Nope Guard
                'harley-personality-4x4-v2.png': (1.13, ['pent', 'ptaunt', 'pwin', 'plose'])},
+    'haislie': {'haislie-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
+                'haislie-ground-4x4-v2.png': (0.97, ['spark', 'palm', 'tele', 'sweep']),
+                'haislie-aerials-4x4-v2.png': (0.96, ['anair', 'afair', 'auair', 'adair']),
+                'haislie-specials-4x4-v2.png': (1.0, ['rush', 'hammer', 'sky', 'flame']),
+                'haislie-personality-4x4-v2.png': (0.98, ['pent', 'ptaunt', 'pwin', 'plose'])},
+    'august': {'august-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
+               'august-ground-4x4-v2.png': (1.0, ['zap', 'vine', 'flame', 'splash']),
+               'august-aerials-4x4-v2.png': (0.99, ['anair', 'afair', 'auair', 'adair']),
+               'august-specials-4x4-v2.png': (1.01, ['ball', 'catch', 'lift', 'charm']),
+               'august-personality-4x4-v2.png': (1.05, ['pent', 'ptaunt', 'pwin', 'plose'])},
 }[sid]
 # a brand-new fighter (no old atlas to keep from): ultimate 2x2 (face size vs movement) and an effects 4x4 (rows of 4 phases)
-NEW = {'harley': {'ult': ('harley-ultimate-2x2-v2.png', 2.27), 'fx': ('harley-sass-effects-4x4-v2.png', ['fxpalm', 'fxstomp', 'fxguard', 'fxtantrum'])}}.get(sid)
+# fx: (sheet, frame names per row (None = skip that row), rows, cols); 'cup': a 2x2 of power-up poses -> cup0..3
+NEW = {'harley': {'ult': ('harley-ultimate-2x2-v2.png', 2.27), 'fx': [('harley-sass-effects-4x4-v2.png', ['fxpalm', 'fxstomp', 'fxguard', 'fxtantrum'], 4, 4)]},
+       'haislie': {'ult': ('haislie-ultimate-2x2-v2.png', 1.92), 'cup': ('haislie-chaos-control-2x2-v2.png', 1.87),
+                   'fx': [('haislie-chaos-emeralds-effects-v2.png', [['fxgem0', 'fxgem1', 'fxgem2', 'fxgem3'], ['fxgem4', 'fxgem5', 'fxgem6', 'fxgemring']], 2, 4)]},
+       'august': {'ult': ('august-ultimate-2x2-v2.png', 2.0), 'cup': ('august-evolve-2x2-v2.png', 1.87),
+                  'fx': [('august-partner-element-effects-4x4-v2.png', ['fxzap', 'fxvine', 'fxfire', 'fxwater'], 4, 4),
+                         ('august-ball-capture-effects-4x4-v2.png', [None, None, 'fxbubble', 'fxsparkle'], 4, 4)]}}.get(sid)
 KEEP = ('ultA', 'ultB', 'ultC', 'cheer', 'fx')
 import os
 oldF = json.load(open(f'{out}/{sid}-frames.json')) if not NEW else {}; oldA = Image.open(f'{out}/{sid}-atlas.webp').convert('RGBA') if not NEW else None
 grid = {fn: cells(f'{raw}/{fn}') for fn in CFG}
 first = next(iter(CFG)); base = STAND / grid[first][0][0].height
 cuts = []
+def unball(c):  # clear the red-and-white ball (and its button) sitting on the bubble's rim
+    a = np.array(c); r, g, b, al = [a[..., i].astype(int) for i in range(4)]
+    red = (r > 150) & (g < 90) & (b < 90) & (al > 100); ys, xs = np.where(red)
+    if not len(xs): return c
+    cx, cy = (xs.min() + xs.max()) / 2, (ys.min() + ys.max()) / 2; rad = max(xs.max() - xs.min(), ys.max() - ys.min()) * 0.85 + 6
+    yy, xx = np.mgrid[:a.shape[0], :a.shape[1]]; hole = (xx - cx) ** 2 + (yy - cy) ** 2 < rad ** 2; a[..., 3][hole] = 0
+    # fill the bite with the bubble's own bottom edge, mirrored (bubbles are round)
+    al2 = a[..., 3] > 24; ys2 = np.where(al2.any(1))[0]; xs2 = np.where(al2.any(0))[0]
+    if len(ys2) and len(xs2):
+        ccx, R = (xs2.min() + xs2.max()) / 2, (xs2.max() - xs2.min()) / 2; ccy = ys2.max() - R  # the bubble's circle, from its width and bottom
+        src_y = np.clip((2 * ccy - yy).astype(int), 0, a.shape[0] - 1)
+        fill = hole & ((xx - ccx) ** 2 + (yy - ccy) ** 2 <= R * R) & (src_y > ccy)
+        if a[..., 3][int(ccy), int(ccx)] > 100: a[fill] = a[src_y[fill], xx[fill]]  # only solid bubbles (not the open rings)
+    out = Image.fromarray(a); bb = out.split()[3].point(lambda v: 255 if v > 24 else 0).getbbox(); return out.crop(bb) if bb else out
 def anchor(c):
     a = np.array(c)[..., 3] > 100; rows = np.where(a.any(1))[0]; foot = a[rows[-1] - min(8, len(rows) - 1):rows[-1] + 1].any(0); xs = np.where(foot)[0]
     return (xs.min() + xs.max()) / 2 if len(xs) else c.width / 2
@@ -50,14 +80,19 @@ for fn, (face, names) in CFG.items():
             c = c.resize((max(1, round(c.width * s)), max(1, round(c.height * s))), Image.LANCZOS)
             cuts.append((f'{name}{i}', c, anchor(c), c.height))
 if NEW:
-    fn, face = NEW['ult']; U = Image.open(f'{raw}/{fn}').convert('RGBA'); W, H = U.size
-    for i in range(4):
-        c = U.crop(((i % 2) * W // 2, (i // 2) * H // 2, (i % 2 + 1) * W // 2, (i // 2 + 1) * H // 2)); c = c.crop(c.split()[3].point(lambda v: 255 if v > 24 else 0).getbbox())
-        sc = base / face; assert sc <= 1; c = c.resize((round(c.width * sc), round(c.height * sc)), Image.LANCZOS); cuts.append((f'ult{i}', c, anchor(c), c.height))
-    fn, names = NEW['fx']
-    for name, row in zip(names, cells(f'{raw}/{fn}')):
-        for i, c in enumerate(row):
-            sc = min(1, 200 / max(c.size)); c = c.resize((max(1, round(c.width * sc)), max(1, round(c.height * sc))), Image.LANCZOS); cuts.append((f'{name}{i}', c, c.width / 2, c.height / 2))
+    for key, pre in (('ult', 'ult'), ('cup', 'cup')):
+        if key not in NEW: continue
+        fn, face = NEW[key]; U = Image.open(f'{raw}/{fn}').convert('RGBA'); W, H = U.size
+        for i in range(4):
+            c = U.crop(((i % 2) * W // 2, (i // 2) * H // 2, (i % 2 + 1) * W // 2, (i // 2 + 1) * H // 2)); c = c.crop(c.split()[3].point(lambda v: 255 if v > 24 else 0).getbbox())
+            sc = base / face; assert sc <= 1; c = c.resize((round(c.width * sc), round(c.height * sc)), Image.LANCZOS); cuts.append((f'{pre}{i}', c, anchor(c), c.height))
+    for fn, names, nr, nc in NEW['fx']:
+        for name, row in zip(names, cells(f'{raw}/{fn}', nr=nr, nc=nc)):
+            if name is None: continue
+            for i, c in enumerate(row):
+                nm = name[i] if isinstance(name, list) else f'{name}{i}'
+                if nm.startswith('fxbubble'): c = unball(c)  # a plain bubble: take the capture ball off the top
+                sc = min(1, 200 / max(c.size)); c = c.resize((max(1, round(c.width * sc)), max(1, round(c.height * sc))), Image.LANCZOS); cuts.append((nm, c, c.width / 2, c.height / 2))
 k_old = STAND / oldF['idle0'][3] if oldF else 1  # the kept v1 frames were cut with idle0 = this tall
 seen = {}
 for n, (x, y, w, h, ax, ay) in oldF.items():

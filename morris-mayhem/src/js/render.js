@@ -193,10 +193,13 @@ window.MM = window.MM || {};
     // player-color ring at the feet (keeps two of the same fighter apart without recoloring the art)
     if (f.ground) { g.save(); g.strokeStyle = f.team ? MM.TEAM_COLORS[f.team] : MM.PLAYER_COLORS[f.slot]; g.lineWidth = 4; g.globalAlpha *= 0.85; g.beginPath(); g.ellipse(0, -2, f.w * 0.9, 8, 0, 0, TAU); g.stroke(); g.restore(); }
     g.scale(flip * k, k);
+    if (f.def.glow) { g.shadowColor = f.def.glow; g.shadowBlur = 26 + 10 * Math.sin(G.frame * 0.25); } // e.g. Haislie's Gem Surge, August evolved
     g.drawImage(im, fr[0], fr[1], fr[2], fr[3], -fr[4], -fr[5], fr[2], fr[3]);
+    g.shadowBlur = 0;
     const lvl = f.def.mess && f.def.mess.dirt && f.formIdx === 0 && !(f.act && f.act.type === 'cleanup') ? (f.mess >= 100 ? 3 : f.mess >= 66 ? 2 : f.mess >= 33 ? 1 : 0) : 0;
     if (lvl) g.drawImage(dirtFor(sh, frameName, fr, lvl), -fr[4], -fr[5]);
     g.restore();
+    if (f.captured && f.captured.by) drawFx(g, f.captured.by.def.sprite, 'fxbubble1', f.x, f.y - f.h * 0.5, f.h * 1.5 * (1 + 0.04 * Math.sin(G.frame * 0.4)), 0.85); // inside August's capture bubble
     if (f.def.fx && f.act && fsh) for (const e of f.def.fx) { // e.g. Sara's ink tattoo effects
       const a = f.act, on = e.act === a.type && (!e.name || e.name === a.name) && (!e.slot || e.slot === a.slot) && a.t >= e.t[0] && a.t < e.t[1];
       const ef = on && fsh.S.frames[e.pic]; if (!ef) continue;

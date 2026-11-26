@@ -13,14 +13,14 @@ def _bands(mask_1d, n, minsize):
         gaps = [runs[i + 1][0] - runs[i][-1] for i in range(len(runs) - 1)]; i = int(np.argmin(gaps))
         runs[i:i + 2] = [np.arange(runs[i][0], runs[i + 1][-1] + 1)]
     return [(r[0], r[-1] + 1) for r in runs]
-def cells(path, thr=24):
+def cells(path, thr=24, nr=4, nc=4):
     S = Image.open(path).convert('RGBA'); A = np.array(S); al = A[..., 3] > thr
     lab, n = nd.label(al); sz = nd.sum(al, lab, range(1, n + 1)); keep = np.isin(lab, [j + 1 for j in range(n) if sz[j] >= 0.0005 * al.sum()])
     A[..., 3][~keep] = 0; al = keep; S = Image.fromarray(A)
-    rows = _bands(al.any(1), 4, 8); out = []
-    assert len(rows) == 4, (path, rows)
+    rows = _bands(al.any(1), nr, 8); out = []
+    assert len(rows) == nr, (path, rows)
     for y0, y1 in rows:
-        cols = _bands(al[y0:y1].any(0), 4, 4); assert len(cols) == 4, (path, y0, cols)
+        cols = _bands(al[y0:y1].any(0), nc, 4); assert len(cols) == nc, (path, y0, cols)
         r = []
         for x0, x1 in cols:
             c = S.crop((x0, y0, x1, y1)); bb = c.split()[3].point(lambda v: 255 if v > thr else 0).getbbox(); r.append(c.crop(bb))
