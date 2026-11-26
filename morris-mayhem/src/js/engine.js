@@ -897,7 +897,7 @@ window.MM = window.MM || {};
         const i = t / u.every, last = i === u.count - 1;
         spawnProj(G, f, { x: f.x + f.face * 60 * f.s, y: f.y - (40 + (i % 3) * 30) * f.s, vx: f.face * u.speed, vy: ((i % 3) - 1) * 0.6, r: 22,
           dmg: last ? u.dmg * 2 : u.dmg, kb: last ? 9 * u.kbMul : 3, kbg: last ? 0.12 * u.kbMul : 0.02, ang: last ? 40 : 15, life: 70,
-          sprite: u.ball, anim: u.anim, scale: u.ballScale || 0.4, dir: f.face });
+          sprite: u.ball, anim: u.anim, scale: u.ballScale || 0.4, px: u.ballPx, dir: f.face });
         G.shake = Math.max(G.shake, 4);
       }
     } else if (u.type === 'decoy') { // e.g. Jorie's Cardboard Checkout: set up a cutout, run off, and it bursts on whoever is near it

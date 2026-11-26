@@ -530,6 +530,24 @@ MM.FIGHTERS = [
   }
 }
 
+// ---------- Jaicelynn (ChatGPT, Nov 26): phone, selfies, a purple four-wheeler and Taco Bell ----------
+MM.FIGHTERS.push({
+  id: 'jaicelynn', name: 'Jaicelynn Morris', title: 'The Four-Wheel Selfie Queen', photo: 'img/jaicelynn.png', sprite: 'jaicelynn',
+  color: '#1b1b1f', accent: '#b14bff', skin: '#f0c4a4', hair: '#8a5a32',
+  stats: { speed: 7.3, air: 6.8, jump: 15.4, weight: 0.92, power: 0.98, size: 0.95 },
+  attackNames: { jab: 'Phone Tap', side: 'Handlebar Shove', up: 'Wheel Uppercut', down: 'Flying Kick', air: 'Flying Kick, Wheel Uppercut' },
+  specials: {
+    neutral: { kind: 'projectile', name: 'Selfie Flash', thing: 'a camera flash ring', sprite: 'fxring', px: 60, speed: 13, dmg: 6, kb: 5.5, kbg: 0.06, r: 24, life: 40, cd: 40 },
+    side: { kind: 'dash', name: 'Four-Wheeler Rush', ride: true, speed: 15, dur: 30, dmg: 10, kb: 8.5, kbg: 0.12, ang: 30, cd: 140, box: [-100, -100, 210, 100] },
+    up: { kind: 'rise', name: 'Wheelie Launch', power: 19.5, forward: 4, dmg: 6, kb: 6, kbg: 0.06 },
+    down: { kind: 'trap', name: 'Taco Run', thing: 'a taco: the first one to grab it heals 4% (hers only after a second)', sprite: 'fxtaco', px: 56, heal: 4, toss: 5, life: 240, cd: 420 },
+  },
+  taunt: 'Wait, let me take a selfie!',
+  ultimate: { name: 'Live Más Rush', sprite: 'jaicelynn', type: 'catch', ahead: 3.4, rush: [60, 98, 13], dur: 168, catchAt: 60, finishAt: 100, dmg: 24, kbMul: 1.45,
+    desc: 'snaps a selfie, hops on her four-wheeler and rides through everyone in front of her in a Taco Bell blast',
+    poses: [[0, 'ultA0'], [34, 'ultB0'], [60, 'ultC0']] },
+});
+
 // ---------- Kevin, Cloe and Janelle (ChatGPT's Nov 25 pack, restyled sheets) ----------
 {
   // Kevin Crist, "The Steel City Superfan": Mandi's husband. A Rally bar fills as he fights; full, Switch turns him
@@ -679,6 +697,41 @@ MM.BOSS_FORMS = {
   jeffery: Object.assign({}, MM.GIANTS[0], { id: 'jeff_boss', stats: Object.assign({}, MM.GIANTS[0].stats, { size: 2.5, weight: 1.9 }), unlock: null }),
   patty: Object.assign({}, MM.GIANTS[1], { id: 'patty_boss', stats: Object.assign({}, MM.GIANTS[1].stats, { size: 2.5, weight: 2.0 }), unlock: null }),
 };
+// The grandmas (ChatGPT, Nov 26): secret fighters at the end of the roster, unlocked with a code (like the giants)
+MM.GIANTS.push(
+  { // Grandma Morris: garden grandma. Apples, a veggie basket, a beanstalk and a vine shield.
+    id: 'grandma_morris', unlock: 'GARDENGRANNY', family: 'The grandmas', name: 'Grandma Morris', title: 'The Garden Grandma', photo: 'img/grandma_morris.png', sprite: 'grandma_morris',
+    color: '#2f6b4a', accent: '#d9302b', skin: '#f0c4a4', hair: '#e8e8e8',
+    stats: { speed: 6.4, air: 6.0, jump: 14.6, weight: 1.0, power: 1.04, size: 0.95 },
+    attackNames: { jab: 'Trowel Poke', side: 'Rake Sweep', up: 'Beet Pull', down: 'Garden Kick', air: 'Garden Kick, Beet Pull' },
+    specials: {
+      neutral: { kind: 'projectile', name: 'Apple Toss', thing: 'a shiny red apple', sprite: 'fxapple', px: 46, speed: 11, vy: -4, grav: 0.25, dmg: 7, kb: 6, kbg: 0.07, r: 20, life: 80, cd: 45 },
+      side: { kind: 'projectile', name: 'Harvest Basket', thing: 'a carrot, a tomato and an apple', sprites: ['fxcarrot', 'fxtomato', 'fxapple'], px: 40, count: 3, spread: 0.22, speed: 11, dmg: 3, kb: 4.5, kbg: 0.05, r: 16, life: 50, cd: 70 },
+      up: { kind: 'rise', name: 'Beanstalk Boost', power: 19.5, forward: 3, dmg: 5, kb: 6, kbg: 0.06 },
+      down: { kind: 'counter', name: 'Vine Shield', window: 20, mult: 1.3 },
+    },
+    taunt: 'Eat your vegetables!',
+    ultimate: { name: 'Harvest Time', sprite: 'grandma_morris', type: 'barrage', dur: 160, fireAt: 50, count: 12, every: 7, speed: 14, dmg: 3, kbMul: 1.45, ball: 'fxtomato', ballPx: 46,
+      desc: 'fills her basket, grows a vine arch and throws a whole harvest of tomatoes straight ahead',
+      poses: [[0, 'ultA0'], [26, 'ultB0'], [50, 'ultC0']] },
+  },
+  { // Grandma Worst: the ghost grandma who floats along. Roses, soup, a toastie and a rose whirlwind.
+    id: 'grandma_worst', unlock: 'GHOSTGRANNY', family: 'The grandmas', name: 'Grandma Worst', title: 'The Ghostly Grandma', photo: 'img/grandma_worst.png', sprite: 'grandma_worst',
+    color: '#a3245e', accent: '#7fd8ff', skin: '#f0c4a4', hair: '#e8e8e8',
+    stats: { speed: 6.6, air: 7.2, jump: 16, weight: 0.86, power: 0.98, size: 0.95 },
+    attackNames: { jab: 'Rose Flick', side: 'Ghost Palm', up: 'Spoon Smack', down: 'Soup Scoop', air: 'Rose Flick, Ghost Palm, Spoon Smack' },
+    specials: {
+      neutral: { kind: 'projectile', name: "Soup's On", thing: 'a ladle of soup dumplings', sprite: 'fxdumplings', px: 64, speed: 10, vy: -2, grav: 0.12, dmg: 7, kb: 6, kbg: 0.07, r: 22, life: 70, cd: 45 },
+      side: { kind: 'projectile', name: 'Hot Toastie', thing: 'a hot ham-and-cheese toastie', sprite: 'fxtoastie', px: 56, speed: 14, dmg: 8, kb: 6.5, kbg: 0.08, r: 20, life: 45, cd: 60 },
+      up: { kind: 'rise', name: 'Rose Whirlwind', power: 20, forward: 3, dmg: 6, kb: 6, kbg: 0.06 },
+      down: { kind: 'counter', name: 'Grave Grab', window: 20, mult: 1.35 },
+    },
+    taunt: 'Have some toast, dear!',
+    ultimate: { name: 'Toast and Jam Jamboree', sprite: 'grandma_worst', type: 'barrage', dur: 160, fireAt: 50, count: 12, every: 7, speed: 15, dmg: 3, kbMul: 1.45, ball: 'fxtoast', ballPx: 52,
+      desc: 'makes a plate of jam toast, conjures more and fires a stream of toast slices straight ahead',
+      poses: [[0, 'ultA0'], [26, 'ultB0'], [50, 'ultC0']] },
+  },
+);
 MM.unlocks = (() => { try { return JSON.parse(localStorage.getItem('mm_unlocks')) || {}; } catch (e) { return {}; } })();
 // lock the giants again: they leave fighter select, Meet the family, practice and the move list (codes still work later)
 MM.relockGiants = function () {
@@ -713,6 +766,7 @@ MM.FAMILIES = [
   { name: "Haylie's family", ids: ['haylie', 'sabir', 'haislie', 'august', 'harley'] },
   { name: "Sara's family", ids: ['sara'] },
   { name: "Jorie's family", ids: ['jorie'] },
+  { name: 'The grandmas', ids: ['grandma_morris', 'grandma_worst'] }, // secret: GARDENGRANNY / GHOSTGRANNY
 ];
 // the fighters that exist, grouped: [{ name, fighters: [def...] }]; anyone not listed goes in a last group
 MM.familyGroups = function () {

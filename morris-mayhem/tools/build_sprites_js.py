@@ -68,6 +68,16 @@ MOVES = {
     'cole-iron': dict(jab='combo', side='herokick', down='stomp', up='rising', nair='airspin', fair='webkick', uair='skypalm', dair='meteor',
                  neutral='ion', sideSpecial='portal', upSpecial='webswing', downSpecial='snare',
                  upRow='rising', uairRow='skypalm', riseMid='webswing2', riseLate='webswing3'),
+    # the grandmas and Jaicelynn (Nov 26): one key pose per move (tools/slice_grid4.py)
+    'grandma_morris': dict(jab='trowel', side='rake', down='kick', up='beet', nair='jump', fair='kick', uair='beet', dair='kick',
+                           neutral='apple', sideSpecial='basket', upSpecial='stalk', downSpecial='vines', counterHit='vines',
+                           upRow='beet', uairRow='beet', riseMid='stalk2', riseLate='stalk3'),
+    'grandma_worst': dict(jab='rose', side='palm', down='soup', up='spoon', nair='palm', fair='rose', uair='spoon', dair='soup',
+                          neutral='ladle', sideSpecial='coffee', upSpecial='whirl', downSpecial='portal', counterHit='portal',
+                          upRow='spoon', uairRow='spoon', riseMid='whirl2', riseLate='whirl3'),
+    'jaicelynn': dict(jab='phone', side='bars', down='kick', up='wheel', nair='kick', fair='kick', uair='wheel', dair='kick',
+                      neutral='flash', sideSpecial='atv', upSpecial='wheelie', downSpecial='taco',
+                      upRow='wheel', uairRow='wheel', riseMid='wheelie2', riseLate='wheelie3'),
     'jacqi': dict(jab='swat', side='bump', down='csweep', up='whistle', nair='sspin', fair='poke', uair='skycheer', dair='cdrop',
                   neutral='pride', sideSpecial='suv', upSpecial='lift', downSpecial='snacks',
                   upRow='whistle', uairRow='skycheer', riseMid='lift2', riseLate='lift3'),
@@ -165,6 +175,7 @@ ALIASES['sabir'].update({'build4': 'buildx0', 'build5': 'buildx1', 'fly3': 'fly0
 ALIASES['jeff-giant'] = {'ent': 'cup3', 'taunt': 'wild0', 'win': 'wild3', 'lose': 'back3'}
 ALIASES['patty-giant'] = {'ent': 'cup3', 'taunt': 'idle3', 'win': 'emg3', 'lose': 'back3'}
 ALIASES['triple-trouble'] = {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'}
+for _w in ('grandma_morris', 'grandma_worst', 'jaicelynn'): ALIASES[_w] = {'ent': 'idle0', 'taunt': 'cheer0', 'win': 'cheer0', 'lose': 'hurt0'}
 ALIASES['kevin'] = {'ent': 'cup0', 'taunt': 'rally3', 'win': 'rally3', 'lose': 'slow1'}  # lose: bent over, worn out
 ALIASES['kevin-fan'] = {'ent': 'idle0', 'taunt': 'idle1', 'win': 'curtain2', 'lose': 'hurt3'}
 ALIASES['cloe'] = {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'hurt2'}  # lose: knocked down

@@ -84,13 +84,13 @@ window.MM = window.MM || {};
     const r = MM.tryCode($('#codeIn').value), msg = $('#codeMsg');
     if (r === 'bad') { msg.textContent = 'That code didn\'t work.'; MM.sfx && MM.sfx('dodge'); }
     else if (r.startsWith('already:')) msg.textContent = r.slice(8) + ' is already unlocked.';
-    else if (r.startsWith('locked:')) msg.textContent = +r.slice(7) ? 'The giants are locked again.' : 'The giants are already locked.';
-    else { msg.textContent = 'Unlocked: ' + r.slice(3) + '! Find them in Jeff & Patty\'s family.'; MM.sfx && MM.sfx('heal'); }
+    else if (r.startsWith('locked:')) msg.textContent = +r.slice(7) ? 'The secret fighters are locked again.' : 'The secret fighters are already locked.';
+    else { const g = MM.GIANTS.find((x) => x.name === r.slice(3)); msg.textContent = 'Unlocked: ' + r.slice(3) + '! Find them in ' + (g && g.family ? g.family.replace(/^The /, 'the ') : 'the roster') + '.'; MM.sfx && MM.sfx('heal'); }
     $('#codeIn').value = '';
   }
   function relock() {
     const n = MM.relockGiants(), msg = $('#codeMsg');
-    msg.textContent = n ? 'The giants are locked again. Enter their codes to bring them back.' : 'The giants are already locked.';
+    msg.textContent = n ? 'The secret fighters are locked again. Enter their codes to bring them back.' : 'The secret fighters are already locked.';
     MM.sfx && MM.sfx('select');
   }
   document.addEventListener('click', (e) => { if (e.target.closest('#codeGo')) tryCode(); if (e.target.closest('#relockGo')) relock(); });
