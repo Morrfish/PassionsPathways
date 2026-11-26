@@ -1,4 +1,4 @@
-"""CD Ripper: the window.
+"""Disc Rescue: the window.
 
 Put a CD in, it looks the album up (titles, artist, year, genre, cover art),
 you check or fix anything you like, then press Rip.
@@ -22,14 +22,21 @@ from .disc import Toc
 from .lookup import Album, TrackInfo
 from .ripper import RipCancelled, Settings, rip_album
 
-APP_NAME = "CD Ripper"
+APP_NAME = "Disc Rescue"
+BRAND_BG = "#232b3d"       # banner colours; change to match the logo
+BRAND_ACCENT = "#9fb3d9"
+
+
+def resource(name: str) -> str:
+    """A file shipped with the app (inside the .exe, or next to this file)."""
+    return os.path.join(getattr(sys, "_MEIPASS", os.path.dirname(__file__)), name)
 BITRATES = {"Best (320 kbps)": 320, "Great (256 kbps)": 256,
             "Good (192 kbps)": 192, "Small files (128 kbps)": 128}
 
 
 def settings_path() -> str:
     base = os.environ.get("APPDATA") or os.path.expanduser("~/.config")
-    return os.path.join(base, "CD Ripper", "settings.json")
+    return os.path.join(base, "Disc Rescue", "settings.json")
 
 
 def default_music_folder() -> str:
@@ -61,8 +68,8 @@ class App:
         self.saved = self._load_settings()
 
         root.title(APP_NAME)
-        root.geometry("980x680")
-        root.minsize(820, 560)
+        root.geometry("1000x760")
+        root.minsize(840, 620)
         self._style()
         self._build()
         self.refresh_drives()
@@ -102,6 +109,23 @@ class App:
     def _build(self) -> None:
         r = self.root
         pad = {"padx": 10, "pady": 6}
+
+        banner = tk.Frame(r, bg=BRAND_BG)
+        banner.pack(fill="x")
+        self.logo_img = None
+        logo = resource("logo.png")
+        if os.path.exists(logo):
+            try:
+                img = Image.open(logo)
+                img.thumbnail((52, 52))
+                self.logo_img = ImageTk.PhotoImage(img)
+                tk.Label(banner, image=self.logo_img, bg=BRAND_BG).pack(side="left", padx=(12, 8), pady=8)
+            except Exception:
+                pass
+        tk.Label(banner, text=APP_NAME, bg=BRAND_BG, fg="white",
+                 font=("Segoe UI", 20, "bold")).pack(side="left", pady=8)
+        tk.Label(banner, text="Save your CDs, with every song name and cover",
+                 bg=BRAND_BG, fg=BRAND_ACCENT, font=("Segoe UI", 11)).pack(side="left", padx=14, pady=(14, 8))
 
         top = ttk.Frame(r)
         top.pack(fill="x", **pad)
@@ -548,7 +572,7 @@ def main() -> None:
         except Exception:
             pass
     root = tk.Tk()
-    icon = os.path.join(getattr(sys, "_MEIPASS", os.path.dirname(__file__)), "icon.png")
+    icon = resource("icon.png")
     if os.path.exists(icon):
         try:
             root.iconphoto(True, tk.PhotoImage(file=icon))

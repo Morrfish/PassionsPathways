@@ -1,22 +1,22 @@
-# Builds CD Ripper for Windows on a Windows machine:
-#   CDRipper.exe   one file, runs without installing
+# Builds Disc Rescue for Windows on a Windows machine:
+#   DiscRescue.exe   one file, runs without installing
 # It is kept as a build artifact on the run page: only people signed in to
 # GitHub with access to this repo can download it. Nothing is published.
-name: CD Ripper exe
+name: Disc Rescue exe
 
 on:
   workflow_dispatch:
   push:
     branches: [main, 'ccr-bcf909e3-7qtnwa']
     paths:
-      - 'cd-ripper/**'
-      - '.github/workflows/cd-ripper-exe.yml'
+      - 'disc-rescue/**'
+      - '.github/workflows/disc-rescue-exe.yml'
 
 permissions:
   contents: read
 
 concurrency:
-  group: cd-ripper-exe-${{ github.ref }}
+  group: disc-rescue-exe-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        working-directory: cd-ripper
+        working-directory: disc-rescue
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -39,18 +39,18 @@ jobs:
       - name: Build the exe
         run: |
           python make_icon.py
-          pyinstaller --noconfirm --onefile --windowed --name CDRipper --icon icon.ico `
-            --add-data "cdripper/icon.png;." CDRipper.py
+          pyinstaller --noconfirm --onefile --windowed --name DiscRescue --icon icon.ico `
+            --add-data "discrescue/icon.png;." --add-data "discrescue/logo.png;." DiscRescue.py
       - name: Check the exe starts
         shell: pwsh
         run: |
-          $p = Start-Process -FilePath dist/CDRipper.exe -PassThru
+          $p = Start-Process -FilePath dist/DiscRescue.exe -PassThru
           Start-Sleep -Seconds 12
-          if ($p.HasExited) { throw "CDRipper.exe closed by itself (exit code $($p.ExitCode))" }
+          if ($p.HasExited) { throw "DiscRescue.exe closed by itself (exit code $($p.ExitCode))" }
           Stop-Process -Id $p.Id -Force
       - uses: actions/upload-artifact@v4
         with:
-          name: CDRipper-Windows
-          path: cd-ripper/dist/CDRipper.exe
+          name: DiscRescue-Windows
+          path: disc-rescue/dist/DiscRescue.exe
           retention-days: 90
           compression-level: 0

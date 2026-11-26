@@ -1,4 +1,4 @@
-"""Draws the CD Ripper icon (icon.ico for the .exe, cdripper/icon.png for the window)."""
+"""Draws the Disc Rescue icon (icon.ico for the .exe, discrescue/icon.png for the window)."""
 from PIL import Image, ImageDraw
 
 S = 512
@@ -14,4 +14,5 @@ d.ellipse((300, 330, 400, 410), fill="#e0475b")
 d.rectangle((380, 150, 400, 372), fill="#e0475b")
 d.polygon([(400, 150), (470, 190), (470, 230), (400, 195)], fill="#e0475b")
 im.save("icon.ico", sizes=[(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)])
-im.resize((64, 64), Image.LANCZOS).save("cdripper/icon.png")
+im.resize((64, 64), Image.LANCZOS).save("discrescue/icon.png")
+im.resize((128, 128), Image.LANCZOS).save("discrescue/logo.png")

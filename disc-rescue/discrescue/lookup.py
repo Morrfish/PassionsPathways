@@ -15,7 +15,7 @@ from dataclasses import dataclass, field
 
 from .disc import Toc
 
-USER_AGENT = "CDRipper/1.0 ( home CD ripping app )"
+USER_AGENT = "DiscRescue/1.0 ( home CD ripping app )"
 MB = "https://musicbrainz.org/ws/2"
 CAA = "https://coverartarchive.org"
 _last_call = 0.0

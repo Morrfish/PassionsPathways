@@ -9,12 +9,12 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from mutagen.id3 import ID3
 from mutagen.mp3 import MP3
 
-from cdripper.disc import Toc, Track
-from cdripper.fake_drive import EXAMPLE_TOC, FakeDrive
-from cdripper.lookup import Album, TrackInfo
-from cdripper.ripper import Settings, rip_album, safe_name, track_filename
+from discrescue.disc import Toc, Track
+from discrescue.fake_drive import EXAMPLE_TOC, FakeDrive
+from discrescue.lookup import Album, TrackInfo
+from discrescue.ripper import Settings, rip_album, safe_name, track_filename
 
-ONLINE = os.environ.get("CDRIPPER_ONLINE") == "1"
+ONLINE = os.environ.get("DISCRESCUE_ONLINE") == "1"
 
 
 class DiscIdTest(unittest.TestCase):
@@ -81,10 +81,10 @@ class RipTest(unittest.TestCase):
             self.assertTrue(any("couldn't be read" in l for l in logs))  # the bad sector
 
 
-@unittest.skipUnless(ONLINE, "set CDRIPPER_ONLINE=1 to test the real MusicBrainz lookup")
+@unittest.skipUnless(ONLINE, "set DISCRESCUE_ONLINE=1 to test the real MusicBrainz lookup")
 class OnlineTest(unittest.TestCase):
     def test_lookup_and_cover(self):
-        from cdripper import lookup
+        from discrescue import lookup
         toc = Toc.from_offsets(*EXAMPLE_TOC)
         albums = lookup.lookup_disc(toc)
         self.assertTrue(albums)

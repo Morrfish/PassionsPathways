@@ -1,4 +1,4 @@
-# CD Ripper
+# Disc Rescue
 
 Turn your old music CDs into MP3s, with everything filled in automatically:
 
@@ -12,9 +12,9 @@ Album details come from [MusicBrainz](https://musicbrainz.org) and covers from t
 
 ## Getting the program
 
-1. On GitHub, open **Actions**, then **CD Ripper exe**, and open the newest run with a green check.
-2. Under **Artifacts**, download **CDRipper-Windows**, then unzip it.
-3. Put `CDRipper.exe` anywhere you like (your Desktop is fine) and double-click it.
+1. On GitHub, open **Actions**, then **Disc Rescue exe**, and open the newest run with a green check.
+2. Under **Artifacts**, download **DiscRescue-Windows**, then unzip it.
+3. Put `DiscRescue.exe` anywhere you like (your Desktop is fine) and double-click it.
    Nothing needs installing.
 
 The first time, Windows may say *"Windows protected your PC"*, because the program
@@ -47,16 +47,16 @@ Your choices (save folder, quality, eject) are remembered for next time.
 
 ```
 pip install -r requirements.txt
-python CDRipper.py                               # run it (Windows)
+python DiscRescue.py                               # run it (Windows)
 python -m unittest discover -s tests             # tests (any computer)
-CDRIPPER_ONLINE=1 python -m unittest discover -s tests   # also tests the real lookup
+DISCRESCUE_ONLINE=1 python -m unittest discover -s tests   # also tests the real lookup
 ```
 
-- `cdripper/drive_windows.py` reads the disc through Windows' own CD-ROM driver (no extra tools).
-- `cdripper/disc.py` works out the MusicBrainz disc ID.
-- `cdripper/lookup.py` looks up the album details and cover.
-- `cdripper/ripper.py` encodes the MP3s (LAME) and writes the tags (ID3 v2.3).
-- `cdripper/app.py` is the window.
-- `cdripper/fake_drive.py` is a pretend drive for testing without a CD.
+- `discrescue/drive_windows.py` reads the disc through Windows' own CD-ROM driver (no extra tools).
+- `discrescue/disc.py` works out the MusicBrainz disc ID.
+- `discrescue/lookup.py` looks up the album details and cover.
+- `discrescue/ripper.py` encodes the MP3s (LAME) and writes the tags (ID3 v2.3).
+- `discrescue/app.py` is the window.
+- `discrescue/fake_drive.py` is a pretend drive for testing without a CD.
 
-The `.github/workflows/cd-ripper-exe.yml` workflow tests and builds `CDRipper.exe` on Windows.
+The `.github/workflows/disc-rescue-exe.yml` workflow tests and builds `DiscRescue.exe` on Windows.
