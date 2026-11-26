@@ -551,6 +551,25 @@ MM.FIGHTERS.push({
     poses: [[0, 'ultA0'], [34, 'ultB0'], [60, 'ultC0']] },
 });
 
+// ---------- Harley Rollerson (ChatGPT, Nov 26): Haylie and Sabir's toddler. Very small, mean, rotten and sassy; doesn't like anybody ----------
+MM.FIGHTERS.push({
+  id: 'harley', name: 'Harley Rollerson', title: 'The Tiny Temper', photo: 'img/harley.png', sprite: 'harley',
+  color: '#c9a77c', accent: '#ff5fa2', skin: '#8d5a3b', hair: '#3b2416',
+  stats: { speed: 7.4, air: 7.0, jump: 15.8, weight: 0.72, power: 0.92, size: 0.68 },
+  attackNames: { jab: 'Palm Tap', side: 'Sass Kick', up: 'Tiny Uppercut', down: 'Stomp', air: 'Palm Tap, Sass Kick, Tiny Uppercut, Stomp' },
+  specials: {
+    neutral: { kind: 'projectile', name: 'Talk to the Hand', thing: 'a flying sassy palm', sheet: 'harley', anim: ['fxpalm0', 'fxpalm1', 'fxpalm2', 'fxpalm3'], px: 66, speed: 11, dmg: 6, kb: 6, kbg: 0.07, r: 24, life: 45, cd: 45 },
+    side: { kind: 'dash', name: 'Tiny Temper', fx: ['harley', 'fxstomp', 4, 0.9], speed: 13, dur: 22, dmg: 9, kb: 7.5, kbg: 0.1, ang: 35, cd: 90, box: [-10, -80, 90, 80] },
+    up: { kind: 'rise', name: 'Stomp Rocket', power: 19.5, forward: 3, dmg: 6, kb: 6, kbg: 0.06 },
+    down: { kind: 'counter', name: 'Nope Guard', fx: ['harley', 'fxguard', 4, 1.0], window: 22, mult: 1.35 },
+  },
+  taunt: "Don't look at me!",
+  ultimate: { name: 'Royal Tantrum', sprite: 'harley', type: 'catch', radius: 2.4, dur: 130, catchAt: 44, finishAt: 92, dmg: 22, kbMul: 1.4,
+    orbit: ['fxtantrum2', 'fxpalm2', 'fxtantrum2', 'fxpalm2'],
+    desc: 'crouches, raises one foot and stomps a shockwave that catches everyone close by, then waves them off with a palm',
+    poses: [[0, 'ult0'], [22, 'ult1'], [44, 'ult2'], [92, 'ult3']] },
+});
+
 // ---------- Kevin, Cloe and Janelle (ChatGPT's Nov 25 pack, restyled sheets) ----------
 {
   // Kevin Crist, "The Steel City Superfan": Mandi's husband. A Rally bar fills as he fights; full, Switch turns him

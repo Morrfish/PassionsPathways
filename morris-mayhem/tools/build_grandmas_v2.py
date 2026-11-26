@@ -9,7 +9,7 @@ from PIL import Image
 sys.path.insert(0, __file__.rsplit('/', 1)[0])
 from slice_grid44 import cells
 raw, out, sid = sys.argv[1:4]
-STAND = {'jaicelynn': 290}.get(sid, 300)  # her specials sheet is drawn small, so 290 keeps every sheet at or below its own size; standing (idle0) height in the atlas, like the other full-size fighters (she's drawn smaller, so it stays sharp)
+STAND = {'jaicelynn': 290, 'harley': 280}.get(sid, 300)  # her specials sheet is drawn small, so 290 keeps every sheet at or below its own size; standing (idle0) height in the atlas, like the other full-size fighters (she's drawn smaller, so it stays sharp)
 CFG = {
     'grandma_morris': {'grandma-morris-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
                        'grandma-morris-ground-4x4-v2.png': (1.04, ['trowel', 'rake', 'beet', 'kick']),
@@ -26,9 +26,17 @@ CFG = {
                   'jaicelyn-aerials-4x4-v2.png': (1.15, ['anair', 'afair', 'auair', 'adair']),
                   'jaicelyn-specials-4x4-v2.png': (0.95, ['flash', 'atv', 'wheelie', 'taco']),
                   'jaicelyn-personality-4x4-v2.png': (0.94, ['pent', 'ptaunt', 'pwin', 'plose'])},
+    'harley': {'harley-movement-4x4-v2.png': (1.0, ['idle', 'run', 'jump', 'hurt']),
+               'harley-ground-4x4-v2.png': (1.03, ['palm', 'kick', 'upper', 'stomp']),
+               'harley-aerials-4x4-v2.png': (1.11, ['anair', 'afair', 'auair', 'adair']),
+               'harley-specials-4x4-v2.png': (1.07, ['hand', 'temper', 'rocket', 'guard']),  # Talk to the Hand, Tiny Temper, Stomp Rocket, Nope Guard
+               'harley-personality-4x4-v2.png': (1.13, ['pent', 'ptaunt', 'pwin', 'plose'])},
 }[sid]
+# a brand-new fighter (no old atlas to keep from): ultimate 2x2 (face size vs movement) and an effects 4x4 (rows of 4 phases)
+NEW = {'harley': {'ult': ('harley-ultimate-2x2-v2.png', 2.27), 'fx': ('harley-sass-effects-4x4-v2.png', ['fxpalm', 'fxstomp', 'fxguard', 'fxtantrum'])}}.get(sid)
 KEEP = ('ultA', 'ultB', 'ultC', 'cheer', 'fx')
-oldF = json.load(open(f'{out}/{sid}-frames.json')); oldA = Image.open(f'{out}/{sid}-atlas.webp').convert('RGBA')
+import os
+oldF = json.load(open(f'{out}/{sid}-frames.json')) if not NEW else {}; oldA = Image.open(f'{out}/{sid}-atlas.webp').convert('RGBA') if not NEW else None
 grid = {fn: cells(f'{raw}/{fn}') for fn in CFG}
 first = next(iter(CFG)); base = STAND / grid[first][0][0].height
 cuts = []
@@ -41,7 +49,16 @@ for fn, (face, names) in CFG.items():
         for i, c in enumerate(row):
             c = c.resize((max(1, round(c.width * s)), max(1, round(c.height * s))), Image.LANCZOS)
             cuts.append((f'{name}{i}', c, anchor(c), c.height))
-k_old = STAND / oldF['idle0'][3]  # the kept v1 frames were cut with idle0 = this tall
+if NEW:
+    fn, face = NEW['ult']; U = Image.open(f'{raw}/{fn}').convert('RGBA'); W, H = U.size
+    for i in range(4):
+        c = U.crop(((i % 2) * W // 2, (i // 2) * H // 2, (i % 2 + 1) * W // 2, (i // 2 + 1) * H // 2)); c = c.crop(c.split()[3].point(lambda v: 255 if v > 24 else 0).getbbox())
+        sc = base / face; assert sc <= 1; c = c.resize((round(c.width * sc), round(c.height * sc)), Image.LANCZOS); cuts.append((f'ult{i}', c, anchor(c), c.height))
+    fn, names = NEW['fx']
+    for name, row in zip(names, cells(f'{raw}/{fn}')):
+        for i, c in enumerate(row):
+            sc = min(1, 200 / max(c.size)); c = c.resize((max(1, round(c.width * sc)), max(1, round(c.height * sc))), Image.LANCZOS); cuts.append((f'{name}{i}', c, c.width / 2, c.height / 2))
+k_old = STAND / oldF['idle0'][3] if oldF else 1  # the kept v1 frames were cut with idle0 = this tall
 seen = {}
 for n, (x, y, w, h, ax, ay) in oldF.items():
     if not n.startswith(KEEP): continue
@@ -62,7 +79,7 @@ for n, c, ax, ay in real:
     px, py = pos[n]; A.paste(c, (px, py)); F[n] = [px, py, c.width, c.height, round(float(ax), 1), round(float(ay), 1)]
 for n, c, src, _ in cuts:
     if c is None: F[n] = F[src]
-F['ult0'], F['ult1'], F['ult2'], F['ult3'] = F['ultA0'], F['ultB0'], F['ultC0'], F['ultC0']
+if not NEW: F['ult0'], F['ult1'], F['ult2'], F['ult3'] = F['ultA0'], F['ultB0'], F['ultC0'], F['ultC0']
 assert A.height <= 4096, A.size
 A.save(f'{out}/{sid}-atlas.webp', 'WEBP', quality=88, method=6); json.dump(F, open(f'{out}/{sid}-frames.json', 'w'))
 print(sid, A.size, len(F), 'idle', F['idle0'][2:4])
