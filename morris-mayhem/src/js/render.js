@@ -93,6 +93,7 @@ window.MM = window.MM || {};
         if (kind === 'transform') return row + (a.t < 8 ? 0 : a.t < 20 ? 1 : a.t < 30 ? 2 : 3);
         if (kind === 'trap') return row + (a.t < 6 ? 0 : a.t < 12 ? 1 : a.t < 18 ? 2 : 3);
         if (kind === 'wheel' || kind === 'shuffle') return row ? row + Math.min(3, Math.floor(a.t / 8) % 4) : 'idle0';
+        if (kind === 'spray') return row + (a.t < 6 ? 0 : a.ending ? 3 : 1 + ((a.t >> 3) & 1)); // e.g. Harper: aim, spray (two poses), done
         if (kind === 'drink') return row + (a.ending ? 3 : a.t < 8 ? 0 : 1 + ((a.t >> 4) & 1)); // pick up the jug, chug, wipe the mouth
         if (row) return row + Math.min(3, Math.floor((a.t / a.dur) * 4));
       }
@@ -199,6 +200,7 @@ window.MM = window.MM || {};
     const lvl = f.def.mess && f.def.mess.dirt && f.formIdx === 0 && !(f.act && f.act.type === 'cleanup') ? (f.mess >= 100 ? 3 : f.mess >= 66 ? 2 : f.mess >= 33 ? 1 : 0) : 0;
     if (lvl) g.drawImage(dirtFor(sh, frameName, fr, lvl), -fr[4], -fr[5]);
     g.restore();
+    if (f.reverseT > 0) { g.save(); g.font = `900 ${Math.round(f.h * 0.22)}px system-ui`; g.textAlign = 'center'; g.lineWidth = 4; g.strokeStyle = '#000'; g.strokeText('⇄', f.x, f.y - f.h * 1.18); g.fillStyle = '#b6e35a'; g.fillText('⇄', f.x, f.y - f.h * 1.18); g.restore(); } // reversed controls
     if (f.captured && f.captured.by) drawFx(g, f.captured.by.def.sprite, 'fxbubble1', f.x, f.y - f.h * 0.5, f.h * 1.5 * (1 + 0.04 * Math.sin(G.frame * 0.4)), 0.85); // inside August's capture bubble
     if (f.def.fx && f.act && fsh) for (const e of f.def.fx) { // e.g. Sara's ink tattoo effects
       const a = f.act, on = e.act === a.type && (!e.name || e.name === a.name) && (!e.slot || e.slot === a.slot) && a.t >= e.t[0] && a.t < e.t[1];
@@ -900,6 +902,12 @@ window.MM = window.MM || {};
       for (let j = 0; j < f.stocks; j++) {
         const lx = x + 588 * k - ss - j * (ss + 3), ly = y0 + 182 * k;
         if (si) g.drawImage(si, lx, ly, ss, ss); else { g.fillStyle = MM.PLAYER_COLORS[f.slot]; g.beginPath(); g.arc(lx + ss / 2, ly + ss / 2, ss * 0.3, 0, TAU); g.fill(); }
+      }
+      if (!f.out && f.def.spray) { // Harper: how much spray is left (EMPTY at zero; refills after 3 s without spraying)
+        const mx = tx, mw2 = Math.max(20, x + 588 * k - f.stocks * (ss + 3) - 8 - mx), my = y0 + 194 * k, v = (f.spray ?? 100) / 100;
+        g.fillStyle = '#0008'; rr(g, mx, my, mw2, 7, 3); g.fill();
+        g.fillStyle = '#b6e35a'; if (v > 0) { rr(g, mx, my, Math.max(4, mw2 * v), 7, 3); g.fill(); }
+        if (v <= 0) { g.font = `900 12px system-ui`; g.textAlign = 'left'; g.textBaseline = 'bottom'; g.lineWidth = 3; g.strokeStyle = '#000'; g.strokeText('SPRAY EMPTY', mx, my - 1); g.fillStyle = '#ddd'; g.fillText('SPRAY EMPTY', mx, my - 1); }
       }
       if (!f.out && f.def.mess) { // Codee: Mess Meter (brown -> green), or the Clean Freak time left (blue)
         const mx = tx, mw2 = Math.max(20, x + 588 * k - f.stocks * (ss + 3) - 8 - mx), my = y0 + 194 * k;

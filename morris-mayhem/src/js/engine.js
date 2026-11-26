@@ -264,6 +264,8 @@ window.MM = window.MM || {};
       f.prev = f.inp;
       f.inp = f.dummy ? blankInput() : f.cpu ? MM.aiThink(G, f) : MM.readDevice(f.dev); // practice dummy: stands still
       if (G.countdown > 0 || G.over || f.exhaust > 0) f.inp = blankInput(); // exhausted: no moving or acting
+      if (f.reverseT > 0) { f.reverseT--; f.inp = Object.assign({}, f.inp, { x: -f.inp.x, y: -f.inp.y }); } // Harper's Reverse Reek: left is right, up is down
+      if (f.def.spray) { f.spray = f.spray ?? 100; if ((f.sprayIdle = (f.sprayIdle || 0) + 1) > 180) f.spray = Math.min(100, f.spray + 10 / 60); } // refills after 3 s without spraying
     }
     movePlatforms(G);
     tickItems(G);
@@ -853,11 +855,33 @@ window.MM = window.MM || {};
         if (a.t >= a.dur) f.act = null;
       },
     },
+    spray: { // e.g. Harper's Reverse Reek: hold Special to spray (drains her spray bar); anyone in the cloud gets reversed controls for a bit
+      start(G, f, sp, a) {
+        if ((f.spray ?? 100) <= 0) { popText(G, f.x, f.y - f.h - 20, 'EMPTY!', '#c9c9c9'); f.act = null; f.cd.down = 0; return; }
+        a.dur = 9999; a.pose = 'cast';
+      },
+      tick(G, f, sp, a) {
+        f.vx *= 0.7; if (!f.ground) f.vy = Math.min(f.vy, 2);
+        const going = a.t < 8 || (f.inp.special && f.spray > 0 && a.t < (sp.max || 150));
+        if (!going) { if (!a.ending) { a.ending = a.t; } if (a.t - a.ending > 6) f.act = null; a.box = null; return; }
+        if (a.t < 6) return;
+        f.spray = Math.max(0, f.spray - (sp.drain || 25) / 60); f.sprayIdle = 0;
+        if (a.t % 4 === 0) part(G, { x: f.x + f.face * (f.w * 0.9 + Math.random() * 120), y: f.y - f.h * (0.35 + Math.random() * 0.3), vx: f.face * 2, vy: -0.3, color: '#b6e35a', size: 14 + Math.random() * 10, life: 26, max: 26 });
+        const box = { x: f.face > 0 ? f.x + f.w * 0.4 : f.x - f.w * 0.4 - (sp.reach || 150), y: f.y - f.h * 0.85, w: sp.reach || 150, h: f.h * 0.8 };
+        for (const d of G.fighters) {
+          if (d === f || d.dead || d.out || d.invuln > 0 || (MM.sameTeam(G, f, d) && !G.ff) || !overlap(box, MM.hurtbox(d))) continue;
+          if (!(d.reverseT > 0)) popText(G, d.x, d.y - d.h - 20, 'REVERSED!', '#b6e35a');
+          d.reverseT = sp.reverse || 120; // refreshes to a fixed time, never stacks
+          if (!a.hit.has(d)) { a.hit.add(d); applyHit(G, f, d, { dmg: sp.dmg || 2, kb: 2, kbg: 0, ang: 30, face: f.face, light: true }, d.x, d.y - d.h / 2); }
+        }
+      },
+    },
     trap: {
       start(G, f, sp, a) { a.dur = 22; a.pose = 'throw'; },
       tick(G, f, sp, a) {
         if (a.t === 10) {
-          G.traps = G.traps.filter((t) => t.owner !== f);
+          if (sp.max) { const mine = G.traps.filter((t) => t.owner === f && t.sp === sp); if (mine.length >= sp.max) { const old = mine[0]; G.traps = G.traps.filter((t) => t !== old); } } // e.g. Harper: two cushions out at once
+          else G.traps = G.traps.filter((t) => t.owner !== f);
           G.traps.push({ owner: f, x: f.x + f.face * 40, y: f.y - (sp.toss ? 60 : 2), vy: sp.toss ? -7 : 0, vx: sp.toss ? f.face * sp.toss : 0, sp, life: sp.life || 600, armed: sp.heal ? 0 : 20, age: 0, dir: f.face });
         }
       },
@@ -1180,6 +1204,7 @@ window.MM = window.MM || {};
       f.exhaust = 0; f.tiredT = 0;
       if (f.def.powerup && f.formIdx) { applyForm(f, 0); f.powerT = 0; }
       if (f.captured) releaseCapture(G, f);
+      f.reverseT = 0; if (f.def.spray) f.spray = 100;
       if (f.def.mess) { if (f.formIdx) applyForm(f, 0); f.mess = 0; f.clean = 0; f.pieces = 0; f.catches = 0; G.traps = G.traps.filter((t) => !(t.owner === f && t.piece != null)); }
       f.act = null; f.hitstun = 0; f.buff = null; f.slow = null; f.vx = f.vy = 0; f.caught = null; f.meter = 0;
       if (f.stocks <= 0) { f.out = true; f.x = 0; f.y = -3000; }
