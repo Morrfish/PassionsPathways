@@ -7,6 +7,7 @@ import sys, os, json, shutil
 from PIL import Image
 raw, out = sys.argv[1:3]
 S_KEVIN, S_BUS, S_TERRY = 0.30, 0.41, 0.32   # the Bus art draws Kevin smaller (head 100 px vs 137)
+S_HELI = S_KEVIN * 1.38  # the helicopter art draws Kevin smaller too, to fit the towel overhead (head-size check)
 def load(n):
     im = Image.open(f'{raw}/{n}').convert('RGBA'); bb = im.split()[3].point(lambda v: 255 if v > 10 else 0).getbbox(); return im.crop(bb), bb
 def feet(n, s):
@@ -31,7 +32,7 @@ if not os.path.exists(bf): shutil.copy(f'{out}/kevin-atlas.webp', ba); shutil.co
 cuts = []
 for i in range(4):
     cuts.append((f'toss{i}', *feet(f'kevin-towel-boomerang-0{i+1}-v1.png', S_KEVIN)))
-    cuts.append((f'heli{i}', *feet(f'kevin-towel-helicopter-0{i+1}-v1.png', S_KEVIN)))
+    cuts.append((f'heli{i}', *feet(f'kevin-towel-helicopter-0{i+1}-v1.png', S_HELI * (0.88 if i == 0 else 1))))  # the windup key is drawn a bit bigger
     cuts.append((f'bus{i}', *feet(f'kevin-riding-the-bus-0{i+1}-v1.png', S_BUS)))
 N, fr = pack(cuts, (Image.open(ba).convert('RGBA'), json.load(open(bf))))
 N.save(f'{out}/kevin-atlas.webp', 'WEBP', quality=88, method=6); json.dump(fr, open(f'{out}/kevin-frames.json', 'w'))
