@@ -84,10 +84,16 @@ window.MM = window.MM || {};
     const r = MM.tryCode($('#codeIn').value), msg = $('#codeMsg');
     if (r === 'bad') { msg.textContent = 'That code didn\'t work.'; MM.sfx && MM.sfx('dodge'); }
     else if (r.startsWith('already:')) msg.textContent = r.slice(8) + ' is already unlocked.';
+    else if (r.startsWith('locked:')) msg.textContent = +r.slice(7) ? 'The giants are locked again.' : 'The giants are already locked.';
     else { msg.textContent = 'Unlocked: ' + r.slice(3) + '! Find them in Jeff & Patty\'s family.'; MM.sfx && MM.sfx('heal'); }
     $('#codeIn').value = '';
   }
-  document.addEventListener('click', (e) => { if (e.target.closest('#codeGo')) tryCode(); });
+  function relock() {
+    const n = MM.relockGiants(), msg = $('#codeMsg');
+    msg.textContent = n ? 'The giants are locked again. Enter their codes to bring them back.' : 'The giants are already locked.';
+    MM.sfx && MM.sfx('select');
+  }
+  document.addEventListener('click', (e) => { if (e.target.closest('#codeGo')) tryCode(); if (e.target.closest('#relockGo')) relock(); });
   addEventListener('keydown', (e) => { if (e.key === 'Enter' && document.activeElement && document.activeElement.id === 'codeIn') { e.preventDefault(); tryCode(); } });
   MM.drawSettings = draw;
   addEventListener('load', drawHowto);

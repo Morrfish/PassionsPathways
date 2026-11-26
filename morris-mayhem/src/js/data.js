@@ -679,8 +679,18 @@ MM.BOSS_FORMS = {
   patty: Object.assign({}, MM.GIANTS[1], { id: 'patty_boss', stats: Object.assign({}, MM.GIANTS[1].stats, { size: 2.5, weight: 2.0 }), unlock: null }),
 };
 MM.unlocks = (() => { try { return JSON.parse(localStorage.getItem('mm_unlocks')) || {}; } catch (e) { return {}; } })();
-MM.tryCode = function (code) { // returns 'ok:<name>', 'already:<name>' or 'bad'
-  const c = String(code || '').trim().toUpperCase(); const g = MM.GIANTS.find((x) => x.unlock === c);
+// lock the giants again: they leave fighter select, Meet the family, practice and the move list (codes still work later)
+MM.relockGiants = function () {
+  const had = MM.GIANTS.filter((g) => MM.unlocks[g.id]).length;
+  for (const g of MM.GIANTS) { delete MM.unlocks[g.id]; const i = MM.FIGHTERS.indexOf(g); if (i >= 0) MM.FIGHTERS.splice(i, 1); }
+  try { localStorage.setItem('mm_unlocks', JSON.stringify(MM.unlocks)); } catch (e) {}
+  if (MM.rosterChanged) MM.rosterChanged();
+  return had;
+};
+MM.tryCode = function (code) { // returns 'ok:<name>', 'already:<name>', 'locked:<n>' or 'bad'
+  const c = String(code || '').trim().toUpperCase();
+  if (c === 'LOCKGIANTS') return 'locked:' + MM.relockGiants();
+  const g = MM.GIANTS.find((x) => x.unlock === c);
   if (!g) return 'bad';
   if (MM.unlocks[g.id]) return 'already:' + g.name;
   MM.unlocks[g.id] = true; try { localStorage.setItem('mm_unlocks', JSON.stringify(MM.unlocks)); } catch (e) {}

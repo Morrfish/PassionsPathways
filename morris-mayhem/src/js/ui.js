@@ -18,7 +18,10 @@ window.MM = window.MM || {};
   const load = (k, d) => { try { return JSON.parse(localStorage.getItem('mm_' + k)) ?? d; } catch (e) { return d; } };
   const save = (k, v) => { try { localStorage.setItem('mm_' + k, JSON.stringify(v)); } catch (e) {} };
   const ids = MM.FIGHTERS.map((f) => f.id);
-  MM.rosterChanged = () => { ids.length = 0; ids.push(...MM.FIGHTERS.map((f) => f.id)); };
+  MM.rosterChanged = () => {
+    ids.length = 0; ids.push(...MM.FIGHTERS.map((f) => f.id));
+    if (typeof slots !== 'undefined') { let ch = false; slots.forEach((s) => { if (!ids.includes(s.fighter)) { s.fighter = ids[0]; ch = true; } }); if (ch) save('slots', slots); } // a locked giant was picked
+  };
   let slots = load('slots', null);
   if (!slots || slots.length !== 4) slots = [
     { type: 'human', dev: MM.isTouch ? 'touch' : 'k1', fighter: ids[0], level: 2 },
@@ -525,7 +528,7 @@ window.MM = window.MM || {};
     $('#movePicks').innerHTML = list.map((d) => `<button data-mv="${d.id}" class="${d.id === moveId ? 'on' : ''}"><img src="${portrait(d.id)}" alt="">${d.name}</button>`).join('');
     const d = list.find((x) => x.id === moveId);
     let html = `<div class="who"><img src="${portrait(d.id)}" alt=""><div><h3>${d.name}</h3><p>${d.title || ''}</p></div></div>`;
-    if (d.forms && d.forms[0].specials.down.kind === 'supersaiyan') {
+    if (d.forms && ((d.forms[0].specials || d.specials || {}).down || {}).kind === 'supersaiyan') {
       html += `<div class="note"><b>Super Saiyan!</b> ↓ + Special powers him up for 8 seconds: golden hair, faster and stronger. When it wears off he's worn out and takes +25% damage, and he has to wait 15 seconds to do it again.</div>`;
       for (const fd of MM.formDefs(d)) html += `<h4>${fd.title}</h4>` + moveRows(fd);
     } else if (d.mess) {
