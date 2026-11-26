@@ -38,11 +38,12 @@ const {chromium}=require('playwright'),path=require('path');
   const hpB=await p.evaluate(()=>D.bot.hp);await aimFire(false);await p.waitForTimeout(100);
   out.shield.enemyHpAfterShieldEnds=[hpB,await p.evaluate(()=>+D.bot.hp.toFixed(1))];
   // scope: a hit keeps it up, a miss drops it
-  out.scope=await p.evaluate(()=>{const P=D.player,B=D.bot;P.w=wstats('raylance',{});P.ammo=5;B.hp=B.max=900;B.pos.set(0,0,10);B.vel.set(0,0,0);P.pos.set(0,0,19);
+  out.scope=await p.evaluate(()=>{const P=D.player,B=D.bot;P.w=wstats('raylance',{});P.ammo=5;B.hp=B.max=900;B.pos.set(0,0,10);B.vel.set(0,0,0);P.pos.set(0,0,19);D.paused=true;B.model.position.copy(B.pos);B.model.updateMatrixWorld(true);   // the hit test uses where the fighter is drawn, so move that too
+    
     const dx=B.pos.x-P.pos.x,dz=B.pos.z-P.pos.z,dy=(B.pos.y+1)-(P.pos.y+P.eye);
     adsDown=true;P.yaw=Math.atan2(-dx,-dz);P.pitch=Math.atan2(dy,Math.hypot(dx,dz));P.fireCd=0;playerFire();const afterHit=adsDown;
     adsDown=true;P.yaw+=1.3;P.fireCd=0;playerFire();const afterMiss=adsDown;
-    return {scopeStaysAfterHit:afterHit,scopeStaysAfterMiss:afterMiss};});
+    D.paused=false;return {scopeStaysAfterHit:afterHit,scopeStaysAfterMiss:afterMiss};});
   // credits from a duel win
   const c0=await p.evaluate(()=>PROF.credits);
   await p.evaluate(()=>{D.bot.hp=0;finishDuel();});await p.waitForTimeout(300);

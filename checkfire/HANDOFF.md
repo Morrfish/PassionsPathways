@@ -40,6 +40,17 @@ Windows from this environment (only the same code as a Linux build was tested).
   Star 200, Heart 250, Laser Sight 400 (red dot plus a red beam from the muzzle). Looks only.
 - Test: `node tools/tests/balance.js`.
 
+## Blaster shapes (Nov 2026 rebuild) and the checkmate duel
+- **Blasters remodelled to follow the reference sheets** (`blender/equipment.py`): each is now a sculpted side profile
+  (`slab()` = an outline pushed through to a thickness and rounded), one colour like the sheets, with solid stocks with a
+  triangular cut-out (`frame_stock()`), carry handles, slanted moulded slots (`slots()`), chunky muzzle rings (`muzzle()`)
+  and a moulded trigger guard. Orange is only where the sheets have it (Thunder Coach rings, Minigun barrels, Mortar band).
+  The Crossbow's suction cup is the bow's colour. Origins, sockets and the `WS_`/`WM_` swap parts are unchanged, so
+  attachments, finishes, hand placement and the first-person view all still work.
+- **Checkmate is a duel, not the end** (`checkEnd()`): the piece giving check attacks the King (`performMove(m, true)`).
+  If the King wins, that piece is destroyed and the game continues; if he loses, "The King fell in battle" ends it.
+  With a double check the next checking piece attacks on the following turn. Test: `node tools/tests/checkmate.js`.
+
 ## The King's melee and Last Stand
 - **Melee (press V, Kings only):** `MELEE` has three tiers bought in order on the Armory's King tab (`PROF.melee`):
   Broadsword (free, 45), Glow Blade (400 credits, 60, longer reach, faster), Lightning Hammer (700, 70, and every swing

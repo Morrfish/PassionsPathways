@@ -72,4 +72,9 @@ still flickers or flashes? Which room, and where were you standing? ____________
 - Last Stand: is 4 seconds and one shot the right amount? Does it make the King too hard to finish? ____________________
 - When the computer's King gets back up, does it feel fair? ____________________
 
-## 10. Anything else
+## 10. New blaster shapes and the checkmate duel
+- Do the blasters now look like your sheets? Which ones are still off, and how? ____________________
+- Do hands sit right on the new shapes? (Blaster, and what you were doing.) ____________________
+- Checkmate duel: does a King who keeps winning make games drag on? ____________________
+
+## 11. Anything else

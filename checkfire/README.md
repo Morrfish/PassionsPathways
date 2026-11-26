@@ -2,7 +2,7 @@
 
 Chess where every capture is a firefight. Open `index.html` in a browser — it's one self-contained file (Three.js is inlined), so it also runs offline or from a USB drive.
 
-- **Real chess:** castling, en passant, promotion, check, checkmate, stalemate, draw by threefold repetition and the fifty-move rule.
+- **Real chess, with one twist at the end:** castling, en passant, promotion, check, stalemate, draw by threefold repetition and the fifty-move rule. Checkmate is not the end: the checkmated King is attacked and fights a duel for his life, and if he wins the game goes on.
 - **Story mode:** beat eight toy parodies of famous chess champions, one after another; each one you beat unlocks their colours for your own pieces.
 - **Play a friend (same network):** run `Checkfire.exe` on one computer, choose Host, and other players on the same Wi-Fi open the address it shows; pair up with a 4-letter code. Every capture is a live duel between the two players.
 - **Game rules:** switch off flying gadgets or limit everyone to plain starter blasters. Every duel starts with a 3-second shield, a scoped miss drops your scope, and most blasters do less damage at long range.
