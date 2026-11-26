@@ -500,7 +500,7 @@ MM.FIGHTERS = [
       attackNames: { jab: 'Tail Brush', side: 'Tail Brush', up: 'Pencil Horn Lift', down: 'Block Stomp', air: 'Wing Swipe, Pencil Horn Lift, Block Stomp' },
       specials: {
         neutral: { kind: 'beam', name: 'Prism Breath', thing: 'a rainbow breath (hold Special to make it bigger)', startup: 16, active: 18, recovery: 18, maxCharge: 30, len: 430, dmg: 8, kb: 7, kbg: 0.1, cd: 60 },
-        side: { kind: 'projectile', name: 'Block Barrage', thing: 'three toy blocks', sprite: 'fxcubes', scale: 0.77, speed: 12, dmg: 9, kb: 7, kbg: 0.09, r: 26, life: 55, cd: 90 },
+        side: { kind: 'projectile', name: 'Block Barrage', thing: 'three toy blocks', sheet: 'fx10', sprite: 'dragonblocks', px: 150, speed: 12, dmg: 9, kb: 7, kbg: 0.09, r: 26, life: 55, cd: 90 },
         up: { kind: 'rise', name: 'Canvas Soar', power: 20, forward: 4, dmg: 6, kb: 6, kbg: 0.06 },
         down: { kind: 'counter', name: 'Sketch Shield', window: 18, mult: 1.3 },
       },

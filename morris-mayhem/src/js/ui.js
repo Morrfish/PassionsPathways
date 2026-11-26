@@ -78,7 +78,12 @@ window.MM = window.MM || {};
   function devOptions(sel) {
     return Object.entries(MM.DEVICE_NAMES).map(([k, v]) => `<option value="${k}" ${k === sel ? 'selected' : ''}>${v}</option>`).join('');
   }
+  // load every scene card up front, so picking a fighter shows the scene right away (no portrait flash first)
+  const sceneImgs = {};
+  MM.preloadScenes = () => { for (const d of MM.FIGHTERS) if (!sceneImgs[d.id]) { const im = new Image(); im.src = `img/scenes/${d.id}.webp`; sceneImgs[d.id] = im; } }; // giants too, once unlocked
+  MM.preloadScenes(); // start right away, while the title screen is up
   function drawSelect() {
+    MM.preloadScenes();
     const box = $('#slots');
     const pcol = (i) => (teamMode() ? MM.TEAM_COLORS[slots[i].team] : MM.PLAYER_COLORS[i]);
     box.classList.add('scenes'); // ChatGPT's scene cards: the whole 3:1 picture, controls over its right side
@@ -91,7 +96,7 @@ window.MM = window.MM || {};
         return `<div class="slot ${off ? 'off' : ''} ${i === activeSlot ? 'active' : ''}" data-slot="${i}" style="--pc:${pcol(i)}">
           <div class="top"><span class="pn">P${i + 1}</span><span class="nm">${off ? 'Empty' : f.name}</span>
             ${off ? '' : '<div class="pick"><button data-k="prev" aria-label="Previous fighter">◀</button><button data-k="next" aria-label="Next fighter">▶</button></div>'}</div>
-          <div class="pic" ${off ? '' : `style="background-image:url(img/scenes/${s.fighter}.webp), url(${portrait(s.fighter)})"`}>
+          <div class="pic" ${off ? '' : `style="background-image:url(img/scenes/${s.fighter}.webp)"`}>
             ${off ? '<div class="join">Press X on a controller to join</div>' : ''}
             <div class="side">${ctrl}</div>
           </div>

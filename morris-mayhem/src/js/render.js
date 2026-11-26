@@ -13,7 +13,7 @@ window.MM = window.MM || {};
   // from ChatGPT's colour-swap poses), so she keeps the colour she switched to on every move
   const CLOE_COLORS = { orange: [22.8, 0.848, 0.656], yellow: [42.4, 0.858, 0.709], green: [95.4, 0.784, 0.498], blue: [227.2, 0.871, 0.571], purple: [293.6, 0.699, 0.477] };
   const RED = [2.9, 0.737, 0.603];
-  if (MM.SPRITES && MM.SPRITES.cloe) for (const c in CLOE_COLORS) MM.SPRITES['cloe-' + c] = Object.assign({}, MM.SPRITES.cloe, { recolorOf: 'cloe', recolor: CLOE_COLORS[c] });
+  if (MM.SPRITES && MM.SPRITES.cloe) for (const c in CLOE_COLORS) if (!MM.SPRITES['cloe-' + c]) MM.SPRITES['cloe-' + c] = Object.assign({}, MM.SPRITES.cloe, { recolorOf: 'cloe', recolor: CLOE_COLORS[c] }); // ChatGPT's own colour sheets win
   function recolorSheet(base, to) {
     const cv = document.createElement('canvas'); cv.width = base.naturalWidth; cv.height = base.naturalHeight;
     const g = cv.getContext('2d', { willReadFrequently: true }); g.drawImage(base, 0, 0);

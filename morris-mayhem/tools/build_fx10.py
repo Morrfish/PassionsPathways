@@ -10,6 +10,7 @@ ITEMS += [(f'parcel{i}', f'giant-patty-parcel-rain-0{i+1}-v1.png', 200) for i in
 ITEMS += [(f'yap{i}', f'triple-trouble-triple-yap-0{i+1}-v1.png', 260) for i in range(4)]
 ITEMS += [(f'woodland{i}', f'giant-jeff-woodland-call-0{i+1}-v1.png', 320) for i in range(4)]
 ITEMS += [(f'star{i}', f'mayhem-star-0{i+1}-v1.png', 200) for i in range(4)]
+ITEMS += [('dragonblocks', 'siren-dragon-block-barrage-projectiles-hires-v2.png', 360)]  # Siren's dragon Block Barrage (Nov 26)
 ITEMS += [('hitsmall', 'hit-small-spark-v1.png', 200), ('hitbig', 'hit-big-burst-v1.png', 320), ('catchring', 'ultimate-catch-ring-v1.png', 360)]
 cuts = []
 for name, fn, mx in ITEMS:

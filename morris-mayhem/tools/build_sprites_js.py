@@ -188,6 +188,10 @@ MATCH_IDLE = {'siren': ('mac', ('cup', 'tired3'), ('tired', 'tired3')), 'jorie':
               # Cloe's and Janelle's sheets were drawn smaller row by row: size each move by its standing pose
               'cloe': tuple((c, c + '3') for c in ('red', 'orange', 'yellow', 'green', 'blue', 'purple', 'release')) + (('shuffle', 'shuffle0'), ('wheel', 'wheel0')),
               'janelle': tuple((r, r + '0') for r in ('book', 'oeng', 'oread', 'omath', 'osoc', 'osci', 'deng', 'dread', 'dmath', 'dsoc', 'dsci'))}
+# Cloe's five jacket colours: ChatGPT's recoloured sheets, cut exactly like her red ones (same poses and sizes)
+for _c in ('orange', 'yellow', 'green', 'blue', 'purple'):
+    MOVES['cloe-' + _c] = MOVES['cloe']; ALIASES['cloe-' + _c] = ALIASES['cloe']
+    GROUP_SCALE['cloe-' + _c] = GROUP_SCALE['cloe']; MATCH_IDLE['cloe-' + _c] = MATCH_IDLE['cloe']
 for who, moves in MOVES.items():
     fr = json.load(open(os.path.join(src_dir, f'{who}-frames.json')))
     for a, b in ALIASES.get(who, {}).items(): fr[a] = fr[b]

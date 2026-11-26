@@ -23,7 +23,7 @@ for row, name in ROWS.items():
         im = im.resize((round(im.width * S), round(im.height * S)), Image.LANCZOS)
         cuts.append((f'{name}{i}', im, ((800 - bb[0]) * S, (1100 - bb[1]) * S)))
 new_names = {n for n, _, _ in cuts}
-keep = [k for k in old if k not in new_names and not k.startswith(('tail', 'wing'))]  # old tail/wing swipes: unused, replaced by the hi-res attack row
+keep = [k for k in old if k not in new_names and not k.startswith(('tail', 'wing', 'fxcubes'))]  # old tail/wing swipes: unused, replaced by the hi-res attack row
 for k in keep:
     x, y, w, h, ax, ay = old[k]
     c = OA.crop((x, y, x + w, y + h))
