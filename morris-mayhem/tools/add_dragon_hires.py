@@ -11,7 +11,9 @@ lo_a, lo_f = f'{out}/siren-dragon-lowres-atlas.webp', f'{out}/siren-dragon-lowre
 if not os.path.exists(lo_f):  # keep the original cut once
     shutil.copy(f'{out}/siren-dragon-atlas.webp', lo_a); shutil.copy(f'{out}/siren-dragon-frames.json', lo_f)
 old = json.load(open(lo_f)); OA = Image.open(lo_a).convert('RGBA')
-ROWS = {'idle': 'idle', 'run': 'run', 'jump': 'jump', 'hurt': 'hurt', 'attack': 'atk', 'breath': 'prism', 'tired': 'tired'}
+ROWS = {'idle': 'idle', 'run': 'run', 'jump': 'jump', 'hurt': 'hurt', 'attack': 'atk', 'breath': 'prism', 'tired': 'tired',
+        # second pack (Nov 26): the moves that were still the old small art
+        'horn-lift': 'horn', 'block-stomp': 'stomp', 'soar': 'soar', 'shield': 'shield', 'barrage': 'barrage', 'change-back': 'back'}
 LABEL_BELOW = {'back2', 'barrage0'}  # old poses with a caption plate drawn under them
 cuts = []
 for row, name in ROWS.items():
@@ -21,7 +23,7 @@ for row, name in ROWS.items():
         im = im.resize((round(im.width * S), round(im.height * S)), Image.LANCZOS)
         cuts.append((f'{name}{i}', im, ((800 - bb[0]) * S, (1100 - bb[1]) * S)))
 new_names = {n for n, _, _ in cuts}
-keep = [k for k in old if k not in new_names]
+keep = [k for k in old if k not in new_names and not k.startswith(('tail', 'wing'))]  # old tail/wing swipes: unused, replaced by the hi-res attack row
 for k in keep:
     x, y, w, h, ax, ay = old[k]
     c = OA.crop((x, y, x + w, y + h))
