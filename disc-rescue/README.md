@@ -7,8 +7,9 @@ Turn your old music CDs into MP3s, with everything filled in automatically:
   car stereos and Plex show it) and as `folder.jpg` in the album folder
 - neat folders: `Music\Artist\Album (Year)\01 - Song.mp3`
 
-Album details come from [MusicBrainz](https://musicbrainz.org) and covers from the
-[Cover Art Archive](https://coverartarchive.org). Both are free, with no account needed.
+Album details come from [MusicBrainz](https://musicbrainz.org). Covers come from the
+[Cover Art Archive](https://coverartarchive.org), or from the iTunes and Deezer catalogs when
+the Cover Art Archive doesn't have one. All of them are free, with no account needed.
 
 ## Getting the program
 
@@ -32,7 +33,7 @@ isn't from a big company. Click **More info**, then **Run anyway**.
    pops out and **Open folder** shows your music.
 
 **CD not recognised?** Type the artist and album name on the left and press
-**Search by the artist and album above**. If it still isn't found, type the
+**Search…** at the top. If it still isn't found, type the
 details in yourself and rip anyway.
 
 **Scratched CD?** The program re-reads bad spots several times. If a bit still

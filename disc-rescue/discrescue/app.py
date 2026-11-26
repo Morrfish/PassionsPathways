@@ -68,13 +68,21 @@ class App:
         self.saved = self._load_settings()
 
         root.title(APP_NAME)
-        root.geometry("1000x760")
-        root.minsize(840, 620)
+        # Windows "make text bigger" settings (125%, 150%...) enlarge the text,
+        # so every size given in pixels is scaled to match.
+        self.k = max(1.0, root.winfo_fpixels("1i") / 96)
+        sw, sh = root.winfo_screenwidth(), root.winfo_screenheight()
+        w, h = min(self.px(1000), sw - 40), min(self.px(760), sh - 80)
+        root.geometry(f"{w}x{h}+{max(0, (sw - w) // 2)}+{max(0, (sh - h) // 3)}")
+        root.minsize(min(self.px(760), w), min(self.px(540), h))
         self._style()
         self._build()
         self.refresh_drives()
         root.after(100, self._pump)
         root.protocol("WM_DELETE_WINDOW", self.on_close)
+
+    def px(self, n: float) -> int:
+        return int(round(n * self.k))
 
     # ---------- settings ----------
     def _load_settings(self) -> dict:
@@ -104,7 +112,9 @@ class App:
         s.configure("Big.TButton", font=("Segoe UI", 11, "bold"), padding=(14, 6))
         s.configure("Head.TLabel", font=("Segoe UI", 15, "bold"))
         s.configure("Muted.TLabel", foreground="#555")
-        s.configure("Treeview", rowheight=24)
+        from tkinter import font as tkfont
+        line = tkfont.nametofont("TkDefaultFont").metrics("linespace")
+        s.configure("Treeview", rowheight=line + self.px(8))
 
     def _build(self) -> None:
         r = self.root
@@ -115,7 +125,7 @@ class App:
         self.logo_img = None
         try:   # the Disc Rescue logo (shield + name); falls back to plain text
             img = Image.open(resource("logo.png"))
-            img.thumbnail((400, 70))
+            img.thumbnail((self.px(400), self.px(56)))
             self.logo_img = ImageTk.PhotoImage(img)
             tk.Label(banner, image=self.logo_img, bg=BRAND_BG).pack(side="left", padx=(14, 6), pady=8)
         except Exception:
@@ -139,38 +149,40 @@ class App:
         self.release_var = tk.StringVar()
         self.release_box = ttk.Combobox(top, textvariable=self.release_var, state="readonly")
         self.release_box.pack(side="left", fill="x", expand=True)
+        ttk.Button(top, text="Search…", command=self.search).pack(side="left", padx=(6, 0))
         self.release_box.bind("<<ComboboxSelected>>", lambda e: self.choose_release())
 
-        mid = ttk.Frame(r)
-        mid.pack(fill="both", expand=True, **pad)
+        mid = ttk.Frame(r)   # packed last, so it only gets the space that's left
 
         left = ttk.Frame(mid)
         left.pack(side="left", fill="y")
-        self.cover_lbl = tk.Label(left, width=220, height=220, bg="#e6e6e6", text="No cover art yet",
-                                  fg="#777", relief="flat", compound="center")
-        self.cover_lbl.pack()
+        self.cover_size = self.px(200)
+        box = tk.Frame(left, width=self.cover_size, height=self.cover_size, bg="#e6e6e6")
+        box.pack_propagate(False)   # keep the box this size, picture or not
+        box.pack()
+        self.cover_lbl = tk.Label(box, bg="#e6e6e6", text="No cover art yet", fg="#777",
+                                  wraplength=self.cover_size - self.px(20))
+        self.cover_lbl.pack(fill="both", expand=True)
         cbtns = ttk.Frame(left)
         cbtns.pack(fill="x", pady=4)
         ttk.Button(cbtns, text="Use my own picture…", command=self.pick_cover).pack(side="left")
         ttk.Button(cbtns, text="Remove", command=lambda: self.set_cover(None)).pack(side="right")
 
         form = ttk.Frame(left)
-        form.pack(fill="x", pady=(10, 0))
-        self.vars = {}
-        for row, (key, label) in enumerate([("artist", "Artist"), ("title", "Album"),
-                                            ("year", "Year"), ("genre", "Genre"),
-                                            ("disc", "Disc")]):
+        form.pack(fill="x", pady=(8, 0))
+        self.vars = {k: tk.StringVar() for k in ("artist", "title", "year", "genre", "disc")}
+        for row, (key, label) in enumerate([("artist", "Artist"), ("title", "Album")]):
             ttk.Label(form, text=label).grid(row=row, column=0, sticky="w", pady=2)
-            v = tk.StringVar()
-            ttk.Entry(form, textvariable=v, width=30).grid(row=row, column=1, sticky="ew", pady=2)
-            self.vars[key] = v
+            ttk.Entry(form, textvariable=self.vars[key]).grid(
+                row=row, column=1, columnspan=5, sticky="ew", pady=2)
+        for col, (key, label, width) in enumerate([("year", "Year", 6), ("genre", "Genre", 10),
+                                                  ("disc", "Disc", 4)]):
+            ttk.Label(form, text=label).grid(row=2, column=col * 2, sticky="w",
+                                             padx=(0 if col == 0 else 6, 0), pady=2)
+            ttk.Entry(form, textvariable=self.vars[key], width=width).grid(
+                row=2, column=col * 2 + 1, sticky="ew", pady=2)
         self.vars["disc"].set("1/1")
-        form.columnconfigure(1, weight=1)
-        sf = ttk.Frame(left)
-        sf.pack(fill="x", pady=(8, 0))
-        ttk.Label(sf, text="Not the right album?", style="Muted.TLabel").pack(anchor="w")
-        ttk.Button(sf, text="Search by the artist and album above",
-                   command=self.search).pack(fill="x", pady=2)
+        form.columnconfigure(3, weight=1)
 
         right = ttk.Frame(mid)
         right.pack(side="left", fill="both", expand=True, padx=(12, 0))
@@ -186,7 +198,7 @@ class App:
                                    ("title", "Song", 220, "w"), ("artist", "Artist", 140, "w"),
                                    ("time", "Time", 50, "e"), ("status", "Progress", 80, "w")]:
             self.tree.heading(c, text=text)
-            self.tree.column(c, width=w, anchor=anchor, stretch=c in ("title", "artist"))
+            self.tree.column(c, width=self.px(w), minwidth=self.px(min(w, 40)), anchor=anchor, stretch=c in ("title", "artist"))
         sb = ttk.Scrollbar(tf, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscrollcommand=sb.set)
         self.tree.pack(side="left", fill="both", expand=True)
@@ -196,7 +208,6 @@ class App:
         self.tree.bind("<space>", lambda e: self.toggle_selected())
 
         opts = ttk.Frame(r)
-        opts.pack(fill="x", **pad)
         ttk.Label(opts, text="Save to:").pack(side="left")
         self.folder_var = tk.StringVar(value=self.saved.get("music_folder", default_music_folder()))
         ttk.Entry(opts, textvariable=self.folder_var).pack(side="left", fill="x", expand=True, padx=6)
@@ -207,7 +218,6 @@ class App:
                      state="readonly", width=20).pack(side="left")
 
         opts2 = ttk.Frame(r)
-        opts2.pack(fill="x", padx=10)
         self.eject_var = tk.BooleanVar(value=self.saved.get("eject", True))
         self.folderjpg_var = tk.BooleanVar(value=self.saved.get("folder_jpg", True))
         ttk.Checkbutton(opts2, text="Eject the CD when finished",
@@ -216,7 +226,6 @@ class App:
                         variable=self.folderjpg_var).pack(side="left", padx=14)
 
         bottom = ttk.Frame(r)
-        bottom.pack(fill="x", **pad)
         self.rip_btn = ttk.Button(bottom, text="Rip CD", style="Big.TButton",
                                   command=self.rip, state="disabled")
         self.rip_btn.pack(side="right")
@@ -226,8 +235,12 @@ class App:
         self.progress = ttk.Progressbar(bottom, mode="determinate", maximum=1.0)
         self.progress.pack(side="left", fill="x", expand=True, padx=(0, 10))
         self.status_var = tk.StringVar(value="Ready.")
-        ttk.Label(r, textvariable=self.status_var, style="Muted.TLabel").pack(
-            anchor="w", padx=10, pady=(0, 8))
+        status = ttk.Label(r, textvariable=self.status_var, style="Muted.TLabel")
+        status.pack(side="bottom", anchor="w", padx=10, pady=(0, 8))
+        bottom.pack(side="bottom", fill="x", **pad)
+        opts2.pack(side="bottom", fill="x", padx=10)
+        opts.pack(side="bottom", fill="x", **pad)
+        mid.pack(fill="both", expand=True, **pad)
         self.last_folder = None
 
     # ---------- background work ----------
@@ -402,15 +415,14 @@ class App:
         if data:
             try:
                 img = Image.open(io.BytesIO(data))
-                img.thumbnail((220, 220))
+                img.thumbnail((self.cover_size, self.cover_size))
                 self.cover_img = ImageTk.PhotoImage(img)
-                self.cover_lbl.configure(image=self.cover_img, text="", width=220, height=220)
+                self.cover_lbl.configure(image=self.cover_img, text="")
                 return
             except Exception:
                 self.cover = None
         self.cover_img = None
-        self.cover_lbl.configure(image="", text="Getting the cover…" if loading else "No cover art",
-                                 width=220, height=220)
+        self.cover_lbl.configure(image="", text="Getting the cover…" if loading else "No cover art")
 
     def pick_cover(self) -> None:
         path = filedialog.askopenfilename(title="Choose the album cover",
