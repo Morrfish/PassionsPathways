@@ -151,8 +151,7 @@ GROUP_SCALE = {
     'cloe': {'jump': 0.89, 'alift': 1.15},  # alift (block steps): drawn ~15% small  # her jump poses were drawn ~12% bigger (face width 25 vs 22 px)
     # the giants' transformation / personality sheets were drawn bigger than their fighting poses (head-size check):
     # entrance and losing poses come from them, so without this they shrank when the fight started
-    'jeff-giant': {g: 0.72 for g in ('cup', 'back', 'ent', 'lose')},
-    'patty-giant': {g: 0.68 for g in ('cup', 'back', 'ent', 'lose')},
+    # (the giants' cup/back/ent/lose sizes are baked into their v2 art by tools/build_giants_v2.py)
     'triple-trouble': {g: 0.76 for g in ('ult', 'pers', 'ent', 'taunt', 'win', 'lose')},
     'haylie': {'ult1': 1.15, 'ult2': 1.3, 'ult3': 1.3},
     # Jacqi's specials sheet was drawn ~3/4 size; her dash SUV matches the ultimate's SUV
@@ -193,7 +192,9 @@ ALIASES['evea-spirit'] = {'ent': 'link2', 'taunt': 'link3', 'win': 'link3', 'los
 # the standing pose to size the personality sheet by, when the taunt reaches up (Jorie lifts the milk jug overhead)
 PERS_REF = {'jorie': 'pers0'}
 # atlases whose personality/ultimate poses were drawn at the same scale as the fighting poses: don't resize them
-SAME_SHEET_PERS = {'courtnee', 'grandma_morris', 'grandma_worst', 'jaicelynn', 'jeff-giant', 'patty-giant', 'triple-trouble', 'kevin', 'kevin-fan', 'janelle'}
+# giants v2: too much art for one atlas, so a second one holds the rest (tools/build_giants_v2.py)
+for _g in ('jeff-giant', 'patty-giant'): MOVES[_g + '-b'] = MOVES[_g]; BASE[_g] = _g + '-b'
+SAME_SHEET_PERS = {'jeff-giant-b', 'patty-giant-b', 'courtnee', 'grandma_morris', 'grandma_worst', 'jaicelynn', 'jeff-giant', 'patty-giant', 'triple-trouble', 'kevin', 'kevin-fan', 'janelle'}
 # standing height comes from another pose (Evea's spirit poses have Grandma floating over her: size her by Evea alone)
 STANDH_FROM = {'evea-spirit': 'link0'}
 # a move group cut from another sheet: size it so its first pose is as tall as the idle pose
