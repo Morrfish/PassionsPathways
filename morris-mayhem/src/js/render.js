@@ -188,6 +188,7 @@ window.MM = window.MM || {};
     g.translate(f.x + slide, f.y + ((G && G.stage.footSink != null) ? G.stage.footSink : MM.FOOT_SINK)); // feet stand on the floor's top face, not its back edge
     if (f.invuln > 0 && Math.floor(G.frame / 4) % 2) g.globalAlpha = 0.5;
     if (f.act && f.act.type === 'dodge') g.globalAlpha *= 0.55;
+    if (f.act && f.act.sink) { g.beginPath(); g.rect(-f.w * 4, -f.h * 3, f.w * 8, f.h * 3); g.clip(); g.translate(0, f.act.sink * f.h * 1.3); } // Grandma Worst sinking into / rising from the floor
     if (f.buff) { g.save(); g.fillStyle = f.buff.color; g.globalAlpha *= 0.3; g.beginPath(); g.ellipse(0, -f.h * 0.55, f.w * 1.4, f.h * 0.75, 0, 0, TAU); g.fill(); g.restore(); }
     // player-color ring at the feet (keeps two of the same fighter apart without recoloring the art)
     if (f.ground) { g.save(); g.strokeStyle = f.team ? MM.TEAM_COLORS[f.team] : MM.PLAYER_COLORS[f.slot]; g.lineWidth = 4; g.globalAlpha *= 0.85; g.beginPath(); g.ellipse(0, -2, f.w * 0.9, 8, 0, 0, TAU); g.stroke(); g.restore(); }
@@ -321,6 +322,11 @@ window.MM = window.MM || {};
       const k = Math.min(1, a.t / a.u.catchAt), r = a.u.radius * f.h * (a.t < a.u.catchAt ? k : 1);
       g.save(); g.globalAlpha = 0.25 + 0.15 * Math.sin(G.frame * 0.5); g.strokeStyle = f.accent; g.lineWidth = 8;
       g.beginPath(); g.arc(f.x, f.y - f.h / 2, r, 0, TAU); g.stroke();
+      if (a.u.orbit && a.t > a.u.catchAt * 0.5) { // food circling the ring, bursting outward at the finish
+        g.globalAlpha = a.t > a.u.finishAt ? Math.max(0, 1 - (a.t - a.u.finishAt) / 24) : 1;
+        const out = a.t > a.u.finishAt ? 1 + (a.t - a.u.finishAt) / 12 : 1, n = a.u.orbit.length;
+        for (let i = 0; i < n; i++) { const ang = G.frame * 0.1 + (i * TAU) / n; drawFx(g, a.u.sprite || f.def.sprite, a.u.orbit[i], f.x + Math.cos(ang) * r * 0.8 * out, f.y - f.h / 2 + Math.sin(ang) * r * 0.55 * out, f.h * 0.4, 1, ang); }
+      }
       if (!a.u.sprite && a.t > a.u.catchAt) { g.globalAlpha = 0.9; g.font = '64px serif'; g.textAlign = 'center'; for (let i = 0; i < 6; i++) { const ang = G.frame * 0.12 + (i * TAU) / 6; g.fillText(a.u.emoji || '💥', f.x + Math.cos(ang) * r * 0.7, f.y - f.h / 2 + Math.sin(ang) * r * 0.5); } }
       g.restore();
     }

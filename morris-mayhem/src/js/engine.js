@@ -632,6 +632,26 @@ window.MM = window.MM || {};
         if (a.t > 14) a.noGrav = false;
       },
     },
+    behind: { // e.g. Grandma Worst's Behind You, Honey: sinks away, then rises right behind the nearest opponent, facing them
+      start(G, f, sp, a) { a.dur = 40; a.pose = 'idle'; a.noGrav = !f.ground; burst(G, f.x, f.y - 10, f.accent, 14, 4); },
+      tick(G, f, sp, a) {
+        f.vx = 0; if (!f.ground) f.vy = 0;
+        a.hidden = a.t >= 6 && a.t < 18; if (a.hidden) f.invuln = Math.max(f.invuln, 2);
+        a.sink = a.t < 6 ? a.t / 6 : a.t < 18 ? 1 : a.t < 24 ? 1 - (a.t - 18) / 6 : 0; // drawn sinking into / rising out of the floor
+        if (a.t === 18) {
+          const legal = G.fighters.filter((d) => d !== f && !d.dead && !d.out && !(MM.sameTeam(G, f, d) && !G.ff));
+          let d = null, best = 1e9; for (const o of legal) { const k = Math.hypot(o.x - f.x, o.y - f.y); if (k < best) { best = k; d = o; } }
+          if (d) { // no one to sneak up on: she just comes back up where she was
+            const bl = G.stage.blast, lo = MM.blastLeft(bl) + 80, hi = MM.blastRight(bl) - 80;
+            f.x = clamp(d.x - (d.face || 1) * (d.w + 30), lo, hi); f.y = d.y; f.vy = 0; f.ground = d.ground || null;
+            f.face = sgn(d.x - f.x) || f.face; f.ff = false;
+          }
+          burst(G, f.x, f.y - 10, f.accent, 18, 5); MM.sfx('special');
+        }
+        if (a.t >= 20 && a.t < 26 && sp.dmg) { a.box = boxFor(f, [-10, -110, 90, 110]); a.hitProps = { dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: 45 }; } else a.box = null;
+        if (a.t > 24) a.noGrav = false;
+      },
+    },
     slam: {
       start(G, f, sp, a) {
         a.dur = 120; a.pose = 'slam'; a.noGrav = true;

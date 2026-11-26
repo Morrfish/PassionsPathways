@@ -351,6 +351,7 @@ window.MM = window.MM || {};
 
   // ---------- family cards ----------
   const KIND_TEXT = {
+    behind: () => 'sinks into the ground and pops up behind the nearest opponent',
     projectile: (s) => `throws ${s.thing || s.emoji || 'an energy ball'}${s.count > 1 ? ` ×${s.count}` : ''}${s.boomerang ? ' that comes back' : ''}`,
     shockwave: () => 'sends shockwaves along the ground both ways', dash: (s) => `charges forward${s.armor ? " and can't be stopped by small hits" : ''}`,
     heli: () => 'spins his towel overhead and flies up higher than a jump (steer left and right)',
