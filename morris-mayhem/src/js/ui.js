@@ -535,6 +535,10 @@ window.MM = window.MM || {};
     if (d.forms && ((d.forms[0].specials || d.specials || {}).down || {}).kind === 'supersaiyan') {
       html += `<div class="note"><b>Super Saiyan!</b> ↓ + Special powers him up for 8 seconds: golden hair, faster and stronger. When it wears off he's worn out and takes +25% damage, and he has to wait 15 seconds to do it again.</div>`;
       for (const fd of MM.formDefs(d)) html += `<h4>${fd.title}</h4>` + moveRows(fd);
+    } else if (d.mess && d.id !== 'codee') { // a power bar (Jeff and Patty's Mayhem, Kevin's Rally, Siren's Creativity, ...)
+      const ms = d.mess, secs = Math.round((ms.cleanFrames || 720) / 60), fill = ms.pieces ? `Collect all ${ms.pieces} pieces` : ms.action ? 'The bar under the damage fills as you attack and land hits' : 'The bar under the damage fills as you land hits';
+      html += `<div class="note"><b>${(ms.go || 'Power-up').replace(/!$/, '')}!</b> ${fill}. When it's full (<b>${ms.ready || 'READY!'}</b>), press <b>Switch form</b> (R · Num 4 · controller Y · ⇄ on touch) for <b>${secs} seconds</b> of ${(MM.formDefs(d)[1] || {}).title || 'the power-up'}.${ms.tiredAfter ? ` Then he's worn out and slower for ${Math.round(ms.tiredAfter.t / 60)} s.` : ''}</div>`;
+      for (const fd of MM.formDefs(d)) html += `<h4>${fd.title}</h4>` + moveRows(fd);
     } else if (d.mess) {
       html += `<div class="note"><b>Mess Meter!</b> His landscaping moves cover him in grass and mud and fill the brown Mess Meter (+4 per move, +6 more when it lands). When it's full, press <b>Switch form</b> (R · Num 4 · controller Y · ⇄ on touch) to clean up into the <b>Clean Freak</b> for 12 seconds: cleaning tools, 10% more power and 8% more speed. A hit while he's cleaning up stops it, but he keeps the full meter. After 12 seconds he goes back to work with an empty meter.</div>`;
       for (const fd of MM.formDefs(d)) html += `<h4>${fd.title}</h4>` + moveRows(fd);

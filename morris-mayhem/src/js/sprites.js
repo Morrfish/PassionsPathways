@@ -6,6 +6,7 @@ MM.SPRITES = MM.SPRITES || {};
 
 MM.SPRITES['patty'] = {
   src: 'img/patty-atlas.webp',
+  base: 'patty-mayhem',
   standH: 296,
   fscale: {},
   frames: {
@@ -79,6 +80,7 @@ MM.SPRITES['patty'] = {
 
 MM.SPRITES['jeffery'] = {
   src: 'img/jeffery-atlas.webp',
+  base: 'jeffery-mayhem',
   standH: 249,
   fscale: {},
   frames: {
@@ -2376,7 +2378,7 @@ MM.SPRITES['kevin'] = {
     'ent': [1394, 910, 216, 280, 108.0, 280.0],
     'taunt': [1718, 1209, 214, 217, 107.0, 217.0],
     'win': [1718, 1209, 214, 217, 107.0, 217.0],
-    'lose': [750, 1209, 149, 275, 74.5, 275.0]
+    'lose': [584, 1209, 162, 266, 81.0, 266.0]
   },
   moves: {"jab": "punch", "side": "kick", "down": "towel", "up": "kick", "nair": "kick", "fair": "kick", "uair": "kick", "dair": "towel", "neutral": "spiral", "sideSpecial": "toss", "upSpecial": "heli", "downSpecial": "towel", "counterHit": "towel2", "dashAttack": "bus", "airRow": "kick", "upRow": "kick", "uairRow": "kick", "riseMid": "rally2", "riseLate": "rally3"},
 };
@@ -2513,7 +2515,7 @@ MM.SPRITES['cloe'] = {
     'ent': [1271, 562, 253, 326, 146.0, 326.0],
     'taunt': [1526, 562, 245, 326, 88.0, 326.0],
     'win': [811, 562, 272, 338, 125.5, 338.0],
-    'lose': [357, 1422, 194, 300, 97.0, 300.0]
+    'lose': [1572, 2308, 236, 249, 118.0, 249.0]
   },
   moves: {"jab": "paint", "side": "paint", "down": "crayon", "up": "alift", "nair": "crayon", "fair": "paint", "uair": "alift", "dair": "crayon", "neutral": "red", "sideSpecial": "abc", "upSpecial": "alift", "downSpecial": "shuffle", "upRow": "alift", "uairRow": "alift", "riseMid": "alift2", "riseLate": "alift3"},
 };
@@ -2952,7 +2954,7 @@ MM.SPRITES['cloe-orange'] = {
     'ent': [1271, 562, 253, 326, 146.0, 326.0],
     'taunt': [1526, 562, 245, 326, 88.0, 326.0],
     'win': [811, 562, 272, 338, 125.5, 338.0],
-    'lose': [197, 1422, 194, 300, 97.0, 300.0]
+    'lose': [1193, 2307, 236, 249, 118.0, 249.0]
   },
   moves: {"jab": "paint", "side": "paint", "down": "crayon", "up": "alift", "nair": "crayon", "fair": "paint", "uair": "alift", "dair": "crayon", "neutral": "red", "sideSpecial": "abc", "upSpecial": "alift", "downSpecial": "shuffle", "upRow": "alift", "uairRow": "alift", "riseMid": "alift2", "riseLate": "alift3"},
 };
@@ -3043,7 +3045,7 @@ MM.SPRITES['cloe-yellow'] = {
     'ent': [1271, 562, 253, 326, 146.0, 326.0],
     'taunt': [1526, 562, 245, 326, 88.0, 326.0],
     'win': [811, 562, 272, 338, 125.5, 338.0],
-    'lose': [197, 1422, 194, 300, 97.0, 300.0]
+    'lose': [1193, 2307, 236, 249, 118.0, 249.0]
   },
   moves: {"jab": "paint", "side": "paint", "down": "crayon", "up": "alift", "nair": "crayon", "fair": "paint", "uair": "alift", "dair": "crayon", "neutral": "red", "sideSpecial": "abc", "upSpecial": "alift", "downSpecial": "shuffle", "upRow": "alift", "uairRow": "alift", "riseMid": "alift2", "riseLate": "alift3"},
 };
@@ -3134,7 +3136,7 @@ MM.SPRITES['cloe-green'] = {
     'ent': [1271, 562, 253, 326, 146.0, 326.0],
     'taunt': [1526, 562, 245, 326, 88.0, 326.0],
     'win': [811, 562, 272, 338, 125.5, 338.0],
-    'lose': [197, 1422, 194, 300, 97.0, 300.0]
+    'lose': [1193, 2307, 236, 249, 118.0, 249.0]
   },
   moves: {"jab": "paint", "side": "paint", "down": "crayon", "up": "alift", "nair": "crayon", "fair": "paint", "uair": "alift", "dair": "crayon", "neutral": "red", "sideSpecial": "abc", "upSpecial": "alift", "downSpecial": "shuffle", "upRow": "alift", "uairRow": "alift", "riseMid": "alift2", "riseLate": "alift3"},
 };
@@ -3225,7 +3227,7 @@ MM.SPRITES['cloe-blue'] = {
     'ent': [1271, 562, 253, 326, 146.0, 326.0],
     'taunt': [1526, 562, 245, 326, 88.0, 326.0],
     'win': [811, 562, 272, 338, 125.5, 338.0],
-    'lose': [197, 1422, 194, 300, 97.0, 300.0]
+    'lose': [1193, 2307, 236, 249, 118.0, 249.0]
   },
   moves: {"jab": "paint", "side": "paint", "down": "crayon", "up": "alift", "nair": "crayon", "fair": "paint", "uair": "alift", "dair": "crayon", "neutral": "red", "sideSpecial": "abc", "upSpecial": "alift", "downSpecial": "shuffle", "upRow": "alift", "uairRow": "alift", "riseMid": "alift2", "riseLate": "alift3"},
 };
@@ -3316,7 +3318,7 @@ MM.SPRITES['cloe-purple'] = {
     'ent': [1271, 562, 253, 326, 146.0, 326.0],
     'taunt': [1526, 562, 245, 326, 88.0, 326.0],
     'win': [811, 562, 272, 338, 125.5, 338.0],
-    'lose': [197, 1422, 194, 300, 97.0, 300.0]
+    'lose': [1193, 2307, 236, 249, 118.0, 249.0]
   },
   moves: {"jab": "paint", "side": "paint", "down": "crayon", "up": "alift", "nair": "crayon", "fair": "paint", "uair": "alift", "dair": "crayon", "neutral": "red", "sideSpecial": "abc", "upSpecial": "alift", "downSpecial": "shuffle", "upRow": "alift", "uairRow": "alift", "riseMid": "alift2", "riseLate": "alift3"},
 };

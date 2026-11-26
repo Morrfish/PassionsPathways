@@ -106,7 +106,8 @@ window.MM = window.MM || {};
 
   // entrance (before the countdown), taunt, victory: key poses from the fighter's personality sheet
   function presPose(f, G) {
-    const u = f.def.ultimate, sh = u && u.sprite && sheet(u.sprite);
+    const u = f.def.ultimate; let sh = u && u.sprite && sheet(u.sprite);
+    if (!(sh && sh.S.frames.win) && f.def.sprite) sh = sheet(f.def.sprite); // entrance/taunt/win poses on the fighter's own sheet
     if (!sh) return null;
     let frame = null;
     if (G.countdown > 150) frame = 'ent';
@@ -115,7 +116,9 @@ window.MM = window.MM || {};
     return frame && sh.S.frames[frame] ? { sh, frame } : null;
   }
   MM.posePicture = function (def, frame, size = 320) { // a still of one pose for menus (results screen)
-    const u = def.ultimate, sh = u && u.sprite && sheet(u.sprite), fr = sh && sh.S.frames[frame];
+    const u = def.ultimate; let sh = u && u.sprite && sheet(u.sprite);
+    if (!(sh && sh.S.frames[frame]) && def.sprite) sh = sheet(def.sprite); // e.g. Kevin: his win/lose poses are on his own sheet, not the ultimate's
+    const fr = sh && sh.S.frames[frame];
     if (!fr) return null;
     const c = document.createElement('canvas'); c.width = c.height = size; const g = c.getContext('2d');
     // same scale as in a match: a standing fighter is ~70% of the card (Courtnee tallest), so sitting/lose poses stay small

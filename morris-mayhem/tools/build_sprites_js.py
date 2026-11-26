@@ -165,16 +165,17 @@ ALIASES['sabir'].update({'build4': 'buildx0', 'build5': 'buildx1', 'fly3': 'fly0
 ALIASES['jeff-giant'] = {'ent': 'cup3', 'taunt': 'wild0', 'win': 'wild3', 'lose': 'back3'}
 ALIASES['patty-giant'] = {'ent': 'cup3', 'taunt': 'idle3', 'win': 'emg3', 'lose': 'back3'}
 ALIASES['triple-trouble'] = {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'}
-ALIASES['kevin'] = {'ent': 'cup0', 'taunt': 'rally3', 'win': 'rally3', 'lose': 'slow2'}
+ALIASES['kevin'] = {'ent': 'cup0', 'taunt': 'rally3', 'win': 'rally3', 'lose': 'slow1'}  # lose: bent over, worn out
 ALIASES['kevin-fan'] = {'ent': 'idle0', 'taunt': 'idle1', 'win': 'curtain2', 'lose': 'hurt3'}
-ALIASES['cloe'] = {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'hurt3'}
+ALIASES['cloe'] = {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'hurt2'}  # lose: knocked down
 ALIASES['janelle'] = {'ent': 'idle0', 'taunt': 'book2', 'win': 'book2', 'lose': 'hurt3'}
 ALIASES['siren-dragon'] = {'ent': 'idle0', 'taunt': 'idle1', 'win': 'idle0', 'lose': 'hurt3'}
 ALIASES['sabir-anime'] = {'ent': 'idle0', 'taunt': 'idle3', 'win': 'idle3', 'lose': 'hurt3', 'fly3': 'fly0'}
 # fighters with their own left-facing art (drawn as-is instead of mirrored: Jaxston always kicks with his LEFT foot)
 LEFT = {'jaxston': 'jaxston-left'}
 # atlases that only hold some poses; the rest come from this atlas (Cole's printed-shirt forms)
-BASE = {'cole-thor': 'cole', 'cole-cap': 'cole', 'cole-iron': 'cole', 'kevin-fan': 'kevin'}
+BASE = {'cole-thor': 'cole', 'cole-cap': 'cole', 'cole-iron': 'cole', 'kevin-fan': 'kevin',
+        'jeffery': 'jeffery-mayhem', 'patty': 'patty-mayhem'}  # Jeff/Patty: the Mayhem power-up poses (cup/back) live in their Mayhem atlases
 ALIASES['jorie-rage'] = {'ent': 'xform3', 'taunt': 'xform3', 'win': 'xform3', 'lose': 'hurt3'}
 ALIASES['evea-spirit'] = {'ent': 'link2', 'taunt': 'link3', 'win': 'link3', 'lose': 'hurt3'}
 # the standing pose to size the personality sheet by, when the taunt reaches up (Jorie lifts the milk jug overhead)

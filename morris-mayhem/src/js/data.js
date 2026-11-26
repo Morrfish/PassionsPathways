@@ -509,11 +509,12 @@ MM.FIGHTERS = [
   }
   // Five-Star Flyby (replaces Encore, Sabir!): a star portal opens behind him and five friends fly out across the screen,
   // each one hitting each opponent once (about 5% each, under 25% in all). In his anime form he casts it in that outfit.
-  // Jeff's and Patty's Mayhem power-ups: grabbing a Mayhem Star (it drops onto the stage now and then when one of
-  // them is playing) powers them up for 12 s: +15% damage, +8% speed, the power-up look; moves stay the same.
+  // Jeff's and Patty's Mayhem power-ups: a Mayhem bar fills as they fight (like Kevin's Rally bar); full, Switch
+  // powers them up for 12 s: +15% damage, +8% speed, the power-up look; moves stay the same.
   for (const [id, sprite, stats] of [['jeffery', 'jeffery-mayhem', null], ['patty', 'patty-mayhem', null]]) {
     const d = MM.FIGHTERS.find((x) => x.id === id);
-    d.powerup = { frames: 720 };
+    d.mess = { action: 2, hit: 5, cleanFrames: 720, cupDur: 36, backDur: 24,
+      ready: 'MAYHEM READY!', go: 'MAYHEM MODE!', back: 'MAYHEM OVER', color: '#ffd34a', goColor: '#ffd34a', bar: '#ff7a1a', formBar: '#ffd34a', hue: 40 };
     d.forms = [{ form: 'normal', formName: 'MAYHEM OVER', sprite: d.sprite },
       { form: 'mayhem', formName: 'MAYHEM MODE!', sprite, stats: Object.assign({}, d.stats, { power: +(d.stats.power * 1.15).toFixed(3), speed: +(d.stats.speed * 1.08).toFixed(3) }) }];
   }
