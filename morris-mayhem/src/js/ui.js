@@ -73,8 +73,14 @@ window.MM = window.MM || {};
     const d = MM.FIGHTERS.find((f) => f.id === id);
     if (d.photo && !MM.photos[id]) { const nim = new Image(); nim.src = d.photo; MM.photos[id] = nim; } // e.g. a giant unlocked by code after loading
     const im = MM.photos[id], url = MM.portrait(d);
-    if (!d.photo || (im && im.complete)) portraits[id] = url; // don't keep a cartoon stand-in while a photo is loading
-    else if (im) im.addEventListener('load', () => { delete portraits[id]; if (screen === 'select') drawSelect(); else if (screen === 'family') drawFamily(); }, { once: true });
+    if (!d.photo || (im && im.complete && im.naturalWidth)) portraits[id] = url; // don't keep a cartoon stand-in while a photo is loading
+    else if (im && !im.retrying) { // redraw once the photo arrives; if it failed to download, try once more
+      im.retrying = true;
+      const redraw = () => { im.retrying = false; delete portraits[id]; if (screen === 'select') drawSelect(); else if (screen === 'family') drawFamily(); };
+      im.addEventListener('load', redraw, { once: true });
+      im.addEventListener('error', () => { if (im.tries) return; im.tries = 1; setTimeout(() => { im.src = d.photo + '?r=1'; }, 800); }, { once: true });
+      if (im.complete && !im.naturalWidth) im.dispatchEvent(new Event('error'));
+    }
     return url;
   };
   const fighterById = (id) => MM.FIGHTERS.find((f) => f.id === id);
@@ -369,7 +375,7 @@ window.MM = window.MM || {};
     const card = (f) => `<div class="card" style="border-color:${f.color}">
       <img src="${portrait(f.id)}" alt=""><h3>${f.name}</h3><small>${f.title || ''}</small>
       <div class="bars">${bar('Speed', f.stats.speed, 9)}${bar('Power', f.stats.power, 1.4)}${bar('Weight', f.stats.weight, 1.4)}</div>
-      <ul>${f.attackNames ? `<li><b>Attacks</b>: ${Object.values(f.attackNames).join(', ')}</li>` : ''}${['neutral', 'side', 'up', 'down'].map((k) => { const s = f.specials[k]; return s ? `<li><b>${{ neutral: 'Special', side: '→ Special', up: '↑ Special', down: '↓ Special' }[k]}: ${s.name}</b>: ${(KIND_TEXT[s.kind] || (() => ''))(s)}</li>` : ''; }).join('')}</ul></div>`;
+      <ul>${f.attackNames ? `<li><b>Attacks</b>: ${[...new Set(Object.values(f.attackNames).join(', ').split(', '))].join(', ')}</li>` : ''}${['neutral', 'side', 'up', 'down'].map((k) => { const s = f.specials[k]; return s ? `<li><b>${{ neutral: 'Special', side: '→ Special', up: '↑ Special', down: '↓ Special' }[k]}: ${s.name}</b>: ${(KIND_TEXT[s.kind] || (() => ''))(s)}</li>` : ''; }).join('')}</ul></div>`;
     $('#cards').innerHTML = MM.familyGroups().map((g) => `<h3 class="famhead">${g.name}</h3>${g.fighters.map(card).join('')}`).join(''); // by family, oldest to youngest
   }
 
