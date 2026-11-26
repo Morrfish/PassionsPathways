@@ -180,12 +180,16 @@ window.MM = window.MM || {};
         const i = slots.findIndex((s) => s.type === 'human' && s.dev === dv);
         if (i >= 0) {
           moveCursor(i, dv, inp, press);
-          if (dv[0] === 'p') { const pad = navigator.getGamepads()[+dv.slice(1)], bb = (n) => pad && pad.buttons[n] && pad.buttons[n].pressed;
+          if (dv[0] === 'p') { const pad = MM.pads()[+dv.slice(1)], bb = (n) => pad && pad.buttons[n] && pad.buttons[n].pressed;
             const lb = bb(4) || bb(6), rb = bb(5) || bb(7); if (lb && !menuPrev['lb' + dv]) cycle(i, -1); if (rb && !menuPrev['rb' + dv]) cycle(i, 1); menuPrev['lb' + dv] = lb; menuPrev['rb' + dv] = rb; }
           if (press('pause')) $('#fight').click();
         } else if (press('pause') && dv[0] === 'p') $('#fight').click(); // Start = FIGHT from any controller
         else if (press('attack') && dv[0] === 'p') {
-          const free = slots.findIndex((s) => s.type === 'off') >= 0 ? slots.findIndex((s) => s.type === 'off') : slots.findIndex((s) => s.type === 'cpu');
+          // join: an empty slot, else a CPU, else a player slot set to a controller that isn't plugged in, else one set to a keyboard
+          const npads = MM.pads().length, dead = (s) => s.type === 'human' && s.dev[0] === 'p' && +s.dev.slice(1) >= npads;
+          const pick = (fn) => slots.findIndex(fn);
+          let free = pick((s) => s.type === 'off'); if (free < 0) free = pick((s) => s.type === 'cpu'); if (free < 0) free = pick(dead);
+          if (free < 0) free = slots.map((s, k) => k).reverse().find((k) => slots[k].type === 'human' && (slots[k].dev === 'k2' || slots[k].dev === 'k1')) ?? -1;
           if (free >= 0) { slots[free].type = 'human'; slots[free].dev = dv; MM.sfx('select'); save('slots', slots); drawSelect(); }
         }
       } else if (screen === 'title' && press('pause') && dv[0] === 'p') show('select');
@@ -243,10 +247,10 @@ window.MM = window.MM || {};
   function moveCursor(i, dv, inp, press) {
     const c = curs[i]; if (!c) return;
     let dx = inp.x, dy = inp.y;
-    if (dv[0] === 'p') { const pad = navigator.getGamepads()[+dv.slice(1)]; if (pad) { const ax = pad.axes[0] || 0, ay = pad.axes[1] || 0; if (Math.hypot(ax, ay) > 0.2) { dx = ax; dy = ay; } } }
+    if (dv[0] === 'p') { const pad = MM.pads()[+dv.slice(1)]; if (pad) { const ax = pad.axes[0] || 0, ay = pad.axes[1] || 0; if (Math.hypot(ax, ay) > 0.2) { dx = ax; dy = ay; } } }
     const sp = Math.max(6, innerWidth / 110);
     c.x = Math.max(4, Math.min(innerWidth - 4, c.x + dx * sp)); c.y = Math.max(4, Math.min(innerHeight - 4, c.y + dy * sp));
-    const pad = dv[0] === 'p' && navigator.getGamepads()[+dv.slice(1)], a = pad ? !!(pad.buttons[0] && pad.buttons[0].pressed) : false;
+    const pad = dv[0] === 'p' && MM.pads()[+dv.slice(1)], a = pad ? !!(pad.buttons[0] && pad.buttons[0].pressed) : false;
     const aPress = a && !menuPrev['a' + dv]; menuPrev['a' + dv] = a;
     if (aPress || press('attack')) pointAndPick(i, c);
   }

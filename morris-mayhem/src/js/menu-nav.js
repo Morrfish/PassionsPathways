@@ -83,8 +83,8 @@ window.MM = window.MM || {};
   // called every frame from the main loop while a menu is showing
   MM.menuNavTick = function (inMatch) {
     if (inMatch || (MM.arenaMaker && MM.arenaMaker.active)) { editing = null; return; } // the Arena Maker reads the pad itself
-    if (MM.capturingInput) { const pads = navigator.getGamepads ? navigator.getGamepads() : []; for (let i = 0; i < 4; i++) { const p = pads[i]; if (p) prev[i] = { dir: 'held', a: true, b: true }; } return; } // Settings is waiting for a button press
-    const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+    if (MM.capturingInput) { const pads = MM.pads(); for (let i = 0; i < 4; i++) { const p = pads[i]; if (p) prev[i] = { dir: 'held', a: true, b: true }; } return; } // Settings is waiting for a button press
+    const pads = MM.pads();
     for (let i = 0; i < 4; i++) {
       const p = pads[i]; if (!p) continue;
       if (MM.cursorDevs && MM.cursorDevs.has('p' + i) && screenEl() && screenEl().id === 'select') continue; // this pad drives a pointer
@@ -112,5 +112,5 @@ window.MM = window.MM || {};
   });
   // a mouse/touch click clears the controller highlight so it doesn't linger
   addEventListener('pointerdown', () => { document.querySelectorAll('.padfocus').forEach((e) => e.classList.remove('padfocus')); if (editing) { editing.classList.remove('editing'); editing = null; } });
-  MM.menuFocusFirst = () => requestAnimationFrame(() => { if (navigator.getGamepads && [...navigator.getGamepads()].some(Boolean)) setFocus(first()); });
+  MM.menuFocusFirst = () => requestAnimationFrame(() => { if (MM.pads().length) setFocus(first()); });
 })();

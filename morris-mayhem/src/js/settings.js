@@ -15,7 +15,7 @@ window.MM = window.MM || {};
   function rows() { return (isPad(dev) ? [] : C.KEY_MOVES).concat(C.ACTIONS); }
   function draw() {
     $('#setDev').innerHTML = `Mapping: <b>${DEV_NAMES[dev]}</b>`;
-    const on = isPad(dev) && navigator.getGamepads && navigator.getGamepads()[+dev[1]];
+    const on = isPad(dev) && MM.pads()[+dev[1]];
     $('#setNote').textContent = isPad(dev)
       ? `Each controller has its own buttons: press the new button on ${DEV_NAMES[dev]}${on ? '' : ' (not plugged in right now)'}. The stick and D-pad always move. Menus always use A to choose and B to go back.`
       : 'Choose Change, then press the key you want. Escape cancels.';
@@ -39,8 +39,8 @@ window.MM = window.MM || {};
       + '<tr><td colspan="4" class="hint">Change any of these in Settings. Every controller can have its own buttons.</td></tr>';
   }
   function padsDown() {
-    const out = new Set(), pads = navigator.getGamepads ? navigator.getGamepads() : [];
-    for (const p of pads) if (p) p.buttons.forEach((b, i) => { if (b.pressed) out.add(p.index + ':' + i); });
+    const out = new Set(), pads = MM.pads();
+    pads.forEach((p, pi) => p.buttons.forEach((b, i) => { if (b.pressed) out.add(pi + ':' + i); }));
     return out;
   }
   function start(action) {

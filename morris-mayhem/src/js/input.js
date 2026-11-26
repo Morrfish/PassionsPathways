@@ -75,8 +75,15 @@ window.MM = window.MM || {};
     };
   }
 
+  // Controller 1-4 = the 1st-4th controller actually plugged in, in order. Browsers can leave gaps in their own
+  // numbering (after a reconnect, or mixing brands they may sit in slots 0, 3, 4, 5), so slots 0-3 can't be trusted.
+  MM.pads = function () {
+    const raw = navigator.getGamepads ? navigator.getGamepads() : [];
+    const out = []; for (const p of raw) if (p && p.connected !== false) out.push(p);
+    return out.slice(0, 4);
+  };
   function readPad(i) {
-    const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+    const pads = MM.pads();
     const p = pads && pads[i];
     const none = { x: 0, y: 0, jump: false, attack: false, special: false, dodge: false, pause: false };
     if (!p) return none;
@@ -97,7 +104,7 @@ window.MM = window.MM || {};
   };
 
   MM.connectedPads = function () {
-    const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+    const pads = MM.pads();
     const out = [];
     for (let i = 0; i < 4; i++) if (pads[i]) out.push(i);
     return out;

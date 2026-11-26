@@ -14,14 +14,20 @@ old = json.load(open(lo_f)); OA = Image.open(lo_a).convert('RGBA')
 ROWS = {'idle': 'idle', 'run': 'run', 'jump': 'jump', 'hurt': 'hurt', 'attack': 'atk', 'breath': 'prism', 'tired': 'tired',
         # second pack (Nov 26): the moves that were still the old small art
         'horn-lift': 'horn', 'block-stomp': 'stomp', 'soar': 'soar', 'shield': 'shield', 'barrage': 'barrage', 'change-back': 'back'}
+# these rows were drawn with a smaller dragon (head-size check against idle): drawn bigger, still sharp
+POSESCALE = {'barrage3': 0.85}  # the last barrage pose stands upright and was drawn bigger than the others
+ROWSCALE = {'barrage': 1.3, 'shield': 1.3, 'jump': 1.1}
 LABEL_BELOW = {'back2', 'barrage0'}  # old poses with a caption plate drawn under them
 cuts = []
 for row, name in ROWS.items():
     for i in range(4):
-        im = Image.open(f'{raw}/siren-dragon-{row}-0{i+1}-hires-v2.png').convert('RGBA')
+        src = f'{raw}/siren-dragon-{row}-0{i+1}-hires-v2.png'
+        if os.path.exists(f'{raw}-blockfree/{os.path.basename(src)}'): src = f'{raw}-blockfree/{os.path.basename(src)}'  # tools/erase_blocks.py
+        im = Image.open(src).convert('RGBA')
         bb = im.split()[3].point(lambda v: 255 if v > 12 else 0).getbbox(); im = im.crop(bb)
-        im = im.resize((round(im.width * S), round(im.height * S)), Image.LANCZOS)
-        cuts.append((f'{name}{i}', im, ((800 - bb[0]) * S, (1100 - bb[1]) * S)))
+        k = S * ROWSCALE.get(row, 1) * POSESCALE.get(f'{name}{i}', 1)
+        im = im.resize((round(im.width * k), round(im.height * k)), Image.LANCZOS)
+        cuts.append((f'{name}{i}', im, ((800 - bb[0]) * k, (1100 - bb[1]) * k)))
 new_names = {n for n, _, _ in cuts}
 keep = [k for k in old if k not in new_names and not k.startswith(('tail', 'wing', 'fxcubes'))]  # old tail/wing swipes: unused, replaced by the hi-res attack row
 for k in keep:
