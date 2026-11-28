@@ -725,6 +725,35 @@ MM.FIGHTERS.push({
     poses: [[0, 'ult0'], [30, 'ult1'], [56, 'ult2'], [108, 'ult3']] },
 });
 
+// ---------- Colten Crist, "Crispy Crist" (ChatGPT Nov 28): Mandi's son. He watches production lines for a living (that's
+// just his bio: no work outfit), but Crispy Crist is the gamer tag from when he tried to make it as a streamer. His
+// doughnut CC logo and bakery stickers become pastry emotes. Switch = Size Hack: Normal -> Small -> Giant, same moves.
+// Small: same damage, much faster, slides more (harder to steer). Giant: 40% more damage, bigger (easier to hit). ----------
+MM.FIGHTERS.push({
+  male: true, id: 'colten', name: 'Colten Crist', title: 'Crispy Crist', photo: 'img/colten.png', sprite: 'colten',
+  color: '#26262b', accent: '#38d8f0', skin: '#f0c4a4', hair: '#6b4426',
+  stats: { speed: 7.0, air: 6.6, jump: 15.2, weight: 1.02, power: 1.0, size: 1.0 },
+  // body size, run speed, acceleration, braking, air steering, damage (Normal, Small, Giant); cd = frames between changes
+  sizeHack: { names: ['NORMAL', 'SMALL', 'GIANT'], size: [1, 0.45, 1.9], run: [1, 1.7, 0.85], accel: [1, 1.3, 0.85], brake: [1, 0.55, 1], steer: [1, 0.7, 0.85], dmg: [1, 1, 1.4], cd: 180, grow: 12 },
+  attackNames: { jab: 'Glaze Jab', side: 'Bear Claw Swipe', up: 'Long John Poke', down: 'Crumb Sweep', air: 'Controller Combo, Keyboard Clack, Level Up, Rage Quit' },
+  specials: {
+    neutral: { kind: 'projectile', name: 'Glazed Emote', thing: 'a glazed doughnut emote that rolls out from his controller', sheet: 'colten', anim: ['fxdonut0', 'fxdonut1', 'fxdonut2', 'fxdonut3'], px: 58, speed: 10, dmg: 7, kb: 6, kbg: 0.07, r: 22, life: 72, cd: 60, max: 1 },
+    side: { kind: 'dash', name: 'Lag Spike', speed: 16, dur: 15, dmg: 8, kb: 7, kbg: 0.09, ang: 35, cd: 120, box: [-20, -150, 110, 140] },
+    up: { kind: 'rise', name: 'Double Jump', power: 20.5, forward: 3, dmg: 5, kb: 6, kbg: 0.06 },
+    down: { kind: 'counter', name: 'Clip That!', window: 14, mult: 1.3 },
+  },
+  taunt: 'Clip that!',
+  ultimate: { name: 'Crispy Raid', sprite: 'colten', type: 'raid', dur: 200, noSize: true,
+    rainAt: 36, pastries: 12, every: 7, pastry: ['pdonut', 'pchoc', 'pclaw', 'peclair'], pastryPx: 54, pastryDmg: 2, pastryCap: 6, spread: 420,
+    slamAt: 132, slamDmg: 18, slamW: 4.0, kbMul: 1.4,
+    desc: 'a digital CC bakery box rains twelve pastry emotes, then a giant hologram of Crispy Crist slams a huge controller down in front of him (dodge the pastries and the slam!)',
+    // [from, to, frame, x and y from his feet, width] in standing heights (not his Size Hack size)
+    showBase: true,
+    show: [[6, 34, 'rportal', 0, 3.1, 1.6], [24, 120, 'rbox', 0, 3.0, 0.9], [96, 110, 'holo0', -0.7, 0, 1.9], [110, 122, 'holo1', -0.7, 0, 1.9], [122, 132, 'holo2', 0.7, 0, 3.4], [132, 160, 'holo3', 0.7, 0, 3.4],
+      [132, 140, 'rwave0', 1.1, 0.25, 1.4], [140, 150, 'rwave1', 1.1, 0.12, 2.4], [150, 164, 'rwave2', 1.1, 0.08, 3.6], [164, 180, 'rwave3', 1.1, 0.08, 3.6], [180, 196, 'rclear', 0, 2.2, 1.6]],
+    poses: [[0, 'ult0'], [10, 'ult1'], [28, 'ult2'], [44, 'ult3'], [118, 'raid0'], [130, 'raid1'], [152, 'raid2'], [176, 'raid3']] },
+});
+
 // ---------- Kevin, Cloe and Janelle (ChatGPT's Nov 25 pack, restyled sheets) ----------
 {
   // Kevin Crist, "The Steel City Superfan": Mandi's husband. A Rally bar fills as he fights; full, Switch turns him

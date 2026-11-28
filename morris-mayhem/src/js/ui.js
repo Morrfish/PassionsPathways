@@ -566,6 +566,8 @@ window.MM = window.MM || {};
     } else if (d.forms) {
       html += `<div class="note"><b>Two forms!</b> Press <b>↓ + Special</b> or <b>Switch form</b> (R · Num 4 · controller Y · ⇄ on touch) for Wardrobe Whirl, which changes between ${MM.formDefs(d).map((f) => f.title.replace(' outfit', '')).join(' and ')} at any time. Each outfit has its own moves, speed and power. The spin takes a moment and a hit stops it, so pick your moment.</div>`;
       for (const fd of MM.formDefs(d)) html += `<h4>${fd.title}</h4>` + moveRows(fd);
+    } else if (d.sizeHack) { // Colten
+      html += `<div class="note"><b>Size Hack!</b> Press <b>Switch form</b> (R · Num 4 · controller Y · ⇄ on touch) to go <b>Normal → Small → Giant</b> and back, with the same moves at every size (once every 3 seconds, not in the middle of a move). <b>Small</b>: just as strong and much faster, but he slides and turns slowly, so he's harder to steer. <b>Giant</b>: hits 40% harder, but he's slower and a big target. A KO puts him back to normal size.</div>` + moveRows(d);
     } else html += moveRows(d);
     const ults = d.forms ? MM.formDefs(d).map((fd) => fd.ultimate).filter(Boolean) : [d.ultimate].filter(Boolean);
     if (ults.length) html += `<h4>Ultimate</h4><table>${ults.map((u) => `<tr><td class="in">Meter full + E · Num 5/U · stick click · or Attack + Special together</td><td><b>${u.name}</b>: ${u.desc || ''}</td></tr>`).join('')}</table><p class="keys">The meter fills as you deal damage (and a little when you take it). A hit stops an ultimate, so pick your moment.</p>`;

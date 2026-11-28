@@ -95,6 +95,10 @@ MOVES = {
                      neutral='inkshot', sideSpecial='tiger', upSpecial='swallow', downSpecial='stencil', counterHit='stencil',
                      upRow='rose', uairRow='auair', riseMid='swallow2', riseLate='swallow3'),
     # Harper and Sophia Faber (Nov 26, ChatGPT's 4x4 v2 sheets): Codee and Janelle's daughters
+    # Colten Crist / Crispy Crist (Nov 28): gamer and pastry-emote moves; defRow = guard (block, block, dodge, dodge)
+    'colten': dict(jab='jab', side='claw', down='crumb', up='john', nair='anair', fair='afair', uair='auair', dair='adair',
+                   neutral='glazed', sideSpecial='lag', upSpecial='djump', downSpecial='clip', counterHit='clip2',
+                   upRow='john', uairRow='auair', riseMid='djump2', riseLate='djump3', defRow='def'),
     'harper': dict(jab='palm', side='kick', down='sweep', up='upper', nair='anair', fair='afair', uair='auair', dair='adair',
                    neutral='slime', sideSpecial='cushion', upSpecial='pop', downSpecial='spray', counterHit='spray',
                    upRow='upper', uairRow='auair', riseMid='pop2', riseLate='pop3'),
@@ -198,6 +202,7 @@ ALIASES['patty-giant'] = {'ent': 'cup3', 'taunt': 'idle3', 'win': 'emg3', 'lose'
 ALIASES['triple-trouble'] = {'ent': 'pers0', 'taunt': 'pers1', 'win': 'pers2', 'lose': 'pers3'}
 for _w in ('grandma_morris', 'grandma_worst', 'jaicelynn'): ALIASES[_w] = {'ent': 'idle0', 'taunt': 'cheer0', 'win': 'cheer0', 'lose': 'hurt0'}
 for _w in ('grandma_morris', 'grandma_worst', 'jaicelynn', 'harley', 'haislie', 'august', 'harper', 'sophia', 'danielle', 'haislie-surge', 'sophia-charlie', 'sophia-dorothy', 'sophia-alice', 'sophia-robin'): ALIASES[_w] = {'ent': 'pent0', 'taunt': 'ptaunt2', 'win': 'pwin2', 'lose': 'plose0'}
+ALIASES['colten'] = {'ent': 'pent0', 'taunt': 'ptaunt2', 'win': 'pwin1', 'lose': 'plose1', 'def0': 'block0', 'def1': 'block0', 'def2': 'dodge0', 'def3': 'dodge0'}
 for _w in ('haislie', 'august'): ALIASES[_w].update({'back0': 'cup3', 'back1': 'cup2', 'back2': 'cup1', 'back3': 'cup0'})  # powering down plays the power-up backwards  # v2 personality sheets
 ALIASES['kevin'] = {'ent': 'cup0', 'taunt': 'rally3', 'win': 'rally3', 'lose': 'slow1'}  # lose: bent over, worn out
 ALIASES['kevin-fan'] = {'ent': 'idle0', 'taunt': 'idle1', 'win': 'curtain2', 'lose': 'hurt3'}
@@ -225,7 +230,7 @@ MOVES['haislie-surge'] = MOVES['haislie']; BASE['haislie-surge'] = 'haislie'
 for _f in ('squirgust', 'pikagust', 'chaizagust', 'bulbagust', 'owlgust', 'frostgust', 'augustral'):
     MOVES['august-' + _f] = MOVES['august']; ALIASES['august-' + _f] = {'ent': 'pent0', 'taunt': 'ptaunt2', 'win': 'pwin2', 'lose': 'plose0'}
 ALIASES['august-augustral'].update({'back0': 'cup3', 'back1': 'cup2', 'back2': 'cup1', 'back3': 'cup0'})
-SAME_SHEET_PERS = {'august-squirgust', 'august-pikagust', 'august-chaizagust', 'august-bulbagust', 'august-owlgust', 'august-frostgust', 'august-augustral', 'danielle', 'haislie-surge', 'harper', 'sophia', 'sophia-charlie', 'sophia-dorothy', 'sophia-alice', 'sophia-robin', 'harley', 'haislie', 'august', 'jeff-giant-b', 'patty-giant-b', 'courtnee', 'grandma_morris', 'grandma_worst', 'jaicelynn', 'jeff-giant', 'patty-giant', 'triple-trouble', 'kevin', 'kevin-fan', 'janelle'}
+SAME_SHEET_PERS = {'colten', 'august-squirgust', 'august-pikagust', 'august-chaizagust', 'august-bulbagust', 'august-owlgust', 'august-frostgust', 'august-augustral', 'danielle', 'haislie-surge', 'harper', 'sophia', 'sophia-charlie', 'sophia-dorothy', 'sophia-alice', 'sophia-robin', 'harley', 'haislie', 'august', 'jeff-giant-b', 'patty-giant-b', 'courtnee', 'grandma_morris', 'grandma_worst', 'jaicelynn', 'jeff-giant', 'patty-giant', 'triple-trouble', 'kevin', 'kevin-fan', 'janelle'}
 # standing height comes from another pose (Evea's spirit poses have Grandma floating over her: size her by Evea alone)
 STANDH_FROM = {'evea-spirit': 'link0'}
 # a move group cut from another sheet: size it so its first pose is as tall as the idle pose

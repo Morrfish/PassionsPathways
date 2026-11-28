@@ -328,10 +328,11 @@ window.MM = window.MM || {};
         g.translate(a.decoy.x, a.decoy.y + (burst ? h * 0.15 : 0)); g.scale(a.decoy.face, 1); g.drawImage(sh.im, fr[0], fr[1], fr[2], fr[3], -w / 2, -h, w, h); g.restore();
       }
     }
+    const sh0 = a.u.showBase ? f.h / (f.sizeK || 1) : f.h; // e.g. Colten's raid hologram: his normal height, whatever size he is
     if (a.u.show) for (const [t0, t1, name, dx, dy, w] of a.u.show) { // e.g. Dani's ink dragon: sketch -> alive -> lunge -> roses
       if (a.t < t0 || a.t >= t1) continue;
       const fade = Math.min(1, (a.t - t0) / 8, (t1 - a.t) / 8 + (t1 === a.u.show[a.u.show.length - 1][1] ? 0 : 1));
-      g.save(); g.translate(f.x + f.face * dx * f.h, f.y - dy * f.h); g.scale(f.face, 1); drawFx(g, a.u.showSheet || a.u.sprite || f.def.sprite, name, 0, 0, w * f.h, fade); g.restore();
+      g.save(); g.translate(f.x + f.face * dx * sh0, f.y - dy * sh0); g.scale(f.face, 1); drawFx(g, a.u.showSheet || a.u.sprite || f.def.sprite, name, 0, 0, w * sh0, fade); g.restore();
     }
     if (a.u.type === 'catch') {
       const k = Math.min(1, a.t / a.u.catchAt), r = a.u.radius * f.h * (a.t < a.u.catchAt ? k : 1);

@@ -75,7 +75,22 @@ window.MM = window.MM || {};
   function makeFighter(p, def, x, alt, stocks) {
     const f = makeFighterBase(p, def, x, alt, stocks);
     if (def.forms) { f.forms = MM.formDefs(def); f.formIdx = 0; f.swapCd = 0; applyForm(f, 0); }
+    if (def.sizeHack) { f.sizeIdx = 0; f.sizeK = 1; f.sizeCd = 0; }
     return f;
+  }
+  // Colten's Size Hack: Switch = Normal -> Small -> Giant -> Normal, the same moves at every size. The body and its
+  // hurtbox/hitboxes grow or shrink together over a few frames (feet stay put). Only when free (not mid-move/hit/ultimate).
+  const sizeOf = (f, k) => (f.def.sizeHack ? f.def.sizeHack[k][f.sizeIdx || 0] : 1);
+  function setScale(f) { f.s = (f.def.stats.size || 1) * (f.sizeK || 1); f.w = W * f.s; f.h = H * f.s; }
+  function sizeHack(G, f) {
+    const sh = f.def.sizeHack;
+    if (f.sizeCd > 0) { popText(G, f.x, f.y - f.h - 24, 'RECHARGING...', '#9aa'); return; }
+    f.sizeIdx = (f.sizeIdx + 1) % sh.size.length; f.sizeFrom = f.sizeK; f.sizeT = sh.grow || 12; f.sizeCd = sh.cd;
+    popText(G, f.x, f.y - f.h - 24, sh.names[f.sizeIdx] + '!', f.accent); burst(G, f.x, f.y - f.h / 2, f.accent, 16, 5); MM.sfx('special');
+  }
+  function sizeTick(f) {
+    if (f.sizeCd > 0) f.sizeCd--;
+    if (f.sizeT > 0) { f.sizeT--; const to = f.def.sizeHack.size[f.sizeIdx], k = 1 - f.sizeT / (f.def.sizeHack.grow || 12); f.sizeK = f.sizeFrom + (to - f.sizeFrom) * k; setScale(f); }
   }
   // Switch a fighter with several forms (e.g. Mandi: Witch <-> Mermaid Fangirl) to form i.
   function applyForm(f, i) {
@@ -227,7 +242,7 @@ window.MM = window.MM || {};
   const blankInput = () => ({ x: 0, y: 0, jump: false, attack: false, special: false, dodge: false, swap: false, ult: false, taunt: false, pause: false });
 
   // ---------- helpers ----------
-  const power = (f) => f.st.power * (f.buff ? f.buff.powerMul : 1);
+  const power = (f) => f.st.power * (f.buff ? f.buff.powerMul : 1) * sizeOf(f, 'dmg');
   const speedMul = (f) => (f.buff ? f.buff.speedMul : 1) * (f.slow ? f.slow.mul : 1) * (f.tiredT > 0 ? f.tiredMul : 1);
   MM.hurtbox = (f) => ({ x: f.x - f.w / 2, y: f.y - f.h, w: f.w, h: f.h });
   function boxFor(f, b) {
@@ -266,6 +281,7 @@ window.MM = window.MM || {};
       f.inp = f.dummy ? blankInput() : f.cpu ? MM.aiThink(G, f) : MM.readDevice(f.dev); // practice dummy: stands still
       if (G.countdown > 0 || G.over || f.exhaust > 0) f.inp = blankInput(); // exhausted: no moving or acting
       if (f.reverseT > 0) { f.reverseT--; f.inp = Object.assign({}, f.inp, { x: -f.inp.x, y: -f.inp.y }); } // Harper's Reverse Reek: left is right, up is down
+      if (f.def.sizeHack) sizeTick(f);
       if (f.def.spray) { f.spray = f.spray ?? 100; if ((f.sprayIdle = (f.sprayIdle || 0) + 1) > 180) f.spray = Math.min(100, f.spray + 10 / 60); } // refills after 3 s without spraying
     }
     movePlatforms(G);
@@ -361,9 +377,10 @@ window.MM = window.MM || {};
     } else if (f.act) {
       tickAction(G, f);
     } else {
-      const swapNow = f.forms && pressed('swap');
+      const swapNow = (f.forms || f.def.sizeHack) && pressed('swap');
       const ultNow = pressed('ult') || (inp.attack && inp.special && (pressed('attack') || pressed('special')));
       if (ultNow && f.meter >= 100 && f.def.ultimate) startUlt(G, f);
+      else if (swapNow && f.def.sizeHack) sizeHack(G, f);
       else if (swapNow && f.def.cycle) { if (!(f.swapCd > 0)) nextForm(G, f); } // e.g. Cole's shirts, Cloe's colours
       else if (swapNow && f.def.mess && f.def.mess.formCycle) { // e.g. August: Switch = next creature form; with 6 catches = Augustral
         if (f.formIdx === evoIdx(f)) { /* evolved: wait it out */ }
@@ -396,14 +413,15 @@ window.MM = window.MM || {};
 
   function move(f, inp) {
     const dir = inp.x;
+    const sh = f.def.sizeHack, i = f.sizeIdx || 0; // Size Hack: small runs faster but brakes and turns slower; giant is slower
     if (f.ground) {
-      const target = dir * f.st.speed * speedMul(f);
-      f.vx += clamp(target - f.vx, -1.5, 1.5);
-      if (!dir) f.vx *= 0.72;
+      const target = dir * f.st.speed * speedMul(f) * (sh ? sh.run[i] : 1), acc = 1.5 * (sh ? sh.accel[i] : 1);
+      f.vx += clamp(target - f.vx, -acc, acc);
+      if (!dir) f.vx *= sh ? 1 - 0.28 * sh.brake[i] : 0.72;
       if (dir) f.face = dir;
     } else {
-      const target = dir * f.st.air * speedMul(f);
-      if (dir) f.vx += clamp(target - f.vx, -0.55, 0.55); else f.vx *= 0.985;
+      const target = dir * f.st.air * speedMul(f), acc = 0.55 * (sh ? sh.steer[i] : 1);
+      if (dir) f.vx += clamp(target - f.vx, -acc, acc); else f.vx *= 0.985;
     }
   }
 
@@ -582,7 +600,7 @@ window.MM = window.MM || {};
   }
 
   function spawnProj(G, f, o) {
-    G.projs.push(Object.assign({ owner: f, cast: f.act, x: f.x + f.face * 34 * f.s, y: f.y - 70 * f.s, vx: f.face * 10, vy: 0, r: 14, dmg: 6, kb: 5, kbg: 0.05, ang: 30, life: 70, grav: 0, color: f.accent, hit: new Set(), t: 0 }, o));
+    G.projs.push(Object.assign({ owner: f, cast: f.act, x: f.x + f.face * 34 * f.s, y: f.y - 70 * f.s, vx: f.face * 10, vy: 0, r: 14, dmg: 6, kb: 5, kbg: 0.05, ang: 30, life: 70, grav: 0, color: f.accent, hit: new Set(), t: 0, pmul: f.def.sizeHack ? sizeOf(f, 'dmg') : null }, o));
   }
 
   // Every ability kind. start() sets it up, tick() runs every frame.
@@ -592,12 +610,12 @@ window.MM = window.MM || {};
       start(G, f, sp, a) { a.dur = 26; a.pose = 'throw'; },
       tick(G, f, sp, a) {
         if (!f.ground) { f.vy = Math.min(f.vy, 2); f.vx *= 0.95; }
-        if (a.t === 9) {
+        if (a.t === 9 && !(sp.max && G.projs.filter((p) => p.owner === f && p.tag === sp.name).length >= sp.max)) { // e.g. one doughnut out at a time
           const n = sp.count || 1;
           if (sp.cycle) { f.partnerI = ((f.partnerI ?? -1) + 1) % sp.cycle.length; sp = Object.assign({}, sp, { sprite: sp.cycle[f.partnerI], anim: sp.cycleAnim ? sp.cycleAnim[f.partnerI] : sp.anim }); if (sp.names) popText(G, f.x, f.y - f.h - 24, sp.names[f.partnerI] + '!', f.accent); } // e.g. August's Element Toss: next element in order
           for (let i = 0; i < n; i++) {
             const ang = n > 1 ? (i - (n - 1) / 2) * (sp.spread || 0.2) : 0;
-            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, sprite: sp.sprites ? sp.sprites[i % sp.sprites.length] : sp.sprite, sheet: sp.sheet, anim: sp.anim, animOnce: sp.animOnce, px: sp.px, scale: sp.scale, spin: sp.spin, puddle: sp.puddle, slow: sp.slow, bounce: sp.bounce, boomer: sp.boomerang, pull: sp.pull, line: sp.line, capture: sp.capture, dir: f.face });
+            spawnProj(G, f, { vx: Math.cos(ang) * sp.speed * f.face, vy: (sp.vy || 0) + Math.sin(ang) * sp.speed, r: sp.r || 14, dmg: sp.dmg, kb: sp.kb, kbg: sp.kbg, ang: sp.ang || 35, life: sp.life || 70, grav: sp.grav || 0, emoji: sp.emoji, sprite: sp.sprites ? sp.sprites[i % sp.sprites.length] : sp.sprite, sheet: sp.sheet, anim: sp.anim, animOnce: sp.animOnce, px: sp.px, scale: sp.scale, spin: sp.spin, puddle: sp.puddle, slow: sp.slow, bounce: sp.bounce, boomer: sp.boomerang, pull: sp.pull, line: sp.line, capture: sp.capture, tag: sp.name, dir: f.face });
           }
         }
       },
@@ -1010,6 +1028,20 @@ window.MM = window.MM || {};
             applyHit(G, f, d, { dmg: u.dmg, kb: 9 * u.kbMul, kbg: 0.12 * u.kbMul, ang: 55, face: sgn(d.x - a.decoy.x) || f.face }, d.x, d.y - d.h / 2);
         }
       }
+    } else if (u.type === 'raid') { // Colten's Crispy Raid: 12 pastry emotes rain from a digital bakery box, then a hologram controller slam
+      const t = a.t - u.rainAt, hb = f.h / (f.sizeK || 1); // placed by his normal height, whatever size he is
+      if (t >= 0 && t < u.pastries * u.every && t % u.every === 0) {
+        const i = t / u.every, ord = [5, 2, 9, 0, 7, 11, 3, 8, 1, 10, 4, 6][i % 12], m = G.stage.main;
+        const x = clamp(f.x + f.face * (u.spread * 0.35 + ((ord / 11) * 2 - 1) * u.spread), m.left + 40, m.right - 40);
+        a.cap = a.cap || new Map();
+        spawnProj(G, f, { x, y: f.y - hb * 2.6, vx: 0, vy: 2, grav: 0.22, r: 24, dmg: u.pastryDmg, kb: 3, kbg: 0.02, ang: 70, life: 140, sheet: f.def.sprite, sprite: u.pastry[i % u.pastry.length], px: u.pastryPx, dir: f.face, cap: a.cap, capN: u.pastryCap });
+      }
+      if (a.t >= u.slamAt && a.t < u.slamAt + 6) { // one slam, in front of him where the hologram's controller lands
+        const w = u.slamW * hb, cx = f.x + f.face * hb * 1.3;
+        a.box = { x: cx - w / 2, y: f.y - hb * 0.9, w, h: hb };
+        a.hitProps = { dmg: u.slamDmg, kb: 10 * u.kbMul, kbg: 0.13 * u.kbMul, ang: 60 };
+        if (a.t === u.slamAt) { G.shake = 22; G.flash = 6; burst(G, cx, f.y - 10, '#38d8f0', 30, 10); burst(G, cx, f.y - 10, '#ff6ad5', 20, 8); }
+      } else a.box = null;
     } else if (u.type === 'stampede') { // a herd runs across the stage; each opponent is hit once
       const t = a.t - u.spawnAt;
       if (t >= 0 && t < u.sweepDur) {
@@ -1054,7 +1086,7 @@ window.MM = window.MM || {};
       popText(G, def.x, def.y - def.h - 20, 'COUNTER!', '#fff36b'); MM.sfx('counter');
       return false;
     }
-    const dmg = h.dmg * (att ? power(att) : 1);
+    const dmg = h.dmg * (att ? power(att) : 1) * (proj && proj.pmul != null && att ? proj.pmul / sizeOf(att, 'dmg') : 1); // a projectile keeps the size it was thrown at
     def.damage = Math.min(999, def.damage + dmg);
     // ultimate meter: 0.65 per damage dealt to an opponent, 0.35 per damage taken; nothing while in an ultimate
     if (att && att !== def && !MM.sameTeam(G, att, def) && !(att.act && att.act.type === 'ult')) att.meter = Math.min(100, att.meter + dmg * 0.65);
@@ -1124,9 +1156,11 @@ window.MM = window.MM || {};
       const box = { x: p.x - p.r, y: p.y - p.r, w: p.r * 2, h: p.r * 2 };
       for (const d of G.fighters) {
         if (d === p.owner || d.dead || d.out || p.hit.has(d) || d.invuln > 0 || (p.homing && d !== p.homing)) continue; // a homing ball only hits its mark
+        if (p.cap && (p.cap.get(d) || 0) >= p.capN) continue; // e.g. Crispy Raid: at most 6 pastries hurt each player
         if (overlap(box, MM.hurtbox(d))) {
           p.hit.add(d);
           const ok = applyHit(G, p.owner, d, { dmg: p.dmg, kb: p.kb, kbg: p.kbg, ang: p.ang, face: p.pull ? sgn(p.owner.x - d.x) : sgn(p.vx || p.dir) }, p.x, p.y, p);
+          if (ok && p.cap) p.cap.set(d, (p.cap.get(d) || 0) + 1);
           if (ok && p.slow && (!d.slow || d.slow.mul >= p.slow.mul)) { d.slow = { mul: p.slow.mul, t: p.slow.t }; burst(G, d.x, d.y - d.h / 2, '#bff3ff', 12, 4); } // refresh, never stack
           if (ok && p.pierce) p.atkT = p.t; // flies on through (e.g. Sabir's flyby girls strike as they pass)
           else if (ok && !p.ground && !p.boomer) p.life = 0; // a boomerang keeps going and comes back
@@ -1211,6 +1245,7 @@ window.MM = window.MM || {};
       if (f.def.powerup && f.formIdx) { applyForm(f, 0); f.powerT = 0; }
       if (f.captured) releaseCapture(G, f);
       f.reverseT = 0; if (f.def.spray) f.spray = 100;
+      if (f.def.sizeHack) { f.sizeIdx = 0; f.sizeK = 1; f.sizeT = 0; f.sizeCd = 0; setScale(f); G.projs = G.projs.filter((p) => !(p.owner === f && p.cap)); } // back to normal size; his raid pastries vanish
       if (f.def.mess) { if (f.formIdx) applyForm(f, 0); f.preEvo = 0; f.mess = 0; f.clean = 0; f.pieces = 0; f.catches = 0; G.traps = G.traps.filter((t) => !(t.owner === f && t.piece != null)); }
       f.act = null; f.hitstun = 0; f.buff = null; f.slow = null; f.vx = f.vy = 0; f.caught = null; f.meter = 0;
       if (f.stocks <= 0) { f.out = true; f.x = 0; f.y = -3000; }
