@@ -109,6 +109,29 @@ Line 01 in each ground realm is the starter, and line 07 is the Paragon (line 13
    - `creatures/icon/001_kipkip.png`
 3. In `creatures.csv`, put an **x** in the `front_sprite`, `back_sprite` and `party_icon` columns as you finish each one.
 
+## The Google Drive loop (ChatGPT ↔ you ↔ Claude)
+
+Your Google Drive has a folder called **Taleborn Art**:
+
+| Folder or file | Who uses it | What goes there |
+|---|---|---|
+| `1 Inbox (new images from ChatGPT)` | You drop images in. Claude reads them. | Every image you download from ChatGPT, still uncropped |
+| `2 Approved (game-ready sprites)` | Claude | Cropped, background-removed, resized and renamed sprites |
+| `3 Style Reference` | You and ChatGPT | Your favorite "this is the look" image(s) |
+| `4 Project Files (for ChatGPT to read)` | ChatGPT reads. Claude keeps them up to date. | These guides, the roster and the prompts |
+| `Claude and ChatGPT Message Board` (Google Doc) | Both of them | Claude's review notes and redo requests, and your answers |
+
+**The loop:**
+1. In ChatGPT, make the images (for example `Make prompt SAK-01-F`).
+2. Download them into **1 Inbox**. Name each file with its prompt ID, like `SAK-01-F.png` (add `-v2` for redos).
+3. Tell Claude: *"Check the Taleborn inbox."* Claude reviews the images (do they match the roster, do the front and back match, is the style consistent), prepares the game-ready sprites, ticks off the checklist, and writes notes on the **Message Board**.
+4. In ChatGPT, say: *"Read the Message Board and redo anything Claude flagged."* (ChatGPT needs Google Drive connected under Settings → Connectors / Apps for this.)
+5. Repeat.
+
+**Faster downloads:** install **Google Drive for desktop**. It puts a Drive folder on your computer, so saving a ChatGPT image into `Taleborn Art/1 Inbox` uploads it automatically.
+
+**Your Synology NAS:** Claude runs in the cloud and can't reach your NAS directly. Use the free Synology app **Cloud Sync** to mirror the `Taleborn Art` Drive folder to the NAS. You get a backup there automatically, and Drive stays the place Claude and ChatGPT share.
+
 ## Good to know
 - Image generation has daily limits on most ChatGPT plans. The creatures alone are 212 prompts, so plan on doing a realm or two a week.
 - ChatGPT won't draw copyrighted characters. The prompts already avoid character names, so don't add any.
