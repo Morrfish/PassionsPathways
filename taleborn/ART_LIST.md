@@ -1,4 +1,4 @@
-# MYTHBOUND (placeholder title): Complete Art and Sprite List for ChatGPT
+# TALEBORN: The Six Realms. Complete Art and Sprite List for ChatGPT
 
 Creature prompts are in **`CREATURE_PROMPTS.md`** (one copy-paste prompt per evolution line).
 This file has the **Style Lock**, the **workflow**, and **everything else** the game needs.
@@ -9,7 +9,7 @@ Check things off in `creatures.csv` as you go.
 ## Step 1: Paste this Style Lock first in every new ChatGPT chat
 
 ```
-For this whole chat you are making art for my original creature-collecting RPG (working title "The Seven Realms").
+For this whole chat you are making art for my original creature-collecting RPG called "Taleborn: The Six Realms".
 Style rules for EVERY image:
 - Pixel art, Game Boy Color / Game Boy Advance era monster-RPG look
 - Crisp 1-pixel dark outlines, simple 2-3 step shading, limited palette (6-8 colors per sprite)
@@ -89,7 +89,7 @@ Full-body trainer battle sprite for a Game Boy Color style RPG, 3/4 view, confid
 | 3 | Sage (rival) | cocky young Pathfinder in a purple hoodie with a pen behind one ear | Portrait (3 versions: early, middle, final), walk |
 | 4 | Professor Inkwell | kind older scholar with an ink-stained lab coat, round glasses, giant quill | Portrait, walk |
 | 5 | Player's family member | friendly adult in an apron at home | Walk |
-| 6 | Lexa (Grand Champion) | calm champion in a long coat with patches from all seven realms | Portrait, walk |
+| 6 | Lexa (Grand Champion) | calm champion in a long coat with patches from all six realms | Portrait, walk |
 | 7 | The Editor (villain boss) | tall figure in a white suit and mask shaped like a blank page, holding a giant red pen | Portrait, walk |
 | 8 | Redactor Grunt (x2: two looks) | uniform of grey hoodies with a black bar across the chest, face masks | Portrait, walk |
 | 9-14 | 6 Redactor Admins | one per realm, each in a Redactor uniform mixed with that realm's style (ninja, villain, cartoon, priest, gamer, monster hunter) | Portrait, walk |
@@ -235,7 +235,7 @@ Tonic, Super Tonic, Max Tonic, Full Restore Tonic, Revive Quill, Max Revive Quil
 
 | UI piece | Notes |
 |---|---|
-| Title screen + logo | Game title (pick a name first, see `GAME_DESIGN.md`) + "The Seven Realms", open book with six glowing realm symbols and a seventh in the clouds above it |
+| Title screen + logo | "TALEBORN: The Six Realms", open book with six glowing realm symbols, and a faint seventh symbol hidden in the clouds above (a secret tease) |
 | Dialogue box | Paper-scroll style 9-slice frame |
 | Menus | Pause menu, bag, party, Lorebook, save, options (frame + cursor arrow) |
 | Battle HUD | Enemy and player HP boxes, HP bar (green/yellow/red), EXP bar, Bond hearts, status badges |
@@ -246,7 +246,7 @@ Tonic, Super Tonic, Max Tonic, Full Restore Tonic, Revive Quill, Max Revive Quil
 | Realm minigame screens | Arcade "High Score" overlay (Respawn Reach), Evidence Lens camera viewfinder (Hollowmere), Redemption bar (Capeworth), riddle stone tablet (Pantheos) |
 | Lantern oil meter + jump-scare flash | Sky realm: oil bar in the corner, a full-screen scare frame |
 | Hero/Villain meter | Bar with a shield icon on one end and a skull-mask on the other |
-| Lorebook screens | Page layout, seen/caught markers, realm tabs (7), Sovereign pages |
+| Lorebook screens | Page layout, seen/caught markers, realm tabs (6, plus a blank locked seventh tab that unlocks in the post-game), Sovereign pages |
 | Ascension animation | Book pages flipping + glow burst frames (4 to 6 frames) |
 | Chapter Seals case | Book cover with 24 badge slots, plus a Ticket Stub page with 4 slots and the Final Reel |
 | Fonts | Use a free pixel font (search "free pixel font OFL") rather than drawing one |

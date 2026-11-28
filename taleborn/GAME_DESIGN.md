@@ -1,5 +1,4 @@
-# MYTHBOUND: The Seven Realms
-_Placeholder title: other games already use "Mythbound". See **Name Options** below._
+# TALEBORN: The Six Realms
 
 _A creature-collecting RPG in the spirit of the classic Game Boy monster games: top-down overworld, turn-based battles, a creature encyclopedia to fill, badges, a rival and a final league._
 
@@ -12,24 +11,17 @@ Other files in this folder:
 
 ---
 
-## Name Options (Mythbound is taken)
+## The Name
 
-Checked with web searches on 2026-11-28. A web search is not a trademark search, so check the USPTO trademark database, Steam and the app stores before you publish.
+**Taleborn: The Six Realms.** The subtitle says six on purpose: at the start, the seventh Realm is only a myth (see Section 1).
 
-| Name | What the search found | Verdict |
-|---|---|---|
-| **Taleborn: The Seven Realms** | No game, app or trademark found. Closest: *Fableborne* (a different game) | Clear, best pick |
-| **Storyborne: The Seven Realms** | No game found. Closest: *Storybound*, a free tabletop RPG on itch.io | Clear |
-| **Inkwild** | No game found. Close: *Wild Ink* and *inkwill* on itch.io | Probably OK |
-| Echolore | Already used by a Telegram music RPG mini-app and an AI roleplay app | Avoid |
-| Echoveil | Already a horror game on Steam (*Echoveil: The Last Guest*, 2025) | Taken |
-| Lorebound | A dungeon-master tool on itch.io (*LoreBound: DM Engine*) | Avoid |
+Name check, done with web searches on 2026-11-28: no game, app or trademark called "Taleborn" turned up (the closest was *Fableborne*, a different game). "Mythbound" was dropped because other games already use it. A web search is not a trademark search, so check the USPTO trademark database, Steam and the app stores before you publish.
 
 ---
 
 ## 1. The Story Hook
 
-Every story people have ever told leaves an echo. In the world of **Mythbound**, those echoes come alive as creatures called **Echoes**. Six Realms grew around six kinds of stories, and a seventh, hidden one floats in the sky above them all:
+Every story people have ever told leaves an echo. In the world of **Taleborn**, those echoes come alive as creatures called **Echoes**. Six Realms grew around six kinds of stories. Everyone knows the six. Only old storytellers talk about a **seventh**:
 
 | # | Realm | Stories it grew from | Signature type | Look and feel |
 |---|---|---|---|---|
@@ -39,9 +31,18 @@ Every story people have ever told leaves an echo. In the world of **Mythbound**,
 | 4 | **Pantheos** | Gods and goddesses of many cultures | Divine | Floating temple districts: Greek, Egyptian, Norse, Chinese, Celtic and Mesoamerican |
 | 5 | **Respawn Reach** | Video games | Pixel | 8-bit plains, a mushroom kingdom, a block-built mine, a dungeon, an arcade city, a racetrack |
 | 6 | **Hollowmere** | Cryptids and monsters | Dread | Foggy pine woods, a misty loch, a moth-haunted bridge, a monster castle, a sunken city |
-| 7 | **The Midnight Marquee** (sky realm, post-game) | Horror movies | Fright | A haunted movie palace floating in storm clouds under a red moon. Each island is a different scary-movie set. See Section 12. |
+| 7? | **The Midnight Marquee** (a myth, until the post-game) | Horror movies | Fright | A haunted movie palace floating in storm clouds under a red moon. Each island is a different scary-movie set. See Section 12. |
 
 At the center is the hub, **Prologue Village**, home of **Professor Inkwell**. The player is a new **Pathfinder** who gets a **Lorebook** (the creature encyclopedia and storage) and one starter Echo.
+
+**The Seventh Realm is a myth.** Nothing in the game's title, menus or maps admits it exists. The player only hears about it:
+- A spooky nursery rhyme kids sing in every Realm: *"Six lands below and one above, where the stories go that no one loves."*
+- Old storytellers and a few Chapter Masters tell of a movie palace "above the storms." Professor Inkwell laughs it off as a campfire tale.
+- The Lorebook has six Realm tabs, and a seventh tab that's blank and won't open.
+- On stormy nights, a red light sometimes flickers in the clouds above the hub.
+- Quillion's old carvings show seven tail feathers, but no one knows why.
+
+Then, after the Grand Champion, the myth turns out to be true (Section 12).
 
 **The bad guys: The Redactors.** Led by **The Editor**, they want to erase every story and return the world to a blank page. They are stealing the Sovereigns' power to do it. Each Realm has one Redactor Admin. Their partner Sovereign is **Erazor** (the Eraser of Toonvale), and freeing it is a midgame twist.
 
@@ -83,7 +84,7 @@ At the center is the hub, **Prologue Village**, home of **Professor Inkwell**. T
 | **Echo** | Normal creature | 48 lines (6 per ground Realm including the starter, 12 in the sky Realm) | 5 | Common to rare. Caught with Inks. |
 | **Paragon** | Pseudo-legendary | 7 lines (1 per Realm) | 5 | Slow to level, very strong (about 600 total stats). One per save file, from a Paragon Egg quest. |
 | **Sovereign** | Legendary | 14 (a rival pair per Realm) | 1 + Awakened form | Can't be caught with Inks. Joins only through a **Pact** (Section 5). About 680 total stats. |
-| **Origin** | Mythical / the "final" one | 1 (Quillion) | 1 + Awakened form | Post-game. Wrote all seven Realms. 720 total stats. |
+| **Origin** | Mythical / the "final" one | 1 (Quillion) | 1 + Awakened form | Post-game. Wrote all the Realms, even the seventh. 720 total stats. |
 
 **Total: 307 creature designs** (275 Echo and Paragon stages + 2 extra for the Webbit branch + 28 Sovereign forms + 2 Quillion forms). That's about twice the 151 in the original Game Boy games.
 
@@ -317,8 +318,8 @@ The creatures are **echoes**: they nod to a famous character *type* (a spiky-hai
 
 ## 12. The Seventh Realm: The Midnight Marquee
 
-### Why it's there
-Long ago, Quillion sealed away the stories people were too scared to finish, and locked them in a movie palace above the clouds. When you beat the Grand Champion, **The Editor** makes a last stand and fails, then flees **up** a red beam of light. That beam breaks the seal, and the Marquee rises over the hub. The Editor was working for the Boogeyman all along.
+### Why it's there (and why everyone thought it was a myth)
+Long ago, Quillion sealed away the stories people were too scared to finish, and locked them in a movie palace above the clouds. When you beat the Grand Champion, **The Editor** makes a last stand and fails, then flees **up** a red beam of light. That beam breaks the seal, and the Marquee rises over the hub. The blank seventh Lorebook tab fills in, the title screen's hidden seventh symbol lights up, and the subtitle changes to **The Seven Realms** for the rest of the save file. The Editor was working for the Boogeyman all along.
 
 ### Getting there
 - The **Night Ferry**, a ghostly airship, docks at the Grand Anthology after the credits roll. Its ticket is the reward for beating the Grand Champion.
