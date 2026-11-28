@@ -538,9 +538,164 @@ _Nod: the atomic-breathing king of giant monsters_
 | 224 | **Cthaloth** | The Dreamer in the Deep | Dread/Tide | tentacled winged sea horror with an octopus head rising from a sunken city |
 | 224-A | **Cthaloth (Dreaming Form)** | The Dreamer in the Deep | Dread/Tide | cosmic tentacles reaching from a starry void (awakened form of: tentacled winged sea horror with an octopus head rising from a sunken city) |
 
+## The Midnight Marquee: Horror Movie Realm (floating sky realm, post-game)
+Signature type: **Fright**
+
+### Campcub line
+_Nod: the masked slasher of the summer-camp lake who always comes back for a sequel_
+
+| # | Stage | Name | Type | Evolves by | Look |
+|---|---|---|---|---|---|
+| 225 | 1 Seedling | **Campcub** | Fright | Level 18 | tiny black bear cub with a cracked white goalie mask pushed up on its head, faded camp T-shirt |
+| 226 | 2 Rookie | **Lakelurk** | Fright/Tide | Level up at Camp Blackwater lake | dripping-wet bear rising out of a dark lake, goalie mask pulled down, holding a broken oar |
+| 227 | 3 Veteran | **Grizzlemask** | Fright/Brawl | Faint 5 times (it always comes back) | hulking bear in a torn work jacket and goalie mask, carrying a camp lantern |
+| 228 | 4 Elite | **Unstoppabear** | Fright/Brawl | Level 55 on a Friday night | huge masked bear wrapped in broken chains, walking slowly and never stopping |
+| 229 | 5 Ascended | **Sequelbear** | Fright/Spirit | - | towering ghostly masked bear glowing green, roman numerals like 'PART VII' floating around it |
+
+### Napcoon line
+_Nod: the dream stalker in a striped sweater with a clawed glove_
+
+| # | Stage | Name | Type | Evolves by | Look |
+|---|---|---|---|---|---|
+| 230 | 1 Seedling | **Napcoon** | Fright | Level 16 | sleepy raccoon kit in a red-and-green striped sweater, one paw with long metal claw-tips |
+| 231 | 2 Rookie | **Dozeclaw** | Fright/Mind | Level up while another party member is asleep | raccoon in a battered brown hat and striped sweater, scraping its claw glove along a wall |
+| 232 | 3 Veteran | **Nightmaroon** | Fright/Mind | Level 34 at midnight | tall thin raccoon stepping out of a swirling dream cloud, glowing claw glove |
+| 233 | 4 Elite | **Dreamslash** | Fright/Shadow | Use a Broken Music Box | giant raccoon whose body melts into a nightmare of stairs and doors, grinning |
+| 234 | 5 Ascended | **Slumberfiend** | Fright/Shadow | - | colossal dream-lord raccoon looming over a sleeping town, claws like crescent moons |
+
+### Dollypop line
+_Nod: the possessed toy doll that turns on its owner_
+
+| # | Stage | Name | Type | Evolves by | Look |
+|---|---|---|---|---|---|
+| 235 | 1 Seedling | **Dollypop** | Fright | Level 15 | cute little rag doll with button eyes, freckles and red yarn hair, a tiny smile |
+| 236 | 2 Rookie | **Cracklette** | Fright/Toon | LOW Bond: level up when it is unhappy with you | porcelain doll with a hairline crack across its face and a lopsided grin |
+| 237 | 3 Veteran | **Porcelurk** | Fright/Spirit | Level 32 at midnight | tall porcelain doll in a frilly dress with glowing eyes and a music-box key in its back |
+| 238 | 4 Elite | **Marionix** | Fright/Spirit | Level 52 inside the Dollhouse Manor | life-size puppet doll dangling from ghostly strings, head tilted |
+| 239 | 5 Ascended | **Dollmother** | Fright/Spirit | - | giant doll queen in a dollhouse-shaped dress, smaller dolls peeking from its windows |
+
+### Croakle line
+_Nod: the grinning sewer clown with red balloons_
+
+| # | Stage | Name | Type | Evolves by | Look |
+|---|---|---|---|---|---|
+| 240 | 1 Seedling | **Croakle** | Fright | Level 15 | small green frog with a red clown nose and a white ruffled collar |
+| 241 | 2 Rookie | **Balloonatic** | Fright/Gale | Level up holding 3 Red Balloons | frog clown floating up holding a bunch of red balloons, silver suit |
+| 242 | 3 Veteran | **Grinmire** | Fright/Venom | Level up at the Carnival of Grins at night | clown frog peeking out of a storm drain with an enormous toothy grin |
+| 243 | 4 Elite | **Carnivoad** | Fright/Venom | Level 54 after 27 in-game days | big circus clown toad in a baggy silver suit with orange pom-poms and yellow eyes |
+| 244 | 5 Ascended | **Bigtopor** | Fright/Shadow | - | giant clown toad whose body is a striped circus tent, glowing eyes in the dark entrance, balloons everywhere |
+
+### Fuzzlet line
+_Nod: the long-haired ghost who crawls out of a cursed TV_
+
+| # | Stage | Name | Type | Evolves by | Look |
+|---|---|---|---|---|---|
+| 245 | 1 Seedling | **Fuzzlet** | Fright | Level 16 | tiny ghost jellyfish made of TV static with a few strands of long black hair |
+| 246 | 2 Rookie | **Wellwisp** | Fright/Tide | Level up next to the Old Well | pale jellyfish ghost rising from an old stone well, long wet black hair hiding its face |
+| 247 | 3 Veteran | **Tapehaunt** | Fright/Spirit | Use a Cursed Tape, then wait 7 in-game days | ghost with hair-like tentacles tangled with old videotape ribbon |
+| 248 | 4 Elite | **Screencrawl** | Fright/Volt | Level 52 | long-haired ghost crawling halfway out of a boxy old TV screen, static flickering |
+| 249 | 5 Ascended | **Broadcurse** | Fright/Volt | - | giant ghost made of a hundred flickering TV screens, black hair flowing between them |
+
+### Sawlet line
+_Nod: the masked chainsaw maniac of the lonely farmhouse (spooky, not gory)_
+
+| # | Stage | Name | Type | Evolves by | Look |
+|---|---|---|---|---|---|
+| 250 | 1 Seedling | **Sawlet** | Fright | Level 17 | piglet with a patched leather face mask and tiny buzzing saw-tooth tusks |
+| 251 | 2 Rookie | **Revhog** | Fright/Metal | Level up at the Old Farmhouse | boar in a butcher's apron with rumbling motor-tusks and smoke puffs |
+| 252 | 3 Veteran | **Chainsnout** | Fright/Metal | Use the move Rev Up 30 times | big boar with chain-saw-blade tusks spinning, stomping through a cornfield |
+| 253 | 4 Elite | **Leatherhide** | Fright/Metal | Level 50 | hulking masked boar spinning in a circle at sunset waving its motor-tusks |
+| 254 | 5 Ascended | **Sawtusk** | Fright/Metal | - | colossal iron boar tyrant with engine smokestacks on its back and roaring saw-tusks |
+
+### Tickit line
+_Nod: the puzzle-trap puppet who wants to play a game_
+
+| # | Stage | Name | Type | Evolves by | Look |
+|---|---|---|---|---|---|
+| 255 | 1 Seedling | **Tickit** | Fright | Solve 5 trap puzzles in The Puzzle Works | wind-up toy hamster with red spiral cheeks and a white face, riding a tiny tricycle |
+| 256 | 2 Rookie | **Gearsqueak** | Fright/Metal | Level 30 | clockwork hamster running in a rusty wheel full of gears and locks |
+| 257 | 3 Veteran | **Trapwheel** | Fright/Metal | Use a Rusty Key | hamster puppet inside a giant spinning cage of gears and keys |
+| 258 | 4 Elite | **Puzzlecage** | Fright/Mind | Level 52 | tall puppet with a cage for a body holding a tape recorder, puzzle pieces floating |
+| 259 | 5 Ascended | **Gamewright** | Fright/Mind | - | giant puppet game-master in a red cloak sitting on a throne of traps and timers |
+
+### Dialhoot line
+_Nod: the ghost-masked phone caller who asks your favorite scary movie_
+
+| # | Stage | Name | Type | Evolves by | Look |
+|---|---|---|---|---|---|
+| 260 | 1 Seedling | **Dialhoot** | Fright | Level 15 | owl chick with a long drooping white ghost-face and a curly old phone cord tail |
+| 261 | 2 Rookie | **Ringeye** | Fright/Gale | Get 10 phone calls with it in the party | owl in a black hooded cloak holding a ringing phone |
+| 262 | 3 Veteran | **Shriekmask** | Fright/Gale | Win on the very first turn 10 times (a surprise attack) | tall owl with a long melting-scream white face, cloak flaring |
+| 263 | 4 Elite | **Phantomcaller** | Fright/Shadow | Level 50 | shadowy owl stalker with glowing scream-face mask and phone wires for feathers |
+| 264 | 5 Ascended | **Lastcall** | Fright/Shadow | - | giant cloaked owl whose wings are filled with ringing phones and screaming white masks |
+
+### Creaklet line
+_Nod: the haunted house and its poltergeists_
+
+| # | Stage | Name | Type | Evolves by | Look |
+|---|---|---|---|---|---|
+| 265 | 1 Seedling | **Creaklet** | Fright | Level 16 | tiny haunted doghouse creature with glowing window-eyes and a creaky door mouth |
+| 266 | 2 Rookie | **Spookshack** | Fright/Stone | Level up with 3 Spirit types in the party | small crooked cabin on chicken-like legs, ghostly lights inside |
+| 267 | 3 Veteran | **Hauntstead** | Fright/Spirit | Level 34 at midnight | old farmhouse creature with floating furniture orbiting it, screaming windows |
+| 268 | 4 Elite | **Poltermanor** | Fright/Spirit | Level 52 | big Victorian mansion monster with a staircase tongue and flickering chandeliers |
+| 269 | 5 Ascended | **Mansionmaw** | Fright/Spirit | - | colossal living mansion on a hill under a red moon, every window an eye |
+
+### Shamblebun line
+_Nod: the shambling zombie horde that keeps growing_
+
+| # | Stage | Name | Type | Evolves by | Look |
+|---|---|---|---|---|---|
+| 270 | 1 Seedling | **Shamblebun** | Fright | Level 15 | single green zombie bunny with a stitched ear, arms out, slow walk |
+| 271 | 2 Rookie | **Hordelings** | Fright/Venom | Level up with another Shamblebun-line in the party (the horde grows) | three zombie bunnies shuffling together in a group |
+| 272 | 3 Veteran | **Swarmbun** | Fright/Venom | Level up in Deadmart Mall | crowd of six zombie bunnies climbing over each other |
+| 273 | 4 Elite | **Mallhorde** | Fright/Venom | Level 52 | zombie bunny horde riding a rolling shopping cart, mall signs behind them |
+| 274 | 5 Ascended | **Apocalypsebun** | Fright/Venom | - | giant zombie bunny made of hundreds of tiny zombie bunnies, ruined city behind it |
+
+### Huskling line
+_Nod: the shape-copying thing from the frozen research base_
+
+| # | Stage | Name | Type | Evolves by | Look |
+|---|---|---|---|---|---|
+| 275 | 1 Seedling | **Huskling** | Fright | Level 18 in snow | fluffy husky puppy with one odd-looking eye and a tendril for a tongue |
+| 276 | 2 Rookie | **Mimicur** | Fright/Frost | Level up holding a Mimic Seed | husky whose face splits open into flower-like petals |
+| 277 | 3 Veteran | **Splitwolf** | Fright/Frost | Level up at the Arctic Outpost set | wolf-shape with extra legs and tendrils sprouting, half-copying a nearby creature |
+| 278 | 4 Elite | **Thingamajig** | Fright/Frost | Level 50 | lumpy shapeshifter blob with parts of many animals |
+| 279 | 5 Ascended | **Assimilatrix** | Fright/Mind | - | giant shapeshifting horror that copies whatever it faces, frozen base in the background |
+
+### Jackolette line
+_Nod: the pumpkin-headed stalker of the haunted harvest and the headless rider_
+
+| # | Stage | Name | Type | Evolves by | Look |
+|---|---|---|---|---|---|
+| 280 | 1 Seedling | **Jackolette** | Fright | Level 15 | small pumpkin creature with a carved grin and a candle glowing inside |
+| 281 | 2 Rookie | **Gourdghast** | Fright/Verdant | Level up in the Cornfield at dusk | pumpkin-headed scarecrow with straw hands and a tattered coat |
+| 282 | 3 Veteran | **Cornstalker** | Fright/Verdant | Use a Jack-o'-Lantern Candle | tall pumpkin creature creeping through a cornfield, vines for arms |
+| 283 | 4 Elite | **Hollowhead** | Fright/Blaze | Level 50 on Halloween night (Oct 31 in-game) | headless rider on a dark horse holding up a flaming jack-o'-lantern |
+| 284 | 5 Ascended | **Harvest King** | Fright/Blaze | - | giant pumpkin king in a crown of autumn leaves, crows and lanterns around it |
+
+### Finlet line (PARAGON)
+_Nod: the giant shark from the summer beach movie, now swimming through storm clouds_
+
+| # | Stage | Name | Type | Evolves by | Look |
+|---|---|---|---|---|---|
+| 285 | 1 Seedling | **Finlet** | Fright | Level 30 | tiny grey shark pup with a giant dorsal fin, peeking out of a cloud |
+| 286 | 2 Rookie | **Stormfin** | Fright/Gale | Level 45 | young shark swimming through rain clouds, just its fin showing |
+| 287 | 3 Veteran | **Cloudjaw** | Fright/Gale | Level up during a thunderstorm in the sky | great white shark leaping out of clouds with its huge jaws open |
+| 288 | 4 Elite | **Voltjaw** | Fright/Volt | Level 70 | giant shark crackling with lightning in a swirling storm |
+| 289 | 5 Ascended | **Skymegalodon** | Fright/Volt | - | colossal ancient megalodon circling the floating realm, storm swirling, eyes glowing red |
+
+### Sovereigns
+
+| # | Name | Title | Type | Look |
+|---|---|---|---|---|
+| 290 | **Lastlight** | The Final Girl | Radiant/Fright | brave doe-like guardian with a lantern hanging from its antlers, torn jacket, determined eyes |
+| 290-A | **Lastlight (Sunrise Form)** | The Final Girl | Radiant/Fright | dawn breaks behind it and the lantern becomes a blazing sun (awakened form of: brave doe-like guardian with a lantern hanging from its antlers, torn jacket, determined eyes) |
+| 291 | **Bogeyreign** | The Boogeyman | Fright/Shadow | tall faceless shadow with long arms, wearing a mask that keeps changing, stepping out from under a bed |
+| 291-A | **Bogeyreign (Every Mask Form)** | The Boogeyman | Fright/Shadow | a huge cloak covered in hundreds of different scary masks (awakened form of: tall faceless shadow with long arms, wearing a mask that keeps changing, stepping out from under a bed) |
+
 ## The Origin
 
 | # | Name | Title | Type | Look |
 |---|---|---|---|---|
-| 225 | **Quillion** | The First Storyteller | Radiant/Mind | great feathered serpent-bird made of book pages and ink, a giant quill as its crest, six colored tail feathers (one per realm) |
-| 225-A | **Quillion (Epilogue Form)** | The First Storyteller | Radiant/Mind | pages unfold into vast wings showing scenes from all six realms (awakened form of: great feathered serpent-bird made of book pages and ink, a giant quill as its crest, six colored tail feathers (one per realm)) |
+| 292 | **Quillion** | The First Storyteller | Radiant/Mind | great feathered serpent-bird made of book pages and ink, a giant quill as its crest, seven colored tail feathers (one per realm) |
+| 292-A | **Quillion (Epilogue Form)** | The First Storyteller | Radiant/Mind | pages unfold into vast wings showing scenes from all seven realms (awakened form of: great feathered serpent-bird made of book pages and ink, a giant quill as its crest, seven colored tail feathers (one per realm)) |

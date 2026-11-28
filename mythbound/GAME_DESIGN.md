@@ -1,5 +1,7 @@
-# MYTHBOUND: The Six Realms
-_Working title. A creature-collecting RPG in the spirit of the classic Game Boy monster games: top-down overworld, turn-based battles, a creature encyclopedia to fill, badges, a rival and a final league._
+# MYTHBOUND: The Seven Realms
+_Placeholder title: other games already use "Mythbound". See **Name Options** below._
+
+_A creature-collecting RPG in the spirit of the classic Game Boy monster games: top-down overworld, turn-based battles, a creature encyclopedia to fill, badges, a rival and a final league._
 
 Other files in this folder:
 - `ROSTER.md`: every creature, its types, look and how it evolves
@@ -10,9 +12,24 @@ Other files in this folder:
 
 ---
 
+## Name Options (Mythbound is taken)
+
+Checked with web searches on 2026-11-28. A web search is not a trademark search, so check the USPTO trademark database, Steam and the app stores before you publish.
+
+| Name | What the search found | Verdict |
+|---|---|---|
+| **Taleborn: The Seven Realms** | No game, app or trademark found. Closest: *Fableborne* (a different game) | Clear, best pick |
+| **Storyborne: The Seven Realms** | No game found. Closest: *Storybound*, a free tabletop RPG on itch.io | Clear |
+| **Inkwild** | No game found. Close: *Wild Ink* and *inkwill* on itch.io | Probably OK |
+| Echolore | Already used by a Telegram music RPG mini-app and an AI roleplay app | Avoid |
+| Echoveil | Already a horror game on Steam (*Echoveil: The Last Guest*, 2025) | Taken |
+| Lorebound | A dungeon-master tool on itch.io (*LoreBound: DM Engine*) | Avoid |
+
+---
+
 ## 1. The Story Hook
 
-Every story people have ever told leaves an echo. In the world of **Mythbound**, those echoes come alive as creatures called **Echoes**. Six Realms grew around six kinds of stories:
+Every story people have ever told leaves an echo. In the world of **Mythbound**, those echoes come alive as creatures called **Echoes**. Six Realms grew around six kinds of stories, and a seventh, hidden one floats in the sky above them all:
 
 | # | Realm | Stories it grew from | Signature type | Look and feel |
 |---|---|---|---|---|
@@ -22,6 +39,7 @@ Every story people have ever told leaves an echo. In the world of **Mythbound**,
 | 4 | **Pantheos** | Gods and goddesses of many cultures | Divine | Floating temple districts: Greek, Egyptian, Norse, Chinese, Celtic and Mesoamerican |
 | 5 | **Respawn Reach** | Video games | Pixel | 8-bit plains, a mushroom kingdom, a block-built mine, a dungeon, an arcade city, a racetrack |
 | 6 | **Hollowmere** | Cryptids and monsters | Dread | Foggy pine woods, a misty loch, a moth-haunted bridge, a monster castle, a sunken city |
+| 7 | **The Midnight Marquee** (sky realm, post-game) | Horror movies | Fright | A haunted movie palace floating in storm clouds under a red moon. Each island is a different scary-movie set. See Section 12. |
 
 At the center is the hub, **Prologue Village**, home of **Professor Inkwell**. The player is a new **Pathfinder** who gets a **Lorebook** (the creature encyclopedia and storage) and one starter Echo.
 
@@ -38,7 +56,8 @@ At the center is the hub, **Prologue Village**, home of **Professor Inkwell**. T
 3. **Each Realm** has 4 **Chapter Masters** (gym leaders), a Redactor Admin hideout, a Paragon Egg quest, and a Sovereign Trial.
 4. **24 Chapter Seals** (badges) in total. Wild Echo levels scale with how many seals you hold, so you can do the Realms in many orders.
 5. **The Grand Anthology** (the league): beat the 6 **Realm Champions** in a row, then the **Grand Champion**.
-6. **Post-game:** gather all 12 Sovereigns to summon **Quillion, the First Storyteller**.
+6. **Post-game, part 1:** after the Grand Champion, a red beam shoots into the sky and **The Midnight Marquee** rises. Ride the Night Ferry up to it (Section 12).
+7. **Post-game, part 2:** gather all 14 Sovereigns to summon **Quillion, the First Storyteller**.
 
 ### Chapter Masters and Champions
 
@@ -61,12 +80,12 @@ At the center is the hub, **Prologue Village**, home of **Professor Inkwell**. T
 
 | Class | Like a... | How many | Stages | What makes it special |
 |---|---|---|---|---|
-| **Echo** | Normal creature | 36 lines (6 per Realm, including the starter) | 5 | Common to rare. Caught with Inks. |
-| **Paragon** | Pseudo-legendary | 6 lines (1 per Realm) | 5 | Slow to level, very strong (about 600 total stats). One per save file, from a Paragon Egg quest. |
-| **Sovereign** | Legendary | 12 (a rival pair per Realm) | 1 + Awakened form | Can't be caught with Inks. Joins only through a **Pact** (Section 5). About 680 total stats. |
-| **Origin** | Mythical / the "final" one | 1 (Quillion) | 1 + Awakened form | Post-game. Wrote the six Realms. 720 total stats. |
+| **Echo** | Normal creature | 48 lines (6 per ground Realm including the starter, 12 in the sky Realm) | 5 | Common to rare. Caught with Inks. |
+| **Paragon** | Pseudo-legendary | 7 lines (1 per Realm) | 5 | Slow to level, very strong (about 600 total stats). One per save file, from a Paragon Egg quest. |
+| **Sovereign** | Legendary | 14 (a rival pair per Realm) | 1 + Awakened form | Can't be caught with Inks. Joins only through a **Pact** (Section 5). About 680 total stats. |
+| **Origin** | Mythical / the "final" one | 1 (Quillion) | 1 + Awakened form | Post-game. Wrote all seven Realms. 720 total stats. |
 
-**Total: 238 creature designs** (210 Echo and Paragon stages + 2 extra for the Webbit branch + 24 Sovereign forms + 2 Quillion forms). That's more than the 151 in the original Game Boy games.
+**Total: 307 creature designs** (275 Echo and Paragon stages + 2 extra for the Webbit branch + 28 Sovereign forms + 2 Quillion forms). That's about twice the 151 in the original Game Boy games.
 
 ### Starters (pick one)
 
@@ -89,6 +108,7 @@ At the center is the hub, **Prologue Village**, home of **Professor Inkwell**. T
 | Quetzlet → Quetzalcoron | Pantheos | Mesoamerican feathered serpent |
 | Bitling → Maxrez | Respawn Reach | Final-boss dragon whose graphics improve each stage (8-bit to HD) |
 | Kaijuvi → Kaijuggernaut | Hollowmere | Atomic-breathing king of giant monsters |
+| Finlet → Skymegalodon | The Midnight Marquee | The giant summer-beach shark, now swimming through storm clouds |
 
 ### Sovereigns (rival pairs)
 
@@ -100,6 +120,7 @@ At the center is the hub, **Prologue Village**, home of **Professor Inkwell**. T
 | Pantheos | **Solarchon**, Sun Above | **Nyxarion**, Night Below |
 | Respawn Reach | **Respawnix**, the Extra Life | **Nullcrash**, the Fatal Error |
 | Hollowmere | **Sanguinar**, the Count | **Cthaloth**, the Dreamer in the Deep |
+| The Midnight Marquee | **Lastlight**, the Final Girl | **Bogeyreign**, the Boogeyman |
 
 The full list of every creature is in `ROSTER.md`.
 
@@ -160,7 +181,7 @@ There are no balls. Pathfinders **write creatures into their Lorebook** with mag
 4. The zone is **bigger** when the Echo has low HP or a status condition, when you use better Ink, and when you've already Inscribed that species before.
 5. Miss and the ink smudges: the Echo breaks free, and it may flee.
 
-**Ink types:** Plain Ink, Fine Ink, Gilded Ink, Master Ink (can't miss), and 6 **Realm Inks** that are extra strong in their home Realm: Sakura Ink, Comic Ink, Toon Ink, Ichor Ink, Pixel Ink and Moonblood Ink.
+**Ink types:** Plain Ink, Fine Ink, Gilded Ink, Master Ink (can't miss), and 7 **Realm Inks** that are extra strong in their home Realm: Sakura Ink, Comic Ink, Toon Ink, Ichor Ink, Pixel Ink, Moonblood Ink and Reel Ink (sky Realm).
 
 ### Each Realm adds its own twist
 
@@ -194,16 +215,16 @@ Sovereigns can't be Inked. To make a **Pact**:
 5. **Awakening:** a Sovereign takes its Awakened form in battle after you've made a Pact with its rival too and both are in your party.
 
 ### Quillion
-After all 12 Pacts, the Lorebook's last page opens. Quillion's Trial is a battle in which every Realm's rules (Comeback, Alignment, Evidence and so on) switch on and off.
+After all 14 Pacts, the Lorebook's last page opens. Quillion's Trial is a battle in which every Realm's rules (Comeback, Alignment, Evidence and so on) switch on and off.
 
 ---
 
 ## 6. Types
 
-20 types: **14 elements** + **6 genre types** (one per Realm).
+21 types: **14 elements** + **7 genre types** (one per Realm).
 
 **Elements:** Blaze, Tide, Verdant, Volt, Frost, Stone, Gale, Brawl, Venom, Mind, Spirit, Shadow, Metal, Radiant
-**Genres:** Ki, Cape, Toon, Divine, Pixel, Dread
+**Genres:** Ki, Cape, Toon, Divine, Pixel, Dread, Fright
 
 ### The Genre Cycle (the heart of the game)
 Each genre beats the next one around the circle:
@@ -218,6 +239,8 @@ Each genre beats the next one around the circle:
 - Ki beats Cape: training beats gadgets and capes.
 
 The rival uses this cycle to pick the starter that beats yours.
+
+**Fright sits outside the cycle** (it's the sky Realm's type): strong against Mind, Cape and Toon (fear breaks heroes, cartoons and minds); weak to Radiant, Brawl and Divine (the light, the final girl who fights back, and the gods).
 
 ### Element strengths (first draft, to balance later)
 | Type | Strong against (2x) |
@@ -244,7 +267,7 @@ Rule of thumb: a type resists anything it's strong against, and every genre type
 ## 7. Battle Basics
 - Turn-based, 1 vs 1, teams of up to 6, 4 moves each (same feel as the classics).
 - Stats: HP, Attack, Defense, Focus (special attack), Will (special defense), Speed.
-- Status conditions: Burn, Freeze, Paralysis, Poison, Sleep, Confusion, plus **Fear** (Dread moves, skip a turn) and **Sanity** (Cthaloth only).
+- Status conditions: Burn, Freeze, Paralysis, Poison, Sleep, Confusion, plus **Fear** (Dread and Fright moves, skip a turn) and **Sanity** (Cthaloth and Bogeyreign only).
 - **Bond** shows as hearts on the summary page. High Bond Echoes sometimes hang on at 1 HP.
 
 ---
@@ -265,7 +288,8 @@ Rule of thumb: a type resists anything it's strong against, and every genre type
 | 2. Core loop | Ascension methods, Bond, items, saving, the Lorebook screen | Item icons, Lorebook UI |
 | 3. All Realms | Remaining 5 Realms, 20 more Chapter Masters, Redactors | Each Realm's tileset, trainers and creatures |
 | 4. Endgame | Paragon Eggs, Sovereign Trials, Grand Anthology | Sovereigns, champions, league tileset |
-| 5. Polish | Quillion, post-game, music, balance | Title screen, effects |
+| 5. Sky Realm | The Midnight Marquee, Night Ferry, Lantern and Survive-the-Night systems | Marquee tilesets, 13 lines, Lastlight and Bogeyreign |
+| 6. Polish | Quillion, music, balance | Title screen, effects |
 
 Build it like your other games, as an HTML5 game that runs in a browser and can also be packaged as a Windows app.
 
@@ -278,12 +302,75 @@ The creatures are **echoes**: they nod to a famous character *type* (a spiky-hai
 - **ChatGPT will refuse** or water down prompts that name copyrighted characters (Goku, Batman, Mickey, Mario and so on). Every prompt in `CREATURE_PROMPTS.md` describes the design instead and never names a character.
 - **If you ever share or sell the game**, copying a real character's name or exact look can get it taken down. Nods to tropes are fine. The classic games do this too (their kicking and punching fighters nod to famous martial-arts movie stars).
 - **Gods and myths** are public domain, but some come from religions people practice today. The Pantheos lines are built on ancient pantheons (Greek, Egyptian, Norse, Celtic, Mesoamerican) and folklore (the Jade Rabbit), and use the gods' animals and symbols (Athena's owl, Anubis's jackal, Thor's goats), not cartoons of the gods themselves. Keep it that way if you add more.
+- **Horror movie villains** (the sky Realm) are copyrighted, more than any other group in the game. The Marquee creatures nod to horror *tropes* (a masked lake slasher, a dream stalker, a killer doll, a sewer clown, a TV ghost) and are animals with new names. Never put a movie title or villain's name in a prompt.
 - **Cryptids and classic monsters** (Bigfoot, Nessie, Mothman, the Chupacabra, the Jersey Devil, Frankenstein's creature, Dracula, the deep-sea horror) are folklore or public-domain books, so they're safe. Avoid using the look of any specific movie version.
 
 ---
 
 ## 11. Ideas to Add Later
-- 6 hidden **Lost Echoes** (event-only mythicals, one per Realm).
+- 7 hidden **Lost Echoes** (event-only mythicals, one per Realm).
 - **Crossover forms:** a Sakuraden Echo raised in Toonvale gets a cartoon variant.
 - **Echo Fusion** of two Seedlings at the Hub's Bindery.
 - More lines per Realm (aim for 10 to 12 each once the first 7 work).
+
+---
+
+## 12. The Seventh Realm: The Midnight Marquee
+
+### Why it's there
+Long ago, Quillion sealed away the stories people were too scared to finish, and locked them in a movie palace above the clouds. When you beat the Grand Champion, **The Editor** makes a last stand and fails, then flees **up** a red beam of light. That beam breaks the seal, and the Marquee rises over the hub. The Editor was working for the Boogeyman all along.
+
+### Getting there
+- The **Night Ferry**, a ghostly airship, docks at the Grand Anthology after the credits roll. Its ticket is the reward for beating the Grand Champion.
+- The Realm is a cluster of **floating islands**, each one a different scary-movie "set," joined by rope bridges, cable cars and the Ferry. The **Projection Tower** stands at the top.
+- Wild Echoes are Lv 55 to 75. The whole Realm is a post-game area.
+
+### The movie-set islands
+| Island | Horror trope it nods to | Who lives there |
+|---|---|---|
+| Camp Blackwater | Summer-camp slasher by the lake | Campcub line |
+| Dreamlane Suburbs | Nightmare stalker in your dreams | Napcoon line |
+| Dollhouse Manor | Possessed dolls | Dollypop line |
+| Carnival of Grins | Sewer clown and creepy carnival | Croakle line |
+| Static Video & the Old Well | Cursed videotape ghost | Fuzzlet line |
+| The Old Farmhouse & Cornfield | Chainsaw farmhouse, scary scarecrows | Sawlet and Jackolette lines |
+| The Puzzle Works | Trap-puzzle game master | Tickit line |
+| Ring Road Cul-de-sac | Ghost-masked phone caller | Dialhoot line |
+| Hilltop Haunted House | Poltergeists and living houses | Creaklet line |
+| Deadmart Mall | Zombie horde at the mall | Shamblebun line |
+| The Arctic Outpost Set | Shape-copying thing from the ice | Huskling line |
+| Thunderhead Bay | The giant shark (Paragon) | Finlet line |
+| Projection Tower | The Final Girl vs the Boogeyman | Lastlight and Bogeyreign |
+
+### New creatures up here
+**12 new Echo lines + 1 Paragon line = 65 creature stages, plus 2 Sovereigns (4 forms).** Full details are in `ROSTER.md`. Their Ascension methods include some of the strangest in the game:
+- **Sequel:** Campcub has to faint 5 times, because it always comes back.
+- **Low Bond:** Dollypop only Ascends when it's *unhappy* with you, because the doll turns on its owner.
+- **7-day curse:** use a Cursed Tape on Fuzzlet, then wait 7 in-game days.
+- **27-day cycle:** Carnivoad takes its final stage 27 in-game days after its last Ascension.
+- **Horde grows:** Shamblebun Ascends when another Shamblebun-line Echo is in the party.
+- **Friday night** (Campcub) and **Halloween night, Oct 31** (Jackolette) on the in-game calendar.
+- **Phone calls:** Dialhoot needs 10 calls on your in-game phone.
+
+### Catching in the sky Realm: "Survive the Night"
+- **Lights Out:** the islands are dark. You carry a **Lantern** that runs on oil. When it's out, Fright Echoes come closer and battles start with a **jump scare** (your lead gets Fear).
+- **They hunt you:** many Fright Echoes are visible on the map and **chase** you, slasher-movie style. Hide in lockers and closets, or turn and fight.
+- **Final Girl rule:** a Fright Echo can't be Inked until your lead Echo has **survived 3 of its turns**. After that, the Rune Ring works as normal, and Moonblood Ink and the new **Reel Ink** work best.
+
+### Sovereign Pacts
+- **Lastlight, the Final Girl:** escort her lantern across the islands until sunrise, then win the battle before your lantern runs out.
+- **Bogeyreign, the Boogeyman:** a battle that changes "movies" every 3 turns (lake, dream, carnival, TV). Each one has its own rules.
+- With both Pacts made, you have 14 Sovereigns and Quillion's last page opens.
+
+### Night Masters (post-game gym leaders)
+They give out **4 Ticket Stubs** instead of Chapter Seals.
+| Night Master | Type | Ticket Stub |
+|---|---|---|
+| Scout Calloway, the last camp counselor still standing | Fright/Tide | Campfire Stub |
+| Madame Marionette, the doll collector | Fright/Spirit | Puppet Stub |
+| Professor Static, owner of the video store | Fright/Volt | Rewind Stub |
+| Bonnie Graves, survivor of the mall | Fright/Venom | Survivor Stub |
+| **The Projectionist** (Realm boss), the Editor unmasked | Fright/Shadow | the Final Reel |
+
+### Keep it spooky, not gory
+Your players include kids, so keep this Realm at "scary sleepover movie" level: no blood or wounds. Weapons look like props (motor-tusks, claw tips, an oar). Jump scares, creepy music and chases are where the fear comes from.

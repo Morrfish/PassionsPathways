@@ -904,11 +904,274 @@ Pixel art battle sprite in the style of a Game Boy Color era monster-collecting 
 Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. A legendary creature, larger and more detailed than normal, majestic pose. Region colors: misty green, swamp brown, moonlight blue and campfire orange. Cthaloth: tentacled winged sea horror with an octopus head rising from a sunken city. Draw two versions side by side: left = normal form, right = awakened form: cosmic tentacles reaching from a starry void.
 ```
 
+## The Midnight Marquee (Horror Movie Realm (floating sky realm, post-game))
+
+### Campcub line
+**Front sprites, evolution sheet**
+
+```
+Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. Evolution sheet: 5 stages of one creature line in a row, left to right, each bigger and more powerful than the last but clearly the same species. Region colors: blood-moon red, midnight purple, old-film sepia and flickering projector white. (1) Campcub: tiny black bear cub with a cracked white goalie mask pushed up on its head, faded camp T-shirt. (2) Lakelurk: dripping-wet bear rising out of a dark lake, goalie mask pulled down, holding a broken oar. (3) Grizzlemask: hulking bear in a torn work jacket and goalie mask, carrying a camp lantern. (4) Unstoppabear: huge masked bear wrapped in broken chains, walking slowly and never stopping. (5) Sequelbear: towering ghostly masked bear glowing green, roman numerals like 'PART VII' floating around it.
+```
+
+**Back sprites:**
+
+```
+Using the exact creatures from the sheet above, draw each one from BEHIND (rear 3/4 view, as seen by the player in battle), same order, same palette, same pixel style, white background.
+```
+
+**Party icons:**
+
+```
+Turn each creature above into a tiny 16x16-pixel party menu icon, two-frame idle bounce, very simple, same colors, white background.
+```
+
+### Napcoon line
+**Front sprites, evolution sheet**
+
+```
+Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. Evolution sheet: 5 stages of one creature line in a row, left to right, each bigger and more powerful than the last but clearly the same species. Region colors: blood-moon red, midnight purple, old-film sepia and flickering projector white. (1) Napcoon: sleepy raccoon kit in a red-and-green striped sweater, one paw with long metal claw-tips. (2) Dozeclaw: raccoon in a battered brown hat and striped sweater, scraping its claw glove along a wall. (3) Nightmaroon: tall thin raccoon stepping out of a swirling dream cloud, glowing claw glove. (4) Dreamslash: giant raccoon whose body melts into a nightmare of stairs and doors, grinning. (5) Slumberfiend: colossal dream-lord raccoon looming over a sleeping town, claws like crescent moons.
+```
+
+**Back sprites:**
+
+```
+Using the exact creatures from the sheet above, draw each one from BEHIND (rear 3/4 view, as seen by the player in battle), same order, same palette, same pixel style, white background.
+```
+
+**Party icons:**
+
+```
+Turn each creature above into a tiny 16x16-pixel party menu icon, two-frame idle bounce, very simple, same colors, white background.
+```
+
+### Dollypop line
+**Front sprites, evolution sheet**
+
+```
+Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. Evolution sheet: 5 stages of one creature line in a row, left to right, each bigger and more powerful than the last but clearly the same species. Region colors: blood-moon red, midnight purple, old-film sepia and flickering projector white. (1) Dollypop: cute little rag doll with button eyes, freckles and red yarn hair, a tiny smile. (2) Cracklette: porcelain doll with a hairline crack across its face and a lopsided grin. (3) Porcelurk: tall porcelain doll in a frilly dress with glowing eyes and a music-box key in its back. (4) Marionix: life-size puppet doll dangling from ghostly strings, head tilted. (5) Dollmother: giant doll queen in a dollhouse-shaped dress, smaller dolls peeking from its windows.
+```
+
+**Back sprites:**
+
+```
+Using the exact creatures from the sheet above, draw each one from BEHIND (rear 3/4 view, as seen by the player in battle), same order, same palette, same pixel style, white background.
+```
+
+**Party icons:**
+
+```
+Turn each creature above into a tiny 16x16-pixel party menu icon, two-frame idle bounce, very simple, same colors, white background.
+```
+
+### Croakle line
+**Front sprites, evolution sheet**
+
+```
+Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. Evolution sheet: 5 stages of one creature line in a row, left to right, each bigger and more powerful than the last but clearly the same species. Region colors: blood-moon red, midnight purple, old-film sepia and flickering projector white. (1) Croakle: small green frog with a red clown nose and a white ruffled collar. (2) Balloonatic: frog clown floating up holding a bunch of red balloons, silver suit. (3) Grinmire: clown frog peeking out of a storm drain with an enormous toothy grin. (4) Carnivoad: big circus clown toad in a baggy silver suit with orange pom-poms and yellow eyes. (5) Bigtopor: giant clown toad whose body is a striped circus tent, glowing eyes in the dark entrance, balloons everywhere.
+```
+
+**Back sprites:**
+
+```
+Using the exact creatures from the sheet above, draw each one from BEHIND (rear 3/4 view, as seen by the player in battle), same order, same palette, same pixel style, white background.
+```
+
+**Party icons:**
+
+```
+Turn each creature above into a tiny 16x16-pixel party menu icon, two-frame idle bounce, very simple, same colors, white background.
+```
+
+### Fuzzlet line
+**Front sprites, evolution sheet**
+
+```
+Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. Evolution sheet: 5 stages of one creature line in a row, left to right, each bigger and more powerful than the last but clearly the same species. Region colors: blood-moon red, midnight purple, old-film sepia and flickering projector white. (1) Fuzzlet: tiny ghost jellyfish made of TV static with a few strands of long black hair. (2) Wellwisp: pale jellyfish ghost rising from an old stone well, long wet black hair hiding its face. (3) Tapehaunt: ghost with hair-like tentacles tangled with old videotape ribbon. (4) Screencrawl: long-haired ghost crawling halfway out of a boxy old TV screen, static flickering. (5) Broadcurse: giant ghost made of a hundred flickering TV screens, black hair flowing between them.
+```
+
+**Back sprites:**
+
+```
+Using the exact creatures from the sheet above, draw each one from BEHIND (rear 3/4 view, as seen by the player in battle), same order, same palette, same pixel style, white background.
+```
+
+**Party icons:**
+
+```
+Turn each creature above into a tiny 16x16-pixel party menu icon, two-frame idle bounce, very simple, same colors, white background.
+```
+
+### Sawlet line
+**Front sprites, evolution sheet**
+
+```
+Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. Evolution sheet: 5 stages of one creature line in a row, left to right, each bigger and more powerful than the last but clearly the same species. Region colors: blood-moon red, midnight purple, old-film sepia and flickering projector white. (1) Sawlet: piglet with a patched leather face mask and tiny buzzing saw-tooth tusks. (2) Revhog: boar in a butcher's apron with rumbling motor-tusks and smoke puffs. (3) Chainsnout: big boar with chain-saw-blade tusks spinning, stomping through a cornfield. (4) Leatherhide: hulking masked boar spinning in a circle at sunset waving its motor-tusks. (5) Sawtusk: colossal iron boar tyrant with engine smokestacks on its back and roaring saw-tusks.
+```
+
+**Back sprites:**
+
+```
+Using the exact creatures from the sheet above, draw each one from BEHIND (rear 3/4 view, as seen by the player in battle), same order, same palette, same pixel style, white background.
+```
+
+**Party icons:**
+
+```
+Turn each creature above into a tiny 16x16-pixel party menu icon, two-frame idle bounce, very simple, same colors, white background.
+```
+
+### Tickit line
+**Front sprites, evolution sheet**
+
+```
+Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. Evolution sheet: 5 stages of one creature line in a row, left to right, each bigger and more powerful than the last but clearly the same species. Region colors: blood-moon red, midnight purple, old-film sepia and flickering projector white. (1) Tickit: wind-up toy hamster with red spiral cheeks and a white face, riding a tiny tricycle. (2) Gearsqueak: clockwork hamster running in a rusty wheel full of gears and locks. (3) Trapwheel: hamster puppet inside a giant spinning cage of gears and keys. (4) Puzzlecage: tall puppet with a cage for a body holding a tape recorder, puzzle pieces floating. (5) Gamewright: giant puppet game-master in a red cloak sitting on a throne of traps and timers.
+```
+
+**Back sprites:**
+
+```
+Using the exact creatures from the sheet above, draw each one from BEHIND (rear 3/4 view, as seen by the player in battle), same order, same palette, same pixel style, white background.
+```
+
+**Party icons:**
+
+```
+Turn each creature above into a tiny 16x16-pixel party menu icon, two-frame idle bounce, very simple, same colors, white background.
+```
+
+### Dialhoot line
+**Front sprites, evolution sheet**
+
+```
+Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. Evolution sheet: 5 stages of one creature line in a row, left to right, each bigger and more powerful than the last but clearly the same species. Region colors: blood-moon red, midnight purple, old-film sepia and flickering projector white. (1) Dialhoot: owl chick with a long drooping white ghost-face and a curly old phone cord tail. (2) Ringeye: owl in a black hooded cloak holding a ringing phone. (3) Shriekmask: tall owl with a long melting-scream white face, cloak flaring. (4) Phantomcaller: shadowy owl stalker with glowing scream-face mask and phone wires for feathers. (5) Lastcall: giant cloaked owl whose wings are filled with ringing phones and screaming white masks.
+```
+
+**Back sprites:**
+
+```
+Using the exact creatures from the sheet above, draw each one from BEHIND (rear 3/4 view, as seen by the player in battle), same order, same palette, same pixel style, white background.
+```
+
+**Party icons:**
+
+```
+Turn each creature above into a tiny 16x16-pixel party menu icon, two-frame idle bounce, very simple, same colors, white background.
+```
+
+### Creaklet line
+**Front sprites, evolution sheet**
+
+```
+Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. Evolution sheet: 5 stages of one creature line in a row, left to right, each bigger and more powerful than the last but clearly the same species. Region colors: blood-moon red, midnight purple, old-film sepia and flickering projector white. (1) Creaklet: tiny haunted doghouse creature with glowing window-eyes and a creaky door mouth. (2) Spookshack: small crooked cabin on chicken-like legs, ghostly lights inside. (3) Hauntstead: old farmhouse creature with floating furniture orbiting it, screaming windows. (4) Poltermanor: big Victorian mansion monster with a staircase tongue and flickering chandeliers. (5) Mansionmaw: colossal living mansion on a hill under a red moon, every window an eye.
+```
+
+**Back sprites:**
+
+```
+Using the exact creatures from the sheet above, draw each one from BEHIND (rear 3/4 view, as seen by the player in battle), same order, same palette, same pixel style, white background.
+```
+
+**Party icons:**
+
+```
+Turn each creature above into a tiny 16x16-pixel party menu icon, two-frame idle bounce, very simple, same colors, white background.
+```
+
+### Shamblebun line
+**Front sprites, evolution sheet**
+
+```
+Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. Evolution sheet: 5 stages of one creature line in a row, left to right, each bigger and more powerful than the last but clearly the same species. Region colors: blood-moon red, midnight purple, old-film sepia and flickering projector white. (1) Shamblebun: single green zombie bunny with a stitched ear, arms out, slow walk. (2) Hordelings: three zombie bunnies shuffling together in a group. (3) Swarmbun: crowd of six zombie bunnies climbing over each other. (4) Mallhorde: zombie bunny horde riding a rolling shopping cart, mall signs behind them. (5) Apocalypsebun: giant zombie bunny made of hundreds of tiny zombie bunnies, ruined city behind it.
+```
+
+**Back sprites:**
+
+```
+Using the exact creatures from the sheet above, draw each one from BEHIND (rear 3/4 view, as seen by the player in battle), same order, same palette, same pixel style, white background.
+```
+
+**Party icons:**
+
+```
+Turn each creature above into a tiny 16x16-pixel party menu icon, two-frame idle bounce, very simple, same colors, white background.
+```
+
+### Huskling line
+**Front sprites, evolution sheet**
+
+```
+Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. Evolution sheet: 5 stages of one creature line in a row, left to right, each bigger and more powerful than the last but clearly the same species. Region colors: blood-moon red, midnight purple, old-film sepia and flickering projector white. (1) Huskling: fluffy husky puppy with one odd-looking eye and a tendril for a tongue. (2) Mimicur: husky whose face splits open into flower-like petals. (3) Splitwolf: wolf-shape with extra legs and tendrils sprouting, half-copying a nearby creature. (4) Thingamajig: lumpy shapeshifter blob with parts of many animals. (5) Assimilatrix: giant shapeshifting horror that copies whatever it faces, frozen base in the background.
+```
+
+**Back sprites:**
+
+```
+Using the exact creatures from the sheet above, draw each one from BEHIND (rear 3/4 view, as seen by the player in battle), same order, same palette, same pixel style, white background.
+```
+
+**Party icons:**
+
+```
+Turn each creature above into a tiny 16x16-pixel party menu icon, two-frame idle bounce, very simple, same colors, white background.
+```
+
+### Jackolette line
+**Front sprites, evolution sheet**
+
+```
+Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. Evolution sheet: 5 stages of one creature line in a row, left to right, each bigger and more powerful than the last but clearly the same species. Region colors: blood-moon red, midnight purple, old-film sepia and flickering projector white. (1) Jackolette: small pumpkin creature with a carved grin and a candle glowing inside. (2) Gourdghast: pumpkin-headed scarecrow with straw hands and a tattered coat. (3) Cornstalker: tall pumpkin creature creeping through a cornfield, vines for arms. (4) Hollowhead: headless rider on a dark horse holding up a flaming jack-o'-lantern. (5) Harvest King: giant pumpkin king in a crown of autumn leaves, crows and lanterns around it.
+```
+
+**Back sprites:**
+
+```
+Using the exact creatures from the sheet above, draw each one from BEHIND (rear 3/4 view, as seen by the player in battle), same order, same palette, same pixel style, white background.
+```
+
+**Party icons:**
+
+```
+Turn each creature above into a tiny 16x16-pixel party menu icon, two-frame idle bounce, very simple, same colors, white background.
+```
+
+### Finlet line (Paragon)
+**Front sprites, evolution sheet**
+
+```
+Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. Evolution sheet: 5 stages of one creature line in a row, left to right, each bigger and more powerful than the last but clearly the same species. Region colors: blood-moon red, midnight purple, old-film sepia and flickering projector white. (1) Finlet: tiny grey shark pup with a giant dorsal fin, peeking out of a cloud. (2) Stormfin: young shark swimming through rain clouds, just its fin showing. (3) Cloudjaw: great white shark leaping out of clouds with its huge jaws open. (4) Voltjaw: giant shark crackling with lightning in a swirling storm. (5) Skymegalodon: colossal ancient megalodon circling the floating realm, storm swirling, eyes glowing red.
+```
+
+**Back sprites:**
+
+```
+Using the exact creatures from the sheet above, draw each one from BEHIND (rear 3/4 view, as seen by the player in battle), same order, same palette, same pixel style, white background.
+```
+
+**Party icons:**
+
+```
+Turn each creature above into a tiny 16x16-pixel party menu icon, two-frame idle bounce, very simple, same colors, white background.
+```
+
+### The Midnight Marquee Sovereigns (legendaries)
+
+**Lastlight, The Final Girl**
+
+```
+Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. A legendary creature, larger and more detailed than normal, majestic pose. Region colors: blood-moon red, midnight purple, old-film sepia and flickering projector white. Lastlight: brave doe-like guardian with a lantern hanging from its antlers, torn jacket, determined eyes. Draw two versions side by side: left = normal form, right = awakened form: dawn breaks behind it and the lantern becomes a blazing sun.
+```
+
+**Bogeyreign, The Boogeyman**
+
+```
+Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. A legendary creature, larger and more detailed than normal, majestic pose. Region colors: blood-moon red, midnight purple, old-film sepia and flickering projector white. Bogeyreign: tall faceless shadow with long arms, wearing a mask that keeps changing, stepping out from under a bed. Draw two versions side by side: left = normal form, right = awakened form: a huge cloak covered in hundreds of different scary masks.
+```
+
 ## The Origin
 
 **Quillion, The First Storyteller**
 
 ```
-Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. The final, most powerful creature in the game. great feathered serpent-bird made of book pages and ink, a giant quill as its crest, six colored tail feathers (one per realm). Draw two versions side by side: left = normal form, right = awakened form: pages unfold into vast wings showing scenes from all six realms.
+Pixel art battle sprite in the style of a Game Boy Color era monster-collecting RPG. ORIGINAL creature design, not a copy of any existing character. Limited palette (6-8 colors), crisp 1-pixel dark outline, simple shading, plain white background, no text, no border. The final, most powerful creature in the game. great feathered serpent-bird made of book pages and ink, a giant quill as its crest, seven colored tail feathers (one per realm). Draw two versions side by side: left = normal form, right = awakened form: pages unfold into vast wings showing scenes from all seven realms.
 ```
 
