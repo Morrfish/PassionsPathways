@@ -23,7 +23,7 @@ Reply "Ready" and wait for my first request.
 
 ## Step 2: Workflow tips
 1. **One evolution line per message.** The prompt asks for all 5 stages in one sheet, so they look like the same creature.
-2. **Then ask for the back views** and **party icons** using the short prompts under each line.
+2. **Every creature needs a FRONT sprite (facing you) and a BACK sprite (seen from behind).** For each line, make the `-F` prompt first, then the `-B` prompt in the same chat so the designs match, then the `-I` party icons. Full how-to: `CHATGPT_START_HERE.md`.
 3. If one stage comes out wrong, say: *"Redo only stage 3, keep everything else the same."*
 4. **Clean-up after downloading:** crop each sprite, remove the white background, and resize with **nearest-neighbor** (no smoothing) to the final size below. ChatGPT can't hit exact pixel sizes, so you always shrink afterwards.
 5. Save with the file names below so the game can load them automatically.

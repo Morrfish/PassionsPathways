@@ -3,6 +3,7 @@
 _A creature-collecting RPG in the spirit of the classic Game Boy monster games: top-down overworld, turn-based battles, a creature encyclopedia to fill, badges, a rival and a final league._
 
 Other files in this folder:
+- `CHATGPT_START_HERE.md`: step-by-step guide to making all the art in ChatGPT
 - `ROSTER.md`: every creature, its types, look and how it evolves
 - `CREATURE_PROMPTS.md`: copy-paste ChatGPT prompts for every creature sprite
 - `ART_LIST.md`: the Style Lock plus every other image the game needs (characters, maps, UI, items)
