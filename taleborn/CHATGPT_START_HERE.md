@@ -119,13 +119,14 @@ Your Google Drive has a folder called **Taleborn Art**:
 | `2 Approved (game-ready sprites)` | Claude | Cropped, background-removed, resized and renamed sprites |
 | `3 Style Reference` | You and ChatGPT | Your favorite "this is the look" image(s) |
 | `4 Project Files (for ChatGPT to read)` | ChatGPT reads. Claude keeps them up to date. | These guides, the roster and the prompts |
-| `Claude and ChatGPT Message Board` (Google Doc) | Both of them | Claude's review notes and redo requests, and your answers |
+| `5 Review (size tests and previews)` | Claude | In-game mockups and size tests to look at before anything is approved |
+| `6 Messages` | Both of them | One dated note per message, for example `2026-11-28 0445 Claude - SAK-01 review`. The newest is at the top. Replies are new files, not edits. |
 
 **The loop:**
 1. In ChatGPT, make the images (for example `Make prompt SAK-01-F`).
-2. Download them into **1 Inbox**. Name each file with its prompt ID, like `SAK-01-F.png` (add `-v2` for redos).
-3. Tell Claude: *"Check the Taleborn inbox."* Claude reviews the images (do they match the roster, do the front and back match, is the style consistent), prepares the game-ready sprites, ticks off the checklist, and writes notes on the **Message Board**.
-4. In ChatGPT, say: *"Read the Message Board and redo anything Claude flagged."* (ChatGPT needs Google Drive connected under Settings → Connectors / Apps for this.)
+2. Save them into **1 Inbox** (ChatGPT can upload them there directly once Drive is connected). Name each file with its prompt ID, like `SAK-01-F.png` (add `-v2` for redos).
+3. Tell Claude: *"Check the Taleborn inbox."* Claude reviews the images (do they match the roster, do the front and back match, is the style consistent), prepares the game-ready sprites, ticks off the checklist, and writes a review note in **6 Messages**.
+4. In ChatGPT, say: *"Read the newest Claude note in 6 Messages and do its redo requests, then upload a reply note there."* (ChatGPT needs Google Drive connected under Settings → Connectors / Apps for this.)
 5. Repeat.
 
 **Faster downloads:** install **Google Drive for desktop**. It puts a Drive folder on your computer, so saving a ChatGPT image into `Taleborn Art/1 Inbox` uploads it automatically.
